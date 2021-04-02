@@ -919,7 +919,7 @@ class WidgetsTest(unittest.TestCase):
         # Check title format
         self.assertRaises(AssertionError, lambda: menu.add.clock(title_format='bad'))
 
-    # noinspection SpellCheckingInspection
+    # noinspection SpellCheckingInspection,PyTypeChecker
     def test_textinput(self) -> None:
         """
         Test TextInput widget.
@@ -1251,6 +1251,16 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(menu._widget_offset[1], 76 if PYGAME_V2 else 75)
         self.assertEqual(textinput.get_width(), 134)
         self.assertEqual(textinput._current_underline_string, '________')
+
+        # Test cursor size
+        self.assertRaises(AssertionError, lambda: menu.add.text_input('title', cursor_size=(1, 0)))
+        self.assertRaises(AssertionError, lambda: menu.add.text_input('title', cursor_size=(-1, -1)))
+        self.assertRaises(AssertionError, lambda: menu.add.text_input('title', cursor_size=(1, 1, 0)))
+        self.assertRaises(AssertionError, lambda: menu.add.text_input('title', cursor_size=[1, 1]))
+        self.assertRaises(AssertionError, lambda: menu.add.text_input('title', cursor_size=(1.6, 2.5)))
+
+        textinput_cursor = menu.add.text_input('title', cursor_size=(10, 2))
+        self.assertEqual(textinput_cursor._cursor_size, (10, 2))
 
     def test_button(self) -> None:
         """

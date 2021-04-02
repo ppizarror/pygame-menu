@@ -38,7 +38,7 @@ import pygame_menu.controls as ctrl
 
 from pygame_menu.locals import FINGERDOWN, FINGERUP, INPUT_INT, INPUT_FLOAT, INPUT_TEXT
 from pygame_menu.utils import check_key_pressed_valid, make_surface, assert_color, \
-    get_finger_pos, warn
+    get_finger_pos, warn, assert_vector
 from pygame_menu.widgets.core import Widget
 
 from pygame_menu._types import Optional, Any, CallbackType, Tuple, List, ColorType, \
@@ -105,6 +105,7 @@ class TextInput(Widget):
     :param cursor_color: Color of cursor
     :param cursor_selection_color: Color of the text selection if the cursor is enabled on certain widgets
     :param cursor_selection_enable: Enables selection of text
+    :param cursor_size: Set surface x,y of the cursor which determines cursor size
     :param cursor_switch_ms: Interval of cursor switch between off and on status. First status is ``off``
     :param history: Maximum number of editions stored
     :param input_type: Type of the input data. See :py:mod:`pygame_menu.locals`
@@ -139,6 +140,7 @@ class TextInput(Widget):
     _cursor_offset: NumberType
     _cursor_position: int
     _cursor_render: bool
+    _cursor_size: Optional[Tuple2IntType]  # Size defined by user
     _cursor_surface: Optional['pygame.Surface']
     _cursor_surface_pos: List[int]
     _cursor_switch_ms: NumberType
@@ -195,6 +197,7 @@ class TextInput(Widget):
             cursor_color: ColorInputType = (0, 0, 0),
             cursor_selection_color: ColorInputType = (30, 30, 30, 100),
             cursor_selection_enable: bool = True,
+            cursor_size: Optional[Tuple2IntType] = None,
             cursor_switch_ms: NumberType = 500,
             history: int = 50,
             input_type: str = INPUT_TEXT,
@@ -220,6 +223,7 @@ class TextInput(Widget):
     ) -> None:
         assert isinstance(copy_paste_enable, bool)
         assert isinstance(cursor_selection_enable, bool)
+        assert isinstance(cursor_size, (type(None), tuple))
         assert isinstance(cursor_switch_ms, NumberInstance)
         assert isinstance(history, int)
         assert isinstance(input_type, str)
@@ -254,6 +258,13 @@ class TextInput(Widget):
                 'cursor selection color alpha must be defined'
             assert cursor_selection_color[3] != 255, \
                 'cursor selection color alpha cannot be opaque'
+
+        if cursor_size is not None:
+            assert_vector(cursor_size, 2, int)
+            assert cursor_size[0] > 0, \
+                'cursor size width must be greater than zero'
+            assert cursor_size[1] > 0, \
+                'cursor size height must be greater than zero'
 
         super(TextInput, self).__init__(
             args=args,
@@ -312,6 +323,7 @@ class TextInput(Widget):
         self._cursor_render = True  # If True cursor must be rendered
         self._cursor_surface = None
         self._cursor_surface_pos = [0, 0]  # Position (x,y) of surface
+        self._cursor_size = cursor_size
         self._cursor_switch_ms = cursor_switch_ms
         self._cursor_visible = False  # Switches every self._cursor_switch_ms ms
 
@@ -684,8 +696,11 @@ class TextInput(Widget):
         if self._cursor_surface is None:
             if self._rect.height == 0:  # If Menu has not been initialized this error can occur
                 return
-            self._cursor_surface = make_surface(self._font_size / 20 + 1,
-                                                self._rect.height - 2)
+            if self._cursor_size is not None:
+                self._cursor_surface = make_surface(*self._cursor_size)
+            else:
+                self._cursor_surface = make_surface(self._font_size / 20 + 1,
+                                                    self._rect.height - 2)
             self._cursor_surface.fill(self._cursor_color)
 
         # Get string
