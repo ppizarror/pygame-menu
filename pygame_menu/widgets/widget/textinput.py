@@ -34,8 +34,8 @@ __all__ = ['TextInput']
 import math
 
 import pygame
+import pygame_menu.controls as ctrl
 
-from pygame_menu.controls import KEY_MOVE_UP, KEY_MOVE_DOWN, KEY_APPLY
 from pygame_menu.locals import FINGERDOWN, FINGERUP, INPUT_INT, INPUT_FLOAT, INPUT_TEXT
 from pygame_menu.utils import check_key_pressed_valid, make_surface, assert_color, \
     get_finger_pos, warn
@@ -267,8 +267,8 @@ class TextInput(Widget):
 
         self._input_string = ''
         self._ignore_keys = (  # Ignore keys on keyrepeat event
-            KEY_MOVE_DOWN,
-            KEY_MOVE_UP,
+            ctrl.KEY_MOVE_DOWN,
+            ctrl.KEY_MOVE_UP,
             pygame.K_CAPSLOCK,
             pygame.K_END,
             pygame.K_ESCAPE,
@@ -1788,11 +1788,11 @@ class TextInput(Widget):
                     updated = True
 
                 # Up arrow
-                elif event.key == KEY_MOVE_UP:
+                elif event.key == ctrl.KEY_MOVE_UP:
                     self.active = False
 
                 # Down arrow
-                elif event.key == KEY_MOVE_DOWN:
+                elif event.key == ctrl.KEY_MOVE_DOWN:
                     self.active = False
 
                 # End
@@ -1821,7 +1821,7 @@ class TextInput(Widget):
                     self.active = True
 
                 # Enter
-                elif event.key == KEY_APPLY:
+                elif event.key == ctrl.KEY_APPLY:
                     self._sound.play_open_menu()
                     self.apply()
                     self._unselect_text()

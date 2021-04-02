@@ -36,21 +36,21 @@ import math
 
 import pygame
 import pygame_menu
+import pygame_menu.controls as ctrl
 
-from pygame_menu.controls import KEY_APPLY, KEY_MOVE_DOWN, KEY_MOVE_UP, JOY_BUTTON_SELECT, JOY_LEFT, \
-    JOY_DEADZONE, JOY_RIGHT, JOY_AXIS_X
 from pygame_menu.font import FontType, get_font, assert_font
 from pygame_menu.locals import ORIENTATION_VERTICAL, FINGERDOWN, FINGERUP
-from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, make_surface, \
-    parse_padding, get_finger_pos, uuid4, assert_cursor
+from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, \
+    make_surface, parse_padding, get_finger_pos, uuid4, assert_cursor
 from pygame_menu.widgets.core import Widget
 from pygame_menu.widgets.widget.button import Button
 from pygame_menu.widgets.widget.frame import Frame
 from pygame_menu.widgets.widget.selector import check_selector_items
 
-from pygame_menu._types import Tuple, Union, List, Any, Optional, CallbackType, ColorType, Dict, \
-    ColorInputType, Tuple2IntType, Tuple3IntType, PaddingType, PaddingInstance, Tuple4IntType, \
-    NumberType, EventVectorType, Tuple2NumberType, CursorInputType, CursorType
+from pygame_menu._types import Tuple, Union, List, Any, Optional, CallbackType, \
+    ColorType, Dict, ColorInputType, Tuple2IntType, Tuple3IntType, PaddingType, \
+    PaddingInstance, Tuple4IntType, NumberType, EventVectorType, Tuple2NumberType, \
+    CursorInputType, CursorType
 
 
 # noinspection PyMissingOrEmptyDocstring,PyProtectedMember
@@ -1114,28 +1114,28 @@ class DropSelect(Widget):
             joy_button_down = self._joystick_enabled and event.type == pygame.JOYBUTTONDOWN
 
             # Left button
-            if keydown and event.key == KEY_MOVE_DOWN or \
-                    joy_hatmotion and event.value == JOY_LEFT or \
-                    joy_axismotion and event.axis == JOY_AXIS_X and \
-                    event.value < JOY_DEADZONE:
+            if keydown and event.key == ctrl.KEY_MOVE_DOWN or \
+                    joy_hatmotion and event.value == ctrl.JOY_LEFT or \
+                    joy_axismotion and event.axis == ctrl.JOY_AXIS_X and \
+                    event.value < ctrl.JOY_DEADZONE:
                 if not self.active:
                     continue
                 self._down()
                 updated = True
 
             # Right button
-            elif keydown and event.key == KEY_MOVE_UP or \
-                    joy_hatmotion and event.value == JOY_RIGHT or \
-                    joy_axismotion and event.axis == JOY_AXIS_X and \
-                    event.value > -JOY_DEADZONE:
+            elif keydown and event.key == ctrl.KEY_MOVE_UP or \
+                    joy_hatmotion and event.value == ctrl.JOY_RIGHT or \
+                    joy_axismotion and event.axis == ctrl.JOY_AXIS_X and \
+                    event.value > -ctrl.JOY_DEADZONE:
                 if not self.active:
                     continue
                 self._up()
                 updated = True
 
             # Press enter
-            elif keydown and event.key == KEY_APPLY or \
-                    joy_button_down and event.button == JOY_BUTTON_SELECT:
+            elif keydown and event.key == ctrl.KEY_APPLY or \
+                    joy_button_down and event.button == ctrl.JOY_BUTTON_SELECT:
                 if self.active and self._index >= 0:
                     self._sound.play_key_add()
                     self.apply(*self._items[self._index][1:])

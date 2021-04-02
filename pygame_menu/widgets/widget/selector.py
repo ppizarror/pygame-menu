@@ -48,9 +48,8 @@ __all__ = [
 ]
 
 import pygame
+import pygame_menu.controls as ctrl
 
-from pygame_menu.controls import KEY_LEFT, KEY_RIGHT, JOY_AXIS_X, JOY_LEFT, \
-    JOY_RIGHT, JOY_DEADZONE, KEY_APPLY, JOY_BUTTON_SELECT
 from pygame_menu.locals import FINGERUP
 from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, \
     make_surface, get_finger_pos
@@ -461,22 +460,22 @@ class Selector(Widget):
             joy_button_down = self._joystick_enabled and event.type == pygame.JOYBUTTONDOWN
 
             # Left button
-            if keydown and event.key == KEY_LEFT or \
-                    joy_hatmotion and event.value == JOY_LEFT or \
-                    joy_axismotion and event.axis == JOY_AXIS_X and event.value < JOY_DEADZONE:
+            if keydown and event.key == ctrl.KEY_LEFT or \
+                    joy_hatmotion and event.value == ctrl.JOY_LEFT or \
+                    joy_axismotion and event.axis == ctrl.JOY_AXIS_X and event.value < ctrl.JOY_DEADZONE:
                 self._left()
                 updated = True
 
             # Right button
-            elif keydown and event.key == KEY_RIGHT or \
-                    joy_hatmotion and event.value == JOY_RIGHT or \
-                    joy_axismotion and event.axis == JOY_AXIS_X and event.value > -JOY_DEADZONE:
+            elif keydown and event.key == ctrl.KEY_RIGHT or \
+                    joy_hatmotion and event.value == ctrl.JOY_RIGHT or \
+                    joy_axismotion and event.axis == ctrl.JOY_AXIS_X and event.value > -ctrl.JOY_DEADZONE:
                 self._right()
                 updated = True
 
             # Press enter
-            elif keydown and event.key == KEY_APPLY or \
-                    joy_button_down and event.button == JOY_BUTTON_SELECT:
+            elif keydown and event.key == ctrl.KEY_APPLY or \
+                    joy_button_down and event.button == ctrl.JOY_BUTTON_SELECT:
                 self._sound.play_key_add()
                 self.apply(*self._items[self._index][1:])
                 updated = True

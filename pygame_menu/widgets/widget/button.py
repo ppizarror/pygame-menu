@@ -33,8 +33,8 @@ __all__ = ['Button']
 
 import pygame
 import pygame_menu
+import pygame_menu.controls as ctrl
 
-from pygame_menu.controls import KEY_APPLY, JOY_BUTTON_SELECT
 from pygame_menu.locals import FINGERUP
 from pygame_menu.utils import is_callable, assert_color
 from pygame_menu.widgets.core import Widget
@@ -217,9 +217,9 @@ class Button(Widget):
 
             # User applies with key
             if event.type == pygame.KEYDOWN and self._keyboard_enabled and \
-                    event.key == KEY_APPLY or \
+                    event.key == ctrl.KEY_APPLY or \
                     event.type == pygame.JOYBUTTONDOWN and self._joystick_enabled and \
-                    event.button == JOY_BUTTON_SELECT:
+                    event.button == ctrl.JOY_BUTTON_SELECT:
                 if self.to_menu:
                     self._sound.play_open_menu()
                 else:

@@ -42,10 +42,9 @@ import unittest
 
 import pygame
 import pygame_menu
+import pygame_menu.controls as ctrl
 
 from pygame_menu import events
-from pygame_menu.controls import KEY_MOVE_DOWN, KEY_MOVE_UP, KEY_LEFT, KEY_RIGHT, \
-    JOY_DOWN, JOY_UP, JOY_LEFT, JOY_RIGHT
 from pygame_menu.locals import FINGERDOWN, FINGERMOTION
 from pygame_menu.utils import set_pygame_cursor
 from pygame_menu.widgets import Label, Button
@@ -623,12 +622,12 @@ class MenuTest(unittest.TestCase):
         # Mark w1 as unselectable, then w1 is not selectable, nor w2, and labels are unselectable too
         # so the selected should be the same
         w1.is_selectable = False
-        self.menu.update(PygameEventUtils.key(KEY_MOVE_DOWN, keydown=True))
+        self.menu.update(PygameEventUtils.key(ctrl.KEY_MOVE_DOWN, keydown=True))
         self.assertEqual(self.menu.get_selected_widget(), w_last)
 
         # Show w2, then if DOWN is pressed again, the selected status should be 2
         w2.show()
-        self.menu.update(PygameEventUtils.key(KEY_MOVE_DOWN, keydown=True))
+        self.menu.update(PygameEventUtils.key(ctrl.KEY_MOVE_DOWN, keydown=True))
         self.assertEqual(self.menu.get_selected_widget(), w2)
 
         # Hide w2, pass again to w_last
@@ -759,31 +758,31 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(len(self.menu.get_widgets()), 5)
 
         # Create a event in pygame
-        self.menu.update(PygameEventUtils.key(KEY_MOVE_UP, keydown=True))
+        self.menu.update(PygameEventUtils.key(ctrl.KEY_MOVE_UP, keydown=True))
         self.assertEqual(self.menu.get_index(), 1)
 
         # Move down twice
         for i in range(2):
-            self.menu.update(PygameEventUtils.key(KEY_MOVE_DOWN, keydown=True))
+            self.menu.update(PygameEventUtils.key(ctrl.KEY_MOVE_DOWN, keydown=True))
         self.assertEqual(self.menu.get_index(), 4)
-        self.menu.update(PygameEventUtils.key(KEY_MOVE_UP, keydown=True))
+        self.menu.update(PygameEventUtils.key(ctrl.KEY_MOVE_UP, keydown=True))
         self.assertEqual(self.menu.get_index(), 0)
 
         # Press enter, button should trigger and call function
         self.assertEqual(button.apply(), 'the value')
-        self.menu.update(PygameEventUtils.key(pygame_menu.controls.KEY_APPLY, keydown=True))
+        self.menu.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
 
         # Other
-        self.menu.update(PygameEventUtils.key(pygame_menu.controls.KEY_CLOSE_MENU, keydown=True))
-        self.menu.update(PygameEventUtils.key(pygame_menu.controls.KEY_BACK, keydown=True))
+        self.menu.update(PygameEventUtils.key(ctrl.KEY_CLOSE_MENU, keydown=True))
+        self.menu.update(PygameEventUtils.key(ctrl.KEY_BACK, keydown=True))
 
         # Check index is the same as before
         self.assertEqual(self.menu.get_index(), 0)
 
         # Check joy
-        self.menu.update(PygameEventUtils.joy_hat_motion(JOY_UP))
+        self.menu.update(PygameEventUtils.joy_hat_motion(ctrl.JOY_UP))
         self.assertEqual(self.menu.get_index(), 4)
-        self.menu.update(PygameEventUtils.joy_hat_motion(JOY_DOWN))
+        self.menu.update(PygameEventUtils.joy_hat_motion(ctrl.JOY_DOWN))
         self.assertEqual(self.menu.get_index(), 0)
         self.menu.update(PygameEventUtils.joy_motion(1, 1))
         self.assertEqual(self.menu.get_index(), 1)
@@ -807,7 +806,7 @@ class MenuTest(unittest.TestCase):
         button = self.menu.add.button('open', menu)
         button.apply()
         self.assertEqual(self.menu._get_depth(), 1)
-        self.menu.update(PygameEventUtils.key(pygame_menu.controls.KEY_BACK, keydown=True))  # go back
+        self.menu.update(PygameEventUtils.key(ctrl.KEY_BACK, keydown=True))  # go back
         self.assertEqual(self.menu._get_depth(), 0)
 
     def test_mouse_empty_submenu(self) -> None:
@@ -1465,23 +1464,23 @@ class MenuTest(unittest.TestCase):
 
         # Arrow keys
         self.assertEqual(menu.get_selected_widget(), wid_g[0])
-        menu_top.update(PygameEventUtils.key(KEY_LEFT, keydown=True))
+        menu_top.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
         self.assertEqual(menu.get_selected_widget(), wid_g[6])
-        menu_top.update(PygameEventUtils.key(KEY_MOVE_UP, keydown=True))
+        menu_top.update(PygameEventUtils.key(ctrl.KEY_MOVE_UP, keydown=True))
         self.assertEqual(menu.get_selected_widget(), wid_g[7])
-        menu_top.update(PygameEventUtils.key(KEY_RIGHT, keydown=True))
+        menu_top.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
         self.assertEqual(menu.get_selected_widget(), wid_g[1])
-        menu_top.update(PygameEventUtils.key(KEY_MOVE_DOWN, keydown=True))
+        menu_top.update(PygameEventUtils.key(ctrl.KEY_MOVE_DOWN, keydown=True))
         self.assertEqual(menu.get_selected_widget(), wid_g[0])
 
         # Joy key
-        menu_top.update(PygameEventUtils.joy_hat_motion(JOY_LEFT))
+        menu_top.update(PygameEventUtils.joy_hat_motion(ctrl.JOY_LEFT))
         self.assertEqual(menu.get_selected_widget(), wid_g[6])
-        menu_top.update(PygameEventUtils.joy_hat_motion(JOY_DOWN))
+        menu_top.update(PygameEventUtils.joy_hat_motion(ctrl.JOY_DOWN))
         self.assertEqual(menu.get_selected_widget(), wid_g[7])
-        menu_top.update(PygameEventUtils.joy_hat_motion(JOY_RIGHT))
+        menu_top.update(PygameEventUtils.joy_hat_motion(ctrl.JOY_RIGHT))
         self.assertEqual(menu.get_selected_widget(), wid_g[1])
-        menu_top.update(PygameEventUtils.joy_hat_motion(JOY_UP))
+        menu_top.update(PygameEventUtils.joy_hat_motion(ctrl.JOY_UP))
         self.assertEqual(menu.get_selected_widget(), wid_g[0])
 
         # Joy hat
