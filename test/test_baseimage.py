@@ -254,6 +254,32 @@ class BaseImageTest(unittest.TestCase):
         self.assertEqual(image.get_filename(), 'gray_lines')
         self.assertEqual(image.get_extension(), '.png')
 
+    def test_scale(self) -> None:
+        """
+        Test scale.
+        """
+        image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        w, h = image.get_size()
+        self.assertEqual(w, 256)
+        self.assertEqual(h, 256)
+
+        image4 = image.copy().scale(4, 4)
+        self.assertEqual(image4.get_size(), (1024, 1024))
+
+        # Apply scale2x algorithm
+        image4a = image.copy().scale2x().scale2x()
+        self.assertEqual(image4a.get_size(), (1024, 1024))
+
+        image4b = image.copy().scale4x()
+
+        image.scale(2, 2).scale(2, 2)
+        self.assertEqual(image.get_size(), (1024, 1024))
+
+        # Check if equal
+        self.assertTrue(image.equals(image4))
+        self.assertFalse(image.equals(image4a))
+        self.assertTrue(image4a.equals(image4b))
+
     def test_operations(self) -> None:
         """
         Test the file operations.
