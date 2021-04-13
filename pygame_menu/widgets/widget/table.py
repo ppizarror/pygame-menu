@@ -367,7 +367,7 @@ class Table(Frame):
             cell._update__repr___(self)
             cell.configured = True
 
-            # If cell within a menu, remove from it
+            # If cell is within a menu, remove from it
             if cell.get_menu() is not None:
                 try:
                     cell.get_menu().remove_widget(cell)
