@@ -266,20 +266,23 @@ class Menu(Base):
 
         # Column/row asserts
         assert columns >= 1, \
-            'the number of columns must be equal or greater than 1 (current={0})'.format(columns)
+            'the number of columns must be equal or greater than 1 (current={0})' \
+            ''.format(columns)
         if columns > 1:
             assert rows is not None, \
                 'rows cannot be None if the number of columns is greater than 1'
             if isinstance(rows, int):
                 assert rows >= 1, \
-                    'if number of columns is greater than 1 (current={0}) then the number ' \
-                    'of rows must be equal or greater than 1 (current={1})'.format(columns, rows)
+                    'if number of columns is greater than 1 (current={0}) then the' \
+                    'number of rows must be equal or greater than 1 (current={1})' \
+                    ''.format(columns, rows)
                 rows = [rows for _ in range(columns)]
             assert isinstance(rows, VectorInstance), \
                 'if rows is not an integer it must be a tuple/list'
             assert len(rows) == columns, \
-                'the length of the rows vector must be the ' \
-                'same as the number of columns (current={0}, expected={1})'.format(len(rows), columns)
+                'the length of the rows vector must be the same as the number of' \
+                ' columns (current={0}, expected={1})' \
+                ''.format(len(rows), columns)
 
             for i in rows:
                 assert isinstance(i, int), \
@@ -345,9 +348,11 @@ class Menu(Base):
 
             for i in column_max_width:
                 assert isinstance(i, type(None)) or isinstance(i, NumberInstance), \
-                    'each item of column_max_width can be None (no limit) or an integer/float'
+                    'each item of column_max_width can be None (no limit) or an ' \
+                    'integer/float'
                 assert i is None or i >= 0, \
-                    'each item of column_max_width must be equal or greater than zero or None'
+                    'each item of column_max_width must be equal or greater than' \
+                    ' zero or None'
 
         else:
             column_max_width = [None for _ in range(columns)]
@@ -422,15 +427,16 @@ class Menu(Base):
         self._onwindowmouseleave = None
         self._onwindowmouseover = None
 
-        # Menu links (pointer to previous and next menus in nested submenus), for public methods
-        # accessing self should be through "_current", because user can move through submenus
-        # and self pointer should target the current Menu object. Private methods access
-        # through self (not _current) because these methods are called by public (_current) or
-        # by themselves. _top is only used when moving through menus (open,reset)
+        # Menu links (pointer to previous and next menus in nested submenus),
+        # for public methods accessing, self should be used through "_current",
+        # because user can move through submenus and self pointer should target
+        # the current Menu object. Private methods access through self
+        # (not _current) because these methods are called by public (_current) or
+        # by themselves. _top is only used when moving through menus (open, reset)
         self._current = self  # Current Menu
 
-        # Prev stores a list of Menu pointers, when accessing a submenu, prev grows as
-        # prev = [prev, new_pointer]
+        # Prev stores a list of Menu pointers, when accessing a submenu, prev grows
+        # as prev = [prev, new_pointer]
         self._prev = None
 
         # Top is the same for the menus and submenus if the user moves through them
@@ -441,13 +447,17 @@ class Menu(Base):
         self._translate = (0, 0)
         self.set_relative_position(position[0], position[1])
 
-        # Menu widgets, it should not be accessed outside the object as strange issues can occur
+        # Menu widgets, it should not be accessed outside the object as strange
+        # issues can occur
         self.add = WidgetManager(self)
         self._widget_offset = [theme.widget_offset[0], theme.widget_offset[1]]
         self._widgets = []  # This list may change during execution (replaced by a new one)
 
         self._update_frames = []  # Stores the frames which receive update events
-        self._update_widgets = []  # Stores the widgets which receive update even if not selected or events is empty
+
+        # Stores the widgets which receive update even if not selected or events
+        # is empty
+        self._update_widgets = []
 
         if abs(self._widget_offset[0]) < 1:
             self._widget_offset[0] *= self._width
@@ -463,11 +473,17 @@ class Menu(Base):
         self._widgets_surface_need_update = False
         self._widgets_surface_last = (0, 0, None)
 
-        # Precache widgets surface draw
+        # Precache widgets surface draw, this method dramatically increases the
+        # performance of the menu rendering
         self._widget_surface_cache_enabled = True
+
+        # This boolean variable, if True, forces the cache to be updated, after
+        # updating, _widget_surface_cache_need_update goes back again to False,
+        # thus, the state only is used once
         self._widget_surface_cache_need_update = True
 
-        # If centering is enabled, but widget offset in the vertical is different than zero a warning is raised
+        # If centering is enabled, but widget offset in the vertical is different
+        # than zero a warning is raised
         if self._auto_centering and self._widget_offset[1] != 0:
             warn(
                 'menu (title "{0}") is vertically centered (center_content=True), '
@@ -477,7 +493,8 @@ class Menu(Base):
             self._auto_centering = False
 
         # Scroll area outer margin
-        self._scrollarea_margin = [theme.scrollarea_outer_margin[0], theme.scrollarea_outer_margin[1]]
+        self._scrollarea_margin = [theme.scrollarea_outer_margin[0],
+                                   theme.scrollarea_outer_margin[1]]
         if abs(self._scrollarea_margin[0]) < 1:
             self._scrollarea_margin[0] *= self._width
         if abs(self._scrollarea_margin[1]) < 1:
@@ -486,7 +503,8 @@ class Menu(Base):
         self._scrollarea_margin[0] = int(self._scrollarea_margin[0])
         self._scrollarea_margin[1] = int(self._scrollarea_margin[1])
 
-        # If centering is enabled, but ScrollArea margin in the vertical is different than zero a warning is raised
+        # If centering is enabled, but ScrollArea margin in the vertical is
+        # different than zero a warning is raised
         if self._auto_centering and self._scrollarea_margin[1] != 0:
             warn(
                 'menu (title "{0}") is vertically centered (center_content=True)'
@@ -1061,7 +1079,8 @@ class Menu(Base):
             index = self._widgets.index(widget)  # If not exists this raises ValueError
         except ValueError:
             raise ValueError('{0} is not in Menu, check if exists on the current '
-                             'with menu.get_current().remove_widget(widget)'.format(widget.get_class_id()))
+                             'with menu.get_current().remove_widget(widget)'
+                             ''.format(widget.get_class_id()))
         self._select(index, 1, SELECT_WIDGET, False)
         return self
 
@@ -1156,7 +1175,8 @@ class Menu(Base):
                 self._select(self._index, 1, SELECT_REMOVE, False)
         self._update_widget_position()
         if update_surface:
-            self._widgets_surface = None  # If added on execution time forces the update of the surface
+            # If added on execution time forces the update of the surface
+            self._widgets_surface = None
 
     def _back(self) -> None:
         """
@@ -1195,8 +1215,9 @@ class Menu(Base):
         for i in range(self._columns):
             self._widget_columns[i] = []
 
-        # Set the column widths (minimum values)
-        self._column_widths = []  # Safe for certain widgets that request the width on rendering
+        # Set the column widths (minimum values), safe for certain widgets that
+        # request the width on rendering
+        self._column_widths = []
         column_widths = [self._column_min_width[i] for i in range(self._columns)]
 
         # Set column/row of each widget and compute maximum width of each column if None
@@ -2282,14 +2303,14 @@ class Menu(Base):
 
         # Get frame properties
         selected_widget = self.get_selected_widget()
-        selected_widget_in_frame_horizontal = selected_widget is not None and \
-                                              selected_widget.get_frame() is not None and \
-                                              selected_widget.get_frame().horizontal
-        selected_widget_last_in_frame = selected_widget_in_frame_horizontal and \
-                                        selected_widget.get_frame().last_index == self._current._index
+        selected_in_frame_horizontal = selected_widget is not None and \
+                                       selected_widget.get_frame() is not None and \
+                                       selected_widget.get_frame().horizontal
+        selected_last_in_frame = selected_in_frame_horizontal and \
+                                 selected_widget.get_frame().last_index == self._current._index
 
         # If current selected in within a horizontal frame
-        if selected_widget_in_frame_horizontal and not selected_widget_last_in_frame:
+        if selected_in_frame_horizontal and not selected_last_in_frame:
             return self._current._select(self._current._index + 1, 1, SELECT_KEY, False)
         elif self._current._used_columns > 1:
             return self._current._move_selected_left_right(1)
@@ -2313,7 +2334,8 @@ class Menu(Base):
 
         # If menu is not enabled
         if not self.is_enabled():
-            self._current._runtime_errors.throw(self._current._runtime_errors.update, 'menu is not enabled')
+            self._current._runtime_errors.throw(self._current._runtime_errors.update,
+                                                'menu is not enabled')
             return False
         self._current._stats.update += 1
 
@@ -2331,10 +2353,11 @@ class Menu(Base):
         mouse_motion_event = None
 
         selected_widget = self._current.get_selected_widget()
-        selected_widget_active_disable_scroll = (False if selected_widget is None else selected_widget.active) and \
-                                                self._current._mouse_motion_selection or \
-                                                selected_widget is not None and selected_widget.active and \
-                                                selected_widget.force_menu_draw_focus
+        selected_widget_active_disable_scroll = \
+            (False if selected_widget is None else selected_widget.active) and \
+            self._current._mouse_motion_selection or \
+            selected_widget is not None and selected_widget.active and \
+            selected_widget.force_menu_draw_focus
         selected_widget_scrollarea = None if selected_widget is None else selected_widget.get_scrollarea()
 
         # First, check scrollable widgets (if any)
@@ -2505,7 +2528,8 @@ class Menu(Base):
                     # only if the user clicked outside the widget
                     else:
                         if selected_widget is not None:
-                            if not selected_widget_scrollarea.collide(selected_widget.get_focus_rect(), event):
+                            focus_rect = selected_widget.get_focus_rect()
+                            if not selected_widget_scrollarea.collide(focus_rect, event):
                                 selected_widget.active = False
                                 selected_widget.render()  # Some widgets need to be rendered
                                 updated = True
@@ -2634,7 +2658,8 @@ class Menu(Base):
                         break
 
                 # Touchscreen events in selected widget
-                elif event.type == FINGERUP and self._current._touchscreen and selected_widget is not None:
+                elif event.type == FINGERUP and self._current._touchscreen and \
+                        selected_widget is not None:
                     self._current._sound.play_click_mouse()
                     if selected_widget_scrollarea.collide(selected_widget, event):
                         updated = selected_widget.update([event])
@@ -2816,7 +2841,8 @@ class Menu(Base):
                 sub_data_keys = data_submenu.keys()
                 for key in sub_data_keys:
                     if key in data_keys:
-                        raise ValueError('collision between widget data ID="{0}" at depth={1}'.format(key, depth))
+                        raise ValueError('collision between widget data ID="{0}" at depth={1}'
+                                         ''.format(key, depth))
 
                 # Update data
                 data.update(data_submenu)
