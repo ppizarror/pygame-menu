@@ -51,6 +51,10 @@ pygame-menu
     :target: https://pypi.org/project/pygame-menu/
     :alt: PyPi downloads
 
+.. image:: https://static.pepy.tech/personalized-badge/pygame-menu?period=total&units=international_system&left_color=grey&right_color=lightgrey&left_text=total%20downloads
+    :target: https://pepy.tech/project/pygame-menu
+    :alt: Total downloads
+
 Source repo on `GitHub <https://github.com/ppizarror/pygame-menu>`_, 
 and run it on `Repl.it <https://repl.it/github/ppizarror/pygame-menu>`_
 
