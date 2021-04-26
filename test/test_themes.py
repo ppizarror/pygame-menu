@@ -76,6 +76,20 @@ class ThemeTest(unittest.TestCase):
         self.assertNotEqual(theme.background_color, theme_copy.background_color)
         self.assertNotEqual(theme.background_color, pygame_menu.themes.THEME_DEFAULT.background_color)
 
+        # Test attribute copy
+        color_main = (29, 120, 107, 255)
+        color_copy = (241, 125, 1)
+        theme_white = pygame_menu.themes.Theme(
+            scrollbar_thick=50,
+            selection_color=color_main
+        )
+
+        sub_theme_white = theme_white.copy()
+        sub_theme_white.selection_color = color_copy
+
+        self.assertEqual(theme_white.selection_color, color_main)
+        self.assertEqual(sub_theme_white.selection_color, color_copy)
+
     def test_methods(self) -> None:
         """
         Test theme method.
