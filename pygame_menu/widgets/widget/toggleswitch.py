@@ -450,7 +450,7 @@ class ToggleSwitch(Widget):
                 if rect.collidepoint(*event_pos):
                     # Check if mouse collides left or right as percentage, use
                     # only X coordinate
-                    mouse_x, _ = event.pos
+                    mouse_x, _ = event_pos
                     topleft, _ = rect.topleft
                     topright, _ = rect.topright
                     # Distance from title

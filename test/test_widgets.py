@@ -548,6 +548,19 @@ class WidgetsTest(unittest.TestCase):
         selector.update(PygameEventUtils.mouse_click(click_pos[0] + 250, click_pos[1]))
         self.assertEqual(selector.get_index(), 0)
 
+        # Test left/right touch
+        click_pos = selector.get_rect(to_real_position=True, apply_padding=False).midleft
+        selector._touchscreen_enabled = True
+        selector.update(PygameEventUtils.touch_click(click_pos[0] + 150, click_pos[1],
+                                                     menu=selector.get_menu()))
+        self.assertEqual(selector.get_index(), 2)
+        selector.update(PygameEventUtils.touch_click(click_pos[0] + 250, click_pos[1],
+                                                     menu=selector.get_menu()))
+        self.assertEqual(selector.get_index(), 0)
+        selector.update(PygameEventUtils.touch_click(click_pos[0] + 250, click_pos[1],
+                                                     menu=selector.get_menu()))
+        self.assertEqual(selector.get_index(), 1)
+
         # Update elements
         new_elements = [('4 - Easy', 'EASY'),
                         ('5 - Medium', 'MEDIUM'),
@@ -1832,6 +1845,12 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(drop.get_index(), 10)
         self.assertFalse(drop.active)
 
+        # Touch middle
+        self.assertTrue(drop._touchscreen_enabled)
+        drop.update(PygameEventUtils.middle_rect_click(
+            drop.get_focus_rect(), evtype=pygame.FINGERUP, menu=drop.get_menu()))
+        self.assertTrue(drop.active)
+
         # Test focus
         if not drop.active:
             drop.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
@@ -2534,6 +2553,18 @@ class WidgetsTest(unittest.TestCase):
         switch.update(PygameEventUtils.mouse_click(click_pos[0] + 250, click_pos[1]))
         self.assertTrue(value[0])
         switch.update(PygameEventUtils.mouse_click(click_pos[0] + 150, click_pos[1]))
+        self.assertFalse(value[0])
+
+        # Test left/right touch
+        switch._touchscreen_enabled = True
+        switch.update(PygameEventUtils.touch_click(click_pos[0] + 250, click_pos[1],
+                                                   menu=switch.get_menu()))
+        self.assertTrue(value[0])
+        switch.update(PygameEventUtils.touch_click(click_pos[0] + 250, click_pos[1],
+                                                   menu=switch.get_menu()))
+        self.assertTrue(value[0])
+        switch.update(PygameEventUtils.touch_click(click_pos[0] + 150, click_pos[1],
+                                                   menu=switch.get_menu()))
         self.assertFalse(value[0])
 
         # Test readonly
