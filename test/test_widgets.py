@@ -548,6 +548,19 @@ class WidgetsTest(unittest.TestCase):
         selector.update(PygameEventUtils.mouse_click(click_pos[0] + 250, click_pos[1]))
         self.assertEqual(selector.get_index(), 0)
 
+        # Test left/right touch
+        click_pos = selector.get_rect(to_real_position=True, apply_padding=False).midleft
+        selector._touchscreen_enabled = True
+        selector.update(PygameEventUtils.touch_click(click_pos[0] + 150, click_pos[1],
+                                                     menu=selector.get_menu()))
+        self.assertEqual(selector.get_index(), 2)
+        selector.update(PygameEventUtils.touch_click(click_pos[0] + 250, click_pos[1],
+                                                     menu=selector.get_menu()))
+        self.assertEqual(selector.get_index(), 0)
+        selector.update(PygameEventUtils.touch_click(click_pos[0] + 250, click_pos[1],
+                                                     menu=selector.get_menu()))
+        self.assertEqual(selector.get_index(), 1)
+
         # Update elements
         new_elements = [('4 - Easy', 'EASY'),
                         ('5 - Medium', 'MEDIUM'),
