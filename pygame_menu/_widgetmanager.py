@@ -235,6 +235,8 @@ class WidgetManager(Base):
         else:
             selection_effect = selection_effect.copy()
         assert isinstance(selection_effect, pygame_menu.widgets.core.Selection)
+
+        selection_effect.set_color(attributes['selection_color'])
         attributes['selection_effect'] = selection_effect
 
         # tab_size
