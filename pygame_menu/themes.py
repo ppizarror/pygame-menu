@@ -137,7 +137,7 @@ class Theme(object):
     :type scrollbar_slider_pad: int, float
     :param scrollbar_thick: Scrollbar thickness in px
     :type scrollbar_thick: int
-    :param selection_color: Color of the selected widget
+    :param selection_color: Color of the selected widget. It updates both selected font and ``widget_selection_effect`` color
     :type selection_color: tuple, list, str, int, :py:class:`pygame.Color`
     :param surface_clear_color: Surface clear color before applying background function
     :type surface_clear_color: tuple, list, str, int, :py:class:`pygame.Color`
@@ -376,10 +376,6 @@ class Theme(object):
         self.scrollbar_thick = self._get(kwargs, 'scrollbar_thick', int, 20)
 
         # Generic widget themes
-        default_selection_effect = HighlightSelection(margin_x=0, margin_y=0).set_color(self.selection_color)
-        self.widget_selection_effect = self._get(kwargs, 'widget_selection_effect', Selection,
-                                                 default_selection_effect)
-
         self.widget_alignment = self._get(kwargs, 'widget_alignment', 'alignment', ALIGN_CENTER)
         self.widget_background_color = self._get(kwargs, 'widget_background_color', 'color_image_none')
         self.widget_background_inflate = self._get(kwargs, 'background_inflate', 'tuple2int', (0, 0))
@@ -412,6 +408,8 @@ class Theme(object):
         self.widget_margin = self._get(kwargs, 'widget_margin', 'tuple2', (0, 0))
         self.widget_offset = self._get(kwargs, 'widget_offset', 'tuple2', (0, 0))
         self.widget_padding = self._get(kwargs, 'widget_padding', PaddingInstance, (4, 8))
+        self.widget_selection_effect = self._get(kwargs, 'widget_selection_effect', Selection,
+                                                 HighlightSelection(margin_x=0, margin_y=0))
         self.widget_tab_size = self._get(kwargs, 'widget_tab_size', int, 4)
         self.widget_url_color = self._get(kwargs, 'widget_url_color', 'color', (6, 69, 173))
 
@@ -618,6 +616,7 @@ class Theme(object):
 
         :return: Copied theme
         """
+        self.validate()
         return copy.deepcopy(self)
 
     def __copy__(self) -> 'Theme':

@@ -31,6 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['ThemeTest']
 
+from test._utils import MenuUtils
 from pathlib import Path
 import unittest
 
@@ -89,6 +90,23 @@ class ThemeTest(unittest.TestCase):
 
         self.assertEqual(theme_white.selection_color, color_main)
         self.assertEqual(sub_theme_white.selection_color, color_copy)
+
+        self.assertNotEqual(theme_white.selection_color, sub_theme_white.selection_color)
+        self.assertNotEqual(theme_white.widget_selection_effect, sub_theme_white.widget_selection_effect)
+
+        # Test the widget effect color is different in both objects
+        m1 = MenuUtils.generic_menu(theme=theme_white)
+        m2 = MenuUtils.generic_menu(theme=sub_theme_white)
+        b1 = m1.add.button('1')
+        b2 = m2.add.button('2')
+
+        self.assertEqual(b1._selection_effect.color, b1.get_menu().get_theme().selection_color)
+        self.assertEqual(b2._selection_effect.color, b2.get_menu().get_theme().selection_color)
+        self.assertNotEqual(b1._selection_effect.color, b2._selection_effect.color)
+
+        # Main Theme selection effect class should not be modified
+        self.assertEqual(b1.get_menu().get_theme(), theme_white)
+        self.assertEqual(theme_white.widget_selection_effect.color, (0, 0, 0))
 
     def test_methods(self) -> None:
         """
