@@ -430,7 +430,7 @@ class Widget(Base):
 
         # Selection effect, for avoiding exception while getting object rect,
         # NullSelection was created. Initially it was None
-        self._selection_effect = _WidgetNullSelection()
+        self._selection_effect = pygame_menu.widgets.NoneSelection()
         # If False, the selection effect is drawn previous the widget surface
         self._selection_effect_draw_post = True
 
@@ -1160,7 +1160,7 @@ class Widget(Base):
         """
         assert isinstance(selection, (Selection, type(None)))
         if selection is None:
-            selection = _WidgetNullSelection()
+            selection = pygame_menu.widgets.NoneSelection()
         self._selection_effect = selection
         self._force_render()
         return self
@@ -1608,7 +1608,7 @@ class Widget(Base):
             if self._selected:
                 return self._font_readonly_selected_color
             return self._font_readonly_color
-        if self._selected and check_selection:
+        if self._selected and check_selection and self._selection_effect.widget_apply_font_color:
             return self._font_selected_color
         return self._font_color
 
@@ -2938,28 +2938,6 @@ class Widget(Base):
         """
         assert isinstance(tab_size, int) and tab_size >= 0
         self._tab_size = tab_size
-        return self
-
-
-class _WidgetNullSelection(Selection):
-    """
-    Null selection. It redefines :py:class:`pygame_menu.widgets.selection.NoneSelection`
-    because that class cannot be imported directly from widget.py.
-
-    .. note::
-
-        Prefer using :py:class:`pygame_menu.widgets.selection.NoneSelection` class
-        instead.
-
-    """
-
-    def __init__(self) -> None:
-        super(_WidgetNullSelection, self).__init__(
-            margin_left=0, margin_right=0, margin_top=0, margin_bottom=0
-        )
-
-    # noinspection PyMissingOrEmptyDocstring
-    def draw(self, surface: 'pygame.Surface', widget: 'Widget') -> 'Selection':
         return self
 
 
