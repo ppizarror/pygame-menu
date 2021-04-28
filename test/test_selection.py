@@ -145,6 +145,12 @@ class SelectionTest(unittest.TestCase):
         self.assertTrue(rect == new_rect)
         self.assertFalse(w.get_selection_effect().widget_apply_font_color)
 
+        # Widgets default selection effect is None
+        last_selection = w.get_selection_effect()
+        w.set_selection_effect()
+        self.assertIsInstance(w.get_selection_effect(), NoneSelection)
+        self.assertNotEqual(w.get_selection_effect(), last_selection)
+
     def test_simple(self) -> None:
         """
         Test simple selection.

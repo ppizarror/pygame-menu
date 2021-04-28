@@ -1146,7 +1146,7 @@ class Widget(Base):
         """
         return self._selection_effect
 
-    def set_selection_effect(self, selection: Optional['Selection']) -> 'Widget':
+    def set_selection_effect(self, selection: Optional['Selection'] = None) -> 'Widget':
         """
         Set the selection effect handler.
 
