@@ -161,6 +161,33 @@ class WidgetsTest(unittest.TestCase):
         vmargin.select(update_menu=True)
         self.assertEqual(test[0], text)
 
+    def test_font_colors(self) -> None:
+        """
+        Test widget font colors for different status.
+        """
+        menu = MenuUtils.generic_menu()
+        w = menu.add.button('title')
+
+        # Default color
+        w._selected = False
+        self.assertEqual(w.get_font_color_status(), w._font_color)
+
+        # Readonly color
+        w.readonly = True
+        self.assertEqual(w.get_font_color_status(), w._font_readonly_color)
+
+        # Read only + selected color
+        w._selected = True
+        self.assertEqual(w.get_font_color_status(), w._font_readonly_selected_color)
+
+        # Selected only color
+        w.readonly = False
+        self.assertEqual(w.get_font_color_status(), w._font_selected_color)
+
+        # Default color
+        w._selected = False
+        self.assertEqual(w.get_font_color_status(), w._font_color)
+
     def test_non_ascii(self) -> None:
         """
         Test non-ascii.
