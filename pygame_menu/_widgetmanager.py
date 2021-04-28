@@ -1876,6 +1876,7 @@ class WidgetManager(Base):
             onchange: CallbackType = None,
             onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
             toggleswitch_id: str = '',
+            single_click: bool = False,
             state_text: Tuple[str, ...] = ('Off', 'On'),
             state_values: Tuple[Any, ...] = (False, True),
             width: int = 150,
@@ -1921,6 +1922,7 @@ class WidgetManager(Base):
             - ``readonly_selected_color``       (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the widget if readonly mode and is selected
             - ``selection_color``               (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the selected widget; only affects the font color
             - ``selection_effect``              (:py:class:`pygame_menu.widgets.core.Selection`) – Widget selection effect
+            - ``single_click_dir``              (bool) - Direction of the change if only 1 click is pressed. ``True`` for left direction (default), ``False`` for right
             - ``slider_color``                  (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the slider
             - ``slider_thickness``              (int) – Slider thickness in px. ``20`` px by default
             - ``state_color``                   (tuple) – 2-item color tuple for each state
@@ -1959,6 +1961,7 @@ class WidgetManager(Base):
         :param onchange: Callback executed when when changing the state of the toggle switch
         :param onselect: Callback executed when selecting the widget
         :param toggleswitch_id: Widget ID
+        :param single_click: Changes the state of the switch with 1 click instead of finding the closest position
         :param state_text: Text of each state
         :param state_values: Value of each state of the switch
         :param width: Width of the switch box in px
@@ -1999,6 +2002,8 @@ class WidgetManager(Base):
             infinite=infinite,
             onchange=onchange,
             onselect=onselect,
+            single_click=single_click,
+            single_click_dir=kwargs.pop('single_click_dir', True),
             slider_color=slider_color,
             slider_thickness=slider_thickness,
             state_color=state_color,
