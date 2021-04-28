@@ -34,7 +34,6 @@ __all__ = ['LeftArrowSelection']
 import pygame
 import pygame_menu
 
-from pygame_menu.widgets.core import Selection
 from pygame_menu.widgets.selection.arrow_selection import ArrowSelection
 
 from pygame_menu._types import Tuple2IntType, NumberType, NumberInstance
@@ -61,6 +60,7 @@ class LeftArrowSelection(ArrowSelection):
     ) -> None:
         assert isinstance(arrow_right_margin, NumberInstance)
         assert arrow_right_margin >= 0, 'margin cannot be negative'
+
         super(LeftArrowSelection, self).__init__(
             margin_left=arrow_size[0] + arrow_right_margin,
             margin_right=0,
@@ -69,10 +69,11 @@ class LeftArrowSelection(ArrowSelection):
             arrow_vertical_offset=arrow_vertical_offset,
             blink_ms=blink_ms
         )
+
         self._arrow_right_margin = arrow_right_margin
 
     # noinspection PyMissingOrEmptyDocstring
-    def draw(self, surface: 'pygame.Surface', widget: 'pygame_menu.widgets.Widget') -> 'Selection':
+    def draw(self, surface: 'pygame.Surface', widget: 'pygame_menu.widgets.Widget') -> 'LeftArrowSelection':
         # A
         #   \B        widget
         # C /
