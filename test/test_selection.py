@@ -37,7 +37,7 @@ import unittest
 
 from pygame_menu.widgets import Button
 from pygame_menu.widgets.selection import LeftArrowSelection, RightArrowSelection, \
-    HighlightSelection, NoneSelection
+    HighlightSelection, NoneSelection, SimpleSelection
 
 
 class SelectionTest(unittest.TestCase):
@@ -107,7 +107,7 @@ class SelectionTest(unittest.TestCase):
 
     def test_none(self) -> None:
         """
-        Test highlight selection.
+        Test none selection.
         """
         w = Button('epic')
         w.set_selection_effect(NoneSelection())
@@ -117,3 +117,18 @@ class SelectionTest(unittest.TestCase):
         rect = w.get_rect()
         new_rect = w.get_selection_effect().inflate(rect)
         self.assertTrue(rect == new_rect)
+        self.assertFalse(w.get_selection_effect().widget_apply_font_color)
+
+    def test_simple(self) -> None:
+        """
+        Test simple selection.
+        """
+        w = Button('epic')
+        w.set_selection_effect(SimpleSelection())
+        self.menu.add.generic_widget(w)
+        self.menu.draw(surface)
+
+        rect = w.get_rect()
+        new_rect = w.get_selection_effect().inflate(rect)
+        self.assertTrue(rect == new_rect)
+        self.assertTrue(w.get_selection_effect().widget_apply_font_color)
