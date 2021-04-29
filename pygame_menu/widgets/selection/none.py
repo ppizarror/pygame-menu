@@ -43,9 +43,7 @@ class NoneSelection(SimpleSelection):
     """
 
     def __init__(self) -> None:
-        super(SimpleSelection, self).__init__(
-            margin_left=0, margin_right=0, margin_top=0, margin_bottom=0
-        )
+        super(NoneSelection, self).__init__()
         self.widget_apply_font_color = False
 
     # noinspection PyMissingOrEmptyDocstring
