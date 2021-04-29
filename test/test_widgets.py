@@ -75,15 +75,13 @@ class WidgetsTest(unittest.TestCase):
         self.assertRaises(NotImplementedError, lambda: w._render())
         self.assertRaises(NotImplementedError, lambda: w._draw(surface))
         self.assertRaises(NotImplementedError, lambda: w._apply_font())
-        self.assertRaises(NotImplementedError, lambda: w.update())
+        self.assertRaises(NotImplementedError, lambda: w.update([]))
 
         self.assertEqual(w._get_menu_widgets(), [])
         self.assertEqual(w._get_menu_update_widgets(), [])
 
         w._selected = True
-        self.assertEqual(w.get_selected_time(), 0)
-
-
+        self.assertTrue(w.get_selected_time() > 0)
 
     def test_kwargs(self) -> None:
         """

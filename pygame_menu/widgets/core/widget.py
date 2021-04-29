@@ -1980,6 +1980,7 @@ class Widget(Base):
         self._scale[2] = 1
         self._max_width[0] = None
         self._max_height[0] = None
+        self.render()
 
     def _scale_warn(
             self,
