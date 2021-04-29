@@ -15,8 +15,8 @@ Add a button
 A button is a text that fire action when the user trigger it. An action is linked
 to a button by defining the ``action`` parameter with one of the three values:
 
- - a :py:class:`pygame_menu.menu.Menu`, in this case, it will be displayed
-   when the button is triggered.
+ - a :py:class:`pygame_menu.menu.Menu`, in this case, it will be displayed when
+   the button is triggered.
  - a python callable object (a function, a method, a class, ...) that will be
    called with the given arguments.
  - a specific event of :py:mod:`pygame_menu`. The possible events are the

@@ -70,13 +70,13 @@ Alignment
 
 The alignment (str) can take one of the three following values:
 
-==============================================  ========================
+==============================================  ==================
 Alignment                                       Description
-==============================================  ========================
+==============================================  ==================
 :py:data:`pygame_menu.locals.ALIGN_LEFT`        Left alignment
 :py:data:`pygame_menu.locals.ALIGN_CENTER`      Center alignment
 :py:data:`pygame_menu.locals.ALIGN_RIGHT`       Right alignment
-==============================================  ========================
+==============================================  ==================
 
 
 Background Color/Images
@@ -106,16 +106,16 @@ Images needs a Path (file location on disk), a drawing mode, and an optional off
     )
     mytheme.background_color = myimage
 
-=====================================================   =========================================
+=====================================================   ======================================
 Image drawing modes                                     Description
-=====================================================   =========================================
+=====================================================   ======================================
 :py:data:`pygame_menu.baseimage.IMAGE_MODE_CENTER`      Centers the image in the surface
 :py:data:`pygame_menu.baseimage.IMAGE_MODE_FILL`        Fill the image on the surface
 :py:data:`pygame_menu.baseimage.IMAGE_MODE_REPEAT_X`    Repeat the image on x axis
 :py:data:`pygame_menu.baseimage.IMAGE_MODE_REPEAT_XY`   Repeat the image on x and y axis
 :py:data:`pygame_menu.baseimage.IMAGE_MODE_REPEAT_Y`    Repeat the image on y axis
 :py:data:`pygame_menu.baseimage.IMAGE_MODE_SIMPLE`      Write the image on top-left location
-=====================================================   =========================================
+=====================================================   ======================================
 
 Currently, :py:class:`Theme` class only supports images for :py:attr:`background_color`
 and :py:attr:`widget_background_color`. Also, only `IMAGE_MODE_FILL` drawing mode
@@ -185,9 +185,9 @@ Positioning
 
 Several possible positions are accepted by some configurations:
 
-=================================================  ========================
+=================================================  =====================
 Position                                           Description
-=================================================  ========================
+=================================================  =====================
 :py:data:`pygame_menu.locals.POSITION_EAST`        East position
 :py:data:`pygame_menu.locals.POSITION_NORTH`       North position
 :py:data:`pygame_menu.locals.POSITION_NORTHEAST`   North/East position
@@ -196,7 +196,7 @@ Position                                           Description
 :py:data:`pygame_menu.locals.POSITION_SOUTHEAST`   South/East position
 :py:data:`pygame_menu.locals.POSITION_SOUTHWEST`   South/West position
 :py:data:`pygame_menu.locals.POSITION_WEST`        West position
-=================================================  ========================
+=================================================  =====================
 
 Special positions used by Menu :py:class:`pygame_menu._scrollarea.ScrollArea`
 (all above are available):

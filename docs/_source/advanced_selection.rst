@@ -1,11 +1,11 @@
 
 :orphan:
 
-================
-Widget Selection
-================
+========================
+Widget selection effects
+========================
 
-Selection Effect
+Core Class
 ----------------
 
 .. module:: pygame_menu.widgets.core.selection
@@ -14,8 +14,8 @@ Selection Effect
     :members:
 
 
-Highlight Selection Effect
---------------------------
+Highlight Selection
+-------------------
 
 .. module:: pygame_menu.widgets.selection.highlight
 
@@ -24,8 +24,8 @@ Highlight Selection Effect
     :show-inheritance:
 
 
-Left Arrow Selection Effect
----------------------------
+Left Arrow Selection
+--------------------
 
 .. module:: pygame_menu.widgets.selection.left_arrow
 
@@ -34,8 +34,8 @@ Left Arrow Selection Effect
     :show-inheritance:
 
 
-None Selection Effect
----------------------
+None Selection
+--------------
 
 .. module:: pygame_menu.widgets.selection.none
 
@@ -44,12 +44,21 @@ None Selection Effect
     :show-inheritance:
 
 
-Right Arrow Selection Effect
-----------------------------
+Right Arrow Selection
+---------------------
 
 .. module:: pygame_menu.widgets.selection.right_arrow
 
 .. autoclass:: pygame_menu.widgets.RightArrowSelection
     :members:
     :show-inheritance:
-    
+
+
+Simple Selection
+----------------
+
+.. module:: pygame_menu.widgets.selection.simple
+
+.. autoclass:: pygame_menu.widgets.SimpleSelection
+    :members:
+    :show-inheritance:

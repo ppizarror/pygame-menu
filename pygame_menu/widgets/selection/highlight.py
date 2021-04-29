@@ -47,9 +47,9 @@ class HighlightSelection(Selection):
 
         Widget background color may not reach the entire selection area.
 
-    :param border_width: Border width of the highlight box
-    :param margin_x: X margin of selected highlight box
-    :param margin_y: Y margin of selected highlight box
+    :param border_width: Border width of the highlight box (px)
+    :param margin_x: X margin of selected highlight box (px)
+    :param margin_y: Y margin of selected highlight box (px)
     """
     _border_width: int
 

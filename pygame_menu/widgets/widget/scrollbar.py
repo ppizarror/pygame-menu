@@ -69,7 +69,7 @@ class ScrollBar(Widget):
     :param values_range: Min and max values
     :param scrollbar_id: Bar identifier
     :param orientation: Bar orientation (horizontal or vertical). See :py:mod:`pygame_menu.locals`
-    :param slider_pad: Space between slider and page control
+    :param slider_pad: Space between slider and page control (px)
     :param slider_color: Color of the slider
     :param page_ctrl_thick: Page control thickness
     :param page_ctrl_color: Page control color

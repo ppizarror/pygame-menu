@@ -45,9 +45,9 @@ class RightArrowSelection(ArrowSelection):
     selected Menu item.
 
     :param arrow_size: Size of arrow on x-axis and y-axis (width, height) in px
-    :param arrow_left_margin: Distance from the arrow to the widget
-    :param arrow_vertical_offset: Vertical offset of the arrow
-    :param blink_ms: Milliseconds between each blink, if ``0`` blinking is disabled
+    :param arrow_left_margin: Distance from the arrow to the widget (px)
+    :param arrow_vertical_offset: Vertical offset of the arrow (px)
+    :param blink_ms: Milliseconds between each blink; if ``0`` blinking is disabled
     """
     _arrow_left_margin: int
 

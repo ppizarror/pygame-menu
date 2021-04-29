@@ -94,19 +94,20 @@ This chapter define rules and advanced tips and tricks to develop extensions for
 - :ref:`Creating a selection effect <Create a selection effect>`
 
 .. toctree::
-   :maxdepth: 2
-   :hidden:
-   :caption: Advanced usage
+    :maxdepth: 2
+    :hidden:
+    :caption: Advanced usage
 
-   _source/advanced
+    _source/advanced
+    _source/advanced_selection
 
 .. toctree::
-   :maxdepth: 2
-   :hidden:
-   :caption: Menu APIs
+    :maxdepth: 2
+    :hidden:
+    :caption: Menu APIs
 
-   _source/baseimage
-   _source/scrollarea.rst
+    _source/baseimage
+    _source/scrollarea.rst
 
 
 ===========

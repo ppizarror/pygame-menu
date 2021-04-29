@@ -47,13 +47,13 @@ class ArrowSelection(Selection):
     Widget selection arrow class.
     Parent class for left and right arrow selection classes.
 
-    :param margin_left: Left margin
-    :param margin_right: Right margin
-    :param margin_top: Top margin
-    :param margin_bottom: Bottom margin
+    :param margin_left: Left margin (px)
+    :param margin_right: Right margin (px)
+    :param margin_top: Top margin (px)
+    :param margin_bottom: Bottom margin (px)
     :param arrow_size: Size of arrow on x-axis and y-axis (width, height) in px
-    :param arrow_vertical_offset: Vertical offset of the arrow
-    :param blink_ms: Milliseconds between each blink, if ``0`` blinking is disabled
+    :param arrow_vertical_offset: Vertical offset of the arrow (px)
+    :param blink_ms: Milliseconds between each blink; if ``0`` blinking is disabled
     """
     _arrow_vertical_offset: int
     _arrow_size: Tuple2IntType
