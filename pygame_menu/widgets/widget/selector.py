@@ -495,6 +495,7 @@ class Selector(Widget):
                     topleft, _ = rect.topleft
                     topright, _ = rect.topright
                     dist = mouse_x - (topleft + self._title_size)  # Distance from title
+
                     if dist > 0:  # User clicked the options, not title
                         # Position in percentage, if <0.5 user clicked left
                         pos = dist / float(topright - topleft - self._title_size)

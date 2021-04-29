@@ -2607,7 +2607,7 @@ class WidgetsTest(unittest.TestCase):
             """
             value[0] = val
 
-        switch = menu.add.toggle_switch('toggle', False, onchange=onchange, infinite=False)
+        switch = menu.add.toggle_switch('toggle', False, onchange=onchange, infinite=False, single_click=False)
         self.assertFalse(switch.get_value())
         self.assertIsNone(value[0])
         switch.apply()
@@ -2622,7 +2622,7 @@ class WidgetsTest(unittest.TestCase):
         switch.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
         self.assertFalse(value[0])
 
-        switch = menu.add.toggle_switch('toggle', False, onchange=onchange, infinite=True)
+        switch = menu.add.toggle_switch('toggle', False, onchange=onchange, infinite=True, single_click=False)
         switch.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
         self.assertTrue(value[0])
         switch.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
@@ -2703,8 +2703,36 @@ class WidgetsTest(unittest.TestCase):
         self.assertIsNone(switch._max_height[0])
 
         # Assert switch values
-        self.assertRaises(ValueError, lambda: menu.add.toggle_switch('toggle', 'false',
-                                                                     onchange=onchange, infinite=False))
+        self.assertRaises(ValueError,
+                          lambda: menu.add.toggle_switch('toggle', 'false', onchange=onchange, infinite=False))
+
+        # Test single click toggle
+        switch_single = menu.add.toggle_switch('toggle', False, onchange=onchange, single_click=True)
+        self.assertTrue(switch_single._infinite)  # Infinite sets to True if using single click
+
+        self.assertFalse(switch_single.get_value())
+        switch_single._left()
+        self.assertTrue(switch_single.get_value())
+
+        click_pos = switch_single.get_rect(to_real_position=True, apply_padding=False).midleft
+
+        # Test single click toggle between two states
+        switch_single.update(PygameEventUtils.mouse_click(click_pos[0] + 150, click_pos[1]))
+        self.assertFalse(switch_single.get_value())  # single_click_dir=True, move to left
+        switch_single.update(PygameEventUtils.mouse_click(click_pos[0] + 250, click_pos[1]))
+        self.assertTrue(switch_single.get_value())
+        switch_single.update(PygameEventUtils.mouse_click(click_pos[0] + 250, click_pos[1]))
+        self.assertFalse(switch_single.get_value())
+
+        switch_single._single_click_dir = False
+        switch_single.update(PygameEventUtils.mouse_click(click_pos[0] + 250, click_pos[1]))
+        self.assertTrue(switch_single.get_value())
+
+        # Create invalid single click params
+        self.assertRaises(AssertionError,
+                          lambda: menu.add.toggle_switch('toggle', False, single_click='true'))
+        self.assertRaises(AssertionError,
+                          lambda: menu.add.toggle_switch('toggle', False, single_click_dir='true'))
 
     def test_image_widget(self) -> None:
         """

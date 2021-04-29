@@ -69,6 +69,8 @@ class ToggleSwitch(Widget):
     :param infinite: The state can rotate
     :param onchange: Callback when changing the state of the switch
     :param onselect: Function when selecting the widget
+    :param single_click: Changes the state of the switch with 1 click instead of finding the closest position (events). If ``True`` the parameter ``infinite`` will also be ``True``
+    :param single_click_dir: Direction of the change if only 1 click is pressed. ``True`` for left direction, ``False`` for right
     :param slider_color: Slider color
     :param slider_height_factor: Height of the slider (factor of the switch height)
     :param slider_thickness: Slider thickness in px
@@ -89,6 +91,8 @@ class ToggleSwitch(Widget):
     :param kwargs: Optional keyword arguments
     """
     _infinite: bool
+    _single_click: bool
+    _single_click_dir: bool
     _slider: Optional['pygame.Surface']
     _slider_color: ColorType
     _slider_height: int
@@ -125,6 +129,8 @@ class ToggleSwitch(Widget):
             infinite: bool = False,
             onchange: CallbackType = None,
             onselect: CallbackType = None,
+            single_click: bool = False,
+            single_click_dir: bool = True,
             slider_color: ColorInputType = (255, 255, 255),
             slider_height_factor: NumberType = 1,
             slider_thickness: int = 25,
@@ -155,13 +161,17 @@ class ToggleSwitch(Widget):
 
         # Asserts
         assert isinstance(default_state, int)
-        assert isinstance(state_values, tuple)
         assert isinstance(infinite, bool)
+        assert isinstance(single_click, bool)
+        assert isinstance(single_click_dir, bool)
+        assert isinstance(state_values, tuple)
 
+        # Check the number of states
         self._total_states = len(state_values)
         assert 2 <= self._total_states, 'the minimum number of states is 2'
         assert 0 <= default_state < self._total_states, 'invalid default state value'
 
+        # Check font sizes
         if state_text_font is not None:
             assert_font(state_text_font)
         assert isinstance(state_text_font_size, (int, type(None)))
@@ -169,12 +179,14 @@ class ToggleSwitch(Widget):
             assert state_text_font_size > 0, \
                 'state text font size must be equal or greater than zero'
 
+        # Check colors
         assert_vector(state_text_position, 2)
         switch_border_color = assert_color(switch_border_color)
         assert isinstance(switch_border_width, int) and switch_border_width >= 0, \
             'border width must be equal or greater than zero'
         slider_color = assert_color(slider_color)
 
+        # Check dimensions and sizes
         assert slider_height_factor > 0, 'slider height factor cannot be negative'
         assert slider_thickness >= 0, 'slider thickness cannot be negative'
         assert isinstance(slider_vmargin, NumberInstance)
@@ -183,11 +195,13 @@ class ToggleSwitch(Widget):
             'switch height factor cannot be zero or negative'
         assert isinstance(state_color, tuple) and len(state_color) == self._total_states
 
+        # Create state color
         new_state_color = []
         for c in state_color:
             new_state_color.append(assert_color(c))
         state_color = tuple(new_state_color)
 
+        # Create state texts
         assert isinstance(state_text, tuple) and len(state_text) == self._total_states
         for c in state_text:
             assert isinstance(c, str), 'all states text must be string-type'
@@ -199,6 +213,7 @@ class ToggleSwitch(Widget):
             new_state_text_font_color.append(assert_color(c))
         state_text_font_color = tuple(new_state_text_font_color)
 
+        # Crete state widths
         self._switch_width = 0
         if isinstance(state_width, NumberInstance):
             state_width = [state_width]
@@ -209,10 +224,16 @@ class ToggleSwitch(Widget):
             assert state_width[i] > 0, 'each state width must be greater than zero'
             self._switch_width += state_width[i]
 
+        # Finals
+        if single_click:
+            infinite = True
+
         # Store properties
         self._switch_border_color = switch_border_color
         self._switch_border_width = switch_border_width
         self._infinite = infinite
+        self._single_click = single_click
+        self._single_click_dir = single_click_dir
         self._slider_color = slider_color
         self._slider_height_factor = slider_height_factor
         self._slider_thickness = slider_thickness
@@ -455,19 +476,29 @@ class ToggleSwitch(Widget):
                     topright, _ = rect.topright
                     # Distance from title
                     dist = mouse_x - (topleft + self._switch_margin[0] + self._switch_pos[0])
+
                     if dist > 0:  # User clicked the options, not title
-                        target_index = 0
-                        best = 1e6
-                        # Find the closest position
-                        for i in range(self._total_states):
-                            dx = abs(self._state_width_accum[i] - dist)
-                            if dx < best:
-                                target_index = i
-                                best = dx
-                        if target_index != self._state:
-                            self._sound.play_key_add()
-                            self._state = target_index
-                            self.change()
+                        # Toggle with only 1 click
+                        if self._single_click:
+                            if self._single_click_dir:
+                                self._left()
+                            else:
+                                self._right()
                             updated = True
+
+                        else:
+                            target_index = 0
+                            best = 1e6
+                            # Find the closest position
+                            for i in range(self._total_states):
+                                dx = abs(self._state_width_accum[i] - dist)
+                                if dx < best:
+                                    target_index = i
+                                    best = dx
+                            if target_index != self._state:
+                                self._sound.play_key_add()
+                                self._state = target_index
+                                self.change()
+                                updated = True
 
         return updated
