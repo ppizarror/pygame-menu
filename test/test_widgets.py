@@ -41,12 +41,14 @@ import pygame_menu
 import pygame_menu.controls as ctrl
 
 from pygame_menu.locals import ORIENTATION_VERTICAL, FINGERDOWN, ALIGN_LEFT, \
-    POSITION_SOUTHEAST, POSITION_NORTH, POSITION_SOUTH, POSITION_EAST, POSITION_WEST
+    POSITION_SOUTHEAST, POSITION_NORTH, POSITION_SOUTH, POSITION_EAST, POSITION_WEST, \
+    POSITION_CENTER, POSITION_NORTHEAST, POSITION_SOUTHWEST, POSITION_NORTHWEST
 from pygame_menu.widgets import MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_NONE, \
     MENUBAR_STYLE_SIMPLE, MENUBAR_STYLE_UNDERLINE, MENUBAR_STYLE_UNDERLINE_TITLE, \
     MENUBAR_STYLE_TITLE_ONLY, MENUBAR_STYLE_TITLE_ONLY_DIAGONAL
 from pygame_menu.widgets import ScrollBar, Label, Button, MenuBar, NoneWidget, \
     NoneSelection
+from pygame_menu.widgets.core import Widget
 
 
 class WidgetsTest(unittest.TestCase):
@@ -56,6 +58,32 @@ class WidgetsTest(unittest.TestCase):
         Setup widgets test.
         """
         test_reset_surface()
+
+    def test_abstract_widget(self) -> None:
+        """
+        Test an abstract widget.
+        """
+        w = Widget()
+
+        w.readonly = True
+        w.change()
+
+        w.lock_position = True
+        w.set_position(1, 1)
+        self.assertEqual(w.get_position(), (0, 0))
+
+        self.assertRaises(NotImplementedError, lambda: w._render())
+        self.assertRaises(NotImplementedError, lambda: w._draw(surface))
+        self.assertRaises(NotImplementedError, lambda: w._apply_font())
+        self.assertRaises(NotImplementedError, lambda: w.update())
+
+        self.assertEqual(w._get_menu_widgets(), [])
+        self.assertEqual(w._get_menu_update_widgets(), [])
+
+        w._selected = True
+        self.assertEqual(w.get_selected_time(), 0)
+
+
 
     def test_kwargs(self) -> None:
         """
@@ -120,6 +148,7 @@ class WidgetsTest(unittest.TestCase):
         btn2.is_selectable = True
         btn2.select(update_menu=True)
         self.assertEqual(test[0], btn2)
+        btn.scale(1, 1)
 
         # Color
         color = menu.add.color_input('nice', 'rgb', onselect=on_select)
@@ -160,33 +189,6 @@ class WidgetsTest(unittest.TestCase):
         vmargin = menu.add.vertical_margin(10)
         vmargin.select(update_menu=True)
         self.assertEqual(test[0], text)
-
-    def test_font_colors(self) -> None:
-        """
-        Test widget font colors for different status.
-        """
-        menu = MenuUtils.generic_menu()
-        w = menu.add.button('title')
-
-        # Default color
-        w._selected = False
-        self.assertEqual(w.get_font_color_status(), w._font_color)
-
-        # Readonly color
-        w.readonly = True
-        self.assertEqual(w.get_font_color_status(), w._font_readonly_color)
-
-        # Read only + selected color
-        w._selected = True
-        self.assertEqual(w.get_font_color_status(), w._font_readonly_selected_color)
-
-        # Selected only color
-        w.readonly = False
-        self.assertEqual(w.get_font_color_status(), w._font_selected_color)
-
-        # Default color
-        w._selected = False
-        self.assertEqual(w.get_font_color_status(), w._font_color)
 
     def test_non_ascii(self) -> None:
         """
@@ -381,9 +383,36 @@ class WidgetsTest(unittest.TestCase):
         Test widget font.
         """
         menu = MenuUtils.generic_menu()
+
         w = menu.add.label('Text')  # type: Label
         self.assertRaises(AssertionError, lambda: w.update_font({}))
         w.update_font({'color': (255, 0, 0)})
+
+        # Default color
+        w._selected = False
+        self.assertEqual(w.get_font_color_status(), w._font_color)
+
+        # Readonly color
+        w.readonly = True
+        self.assertEqual(w.get_font_color_status(), w._font_readonly_color)
+
+        # Read only + selected color
+        w._selected = True
+        self.assertEqual(w.get_font_color_status(), w._font_readonly_selected_color)
+
+        # Selected only color
+        w.readonly = False
+        self.assertEqual(w.get_font_color_status(), w._font_selected_color)
+
+        # Default color
+        w._selected = False
+        self.assertEqual(w.get_font_color_status(), w._font_color)
+
+        # Test font shadow
+        for pos in [POSITION_NORTHWEST, POSITION_NORTH, POSITION_NORTHEAST, POSITION_EAST,
+                    POSITION_SOUTHEAST, POSITION_SOUTH, POSITION_SOUTHWEST, POSITION_WEST,
+                    POSITION_CENTER]:
+            w.set_font_shadow(position=pos)
 
     def test_padding(self) -> None:
         """
@@ -2408,6 +2437,40 @@ class WidgetsTest(unittest.TestCase):
         # Invalid
         btn._border_position = [POSITION_SOUTHEAST]
         self.assertRaises(RuntimeError, lambda: btn._draw_border(surface))
+
+        # None border
+        btn._border_position = pygame_menu.widgets.core.widget.WIDGET_BORDER_POSITION_NONE
+        btn._draw_border(surface)
+        btn._border_position = 'invalid'
+        self.assertRaises(RuntimeError, lambda: btn._draw_border(surface))
+
+    def test_scale_maxwidth_height(self) -> None:
+        """
+        Test the interaction between scale, max width and max height.
+        """
+        menu = MenuUtils.generic_menu()
+        btn = menu.add.button('button')
+
+        btn.scale(1, 1)
+        btn.scale(2, 3)
+
+        self.assertTrue(btn._scale[0])
+        self.assertEqual(btn._scale[1], 2)
+        self.assertEqual(btn._scale[2], 3)
+
+        # Now, set max width
+        btn.set_max_width(150)
+        self.assertFalse(btn._scale[0])
+
+        btn.set_max_height(150)
+        self.assertFalse(btn._scale[0])
+        self.assertIsNone(btn._max_width[0])
+
+        btn.scale(2, 2)
+        self.assertIsNone(btn._max_height[0])
+        self.assertTrue(btn._scale[0])
+        self.assertEqual(btn._scale[1], 2)
+        self.assertEqual(btn._scale[2], 2)
 
     def test_scrollbar(self) -> None:
         """

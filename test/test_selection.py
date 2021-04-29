@@ -39,8 +39,8 @@ from pygame_menu.widgets import Button
 from pygame_menu.widgets.selection import LeftArrowSelection, RightArrowSelection, \
     HighlightSelection, NoneSelection, SimpleSelection
 
-from pygame_menu.widgets.selection.arrow_selection import ArrowSelection
 from pygame_menu.widgets.core.selection import Selection
+from pygame_menu.widgets.selection.arrow_selection import ArrowSelection
 
 
 class SelectionTest(unittest.TestCase):
