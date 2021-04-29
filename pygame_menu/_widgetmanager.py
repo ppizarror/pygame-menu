@@ -1876,7 +1876,7 @@ class WidgetManager(Base):
             onchange: CallbackType = None,
             onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
             toggleswitch_id: str = '',
-            single_click: bool = False,
+            single_click: bool = True,
             state_text: Tuple[str, ...] = ('Off', 'On'),
             state_values: Tuple[Any, ...] = (False, True),
             width: int = 150,

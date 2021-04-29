@@ -2519,7 +2519,7 @@ class WidgetsTest(unittest.TestCase):
             """
             value[0] = val
 
-        switch = menu.add.toggle_switch('toggle', False, onchange=onchange, infinite=False)
+        switch = menu.add.toggle_switch('toggle', False, onchange=onchange, infinite=False, single_click=False)
         self.assertFalse(switch.get_value())
         self.assertIsNone(value[0])
         switch.apply()
@@ -2534,7 +2534,7 @@ class WidgetsTest(unittest.TestCase):
         switch.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
         self.assertFalse(value[0])
 
-        switch = menu.add.toggle_switch('toggle', False, onchange=onchange, infinite=True)
+        switch = menu.add.toggle_switch('toggle', False, onchange=onchange, infinite=True, single_click=False)
         switch.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
         self.assertTrue(value[0])
         switch.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
