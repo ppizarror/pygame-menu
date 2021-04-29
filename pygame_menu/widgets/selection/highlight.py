@@ -62,6 +62,7 @@ class HighlightSelection(Selection):
         assert isinstance(border_width, int)
         assert margin_x >= 0 and margin_y >= 0
         assert border_width >= 0
+
         margin_x = float(margin_x)
         margin_y = float(margin_y)
         super(HighlightSelection, self).__init__(
@@ -70,10 +71,11 @@ class HighlightSelection(Selection):
             margin_top=margin_y / 2,
             margin_bottom=margin_y / 2
         )
+
         self._border_width = border_width
 
     # noinspection PyMissingOrEmptyDocstring
-    def draw(self, surface: 'pygame.Surface', widget: 'pygame_menu.widgets.Widget') -> 'Selection':
+    def draw(self, surface: 'pygame.Surface', widget: 'pygame_menu.widgets.Widget') -> 'HighlightSelection':
         if self._border_width == 0:
             return self
         # noinspection PyArgumentList

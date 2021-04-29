@@ -227,6 +227,7 @@ Class                                                   Selection effect
 :py:class:`pygame_menu.widgets.LeftArrowSelection`      Left arrow on the widget
 :py:class:`pygame_menu.widgets.NoneSelection`           No selection
 :py:class:`pygame_menu.widgets.RightArrowSelection`     Right arrow on the widget
+:py:class:`pygame_menu.widgets.SimpleSelection`         Only font color is changed
 ======================================================  ============================
 
 The selection color is defined in :py:attr:`Theme.widget_selection_color`.

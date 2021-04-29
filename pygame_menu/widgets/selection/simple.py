@@ -2,8 +2,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-SELECTION
-This module contains the widget highlight effects.
+SIMPLE
+Simple selection effect.
 
 License:
 -------------------------------------------------------------------------------
@@ -29,8 +29,25 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-from pygame_menu.widgets.selection.highlight import HighlightSelection
-from pygame_menu.widgets.selection.left_arrow import LeftArrowSelection
-from pygame_menu.widgets.selection.none import NoneSelection
-from pygame_menu.widgets.selection.right_arrow import RightArrowSelection
-from pygame_menu.widgets.selection.simple import SimpleSelection
+__all__ = ['SimpleSelection']
+
+import pygame
+import pygame_menu
+
+from pygame_menu.widgets.core import Selection
+
+
+class SimpleSelection(Selection):
+    """
+    This selection effect only tells widget to apply selection color to font if
+    selected.
+    """
+
+    def __init__(self) -> None:
+        super(SimpleSelection, self).__init__(
+            margin_left=0, margin_right=0, margin_top=0, margin_bottom=0
+        )
+
+    # noinspection PyMissingOrEmptyDocstring
+    def draw(self, surface: 'pygame.Surface', widget: 'pygame_menu.widgets.Widget') -> 'SimpleSelection':
+        return self

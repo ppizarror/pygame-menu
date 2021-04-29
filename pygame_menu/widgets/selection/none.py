@@ -34,19 +34,18 @@ __all__ = ['NoneSelection']
 import pygame
 import pygame_menu
 
-from pygame_menu.widgets.core import Selection
+from pygame_menu.widgets.selection.simple import SimpleSelection
 
 
-class NoneSelection(Selection):
+class NoneSelection(SimpleSelection):
     """
     No selection effect.
     """
 
     def __init__(self) -> None:
-        super(NoneSelection, self).__init__(
-            margin_left=0, margin_right=0, margin_top=0, margin_bottom=0
-        )
+        super(NoneSelection, self).__init__()
+        self.widget_apply_font_color = False
 
     # noinspection PyMissingOrEmptyDocstring
-    def draw(self, surface: 'pygame.Surface', widget: 'pygame_menu.widgets.Widget') -> 'Selection':
+    def draw(self, surface: 'pygame.Surface', widget: 'pygame_menu.widgets.Widget') -> 'NoneSelection':
         return self

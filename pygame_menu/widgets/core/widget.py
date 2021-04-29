@@ -430,7 +430,7 @@ class Widget(Base):
 
         # Selection effect, for avoiding exception while getting object rect,
         # NullSelection was created. Initially it was None
-        self._selection_effect = _WidgetNullSelection()
+        self._selection_effect = pygame_menu.widgets.NoneSelection()
         # If False, the selection effect is drawn previous the widget surface
         self._selection_effect_draw_post = True
 
@@ -1146,7 +1146,7 @@ class Widget(Base):
         """
         return self._selection_effect
 
-    def set_selection_effect(self, selection: Optional['Selection']) -> 'Widget':
+    def set_selection_effect(self, selection: Optional['Selection'] = None) -> 'Widget':
         """
         Set the selection effect handler.
 
@@ -1160,7 +1160,7 @@ class Widget(Base):
         """
         assert isinstance(selection, (Selection, type(None)))
         if selection is None:
-            selection = _WidgetNullSelection()
+            selection = pygame_menu.widgets.NoneSelection()
         self._selection_effect = selection
         self._force_render()
         return self
@@ -1608,7 +1608,7 @@ class Widget(Base):
             if self._selected:
                 return self._font_readonly_selected_color
             return self._font_readonly_color
-        if self._selected and check_selection:
+        if self._selected and check_selection and self._selection_effect.widget_apply_font_color:
             return self._font_selected_color
         return self._font_color
 
@@ -1969,6 +1969,47 @@ class Widget(Base):
         self._force_render()
         return self
 
+    def _disable_scale(self) -> None:
+        """
+        Disables Widget scale.
+
+        :return: None
+        """
+        self._scale[0] = False
+        self._scale[1] = 1
+        self._scale[2] = 1
+        self._max_width[0] = None
+        self._max_height[0] = None
+        self.render()
+
+    def _scale_warn(
+            self,
+            scale: bool = True,
+            maxwidth: bool = True,
+            maxheight: bool = True
+    ) -> None:
+        """
+        Warns user about overriding properties of scale/maxwidth/maxheight.
+
+        :param scale: Warn about scale
+        :param maxwidth: Warn bout maxwidth
+        :param maxheight: Warn about maxheight
+        :return: None
+        """
+        if self._scale[0] and scale:
+            warn('widget already has a scaling factor applied. Scaling has '
+                 'been disabled')
+        if self._max_width[0] is not None and maxwidth:
+            warn(
+                'widget max width is not None. Set widget.set_max_width(None) '
+                'for disabling such feature. This scaling will be ignored'
+            )
+        if self._max_height[0] is not None and maxheight:
+            warn(
+                'widget max height is not None. Set widget.set_max_height(None) '
+                'for disabling such feature. This scaling will be ignored'
+            )
+
     def set_max_width(self, width: Optional[NumberType], scale_height: NumberType = False,
                       smooth: bool = True) -> 'Widget':
         """
@@ -1999,6 +2040,12 @@ class Widget(Base):
             Final Widget size may not be exactly the same as the desired (width,
             height) tuple due to rounding errors, expect ±2 px average.
 
+        .. warning::
+
+            Widget will scale only if :py:meth:`pygame_menu.widgets.core.widget.Widget.scale`
+            and :py:meth:`pygame_menu.widgets.core.widget.Widget.set_max_height`
+            are set to ``None``. Thus, calling this method disables both scale and max height.
+
         :param width: Width in px, ``None`` if max width is disabled
         :param scale_height: If ``True`` the height is also scaled if the width exceeds the limit
         :param smooth: Smooth scaling
@@ -2007,21 +2054,15 @@ class Widget(Base):
         assert isinstance(scale_height, bool)
         assert isinstance(smooth, bool)
 
+        self._scale_warn(maxwidth=False)
         self._disable_scale()
+
         if width is None:
             self._max_width[0] = None
         else:
             assert isinstance(width, NumberInstance), 'width must be numeric'
             assert width >= 0, 'width must be equal or greater than zero'
             self._max_width = [width, scale_height, smooth]
-            if self._scale[0]:
-                warn('widget already has a scaling factor applied. Scaling has '
-                     'been disabled')
-                return self
-            if self._max_height[0] is not None:
-                warn('widget already has a max_height. Widget max height has '
-                     'been disabled')
-                return self
 
         self._force_render()
         return self
@@ -2055,6 +2096,12 @@ class Widget(Base):
             Final Widget size may not be exactly the same as the desired (width,
             height) tuple due to rounding errors, expect ±2 px average.
 
+        .. warning::
+
+            Widget will scale only if :py:meth:`pygame_menu.widgets.core.widget.Widget.scale`
+            and :py:meth:`pygame_menu.widgets.core.widget.Widget.set_max_width`
+            are set to ``None``. Thus, calling this method disables both scale and max width.
+
         :param height: Height in px, ``None`` if max height is disabled
         :param scale_width: If ``True`` the width is also scaled if the height exceeds the limit
         :param smooth: Smooth scaling
@@ -2063,37 +2110,18 @@ class Widget(Base):
         assert isinstance(scale_width, bool)
         assert isinstance(smooth, bool)
 
+        self._scale_warn(maxheight=False)
         self._disable_scale()
+
         if height is None:
             self._max_height[0] = None
         else:
             assert isinstance(height, NumberInstance), 'height must be numeric'
             assert height > 0, 'height must be greater than zero'
             self._max_height = [height, scale_width, smooth]
-            if self._scale[0]:
-                warn('widget already has a scaling factor applied. Scaling has '
-                     'been disabled')
-                return self
-            if self._max_width[0] is not None:
-                warn('widget already has a max_width. Widget max width has been '
-                     'disabled')
-                return self
 
         self._force_render()
         return self
-
-    def _disable_scale(self) -> None:
-        """
-        Disables Widget scale.
-
-        :return: None
-        """
-        self._scale[0] = False
-        self._scale[1] = 1
-        self._scale[2] = 1
-        self._max_width[0] = None
-        self._max_height[0] = None
-        self.render()
 
     def scale(
             self,
@@ -2126,7 +2154,7 @@ class Widget(Base):
 
             Widget will scale only if :py:meth:`pygame_menu.widgets.core.widget.Widget.set_max_width`
             and :py:meth:`pygame_menu.widgets.core.widget.Widget.set_max_height`
-            are set to ``None``.
+            are set to ``None``. Thus, calling this method disables both max width and height.
 
         :param width: Scale factor of the width
         :param height: Scale factor of the height
@@ -2139,19 +2167,9 @@ class Widget(Base):
         assert width > 0 and height > 0, \
             'width and height must be greater than zero'
 
+        self._scale_warn(scale=False)
         self._disable_scale()
-        if self._max_width[0] is not None:
-            warn(
-                'widget max width is not None. Set widget.set_max_width(None) '
-                'for disabling such feature. This scaling will be ignored'
-            )
-            return self
-        if self._max_height[0] is not None:
-            warn(
-                'widget max height is not None. Set widget.set_max_height(None) '
-                'for disabling such feature. This scaling will be ignored'
-            )
-            return self
+
         self._scale = [True, width, height, smooth]
         if width == 1 and height == 1:  # Disables scaling
             self._scale[0] = False
@@ -2938,28 +2956,6 @@ class Widget(Base):
         """
         assert isinstance(tab_size, int) and tab_size >= 0
         self._tab_size = tab_size
-        return self
-
-
-class _WidgetNullSelection(Selection):
-    """
-    Null selection. It redefines :py:class:`pygame_menu.widgets.selection.NoneSelection`
-    because that class cannot be imported directly from widget.py.
-
-    .. note::
-
-        Prefer using :py:class:`pygame_menu.widgets.selection.NoneSelection` class
-        instead.
-
-    """
-
-    def __init__(self) -> None:
-        super(_WidgetNullSelection, self).__init__(
-            margin_left=0, margin_right=0, margin_top=0, margin_bottom=0
-        )
-
-    # noinspection PyMissingOrEmptyDocstring
-    def draw(self, surface: 'pygame.Surface', widget: 'Widget') -> 'Selection':
         return self
 
 

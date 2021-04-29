@@ -35,7 +35,7 @@ from pygame_menu.widgets.core import Widget
 
 # Selection
 from pygame_menu.widgets.selection import HighlightSelection, LeftArrowSelection, \
-    NoneSelection, RightArrowSelection
+    NoneSelection, RightArrowSelection, SimpleSelection
 
 # Widgets
 from pygame_menu.widgets.widget import Button, ColorInput, DropSelect, \

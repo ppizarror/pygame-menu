@@ -59,9 +59,15 @@ class Selection(object):
     margin_left: NumberType
     margin_right: NumberType
     margin_top: NumberType
+    widget_apply_font_color: bool
 
-    def __init__(self, margin_left: NumberType, margin_right: NumberType,
-                 margin_top: NumberType, margin_bottom: NumberType) -> None:
+    def __init__(
+            self,
+            margin_left: NumberType,
+            margin_right: NumberType,
+            margin_top: NumberType,
+            margin_bottom: NumberType
+    ) -> None:
         assert isinstance(margin_left, NumberInstance)
         assert isinstance(margin_right, NumberInstance)
         assert isinstance(margin_top, NumberInstance)
@@ -70,11 +76,13 @@ class Selection(object):
         assert margin_right >= 0, 'right margin of widget selection cannot be negative'
         assert margin_top >= 0, 'top margin of widget selection cannot be negative'
         assert margin_bottom >= 0, 'bottom margin of widget selection cannot be negative'
-        self.color = (0, 0, 0)
+
+        self.color = (0, 0, 0)  # Main color of the selection effect
         self.margin_bottom = margin_bottom
         self.margin_left = margin_left
         self.margin_right = margin_right
         self.margin_top = margin_top
+        self.widget_apply_font_color = True  # Widgets apply "selected_color" if selected
 
     def margin_xy(self, x: NumberType, y: NumberType) -> 'Selection':
         """
