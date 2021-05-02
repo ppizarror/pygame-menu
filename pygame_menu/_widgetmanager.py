@@ -736,7 +736,7 @@ class WidgetManager(Base):
 
         :param image_path: Path of the image (file) or a BaseImage object. If BaseImage object is provided the angle and scale are ignored
         :param angle: Angle of the image in degrees (clockwise)
-        :param image_id: ID of the label
+        :param image_id: ID of the image widget
         :param onselect: Callback executed when selecting the widget; only executed if ``selectable`` is ``True``
         :param scale: Scale of the image on x-axis and y-axis (x, y)
         :param scale_smooth: Scale is smoothed
