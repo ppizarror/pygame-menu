@@ -1756,7 +1756,9 @@ class Menu(object):
 
             # If loop, gather events by Menu and draw the background function, if this method
             # returns true then the mainloop will break
-            self.update(pygame.event.get())
+            self.update([pygame.event.wait(),])
+            if pygame.event.peek():
+                self.update(pygame.event.get())
 
             if not self.is_enabled() or disable_loop:
                 self._background_function = None
