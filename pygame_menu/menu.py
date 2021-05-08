@@ -2727,6 +2727,7 @@ class Menu(Base):
             - ``clear_surface``     (bool) – If ``True`` surface is cleared using ``theme.surface_clear_color``
             - ``disable_loop``      (bool) – If ``True`` the mainloop only runs once. Use for running draw and update in a single call
             - ``fps_limit``         (int) – Maximum FPS of the loop. Default equals to ``theme.fps``. If ``0`` there's no limit
+            - ``wait_for_event``    (bool) – Holds the loop until an event is provided, useful to save CPU power
 
         .. warning::
 
@@ -2742,11 +2743,13 @@ class Menu(Base):
         clear_surface = kwargs.get('clear_surface', True)
         disable_loop = kwargs.get('disable_loop', False)
         fps_limit = kwargs.get('fps_limit', self._theme.fps)
+        wait_for_event = kwargs.get('wait_for_event', False)
 
         assert isinstance(clear_surface, bool)
         assert isinstance(disable_loop, bool)
         assert isinstance(fps_limit, NumberInstance)
         assert isinstance(surface, pygame.Surface)
+        assert isinstance(wait_for_event, bool)
 
         assert fps_limit >= 0, 'fps limit cannot be negative'
 
@@ -2783,9 +2786,14 @@ class Menu(Base):
 
             # Draw the menu
             self.draw(surface=surface, clear_surface=clear_surface)
-
+            
             # Gather events by Menu
-            self.update(pygame.event.get())
+            if wait_for_event:
+              self.update([pygame.event.wait()])
+              if pygame.event.peek():
+                  self.update(pygame.event.get())     
+            else:
+              self.update(pygame.event.get())
 
             # Flip contents to screen
             pygame.display.flip()
