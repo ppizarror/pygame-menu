@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -13,7 +12,7 @@ https://www.sphinx-doc.org/en/master/usage/configuration.html
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
-Copyright 2017-2020 Pablo Pizarro R. @ppizarror
+Copyright 2017-2021 Pablo Pizarro R. @ppizarror
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -38,7 +37,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
+# documentation root, use os.path.abspath to make it absolute, like shown here
 #
 import os
 import sys
@@ -49,10 +48,10 @@ import pygame_menu
 
 # -- Project information ------------------------------------------------------
 
-project = 'pygame-menu'
+project = pygame_menu.__module_name__
 # noinspection PyShadowingBuiltins
-copyright = '2020, Pablo Pizarro R. @ppizarror'
-author = 'Pablo Pizarro R.'
+copyright = pygame_menu.__copyright__
+author = pygame_menu.__author__
 
 # The full version, including alpha/beta/rc tags
 release = pygame_menu.__version__
@@ -61,40 +60,46 @@ release = pygame_menu.__version__
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
-# ones.
+# ones
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.viewcode',
               'sphinx.ext.intersphinx',
-              'sphinx.ext.autosectionlabel']
+              'sphinx.ext.autosectionlabel',
+              'sphinx_autodoc_typehints'
+              ]
 
-# Add any paths that contain templates here, relative to this directory.
+# autodoc_default_options = {
+#     'private-members': False
+# }
+
+# Add any paths that contain templates here, relative to this directory
 templates_path = ['_templates']
 
 # The document name of the "master" document, that is, the document that
-# contains the root toctree directive. Default is 'index'.
+# contains the root toc-tree directive. Default is 'index'
 master_doc = 'index'
 
 # List of patterns, relative to source directory, that match files and
-# directories to ignore when looking for source files.
-# This pattern also affects html_static_path and html_extra_path.
+# directories to ignore when looking for source files
+# This pattern also affects html_static_path and html_extra_path
 exclude_patterns = ['build', 'Thumbs.db', '.DS_Store']
 
 # -- Intersphinx configuration ------------------------------------------------
 
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/3.7', None),
+    'python': ('https://docs.python.org/3.9', None),
     'pygame': ('https://www.pygame.org/docs', None),
 }
 
 # -- Options for HTML output --------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
-# a list of builtin themes.
+# a list of builtin themes
 html_theme = 'sphinx_rtd_theme'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
+# so a file named "default.css" will overwrite the builtin "default.css"
 html_static_path = ['_static']
 
 html_title = '%s %s Documentation' % (project, release)
@@ -107,10 +112,11 @@ html_theme_options = {
 
 # -- Options for LaTeX output -------------------------------------------------
 
+# noinspection SpellCheckingInspection
 latex_elements = {
     'papersize': 'a4paper',
     'pointsize': '10pt',
-    'preamble': r'\def\thempfootnote{\arabic{mpfootnote}}',  # workaround sphinx issue #2530
+    'preamble': r'\def\thempfootnote{\arabic{mpfootnote}}'  # workaround sphinx issue #2530
 }
 
 latex_documents = [
@@ -120,8 +126,12 @@ latex_documents = [
         '%s Documentation' % project,  # title
         author,  # author
         'manual',  # documentclass
-        True,  # documents ref'd from toctree only
+        True,  # documents ref'd from toc-tree only
     ),
 ]
 
 latex_show_pagerefs = True
+
+# -- Options for autodoc - typehints ---
+
+set_type_checking_flag = True

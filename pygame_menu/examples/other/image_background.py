@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -9,7 +8,7 @@ Menu using background image + BaseImage object.
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
-Copyright 2017-2020 Pablo Pizarro R. @ppizarror
+Copyright 2017-2021 Pablo Pizarro R. @ppizarror
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -30,29 +29,28 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# Import libraries
-import sys
+__all__ = ['main']
 
-sys.path.insert(0, '../../')
-
-import os
 import pygame
 import pygame_menu
+from pygame_menu.examples import create_example_window
+
+from typing import Optional
 
 # -----------------------------------------------------------------------------
 # Constants and global variables
 # -----------------------------------------------------------------------------
-FPS = 60.0
+FPS = 60
 WINDOW_SIZE = (640, 480)
 
-sound = None  # type: pygame_menu.sound.Sound
-surface = None  # type: pygame.Surface
-main_menu = None  # type: pygame_menu.Menu
+sound: Optional['pygame_menu.sound.Sound'] = None
+surface: Optional['pygame.Surface'] = None
+main_menu: Optional['pygame_menu.Menu'] = None
 
 # -----------------------------------------------------------------------------
 # Load image
 # -----------------------------------------------------------------------------
-background_image = pygame_menu.baseimage.BaseImage(
+background_image = pygame_menu.BaseImage(
     image_path=pygame_menu.baseimage.IMAGE_EXAMPLE_WALLPAPER
 )
 
@@ -60,7 +58,7 @@ background_image = pygame_menu.baseimage.BaseImage(
 # -----------------------------------------------------------------------------
 # Methods
 # -----------------------------------------------------------------------------
-def main_background():
+def main_background() -> None:
     """
     Background color of the main menu, on this function user can plot
     images, play sounds, etc.
@@ -70,12 +68,11 @@ def main_background():
     background_image.draw(surface)
 
 
-def main(test=False):
+def main(test: bool = False) -> None:
     """
     Main program.
 
     :param test: Indicate function is being tested
-    :type test: bool
     :return: None
     """
 
@@ -87,14 +84,9 @@ def main(test=False):
     global surface
 
     # -------------------------------------------------------------------------
-    # Init pygame
+    # Create window
     # -------------------------------------------------------------------------
-    pygame.init()
-    os.environ['SDL_VIDEO_CENTERED'] = '1'
-
-    # Create pygame screen and objects
-    surface = pygame.display.set_mode(WINDOW_SIZE)
-    pygame.display.set_caption('Example - Image Background')
+    surface = create_example_window('Example - Image Background', WINDOW_SIZE)
     clock = pygame.time.Clock()
 
     # -------------------------------------------------------------------------
@@ -105,15 +97,51 @@ def main(test=False):
 
     main_menu = pygame_menu.Menu(
         height=WINDOW_SIZE[1] * 0.7,
-        width=WINDOW_SIZE[0] * 0.8,
         onclose=pygame_menu.events.EXIT,  # User press ESC button
-        title='Epic Menu',
         theme=main_menu_theme,
+        title='Epic Menu',
+        width=WINDOW_SIZE[0] * 0.8
     )
 
-    main_menu.add_button('Button 1', None)
-    main_menu.add_button('Button 2', None)
-    main_menu.add_button('Quit', pygame_menu.events.EXIT)
+    widget_colors_theme = pygame_menu.themes.THEME_ORANGE.copy()
+    widget_colors_theme.widget_margin = (0, 10)
+    widget_colors_theme.widget_padding = 0
+    widget_colors_theme.widget_selection_effect.margin_xy(10, 5)
+    widget_colors_theme.widget_font_size = 20
+    widget_colors_theme.set_background_color_opacity(0.5)  # 50% opacity
+
+    widget_colors = pygame_menu.Menu(
+        height=WINDOW_SIZE[1] * 0.7,
+        theme=widget_colors_theme,
+        title='Widget backgrounds',
+        width=WINDOW_SIZE[0] * 0.8
+    )
+
+    button_image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_CARBON_FIBER)
+
+    widget_colors.add.button('Opaque color button',
+                             background_color=(100, 100, 100))
+    widget_colors.add.button('Transparent color button',
+                             background_color=(50, 50, 50, 200), font_size=40)
+    widget_colors.add.button('Transparent background inflate to selection effect',
+                             background_color=(50, 50, 50, 200),
+                             margin=(0, 15)).background_inflate_to_selection_effect()
+    widget_colors.add.button('Background inflate + font background color',
+                             background_color=(50, 50, 50, 200),
+                             font_background_color=(200, 200, 200)
+                             ).background_inflate_to_selection_effect()
+    widget_colors.add.button('This inflates background to match selection effect',
+                             background_color=button_image,
+                             font_color=(255, 255, 255), font_size=15
+                             ).selection_expand_background = True
+    widget_colors.add.button('This is already inflated to match selection effect',
+                             background_color=button_image,
+                             font_color=(255, 255, 255), font_size=15
+                             ).background_inflate_to_selection_effect()
+
+    main_menu.add.button('Test different widget colors', widget_colors)
+    main_menu.add.button('Another fancy button', lambda: print('This button has been pressed'))
+    main_menu.add.button('Quit', pygame_menu.events.EXIT)
 
     # -------------------------------------------------------------------------
     # Main loop
@@ -122,9 +150,6 @@ def main(test=False):
 
         # Tick
         clock.tick(FPS)
-
-        # Paint background
-        main_background()
 
         # Main menu
         main_menu.mainloop(surface, main_background, disable_loop=test, fps_limit=FPS)

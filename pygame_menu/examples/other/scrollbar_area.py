@@ -1,15 +1,14 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 EXAMPLE - SCROLL AREA
-Shows scroll area widget usage.
+Shows ScrollArea widget usage.
 
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
-Copyright 2017-2020 Pablo Pizarro R. @ppizarror
+Copyright 2017-2021 Pablo Pizarro R. @ppizarror
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -30,18 +29,18 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-import itertools
-import os
-import sys
-
-sys.path.insert(0, '../../../')
+__all__ = ['main']
 
 import pygame
 from pygame_menu import locals
-from pygame_menu.scrollarea import ScrollArea
+from pygame_menu.examples import create_example_window
+from pygame_menu._scrollarea import ScrollArea
 from pygame_menu.utils import make_surface
 
-FPS = 30.0
+import itertools
+from typing import Generator
+
+FPS = 30
 W_SIZE = 800  # Width of window size
 H_SIZE = 600  # Height of window size
 COLOR_BACKGROUND = (128, 230, 198)
@@ -65,22 +64,18 @@ WORLDS = {
           'size': (W_SIZE // 2, H_SIZE // 2 + 10)},
     '6': {'pos': (10, 10),
           'win': (W_SIZE - 300, H_SIZE // 2),
-          'size': (W_SIZE - 200, H_SIZE // 2 - 10)},
+          'size': (W_SIZE - 200, H_SIZE // 2 - 10)}
 }
 
 
-def make_world(width, height, text=''):
+def make_world(width: int, height: int, text: str = '') -> 'pygame.Surface':
     """
     Create a test surface.
 
     :param width: Width in pixels
-    :type width: int
     :param height: Height in pixels
-    :type height: int
     :param text: Text to write
-    :type: str
     :return: World surface
-    :rtype: :py:class:`pygame.Surface`
     """
     world = make_surface(width, height)
     world.fill((210, 210, 210))
@@ -96,7 +91,7 @@ def make_world(width, height, text=''):
         if x % 100 == 0 and x != 0:
             pygame.draw.line(world, (255, 0, 0), (x, 0), (x, 20))
             pygame.draw.line(world, (180, 180, 180), (x, 80), (x, height))
-            tick = font.render(str(x), True, (255, 0, 0))  # type: pygame.Surface
+            tick = font.render(str(x), True, (255, 0, 0))
             world.blit(tick, (x - tick.get_width() / 2, 25))
         else:
             pygame.draw.line(world, (255, 0, 0), (x, 0), (x, 10))
@@ -113,12 +108,11 @@ def make_world(width, height, text=''):
 
 
 # noinspection PyProtectedMember
-def iter_world(area):
+def iter_world(area: 'ScrollArea') -> Generator:
     """
     Iterate through worlds.
 
     :param area: Scroll area
-    :type area: ScrollArea
     :return: None
     """
     for name in itertools.cycle(WORLDS):
@@ -134,30 +128,25 @@ def iter_world(area):
         yield params
 
 
-def main(test=False):
+def main(test: bool = False) -> None:
     """
     Main function.
 
     :param test: Indicate function is being tested
-    :type test: bool
     :return: None
     """
-    os.environ['SDL_VIDEO_CENTERED'] = '1'
-    pygame.init()
+    screen = create_example_window('Example - Scrolling Area', (W_SIZE, H_SIZE))
     clock = pygame.time.Clock()
 
-    # Create window
-    screen = pygame.display.set_mode((W_SIZE, H_SIZE))
-    pygame.display.set_caption('Example - Scrolling Area')
-
-    area = ScrollArea(W_SIZE,
-                      H_SIZE,
-                      scrollbars=(locals.POSITION_SOUTH,
-                                  locals.POSITION_EAST,
-                                  locals.POSITION_WEST,
-                                  locals.POSITION_NORTH
-                                  )
-                      )
+    area = ScrollArea(
+        W_SIZE, H_SIZE,
+        scrollbars=(
+            locals.POSITION_SOUTH,
+            locals.POSITION_EAST,
+            locals.POSITION_WEST,
+            locals.POSITION_NORTH
+        )
+    )
 
     worlds = iter_world(area)
     next(worlds)
@@ -173,16 +162,17 @@ def main(test=False):
         # Paint background
         screen.fill(COLOR_BACKGROUND)
 
-        pygame.draw.rect(screen,
-                         (20, 89, 20),
-                         area.get_rect().inflate(20, 20),  # Inflate to see area overflow in case of bug
-                         )
+        pygame.draw.rect(
+            screen,
+            (20, 89, 20),
+            area.get_rect().inflate(20, 20)  # Inflate to see area overflow in case of bug
+        )
 
         # Application events
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
-                sys.exit()
+                exit(0)
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     next(worlds)

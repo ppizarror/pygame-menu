@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -9,7 +8,7 @@ Test font management.
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
-Copyright 2017-2020 Pablo Pizarro R. @ppizarror
+Copyright 2017-2021 Pablo Pizarro R. @ppizarror
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -30,12 +29,18 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-from test._utils import *
+__all__ = ['FontTest']
+
+from pathlib import Path
+from test._utils import MenuUtils
+import unittest
+
+import pygame_menu
 
 
 class FontTest(unittest.TestCase):
 
-    def test_font_load(self):
+    def test_font_load(self) -> None:
         """
         Load a font from a file.
         """
@@ -45,7 +50,16 @@ class FontTest(unittest.TestCase):
         self.assertRaises(ValueError, lambda: MenuUtils.get_font('', 0))
         self.assertRaises(ValueError, lambda: MenuUtils.get_font('sys', 0))
 
-    def test_system_load(self):
+    def test_pathlib(self) -> None:
+        """
+        Test font load with pathlib.
+        """
+        path_font = Path(pygame_menu.font.FONT_8BIT)
+        self.assertRaises(ValueError, lambda: pygame_menu.font.get_font(path_font, 0))
+        font = pygame_menu.font.get_font(path_font, 10)
+        assert font is not None
+
+    def test_system_load(self) -> None:
         """
         Test fonts from system.
         """

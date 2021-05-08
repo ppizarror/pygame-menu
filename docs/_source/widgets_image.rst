@@ -9,3 +9,4 @@ Image
     :members:
     :show-inheritance:
     :inherited-members:
+    :exclude-members: set_title, get_title, update, set_onchange, set_onreturn, change, apply

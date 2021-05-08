@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -9,7 +8,7 @@ Vertical box margin.
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
-Copyright 2017-2020 Pablo Pizarro R. @ppizarror
+Copyright 2017-2021 Pablo Pizarro R. @ppizarror
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -30,35 +29,36 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-from pygame_menu.utils import make_surface
-from pygame_menu.widgets.core import Widget
+__all__ = ['VMargin']
+
+import pygame
+
+from pygame_menu.widgets.widget.none import NoneWidget
+
+from pygame_menu._types import NumberType
 
 
-class VMargin(Widget):
+# noinspection PyMissingOrEmptyDocstring
+class VMargin(NoneWidget):
     """
-    Vertical margin widget.
+    Vertical margin widget. VMargin only accepts margin, not padding.
+
+    .. note::
+
+        This widget does not implement any transformation.
+
+    :param margin: Vertical margin in px
+    :param widget_id: ID of the widget
     """
 
-    def __init__(self):
-        super(VMargin, self).__init__()
-        self.is_selectable = False
+    def __init__(
+            self,
+            margin: NumberType,
+            widget_id: str = ''
+    ) -> None:
+        super(VMargin, self).__init__(widget_id=widget_id)
+        self._rect.width = 0
+        self._rect.height = int(margin)
 
-    def _apply_font(self):
-        self._font_size = 0
-        self._shadow = False
-
-    # noinspection PyMissingOrEmptyDocstring
-    def draw(self, surface):
-        self._render()
-        surface.blit(self._surface, self._rect.topleft)
-
-    def _render(self):
-        if self._surface is not None:
-            return
-        self._surface = make_surface(1, 1, alpha=True)
-        self._rect.width = 0.0
-        self._rect.height = 0.0
-
-    # noinspection PyMissingOrEmptyDocstring
-    def update(self, events):
-        return False
+    def get_rect(self, *args, **kwargs) -> 'pygame.Rect':
+        return self._rect.copy()

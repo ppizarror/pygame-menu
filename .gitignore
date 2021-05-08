@@ -15,9 +15,21 @@ venv/
 
 # Distribution files
 *.egg-info
+*.spec
 build/
 dist/
-build.bat
 
 # Other
+pygame_menu/examples/other/sources/**
 run_gource.bat
+pygame_menu/examples/other/_test.py
+
+# Tox
+tox.ini
+
+# Pyproject
+pyproject_update.py
+pyproject.toml
+
+# Lock file
+*.lock

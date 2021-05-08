@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -9,7 +8,7 @@ Library version.
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
-Copyright 2017-2020 Pablo Pizarro R. @ppizarror
+Copyright 2017-2021 Pablo Pizarro R. @ppizarror
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -30,6 +29,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+__all__ = ['Version', 'vernum', 'ver', 'rev']
+
+from typing import Tuple
+
 
 class Version(tuple):
     """
@@ -39,14 +42,14 @@ class Version(tuple):
     __slots__ = ()
     fields = 'major', 'minor', 'patch'
 
-    def __new__(cls, major, minor, patch):
+    def __new__(cls, major, minor, patch) -> Tuple:
         return tuple.__new__(cls, (major, minor, patch))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         fields = ('{}={}'.format(fld, val) for fld, val in zip(self.fields, self))
         return '{}({})'.format(str(self.__class__.__name__), ', '.join(fields))
 
-    def __str__(self):
+    def __str__(self) -> str:
         return '{}.{}.{}'.format(*self)
 
     major = property(lambda self: self[0])
@@ -54,6 +57,6 @@ class Version(tuple):
     patch = property(lambda self: self[2])
 
 
-vernum = Version(3, 3, 2)
+vernum = Version(4, 0, 4)
 ver = str(vernum)
 rev = ''

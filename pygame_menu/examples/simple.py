@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -9,7 +8,7 @@ Super simple example of pygame-menu usage, featuring a selector and a button.
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
-Copyright 2017-2020 Pablo Pizarro R. @ppizarror
+Copyright 2017-2021 Pablo Pizarro R. @ppizarror
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -30,39 +29,45 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-import os
-import pygame
 import pygame_menu
+from pygame_menu.examples import create_example_window
 
-pygame.init()
-os.environ['SDL_VIDEO_CENTERED'] = '1'
-surface = pygame.display.set_mode((600, 400))
+from typing import Tuple, Any
+
+surface = create_example_window('Example - Simple', (600, 400))
 
 
-def set_difficulty(selected, value):
+def set_difficulty(selected: Tuple, value: Any) -> None:
     """
     Set the difficulty of the game.
+
+    :return: None
     """
     print('Set difficulty to {} ({})'.format(selected[0], value))
 
 
-def start_the_game():
+def start_the_game() -> None:
     """
     Function that starts a game. This is raised by the menu button,
     here menu can be disabled, etc.
+
+    :return: None
     """
-    print('Do the job here !')
+    global user_name
+    print('{0}, Do the job here!'.format(user_name.get_value()))
 
 
-menu = pygame_menu.Menu(height=300,
-                        width=400,
-                        theme=pygame_menu.themes.THEME_BLUE,
-                        title='Welcome')
+menu = pygame_menu.Menu(
+    height=300,
+    theme=pygame_menu.themes.THEME_BLUE,
+    title='Welcome',
+    width=400
+)
 
-menu.add_text_input('Name: ', default='John Doe')
-menu.add_selector('Difficulty: ', [('Hard', 1), ('Easy', 2)], onchange=set_difficulty)
-menu.add_button('Play', start_the_game)
-menu.add_button('Quit', pygame_menu.events.EXIT)
+user_name = menu.add.text_input('Name: ', default='John Doe', maxchar=10)
+menu.add.selector('Difficulty: ', [('Hard', 1), ('Easy', 2)], onchange=set_difficulty)
+menu.add.button('Play', start_the_game)
+menu.add.button('Quit', pygame_menu.events.EXIT)
 
 if __name__ == '__main__':
     menu.mainloop(surface)

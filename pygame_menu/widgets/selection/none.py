@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -9,7 +8,7 @@ No selection effect.
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
-Copyright 2017-2020 Pablo Pizarro R. @ppizarror
+Copyright 2017-2021 Pablo Pizarro R. @ppizarror
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -30,18 +29,23 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-from pygame_menu.widgets.core import Selection
+__all__ = ['NoneSelection']
+
+import pygame
+import pygame_menu
+
+from pygame_menu.widgets.selection.simple import SimpleSelection
 
 
-class NoneSelection(Selection):
+class NoneSelection(SimpleSelection):
     """
     No selection effect.
     """
 
-    def __init__(self):
-        super(NoneSelection, self).__init__(margin_left=0, margin_right=0,
-                                            margin_top=0, margin_bottom=0)
+    def __init__(self) -> None:
+        super(NoneSelection, self).__init__()
+        self.widget_apply_font_color = False
 
     # noinspection PyMissingOrEmptyDocstring
-    def draw(self, surface, widget):
-        return
+    def draw(self, surface: 'pygame.Surface', widget: 'pygame_menu.widgets.Widget') -> 'NoneSelection':
+        return self

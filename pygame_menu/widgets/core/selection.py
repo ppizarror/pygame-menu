@@ -1,15 +1,14 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 SELECTION
-Widget selection class.
+Widget selection effect.
 
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
-Copyright 2017-2020 Pablo Pizarro R. @ppizarror
+Copyright 2017-2021 Pablo Pizarro R. @ppizarror
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -30,98 +29,178 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+__all__ = ['Selection']
+
+import copy
 import pygame
+import pygame_menu
+
 from pygame_menu.utils import assert_color
+
+from pygame_menu._types import NumberType, ColorType, ColorInputType, Tuple2IntType, \
+    Tuple4IntType, NumberInstance, Optional
 
 
 class Selection(object):
     """
-    Widget selection class.
+    Widget selection effect class.
+
+    .. note::
+
+        All selection classes must be copyable.
 
     :param margin_left: Left margin
-    :type margin_left: int, float
     :param margin_right: Right margin
-    :type margin_right: int, float
     :param margin_top: Top margin
-    :type margin_top: int, float
     :param margin_bottom: Bottom margin
-    :type margin_bottom: int, float
     """
+    color: ColorType
+    margin_bottom: NumberType
+    margin_left: NumberType
+    margin_right: NumberType
+    margin_top: NumberType
+    widget_apply_font_color: bool
 
-    def __init__(self, margin_left, margin_right, margin_top, margin_bottom):
-        assert margin_left >= 0, 'left margin of widget cannot be negative'
-        assert margin_right >= 0, 'right margin of widget cannot be negative'
-        assert margin_top >= 0, 'top margin of widget cannot be negative'
-        assert margin_bottom >= 0, 'bottom margin of widget cannot be negative'
-        self.color = (0, 0, 0)
+    def __init__(
+            self,
+            margin_left: NumberType,
+            margin_right: NumberType,
+            margin_top: NumberType,
+            margin_bottom: NumberType
+    ) -> None:
+        assert isinstance(margin_left, NumberInstance)
+        assert isinstance(margin_right, NumberInstance)
+        assert isinstance(margin_top, NumberInstance)
+        assert isinstance(margin_bottom, NumberInstance)
+        assert margin_left >= 0, 'left margin of widget selection cannot be negative'
+        assert margin_right >= 0, 'right margin of widget selection cannot be negative'
+        assert margin_top >= 0, 'top margin of widget selection cannot be negative'
+        assert margin_bottom >= 0, 'bottom margin of widget selection cannot be negative'
+
+        self.color = (0, 0, 0)  # Main color of the selection effect
         self.margin_bottom = margin_bottom
         self.margin_left = margin_left
         self.margin_right = margin_right
         self.margin_top = margin_top
+        self.widget_apply_font_color = True  # Widgets apply "selected_color" if selected
 
-    def set_color(self, color):
+    def margin_xy(self, x: NumberType, y: NumberType) -> 'Selection':
         """
-        Set the selection color.
+        Set margins at left-right / top-bottom.
+
+        :param x: Left-Right margin in px
+        :param y: Top-Bottom margin in px
+        :return: Self reference
+        """
+        assert isinstance(x, NumberInstance) and x >= 0
+        assert isinstance(y, NumberInstance) and y >= 0
+        self.margin_left = x
+        self.margin_right = x
+        self.margin_top = y
+        self.margin_bottom = y
+        return self
+
+    def zero_margin(self) -> 'Selection':
+        """
+        Makes selection margin zero.
+
+        :return: Self reference
+        """
+        self.margin_top = 0
+        self.margin_left = 0
+        self.margin_right = 0
+        self.margin_bottom = 0
+        return self
+
+    def copy(self) -> 'Selection':
+        """
+        Creates a deep copy of the object.
+
+        :return: Copied selection effect
+        """
+        return copy.deepcopy(self)
+
+    def __copy__(self) -> 'Selection':
+        """
+        Copy method.
+
+        :return: Copied selection
+        """
+        return self.copy()
+
+    def set_color(self, color: ColorInputType) -> 'Selection':
+        """
+        Set the selection effect color.
 
         :param color: Selection color
-        :type color: tuple, list
-        :return: None
+        :return: Self reference
         """
-        assert_color(color)
-        self.color = color
+        self.color = assert_color(color)
+        return self
 
-    def get_margin(self):
+    def get_margin(self) -> Tuple4IntType:
         """
         Return the top, left, bottom and right margins of the selection.
 
-        :return: Tuple of (t,l,b,r) margins in px
-        :rtype: tuple, list
+        :return: Tuple of (top, left, bottom, right) margins in px
         """
-        return self.margin_top, self.margin_left, self.margin_bottom, self.margin_right
+        return int(self.margin_top), int(self.margin_left), \
+               int(self.margin_bottom), int(self.margin_right)
 
-    def get_width(self):
+    def get_xy_margin(self) -> Tuple2IntType:
         """
-        Return the selection width (px) as sum of left and right margins.
+        Return the x/y margins of the selection.
+
+        :return: Margin tuple on x-axis and y-axis (x, y) in px
+        """
+        return int(self.margin_left + self.margin_right), \
+               int(self.margin_top + self.margin_bottom)
+
+    def get_width(self) -> int:
+        """
+        Return the selection width as sum of left and right margins.
 
         :return: Width in px
-        :rtype: int, float
         """
         _, l, _, r = self.get_margin()
         return l + r
 
-    def inflate(self, rect):
+    def get_height(self) -> int:
+        """
+        Return the selection height as sum of top and bottom margins.
+
+        :return: Height in px
+        """
+        t, _, b, _ = self.get_margin()
+        return t + b
+
+    def inflate(
+            self,
+            rect: 'pygame.Rect', inflate: Optional[Tuple2IntType] = None
+    ) -> 'pygame.Rect':
         """
         Grow or shrink the rectangle size according to margins.
 
-        :param rect: rectangle
-        :type rect: :py:class:`pygame.Rect`
+        :param rect: Rect object
+        :param inflate: Extra border inflate
         :return: Inflated rect
-        :rtype: :py:class:`pygame.Rect`
         """
+        if inflate is None:
+            inflate = (0, 0)
         assert isinstance(rect, pygame.Rect)
-        return pygame.Rect(int(rect.x - self.margin_left),
-                           int(rect.y - self.margin_top),
-                           int(rect.width + self.margin_left + self.margin_right),
-                           int(rect.height + self.margin_top + self.margin_bottom))
+        return pygame.Rect(
+            int(rect.x - self.margin_left - inflate[0] / 2),
+            int(rect.y - self.margin_top - inflate[1] / 2),
+            int(rect.width + self.margin_left + self.margin_right + inflate[0]),
+            int(rect.height + self.margin_top + self.margin_bottom + inflate[1])
+        )
 
-    def get_height(self):
-        """
-        Return the selection height (px) as sum of top and bottom margins.
-
-        :return: Height in px
-        :rtype: int, float
-        """
-        t, _, b, _ = self.get_height()
-        return t + b
-
-    def draw(self, surface, widget):
+    def draw(self, surface: 'pygame.Surface', widget: 'pygame_menu.widgets.Widget') -> 'Selection':
         """
         Draw the selection.
 
         :param surface: Surface to draw
-        :type surface: :py:class:`pygame.Surface`
         :param widget: Widget object
-        :type widget: :py:class:`pygame_menu.widgets.core.Widget`
-        :return: None
+        :return: Self reference
         """
         raise NotImplementedError('override is mandatory')

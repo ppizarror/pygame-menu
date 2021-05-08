@@ -5,10 +5,8 @@
 Adding sounds
 =============
 
-A sound engine can be created using the :py:class:`Sound` class. The sound engine can be customized by setting a sound
-file to several sounds defined by a type.
-
-For example, buttons or keys...
+A sound engine can be created using the :py:class:`Sound` class. The sound engine
+can be customized by setting a sound file to several sounds defined by a type.
 
 **Example:**
 
@@ -26,9 +24,9 @@ For example, buttons or keys...
 
 Sound types are the following:
 
-========================================================  =============================
+========================================================  =========================
 Type                                                      Description
-========================================================  =============================
+========================================================  =========================
 :py:data:`pygame_menu.sound.SOUND_TYPE_CLICK_MOUSE`       Mouse click
 :py:data:`pygame_menu.sound.SOUND_TYPE_CLOSE_MENU`        A menu is closed
 :py:data:`pygame_menu.sound.SOUND_TYPE_ERROR`             Generic error
@@ -38,7 +36,7 @@ Type                                                      Description
 :py:data:`pygame_menu.sound.SOUND_TYPE_KEY_DELETION`      User deletes with a key
 :py:data:`pygame_menu.sound.SOUND_TYPE_OPEN_MENU`         A menu is opened
 :py:data:`pygame_menu.sound.SOUND_TYPE_WIDGET_SELECTION`  A widget is selected
-========================================================  =============================
+========================================================  =========================
 
 .. autoclass:: Sound
     :members:

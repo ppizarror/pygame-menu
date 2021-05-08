@@ -2,14 +2,14 @@
 ==========================
 Migration Guide - v2 to v3
 ==========================
-    
+
 - Removed from library
     - Renamed library ``pygameMenu`` to ``pygame_menu``
-    - Removed all configuration variables from ``pygameMenu.config``.
+    - Removed all configuration variables from ``pygameMenu.config``
     - Removed ``TextMenu``, use ``Menu`` and ``add_label()`` method instead
 - New Menu behaviour
-    - Menu manage the event loop and drawing using ``Menu.mainloop(surface,bgfun,disable_loop=False,fps_limit=0)``
-    - User's application manage the event loop, using ``Menu.update(events)` and `Menu.draw(surface)``
+    - Menu manage the event loop and drawing using ``Menu.mainloop(surface, bgfun, disable_loop=False, fps_limit=0)``
+    - User's application manage the event loop, using ``Menu.update(events)`` and ``Menu.draw(surface)``
 - Removed from Menu class
     - ``add_option()``, use ``add_button()`` instead
     - ``set_fps()``, use ``fps_limit`` from ``mainloop()`` instead
@@ -30,7 +30,7 @@ Migration Guide - v2 to v3
         - ``menu_color_title``, moved to ``title_background_color`` of :py:class:`pygame_menu.themes.Theme`
         - ``menu_color``, moved to ``background_color`` of :py:class:`pygame_menu.themes.Theme`
         - ``menu_height``, use ``height``
-        - ``menu_width``, use ``height``
+        - ``menu_width``, use ``width``
         - ``option_margin``, moved to ``widget_margin`` of :py:class:`pygame_menu.themes.Theme`
         - ``option_shadow_offset``, moved to ``widget_shadow_offset`` of :py:class:`pygame_menu.themes.Theme`
         - ``option_shadow_position``, moved to ``widget_shadow_position`` of :py:class:`pygame_menu.themes.Theme`

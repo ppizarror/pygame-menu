@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -9,7 +8,7 @@ This module contains the widgets of pygame-menu.
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
-Copyright 2017-2020 Pablo Pizarro R. @ppizarror
+Copyright 2017-2021 Pablo Pizarro R. @ppizarror
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -30,17 +29,21 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# Widgets
 from pygame_menu.widgets.widget.button import Button
 from pygame_menu.widgets.widget.colorinput import ColorInput
+from pygame_menu.widgets.widget.dropselect import DropSelect
+from pygame_menu.widgets.widget.dropselect_multiple import DropSelectMultiple
+from pygame_menu.widgets.widget.frame import Frame
+from pygame_menu.widgets.widget.hmargin import HMargin
 from pygame_menu.widgets.widget.image import Image
 from pygame_menu.widgets.widget.label import Label
+from pygame_menu.widgets.widget.menubar import MenuBar
+from pygame_menu.widgets.widget.menulink import MenuLink
+from pygame_menu.widgets.widget.none import NoneWidget
 from pygame_menu.widgets.widget.scrollbar import ScrollBar
 from pygame_menu.widgets.widget.selector import Selector
+from pygame_menu.widgets.widget.surface import SurfaceWidget
+from pygame_menu.widgets.widget.table import Table
 from pygame_menu.widgets.widget.textinput import TextInput
+from pygame_menu.widgets.widget.toggleswitch import ToggleSwitch
 from pygame_menu.widgets.widget.vmargin import VMargin
-
-# Menubar and positions
-from pygame_menu.widgets.widget.menubar import MenuBar, MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_SIMPLE, \
-    MENUBAR_STYLE_TITLE_ONLY, MENUBAR_STYLE_TITLE_ONLY_DIAGONAL, MENUBAR_STYLE_NONE, MENUBAR_STYLE_UNDERLINE, \
-    MENUBAR_STYLE_UNDERLINE_TITLE

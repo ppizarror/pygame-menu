@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -9,7 +8,7 @@ Game with 3 difficulty options.
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
-Copyright 2017-2020 Pablo Pizarro R. @ppizarror
+Copyright 2017-2021 Pablo Pizarro R. @ppizarror
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -30,74 +29,65 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# Import libraries
-import sys
+__all__ = ['main']
 
-sys.path.insert(0, '../../')
-
-import os
 import pygame
 import pygame_menu
+from pygame_menu.examples import create_example_window
 
 from random import randrange
+from typing import Tuple, Any, Optional, List
 
 # -----------------------------------------------------------------------------
 # Constants and global variables
 # -----------------------------------------------------------------------------
 ABOUT = ['pygame-menu {0}'.format(pygame_menu.__version__),
          'Author: @{0}'.format(pygame_menu.__author__),
-         '',  # new line
          'Email: {0}'.format(pygame_menu.__email__)]
 DIFFICULTY = ['EASY']
-FPS = 60.0
+FPS = 60
 WINDOW_SIZE = (640, 480)
 
-clock = None  # type: pygame.time.Clock
-main_menu = None  # type: pygame_menu.Menu
-surface = None  # type: pygame.Surface
+clock: Optional['pygame.time.Clock'] = None
+main_menu: Optional['pygame_menu.Menu'] = None
+surface: Optional['pygame.Surface'] = None
 
 
 # -----------------------------------------------------------------------------
 # Methods
 # -----------------------------------------------------------------------------
-def change_difficulty(value, difficulty):
+def change_difficulty(value: Tuple[Any, int], difficulty: str) -> None:
     """
     Change difficulty of the game.
 
     :param value: Tuple containing the data of the selected object
-    :type value: tuple
     :param difficulty: Optional parameter passed as argument to add_selector
-    :type difficulty: str
-    :return: None
     """
     selected, index = value
-    print('Selected difficulty: "{0}" ({1}) at index {2}'.format(selected, difficulty, index))
+    print('Selected difficulty: "{0}" ({1}) at index {2}'
+          ''.format(selected, difficulty, index))
     DIFFICULTY[0] = difficulty
 
 
-def random_color():
+def random_color() -> Tuple[int, int, int]:
     """
     Return a random color.
 
     :return: Color tuple
-    :rtype: tuple
     """
     return randrange(0, 255), randrange(0, 255), randrange(0, 255)
 
 
-def play_function(difficulty, font, test=False):
+def play_function(difficulty: List, font: 'pygame.font.Font', test: bool = False) -> None:
     """
     Main game function.
 
     :param difficulty: Difficulty of the game
-    :type difficulty: tuple, list
     :param font: Pygame font
-    :type font: :py:class:`pygame.font.Font`
-    :param test: Test method, if true only one loop is allowed
-    :type test: bool
+    :param test: Test method, if ``True`` only one loop is allowed
     :return: None
     """
-    assert isinstance(difficulty, (tuple, list))
+    assert isinstance(difficulty, list)
     difficulty = difficulty[0]
     assert isinstance(difficulty, str)
 
@@ -106,13 +96,13 @@ def play_function(difficulty, font, test=False):
     global clock
 
     if difficulty == 'EASY':
-        f = font.render('Playing as a baby (easy)', 1, (255, 255, 255))
+        f = font.render('Playing as a baby (easy)', True, (255, 255, 255))
     elif difficulty == 'MEDIUM':
-        f = font.render('Playing as a kid (medium)', 1, (255, 255, 255))
+        f = font.render('Playing as a kid (medium)', True, (255, 255, 255))
     elif difficulty == 'HARD':
-        f = font.render('Playing as a champion (hard)', 1, (255, 255, 255))
+        f = font.render('Playing as a champion (hard)', True, (255, 255, 255))
     else:
-        raise Exception('Unknown difficulty {0}'.format(difficulty))
+        raise Exception('unknown difficulty {0}'.format(difficulty))
 
     # Draw random color and text
     bg_color = random_color()
@@ -122,7 +112,7 @@ def play_function(difficulty, font, test=False):
     # You also can set another menu, like a 'pause menu', or just use the same
     # main_menu as the menu that will check all your input.
     main_menu.disable()
-    main_menu.reset(1)
+    main_menu.full_reset()
 
     while True:
 
@@ -138,11 +128,12 @@ def play_function(difficulty, font, test=False):
                 if e.key == pygame.K_ESCAPE:
                     main_menu.enable()
 
-                    # Quit this function, then skip to loop of main-menu on line 317
+                    # Quit this function, then skip to loop of main-menu on line 250
                     return
 
         # Pass events to main_menu
-        main_menu.update(events)
+        if main_menu.is_enabled():
+            main_menu.update(events)
 
         # Continue playing
         surface.fill(bg_color)
@@ -154,7 +145,7 @@ def play_function(difficulty, font, test=False):
             break
 
 
-def main_background():
+def main_background() -> None:
     """
     Function used by menus, draw on background while menu is active.
 
@@ -164,12 +155,11 @@ def main_background():
     surface.fill((128, 0, 128))
 
 
-def main(test=False):
+def main(test: bool = False) -> None:
     """
     Main program.
 
     :param test: Indicate function is being tested
-    :type test: bool
     :return: None
     """
 
@@ -181,14 +171,9 @@ def main(test=False):
     global surface
 
     # -------------------------------------------------------------------------
-    # Init pygame
+    # Create window
     # -------------------------------------------------------------------------
-    pygame.init()
-    os.environ['SDL_VIDEO_CENTERED'] = '1'
-
-    # Create pygame screen and objects
-    surface = pygame.display.set_mode(WINDOW_SIZE)
-    pygame.display.set_caption('Example - Game Selector')
+    surface = create_example_window('Example - Game Selector', WINDOW_SIZE)
     clock = pygame.time.Clock()
 
     # -------------------------------------------------------------------------
@@ -196,9 +181,8 @@ def main(test=False):
     # -------------------------------------------------------------------------
     play_menu = pygame_menu.Menu(
         height=WINDOW_SIZE[1] * 0.7,
-        onclose=pygame_menu.events.DISABLE_CLOSE,
         title='Play Menu',
-        width=WINDOW_SIZE[0] * 0.7,
+        width=WINDOW_SIZE[0] * 0.75
     )
 
     submenu_theme = pygame_menu.themes.THEME_DEFAULT.copy()
@@ -207,61 +191,58 @@ def main(test=False):
         height=WINDOW_SIZE[1] * 0.5,
         theme=submenu_theme,
         title='Submenu',
-        width=WINDOW_SIZE[0] * 0.7,
+        width=WINDOW_SIZE[0] * 0.7
     )
     for i in range(30):
-        play_submenu.add_button('Back {0}'.format(i), pygame_menu.events.BACK)
-    play_submenu.add_button('Return to main menu', pygame_menu.events.RESET)
+        play_submenu.add.button('Back {0}'.format(i), pygame_menu.events.BACK)
+    play_submenu.add.button('Return to main menu', pygame_menu.events.RESET)
 
-    play_menu.add_button('Start',  # When pressing return -> play(DIFFICULTY[0], font)
+    play_menu.add.button('Start',  # When pressing return -> play(DIFFICULTY[0], font)
                          play_function,
                          DIFFICULTY,
                          pygame.font.Font(pygame_menu.font.FONT_FRANCHISE, 30))
-    play_menu.add_selector('Select difficulty ',
+    play_menu.add.selector('Select difficulty ',
                            [('1 - Easy', 'EASY'),
                             ('2 - Medium', 'MEDIUM'),
                             ('3 - Hard', 'HARD')],
                            onchange=change_difficulty,
                            selector_id='select_difficulty')
-    play_menu.add_button('Another menu', play_submenu)
-    play_menu.add_button('Return to main menu', pygame_menu.events.BACK)
+    play_menu.add.button('Another menu', play_submenu)
+    play_menu.add.button('Return to main menu', pygame_menu.events.BACK)
 
     # -------------------------------------------------------------------------
     # Create menus:About
     # -------------------------------------------------------------------------
     about_theme = pygame_menu.themes.THEME_DEFAULT.copy()
     about_theme.widget_margin = (0, 0)
-    about_theme.widget_offset = (0, 0.05)
 
     about_menu = pygame_menu.Menu(
         height=WINDOW_SIZE[1] * 0.6,
-        onclose=pygame_menu.events.DISABLE_CLOSE,
         theme=about_theme,
         title='About',
-        width=WINDOW_SIZE[0] * 0.6,
+        width=WINDOW_SIZE[0] * 0.6
     )
+
     for m in ABOUT:
-        about_menu.add_label(m, align=pygame_menu.locals.ALIGN_LEFT, font_size=20)
-    about_menu.add_label('')
-    about_menu.add_button('Return to menu', pygame_menu.events.BACK)
+        about_menu.add.label(m, align=pygame_menu.locals.ALIGN_LEFT, font_size=20)
+    about_menu.add.vertical_margin(30)
+    about_menu.add.button('Return to menu', pygame_menu.events.BACK)
 
     # -------------------------------------------------------------------------
     # Create menus: Main
     # -------------------------------------------------------------------------
     main_theme = pygame_menu.themes.THEME_DEFAULT.copy()
-    main_theme.menubar_close_button = False  # Disable close button
 
     main_menu = pygame_menu.Menu(
         height=WINDOW_SIZE[1] * 0.6,
-        onclose=pygame_menu.events.DISABLE_CLOSE,
         theme=main_theme,
         title='Main Menu',
         width=WINDOW_SIZE[0] * 0.6
     )
 
-    main_menu.add_button('Play', play_menu)
-    main_menu.add_button('About', about_menu)
-    main_menu.add_button('Quit', pygame_menu.events.EXIT)
+    main_menu.add.button('Play', play_menu)
+    main_menu.add.button('About', about_menu)
+    main_menu.add.button('Quit', pygame_menu.events.EXIT)
 
     # -------------------------------------------------------------------------
     # Main loop
@@ -281,7 +262,8 @@ def main(test=False):
                 exit()
 
         # Main menu
-        main_menu.mainloop(surface, main_background, disable_loop=test, fps_limit=FPS)
+        if main_menu.is_enabled():
+            main_menu.mainloop(surface, main_background, disable_loop=test, fps_limit=FPS)
 
         # Flip surface
         pygame.display.flip()

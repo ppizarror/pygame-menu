@@ -1,3 +1,4 @@
+
 ===========
 pygame-menu
 ===========
@@ -14,13 +15,13 @@ pygame-menu
     :target: https://opensource.org/licenses/MIT
     :alt: License MIT
 
-.. image:: https://img.shields.io/badge/python-2.7+ / 3.5+-red.svg
+.. image:: https://img.shields.io/badge/python-3.6+-red.svg
     :target: https://www.python.org/downloads
-    :alt: Python 2.7+/3.5+
+    :alt: Python 3.6+
 
-.. image:: https://img.shields.io/badge/pygame-1.9%2B%2F2.0%2B-orange
+.. image:: https://img.shields.io/badge/pygame-1.9.3%2B%2F2.0%2B-orange
     :target: https://www.pygame.org
-    :alt: Pygame 1.9+/2.0+
+    :alt: Pygame 1.9.3+/2.0+
 
 .. image:: https://badge.fury.io/py/pygame-menu.svg
     :target: https://pypi.org/project/pygame-menu
@@ -50,24 +51,31 @@ pygame-menu
     :target: https://pypi.org/project/pygame-menu/
     :alt: PyPi downloads
 
+.. image:: https://static.pepy.tech/personalized-badge/pygame-menu?period=total&units=international_system&left_color=grey&right_color=lightgrey&left_text=total%20downloads
+    :target: https://pepy.tech/project/pygame-menu
+    :alt: Total downloads
+
 Source repo on `GitHub <https://github.com/ppizarror/pygame-menu>`_, 
 and run it on `Repl.it <https://repl.it/github/ppizarror/pygame-menu>`_
+
 
 Introduction
 ------------
 
-Pygame-menu is a python-pygame library for creating menus. It supports
-selectors, buttons, labels, color inputs, and text inputs, with many options to customize.
+Pygame-menu is a python-pygame library for creating menus. It supports several widgets, such as
+buttons, color inputs, clock objects, drop selectors, frames, images, labels, selectors, tables,
+text inputs, color switches, and many more, with many options to customize.
 
-Comprehensive documentation for the latest version `v3+` is available at
+Comprehensive documentation for the latest version is available at
 https://pygame-menu.readthedocs.io
 
-For pygame-menu `v2`, check out https://github.com/ppizarror/pygame-menu/blob/v2/README.md
 
 Install Instructions
 --------------------
 
-Pygame-menu can be installed via pip. Simply run::
+Pygame-menu can be installed via pip. Simply run:
+
+.. code-block:: bash
 
     $> pip install pygame-menu
 
@@ -77,6 +85,6 @@ To build the documentation from a Git repository:
 
     $> clone https://github.com/ppizarror/pygame-menu
     $> cd pygame-menu
-    $> pip install -e .[doc]
+    $> pip install -e .[docs]
     $> cd docs
     $> make html
