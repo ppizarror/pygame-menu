@@ -1162,11 +1162,15 @@ class MenuTest(unittest.TestCase):
         button = menu.add.button('button', _some_event)
 
         # Check touch
+        if SYS_PLATFORM_OSX:
+            return
+
         if hasattr(pygame, 'FINGERUP'):
             click_pos = button.get_rect(to_real_position=True).center
             menu.enable()
+            # Event must be normalized
             menu.update(
-                PygameEventUtils.touch_click(click_pos[0], click_pos[1], normalize=False))  # Event must be normalized
+                PygameEventUtils.touch_click(click_pos[0], click_pos[1], normalize=False))
             self.assertFalse(event_val[0])
 
             menu.update(PygameEventUtils.touch_click(click_pos[0], click_pos[1], menu=menu))
@@ -1241,6 +1245,24 @@ class MenuTest(unittest.TestCase):
         menu.mainloop(surface, test_not_accept_menu, disable_loop=True)
         self.assertTrue(test[0])
         self.assertTrue(test[1])
+
+        # test wait for events
+        test = [False, 0]
+
+        def bgfun() -> None:
+            """
+            Function executed on each mainloop iteration for testing
+            waiting for events.
+            """
+            print('run', test[1])
+            test[0] = not test[0]
+            test[1] += 1
+            pygame.event.post(PygameEventUtils.joy_center(inlist=False))
+
+        menu = MenuUtils.generic_menu()
+        menu.set_onupdate(menu.disable)
+        menu.mainloop(surface, bgfun, wait_for_event=True)
+        self.assertFalse(menu.is_enabled())
 
     # noinspection PyArgumentList
     def test_invalid_args(self) -> None:
@@ -1441,8 +1463,9 @@ class MenuTest(unittest.TestCase):
         """
         Test events gather.
         """
-        if pygame.vernum[0] < 2:
+        if not PYGAME_V2:
             return
+
         menu_top = MenuUtils.generic_menu()
         menu = MenuUtils.generic_menu(columns=4, rows=2, touchscreen=True,
                                       touchscreen_motion_selection=True, column_min_width=[400, 300, 400, 300],
@@ -1577,6 +1600,7 @@ class MenuTest(unittest.TestCase):
             test[0] = False
 
         menu = MenuUtils.generic_menu(width=100, height=100)
+
         menu.set_onmouseover(on_over)
         menu.set_onmouseleave(on_leave)
 
@@ -1596,6 +1620,15 @@ class MenuTest(unittest.TestCase):
         menu.update(ev)
         self.assertFalse(menu._mouseover)
         self.assertFalse(test[0])
+
+        # Test empty parameters
+        menu.set_onmouseover(lambda: print('Mouse over'))
+        menu.set_onmouseleave(lambda: print('Mouse leave'))
+
+        menu.update(PygameEventUtils.mouse_click(50, 50, inlist=True, evtype=pygame.MOUSEMOTION))
+        menu.update(PygameEventUtils.mouse_click(rect.centerx, rect.centery,
+                                                 inlist=True, evtype=pygame.MOUSEMOTION))
+        menu.update(PygameEventUtils.mouse_click(50, 50, inlist=True, evtype=pygame.MOUSEMOTION))
 
         # Test window mouseover and mouseleave
         test: Any = [None]
@@ -1622,6 +1655,13 @@ class MenuTest(unittest.TestCase):
         self.assertTrue(test[0])
         menu.update(PygameEventUtils.leave_window())  # Leave
         self.assertFalse(test[0])
+
+        # Test empty parameters
+        menu.set_onwindowmouseover(lambda: print('Window mouse over'))
+        menu.set_onwindowmouseleave(lambda: print('Window mouse leave'))
+
+        menu.update(PygameEventUtils.enter_window())
+        menu.update(PygameEventUtils.leave_window())
 
     # noinspection PyTypeChecker
     def test_widget_move_index(self) -> None:
@@ -1983,6 +2023,9 @@ class MenuTest(unittest.TestCase):
         """
         Test baseimage selector + menulink interaction.
         """
+        if SYS_PLATFORM_OSX:
+            return
+
         x = 400
         y = 400
 
