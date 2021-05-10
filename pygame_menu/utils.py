@@ -416,12 +416,12 @@ def load_pygame_image_file(image_path: str, **kwargs) -> 'pygame.Surface':
                 warn('Image file "{0}" could not be loaded, as pygame.error is '
                      'raised. To avoid this issue install the Pillow library'
                      ''.format(image_path))
-                # raise
+                raise
 
             except pil_invalid_exception:
                 warn('The image "{0}" could not be loaded using Pillow'
                      ''.format(image_path))
-                # raise
+                raise
 
         else:
             raise
