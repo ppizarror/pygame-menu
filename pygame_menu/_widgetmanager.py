@@ -736,7 +736,7 @@ class WidgetManager(Base):
 
         :param image_path: Path of the image (file) or a BaseImage object. If BaseImage object is provided the angle and scale are ignored
         :param angle: Angle of the image in degrees (clockwise)
-        :param image_id: ID of the image widget
+        :param image_id: ID of the image
         :param onselect: Callback executed when selecting the widget; only executed if ``selectable`` is ``True``
         :param scale: Scale of the image on x-axis and y-axis (x, y)
         :param scale_smooth: Scale is smoothed
@@ -1453,7 +1453,7 @@ class WidgetManager(Base):
         :param title: Drop select title
         :param items: Item list of the drop select; format ``[('Item1', a, b, c...), ('Item2', d, e, f...)]``
         :param default: Index of default item to display
-        :param dropselect_id: ID of the selector
+        :param dropselect_id: ID of the dropselect
         :param onchange: Callback when changing the drop select item
         :param onreturn: Callback when pressing return on the selected item
         :param onselect: Function when selecting the widget
@@ -1712,7 +1712,7 @@ class WidgetManager(Base):
         :param title: Drop select title
         :param items: Item list of the drop select; format ``[('Item1', a, b, c...), ('Item2', d, e, f...)]``
         :param default: Index(es) of default item(s) to display. If ``None`` no item is selected
-        :param dropselect_multiple_id: ID of the selector
+        :param dropselect_multiple_id: ID of the dropselect multiple
         :param max_selected: Max items to be selected. If ``0`` there's no limit
         :param onchange: Callback when changing the drop select item
         :param onreturn: Callback when pressing return on the selected item
@@ -2514,7 +2514,7 @@ class WidgetManager(Base):
             :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param margin: Horizontal margin in px
-        :param margin_id: ID of the margin
+        :param margin_id: ID of the horizontal margin
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.HMargin`
         """
@@ -2544,7 +2544,7 @@ class WidgetManager(Base):
             :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param margin: Vertical margin in px
-        :param margin_id: ID of the margin
+        :param margin_id: ID of the vertical margin
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.VMargin`
         """
@@ -2608,7 +2608,7 @@ class WidgetManager(Base):
             :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param menu: Menu to be added as a link (the new submenu)
-        :param link_id: ID of the menu link widget
+        :param link_id: ID of the menu link
         :return: Menu link widget
         :rtype: :py:class:`pygame_menu.widgets.MenuLink`
         """
