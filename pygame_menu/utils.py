@@ -400,6 +400,7 @@ def load_pygame_image_file(image_path: str, **kwargs) -> 'pygame.Surface':
         # Check if file is not a windows file
         if str(exc) == 'File is not a Windows BMP file':
             pil_invalid_exception = Exception
+            surface = make_surface(0, 0)
 
             # Check if Pillow exists
             try:
@@ -412,14 +413,15 @@ def load_pygame_image_file(image_path: str, **kwargs) -> 'pygame.Surface':
                     img_pil.tobytes(), img_pil.size, img_pil.mode).convert()
 
             except (ModuleNotFoundError, ImportError):
-                warn('Image file could not be loaded, as pygame.error is'
-                     ' raised. To avoid this issue install the Pillow '
-                     'library')
-                raise
+                warn('Image file "{0}" could not be loaded, as pygame.error is '
+                     'raised. To avoid this issue install the Pillow library'
+                     ''.format(image_path))
+                # raise
 
             except pil_invalid_exception:
-                warn('The image could not be loaded using Pillow')
-                raise
+                warn('The image "{0}" could not be loaded using Pillow'
+                     ''.format(image_path))
+                # raise
 
         else:
             raise
