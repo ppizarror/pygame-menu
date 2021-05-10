@@ -444,8 +444,6 @@ class PygameEventUtils(object):
         :param testmode: Event is in test mode
         :return: Event
         """
-        assert PYGAME_V2, \
-            'function only available in pygame v2+'
         if normalize:
             assert menu is not None, \
                 'menu reference must be provided if normalize is used (related to touch events)'

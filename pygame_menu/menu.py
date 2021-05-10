@@ -563,15 +563,9 @@ class Menu(Base):
         self._mouse_visible_default = mouse_visible
 
         # Init touchscreen
-        if touchscreen:
-            version_major, _, _ = pygame.version.vernum
-            assert version_major >= 2, 'touchscreen is only supported in pygame v2+'
         if touchscreen_motion_selection:
             assert touchscreen, \
                 'touchscreen motion selection cannot be enabled if touchscreen is disabled'
-            assert hasattr(pygame, 'FINGERMOTION'), \
-                'pygame FINGERMOTION does not exist, thus, touchscreen motion ' \
-                'selection cannot be enabled'
         self._touchscreen = touchscreen
         self._touchscreen_motion_selection = touchscreen_motion_selection
 
