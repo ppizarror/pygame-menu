@@ -1146,11 +1146,6 @@ class MenuTest(unittest.TestCase):
         """
         Test menu touchscreen behaviour.
         """
-        if not PYGAME_V2:
-            self.assertRaises(AssertionError,
-                              lambda: MenuUtils.generic_menu(title='mainmenu', touchscreen=True))
-            return
-
         self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(title='mainmenu', touchscreen=False,
                                                                          touchscreen_motion_selection=True))
         menu = MenuUtils.generic_menu(title='mainmenu', touchscreen=True, enabled=False)
