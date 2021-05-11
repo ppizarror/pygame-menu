@@ -400,7 +400,6 @@ def load_pygame_image_file(image_path: str, **kwargs) -> 'pygame.Surface':
         # Check if file is not a windows file
         if str(exc) == 'File is not a Windows BMP file':
             pil_invalid_exception = Exception
-            surface = make_surface(0, 0)
 
             # Check if Pillow exists
             try:
