@@ -47,7 +47,8 @@ from pygame_menu.utils import assert_list_vector, assert_color, make_surface, \
     is_callable, assert_vector, uuid4, warn
 
 from pygame_menu._types import List, Tuple2NumberType, ColorInputType, Tuple, \
-    Any, Dict, Union, NumberType, Tuple2IntType, Optional, Callable, NumberInstance
+    Any, Dict, Union, NumberType, Tuple2IntType, Optional, Callable, NumberInstance, \
+    CallableNoArgsType
 
 # Decoration constants
 DECORATION_ARC = 2000
@@ -658,7 +659,7 @@ class Decorator(Base):
 
     def add_callable(
             self,
-            fun: Union[Callable[['pygame.Surface', Any], Any], Callable[[], Any]],
+            fun: Union[Callable[['pygame.Surface', Any], Any], CallableNoArgsType],
             prev: bool = True,
             pass_args: bool = True
     ) -> str:

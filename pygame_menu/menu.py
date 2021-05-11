@@ -61,7 +61,7 @@ from pygame_menu._types import Callable, Any, Dict, NumberType, VectorType, \
     Vector2NumberType, Union, Tuple, List, Vector2IntType, Vector2BoolType, \
     Tuple4Tuple2IntType, Tuple2IntType, MenuColumnMaxWidthType, MenuColumnMinWidthType, \
     MenuRowsType, Optional, Tuple2BoolType, NumberInstance, VectorInstance, EventType, \
-    EventVectorType, EventListType
+    EventVectorType, EventListType, CallableNoArgsType
 
 # Joy events
 JOY_EVENT_LEFT = 1
@@ -124,7 +124,7 @@ class Menu(Base):
     :param touchscreen_motion_selection: Select widgets using touchscreen motion. If ``True`` menu draws a ``focus`` on the selected widget
     """
     _auto_centering: bool
-    _background_function: Tuple[bool, Optional[Union[Callable[['Menu'], Any], Callable[[], Any]]]]
+    _background_function: Tuple[bool, Optional[Union[Callable[['Menu'], Any], CallableNoArgsType]]]
     _clock: 'pygame.time.Clock'
     _column_max_width: VectorType
     _column_min_width: VectorType
@@ -153,13 +153,13 @@ class Menu(Base):
     _mouse_visible_default: bool
     _mouseover: bool
     _onbeforeopen: Optional[Callable[['Menu', 'Menu'], Any]]
-    _onclose: Optional[Union['_events.MenuAction', Callable[[], Any], Callable[['Menu'], Any]]]
-    _onmouseleave: Optional[Callable[['Menu', EventType], Any]]
-    _onmouseover: Optional[Callable[['Menu', EventType], Any]]
-    _onreset: Optional[Union[Callable[[], Any], Callable[['Menu'], Any]]]
-    _onupdate: Optional[Callable[[EventListType, 'Menu'], Any]]
-    _onwindowmouseleave: Optional[Callable[['Menu'], Any]]
-    _onwindowmouseover: Optional[Callable[['Menu'], Any]]
+    _onclose: Optional[Union['_events.MenuAction', Callable[['Menu'], Any], CallableNoArgsType]]
+    _onmouseleave: Optional[Union[Callable[['Menu', EventType], Any], CallableNoArgsType]]
+    _onmouseover: Optional[Union[Callable[['Menu', EventType], Any], CallableNoArgsType]]
+    _onreset: Optional[Union[Callable[['Menu'], Any], CallableNoArgsType]]
+    _onupdate: Optional[Union[Callable[[EventListType, 'Menu'], Any], CallableNoArgsType]]
+    _onwindowmouseleave: Optional[Union[Callable[['Menu'], Any], CallableNoArgsType]]
+    _onwindowmouseover: Optional[Union[Callable[['Menu'], Any], CallableNoArgsType]]
     _overflow: Tuple2BoolType
     _position: Tuple2IntType
     _prev: Optional[List[Union['Menu', List['Menu']]]]
@@ -208,8 +208,8 @@ class Menu(Base):
             mouse_enabled: bool = True,
             mouse_motion_selection: bool = False,
             mouse_visible: bool = True,
-            onclose: Optional[Union['_events.MenuAction', Callable[[], Any], Callable[['Menu'], Any]]] = None,
-            onreset: Optional[Union[Callable[[], Any], Callable[['Menu'], Any]]] = None,
+            onclose: Optional[Union['_events.MenuAction', Callable[['Menu'], Any], CallableNoArgsType]] = None,
+            onreset: Optional[Union[Callable[['Menu'], Any], CallableNoArgsType]] = None,
             overflow: Union[Vector2BoolType, bool] = (True, True),
             position: Vector2NumberType = (50, 50),
             rows: MenuRowsType = None,
@@ -737,15 +737,16 @@ class Menu(Base):
 
     def set_onupdate(
             self,
-            onupdate: Optional[Callable[[EventListType, 'Menu'], Any]]
+            onupdate: Optional[Union[Callable[[EventListType, 'Menu'], Any], CallableNoArgsType]]
     ) -> 'Menu':
         """
         Set ``onupdate`` callback. Callback is executed before updating the Menu,
-        it receives the event list and the menu reference:
+        it receives the event list and the Menu reference; also, ``onupdate`` can
+        receive zero arguments:
 
         .. code-block:: python
 
-            onupdate(event_list, Menu)
+            onupdate() <or> onupdate(event_list, Menu)
 
         .. note::
 
@@ -763,7 +764,7 @@ class Menu(Base):
 
     def set_onclose(
             self,
-            onclose: Optional[Union['_events.MenuAction', Callable[[], Any], Callable[['Menu'], Any]]]
+            onclose: Optional[Union['_events.MenuAction', Callable[['Menu'], Any], CallableNoArgsType]]
     ) -> 'Menu':
         """
         Set ``onclose`` callback. Callback can only receive 1 argument maximum
@@ -791,7 +792,7 @@ class Menu(Base):
 
     def set_onreset(
             self,
-            onreset: Optional[Union[Callable[[], Any], Callable[['Menu'], Any]]]
+            onreset: Optional[Union[Callable[['Menu'], Any], CallableNoArgsType]]
     ) -> 'Menu':
         """
         Set ``onreset`` callback. Callback can only receive 1 argument maximum
@@ -817,7 +818,7 @@ class Menu(Base):
 
     def set_onwindowmouseover(
             self,
-            onwindowmouseover: Optional[Callable[['Menu'], Any]]
+            onwindowmouseover: Optional[Union[Callable[['Menu'], Any], CallableNoArgsType]]
     ) -> 'Menu':
         """
         Set ``onwindowmouseover`` callback. This method is executed in
@@ -826,7 +827,7 @@ class Menu(Base):
 
         .. code-block:: python
 
-            onwindowmouseover(menu)
+            onwindowmouseover() <or> onwindowmouseover(menu)
 
         :param onwindowmouseover: Callback executed if user enters the window with the mouse; it can be a function or None
         :return: Self reference
@@ -839,7 +840,7 @@ class Menu(Base):
 
     def set_onwindowmouseleave(
             self,
-            onwindowmouseleave: Optional[Callable[['Menu'], Any]]
+            onwindowmouseleave: Optional[Union[Callable[['Menu'], Any], CallableNoArgsType]]
     ) -> 'Menu':
         """
         Set ``onmouseleave`` callback. This method is executed in
@@ -848,7 +849,7 @@ class Menu(Base):
 
         .. code-block:: python
 
-            onwindowmouseleave(menu)
+            onwindowmouseleave() <or> onwindowmouseleave(menu)
 
         :param onwindowmouseleave: Callback executed if user leaves the window with the mouse; it can be a function or None
         :return: Self reference
@@ -861,7 +862,7 @@ class Menu(Base):
 
     def set_onmouseover(
             self,
-            onmouseover: Optional[Callable[['Menu', EventType], Any]]
+            onmouseover: Optional[Union[Callable[['Menu', EventType], Any], CallableNoArgsType]]
     ) -> 'Menu':
         """
         Set ``onmouseover`` callback. This method is executed in
@@ -870,7 +871,7 @@ class Menu(Base):
 
         .. code-block:: python
 
-            onmouseover(menu, event)
+            onmouseover() <or> onmouseover(menu, event)
 
         :param onmouseover: Callback executed if user enters the Menu with the mouse; it can be a function or None
         :return: Self reference
@@ -883,7 +884,7 @@ class Menu(Base):
 
     def set_onmouseleave(
             self,
-            onmouseleave: Optional[Callable[['Menu', EventType], Any]]
+            onmouseleave: Optional[Union[Callable[['Menu', EventType], Any], CallableNoArgsType]]
     ) -> 'Menu':
         """
         Set ``onmouseleave`` callback. This method is executed in
@@ -892,7 +893,7 @@ class Menu(Base):
 
         .. code-block:: python
 
-            onmouseleave(menu, event)
+            onmouseleave() <or> onmouseleave(menu, event)
 
         :param onmouseleave: Callback executed if user leaves the Menu with the mouse; it can be a function or None
         :return: Self reference
@@ -2335,7 +2336,10 @@ class Menu(Base):
 
         # Call onupdate callback
         if self._current._onupdate is not None:
-            self._current._onupdate(events, self._current)
+            try:
+                self._current._onupdate(events, self._current)
+            except TypeError:
+                self._current._onupdate()
         if self._current._disable_update:
             return False
 
@@ -2533,15 +2537,24 @@ class Menu(Base):
                 elif event.type == pygame.ACTIVEEVENT:
                     if event.gain == 1:  # Enter
                         if self._current._onwindowmouseover is not None:
-                            self._current._onwindowmouseover(self._current)
+                            try:
+                                self._current._onwindowmouseover(self._current)
+                            except TypeError:
+                                self._current._onwindowmouseover()
                             check_widget_mouseleave()
                     else:  # Leave
                         if self._current._onwindowmouseleave is not None:
-                            self._current._onwindowmouseleave(self._current)
+                            try:
+                                self._current._onwindowmouseleave(self._current)
+                            except TypeError:
+                                self._current._onwindowmouseleave()
                         if self._current._mouseover:
                             self._current._mouseover = False
                             if self._current._onmouseleave is not None:
-                                self._current._onmouseleave(self._current, event)
+                                try:
+                                    self._current._onmouseleave(self._current, event)
+                                except TypeError:
+                                    self._current._onmouseleave()
                             check_widget_mouseleave(force=True)
 
                 # Mouse motion. It changes the cursor of the mouse if enabled
@@ -2553,12 +2566,18 @@ class Menu(Base):
                         if self._current.collide(event):
                             self._current._mouseover = True
                             if self._current._onmouseover is not None:
-                                self._current._onmouseover(self._current, event)
+                                try:
+                                    self._current._onmouseover(self._current, event)
+                                except TypeError:
+                                    self._current._onmouseover()
                     else:
                         if not self._current.collide(event):
                             self._current._mouseover = False
                             if self._current._onmouseleave is not None:
-                                self._current._onmouseleave(self._current, event)
+                                try:
+                                    self._current._onmouseleave(self._current, event)
+                                except TypeError:
+                                    self._current._onmouseleave()
                             mouse_motion_event = None
                             check_widget_mouseleave(force=True)
 
@@ -2692,7 +2711,7 @@ class Menu(Base):
     def mainloop(
             self,
             surface: 'pygame.Surface',
-            bgfun: Optional[Union[Callable[['Menu'], Any], Callable[[], Any]]] = None,
+            bgfun: Optional[Union[Callable[['Menu'], Any], CallableNoArgsType]] = None,
             **kwargs
     ) -> 'Menu':
         """
@@ -2716,6 +2735,8 @@ class Menu(Base):
 
             draw(...):
                 bgfun() <or> bgfun(Menu)
+
+        Finally, mainloop can be disabled externally if menu.disable() is called.
 
         kwargs (Optional)
             - ``clear_surface``     (bool) – If ``True`` surface is cleared using ``theme.surface_clear_color``
@@ -2780,20 +2801,18 @@ class Menu(Base):
 
             # Draw the menu
             self.draw(surface=surface, clear_surface=clear_surface)
-            
+
             # Gather events by Menu
             if wait_for_event:
-              self.update([pygame.event.wait()])
-              if pygame.event.peek():
-                  self.update(pygame.event.get())     
-            else:
-              self.update(pygame.event.get())
+                self.update([pygame.event.wait()])
+            if not wait_for_event or pygame.event.peek():
+                self.update(pygame.event.get())
 
             # Flip contents to screen
             pygame.display.flip()
 
             # Menu closed or disabled
-            if not self.is_enabled() or disable_loop:
+            if not self.is_enabled() or disable_loop or self._current._mainloop:
                 self._current._mainloop = False
                 check_widget_mouseleave(force=True)
                 return self._current

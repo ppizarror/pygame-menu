@@ -72,7 +72,7 @@ from pygame_menu._types import Optional, ColorType, Tuple2IntType, NumberType, \
     PaddingType, Union, List, Tuple, Any, CallbackType, Dict, Callable, Tuple4IntType, \
     Tuple2BoolType, Tuple3IntType, NumberInstance, ColorInputType, EventType, \
     EventVectorType, EventListType, CursorInputType, CursorType, VectorInstance, \
-    Tuple2NumberType
+    Tuple2NumberType, CallableNoArgsType
 
 # This list stores the current widget which requested the mouseover status, and
 # the previous widget list which requested the mouseover. Each time the widget
@@ -207,8 +207,8 @@ def _check_widget_mouseleave(
 
 
 # Types
-CallbackMouseType = Optional[Union[Callable[['Widget', EventType], Any], Callable[[], Any]]]
-CallbackSelectType = Optional[Union[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any], Callable[[], Any]]]
+CallbackMouseType = Optional[Union[Callable[['Widget', EventType], Any], CallableNoArgsType]]
+CallbackSelectType = Optional[Union[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any], CallableNoArgsType]]
 WidgetBorderPositionType = Union[str, List[str], Tuple[str, ...]]
 WidgetBorderType = Tuple[ColorType, int, WidgetBorderPositionType, Tuple2IntType]
 

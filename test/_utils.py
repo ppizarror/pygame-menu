@@ -156,19 +156,26 @@ class PygameEventUtils(object):
         return event_obj
 
     @staticmethod
-    def joy_center(testmode: bool = True) -> List[EventType]:
+    def joy_center(
+            testmode: bool = True,
+            inlist: bool = True
+    ) -> List[EventType]:
         """
         Centers the joy.
 
         :param testmode: Event is in test mode
+        :param inlist: Event is within a list
         :return: Center joy event
         """
-        return [pygame.event.Event(pygame.JOYAXISMOTION,
-                                   {
-                                       'value': 0,
-                                       'axis': pygame_menu.controls.JOY_AXIS_Y,
-                                       'test': testmode
-                                   })]
+        event_obj = pygame.event.Event(pygame.JOYAXISMOTION,
+                                       {
+                                           'value': 0,
+                                           'axis': pygame_menu.controls.JOY_AXIS_Y,
+                                           'test': testmode
+                                       })
+        if inlist:
+            event_obj = [event_obj]
+        return event_obj
 
     @staticmethod
     def joy_hat_motion(

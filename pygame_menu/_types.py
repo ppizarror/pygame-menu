@@ -42,6 +42,7 @@ from typing_extensions import Literal  # lgtm [py/unused-import]
 
 # Common types
 ArgsType = Optional[Sequence[Any]]
+CallableNoArgsType = Callable[[], Any]
 CallbackType = Optional[Callable]
 EventListType = List[EventType]
 EventVectorType = Union[EventListType, Tuple[EventType]]
