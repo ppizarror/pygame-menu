@@ -43,6 +43,7 @@ __all__ = [
     'check_key_pressed_valid',
     'fill_gradient',
     'format_color',
+    'get_cursor',
     'get_finger_pos',
     'is_callable',
     'load_pygame_image_file',
@@ -350,6 +351,19 @@ def format_color(
     else:
         c = color
     return c.r, c.g, c.b, c.a
+
+
+def get_cursor() -> CursorInputType:
+    """
+    Returns the pygame cursor object.
+
+    :return: Cursor object
+    """
+    try:
+        return pygame.mouse.get_cursor()
+    except TypeError as e:
+        warn(str(e))
+    return None
 
 
 def get_finger_pos(menu: 'pygame_menu.Menu', event: EventType) -> Tuple2IntType:
