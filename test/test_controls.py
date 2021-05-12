@@ -1,6 +1,6 @@
 """
-pygame-obj
-https://github.com/ppizarror/pygame-obj
+pygame-menu
+https://github.com/ppizarror/pygame-menu
 
 TEST CONTROLS
 Test controls configuration.

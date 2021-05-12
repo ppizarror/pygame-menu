@@ -65,7 +65,8 @@ from pygame_menu.locals import POSITION_NORTHWEST, POSITION_SOUTHWEST, POSITION_
 from pygame_menu.sound import Sound
 from pygame_menu.utils import make_surface, assert_alignment, assert_color, \
     assert_position, assert_vector, is_callable, parse_padding, uuid4, \
-    mouse_motion_current_mouse_position, PYGAME_V2, set_pygame_cursor, warn
+    mouse_motion_current_mouse_position, PYGAME_V2, set_pygame_cursor, warn, \
+    get_cursor
 from pygame_menu.widgets.core.selection import Selection
 
 from pygame_menu._types import Optional, ColorType, Tuple2IntType, NumberType, \
@@ -597,7 +598,7 @@ class Widget(Base):
             check_widget_mouseleave(event)
 
         # Change cursor
-        previous_cursor = pygame.mouse.get_cursor()  # Previous cursor
+        previous_cursor = get_cursor()  # Previous cursor
         set_pygame_cursor(self._cursor)
 
         # Update previous state

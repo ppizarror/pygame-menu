@@ -42,7 +42,7 @@ import pygame_menu
 import pygame_menu.controls as ctrl
 
 from pygame_menu.locals import ORIENTATION_VERTICAL, ORIENTATION_HORIZONTAL
-from pygame_menu.utils import set_pygame_cursor
+from pygame_menu.utils import set_pygame_cursor, get_cursor
 from pygame_menu.widgets import Button
 
 
@@ -1504,11 +1504,13 @@ class FrameWidgetTest(unittest.TestCase):
         f3._id__repr__ = True
 
         # Get cursors
-        cur_none = pygame.mouse.get_cursor()
+        cur_none = get_cursor()
+        if cur_none is None:
+            return
         set_pygame_cursor(pygame_menu.locals.CURSOR_ARROW)
-        cur_arrow = pygame.mouse.get_cursor()
+        cur_arrow = get_cursor()
         set_pygame_cursor(pygame_menu.locals.CURSOR_HAND)
-        cur_hand = pygame.mouse.get_cursor()
+        cur_hand = get_cursor()
         set_pygame_cursor(cur_none)
 
         if PYGAME_V2:
@@ -1628,92 +1630,92 @@ class FrameWidgetTest(unittest.TestCase):
         # | .---------------------. |
         # .-------------------------.
         # vbottom <100px>
-        self.assertEqual(pygame.mouse.get_cursor(), cur_none)
+        self.assertEqual(get_cursor(), cur_none)
         menu.update(PygameEventUtils.topleft_rect_mouse_motion(f1))
         self.assertEqual(test, [True, False, False, False, False, False])
         self.assertEqual(WIDGET_MOUSEOVER, [f1, [f1, cur_none, []]])
-        self.assertEqual(pygame.mouse.get_cursor(), cur_hand)
+        self.assertEqual(get_cursor(), cur_hand)
 
         # Move to b1 inside f1
         menu.update(PygameEventUtils.topleft_rect_mouse_motion(b1))
         self.assertEqual(test, [True, True, False, False, False, False])
         self.assertEqual(WIDGET_MOUSEOVER, [b1, [b1, cur_hand, [f1, cur_none, []]]])
-        self.assertEqual(pygame.mouse.get_cursor(), cur_arrow)
+        self.assertEqual(get_cursor(), cur_arrow)
 
         # Move to f2, inside f1
         menu.update(PygameEventUtils.topleft_rect_mouse_motion(f2))
         self.assertEqual(test, [True, False, True, False, False, False])  # out from b1
         self.assertEqual(WIDGET_MOUSEOVER, [f2, [f2, cur_hand, [f1, cur_none, []]]])
-        self.assertEqual(pygame.mouse.get_cursor(), cur_hand)
+        self.assertEqual(get_cursor(), cur_hand)
 
         # Move to b2, inside f2+f1
         menu.update(PygameEventUtils.topleft_rect_mouse_motion(b2))
         self.assertEqual(test, [True, False, True, True, False, False])
         self.assertEqual(WIDGET_MOUSEOVER, [b2, [b2, cur_hand, [f2, cur_hand, [f1, cur_none, []]]]])
-        self.assertEqual(pygame.mouse.get_cursor(), cur_arrow)
+        self.assertEqual(get_cursor(), cur_arrow)
 
         # Move to f3
         menu.update(PygameEventUtils.topleft_rect_mouse_motion(f3))
         self.assertEqual(test, [True, False, True, False, True, False])  # out from b2
         self.assertEqual(WIDGET_MOUSEOVER, [f3, [f3, cur_hand, [f2, cur_hand, [f1, cur_none, []]]]])
-        self.assertEqual(pygame.mouse.get_cursor(), cur_hand)
+        self.assertEqual(get_cursor(), cur_hand)
 
         # Move to b3, inside f3+f2+f1
         menu.update(PygameEventUtils.topleft_rect_mouse_motion(b3))
         self.assertEqual(test, [True, False, True, False, True, True])
         self.assertEqual(WIDGET_MOUSEOVER, [b3, [b3, cur_hand, [f3, cur_hand, [f2, cur_hand, [f1, cur_none, []]]]]])
-        self.assertEqual(pygame.mouse.get_cursor(), cur_arrow)
+        self.assertEqual(get_cursor(), cur_arrow)
 
         # From b3, move mouse out from window
         menu.update(PygameEventUtils.leave_window())
         self.assertEqual(test, [False, False, False, False, False, False])
         self.assertEqual(WIDGET_MOUSEOVER, [None, []])
-        self.assertEqual(pygame.mouse.get_cursor(), cur_none)
+        self.assertEqual(get_cursor(), cur_none)
 
         # Move from out to inner widget (b3), this should call f1->f2->f3->b3
         menu.update(PygameEventUtils.topleft_rect_mouse_motion(b3))
         self.assertEqual(test, [True, False, True, False, True, True])
         self.assertEqual(WIDGET_MOUSEOVER, [b3, [b3, cur_hand, [f3, cur_hand, [f2, cur_hand, [f1, cur_none, []]]]]])
-        self.assertEqual(pygame.mouse.get_cursor(), cur_arrow)
+        self.assertEqual(get_cursor(), cur_arrow)
 
         # Move from b3->f2, this should call b3, f3 but not call f2 as this is actually over
         menu.update(PygameEventUtils.topleft_rect_mouse_motion(f2))
         self.assertEqual(test, [True, False, True, False, False, False])
         self.assertEqual(WIDGET_MOUSEOVER, [f2, [f2, cur_hand, [f1, cur_none, []]]])
-        self.assertEqual(pygame.mouse.get_cursor(), cur_hand)
+        self.assertEqual(get_cursor(), cur_hand)
 
         # Move from f2->b1, this should call f2
         menu.update(PygameEventUtils.topleft_rect_mouse_motion(b1))
         self.assertEqual(test, [True, True, False, False, False, False])
         self.assertEqual(WIDGET_MOUSEOVER, [b1, [b1, cur_hand, [f1, cur_none, []]]])
-        self.assertEqual(pygame.mouse.get_cursor(), cur_arrow)
+        self.assertEqual(get_cursor(), cur_arrow)
 
         # Move from b1 to outside the menu
         menu.update(PygameEventUtils.topleft_rect_mouse_motion((1, 1)))
         self.assertEqual(test, [False, False, False, False, False, False])
         self.assertEqual(WIDGET_MOUSEOVER, [None, []])
-        self.assertEqual(pygame.mouse.get_cursor(), cur_none)
+        self.assertEqual(get_cursor(), cur_none)
 
         # Move from out to b2, this should call f1->f2->b2
         menu.update(PygameEventUtils.topleft_rect_mouse_motion(b2))
         self.assertEqual(test, [True, False, True, True, False, False])
         self.assertEqual(WIDGET_MOUSEOVER, [b2, [b2, cur_hand, [f2, cur_hand, [f1, cur_none, []]]]])
         self.assertEqual(menu.get_mouseover_widget(), b2)
-        self.assertEqual(pygame.mouse.get_cursor(), cur_arrow)
+        self.assertEqual(get_cursor(), cur_arrow)
 
         # Unpack b2
         f2.unpack(b2)
         if test != [False, False, False, False, False, False]:
             return
         self.assertEqual(WIDGET_MOUSEOVER, [None, []])
-        self.assertEqual(pygame.mouse.get_cursor(), cur_none)
+        self.assertEqual(get_cursor(), cur_none)
 
         # Check b2
         menu.scroll_to_widget(b2)
         menu.update(PygameEventUtils.topleft_rect_mouse_motion(b2))
         self.assertEqual(test, [False, False, False, True, False, False])
         self.assertEqual(WIDGET_MOUSEOVER, [b2, [b2, cur_none, []]])
-        self.assertEqual(pygame.mouse.get_cursor(), cur_arrow)
+        self.assertEqual(get_cursor(), cur_arrow)
 
     def test_title(self) -> None:
         """
