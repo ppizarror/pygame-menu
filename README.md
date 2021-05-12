@@ -744,7 +744,7 @@ main()
 
 ## Author
 
-[Pablo Pizarro R.](https://ppizarror.com) | 2017-2020
+[Pablo Pizarro R.](https://ppizarror.com) | 2017 - 2020
 
 ### Contributors
 
