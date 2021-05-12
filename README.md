@@ -1,15 +1,13 @@
 <h1 align="center">
-  <a href="https://ppizarror.com/pygame-menu/" title="Pygame Menu">
-    <img alt="Pygame Menu" src="https://ppizarror.com/resources/other/python.png" width="200px" height="200px" />
-  </a>
+  <img alt="Pygame Menu" src="https://res.ppizarror.com/other/python.png" width="200px" height="200px" />
   <br /><br />
   Pygame Menu</h1>
 <p align="center">Menu for pygame, simple, lightweight and easy to use</p>
-<div align="center"><a href="https://ppizarror.com"><img alt="@ppizarror" src="https://ppizarror.com/badges/author.svg" /></a>
-<a href="https://opensource.org/licenses/MIT/"><img alt="License MIT" src="https://ppizarror.com/badges/licensemit.svg" /></a>
-<a href="https://www.python.org/downloads/"><img alt="Python 2.7" src="https://ppizarror.com/badges/python27.svg" /></a>
-<a href="https://www.python.org/downloads/"><img alt="Python 3.6" src="https://ppizarror.com/badges/python36.svg" /></a>
-<a href="https://www.pygame.org/"><img alt="Pygame 1.9.4" src="https://ppizarror.com/badges/pygame194.svg" /></a>
+<div align="center"><a href="https://ppizarror.com"><img alt="@ppizarror" src="https://res.ppizarror.com/badges/author.svg" /></a>
+<a href="https://opensource.org/licenses/MIT/"><img alt="License MIT" src="https://res.ppizarror.com//badges/licensemit.svg" /></a>
+<a href="https://www.python.org/downloads/"><img alt="Python 2.7" src="https://res.ppizarror.com//badges/python27.svg" /></a>
+<a href="https://www.python.org/downloads/"><img alt="Python 3.6" src="https://res.ppizarror.com//badges/python36.svg" /></a>
+<a href="https://www.pygame.org/"><img alt="Pygame 1.9.4" src="https://res.ppizarror.com//badges/pygame194.svg" /></a>
 <br><a href="https://lgtm.com/projects/g/ppizarror/pygame-menu/alerts/"><img alt="Total alerts" src="https://img.shields.io/lgtm/alerts/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18" /></a>
 <a href="https://lgtm.com/projects/g/ppizarror/pygame-menu/context:python"><img alt="Language grade: Python" src="https://img.shields.io/lgtm/grade/python/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18" /></a>
 </div><br />
@@ -22,22 +20,17 @@ Python library that can create a simple Menu for Pygame application, supports:
 4. Buttons
 
 Examples:
+
 #### Normal Button menu
 
 <p align="center">
-<img src="https://ppizarror.com/resources/images/pygame-menu/cap1.PNG?raw=true" width="60%" >
+    <img src="https://res.ppizarror.com/images/pygame-menu/example1.gif" width="60%" >
 </p>
 
 #### Text menu
 
 <p align="center">
-<img src="https://ppizarror.com/resources/images/pygame-menu/cap2.PNG?raw=true" width="60%"  >
-</p>
-
-#### Small submenu
-
-<p align="center">
-<img src="https://ppizarror.com/resources/images/pygame-menu/cap3.PNG?raw=true" width="60%" >
+    <img src="https://res.ppizarror.com/images/pygame-menu/example2.gif" width="60%"  >
 </p>
 
 ## Install
@@ -339,4 +332,4 @@ Default parameters of *Menu* and *TextMenu* are stored on the following files:
 This project is licensed under MIT [https://opensource.org/licenses/MIT/]
 
 ## Author
-<a href="https://ppizarror.com" title="ppizarror">Pablo Pizarro R.</a> | 2017-2019
+<a href="https://ppizarror.com" title="ppizarror">Pablo Pizarro R.</a> | 2017 - 2019
