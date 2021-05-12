@@ -33,3 +33,6 @@ pyproject.toml
 
 # Lock file
 *.lock
+
+# MacOS files
+.DS_Store
