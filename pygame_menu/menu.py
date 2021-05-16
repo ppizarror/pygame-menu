@@ -92,8 +92,8 @@ class Menu(Base):
 
     .. code-block:: python
 
-        onclose() <or> onclose(Menu)
-        onreset() <or> onreset(Menu)
+        onclose(menu) <or> onclose()
+        onreset(menu) <or> onreset()
 
     .. note::
 
@@ -746,7 +746,7 @@ class Menu(Base):
 
         .. code-block:: python
 
-            onupdate() <or> onupdate(event_list, Menu)
+            onupdate(event_list, menu) <or> onupdate()
 
         .. note::
 
@@ -772,7 +772,7 @@ class Menu(Base):
 
         .. code-block:: python
 
-            onclose() <or> onclose(Menu)
+            onclose(menu) <or> onclose()
 
         .. note::
 
@@ -800,7 +800,7 @@ class Menu(Base):
 
         .. code-block:: python
 
-            onreset() <or> onreset(Menu)
+            onreset(menu) <or> onreset()
 
         .. note::
 
@@ -827,7 +827,7 @@ class Menu(Base):
 
         .. code-block:: python
 
-            onwindowmouseover() <or> onwindowmouseover(menu)
+            onwindowmouseover(menu) <or> onwindowmouseover()
 
         :param onwindowmouseover: Callback executed if user enters the window with the mouse; it can be a function or None
         :return: Self reference
@@ -849,7 +849,7 @@ class Menu(Base):
 
         .. code-block:: python
 
-            onwindowmouseleave() <or> onwindowmouseleave(menu)
+            onwindowmouseleave(menu) <or> onwindowmouseleave()
 
         :param onwindowmouseleave: Callback executed if user leaves the window with the mouse; it can be a function or None
         :return: Self reference
@@ -871,7 +871,7 @@ class Menu(Base):
 
         .. code-block:: python
 
-            onmouseover() <or> onmouseover(menu, event)
+            onmouseover(menu, event) <or> onmouseover()
 
         :param onmouseover: Callback executed if user enters the Menu with the mouse; it can be a function or None
         :return: Self reference
@@ -893,7 +893,7 @@ class Menu(Base):
 
         .. code-block:: python
 
-            onmouseleave() <or> onmouseleave(menu, event)
+            onmouseleave(menu, event) <or> onmouseleave()
 
         :param onmouseleave: Callback executed if user leaves the Menu with the mouse; it can be a function or None
         :return: Self reference
@@ -2734,7 +2734,7 @@ class Menu(Base):
         .. code-block:: python
 
             draw(...):
-                bgfun() <or> bgfun(Menu)
+                bgfun(menu) <or> bgfun()
 
         Finally, mainloop can be disabled externally if menu.disable() is called.
 
