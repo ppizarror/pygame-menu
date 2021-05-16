@@ -159,7 +159,7 @@ class PygameEventUtils(object):
     def joy_center(
             testmode: bool = True,
             inlist: bool = True
-    ) -> List[EventType]:
+    ) -> EventListType:
         """
         Centers the joy.
 
@@ -305,12 +305,17 @@ class PygameEventUtils(object):
         return event_obj
 
     @staticmethod
-    def keydown(key: Union[int, VectorIntType], testmode: bool = True) -> EventListType:
+    def keydown(
+            key: Union[int, VectorIntType],
+            testmode: bool = True,
+            inlist: bool = True
+    ) -> EventListType:
         """
         Keydown list.
 
         :param key: Key to press
         :param testmode: Event is in test mode
+        :param inlist: Return event in a list
         :return: Event list
         """
         if isinstance(key, int):
@@ -319,6 +324,9 @@ class PygameEventUtils(object):
         for k in key:
             assert isinstance(k, int)
             ev.append(PygameEventUtils.key(k, keydown=True, inlist=False, testmode=testmode))
+        if not inlist:
+            assert len(ev) == 1
+            return ev[0]
         return ev
 
     @staticmethod
