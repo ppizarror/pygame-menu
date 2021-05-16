@@ -233,7 +233,7 @@ def main(test: bool = False) -> None:
             print(u'\t{0}\t=>\t{1}'.format(k, data[k]))
 
     settings_menu.add.clock(clock_format='%Y/%m/%d %H:%M', title_format='Clock: {0}')
-    settings_menu.add.button('Store data', data_fun)  # Call function
+    settings_menu.add.button('Store data', data_fun, button_id='store')  # Call function
     settings_menu.add.button('Restore original values', settings_menu.reset_value)
     settings_menu.add.button('Return to main menu', pygame_menu.events.BACK,
                              align=pygame_menu.locals.ALIGN_CENTER)
@@ -277,6 +277,7 @@ def main(test: bool = False) -> None:
         'Color in Hex: ',
         color_type='hex',
         hex_format='lower',
+        color_id='hex_color',
         onreturn=print_color
     )
 

@@ -45,11 +45,11 @@ menu = pygame_menu.Menu(
 )
 
 
-def add_dynamic_button() -> None:
+def add_dynamic_button() -> 'pygame_menu.widgets.Button':
     """
     Append a button to the menu on demand.
 
-    :return: None
+    :return: Appended button
     """
     print('Adding a button dynamically, total: {0}'.format(len(menu.get_widgets()) - 2))
     btn = menu.add.button(randrange(0, 10))
@@ -59,6 +59,7 @@ def add_dynamic_button() -> None:
         btn.set_title(str(count))
 
     btn.update_callback(_update_button)
+    return btn
 
 
 menu.add.text_input('Name: ', default='John Doe')

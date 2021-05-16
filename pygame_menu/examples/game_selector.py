@@ -102,7 +102,7 @@ def play_function(difficulty: List, font: 'pygame.font.Font', test: bool = False
     elif difficulty == 'HARD':
         f = font.render('Playing as a champion (hard)', True, (255, 255, 255))
     else:
-        raise Exception('unknown difficulty {0}'.format(difficulty))
+        raise ValueError('unknown difficulty {0}'.format(difficulty))
 
     # Draw random color and text
     bg_color = random_color()
@@ -114,10 +114,13 @@ def play_function(difficulty: List, font: 'pygame.font.Font', test: bool = False
     main_menu.disable()
     main_menu.full_reset()
 
+    frame = 0
+
     while True:
 
         # noinspection PyUnresolvedReferences
         clock.tick(60)
+        frame += 1
 
         # Application events
         events = pygame.event.get()
@@ -141,7 +144,7 @@ def play_function(difficulty: List, font: 'pygame.font.Font', test: bool = False
         pygame.display.flip()
 
         # If test returns
-        if test:
+        if test and frame == 2:
             break
 
 

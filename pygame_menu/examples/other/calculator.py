@@ -286,6 +286,11 @@ class CalculatorApp(object):
                 return str(int(x))
         except ValueError:
             pass
+        try:
+            x = float(x)
+        except ValueError:
+            pass
+
         return str(round(int(x), 0))
 
     def mainloop(self, test: bool) -> None:
