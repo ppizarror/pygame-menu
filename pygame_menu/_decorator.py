@@ -861,6 +861,18 @@ class Decorator(Base):
         self.force_cache_update(prev=decorid in self._decor_prev_id)
         return self
 
+    def is_enabled(self, decorid: str) -> bool:
+        """
+        Checks if a certain decoration is enabled or not. Raises ``IndexError``
+        if decoration was not found.
+
+        :param decorid: Decoration ID
+        :return: ``True`` if enabled
+        """
+        if decorid not in self._decor_enabled.keys():
+            raise IndexError('decoration<"{0}"> was not found'.format(decorid))
+        return self._decor_enabled[decorid]
+
     def remove(self, decorid: str) -> 'Decorator':
         """
         Remove a decoration from a given ID. Raises ``IndexError`` if decoration

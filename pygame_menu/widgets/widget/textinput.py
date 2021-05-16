@@ -136,7 +136,7 @@ class TextInput(Widget):
     _copy_paste_enabled: bool
     _current_underline_string: str  # Testing
     _cursor_color: ColorType
-    _cursor_ms_counter: NumberType
+    _cursor_ms_counter: NumberType  # Stores the ms between cursor switch
     _cursor_offset: NumberType
     _cursor_position: int
     _cursor_render: bool

@@ -195,9 +195,12 @@ class DecoratorTest(unittest.TestCase):
         self.assertFalse(test[0])
         btn.draw(surface)
         self.assertTrue(test[0])
+        self.assertRaises(IndexError, lambda: deco.is_enabled('unknown'))
+        self.assertTrue(deco.is_enabled(call_id))
 
         # Now disable the decoration
         deco.disable(call_id)
+        self.assertFalse(deco.is_enabled(call_id))
         test[0] = False
         btn.draw(surface)
         self.assertFalse(test[0])

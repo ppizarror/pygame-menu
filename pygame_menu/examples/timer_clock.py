@@ -140,6 +140,7 @@ def main(test: bool = False) -> None:
     timer = [0]
     dt = 1.0 / FPS
     timer_font = pygame_menu.font.get_font(pygame_menu.font.FONT_NEVIS, 100)
+    frame = 0
 
     # -------------------------------------------------------------------------
     # Create menus: Timer
@@ -249,6 +250,7 @@ def main(test: bool = False) -> None:
         # Tick clock
         clock.tick(FPS)
         timer[0] += dt
+        frame += 1
 
         # Title is evaluated at current level as the title of the base pointer
         # object (main_menu) can change if user opens submenus
@@ -283,7 +285,7 @@ def main(test: bool = False) -> None:
         pygame.display.flip()
 
         # At first loop returns
-        if test:
+        if test and frame == 2:
             break
 
 

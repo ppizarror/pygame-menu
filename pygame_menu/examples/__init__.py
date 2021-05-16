@@ -56,7 +56,7 @@ def create_example_window(
     :param pygame_menu_icon: Use pygame menu icon
     :param init_pygame: Init pygame
     :param center_window: Center the window
-    :param kwargs: Optional keyword arguments received by display set mode
+    :param kwargs: Optional keyword arguments received by display set_mode
     :return: Pygame surface from created display
     """
     assert len(title) > 0, 'title cannot be empty'
