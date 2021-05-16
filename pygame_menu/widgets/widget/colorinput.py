@@ -134,7 +134,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             colorinput_id: str = '',
             color_type: ColorInputColorType = COLORINPUT_TYPE_RGB,
             cursor_color: Tuple3IntType = (0, 0, 0),
-            cursor_ms_counter: NumberType = 500,
+            cursor_switch_ms: NumberType = 500,
             dynamic_width: bool = True,
             hex_format: ColorInputHexFormatType = COLORINPUT_HEX_FORMAT_NONE,
             input_separator: str = ',',
@@ -189,7 +189,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         super(ColorInput, self).__init__(
             copy_paste_enable=False,
             cursor_color=cursor_color,
-            cursor_ms_counter=cursor_ms_counter,
+            cursor_switch_ms=cursor_switch_ms,
             cursor_selection_enable=False,
             history=0,
             input_type=INPUT_TEXT,
