@@ -99,7 +99,7 @@ class Base(object):
         self._attributes[key] = value
         return self
 
-    def get_counter_attribute(self, key: str, incr: Any, default: Any = 0) -> NumberType:
+    def get_counter_attribute(self, key: str, incr: Any = 0, default: Any = 0) -> NumberType:
         """
         Get counter attribute.
 
