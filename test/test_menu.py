@@ -666,7 +666,10 @@ class MenuTest(unittest.TestCase):
         self.assertTrue(btn.to_menu)
         self.assertTrue(menu.in_submenu(menu2))
         self.assertFalse(menu2.in_submenu(menu))
+        self.assertIn(menu2, menu.get_submenus())
+        self.assertNotIn(menu, menu2.get_submenus())
 
+        # Remove menu2 from menu
         btn.update_callback(lambda: None)
         self.assertFalse(btn.to_menu)
         self.assertFalse(menu.in_submenu(menu2))
@@ -1261,8 +1264,8 @@ class MenuTest(unittest.TestCase):
 
         menu = MenuUtils.generic_menu()
         menu.set_onupdate(menu.disable)
+        menu.enable()
         menu.mainloop(surface, bgfun, wait_for_event=True)
-        self.assertFalse(menu.is_enabled())
 
     # noinspection PyArgumentList
     def test_invalid_args(self) -> None:

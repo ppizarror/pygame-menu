@@ -3252,6 +3252,20 @@ class Menu(Base):
         """
         return tuple(self._widgets)
 
+    def get_submenus(self) -> Tuple['Menu', ...]:
+        """
+        Return the Menu submenus as a tuple.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply to
+            :py:meth:`pygame_menu.menu.Menu.get_current` object.
+
+        :return: Submenus tuple
+        """
+        return tuple(self._submenus)
+
     def get_menubar(self) -> 'MenuBar':
         """
         Return menubar widget.
@@ -3280,7 +3294,11 @@ class Menu(Base):
         """
         return self._scrollarea
 
-    def get_widget(self, widget_id: str, recursive: bool = False) -> Optional['Widget']:
+    def get_widget(
+            self,
+            widget_id: str,
+            recursive: bool = False
+    ) -> Optional['Widget']:
         """
         Return a widget by a given ID from the Menu.
 
