@@ -496,6 +496,7 @@ class SolarSystemApp(object):
 
         :param test: Test status
         """
+        print('Press ESC to close the app')
         print('Press P to pause the planets')
         print('Press E to increase the rotation velocity')
         print('Press Q to decrease the rotation velocity')

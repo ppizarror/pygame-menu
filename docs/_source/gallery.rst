@@ -8,10 +8,10 @@ examples, simply execute these commands in a terminal:
 
 .. code-block:: bash
 
-    $> python -m pygame_menu.examples.simple
     $> python -m pygame_menu.examples.game_selector
     $> python -m pygame_menu.examples.multi_input
     $> python -m pygame_menu.examples.scroll_menu
+    $> python -m pygame_menu.examples.simple
     $> python -m pygame_menu.examples.timer_clock
 
 Other examples that show specific use cases of the menu are also provided:
@@ -22,6 +22,8 @@ Other examples that show specific use cases of the menu are also provided:
     $> python -m pygame_menu.examples.other.dynamic_button_append
     $> python -m pygame_menu.examples.other.dynamic_widget_update
     $> python -m pygame_menu.examples.other.image_background
+    $> python -m pygame_menu.examples.other.scrollbar
+    $> python -m pygame_menu.examples.other.scrollbar_area
     $> python -m pygame_menu.examples.other.ui_solar_system
 
 Them can also be imported as follows:

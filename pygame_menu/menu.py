@@ -2805,14 +2805,14 @@ class Menu(Base):
             # Gather events by Menu
             if wait_for_event:
                 self.update([pygame.event.wait()])
-            if not wait_for_event or pygame.event.peek():
+            if (not wait_for_event or pygame.event.peek()) and self.is_enabled():
                 self.update(pygame.event.get())
 
             # Flip contents to screen
             pygame.display.flip()
 
             # Menu closed or disabled
-            if not self.is_enabled() or disable_loop or self._current._mainloop:
+            if not self.is_enabled() or disable_loop:
                 self._current._mainloop = False
                 check_widget_mouseleave(force=True)
                 return self._current

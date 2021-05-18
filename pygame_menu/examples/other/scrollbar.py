@@ -97,7 +97,7 @@ def main(test: bool = False) -> None:
     :param test: Indicate function is being tested
     :return: None
     """
-    scr_size = (400, 600)
+    scr_size = (480, 480)
     screen = create_example_window('Example - Scrollbar', scr_size)
     world = make_world(int(scr_size[0] * 4), scr_size[1] * 3)
     screen.fill((120, 90, 130))

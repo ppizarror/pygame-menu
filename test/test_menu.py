@@ -1257,7 +1257,6 @@ class MenuTest(unittest.TestCase):
             Function executed on each mainloop iteration for testing
             waiting for events.
             """
-            print('run', test[1])
             test[0] = not test[0]
             test[1] += 1
             pygame.event.post(PygameEventUtils.joy_center(inlist=False))
@@ -1266,6 +1265,21 @@ class MenuTest(unittest.TestCase):
         menu.set_onupdate(menu.disable)
         menu.enable()
         menu.mainloop(surface, bgfun, wait_for_event=True)
+
+        # Test mainloop for a number of frames
+        test = [0]
+        menu = MenuUtils.generic_menu()
+
+        def bgfun() -> None:
+            """
+            Checks the number of frames.
+            """
+            test[0] += 1
+            if test[0] == 20:
+                self.assertEqual(test[0], menu._stats.loop)
+                menu.disable()
+
+        menu.mainloop(surface, bgfun)
 
     # noinspection PyArgumentList
     def test_invalid_args(self) -> None:
