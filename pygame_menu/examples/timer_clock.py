@@ -43,7 +43,7 @@ from typing import List, Tuple, Optional
 # Constants and global variables
 # -----------------------------------------------------------------------------
 ABOUT = ['pygame-menu {0}'.format(pygame_menu.__version__),
-         'Author: @{0}'.format(pygame_menu.__author__),
+         'Author: {0}'.format(pygame_menu.__author__),
          '',
          'Email: {0}'.format(pygame_menu.__email__)]
 COLOR_BACKGROUND = [128, 0, 128]

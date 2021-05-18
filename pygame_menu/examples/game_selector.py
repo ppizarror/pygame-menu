@@ -42,7 +42,7 @@ from typing import Tuple, Any, Optional, List
 # Constants and global variables
 # -----------------------------------------------------------------------------
 ABOUT = ['pygame-menu {0}'.format(pygame_menu.__version__),
-         'Author: @{0}'.format(pygame_menu.__author__),
+         'Author: {0}'.format(pygame_menu.__author__),
          'Email: {0}'.format(pygame_menu.__email__)]
 DIFFICULTY = ['EASY']
 FPS = 60
@@ -103,10 +103,10 @@ def play_function(difficulty: List, font: 'pygame.font.Font', test: bool = False
         f = font.render('Playing as a champion (hard)', True, (255, 255, 255))
     else:
         raise ValueError('unknown difficulty {0}'.format(difficulty))
+    f_esc = font.render('Press ESC to open the menu', True, (255, 255, 255))
 
     # Draw random color and text
     bg_color = random_color()
-    f_width = f.get_size()[0]
 
     # Reset main menu and disable
     # You also can set another menu, like a 'pause menu', or just use the same
@@ -131,7 +131,7 @@ def play_function(difficulty: List, font: 'pygame.font.Font', test: bool = False
                 if e.key == pygame.K_ESCAPE:
                     main_menu.enable()
 
-                    # Quit this function, then skip to loop of main-menu on line 250
+                    # Quit this function, then skip to loop of main-menu on line 256
                     return
 
         # Pass events to main_menu
@@ -140,7 +140,10 @@ def play_function(difficulty: List, font: 'pygame.font.Font', test: bool = False
 
         # Continue playing
         surface.fill(bg_color)
-        surface.blit(f, ((WINDOW_SIZE[0] - f_width) / 2, WINDOW_SIZE[1] / 2))
+        surface.blit(f, ((WINDOW_SIZE[0] - f.get_width()) / 2,
+                         WINDOW_SIZE[1] / 2 - f.get_height()))
+        surface.blit(f_esc, ((WINDOW_SIZE[0] - f_esc.get_width()) / 2,
+                             WINDOW_SIZE[1] / 2 + f_esc.get_height()))
         pygame.display.flip()
 
         # If test returns
