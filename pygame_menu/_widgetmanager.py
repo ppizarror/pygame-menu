@@ -514,7 +514,6 @@ class WidgetManager(Base):
                     ''.format(action.get_title())
                 )
 
-            self._menu._submenus.append(action)
             widget = pygame_menu.widgets.Button(title, button_id, self._menu._open, action)
             widget.to_menu = True
 
@@ -559,6 +558,11 @@ class WidgetManager(Base):
             widget.add_underline(underline_color, underline_offset, underline_width)
         widget.set_selection_callback(onselect)
         self._append_widget(widget)
+
+        # Add to submenu
+        if widget.to_menu:
+            self._menu._add_submenu(action, widget)
+
         return widget
 
     def color_input(
@@ -2623,7 +2627,6 @@ class WidgetManager(Base):
                     ''.format(menu.get_title())
                 )
 
-            self._menu._submenus.append(menu)
         else:
             raise ValueError('menu object is not a pygame_menu.Menu class')
 
@@ -2634,6 +2637,7 @@ class WidgetManager(Base):
         )
         self.configure_defaults_widget(widget)
         self._append_widget(widget)
+        self._menu._add_submenu(menu, widget)
 
         return widget
 
