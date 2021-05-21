@@ -130,7 +130,7 @@ class Button(Widget):
             assert self._menu.in_submenu(submenu), \
                 'pointed menu is not in submenu list of parent container'
             # noinspection PyProtectedMember
-            assert self._menu._remove_submenu(submenu), \
+            assert self._menu._remove_submenu(submenu, self), \
                 'submenu could not be removed'
             self.to_menu = False
 

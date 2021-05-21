@@ -755,7 +755,8 @@ class DropSelect(Widget):
 
         current_rect_bg = current.get_rect()
         current_rect_bg.x += title.get_width() + self._selection_box_margin[0]
-        current_rect_bg.y += (self._selection_box_inflate[1]) / 2 + vi + self._selection_box_margin[1]
+        current_rect_bg.y += int((self._selection_box_inflate[1]) / 2
+                                 + vi + self._selection_box_margin[1])
         current_rect_bg.width = self._selection_box_width
         current_rect_bg = current_rect_bg.inflate((self._selection_box_inflate[0],
                                                    self._selection_box_inflate[1] + 2 * vi))
@@ -766,9 +767,9 @@ class DropSelect(Widget):
 
         # Create arrows
         arrow = pygame.Rect(
-            title.get_width() + self._selection_box_margin[0] + self._selection_box_width - h,
-            self._selection_box_arrow_margin[2] + (self._selection_box_inflate[1] + vi / 2) / 2
-            + delta_title_height + self._selection_box_margin[1],
+            int(title.get_width() + self._selection_box_margin[0] + self._selection_box_width - h),
+            int(self._selection_box_arrow_margin[2] + (self._selection_box_inflate[1] + vi / 2) / 2
+                + delta_title_height + self._selection_box_margin[1]),
             h,
             h
         )
@@ -802,14 +803,14 @@ class DropSelect(Widget):
                                + 2 * self._selection_box_border_width)
 
         arrow_up = (
-            (arrow.right - w + h / 2 - h / 16, arrow.centery - h / 6 - h / 20),
-            (arrow.right - w + h / 2 + h / 4 - h / 16, arrow.centery + h / 4 - h / 20),
-            (arrow.right - w + h - h / 16, arrow.centery - h / 6 - h / 20)
+            (int(arrow.right - w + h / 2 - h / 16), int(arrow.centery - h / 6 - h / 20)),
+            (int(arrow.right - w + h / 2 + h / 4 - h / 16), int(arrow.centery + h / 4 - h / 20)),
+            (int(arrow.right - w + h - h / 16), int(arrow.centery - h / 6 - h / 20))
         )
         arrow_down = (
-            (arrow.right - w + h / 2 - h / 16, arrow.centery + h / 4 - h / 20),
-            (arrow.right - w + h / 2 + h / 4 - h / 16, arrow.centery - h / 6 - h / 20),
-            (arrow.right - w + h - h / 16, arrow.centery + h / 4 - h / 20)
+            (int(arrow.right - w + h / 2 - h / 16), int(arrow.centery + h / 4 - h / 20)),
+            (int(arrow.right - w + h / 2 + h / 4 - h / 16), int(arrow.centery - h / 6 - h / 20)),
+            (int(arrow.right - w + h - h / 16), int(arrow.centery + h / 4 - h / 20))
         )
         if not self._open_bottom:
             if not self.active:
@@ -827,7 +828,7 @@ class DropSelect(Widget):
                                      + self._selection_box_border_width,
                                      max(title.get_height() + self._selection_box_inflate[1],
                                          current_rect_bg.height))
-        self._surface.blit(title, (0, self._selection_box_inflate[1] / 2 + delta_title_height))
+        self._surface.blit(title, (0, int(self._selection_box_inflate[1] / 2 + delta_title_height)))
         pygame.draw.rect(self._surface, self._selection_box_bgcolor, current_rect_bg)
         pygame.draw.rect(self._surface, self._selection_box_border_color, current_rect_bg,
                          self._selection_box_border_width)
@@ -845,10 +846,12 @@ class DropSelect(Widget):
         new_current.blit(current, (0, 0))
         # new_current.fill((0, 0, 0))
         self._surface.blit(new_current,
-                           (title.get_width() + self._selection_box_margin[0]
-                            + self._selection_box_text_margin,
-                            self._selection_box_inflate[1] / 2 + vi - 1
-                            + self._selection_box_margin[1]))
+                           (
+                               int(title.get_width() + self._selection_box_margin[0]
+                                   + self._selection_box_text_margin),
+                               int(self._selection_box_inflate[1] / 2 + vi - 1
+                                   + self._selection_box_margin[1])
+                           ))
         if len(self._items) > 0:
             pygame.draw.polygon(self._surface, self._selection_box_arrow_color,
                                 arrow_right_pos)

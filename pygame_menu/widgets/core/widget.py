@@ -272,7 +272,8 @@ class Widget(Base):
     _margin: Tuple2IntType
     _max_height: List[Optional[bool]]
     _max_width: List[Optional[bool]]
-    _menu: Optional['pygame_menu.Menu']
+    _menu: Optional['pygame_menu.Menu']  # Menu which contains the Widget
+    _menu_hook: Optional['pygame_menu.Menu']  # Menu the Widget points to (submenu)
     _mouse_enabled: bool
     _mouseover: bool  # Check if mouse is over
     _mouseover_called: Optional[bool]  # Check if the mouseover/mouseleave callbacks were called
@@ -397,7 +398,8 @@ class Widget(Base):
         self._surface = None
 
         # Menu reference
-        self._menu = None
+        self._menu = None  # Menu which contains the widget
+        self._menu_hook = None  # Menu the widget points to. Modified by menu._add_submenu
 
         # Modified in set_font() method
         self._font = None

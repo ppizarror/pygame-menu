@@ -65,7 +65,7 @@ from pygame_menu.widgets.core.widget import check_widget_mouseleave
 # noinspection PyProtectedMember
 from pygame_menu._types import NumberType, Union, List, Tuple, Optional, EventType, \
     Tuple2IntType, MenuColumnMaxWidthType, MenuColumnMinWidthType, Any, MenuRowsType, \
-    Tuple2NumberType, VectorIntType, VectorInstance
+    Tuple2NumberType, VectorIntType, VectorInstance, NumberInstance
 
 EventListType = Union[EventType, List[EventType]]
 
@@ -422,7 +422,11 @@ class PygameEventUtils(object):
         :return: Event
         """
         assert isinstance(button, int) and button > 0
+        assert isinstance(x, NumberInstance)
+        assert isinstance(y, NumberInstance)
         assert_vector(rel, 2, int)
+        x = int(x)
+        y = int(y)
         event_obj = pygame.event.Event(evtype,
                                        {
                                            'button': button,
@@ -459,6 +463,8 @@ class PygameEventUtils(object):
         :param testmode: Event is in test mode
         :return: Event
         """
+        assert isinstance(x, NumberInstance)
+        assert isinstance(y, NumberInstance)
         if normalize:
             assert menu is not None, \
                 'menu reference must be provided if normalize is used (related to touch events)'

@@ -1659,6 +1659,8 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(drop.get_value(), ([('epic', 2), ('item3', 3)], [1, 4]))
         self.assertEqual(drop._get_current_selected_text(), '2 selected')
 
+        # Change drop selected text method
+
         # Set max limit
         drop._max_selected = 3
         self.assertEqual(drop.get_total_selected(), 2)
@@ -2707,7 +2709,7 @@ class WidgetsTest(unittest.TestCase):
                           lambda: menu.add.toggle_switch('toggle', 'false', onchange=onchange, infinite=False))
 
         # Test single click toggle
-        switch_single = menu.add.toggle_switch('toggle', False, onchange=onchange, single_click=True)
+        switch_single = menu.add.toggle_switch('toggle', False, onchange=onchange)
         self.assertTrue(switch_single._infinite)  # Infinite sets to True if using single click
 
         self.assertFalse(switch_single.get_value())

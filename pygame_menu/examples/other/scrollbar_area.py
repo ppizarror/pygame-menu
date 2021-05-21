@@ -92,7 +92,7 @@ def make_world(width: int, height: int, text: str = '') -> 'pygame.Surface':
             pygame.draw.line(world, (255, 0, 0), (x, 0), (x, 20))
             pygame.draw.line(world, (180, 180, 180), (x, 80), (x, height))
             tick = font.render(str(x), True, (255, 0, 0))
-            world.blit(tick, (x - tick.get_width() / 2, 25))
+            world.blit(tick, (int(x - tick.get_width() / 2), 25))
         else:
             pygame.draw.line(world, (255, 0, 0), (x, 0), (x, 10))
     for y in range(0, height, 10):
@@ -100,7 +100,7 @@ def make_world(width: int, height: int, text: str = '') -> 'pygame.Surface':
             pygame.draw.line(world, (255, 0, 0), (0, y), (20, y))
             pygame.draw.line(world, (180, 180, 180), (80, y), (width, y))
             tick = font.render(str(y), True, (255, 0, 0))
-            world.blit(tick, (25, y - tick.get_height() / 2))
+            world.blit(tick, (25, int(y - tick.get_height() / 2)))
         else:
             pygame.draw.line(world, (255, 0, 0), (0, y), (10, y))
 

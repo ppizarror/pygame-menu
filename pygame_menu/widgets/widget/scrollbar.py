@@ -206,15 +206,15 @@ class ScrollBar(Widget):
         """
         opp_orientation = 1 if self._orientation == 0 else 0  # Opposite of orientation
         dims = ('width', 'height')
-        setattr(self._rect, dims[self._orientation], self._page_ctrl_length)
+        setattr(self._rect, dims[self._orientation], int(self._page_ctrl_length))
         setattr(self._rect, dims[opp_orientation], self._page_ctrl_thick)
         self._slider_rect = pygame.Rect(0, 0, int(self._rect.width), int(self._rect.height))
-        setattr(self._slider_rect, dims[self._orientation], self._page_step)
+        setattr(self._slider_rect, dims[self._orientation], int(self._page_step))
         setattr(self._slider_rect, dims[opp_orientation], self._page_ctrl_thick)
 
         # Update slider position according to the current one
         pos = ('x', 'y')
-        setattr(self._slider_rect, pos[self._orientation], self._slider_position)
+        setattr(self._slider_rect, pos[self._orientation], int(self._slider_position))
         self._slider_rect = self._slider_rect.inflate(-2 * self._slider_pad,
                                                       -2 * self._slider_pad)
 
@@ -346,7 +346,8 @@ class ScrollBar(Widget):
             lit_rect = pygame.Rect(self._slider_rect)
             slider_rect = lit_rect.inflate(-self._shadow_offset * 2, -self._shadow_offset * 2)
             shadow_rect = lit_rect.inflate(-self._shadow_offset, -self._shadow_offset)
-            shadow_rect = shadow_rect.move(self._shadow_tuple[0] / 2, self._shadow_tuple[1] / 2)
+            shadow_rect = shadow_rect.move(int(self._shadow_tuple[0] / 2),
+                                           int(self._shadow_tuple[1] / 2))
 
             pygame.draw.rect(self._surface, self._font_selected_color, lit_rect)
             pygame.draw.rect(self._surface, self._shadow_color, shadow_rect)

@@ -47,7 +47,7 @@ icon = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU).ge
 pygame.display.set_icon(icon)
 
 # Set example, only this should change
-EXAMPLE = 'MENU_LINK'
+EXAMPLE = 'DROPSELECT_MULTIPLE'
 
 # Create example
 menu: 'pygame_menu.Menu'
@@ -263,6 +263,9 @@ elif EXAMPLE == 'MENU_LINK':
 
 
     def open_link(*args) -> None:
+        """
+        Opens link.
+        """
         link: 'pygame_menu.widgets.MenuLink' = args[-1]
         link.open()
 

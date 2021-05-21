@@ -140,10 +140,10 @@ def play_function(difficulty: List, font: 'pygame.font.Font', test: bool = False
 
         # Continue playing
         surface.fill(bg_color)
-        surface.blit(f, ((WINDOW_SIZE[0] - f.get_width()) / 2,
-                         WINDOW_SIZE[1] / 2 - f.get_height()))
-        surface.blit(f_esc, ((WINDOW_SIZE[0] - f_esc.get_width()) / 2,
-                             WINDOW_SIZE[1] / 2 + f_esc.get_height()))
+        surface.blit(f, (int((WINDOW_SIZE[0] - f.get_width()) / 2),
+                         int(WINDOW_SIZE[1] / 2 - f.get_height())))
+        surface.blit(f_esc, (int((WINDOW_SIZE[0] - f_esc.get_width()) / 2),
+                             int(WINDOW_SIZE[1] / 2 + f_esc.get_height())))
         pygame.display.flip()
 
         # If test returns
