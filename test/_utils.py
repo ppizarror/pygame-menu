@@ -471,8 +471,6 @@ class PygameEventUtils(object):
             display_size = menu.get_window_size()
             x /= display_size[0]
             y /= display_size[1]
-        x = int(x)
-        y = int(y)
         event_obj = pygame.event.Event(evtype,
                                        {
                                            'test': testmode,
