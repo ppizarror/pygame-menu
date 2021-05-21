@@ -739,6 +739,23 @@ class MenuTest(unittest.TestCase):
         self.assertRaises(ValueError, lambda: menu3.add.button('31', menu))
         self.assertRaises(ValueError, lambda: menu3.add.button('31', menu2))
 
+        # Test update action
+        menu.clear()
+        menu2.clear()
+
+        b12 = menu.add.button('btn12', menu2)
+        b23 = menu2.add.button('btn23', menu3)
+        self.assertEqual(menu.get_submenus(), (menu2,))
+        self.assertEqual(menu.get_submenus(recursive=True), (menu2, menu3))
+        self.assertEqual(menu._submenus, {menu2: [b12]})
+        self.assertEqual(menu2._submenus, {menu3: [b23]})
+
+        b12.update_callback(lambda: print('epic'))
+        self.assertEqual(menu.get_submenus(), ())
+        self.assertEqual(menu.get_submenus(recursive=True), ())
+        self.assertEqual(menu._submenus, {})
+        self.assertEqual(menu2._submenus, {menu3: [b23]})
+
     def test_centering(self) -> None:
         """
         Test centering menu.

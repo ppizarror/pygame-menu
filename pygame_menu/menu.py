@@ -3098,8 +3098,7 @@ class Menu(Base):
         if len(self._widgets) == 0:
             return False
 
-        # This stores +/-1 if the index increases or decreases
-        # Used by non-selectable selection
+        # This stores +/-1 if the index increases or decreases, used by non-selectable selection
         if dwidget == 0:
             if new_index < self._index:
                 dwidget = -1
