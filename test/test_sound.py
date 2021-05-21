@@ -96,6 +96,8 @@ class SoundTest(unittest.TestCase):
         """
         Test load sounds.
         """
+        if SYS_PLATFORM_OSX:
+            return
         self.assertFalse(self.sound.set_sound(pygame_menu.sound.SOUND_TYPE_CLICK_MOUSE, None))
         self.assertRaises(ValueError, lambda: self.sound.set_sound('none', None))
         self.assertRaises(IOError,

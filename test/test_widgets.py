@@ -1770,6 +1770,7 @@ class WidgetsTest(unittest.TestCase):
             _items = select.get_items()
             _items.pop(_items.index(s_val[0]))
             select.update_items(_items)
+            self.assertEqual(select.get_scroll_value_percentage('any'), -1)
             select.make_selection_drop()
 
         menu = MenuUtils.generic_menu()
@@ -1785,6 +1786,13 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(select1.get_index(), -1)
         self.assertEqual(select1.get_items(), [('b',), ('c',), ('d',), ('e',), ('f',)])
         b_sel.apply()
+
+        # Update by value
+        select1.set_value('b')
+        self.assertEqual(select1.get_index(), 0)
+        select1.set_value('e')
+        self.assertEqual(select1.get_index(), 3)
+        self.assertRaises(ValueError, lambda: select1.set_value('unknown'))
 
     def test_dropselect(self) -> None:
         """
