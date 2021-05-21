@@ -112,7 +112,7 @@ SOUND_EXAMPLES = (SOUND_EXAMPLE_CLICK_MOUSE, SOUND_EXAMPLE_CLOSE_MENU, SOUND_EXA
                   SOUND_EXAMPLE_KEY_DELETE, SOUND_EXAMPLE_OPEN_MENU, SOUND_EXAMPLE_WIDGET_SELECTION)
 
 # Stores global reference that marks sounds as initialized
-SOUND_INITIALIZED = [False]
+SOUND_INITIALIZED = [False, True]
 
 
 class Sound(Base):
@@ -168,6 +168,7 @@ class Sound(Base):
         if mixer_missing:
             warn('pygame mixer module could not be found, NotImplementedError'
                  'has been raised. Sound support is disabled')
+            SOUND_INITIALIZED[1] = False
 
         # Initialize sounds if not initialized
         if not mixer_missing and \
@@ -325,7 +326,7 @@ class Sound(Base):
             raise ValueError('sound type not valid, check the manual')
 
         # If file is none disable the sound
-        if sound_file is None:
+        if sound_file is None or not SOUND_INITIALIZED[1]:
             self._sound[sound_type] = {}
             return False
 
