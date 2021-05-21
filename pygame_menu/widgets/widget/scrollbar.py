@@ -209,7 +209,7 @@ class ScrollBar(Widget):
         setattr(self._rect, dims[self._orientation], self._page_ctrl_length)
         setattr(self._rect, dims[opp_orientation], self._page_ctrl_thick)
         self._slider_rect = pygame.Rect(0, 0, int(self._rect.width), int(self._rect.height))
-        setattr(self._slider_rect, dims[self._orientation], self._page_step)
+        setattr(self._slider_rect, dims[self._orientation], int(self._page_step))
         setattr(self._slider_rect, dims[opp_orientation], self._page_ctrl_thick)
 
         # Update slider position according to the current one
