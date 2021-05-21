@@ -1706,6 +1706,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(drop2._get_current_selected_text(), 'nice 1')
         self.assertEqual(drop2._default_value, [])
         self.assertEqual(drop2._index, 0)
+        self.assertRaises(ValueError, lambda: drop2.set_value('not epic'))
 
         # Reset
         drop2.reset_value()
@@ -1759,40 +1760,9 @@ class WidgetsTest(unittest.TestCase):
         drop2._option_buttons[1].apply()
         self.assertEqual(test[0], [0, 1])
 
-        # Test update list
-        def test_update(select: 'pygame_menu.widgets.DropSelect'):
-            """
-            Update list event.
-            """
-            if select.get_index() == -1:
-                return
-            s_val = select.get_value()
-            _items = select.get_items()
-            _items.pop(_items.index(s_val[0]))
-            select.update_items(_items)
-            self.assertEqual(select.get_scroll_value_percentage('any'), -1)
-            select.make_selection_drop()
-
-        menu = MenuUtils.generic_menu()
-
-        select1 = menu.add.dropselect('Subject Id',
-                                      items=[('a',), ('b',), ('c',), ('d',), ('e',), ('f',)],
-                                      dropselect_id='s0')
-        b_sel = menu.add.button('One', test_update, select1)
-        b_sel.apply()
-        select1.set_value(0)
-        self.assertEqual(select1.get_value(), (('a',), 0))
-        b_sel.apply()
-        self.assertEqual(select1.get_index(), -1)
-        self.assertEqual(select1.get_items(), [('b',), ('c',), ('d',), ('e',), ('f',)])
-        b_sel.apply()
-
-        # Update by value
-        select1.set_value('b')
-        self.assertEqual(select1.get_index(), 0)
-        select1.set_value('e')
-        self.assertEqual(select1.get_index(), 3)
-        self.assertRaises(ValueError, lambda: select1.set_value('unknown'))
+        # Test none drop frame
+        drop2._drop_frame = None
+        self.assertEqual(drop2.get_scroll_value_percentage('any'), -1)
 
     def test_dropselect(self) -> None:
         """
@@ -2313,6 +2283,42 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(drop3.get_focus_rect(), pygame.Rect(108 + 100, 468 + 150, 320, rh))
         menu2.translate(0, 0)
         self.assertEqual(drop3.get_focus_rect(), pygame.Rect(108, 468, 320, rh))
+
+        # Test update list
+        def test_update(select: 'pygame_menu.widgets.DropSelect'):
+            """
+            Update list event.
+            """
+            if select.get_index() == -1:
+                return
+            s_val = select.get_value()
+            _items = select.get_items()
+            _items.pop(_items.index(s_val[0]))
+            select.update_items(_items)
+            self.assertEqual(select.get_scroll_value_percentage('any'), -1)
+            select.make_selection_drop()
+
+        menu = MenuUtils.generic_menu()
+
+        select1 = menu.add.dropselect('Subject Id',
+                                      items=[('a',), ('b',), ('c',), ('d',), ('e',), ('f',)],
+                                      dropselect_id='s0')
+        b_sel = menu.add.button('One', test_update, select1)
+        b_sel.apply()
+        select1.set_value(0)
+        self.assertEqual(select1.get_value(), (('a',), 0))
+        b_sel.apply()
+        self.assertEqual(select1.get_index(), -1)
+        self.assertEqual(select1.get_items(), [('b',), ('c',), ('d',), ('e',), ('f',)])
+        b_sel.apply()
+
+        # Update by value
+        select1.set_value('b')
+        self.assertEqual(select1.get_index(), 0)
+        select1.set_value('e')
+        self.assertEqual(select1.get_index(), 3)
+        self.assertRaises(ValueError, lambda: select1.set_value('unknown'))
+        b_sel.apply()  # to -1
 
     def test_none(self) -> None:
         """
