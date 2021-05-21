@@ -663,6 +663,7 @@ class MenuTest(unittest.TestCase):
         menu = MenuUtils.generic_menu()
         menu2 = MenuUtils.generic_menu()
         btn = menu.add.button('btn', menu2)
+
         self.assertTrue(btn.to_menu)
         self.assertTrue(menu.in_submenu(menu2))
         self.assertFalse(menu2.in_submenu(menu))
@@ -681,6 +682,38 @@ class MenuTest(unittest.TestCase):
         self.assertRaises(ValueError, lambda: menu.add.button('to self', menu))
         menu.add.button('to2', menu2)
         self.assertRaises(ValueError, lambda: menu2.add.button('to1', menu))
+
+        # Test duplicated submenu
+        menu_d = MenuUtils.generic_menu()
+        b1 = menu_d.add.button('btn', menu, button_id='1')
+        b2 = menu_d.add.button('btn2', menu, button_id='2')
+
+        self.assertEqual(b1._menu_hook, menu)
+        self.assertEqual(b2._menu_hook, menu)
+
+        self.assertIn(b1, menu_d._submenus[menu])
+        self.assertIn(b2, menu_d._submenus[menu])
+
+        menu_d.remove_widget('1')
+        self.assertNotIn(b1, menu_d._submenus[menu])
+        self.assertIn(b2, menu_d._submenus[menu])
+        menu_d.remove_widget('2')
+
+        self.assertEqual(menu_d._submenus, {})
+
+        # Clear menu
+        menu.clear()
+        self.assertIsNone(btn._menu)
+
+        # Add more submenus
+        menu3 = MenuUtils.generic_menu()
+        menu.add.button('btn12', menu2)
+        menu2.add.button('btn23', menu3)
+
+        # Clear menu
+        menu._test_print_widgets()
+        self.assertEqual(menu.get_submenus(), (menu2, ))
+        self.assertEqual(menu.get_submenus(recursive=True), (menu2, menu3))
 
     def test_centering(self) -> None:
         """
