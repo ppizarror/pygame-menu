@@ -707,13 +707,37 @@ class MenuTest(unittest.TestCase):
 
         # Add more submenus
         menu3 = MenuUtils.generic_menu()
-        menu.add.button('btn12', menu2)
-        menu2.add.button('btn23', menu3)
+        ba = menu.add.button('btn12A', menu2)
+        bb = menu.add.button('btn12B', menu2)
+        bc = menu.add.button('btn12C', menu2)
+        b23 = menu2.add.button('btn23', menu3)
 
-        # Clear menu
         menu._test_print_widgets()
-        self.assertEqual(menu.get_submenus(), (menu2, ))
+        self.assertEqual(menu.get_submenus(), (menu2,))
         self.assertEqual(menu.get_submenus(recursive=True), (menu2, menu3))
+        self.assertEqual(menu._submenus[menu2], [ba, bb, bc])
+
+        # Remove links upon submenu disappears
+        menu.remove_widget(bb)
+        self.assertEqual(menu.get_submenus(), (menu2,))
+        self.assertEqual(menu._submenus[menu2], [ba, bc])
+        menu.remove_widget(ba)
+        self.assertEqual(menu.get_submenus(), (menu2,))
+        self.assertEqual(menu._submenus[menu2], [bc])
+        menu.remove_widget(bc)
+        self.assertEqual(menu.get_submenus(), ())
+        self.assertEqual(menu.get_submenus(recursive=True), ())
+        self.assertEqual(menu._submenus, {})
+
+        self.assertEqual(b23._menu, menu2)
+        menu2.clear()
+        self.assertIsNone(b23._menu)
+
+        # Test circular
+        menu.add.button('12', menu2)
+        menu2.add.button('23', menu3)
+        self.assertRaises(ValueError, lambda: menu3.add.button('31', menu))
+        self.assertRaises(ValueError, lambda: menu3.add.button('31', menu2))
 
     def test_centering(self) -> None:
         """
