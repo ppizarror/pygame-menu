@@ -315,7 +315,8 @@ class DropSelectMultiple(DropSelect):
         .. note::
 
             If the length of the list is different than the previous one, the new
-            index of the select will be the first item of the list.
+            index of the select will be the ``-1``, that is, same as the unselected
+            status.
 
         :param items: New drop select items; format ``[('Item1', a, b, c...), ('Item2', d, e, f...)]``
         :return: None
@@ -354,7 +355,7 @@ class DropSelectMultiple(DropSelect):
         the text if ``item`` is a string, or the index if ``item`` is an integer.
         This method raises ``ValueError`` if no item found.
 
-        For example, if widget item list is ``[['a',0],['b',1],['a',2]]``:
+        For example, if widget item list is ``[['a', 0], ['b', 1], ['a', 2]]``:
 
         - *widget*.set_value('a') -> Widget selects the first item (index 0)
         - *widget*.set_value(2) -> Widget selects the third item (index 2)
@@ -380,7 +381,8 @@ class DropSelectMultiple(DropSelect):
                     found = True
                     break
             if not found:
-                raise ValueError('no value "{}" found in drop select multiple'.format(item))
+                raise ValueError('no value "{}" found in drop select multiple'
+                                 ''.format(item))
         elif isinstance(item, int):
             assert -1 <= item < len(self._items), \
                 'item index must be greater than zero and lower than the number ' \

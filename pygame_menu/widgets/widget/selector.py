@@ -321,7 +321,7 @@ class Selector(Widget):
             self._surface.blit(title, (0, int(self._style_fancy_box_inflate[1] / 2)))
             current_rect_bg = current.get_rect()
             current_rect_bg.x += title.get_width() + self._style_fancy_box_margin[0]
-            current_rect_bg.y += int(self._style_fancy_box_inflate[1] / 2 \
+            current_rect_bg.y += int(self._style_fancy_box_inflate[1] / 2
                                      + self._style_fancy_box_margin[1])
             current_rect_bg.width += 2 * (self._style_fancy_arrow_margin[0]
                                           + self._style_fancy_arrow_margin[1]
@@ -352,6 +352,14 @@ class Selector(Widget):
         :return: Selected index
         """
         return self._index
+
+    def get_items(self) -> Union[List[Tuple[Any, ...]], List[str]]:
+        """
+        Return a copy of the select items.
+
+        :return: Select items list
+        """
+        return self._items.copy()
 
     def get_value(self) -> Tuple[Union[Tuple[Any, ...], str], int]:
         """
@@ -391,7 +399,7 @@ class Selector(Widget):
         the text if ``item`` is a string, or the index if ``item`` is an integer.
         This method raises ``ValueError`` if no item found.
 
-        For example, if widget item list is ``[['a',0],['b',1],['a',2]]``:
+        For example, if widget item list is ``[['a', 0], ['b', 1], ['a', 2]]``:
 
         - *widget*.set_value('a') -> Widget selects the first item (index 0)
         - *widget*.set_value(2) -> Widget selects the third item (index 2)

@@ -634,7 +634,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(selector.get_value()[0][0], '4 - Easy')
 
         # Test fancy selector
-        menu.add.selector(
+        sel_fancy = menu.add.selector(
             'Fancy ',
             [('1 - Easy', 'EASY'),
              ('2 - Medium', 'MEDIUM'),
@@ -642,6 +642,9 @@ class WidgetsTest(unittest.TestCase):
             default=1,
             style=pygame_menu.widgets.widget.selector.SELECTOR_STYLE_FANCY
         )
+        self.assertEqual(sel_fancy.get_items(), [('1 - Easy', 'EASY'),
+                                                 ('2 - Medium', 'MEDIUM'),
+                                                 ('3 - Hard', 'HARD')])
 
     # noinspection PyArgumentEqualDefault,PyTypeChecker
     def test_colorinput(self) -> None:
@@ -1597,8 +1600,6 @@ class WidgetsTest(unittest.TestCase):
         """
         Test dropselect multiple widget.
         """
-        if SYS_PLATFORM_OSX:
-            return
         theme = pygame_menu.themes.THEME_DEFAULT.copy()
         theme.widget_font_size = 25
         menu = MenuUtils.generic_menu(mouse_motion_selection=True, theme=theme)
@@ -1609,7 +1610,7 @@ class WidgetsTest(unittest.TestCase):
         drop = pygame_menu.widgets.DropSelectMultiple('dropsel', items, open_middle=True, selection_box_height=5)
         self.assertNotEqual(id(items), id(drop._items))
         menu.add.generic_widget(drop, configure_defaults=True)
-        self.assertEqual(drop._selection_box_width, 225)
+        self.assertEqual(drop._selection_box_width, 225 if not SYS_PLATFORM_OSX else 226)
         drop.make_selection_drop()
 
         # Check drop is empty
@@ -1695,7 +1696,7 @@ class WidgetsTest(unittest.TestCase):
         # Use manager
         drop2 = menu.add.dropselect_multiple('nice', [('This is a really long selection item', 1), ('epic', 2)],
                                              placeholder_selected='nice {0}', placeholder='epic', max_selected=1)
-        self.assertEqual(drop2._selection_box_width, 134)
+        self.assertEqual(drop2._selection_box_width, 134 if not SYS_PLATFORM_OSX else 135)
         self.assertEqual(drop2._get_current_selected_text(), 'epic')
         drop2.set_value('epic', process_index=True)
         self.assertEqual(drop2.get_index(), [1])
@@ -1705,6 +1706,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(drop2._get_current_selected_text(), 'nice 1')
         self.assertEqual(drop2._default_value, [])
         self.assertEqual(drop2._index, 0)
+        self.assertRaises(ValueError, lambda: drop2.set_value('not epic'))
 
         # Reset
         drop2.reset_value()
@@ -1758,12 +1760,14 @@ class WidgetsTest(unittest.TestCase):
         drop2._option_buttons[1].apply()
         self.assertEqual(test[0], [0, 1])
 
+        # Test none drop frame
+        drop2._drop_frame = None
+        self.assertEqual(drop2.get_scroll_value_percentage('any'), -1)
+
     def test_dropselect(self) -> None:
         """
         Test dropselect widget.
         """
-        if SYS_PLATFORM_OSX:
-            return
         menu = MenuUtils.generic_menu(mouse_motion_selection=True, theme=THEME_NON_FIXED_TITLE)
         items = [('This is a really long selection item', 1), ('epic', 2)]
         for i in range(10):
@@ -1773,7 +1777,8 @@ class WidgetsTest(unittest.TestCase):
                                               selection_option_font_size=int(0.75 * menu._theme.widget_font_size),
                                               placeholder_add_to_selection_box=False)
         menu.add.generic_widget(drop, configure_defaults=True)
-        self.assertEqual(drop._selection_box_width, 207 if PYGAME_V2 else 208)
+        self.assertEqual(drop._selection_box_width,
+                         (207 if PYGAME_V2 else 208) if not SYS_PLATFORM_OSX else 209)
         drop.make_selection_drop()
         self.assertEqual(drop.get_frame_depth(), 0)
         drop.render()
@@ -1828,8 +1833,10 @@ class WidgetsTest(unittest.TestCase):
                    (-1, -1, -1, 0, 428, 356, 40, 261, 348, 0, 583),
                    (1, 0, 0, 0, 0, 1, 1))),)
             ))
-        self.assertEqual(drop._drop_frame.get_attribute('height'), 135 if PYGAME_V2 else 138)
-        self.assertEqual(drop._drop_frame.get_attribute('width'), 187 if PYGAME_V2 else 188)
+        self.assertEqual(drop._drop_frame.get_attribute('height'),
+                         (135 if PYGAME_V2 else 138) if not SYS_PLATFORM_OSX else 141)
+        self.assertEqual(drop._drop_frame.get_attribute('width'),
+                         (187 if PYGAME_V2 else 188) if not SYS_PLATFORM_OSX else 189)
 
         # Test events
         self.assertFalse(drop.active)
@@ -1902,10 +1909,11 @@ class WidgetsTest(unittest.TestCase):
         self.assertFalse(drop.active)
 
         # Touch middle
-        self.assertTrue(drop._touchscreen_enabled)
-        drop.update(PygameEventUtils.middle_rect_click(
-            drop.get_focus_rect(), evtype=pygame.FINGERUP, menu=drop.get_menu()))
-        self.assertTrue(drop.active)
+        if not SYS_PLATFORM_OSX:
+            self.assertTrue(drop._touchscreen_enabled)
+            drop.update(PygameEventUtils.middle_rect_click(
+                drop.get_focus_rect(), evtype=pygame.FINGERUP, menu=drop.get_menu()))
+            self.assertTrue(drop.active)
 
         # Test focus
         if not drop.active:
@@ -1918,12 +1926,20 @@ class WidgetsTest(unittest.TestCase):
                               4: ((0, 484), (600, 484), (600, 600), (0, 600))}
                              )
         else:
-            self.assertEqual(menu._draw_focus_widget(surface, drop),
-                             {1: ((0, 0), (600, 0), (600, 306), (0, 306)),
-                              2: ((0, 307), (259, 307), (259, 486), (0, 486)),
-                              3: ((468, 307), (600, 307), (600, 486), (468, 486)),
-                              4: ((0, 487), (600, 487), (600, 600), (0, 600))}
-                             )
+            if not SYS_PLATFORM_OSX:
+                self.assertEqual(menu._draw_focus_widget(surface, drop),
+                                 {1: ((0, 0), (600, 0), (600, 306), (0, 306)),
+                                  2: ((0, 307), (259, 307), (259, 486), (0, 486)),
+                                  3: ((468, 307), (600, 307), (600, 486), (468, 486)),
+                                  4: ((0, 487), (600, 487), (600, 600), (0, 600))}
+                                 )
+            else:
+                self.assertEqual(menu._draw_focus_widget(surface, drop),
+                                 {1: ((0, 0), (600, 0), (600, 305), (0, 305)),
+                                  2: ((0, 306), (259, 306), (259, 489), (0, 489)),
+                                  3: ((469, 306), (600, 306), (600, 489), (469, 489)),
+                                  4: ((0, 490), (600, 490), (600, 600), (0, 600))}
+                                 )
 
         # Test change items
         drop.update_items([])
@@ -1990,7 +2006,7 @@ class WidgetsTest(unittest.TestCase):
         vm = menu.add.vertical_margin(500)
         self.assertEqual(vm.get_height(), 500)
 
-        # Add drop from widgetmanager, this has the placeholder button
+        # Add drop from widget manager, this has the placeholder button
         drop2 = menu.add.dropselect('drop2', items, dropselect_id='2', selection_infinite=True,
                                     selection_option_font_size=int(0.75 * menu._theme.widget_font_size))
         self.assertEqual(drop2._tab_size, menu._theme.widget_tab_size)
@@ -2010,9 +2026,12 @@ class WidgetsTest(unittest.TestCase):
         menu.select_widget(drop2)
         drop2._toggle_drop()
 
-        self.assertEqual(drop2.get_position(), (132, 554) if PYGAME_V2 else (131, 555))
-        self.assertEqual(drop2._drop_frame.get_attribute('height'), 117 if PYGAME_V2 else 120)
-        self.assertEqual(drop2._drop_frame.get_attribute('width'), 187 if PYGAME_V2 else 188)
+        self.assertEqual(drop2.get_position(),
+                         ((132, 554) if PYGAME_V2 else (131, 555)) if not SYS_PLATFORM_OSX else (131, 556))
+        self.assertEqual(drop2._drop_frame.get_attribute('height'),
+                         (117 if PYGAME_V2 else 120) if not SYS_PLATFORM_OSX else 123)
+        self.assertEqual(drop2._drop_frame.get_attribute('width'),
+                         (187 if PYGAME_V2 else 188) if not SYS_PLATFORM_OSX else 189)
 
         # Test infinite
         self.assertTrue(drop2.active)
@@ -2041,7 +2060,8 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(drop2.get_index(), 7)
         drop2.readonly = False
         menu.render()
-        self.assertEqual(drop2.get_scroll_value_percentage(ORIENTATION_VERTICAL), 0.606 if PYGAME_V2 else 0.603)
+        self.assertEqual(drop2.get_scroll_value_percentage(ORIENTATION_VERTICAL),
+                         (0.606 if PYGAME_V2 else 0.603) if not SYS_PLATFORM_OSX else 0.609)
         drop2.reset_value()
         self.assertTrue(drop2.active)
         self.assertEqual(drop2.get_index(), -1)
@@ -2086,10 +2106,12 @@ class WidgetsTest(unittest.TestCase):
                   (-1, -1, -1, 116, 110, 207, 34, 204, 418, 116, -132),
                   (1, 0, 0, 0, 0, 1, 2)))
             ))
-        self.assertEqual(drop2._drop_frame.get_attribute('height'), 100 if PYGAME_V2 else 103)
-        self.assertEqual(drop2._drop_frame.get_attribute('width'), 207 if PYGAME_V2 else 208)
+        self.assertEqual(drop2._drop_frame.get_attribute('height'),
+                         (100 if PYGAME_V2 else 103) if not SYS_PLATFORM_OSX else 106)
+        self.assertEqual(drop2._drop_frame.get_attribute('width'),
+                         (207 if PYGAME_V2 else 208) if not SYS_PLATFORM_OSX else 209)
         self.assertEqual(drop2.get_scrollarea().get_parent_scroll_value_percentage(ORIENTATION_VERTICAL),
-                         (0, 1))
+                         (0, 1) if not SYS_PLATFORM_OSX else (0, 0.997))
         self.assertTrue(drop2._open_bottom)
 
         # Test onchange
@@ -2140,8 +2162,10 @@ class WidgetsTest(unittest.TestCase):
         f.unpack(drop2)
         self.assertTrue(drop2.is_floating())
         drop2.set_float(False)
-        self.assertEqual(drop2._drop_frame.get_attribute('height'), 100 if PYGAME_V2 else 103)
-        self.assertEqual(drop2._drop_frame.get_attribute('width'), 207 if PYGAME_V2 else 208)
+        self.assertEqual(drop2._drop_frame.get_attribute('height'),
+                         (100 if PYGAME_V2 else 103) if not SYS_PLATFORM_OSX else 106)
+        self.assertEqual(drop2._drop_frame.get_attribute('width'),
+                         (207 if PYGAME_V2 else 208) if not SYS_PLATFORM_OSX else 209)
 
         # Test close if mouse clicks outside
         menu.select_widget(drop)
@@ -2232,7 +2256,7 @@ class WidgetsTest(unittest.TestCase):
         menu_theme.widget_font_size = 20
 
         menu2 = MenuUtils.generic_menu(theme=menu_theme, width=400)
-        menu2.add_vertical_margin(1000)
+        menu2.add.vertical_margin(1000)
 
         drop3 = menu2.add.dropselect_multiple(
             title='Pick 3 colors',
@@ -2248,15 +2272,53 @@ class WidgetsTest(unittest.TestCase):
             open_middle=True,
             max_selected=3
         )
-        self.assertEqual(drop3.get_focus_rect(), pygame.Rect(108, 468, 320, 28))
+        rh = 28 if not SYS_PLATFORM_OSX else 29
+
+        self.assertEqual(drop3.get_focus_rect(), pygame.Rect(108, 468, 320, rh))
 
         # Translate the menu, this should also modify focus
         menu2.translate(100, 50)
-        self.assertEqual(drop3.get_focus_rect(), pygame.Rect(108 + 100, 468 + 50, 320, 28))
+        self.assertEqual(drop3.get_focus_rect(), pygame.Rect(108 + 100, 468 + 50, 320, rh))
         menu2.translate(100, 150)
-        self.assertEqual(drop3.get_focus_rect(), pygame.Rect(108 + 100, 468 + 150, 320, 28))
+        self.assertEqual(drop3.get_focus_rect(), pygame.Rect(108 + 100, 468 + 150, 320, rh))
         menu2.translate(0, 0)
-        self.assertEqual(drop3.get_focus_rect(), pygame.Rect(108, 468, 320, 28))
+        self.assertEqual(drop3.get_focus_rect(), pygame.Rect(108, 468, 320, rh))
+
+        # Test update list
+        def test_update(select: 'pygame_menu.widgets.DropSelect'):
+            """
+            Update list event.
+            """
+            if select.get_index() == -1:
+                return
+            s_val = select.get_value()
+            _items = select.get_items()
+            _items.pop(_items.index(s_val[0]))
+            select.update_items(_items)
+            self.assertEqual(select.get_scroll_value_percentage('any'), -1)
+            select.make_selection_drop()
+
+        menu = MenuUtils.generic_menu()
+
+        select1 = menu.add.dropselect('Subject Id',
+                                      items=[('a',), ('b',), ('c',), ('d',), ('e',), ('f',)],
+                                      dropselect_id='s0')
+        b_sel = menu.add.button('One', test_update, select1)
+        b_sel.apply()
+        select1.set_value(0)
+        self.assertEqual(select1.get_value(), (('a',), 0))
+        b_sel.apply()
+        self.assertEqual(select1.get_index(), -1)
+        self.assertEqual(select1.get_items(), [('b',), ('c',), ('d',), ('e',), ('f',)])
+        b_sel.apply()
+
+        # Update by value
+        select1.set_value('b')
+        self.assertEqual(select1.get_index(), 0)
+        select1.set_value('e')
+        self.assertEqual(select1.get_index(), 3)
+        self.assertRaises(ValueError, lambda: select1.set_value('unknown'))
+        b_sel.apply()  # to -1
 
     def test_none(self) -> None:
         """
