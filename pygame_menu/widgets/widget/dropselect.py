@@ -323,7 +323,9 @@ class DropSelect(Widget):
 
     def make_selection_drop(self, **kwargs) -> 'DropSelect':
         """
-        Make selection drop box.
+        Make the selection drop box. This function creates the box UI and adds
+        the selection options, and should be called after updating the selection
+        options.
 
         kwargs (Optional)
             - ``scrollbar_color``               (tuple, list, str, int, :py:class:`pygame.Color`) – Scrollbar color
@@ -758,8 +760,9 @@ class DropSelect(Widget):
         current_rect_bg.y += int((self._selection_box_inflate[1]) / 2
                                  + vi + self._selection_box_margin[1])
         current_rect_bg.width = self._selection_box_width
-        current_rect_bg = current_rect_bg.inflate((self._selection_box_inflate[0],
-                                                   self._selection_box_inflate[1] + 2 * vi))
+        current_rect_bg = current_rect_bg.inflate(
+            (int(self._selection_box_inflate[0]), int(self._selection_box_inflate[1] + 2 * vi))
+        )
 
         # Compute delta title if height is lower than selection box
         h = title.get_height()
@@ -935,7 +938,7 @@ class DropSelect(Widget):
         text if ``item`` is a string, or the index if ``item`` is an integer.
         This method raises ``ValueError`` if no item found.
 
-        For example, if widget item list is ``[['a',0],['b',1],['a',2]]``:
+        For example, if widget item list is ``[['a', 0], ['b', 1], ['a', 2]]``:
 
         - *widget*.set_value('a') -> Widget selects the first item (index 0)
         - *widget*.set_value(2) -> Widget selects the third item (index 2)
@@ -983,7 +986,8 @@ class DropSelect(Widget):
         .. note::
 
             If the length of the list is different than the previous one, the new
-            index of the select will be the first item of the list.
+            index of the select will be the ``-1``, that is, same as the unselected
+            status.
 
         :param items: New drop select items; format ``[('Item1', a, b, c...), ('Item2', d, e, f...)]``
         :return: None
@@ -991,18 +995,11 @@ class DropSelect(Widget):
         assert isinstance(items, list)
         if len(items) > 0:
             check_selector_items(items)
-        if self._index != -1:
-            selected_item = self._items[self._index]
-        else:
-            selected_item = None
-        self._items = items
-        if selected_item is not None:
-            try:
-                self._index = self._items.index(selected_item)
-            except ValueError:
-                if self._index >= len(self._items):
-                    self._index = -1
-                    self._default_value = -1
+        if self._index != -1 and len(items) != len(self._items) or \
+                (self._index + 1) > len(items):
+            self._index = -1
+            self._default_value = -1
+        self._items = items.copy()
         if self._drop_frame is not None:
             self._drop_frame.set_menu(None)
         self._drop_frame = None
@@ -1019,6 +1016,14 @@ class DropSelect(Widget):
                 'selection drop has not been made yet. Call {0}.make_selection_drop()'
                 'for avoiding this exception'.format(self.get_class_id())
             )
+
+    def get_items(self) -> Union[List[Tuple[Any, ...]], List[str]]:
+        """
+        Return a copy of the select items.
+
+        :return: Select items list
+        """
+        return self._items.copy()
 
     def _toggle_drop(self) -> None:
         """
@@ -1082,8 +1087,8 @@ class DropSelect(Widget):
                           - self._drop_frame.get_attribute('extra_margin')
             if self._open_middle:
                 x, y = self._compute_position_middle(add_offset=False)
-                rect.x = x + self._menu.get_position()[0]
-                rect.y = y + self._menu.get_scrollarea().get_position()[1]
+                rect.x = int(x + self._menu.get_position()[0])
+                rect.y = int(y + self._menu.get_scrollarea().get_position()[1])
                 rect.height -= self._rect.height
         else:
             rect.width -= self._selection_box_border_width
