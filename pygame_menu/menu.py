@@ -168,7 +168,7 @@ class Menu(Base):
     _scrollarea_margin: List[int]
     _sound: 'Sound'
     _stats: '_MenuStats'
-    _submenus: List['Menu']
+    _submenus: Dict['Menu', List['Widget']]
     _theme: 'Theme'
     _top: 'Menu'
     _touchscreen: bool
@@ -412,7 +412,7 @@ class Menu(Base):
         self._onclose = None  # Function or event called on Menu close
         self._sound = Sound()
         self._stats = _MenuStats()
-        self._submenus = []
+        self._submenus = {}
         self._theme = theme
         self._width = int(width)
 
@@ -1110,6 +1110,13 @@ class Menu(Base):
         frame = widget.get_frame()
         if frame is not None:
             frame.unpack(widget)
+
+        # If widget points to a hook, remove the submenu
+        # noinspection PyProtectedMember
+        menu_hook = widget._menu_hook
+        if menu_hook in self._submenus.keys():
+            self._remove_submenu(menu_hook, widget)
+            widget._menu_hook = None
 
         widget.on_remove_from_menu()
         widget.set_menu(None)  # Removes Menu reference from widget
@@ -2854,7 +2861,7 @@ class Menu(Base):
                 pass
         if recursive:
             depth += 1
-            for menu in self._submenus:
+            for menu in self._submenus.keys():
                 data_submenu = menu._get_input_data(recursive=recursive, depth=depth)
 
                 # Check if there is a collision between keys
@@ -2907,7 +2914,7 @@ class Menu(Base):
         for widget in self._widgets:
             widget.set_sound(sound)
         if recursive:
-            for menu in self._submenus:
+            for menu in self._submenus.keys():
                 menu.set_sound(sound, recursive=True)
         return self
 
@@ -2978,8 +2985,11 @@ class Menu(Base):
         """
         if reset:
             self.full_reset()
+        for w in self._widgets:
+            self.remove_widget(w)
         del self._widgets[:]
-        del self._submenus[:]
+        del self._submenus
+        self._submenus = {}
         self._index = -1
         self._stats.clear += 1
         self._render()
@@ -3252,7 +3262,7 @@ class Menu(Base):
         """
         return tuple(self._widgets)
 
-    def get_submenus(self) -> Tuple['Menu', ...]:
+    def get_submenus(self, recursive: bool = False) -> Tuple['Menu', ...]:
         """
         Return the Menu submenus as a tuple.
 
@@ -3262,9 +3272,19 @@ class Menu(Base):
             stored in ``_current`` pointer); for such behaviour apply to
             :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
+        :param recursive: If ``True`` return all submenus in a recursive fashion
         :return: Submenus tuple
         """
-        return tuple(self._submenus)
+        assert isinstance(recursive, bool)
+        if not recursive:
+            return tuple(self._submenus.keys())
+        sm = list(self._submenus.keys())
+        for m in self._submenus:
+            m_sm = m.get_submenus(recursive=recursive)
+            for i in m_sm:
+                if i not in sm:
+                    sm.append(i)
+        return tuple(sm)
 
     def get_menubar(self) -> 'MenuBar':
         """
@@ -3324,7 +3344,7 @@ class Menu(Base):
             if widget.get_id() == widget_id:
                 return widget
         if recursive:
-            for menu in self._submenus:
+            for menu in self._submenus.keys():
                 widget = menu.get_widget(widget_id, recursive)
                 if widget:
                     return widget
@@ -3346,7 +3366,7 @@ class Menu(Base):
         for widget in self._widgets:
             widget.reset_value()
         if recursive:
-            for sm in self._submenus:
+            for sm in self._submenus.keys():
                 sm.reset_value(recursive)
         return self
 
@@ -3364,29 +3384,63 @@ class Menu(Base):
         :param recursive: Check recursively
         :return: ``True`` if ``menu`` is in the submenus
         """
-        if menu in self._submenus:
+        if menu in self._submenus.keys():
             return True
         if recursive:
-            for sm in self._submenus:
+            for sm in self._submenus.keys():
                 if sm.in_submenu(menu, recursive):
                     return True
         return False
 
-    def _remove_submenu(self, menu: 'Menu', recursive: bool = False) -> bool:
+    def _add_submenu(self, menu: 'Menu', hook: 'Widget') -> None:
+        """
+        Adds a submenu. Requires the menu instance and the widget that adds the
+        sub-menu.
+
+        :param menu: Menu reference
+        :param hook: Widget hook
+        :return: None
+        """
+        assert isinstance(menu, Menu)
+        assert menu != self, 'submenu cannot point to menu itself'
+        assert isinstance(hook, Widget)
+        if menu not in self._submenus.keys():
+            self._submenus[menu] = []
+        assert hook not in self._submenus[menu], \
+            'widget {0} already hooks submenu {1}' \
+            ''.format(hook.get_class_id(), menu.get_class_id())
+        self._submenus[menu].append(hook)
+        hook._menu_hook = menu
+
+    def _remove_submenu(
+            self,
+            menu: 'Menu',
+            hook: 'Widget',
+            recursive: bool = False
+    ) -> bool:
         """
         Removes Menu from submenu if ``menu`` is a submenu of the Menu.
 
         :param menu: Menu to remove
+        :param hook: Widget associated with the menu
         :param recursive: Check recursively
         :return: ``True`` if ``menu`` was removed
         """
-        if menu in self._submenus:
-            self._submenus.remove(menu)
+        assert isinstance(menu, Menu)
+        assert isinstance(hook, Widget)
+        if menu in self._submenus.keys():
+            # Remove hook if in list
+            if hook in self._submenus[menu]:
+                self._submenus[menu].remove(hook)
+            hook._menu_hook = None
+            # If total hooks are empty, remove the menu
+            if len(self._submenus[menu]) == 0:
+                del self._submenus[menu]
             self._update_after_remove_or_hidden(self._index)
             return True
         if recursive:
             for sm in self._submenus:
-                if sm._remove_submenu(menu, recursive):
+                if sm._remove_submenu(menu, hook, recursive):
                     return True
         return False
 
