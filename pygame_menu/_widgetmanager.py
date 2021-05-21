@@ -507,11 +507,11 @@ class WidgetManager(Base):
             # Check for recursive
             if action == self._menu or action.in_submenu(self._menu, recursive=True):
                 raise ValueError(
-                    'Menu "{0}" is already on submenu structure, recursive menus'
-                    'lead to unexpected behaviours. For returning to previous menu'
+                    '{0} title "{1}" is already on submenu structure, recursive menus'
+                    ' lead to unexpected behaviours. For returning to previous menu'
                     'use pygame_menu.events.BACK event defining an optional '
                     'back_count number of menus to return from, default is 1'
-                    ''.format(action.get_title())
+                    ''.format(action.get_class_id(), action.get_title())
                 )
 
             widget = pygame_menu.widgets.Button(title, button_id, self._menu._open, action)

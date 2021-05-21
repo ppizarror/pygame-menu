@@ -339,10 +339,10 @@ class ToggleSwitch(Widget):
         if self._state_text[self._state] != '':
             text = self._switch_font_rendered[self._state]
             surface.blit(text, (
-                switch_x
-                + (self._switch_width - text.get_width()) * self._state_text_position[0],
-                switch_y
-                + (self._switch_height - text.get_height()) * self._state_text_position[1]
+                int(switch_x
+                    + (self._switch_width - text.get_width()) * self._state_text_position[0]),
+                int(switch_y
+                    + (self._switch_height - text.get_height()) * self._state_text_position[1])
             ))
 
         # Draw slider

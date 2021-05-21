@@ -1026,8 +1026,8 @@ class Decorator(Base):
                 surf_rect.x += pos[0]
                 surf_rect.y += pos[1]
                 if centered:
-                    surf_rect.x -= surf_rect.width / 2
-                    surf_rect.y -= surf_rect.height / 2
+                    surf_rect.x -= int(surf_rect.width / 2)
+                    surf_rect.y -= int(surf_rect.height / 2)
                 surface.blit(surf, surf_rect)
 
             elif dtype == DECORATION_ELLIPSE:

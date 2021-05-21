@@ -916,8 +916,8 @@ class BaseImage(Base):
             surface.blit(
                 self._surface,
                 (
-                    float(sw - w) / 2 + offx + position[0],
-                    float(hw - h) / 2 + offy + position[1]
+                    int(float(sw - w) / 2 + offx + position[0]),
+                    int(float(hw - h) / 2 + offy + position[1])
                 ),
                 area
             )
