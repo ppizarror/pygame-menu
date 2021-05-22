@@ -36,6 +36,7 @@ __all__ = [
 
     # Sound types
     'SOUND_TYPE_CLICK_MOUSE',
+    'SOUND_TYPE_CLICK_TOUCH',
     'SOUND_TYPE_CLOSE_MENU',
     'SOUND_TYPE_ERROR',
     'SOUND_TYPE_EVENT',
@@ -47,6 +48,7 @@ __all__ = [
 
     # Sound example paths
     'SOUND_EXAMPLE_CLICK_MOUSE',
+    'SOUND_EXAMPLE_CLICK_TOUCH',
     'SOUND_EXAMPLE_CLOSE_MENU',
     'SOUND_EXAMPLE_ERROR',
     'SOUND_EXAMPLE_EVENT',
@@ -73,14 +75,13 @@ from pygame_menu.utils import warn
 from pygame_menu._types import NumberType, Dict, Any, Optional, Union, NumberInstance
 
 try:  # pygame<2.0.0 compatibility
-    from pygame import AUDIO_ALLOW_CHANNELS_CHANGE
-    from pygame import AUDIO_ALLOW_FREQUENCY_CHANGE
+    from pygame import AUDIO_ALLOW_CHANNELS_CHANGE, AUDIO_ALLOW_FREQUENCY_CHANGE
 except ImportError:
-    AUDIO_ALLOW_CHANNELS_CHANGE = False
-    AUDIO_ALLOW_FREQUENCY_CHANGE = False
+    AUDIO_ALLOW_CHANNELS_CHANGE, AUDIO_ALLOW_FREQUENCY_CHANGE = False, False
 
 # Sound types
 SOUND_TYPE_CLICK_MOUSE = '__pygame_menu_sound_click_mouse__'
+SOUND_TYPE_CLICK_TOUCH = '__pygame_menu_sound_click_touch__'
 SOUND_TYPE_CLOSE_MENU = '__pygame_menu_sound_close_menu__'
 SOUND_TYPE_ERROR = '__pygame_menu_sound_error__'
 SOUND_TYPE_EVENT = '__pygame_menu_sound_event__'
@@ -90,14 +91,24 @@ SOUND_TYPE_KEY_DELETION = '__pygame_menu_sound_key_deletion__'
 SOUND_TYPE_OPEN_MENU = '__pygame_menu_sound_open_menu__'
 SOUND_TYPE_WIDGET_SELECTION = '__pygame_menu_sound_widget_selection__'
 
-SOUND_TYPES = (SOUND_TYPE_CLICK_MOUSE, SOUND_TYPE_CLOSE_MENU, SOUND_TYPE_ERROR,
-               SOUND_TYPE_EVENT, SOUND_TYPE_EVENT_ERROR, SOUND_TYPE_KEY_ADDITION,
-               SOUND_TYPE_KEY_DELETION, SOUND_TYPE_OPEN_MENU, SOUND_TYPE_WIDGET_SELECTION)
+SOUND_TYPES = (
+    SOUND_TYPE_CLICK_MOUSE,
+    SOUND_TYPE_CLICK_TOUCH,
+    SOUND_TYPE_CLOSE_MENU,
+    SOUND_TYPE_ERROR,
+    SOUND_TYPE_EVENT,
+    SOUND_TYPE_EVENT_ERROR,
+    SOUND_TYPE_KEY_ADDITION,
+    SOUND_TYPE_KEY_DELETION,
+    SOUND_TYPE_OPEN_MENU,
+    SOUND_TYPE_WIDGET_SELECTION
+)
 
 # Sound example paths
 __sounds_path__ = path.join(path.dirname(path.abspath(__file__)), 'resources', 'sounds', '{0}')
 
 SOUND_EXAMPLE_CLICK_MOUSE = __sounds_path__.format('click_mouse.ogg')
+SOUND_EXAMPLE_CLICK_TOUCH = SOUND_EXAMPLE_CLICK_MOUSE
 SOUND_EXAMPLE_CLOSE_MENU = __sounds_path__.format('close_menu.ogg')
 SOUND_EXAMPLE_ERROR = __sounds_path__.format('error.ogg')
 SOUND_EXAMPLE_EVENT = __sounds_path__.format('event.ogg')
@@ -107,9 +118,18 @@ SOUND_EXAMPLE_KEY_DELETE = __sounds_path__.format('key_delete.ogg')
 SOUND_EXAMPLE_OPEN_MENU = __sounds_path__.format('open_menu.ogg')
 SOUND_EXAMPLE_WIDGET_SELECTION = __sounds_path__.format('widget_selection.ogg')
 
-SOUND_EXAMPLES = (SOUND_EXAMPLE_CLICK_MOUSE, SOUND_EXAMPLE_CLOSE_MENU, SOUND_EXAMPLE_ERROR,
-                  SOUND_EXAMPLE_EVENT, SOUND_EXAMPLE_EVENT_ERROR, SOUND_EXAMPLE_KEY_ADD,
-                  SOUND_EXAMPLE_KEY_DELETE, SOUND_EXAMPLE_OPEN_MENU, SOUND_EXAMPLE_WIDGET_SELECTION)
+SOUND_EXAMPLES = (
+    SOUND_EXAMPLE_CLICK_MOUSE,
+    SOUND_EXAMPLE_CLICK_TOUCH,
+    SOUND_EXAMPLE_CLOSE_MENU,
+    SOUND_EXAMPLE_ERROR,
+    SOUND_EXAMPLE_EVENT,
+    SOUND_EXAMPLE_EVENT_ERROR,
+    SOUND_EXAMPLE_KEY_ADD,
+    SOUND_EXAMPLE_KEY_DELETE,
+    SOUND_EXAMPLE_OPEN_MENU,
+    SOUND_EXAMPLE_WIDGET_SELECTION
+)
 
 # Stores global reference that marks sounds as initialized
 SOUND_INITIALIZED = [False, True]
@@ -183,29 +203,24 @@ class Sound(Base):
 
             # noinspection PyBroadException
             try:
-                # <= 1.9.4
-                if version_major == 1 and version_minor <= 4:
-                    mixer.init(frequency=frequency,
-                               size=size,
-                               channels=channels,
-                               buffer=buffer)
+                # pygame < 1.9.5
+                mixer_kwargs = {
+                    'frequency': frequency,
+                    'size': size,
+                    'channels': channels,
+                    'buffer': buffer
+                }
 
-                # <2.0.0 & >= 1.9.5
-                elif version_major == 1 and version_minor > 4:  # lgtm [py/redundant-comparison]
-                    mixer.init(frequency=frequency,
-                               size=size,
-                               channels=channels,
-                               buffer=buffer,
-                               devicename=devicename)
+                # pygame >= 1.9.5
+                if (version_major == 1 and version_minor > 4) or version_major > 1:
+                    mixer_kwargs['devicename'] = devicename
 
-                # >= 2.0.0
-                elif version_major > 1:
-                    mixer.init(frequency=frequency,
-                               size=size,
-                               channels=channels,
-                               buffer=buffer,
-                               devicename=devicename,
-                               allowedchanges=allowedchanges)
+                # pygame >= 2.0.0
+                if version_major > 1:
+                    mixer_kwargs['allowedchanges'] = allowedchanges
+
+                # Call to mixer
+                mixer.init(**mixer_kwargs)
 
             except Exception as e:
                 warn('sound error: ' + str(e))
@@ -346,13 +361,6 @@ class Sound(Base):
             )
             self._sound[sound_type] = {}
             return False
-        except NotImplementedError:
-            warn(
-                'mixer module is not available on the current System, thus, the '
-                'sound file "{0}" could not be loaded'.format(sound_file)
-            )
-            self._sound[sound_type] = {}
-            return False
 
         # Configure the sound
         sound_data.set_volume(float(volume))
@@ -426,6 +434,15 @@ class Sound(Base):
         :return: Self reference
         """
         self._play_sound(self._sound[SOUND_TYPE_CLICK_MOUSE])
+        return self
+
+    def play_click_touch(self) -> 'Sound':
+        """
+        Play click touch sound.
+
+        :return: Self reference
+        """
+        self._play_sound(self._sound[SOUND_TYPE_CLICK_TOUCH])
         return self
 
     def play_error(self) -> 'Sound':
