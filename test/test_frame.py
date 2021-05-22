@@ -1258,7 +1258,7 @@ class FrameWidgetTest(unittest.TestCase):
                             open_middle=True)
 
         menu.draw(surface)
-        menu.mainloop(surface)
+        # menu.mainloop(surface)
 
         # Test draw surfaces
         # noinspection PyTypeChecker
