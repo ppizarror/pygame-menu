@@ -1488,6 +1488,16 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(btn.apply(), 'nice')
         btn.readonly = True
         self.assertIsNone(btn.apply())
+        self.assertFalse(btn.update(PygameEventUtils.keydown(pygame_menu.controls.KEY_APPLY)))
+
+        # Test button to menu
+        btn_menu = menu.add.button('to2', menu2)
+        self.assertTrue(btn_menu.to_menu)
+        menu.full_reset()
+        self.assertTrue(btn_menu.update(PygameEventUtils.keydown(pygame_menu.controls.KEY_APPLY)))
+        self.assertEqual(menu.get_current(), menu2)
+        menu.full_reset()
+        self.assertEqual(menu.get_current(), menu)
 
     def test_draw_callback(self) -> None:
         """
