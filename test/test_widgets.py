@@ -462,12 +462,20 @@ class WidgetsTest(unittest.TestCase):
         menu.draw(surface)
         menu.disable()
 
+        # Test unknown mode
+        mb = MenuBar('Menu', 500, (0, 0, 0), back_box=True, mode='unknown')
+        mb.set_menu(menu)
+        self.assertRaises(ValueError, lambda: mb._render())
+
         # Check margins
         mb = MenuBar('Menu', 500, (0, 0, 0), back_box=True, mode=MENUBAR_STYLE_ADAPTIVE)
         self.assertEqual(mb.get_scrollbar_style_change(POSITION_SOUTH), (0, (0, 0)))
         self.assertEqual(mb.get_scrollbar_style_change(POSITION_EAST), (0, (0, 0)))
         self.assertEqual(mb.get_scrollbar_style_change(POSITION_WEST), (0, (0, 0)))
         self.assertEqual(mb.get_scrollbar_style_change(POSITION_NORTH), (0, (0, 0)))
+        mb.set_menu(menu)
+        mb._render()
+        self.assertEqual(mb.get_scrollbar_style_change(POSITION_SOUTHWEST), (0, (0, 0)))
 
         # Test displacements
         theme = pygame_menu.themes.THEME_DEFAULT.copy()
@@ -481,7 +489,8 @@ class WidgetsTest(unittest.TestCase):
 
         # Test with close button
         menu = MenuUtils.generic_menu(theme=theme, title='my title',
-                                      onclose=pygame_menu.events.CLOSE)
+                                      onclose=pygame_menu.events.CLOSE,
+                                      touchscreen=True)
         mb = menu.get_menubar()
         self.assertEqual(mb.get_scrollbar_style_change(POSITION_SOUTH), (0, (0, 0)))
         self.assertEqual(mb.get_scrollbar_style_change(POSITION_EAST), (-33, (0, 33)))
@@ -524,8 +533,14 @@ class WidgetsTest(unittest.TestCase):
         # Test menubar
         self.assertFalse(mb.update(PygameEventUtils.middle_rect_click(mb._rect)))
         self.assertTrue(mb.update(PygameEventUtils.middle_rect_click(mb._backbox_rect)))
-        self.assertFalse(mb.update(PygameEventUtils.middle_rect_click(mb._backbox_rect, evtype=pygame.MOUSEBUTTONDOWN)))
+        self.assertTrue(mb.update(PygameEventUtils.middle_rect_click(
+            mb._backbox_rect, evtype=pygame.FINGERUP, menu=menu)))
+        self.assertFalse(mb.update(PygameEventUtils.middle_rect_click(
+            mb._backbox_rect, evtype=pygame.MOUSEBUTTONDOWN)))
         self.assertTrue(mb.update(PygameEventUtils.joy_button(ctrl.JOY_BUTTON_BACK)))
+        mb.readonly = True
+        self.assertFalse(mb.update(PygameEventUtils.joy_button(ctrl.JOY_BUTTON_BACK)))
+        mb.readonly = False
 
         # Test none methods
         mb.rotate(10)
@@ -2375,8 +2390,20 @@ class WidgetsTest(unittest.TestCase):
         sel.update(PygameEventUtils.touch_click(touch_sel[0], touch_sel[1], menu=menu))
         self.assertTrue(sel.active)
 
-        # Test touch scroll
-        # menu.mainloop(surface)
+        # Touch but by menu events, unselect current and force selection
+        sel.active = False
+        menu._widget_selected_update = False
+        menu.update(PygameEventUtils.touch_click(touch_sel[0], touch_sel[1], menu=menu))
+        self.assertTrue(sel.active)
+        menu.update(PygameEventUtils.touch_click(touch_sel[0], touch_sel[1], menu=menu))
+        self.assertFalse(sel.active)
+
+        # Mouse click
+        menu.update(PygameEventUtils.mouse_click(touch_sel[0], touch_sel[1]))
+        self.assertTrue(sel.active)
+        menu.update(PygameEventUtils.mouse_click(touch_sel[0], touch_sel[1]))
+        self.assertFalse(sel.active)
+        menu._widget_selected_update = True
 
         # Update the number of items
         sel.update_items([('a',), ('b',)])

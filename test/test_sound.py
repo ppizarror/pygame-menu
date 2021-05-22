@@ -112,6 +112,7 @@ class SoundTest(unittest.TestCase):
         self.sound.load_example_sounds()
 
         self.sound.play_click_mouse()
+        self.sound.play_click_touch()
         self.sound.play_close_menu()
         self.sound.play_error()
         self.sound.play_event()
