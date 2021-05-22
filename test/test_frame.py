@@ -970,8 +970,6 @@ class FrameWidgetTest(unittest.TestCase):
         # Add last button
         b5 = menu.add.button('btn5', button_id='b5')
 
-        # menu.mainloop(surface)
-
         # Test positioning
         #
         # .------------f1-----------.
@@ -1257,10 +1255,8 @@ class FrameWidgetTest(unittest.TestCase):
         menu.add.dropselect('Subject Id', items=[('a', 'a'), ('b', 'b'), ('c', 'c')], dropselect_id='s4',
                             open_middle=True)
 
-        menu.draw(surface)
-        # menu.mainloop(surface)
-
         # Test draw surfaces
+        menu.draw(surface)
         # noinspection PyTypeChecker
         s0: 'pygame_menu.widgets.DropSelect' = menu.get_widget('s0')
         # noinspection PyTypeChecker
