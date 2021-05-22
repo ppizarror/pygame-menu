@@ -2655,6 +2655,15 @@ class Menu(Base):
                                 updated = True
                                 break
 
+                # Touchscreen events in selected widget
+                elif event.type == FINGERUP and self._current._touchscreen and \
+                     selected_widget is not None:
+                    self._current._sound.play_click_mouse()
+                    if selected_widget_scrollarea.collide(selected_widget, event):
+                        updated = selected_widget.update([event])
+                        if updated:
+                            break
+
                 # Select widgets by touchscreen motion, this is valid only if the
                 # current selected widget is not active and the pointed widget is
                 # selectable
@@ -2678,15 +2687,6 @@ class Menu(Base):
                     if sel:
                         updated = True
                         break
-
-                # Touchscreen events in selected widget
-                elif event.type == FINGERUP and self._current._touchscreen and \
-                        selected_widget is not None:
-                    self._current._sound.play_click_mouse()
-                    if selected_widget_scrollarea.collide(selected_widget, event):
-                        updated = selected_widget.update([event])
-                        if updated:
-                            break
 
         if mouse_motion_event is not None:
             check_widget_mouseleave(event=mouse_motion_event)
