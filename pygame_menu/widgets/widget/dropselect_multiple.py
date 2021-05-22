@@ -422,8 +422,8 @@ class DropSelectMultiple(DropSelect):
                     deco.disable(btn.get_attribute('deco_on'))
                     deco.enable(btn.get_attribute('deco_off'))
 
-    def make_selection_drop(self, **kwargs) -> 'DropSelectMultiple':
-        super(DropSelectMultiple, self).make_selection_drop(**kwargs)
+    def _make_selection_drop(self) -> 'DropSelectMultiple':
+        super(DropSelectMultiple, self)._make_selection_drop()
         # Add button decorations
         for btn in self._option_buttons:
             deco = btn.get_decorator()
