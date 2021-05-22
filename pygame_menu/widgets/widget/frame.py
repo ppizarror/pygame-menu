@@ -135,6 +135,7 @@ class Frame(Widget):
     first_index: int  # First selectable widget index
     horizontal: bool
     last_index: int  # Last selectable widget index
+    selected_widget_draw: Tuple[Optional['Widget'], Optional['pygame.Surface']]  # Stores selected widget
 
     def __init__(
             self,
@@ -183,6 +184,7 @@ class Frame(Widget):
         self.is_scrollable = False
         self.is_selectable = False
         self.last_index = -1
+        self.selected_widget_draw = (None, None)
 
     def set_title(
             self,
@@ -360,10 +362,7 @@ class Frame(Widget):
         self.force_menu_surface_update()
 
         # Title adds frame to scrollable frames even if not scrollable
-        update_frames = self._get_menu_update_frames()
-        if self._menu is not None and (self not in update_frames):
-            update_frames.append(self)
-            self.sort_menu_update_frames()
+        self._append_menu_update_frame(self)
 
         return self._frame_title
 
@@ -379,9 +378,8 @@ class Frame(Widget):
         if self._has_title:
             self._frame_title = None
             self._has_title = False
-        update_frames = self._get_menu_update_frames()
-        if not self.is_scrollable and self in update_frames:
-            update_frames.remove(self)
+        if not self.is_scrollable:
+            self._remove_menu_update_frame(self)
         self._draggable = False
         self._render()
         self.force_menu_surface_update()
@@ -555,7 +553,21 @@ class Frame(Widget):
         """
         return self._width, self._height
 
-    def sort_menu_update_frames(self) -> None:
+    def _get_menu_update_frames(self) -> List['pygame_menu.widgets.Frame']:
+        """
+        Return the menu update frames list.
+
+        .. warning::
+
+            Use with caution.
+
+        :return: Frame update list if the menu reference is not ``None``, else, return an empty list
+        """
+        if self._menu is not None:
+            return self._menu._update_frames
+        return []
+
+    def _sort_menu_update_frames(self) -> None:
         """
         Sort the menu update frames (frames which receive updates).
 
@@ -563,6 +575,31 @@ class Frame(Widget):
         """
         if self._menu is not None:
             self._menu._sort_update_frames()
+
+    def _append_menu_update_frame(self, frame: 'Frame') -> None:
+        """
+        Append update frame to menu and sort.
+
+        :param frame: Frame to append
+        :return: None
+        """
+        assert isinstance(frame, Frame)
+        update_frames = self._get_menu_update_frames()
+        if frame not in update_frames:
+            update_frames.append(frame)
+            self._sort_menu_update_frames()
+
+    def _remove_menu_update_frame(self, frame: 'Frame') -> None:
+        """
+        Remove update frame to menu and sort.
+
+        :param frame: Frame to append
+        :return: None
+        """
+        assert isinstance(frame, Frame)
+        update_frames = self._get_menu_update_frames()
+        if frame in update_frames:
+            update_frames.remove(frame)
 
     def on_remove_from_menu(self) -> 'Frame':
         for w in self.get_widgets(unpack_subframes=False):
@@ -572,18 +609,14 @@ class Frame(Widget):
 
     def set_menu(self, menu: Optional['pygame_menu.Menu']) -> 'Frame':
         # If menu is set, remove from previous scrollable if enabled
-        prev_update_frames = self._get_menu_update_frames()
-        if self in prev_update_frames:
-            prev_update_frames.remove(self)
+        self._remove_menu_update_frame(self)
 
         # Update menu
         super(Frame, self).set_menu(menu)
 
         # Add self to scrollable
-        new_update_frames = self._get_menu_update_frames()
-        if self.is_scrollable and self._menu is not None:
-            new_update_frames.append(self)
-            self.sort_menu_update_frames()
+        if self.is_scrollable:
+            self._append_menu_update_frame(self)
 
         return self
 
@@ -678,9 +711,8 @@ class Frame(Widget):
             self._frame_scrollarea = None
 
             # If in previous scrollable frames
-            update_frames = self._get_menu_update_frames()
-            if self.is_scrollable and self in update_frames:
-                update_frames.remove(self)
+            if self.is_scrollable:
+                self._remove_menu_update_frame(self)
 
             self.is_scrollable = False
             return self
@@ -846,7 +878,7 @@ class Frame(Widget):
         if not self.is_visible():
             return self
 
-        selected_widget = None
+        selected_widget: Optional['Widget'] = None
 
         # Simple case, no scrollarea
         if not self.is_scrollable:
@@ -857,8 +889,6 @@ class Frame(Widget):
                 if widget.is_selected():
                     selected_widget = widget
                 widget.draw(surface)
-            if selected_widget is not None:
-                selected_widget.draw_after_if_selected(surface)
             self._draw_border(surface)
             self._decorator.draw_post(surface)
 
@@ -874,12 +904,7 @@ class Frame(Widget):
                 if widget.is_selected():
                     selected_widget = widget
                 widget.draw(self._surface)
-            if selected_widget is not None:
-                selected_widget.draw_after_if_selected(self._surface)
             self._frame_scrollarea.draw(surface)
-            if selected_widget is not None and \
-                    selected_widget.last_surface != self._surface:  # Draw after was not completed
-                selected_widget.draw_after_if_selected(None)
             self._draw_border(surface)
 
         # If title
@@ -887,6 +912,9 @@ class Frame(Widget):
             self._frame_title.draw(surface)
 
         self.apply_draw_callbacks()
+
+        # Stores selected widget
+        self.selected_widget_draw = selected_widget, self.last_surface
 
         return self
 
@@ -1411,7 +1439,7 @@ class Frame(Widget):
             self.scrollh(0)
 
         if isinstance(widget, Frame):
-            self.sort_menu_update_frames()
+            self._sort_menu_update_frames()
 
         # Update widget leave
         check_widget_mouseleave()
@@ -1539,7 +1567,7 @@ class Frame(Widget):
         else:
             widget.set_scrollarea(self._scrollarea)
         if self.is_scrollable or self._has_title or isinstance(widget, Frame):
-            self.sort_menu_update_frames()
+            self._sort_menu_update_frames()
         self._widgets[widget.get_id()] = widget
         self._widgets_props[widget.get_id()] = (align, vertical_position)
 
