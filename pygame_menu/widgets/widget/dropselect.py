@@ -782,10 +782,9 @@ class DropSelect(Widget):
         )
         w = h + self._selection_box_arrow_margin[1]
 
-        # Check which direction it should open
+        # Check which direction it should open (top, bottom)
         self._open_bottom = True
-        if self._drop_frame is not None and self._scrollarea is not None and \
-                not self._open_middle:
+        if self._drop_frame is not None and self._scrollarea is not None:
             assert self.get_scrollarea().get_world() is not None, \
                 'scrollarea world is None. The widget have been appended to the ' \
                 'Menu?'
@@ -798,6 +797,8 @@ class DropSelect(Widget):
                 rect_clipped = self._scrollarea.get_world_rect().clip(rect)
                 if rect.height != rect_clipped.height:
                     self._open_bottom = False
+
+        # Create frame
         if self._drop_frame is not None and self._open_middle and \
                 self._menu is not None:
             self._drop_frame.set_scrollarea(self._menu.get_scrollarea())
