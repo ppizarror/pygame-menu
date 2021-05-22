@@ -328,12 +328,6 @@ class Menu(Base):
 
         # Set column max width
         if column_max_width is not None:
-            # if isinstance(column_max_width, (tuple, list)) and len(column_max_width) == 1:
-            #     warn(
-            #       'as there is only 1 column, prefer using column_max_width as a number '
-            #       'NumberInstance instead a list/tuple'
-            #     )
-
             if isinstance(column_max_width, NumberInstance):
                 assert column_max_width >= 0, \
                     'column_max_width must be equal or greater than zero'
@@ -453,7 +447,9 @@ class Menu(Base):
         self._widget_offset = [theme.widget_offset[0], theme.widget_offset[1]]
         self._widgets = []  # This list may change during execution (replaced by a new one)
 
-        self._update_frames = []  # Stores the frames which receive update events
+        # Stores the frames which receive update events, updated and managed only
+        # by the Frame class
+        self._update_frames = []
 
         # Stores the widgets which receive update even if not selected or events
         # is empty
@@ -1989,16 +1985,22 @@ class Menu(Base):
             scrollarea_decorator.draw_prev(self._current._widgets_surface)
 
             # Iterate through widgets and draw them
-            selected_widget = None
+            selected_widget_draw: Tuple[Optional['Widget'], Optional['pygame.Surface']] = (None, None)
+
             for widget in self._current._widgets:
                 # Widgets within frames are not drawn as it's frame draw these widgets
                 if widget.get_frame() is not None:
                     continue
                 if widget.is_selected():
-                    selected_widget = widget
+                    selected_widget_draw = widget, self._current._widgets_surface
                 widget.draw(self._current._widgets_surface)
-            if selected_widget is not None:
-                selected_widget.draw_after_if_selected(self._current._widgets_surface)
+                if isinstance(widget, Frame):
+                    f_selected_widget = widget.selected_widget_draw
+                    if f_selected_widget[0] is not None:
+                        selected_widget_draw = f_selected_widget
+
+            if selected_widget_draw[0] is not None:
+                selected_widget_draw[0].draw_after_if_selected(selected_widget_draw[1])
 
             self._current._stats.draw_update_cached += 1
 
@@ -2358,29 +2360,29 @@ class Menu(Base):
         mouse_motion_event = None
 
         selected_widget = self._current.get_selected_widget()
-        selected_widget_active_disable_scroll = \
+        selected_widget_disable_frame_update = \
             (False if selected_widget is None else selected_widget.active) and \
             self._current._mouse_motion_selection or \
             selected_widget is not None and selected_widget.active and \
             selected_widget.force_menu_draw_focus
         selected_widget_scrollarea = None if selected_widget is None else selected_widget.get_scrollarea()
 
-        # First, check scrollable widgets (if any)
-        scrollable_frames_update = False
-        if not selected_widget_active_disable_scroll:
-            for scrollable_frame in self._current._update_frames:
-                scrollable_frames_update = scrollable_frames_update or scrollable_frame.update(events)
+        # First, check update frames
+        frames_updated = False
+        if not selected_widget_disable_frame_update:
+            for frame in self._current._update_frames:
+                frames_updated = frames_updated or frame.update(events)
 
         # Update widgets on update list
         for widget in self._current._update_widgets:
             widget.update(events)
 
-        # Scrollable frames have changed
-        if scrollable_frames_update:
+        # Frames have updated
+        if frames_updated:
             updated = True
 
         # Update scroll bars
-        elif not selected_widget_active_disable_scroll and self._current._scrollarea.update(events):
+        elif not selected_widget_disable_frame_update and self._current._scrollarea.update(events):
             updated = True
 
         # Update the menubar, it may change the status of the widget because
@@ -3574,6 +3576,7 @@ class Menu(Base):
             data.append(w._get_status())
         return tuple(data)
 
+    # noinspection PyProtectedMember
     def move_widget_index(
             self,
             widget: Optional['Widget'],
@@ -3651,7 +3654,7 @@ class Menu(Base):
                 self._select(self._widgets.index(selected_widget), 1, SELECT_MOVE, False)
 
             if len(self._update_frames) > 0:
-                self._update_frames[0].sort_menu_update_frames()
+                self._update_frames[0]._sort_menu_update_frames()
 
             if render:
                 self._widgets_surface = None
@@ -3797,9 +3800,9 @@ class Menu(Base):
         if self._validate_frame_widgetmove:
             if isinstance(widget, Frame) or isinstance(target_widget, Frame):
                 if isinstance(widget, Frame):
-                    widget.sort_menu_update_frames()
+                    widget._sort_menu_update_frames()
                 else:
-                    target_widget.sort_menu_update_frames()
+                    target_widget._sort_menu_update_frames()
             check_widget_mouseleave()
 
         return new_widget_index, target_index
