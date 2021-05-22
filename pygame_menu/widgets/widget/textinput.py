@@ -362,6 +362,7 @@ class TextInput(Widget):
         self._apply_widget_update_callback = True
 
         # Other
+        self._accept_events = True
         self._alt_x_enabled = True
         self._copy_paste_enabled = copy_paste_enable
         self._current_underline_string = ''

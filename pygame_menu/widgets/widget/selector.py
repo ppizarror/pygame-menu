@@ -191,6 +191,7 @@ class Selector(Widget):
             kwargs=kwargs
         )
 
+        self._accept_events = True
         self._index = 0
         self._items = items.copy()
         self._sformat = ''

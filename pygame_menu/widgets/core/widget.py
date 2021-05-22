@@ -231,6 +231,7 @@ class Widget(Base):
     :param args: Optional arguments for callbacks
     :param kwargs: Optional keyword arguments
     """
+    _accept_events: bool
     _alignment: str
     _angle: NumberType
     _args: List[Any]
@@ -327,6 +328,7 @@ class Widget(Base):
     ) -> None:
         super(Widget, self).__init__(object_id=widget_id)
 
+        self._accept_events = False  # Indicate the widget receives events (info)
         self._alignment = ALIGN_CENTER  # Widget alignment
         self._background_color = None
         self._background_inflate = (0, 0)
@@ -1826,20 +1828,6 @@ class Widget(Base):
         """
         if self._menu is not None:
             return self._menu._widgets
-        return []
-
-    def _get_menu_update_frames(self) -> List['pygame_menu.widgets.Frame']:
-        """
-        Return the menu update frames list.
-
-        .. warning::
-
-            Use with caution.
-
-        :return: Frame update list if the menu reference is not ``None``, else, return an empty list
-        """
-        if self._menu is not None:
-            return self._menu._update_frames
         return []
 
     def _get_menu_update_widgets(self) -> List['Widget']:
