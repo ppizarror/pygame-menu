@@ -357,7 +357,7 @@ class WidgetManager(Base):
             widget.select()
             self._menu._index = len(self._menu._widgets) - 1
 
-        # Force menu rendering, this checks if the menu overflows or has sizing}
+        # Force menu rendering, this checks if the menu overflows or has sizing
         # errors; if added on execution time forces the update of the surface
         self._menu._widgets_surface = None
         try:
@@ -366,6 +366,7 @@ class WidgetManager(Base):
                 pygame_menu.menu._MenuWidgetOverflow):
             self._menu.remove_widget(widget)
             raise
+        self._menu.render()
 
         # Sort frame widgets, as render position changes frame position/frame
         if len(self._menu._update_frames) > 0:
