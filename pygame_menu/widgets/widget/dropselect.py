@@ -233,6 +233,7 @@ class DropSelect(Widget):
             kwargs=kwargs
         )
 
+        self._accept_events = True
         self._close_on_apply = True
         self._default_value = default
         self._drop_frame = None
@@ -279,7 +280,6 @@ class DropSelect(Widget):
             'size': selection_option_font_size
         }
 
-        # Configure public's
         self.active = False
 
     def set_theme(self, theme: 'pygame_menu.Theme') -> 'DropSelect':
@@ -685,25 +685,13 @@ class DropSelect(Widget):
         if self.active and self.is_visible():
             self._check_drop_made()
 
-            if not self._open_middle:
-                self._drop_frame.draw(surface)
-                self.last_surface = surface
-
-            else:
-                new_surface = self._menu._widgets_surface
-
-                # Ignore draw if widget is within a frame, if so, the next call made by frame.draw()
-                # with surface=None is performed, but this time drop frame draws over "new_surface".
-                # If widget is not within a frame, this is not necessary as the frame is not drawn over
-                # and the widget is drawn at the end of all widgets
-                if surface == self.last_surface and self.get_frame() is not None:
-                    self.last_surface = new_surface
-                    return self
-
+            if self._open_middle:
                 # Draw drop frame in menu widgets surface
                 assert self._menu is not None, 'middle position need menu reference'
-                self._drop_frame.draw(new_surface)
-                self.last_surface = new_surface
+                surface = self._menu._widgets_surface
+
+            self._drop_frame.draw(surface)
+            self.last_surface = surface
 
         return self
 
