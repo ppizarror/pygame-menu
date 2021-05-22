@@ -1233,6 +1233,51 @@ class FrameWidgetTest(unittest.TestCase):
         menu.remove_widget(f4)
         self.assertEqual(menu._update_frames, [f3, f2])
 
+    def test_dropselect(self) -> None:
+        """
+        Test drop selects within frames.
+        """
+        menu = MenuUtils.generic_menu()
+
+        menu.add.dropselect('Subject Id', items=[('a', 'a'), ('b', 'b'), ('c', 'c')], dropselect_id='s0')
+        frame_s = menu.add.frame_h(600, 58)
+        frame_s.pack(
+            menu.add.dropselect('Subject Id', items=[('a', 'a'), ('b', 'b'), ('c', 'c')], dropselect_id='s1',
+                                open_middle=True)
+        )
+        frame_s.pack(menu.add.button('One', lambda: print('1')))
+        frame_t = menu.add.frame_h(600, 58)
+        frame_t.pack(
+            menu.add.dropselect('Subject Id', items=[('a', 'a'), ('b', 'b'), ('c', 'c')], dropselect_id='s2')
+        )
+        frame_t.pack(menu.add.button('Two', lambda: print('2')))
+        menu.add.dropselect('Subject Id', items=[('a', 'a'), ('b', 'b'), ('c', 'c')], dropselect_id='s3')
+        menu.add.dropselect('Subject Id', items=[('a', 'a'), ('b', 'b'), ('c', 'c')], dropselect_id='s4',
+                            open_middle=True)
+
+        # Test draw surfaces
+        menu.draw(surface)
+        # noinspection PyTypeChecker
+        s0: 'pygame_menu.widgets.DropSelect' = menu.get_widget('s0')
+        # noinspection PyTypeChecker
+        s1: 'pygame_menu.widgets.DropSelect' = menu.get_widget('s1')
+        surf = menu._widgets_surface
+        self.assertTrue(s0.is_selected())
+        self.assertEqual(s0.last_surface, surf)
+        s0.active = True
+        menu.render()
+        menu.draw(surface)
+        self.assertEqual(s0.last_surface, surf)
+        s0._selection_effect_draw_post = True
+        menu.render()
+        menu.draw(surface)
+        s0.draw_after_if_selected(surface)
+
+        s1.select(update_menu=True)
+        s1.active = True
+        menu.draw(surface)
+        self.assertEqual(s1.last_surface, surf)
+
     def test_menu_support(self) -> None:
         """
         Test frame menu support.
@@ -1717,6 +1762,7 @@ class FrameWidgetTest(unittest.TestCase):
         self.assertEqual(WIDGET_MOUSEOVER, [b2, [b2, cur_none, []]])
         self.assertEqual(get_cursor(), cur_arrow)
 
+    # noinspection PyArgumentList,PyTypeChecker
     def test_title(self) -> None:
         """
         Test frame title.
@@ -1736,6 +1782,12 @@ class FrameWidgetTest(unittest.TestCase):
         # self.assertRaises(ValueError, lambda: frame.get_title())
         frame._accepts_title = False
         self.assertRaises(pygame_menu.widgets.widget.frame._FrameDoNotAcceptTitle, lambda: frame.set_title('title'))
+        self.assertRaises(pygame_menu.widgets.widget.frame._FrameDoNotAcceptTitle,
+                          lambda: frame.add_title_button('none', None))
+        self.assertRaises(pygame_menu.widgets.widget.frame._FrameDoNotAcceptTitle,
+                          lambda: frame.add_title_generic_button(None))
+        self.assertRaises(pygame_menu.widgets.widget.frame._FrameDoNotAcceptTitle,
+                          lambda: frame.remove_title())
         frame._accepts_title = True
         self.assertEqual(frame.get_size(), (300, 200))
         self.assertEqual(frame.get_title(), '')
@@ -1745,6 +1797,14 @@ class FrameWidgetTest(unittest.TestCase):
         # Add a title
         self.assertNotIn(frame, menu._update_frames)
         self.assertEqual(frame._title_height(), 0)
+        frame.set_title(
+            'epic',
+            padding_outer=3,
+            title_font_size=20,
+            padding_inner=(0, 3),
+            title_font_color='white',
+            title_alignment=pygame_menu.locals.ALIGN_CENTER
+        )
         frame_title = frame.set_title(
             'epic',
             padding_outer=3,
@@ -1789,6 +1849,7 @@ class FrameWidgetTest(unittest.TestCase):
         btn1 = frame.add_title_button(pygame_menu.widgets.FRAME_TITLE_BUTTON_CLOSE, click_button)
         btn2 = frame.add_title_button(pygame_menu.widgets.FRAME_TITLE_BUTTON_MAXIMIZE, click_button)
         btn3 = frame.add_title_button(pygame_menu.widgets.FRAME_TITLE_BUTTON_MINIMIZE, click_button)
+        self.assertRaises(ValueError, lambda: frame.add_title_button('none', click_button))
         self.assertRaises(IndexError, lambda: frame.get_index(btn1))
         self.assertEqual(frame._frame_title.get_index(btn1), 1)
         self.assertEqual(frame._frame_title.get_index(btn2), 2)
@@ -2167,3 +2228,18 @@ class FrameWidgetTest(unittest.TestCase):
         self.assertEqual(len(table.update_cell_style([1, -1], [1, -1])), 18)
         self.assertRaises(AssertionError, lambda: self.assertEqual(len(table.update_cell_style([1, 7], [1, -1])), 18))
         self.assertEqual(len(table.update_cell_style([1, 2], 1)), 2)
+        self.assertFalse(table.update([]))
+
+    def test_table_update(self) -> None:
+        """
+        Test table update.
+        """
+        menu = MenuUtils.generic_menu()
+        btn = menu.add.button('click', lambda: print('clicked'))
+        sel = menu.add.dropselect('sel', items=[('a', 'a'), ('b', 'b')])
+        table = menu.add.table()
+        table.add_row([btn, sel])
+        menu.render()
+        menu.draw(surface)
+        self.assertEqual(table._update_widgets, [btn, sel])
+        print(table.get_max_size())

@@ -79,6 +79,7 @@ class Button(Widget):
             title=title,
             widget_id=button_id
         )
+        self._accept_events = True
         self._last_underline = ['', None]
         self.to_menu = False  # True if the button opens a new Menu
 

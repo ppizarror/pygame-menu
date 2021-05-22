@@ -259,6 +259,7 @@ class ToggleSwitch(Widget):
             self._state_width_accum.append(accum_width)
 
         # Inner properties
+        self._accept_events = True
         self._slider_height = 0
         self._slider_pos = (0, 0)  # to add to (rect.x, rect.y)
         self._state_font = None

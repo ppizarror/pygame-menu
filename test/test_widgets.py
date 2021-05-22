@@ -2304,6 +2304,7 @@ class WidgetsTest(unittest.TestCase):
                                       items=[('a',), ('b',), ('c',), ('d',), ('e',), ('f',)],
                                       dropselect_id='s0')
         b_sel = menu.add.button('One', test_update, select1)
+
         b_sel.apply()
         select1.set_value(0)
         self.assertEqual(select1.get_value(), (('a',), 0))
@@ -2319,6 +2320,21 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(select1.get_index(), 3)
         self.assertRaises(ValueError, lambda: select1.set_value('unknown'))
         b_sel.apply()  # to -1
+
+        select1.active = True
+        select1.show()
+
+        # Test configured
+        select1.configured = False
+        self.assertRaises(RuntimeError, lambda: select1.make_selection_drop())
+        select1.configured = True
+        select1._menu = None
+        select1._theme = None
+        self.assertRaises(RuntimeError, lambda: select1.make_selection_drop())
+        select1._menu = menu
+        select1._theme = menu.get_theme()
+        select1.readonly = True
+        self.assertFalse(select1.update([]))
 
     def test_none(self) -> None:
         """
