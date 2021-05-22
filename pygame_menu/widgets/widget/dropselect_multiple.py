@@ -34,13 +34,14 @@ __all__ = ['DropSelectMultiple']
 import pygame
 
 from pygame_menu.font import FontType
+from pygame_menu.locals import POSITION_NORTHWEST, POSITION_SOUTHEAST
 from pygame_menu.utils import assert_color, assert_vector
 from pygame_menu.widgets.widget.button import Button
 from pygame_menu.widgets.widget.dropselect import DropSelect
 
 from pygame_menu._types import Tuple, Union, List, Any, Optional, CallbackType, \
     ColorType, ColorInputType, Tuple2IntType, Tuple3IntType, PaddingType, \
-    Tuple2NumberType, CursorInputType
+    Tuple2NumberType, CursorInputType, NumberType
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -81,6 +82,17 @@ class DropSelectMultiple(DropSelect):
     :param placeholder: Text shown if no option is selected yet
     :param placeholder_add_to_selection_box: If ``True`` adds the placeholder button to the selection box
     :param placeholder_selected: Text shown if option is selected. Accepts the number of selected options
+    :param scrollbar_color: Scrollbar color
+    :param scrollbar_cursor: Cursor of the scrollbars if mouse is placed over. By default is ``None``
+    :param scrollbar_shadow: Indicate if a shadow is drawn on each scrollbar
+    :param scrollbar_shadow_color: Color of the shadow of each scrollbar
+    :param scrollbar_shadow_offset: Offset of the scrollbar shadow in px
+    :param scrollbar_shadow_position: Position of the scrollbar shadow. See :py:mod:`pygame_menu.locals`
+    :param scrollbar_slider_color: Color of the sliders
+    :param scrollbar_slider_hover_color: Color of the slider if hovered or clicked
+    :param scrollbar_slider_pad: Space between slider and scrollbars borders in px
+    :param scrollbar_thick: Scrollbar thickness in px
+    :param scrollbars: Scrollbar position. See :py:mod:`pygame_menu.locals`
     :param selection_box_arrow_color: Selection box arrow color
     :param selection_box_arrow_margin: Selection box arrow margin (left, right, vertical) in px
     :param selection_box_bgcolor: Selection box background color
@@ -133,6 +145,17 @@ class DropSelectMultiple(DropSelect):
             placeholder: str = 'Select an option',
             placeholder_add_to_selection_box: bool = True,
             placeholder_selected: str = '{0} selected',
+            scrollbar_color: ColorInputType = (235, 235, 235),
+            scrollbar_cursor: CursorInputType = None,
+            scrollbar_shadow: bool = False,
+            scrollbar_shadow_color: ColorInputType = (0, 0, 0),
+            scrollbar_shadow_offset: int = 2,
+            scrollbar_shadow_position: str = POSITION_NORTHWEST,
+            scrollbar_slider_color: ColorInputType = (200, 200, 200),
+            scrollbar_slider_hover_color: ColorInputType = (170, 170, 170),
+            scrollbar_slider_pad: NumberType = 0,
+            scrollbar_thick: int = 20,
+            scrollbars: str = POSITION_SOUTHEAST,
             selection_box_arrow_color: ColorInputType = (150, 150, 150),
             selection_box_arrow_margin: Tuple3IntType = (5, 5, 0),
             selection_box_bgcolor: ColorInputType = (255, 255, 255),
@@ -172,6 +195,17 @@ class DropSelectMultiple(DropSelect):
             open_middle=open_middle,
             placeholder=placeholder,
             placeholder_add_to_selection_box=placeholder_add_to_selection_box,
+            scrollbar_color=scrollbar_color,
+            scrollbar_cursor=scrollbar_cursor,
+            scrollbar_shadow=scrollbar_shadow,
+            scrollbar_shadow_color=scrollbar_shadow_color,
+            scrollbar_shadow_offset=scrollbar_shadow_offset,
+            scrollbar_shadow_position=scrollbar_shadow_position,
+            scrollbar_slider_color=scrollbar_slider_color,
+            scrollbar_slider_hover_color=scrollbar_slider_hover_color,
+            scrollbar_slider_pad=scrollbar_slider_pad,
+            scrollbar_thick=scrollbar_thick,
+            scrollbars=scrollbars,
             selection_box_arrow_color=selection_box_arrow_color,
             selection_box_arrow_margin=selection_box_arrow_margin,
             selection_box_bgcolor=selection_box_bgcolor,
@@ -422,8 +456,8 @@ class DropSelectMultiple(DropSelect):
                     deco.disable(btn.get_attribute('deco_on'))
                     deco.enable(btn.get_attribute('deco_off'))
 
-    def make_selection_drop(self, **kwargs) -> 'DropSelectMultiple':
-        super(DropSelectMultiple, self).make_selection_drop(**kwargs)
+    def _make_selection_drop(self) -> 'DropSelectMultiple':
+        super(DropSelectMultiple, self)._make_selection_drop()
         # Add button decorations
         for btn in self._option_buttons:
             deco = btn.get_decorator()

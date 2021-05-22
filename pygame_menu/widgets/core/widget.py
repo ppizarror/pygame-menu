@@ -2475,6 +2475,22 @@ class Widget(Base):
         """
         pass
 
+    def _configure(self) -> None:
+        """
+        Function that is executed after the Widget is configured.
+
+        :return: None
+        """
+        pass
+
+    def _append_to_menu(self) -> None:
+        """
+        Function that is executed after the Widget is appended to the Menu.
+
+        :return: None
+        """
+        pass
+
     def set_sound(self, sound: 'Sound') -> 'Widget':
         """
         Set sound engine to the Widget.

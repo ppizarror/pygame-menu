@@ -39,9 +39,10 @@ import pygame_menu
 import pygame_menu.controls as ctrl
 
 from pygame_menu.font import FontType, get_font, assert_font
-from pygame_menu.locals import ORIENTATION_VERTICAL, FINGERDOWN, FINGERUP
+from pygame_menu.locals import ORIENTATION_VERTICAL, FINGERDOWN, FINGERUP, \
+    POSITION_NORTHWEST, POSITION_SOUTHEAST
 from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, \
-    make_surface, parse_padding, get_finger_pos, uuid4, assert_cursor
+    make_surface, parse_padding, get_finger_pos, uuid4, assert_cursor, assert_position
 from pygame_menu.widgets.core import Widget
 from pygame_menu.widgets.widget.button import Button
 from pygame_menu.widgets.widget.frame import Frame
@@ -50,7 +51,7 @@ from pygame_menu.widgets.widget.selector import check_selector_items
 from pygame_menu._types import Tuple, Union, List, Any, Optional, CallbackType, \
     ColorType, Dict, ColorInputType, Tuple2IntType, Tuple3IntType, PaddingType, \
     PaddingInstance, Tuple4IntType, NumberType, EventVectorType, Tuple2NumberType, \
-    CursorInputType, CursorType
+    CursorInputType, CursorType, NumberInstance
 
 
 # noinspection PyMissingOrEmptyDocstring,PyProtectedMember
@@ -91,6 +92,17 @@ class DropSelect(Widget):
     :param open_middle: If ``True`` the selection box is opened in the middle of the menu
     :param placeholder: Text shown if no option is selected yet
     :param placeholder_add_to_selection_box: If ``True`` adds the placeholder button to the selection box
+    :param scrollbar_color: Scrollbar color
+    :param scrollbar_cursor: Cursor of the scrollbars if mouse is placed over. By default is ``None``
+    :param scrollbar_shadow: Indicate if a shadow is drawn on each scrollbar
+    :param scrollbar_shadow_color: Color of the shadow of each scrollbar
+    :param scrollbar_shadow_offset: Offset of the scrollbar shadow in px
+    :param scrollbar_shadow_position: Position of the scrollbar shadow. See :py:mod:`pygame_menu.locals`
+    :param scrollbar_slider_color: Color of the sliders
+    :param scrollbar_slider_hover_color: Color of the slider if hovered or clicked
+    :param scrollbar_slider_pad: Space between slider and scrollbars borders in px
+    :param scrollbar_thick: Scrollbar thickness in px
+    :param scrollbars: Scrollbar position. See :py:mod:`pygame_menu.locals`
     :param selection_box_arrow_color: Selection box arrow color
     :param selection_box_arrow_margin: Selection box arrow margin (left, right, vertical) in px
     :param selection_box_bgcolor: Selection box background color
@@ -124,6 +136,17 @@ class DropSelect(Widget):
     _option_font: Optional['pygame.font.Font']
     _placeholder: str
     _placeholder_add_to_selection_box: bool
+    _scrollbar_color: ColorType
+    _scrollbar_cursor: CursorType
+    _scrollbar_shadow: bool
+    _scrollbar_shadow_color: ColorType
+    _scrollbar_shadow_offset: int
+    _scrollbar_shadow_position: str
+    _scrollbar_slider_color: ColorType
+    _scrollbar_slider_hover_color: ColorType
+    _scrollbar_slider_pad: NumberType
+    _scrollbar_thick: int
+    _scrollbars: str
     _selection_box_arrow_color: ColorType
     _selection_box_arrow_margin: Tuple3IntType
     _selection_box_bgcolor: ColorType
@@ -144,7 +167,6 @@ class DropSelect(Widget):
     _selection_option_left_space_margin: Tuple3IntType
     _selection_option_padding: Tuple4IntType
     _selection_option_selected_bgcolor: ColorType
-    _theme: Optional['pygame_menu.Theme']
     _title_size: Tuple2IntType
 
     def __init__(
@@ -159,6 +181,17 @@ class DropSelect(Widget):
             open_middle: bool = False,
             placeholder: str = 'Select an option',
             placeholder_add_to_selection_box: bool = True,
+            scrollbar_color: ColorInputType = (235, 235, 235),
+            scrollbar_cursor: CursorInputType = None,
+            scrollbar_shadow: bool = False,
+            scrollbar_shadow_color: ColorInputType = (0, 0, 0),
+            scrollbar_shadow_offset: int = 2,
+            scrollbar_shadow_position: str = POSITION_NORTHWEST,
+            scrollbar_slider_color: ColorInputType = (200, 200, 200),
+            scrollbar_slider_hover_color: ColorInputType = (170, 170, 170),
+            scrollbar_slider_pad: NumberType = 0,
+            scrollbar_thick: int = 20,
+            scrollbars: str = POSITION_SOUTHEAST,
             selection_box_arrow_color: ColorInputType = (150, 150, 150),
             selection_box_arrow_margin: Tuple3IntType = (5, 5, 0),
             selection_box_bgcolor: ColorInputType = (255, 255, 255),
@@ -199,6 +232,10 @@ class DropSelect(Widget):
         assert isinstance(default, int), 'default must be an integer'
 
         # Check styling
+        assert isinstance(scrollbar_shadow, bool)
+        assert isinstance(scrollbar_shadow_offset, int) and scrollbar_shadow_offset >= 0
+        assert isinstance(scrollbar_slider_pad, NumberInstance) and scrollbar_slider_pad >= 0
+        assert isinstance(scrollbar_thick, int) and scrollbar_thick >= 0
         assert isinstance(selection_box_border_width, int) and selection_box_border_width >= 0
         assert isinstance(selection_box_height, int) and selection_box_height >= 1
         assert isinstance(selection_box_text_margin, int) and selection_box_text_margin >= 0
@@ -206,10 +243,17 @@ class DropSelect(Widget):
         assert isinstance(selection_infinite, bool)
         assert isinstance(selection_option_border_width, int) and selection_option_border_width >= 0
         assert isinstance(selection_option_padding, PaddingInstance)
+        assert_cursor(scrollbar_cursor)
         assert_cursor(selection_option_cursor)
+        assert_position(scrollbar_shadow_position)
+        assert_position(scrollbars)
         assert_vector(selection_box_arrow_margin, 3, int)
         assert_vector(selection_box_inflate, 2, int)
         assert_vector(selection_box_margin, 2)
+        scrollbar_color = assert_color(scrollbar_color)
+        scrollbar_shadow_color = assert_color(scrollbar_shadow_color)
+        scrollbar_slider_color = assert_color(scrollbar_slider_color)
+        scrollbar_slider_hover_color = assert_color(scrollbar_slider_hover_color)
         selection_box_arrow_color = assert_color(selection_box_arrow_color)
         selection_box_bgcolor = assert_color(selection_box_bgcolor)
         selection_box_border_color = assert_color(selection_box_border_color)
@@ -244,7 +288,6 @@ class DropSelect(Widget):
         self._placeholder = placeholder
         self._placeholder_add_to_selection_box = placeholder_add_to_selection_box
         self._selection_effect_draw_post = False
-        self._theme = None
         self._title_size = (0, 0)
 
         # If True adds a space equals to the height of the option at left, used for
@@ -255,6 +298,17 @@ class DropSelect(Widget):
 
         # Style
         self._option_font = None
+        self._scrollbar_color = scrollbar_color
+        self._scrollbar_cursor = scrollbar_cursor
+        self._scrollbar_shadow = scrollbar_shadow
+        self._scrollbar_shadow_color = scrollbar_shadow_color
+        self._scrollbar_shadow_offset = scrollbar_shadow_offset
+        self._scrollbar_shadow_position = scrollbar_shadow_position
+        self._scrollbar_slider_color = scrollbar_slider_color
+        self._scrollbar_slider_hover_color = scrollbar_slider_hover_color
+        self._scrollbar_slider_pad = scrollbar_slider_pad
+        self._scrollbar_thick = scrollbar_thick
+        self._scrollbars = scrollbars
         self._selection_box_arrow_color = selection_box_arrow_color
         self._selection_box_arrow_margin = selection_box_arrow_margin
         self._selection_box_bgcolor = selection_box_bgcolor
@@ -281,16 +335,6 @@ class DropSelect(Widget):
         }
 
         self.active = False
-
-    def set_theme(self, theme: 'pygame_menu.Theme') -> 'DropSelect':
-        """
-        Set object theme.
-
-        :param theme: Theme
-        :return: Self reference
-        """
-        self._theme = theme
-        return self
 
     def set_default_value(self, index: int) -> 'DropSelect':
         self._default_value = index
@@ -321,26 +365,11 @@ class DropSelect(Widget):
                                             + h - h / 4
                                             + 2 * self._selection_box_border_width)
 
-    def make_selection_drop(self, **kwargs) -> 'DropSelect':
+    def _make_selection_drop(self) -> 'DropSelect':
         """
         Make the selection drop box. This function creates the box UI and adds
-        the selection options, and should be called after updating the selection
-        options.
+        the selection options. Should be called after the widget is configured.
 
-        kwargs (Optional)
-            - ``scrollbar_color``               (tuple, list, str, int, :py:class:`pygame.Color`) – Scrollbar color
-            - ``scrollbar_cursor``              (int, :py:class:`pygame.cursors.Cursor`, None) – Cursor of the scrollbars if mouse is placed over. By default is ``None``
-            - ``scrollbar_shadow_color``        (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the shadow of each scrollbar
-            - ``scrollbar_shadow_offset``       (int) – Offset of the scrollbar shadow in px
-            - ``scrollbar_shadow_position``     (str) – Position of the scrollbar shadow. See :py:mod:`pygame_menu.locals`
-            - ``scrollbar_shadow``              (bool) – Indicate if a shadow is drawn on each scrollbar
-            - ``scrollbar_slider_color``        (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the sliders
-            - ``scrollbar_slider_hover_color``  (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the slider if hovered or clicked
-            - ``scrollbar_slider_pad``          (int, float) – Space between slider and scrollbars borders in px
-            - ``scrollbar_thick``               (int) – Scrollbar thickness in px
-            - ``scrollbars``                    (str) – Scrollbar position. See :py:mod:`pygame_menu.locals`
-
-        :param kwargs: Optional keyword arguments
         :return: Self reference
         """
         # noinspection PyUnresolvedReferences
@@ -349,12 +378,6 @@ class DropSelect(Widget):
         if not self.configured:
             raise RuntimeError('{0} must be configured before creating selection drop'
                                ''.format(self.get_class_id()))
-        if self._theme is None:
-            if self._menu is not None:
-                self.set_theme(self._menu.get_theme())
-            else:
-                raise RuntimeError('{0} theme must be defined')
-        scrollbar_thickness = kwargs.get('scrollbar_thick', self._theme.scrollbar_thick)
 
         # Create options buttons
         total_height = 0
@@ -434,8 +457,8 @@ class DropSelect(Widget):
 
         max_width = frame_width
         if total_height != max_height:
-            max_width -= scrollbar_thickness
-            frame_width -= scrollbar_thickness
+            max_width -= self._scrollbar_thick
+            frame_width -= self._scrollbar_thick
             total_height -= self._selection_box_border_width
             max_height -= self._selection_box_border_width
         elif total_height > 0:
@@ -479,35 +502,21 @@ class DropSelect(Widget):
         self._drop_frame._update__repr___(self)
 
         if total_height > 0:
-            scrollbar_color = kwargs.get('scrollbar_color',
-                                         self._theme.scrollbar_color)
-            scrollbars = kwargs.get('scrollbars',
-                                    self._theme.scrollarea_position)
-            if not kwargs.get('scrollbars_parsed', False):
-                scrollbars = get_scrollbars_from_position(scrollbars)
             self._drop_frame.make_scrollarea(
                 max_width=frame_width,
                 max_height=max_height,
                 scrollarea_color=self._selection_box_arrow_color,
-                scrollbar_color=scrollbar_color,
-                scrollbar_cursor=kwargs.get('scrollbar_cursor',
-                                            self._theme.scrollbar_cursor),
-                scrollbar_shadow_color=kwargs.get('scrollbar_shadow_color',
-                                                  self._theme.scrollbar_shadow_color),
-                scrollbar_shadow_offset=kwargs.get('scrollbar_shadow_offset',
-                                                   self._theme.scrollbar_shadow_offset),
-                scrollbar_shadow_position=kwargs.get('scrollbar_shadow_position',
-                                                     self._theme.scrollbar_shadow_position),
-                scrollbar_shadow=kwargs.get('scrollbar_shadow',
-                                            self._theme.scrollbar_shadow),
-                scrollbar_slider_color=kwargs.get('scrollbar_slider_color',
-                                                  self._theme.scrollbar_slider_color),
-                scrollbar_slider_hover_color=kwargs.get('scrollbar_slider_hover_color',
-                                                        self._theme.scrollbar_slider_hover_color),
-                scrollbar_slider_pad=kwargs.get('scrollbar_slider_pad',
-                                                self._theme.scrollbar_slider_pad),
-                scrollbar_thick=scrollbar_thickness,
-                scrollbars=scrollbars
+                scrollbar_color=self._scrollbar_color,
+                scrollbar_cursor=self._scrollbar_cursor,
+                scrollbar_shadow_color=self._scrollbar_shadow_color,
+                scrollbar_shadow_offset=self._scrollbar_shadow_offset,
+                scrollbar_shadow_position=self._scrollbar_shadow_position,
+                scrollbar_shadow=self._scrollbar_shadow,
+                scrollbar_slider_color=self._scrollbar_slider_color,
+                scrollbar_slider_hover_color=self._scrollbar_slider_hover_color,
+                scrollbar_slider_pad=self._scrollbar_slider_pad,
+                scrollbar_thick=self._scrollbar_thick,
+                scrollbars=get_scrollbars_from_position(self._scrollbars)
             )
 
         self._drop_frame.set_menu(self._menu)
@@ -517,7 +526,7 @@ class DropSelect(Widget):
 
         # Set sizing properties
         if total_height > 0:
-            add_scrollbar = scrollbar_thickness if max_width != frame_width else 0
+            add_scrollbar = self._scrollbar_thick if max_width != frame_width else 0
             border_w = self._selection_box_border_width if total_height != max_height else 0
             self._drop_frame.set_attribute('height',
                                            max_height + add_scrollbar - border_w)
@@ -542,6 +551,9 @@ class DropSelect(Widget):
             self.set_value(self._index)
 
         return self
+
+    def _append_to_menu(self) -> None:
+        self._make_selection_drop()
 
     def on_remove_from_menu(self) -> 'DropSelect':
         if self._drop_frame is not None:
@@ -770,10 +782,12 @@ class DropSelect(Widget):
         )
         w = h + self._selection_box_arrow_margin[1]
 
-        # Check which direction it should open
+        # Check which direction it should open (top, bottom)
         self._open_bottom = True
-        if self._drop_frame is not None and self._scrollarea is not None and \
-                not self._open_middle:
+        if self._drop_frame is not None and self._scrollarea is not None:
+            assert self.get_scrollarea().get_world() is not None, \
+                'scrollarea world is None. The widget have been appended to the ' \
+                'Menu?'
             rect = self._rect.copy()
             rect.width = self._selection_box_width
             rect.y += delta_title_height
@@ -783,6 +797,8 @@ class DropSelect(Widget):
                 rect_clipped = self._scrollarea.get_world_rect().clip(rect)
                 if rect.height != rect_clipped.height:
                     self._open_bottom = False
+
+        # Create frame
         if self._drop_frame is not None and self._open_middle and \
                 self._menu is not None:
             self._drop_frame.set_scrollarea(self._menu.get_scrollarea())
@@ -1002,6 +1018,7 @@ class DropSelect(Widget):
             self._drop_frame.set_menu(None)
         self._drop_frame = None
         self.active = False
+        self._make_selection_drop()
 
     def _check_drop_made(self) -> None:
         """
@@ -1011,7 +1028,7 @@ class DropSelect(Widget):
         """
         if self._drop_frame is None:
             raise _SelectionDropNotMadeException(
-                'selection drop has not been made yet. Call {0}.make_selection_drop()'
+                'selection drop has not been made yet. Call {0}._make_selection_drop()'
                 'for avoiding this exception'.format(self.get_class_id())
             )
 

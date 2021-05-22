@@ -314,6 +314,7 @@ class WidgetManager(Base):
         widget._update__repr___(self)
 
         widget.configured = True
+        widget._configure()
 
     @staticmethod
     def _check_kwargs(kwargs: Dict) -> None:
@@ -372,6 +373,9 @@ class WidgetManager(Base):
 
         # Update widgets
         check_widget_mouseleave()
+
+        # Call event
+        widget._append_to_menu()
 
     def configure_defaults_widget(self, widget: 'Widget') -> None:
         """
@@ -1529,8 +1533,7 @@ class WidgetManager(Base):
                                           self._theme.scrollbar_slider_pad)
         scrollbar_thick = kwargs.pop('scrollbar_thick',
                                      self._theme.scrollbar_thick)
-        scrollbars = get_scrollbars_from_position(
-            kwargs.pop('scrollbars', self._theme.scrollarea_position))
+        scrollbars = kwargs.pop('scrollbars', self._theme.scrollarea_position)
 
         widget = pygame_menu.widgets.DropSelect(
             default=default,
@@ -1542,6 +1545,17 @@ class WidgetManager(Base):
             open_middle=open_middle,
             placeholder=placeholder,
             placeholder_add_to_selection_box=placeholder_add_to_selection_box,
+            scrollbar_color=scrollbar_color,
+            scrollbar_cursor=scrollbar_cursor,
+            scrollbar_shadow=scrollbar_shadow,
+            scrollbar_shadow_color=scrollbar_shadow_color,
+            scrollbar_shadow_offset=scrollbar_shadow_offset,
+            scrollbar_shadow_position=scrollbar_shadow_position,
+            scrollbar_slider_color=scrollbar_slider_color,
+            scrollbar_slider_hover_color=scrollbar_slider_hover_color,
+            scrollbar_slider_pad=scrollbar_slider_pad,
+            scrollbar_thick=scrollbar_thick,
+            scrollbars=scrollbars,
             selection_box_arrow_color=selection_box_arrow_color,
             selection_box_arrow_margin=selection_box_arrow_margin,
             selection_box_bgcolor=selection_box_bgcolor,
@@ -1567,24 +1581,7 @@ class WidgetManager(Base):
         )
 
         self._configure_widget(widget=widget, **attributes)
-        widget.set_theme(self._theme)
         self._append_widget(widget)
-
-        # After addition, create drop
-        widget.make_selection_drop(
-            scrollbar_color=scrollbar_color,
-            scrollbar_cursor=scrollbar_cursor,
-            scrollbar_shadow=scrollbar_shadow,
-            scrollbar_shadow_color=scrollbar_shadow_color,
-            scrollbar_shadow_offset=scrollbar_shadow_offset,
-            scrollbar_shadow_position=scrollbar_shadow_position,
-            scrollbar_slider_color=scrollbar_slider_color,
-            scrollbar_slider_hover_color=scrollbar_slider_hover_color,
-            scrollbar_slider_pad=scrollbar_slider_pad,
-            scrollbar_thick=scrollbar_thick,
-            scrollbars=scrollbars,
-            scrollbars_parsed=True
-        )
 
         return widget
 
@@ -1805,8 +1802,7 @@ class WidgetManager(Base):
                                           self._theme.scrollbar_slider_pad)
         scrollbar_thick = kwargs.pop('scrollbar_thick',
                                      self._theme.scrollbar_thick)
-        scrollbars = get_scrollbars_from_position(
-            kwargs.pop('scrollbars', self._theme.scrollarea_position))
+        scrollbars = kwargs.pop('scrollbars', self._theme.scrollarea_position)
 
         widget = pygame_menu.widgets.DropSelectMultiple(
             default=default,
@@ -1820,6 +1816,17 @@ class WidgetManager(Base):
             placeholder=placeholder,
             placeholder_add_to_selection_box=placeholder_add_to_selection_box,
             placeholder_selected=placeholder_selected,
+            scrollbar_color=scrollbar_color,
+            scrollbar_cursor=scrollbar_cursor,
+            scrollbar_shadow=scrollbar_shadow,
+            scrollbar_shadow_color=scrollbar_shadow_color,
+            scrollbar_shadow_offset=scrollbar_shadow_offset,
+            scrollbar_shadow_position=scrollbar_shadow_position,
+            scrollbar_slider_color=scrollbar_slider_color,
+            scrollbar_slider_hover_color=scrollbar_slider_hover_color,
+            scrollbar_slider_pad=scrollbar_slider_pad,
+            scrollbar_thick=scrollbar_thick,
+            scrollbars=scrollbars,
             selection_box_arrow_color=selection_box_arrow_color,
             selection_box_arrow_margin=selection_box_arrow_margin,
             selection_box_bgcolor=selection_box_bgcolor,
@@ -1852,24 +1859,7 @@ class WidgetManager(Base):
         )
 
         self._configure_widget(widget=widget, **attributes)
-        widget.set_theme(self._theme)
         self._append_widget(widget)
-
-        # After addition, create drop
-        widget.make_selection_drop(
-            scrollbar_color=scrollbar_color,
-            scrollbar_cursor=scrollbar_cursor,
-            scrollbar_shadow=scrollbar_shadow,
-            scrollbar_shadow_color=scrollbar_shadow_color,
-            scrollbar_shadow_offset=scrollbar_shadow_offset,
-            scrollbar_shadow_position=scrollbar_shadow_position,
-            scrollbar_slider_color=scrollbar_slider_color,
-            scrollbar_slider_hover_color=scrollbar_slider_hover_color,
-            scrollbar_slider_pad=scrollbar_slider_pad,
-            scrollbar_thick=scrollbar_thick,
-            scrollbars=scrollbars,
-            scrollbars_parsed=True
-        )
 
         return widget
 

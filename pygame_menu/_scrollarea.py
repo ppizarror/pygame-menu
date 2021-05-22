@@ -909,6 +909,18 @@ class ScrollArea(Base):
         self._apply_size_changes()
         return self
 
+    def get_world(self) -> Optional['pygame.Surface']:
+        """
+        Return the world surface area.
+
+        .. warning::
+
+            Use with caution.
+
+        :return: World surface. ``None`` if it has not been set yet
+        """
+        return self._world
+
     def get_parent_position(self) -> Tuple2IntType:
         """
         Return parent ScrollArea position.

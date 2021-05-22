@@ -1611,7 +1611,6 @@ class WidgetsTest(unittest.TestCase):
         self.assertNotEqual(id(items), id(drop._items))
         menu.add.generic_widget(drop, configure_defaults=True)
         self.assertEqual(drop._selection_box_width, 225 if not SYS_PLATFORM_OSX else 226)
-        drop.make_selection_drop()
 
         # Check drop is empty
         self.assertEqual(drop.get_value(), ([], []))
@@ -1691,7 +1690,6 @@ class WidgetsTest(unittest.TestCase):
         drop.set_default_value(1)
         self.assertEqual(drop.get_value(), ([('epic', 2)], [1]))
         self.assertEqual(drop._get_current_selected_text(), '1 selected')
-        drop.make_selection_drop()
 
         # Use manager
         drop2 = menu.add.dropselect_multiple('nice', [('This is a really long selection item', 1), ('epic', 2)],
@@ -1775,11 +1773,11 @@ class WidgetsTest(unittest.TestCase):
         # noinspection SpellCheckingInspection
         drop = pygame_menu.widgets.DropSelect('dropsel', items,
                                               selection_option_font_size=int(0.75 * menu._theme.widget_font_size),
-                                              placeholder_add_to_selection_box=False)
+                                              placeholder_add_to_selection_box=False,
+                                              selection_option_font=menu._theme.widget_font)
         menu.add.generic_widget(drop, configure_defaults=True)
         self.assertEqual(drop._selection_box_width,
                          (207 if PYGAME_V2 else 208) if not SYS_PLATFORM_OSX else 209)
-        drop.make_selection_drop()
         self.assertEqual(drop.get_frame_depth(), 0)
         drop.render()
         self.assertTrue(drop._drop_frame.is_scrollable)
@@ -1942,10 +1940,14 @@ class WidgetsTest(unittest.TestCase):
                                  )
 
         # Test change items
-        drop.update_items([])
+        drop_frame = drop._drop_frame
+        drop._drop_frame = None
+        self.assertEqual(drop.get_scroll_value_percentage('any'), -1)
         self.assertRaises(pygame_menu.widgets.widget.dropselect._SelectionDropNotMadeException,
                           lambda: drop._check_drop_made())
-        drop.make_selection_drop()  # This selection drop is empty
+        drop._drop_frame = drop_frame
+        drop.update_items([])
+        drop._make_selection_drop()
         self.assertEqual(drop._drop_frame.get_attribute('height'), 0)
         self.assertEqual(drop._drop_frame.get_attribute('width'), 0)
         self.assertFalse(drop.active)
@@ -1970,7 +1972,6 @@ class WidgetsTest(unittest.TestCase):
 
         # Restore previous values
         drop.update_items(items)
-        drop.make_selection_drop()
         self.assertEqual(drop.get_index(), -1)
 
         # Apply transforms
@@ -2088,7 +2089,6 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(drop2.get_scrollarea().get_parent(), menu.get_scrollarea())
         self.assertEqual(drop2._drop_frame.get_scrollarea().get_parent(), menu.get_scrollarea())
         drop2.update_items([('optionA', 1), ('optionB', 2)])
-        drop2.make_selection_drop()
 
         if PYGAME_V2:
             self.assertEqual(drop2._get_status(), (
@@ -2295,8 +2295,6 @@ class WidgetsTest(unittest.TestCase):
             _items = select.get_items()
             _items.pop(_items.index(s_val[0]))
             select.update_items(_items)
-            self.assertEqual(select.get_scroll_value_percentage('any'), -1)
-            select.make_selection_drop()
 
         menu = MenuUtils.generic_menu()
 
@@ -2326,13 +2324,8 @@ class WidgetsTest(unittest.TestCase):
 
         # Test configured
         select1.configured = False
-        self.assertRaises(RuntimeError, lambda: select1.make_selection_drop())
+        self.assertRaises(RuntimeError, lambda: select1._make_selection_drop())
         select1.configured = True
-        select1._menu = None
-        select1._theme = None
-        self.assertRaises(RuntimeError, lambda: select1.make_selection_drop())
-        select1._menu = menu
-        select1._theme = menu.get_theme()
         select1.readonly = True
         self.assertFalse(select1.update([]))
 
