@@ -564,7 +564,10 @@ class MenuBar(Widget):
                     self._menu is not None:
                 event_pos = get_finger_pos(self._menu, event)
                 if self._backbox_rect and self._backbox_rect.collidepoint(*event_pos):
-                    self._sound.play_click_mouse()
+                    if event.type == pygame.MOUSEBUTTONUP:
+                        self._sound.play_click_mouse()
+                    else:
+                        self._sound.play_click_touch()
                     self.apply()
                     updated = True
 

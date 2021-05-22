@@ -233,7 +233,10 @@ class Button(Widget):
                     event.button in (1, 2, 3) or \
                     event.type == FINGERUP and self._touchscreen_enabled and \
                     self._menu is not None:
-                self._sound.play_click_mouse()
+                if event.type == pygame.MOUSEBUTTONUP:
+                    self._sound.play_click_mouse()
+                else:
+                    self._sound.play_click_touch()
 
                 event_pos = get_finger_pos(self._menu, event)
                 if rect.collidepoint(*event_pos):
