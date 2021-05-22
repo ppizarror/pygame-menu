@@ -647,6 +647,10 @@ class WidgetsTest(unittest.TestCase):
         selector.readonly = True
         selector.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
         self.assertEqual(selector.get_value()[0][0], '4 - Easy')
+        selector._left()
+        self.assertEqual(selector.get_value()[0][0], '4 - Easy')
+        selector._right()
+        self.assertEqual(selector.get_value()[0][0], '4 - Easy')
 
         # Test fancy selector
         sel_fancy = menu.add.selector(
@@ -772,6 +776,10 @@ class WidgetsTest(unittest.TestCase):
 
         # Fill with zeros, then number with 2 consecutive 0 types must be 255,0,0
         # Commas should be inserted automatically
+        widget.readonly = True
+        widget.update(PygameEventUtils.key(pygame.K_0, keydown=True, char='0'))
+        self.assertEqual(widget._input_string, '255,')
+        widget.readonly = False
         widget.update(PygameEventUtils.key(pygame.K_0, keydown=True, char='0'))
         widget.update(PygameEventUtils.key(pygame.K_0, keydown=True, char='0'))
         self.assertEqual(widget._input_string, '255,0,0')
@@ -2727,6 +2735,8 @@ class WidgetsTest(unittest.TestCase):
         sb.update(PygameEventUtils.middle_rect_click(sb.get_slider_rect(), button=5, delta=(0, 50), rel=(0, 999),
                                                      evtype=pygame.MOUSEMOTION))
         self.assertEqual(sb.get_value_percentage(), 1)
+        sb.readonly = True
+        self.assertFalse(sb.update([]))
 
         # Ignore events if mouse outside the region
         sb.update(PygameEventUtils.middle_rect_click(sb.get_slider_rect(), button=5, delta=(0, 999), rel=(0, -10),
@@ -2759,7 +2769,9 @@ class WidgetsTest(unittest.TestCase):
         # Set minimum
         sb.set_minimum(0.5 * sb._values_range[1])
 
-        # noinspection PyTypeChecker
+        # Test hide
+        sb._mouseover = True
+        sb.hide()
 
     # noinspection PyTypeChecker
     def test_toggleswitch(self) -> None:
@@ -2832,6 +2844,10 @@ class WidgetsTest(unittest.TestCase):
         self.assertFalse(value[0])
         switch.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
         self.assertFalse(value[0])
+        switch._left()
+        self.assertFalse(value[0])
+        switch._right()
+        self.assertFalse(value[0])
 
         switch.readonly = False
         switch.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
@@ -2902,6 +2918,11 @@ class WidgetsTest(unittest.TestCase):
                           lambda: menu.add.toggle_switch('toggle', False, single_click='true'))
         self.assertRaises(AssertionError,
                           lambda: menu.add.toggle_switch('toggle', False, single_click_dir='true'))
+
+        # Test other constructor params
+        pygame_menu.widgets.ToggleSwitch('Epic', state_text_font=menu._theme.widget_font)
+        self.assertRaises(AssertionError,
+                          lambda: pygame_menu.widgets.ToggleSwitch('Epic', state_text_font_size=-1))
 
     def test_image_widget(self) -> None:
         """

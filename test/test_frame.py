@@ -2243,3 +2243,8 @@ class FrameWidgetTest(unittest.TestCase):
         menu.draw(surface)
         self.assertEqual(table._update_widgets, [btn, sel])
         print(table.get_max_size())
+        self.assertRaises(AssertionError, lambda: table.add_row([table]))
+        f = menu.add.frame_h(100, 100)
+        f._relax = True
+        f.pack(table)
+        self.assertRaises(AssertionError, lambda: table.add_row([f]))
