@@ -368,7 +368,7 @@ class WidgetManager(Base):
 
         # Sort frame widgets, as render position changes frame position/frame
         if len(self._menu._update_frames) > 0:
-            self._menu._update_frames[0].sort_menu_update_frames()
+            self._menu._update_frames[0]._sort_menu_update_frames()
 
         # Update widgets
         check_widget_mouseleave()
