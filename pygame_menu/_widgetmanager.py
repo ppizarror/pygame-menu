@@ -52,6 +52,8 @@ from pygame_menu.utils import assert_vector, assert_color, assert_cursor, is_cal
     uuid4, parse_padding, assert_position_vector, warn
 from pygame_menu.widgets.core.widget import Widget, check_widget_mouseleave
 from pygame_menu.widgets.widget.colorinput import ColorInputColorType, ColorInputHexFormatType
+from pygame_menu.widgets.widget.dropselect_multiple import DropSelectMultipleSFormatType, \
+    DROPSELECT_MULTIPLE_SFORMAT_TOTAL
 from pygame_menu.widgets.widget.selector import SelectorStyleType, SELECTOR_STYLE_CLASSIC
 
 from pygame_menu._types import Any, Union, Callable, Dict, Optional, CallbackType, \
@@ -1175,12 +1177,6 @@ class WidgetManager(Base):
             r'(?:/?|[/?]\S+)$', re.IGNORECASE)
         assert re.match(regex, href) is not None, 'invalid link format'
 
-        def action() -> None:
-            """
-            Opens the link.
-            """
-            webbrowser.open(href)
-
         # Configure kwargs
         if 'cursor' not in kwargs.keys():
             kwargs['cursor'] = CURSOR_HAND
@@ -1194,7 +1190,7 @@ class WidgetManager(Base):
             kwargs['underline'] = True
 
         # Return new button
-        return self.button(title if title != '' else href, action, **kwargs)
+        return self.button(title if title != '' else href, lambda: webbrowser.open(href), **kwargs)
 
     def selector(
             self,
@@ -1599,6 +1595,7 @@ class WidgetManager(Base):
             placeholder: str = 'Select an option',
             placeholder_add_to_selection_box: bool = True,
             placeholder_selected: str = '{0} selected',
+            selection_placeholder_format: DropSelectMultipleSFormatType = DROPSELECT_MULTIPLE_SFORMAT_TOTAL,
             **kwargs
     ) -> 'pygame_menu.widgets.DropSelectMultiple':
         """
@@ -1722,6 +1719,7 @@ class WidgetManager(Base):
         :param placeholder: Text shown if no option is selected yet
         :param placeholder_add_to_selection_box: If ``True`` adds the placeholder button to the selection box
         :param placeholder_selected: Text shown if option is selected. Accepts the number of selected options
+        :param selection_placeholder_format: Format of the string replaced in ``placeholder_selected``. Can be a predefined string type ("total", "comma-list", "hyphen-list", or any other string which will join the list) or a function that receives the list of selected items and returns a string
         :param kwargs: Optional keyword arguments
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.DropSelectMultiple`
@@ -1854,6 +1852,7 @@ class WidgetManager(Base):
             selection_option_selected_box_height=selection_option_selected_box_height,
             selection_option_selected_box_margin=selection_option_selected_box_margin,
             selection_option_selected_font_color=selection_option_selected_font_color,
+            selection_placeholder_format=selection_placeholder_format,
             title=title,
             **kwargs
         )
@@ -2666,7 +2665,7 @@ class WidgetManager(Base):
         # Raise warning if adding button with Menu
         if isinstance(widget, pygame_menu.widgets.Button) and widget.to_menu:
             warn(
-                'prefer adding nested submenus using add_button method instead, '
+                'prefer adding submenus using add_button method instead, '
                 'unintended behaviours may occur'
             )
 
