@@ -39,7 +39,8 @@ from pygame_menu.locals import ORIENTATION_VERTICAL, ALIGN_LEFT, ALIGN_CENTER, \
     ORIENTATION_HORIZONTAL, POSITION_NORTH, POSITION_CENTER, POSITION_SOUTH, \
     ALIGN_RIGHT, POSITION_WEST, POSITION_EAST
 from pygame_menu.utils import assert_alignment, assert_color, uuid4, parse_padding, \
-    assert_position, assert_vector
+    assert_position, assert_vector, warn
+from pygame_menu.version import ver
 from pygame_menu.widgets.core.widget import Widget, WidgetBorderPositionType, \
     WIDGET_FULL_BORDER, WIDGET_BORDER_POSITION_NONE
 from pygame_menu.widgets.widget.frame import Frame
@@ -48,7 +49,7 @@ from pygame_menu.widgets.widget.label import Label
 from pygame_menu.widgets.widget.surface import SurfaceWidget
 
 from pygame_menu._types import List, Union, ColorInputType, Optional, Tuple, \
-    VectorInstance, PaddingType, Dict, NumberType, Vector2IntType
+    VectorInstance, PaddingType, Dict, NumberType, Vector2IntType, EventVectorType
 
 CellType = Union['Widget', str, int, float, bool, 'BaseImage', 'pygame.Surface']
 ColumnInputType = Union[Tuple[CellType, ...], List[CellType]]
@@ -70,6 +71,7 @@ class Table(Frame):
     :param table_id: ID of the table
     """
     _rows: List['Frame']
+    _update_widgets: List['Widget']
     default_cell_align: str
     default_cell_border_color: ColorInputType
     default_cell_border_position: WidgetBorderPositionType
@@ -91,6 +93,7 @@ class Table(Frame):
 
         # Internals
         self._rows = []
+        self._update_widgets = []
 
         # Frame behaviour
         self._accepts_scrollarea = False
@@ -143,6 +146,7 @@ class Table(Frame):
         self._rows.remove(row)
         self._menu_render()
         self._update_row_sizing()
+        self._update_event_widgets()
 
         # Remove scrollable from rows
         if self._menu is not None:
@@ -154,7 +158,7 @@ class Table(Frame):
                         menu_update_frames.remove(w)
                         total_removed += 1
             if total_removed > 0:
-                self.sort_menu_update_frames()
+                self._sort_menu_update_frames()
 
     @staticmethod
     def _check_cell_style(
@@ -234,6 +238,13 @@ class Table(Frame):
         .. note::
 
             By default, the cell font is the same as the table font style.
+
+        .. warning::
+
+            Currently, only static widgets work properly, that is, widgets that
+            does not accept events. Buttons or TextInputs can be added, but them
+            will not accept any event, also, these widgets cannot be selected.
+            That's because the Table architecture relies on Frame widget.
 
         :param cells: Cells to add. This can be a tuple or list of widgets, string, numbers, boolean values or images. Also a Frame row can be added
         :param cell_align: Horizontal align of each cell. See :py:mod:`pygame_menu.locals`
@@ -324,7 +335,10 @@ class Table(Frame):
         row_cells: List['Widget'] = []
         cell: 'Widget'
         j = 0
+
         for c in cells:
+            cell_widget_type = False
+
             if isinstance(c, (str, int, float, bool)):
                 cell = Label(c, label_id=self._id + '+cell-label-' + uuid4(short=True))
                 cell.set_font(
@@ -339,19 +353,32 @@ class Table(Frame):
                 )
                 cell.set_padding(0)
                 cell.set_tab_size(self._tab_size)
+
             elif isinstance(c, BaseImage):
                 cell = Image(
                     c, image_id=self._id + '+cell-image-' + uuid4(short=True)
                 )
+
             elif isinstance(c, pygame.Surface):
                 cell = SurfaceWidget(
                     c, surface_id=self._id + '+cell-surface-' + uuid4(short=True)
                 )
+
             else:
                 assert isinstance(c, Widget)
                 cell = c
+                if c._accept_events:
+                    cell_widget_type = True
+                    warn('{0} does not accept events in current pygame-menu '
+                         'v{1}; thus appended cell row widget {2} (pos {3}) would'
+                         ' not work properly, as it will ignore all inputs. Also, '
+                         'widgets within Tables cannot be selected. Consider Tables'
+                         'as visual-only'
+                         .format(self.get_class_id(), ver, c.get_class_id(), j))
+                # self._append_menu_update_frame(self)
 
             # Configure cell
+            cell.set_attribute('accept_events', cell_widget_type)
             cell.set_attribute('align', cell_align)
             cell.set_attribute('background_color', row_background_color)
             cell.set_attribute('border_color', cell_border_color)
@@ -384,11 +411,8 @@ class Table(Frame):
                           self.get_class_id())
 
             # If cell is frame and scrollable
-            if isinstance(cell, Frame) and self._menu is not None:
-                menu_update_frames = self._get_menu_update_frames()
-                if cell not in menu_update_frames:
-                    menu_update_frames.append(cell)
-                    self.sort_menu_update_frames()
+            if isinstance(cell, Frame):
+                self._append_menu_update_frame(cell)
 
             # Add to cells
             row_cells.append(cell)
@@ -404,8 +428,21 @@ class Table(Frame):
 
         # Update size
         self._update_row_sizing()
+        self._update_event_widgets()
 
         return row
+
+    def _update_event_widgets(self) -> None:
+        """
+        Update the list of widgets that accept events.
+
+        :return: None
+        """
+        self._update_widgets = []
+        for r in self._rows:
+            for w in r.get_widgets():
+                if w.get_attribute('accept_events'):
+                    self._update_widgets.append(w)
 
     def _get_column_width_row_height(self) -> Tuple[Dict[int, int], Dict['Frame', int]]:
         """
@@ -856,3 +893,15 @@ class Table(Frame):
             return self
         super(Table, self).draw(surface)
         self._draw_cell_borders(self.last_surface)
+
+    def update(self, events: EventVectorType) -> bool:
+        super(Table, self).update(events)
+        updated = False
+
+        # if self.readonly or not self.is_visible():
+        #     return updated
+        #
+        # for w in self._update_widgets:
+        #     updated = w.update(events) or updated
+
+        return updated
