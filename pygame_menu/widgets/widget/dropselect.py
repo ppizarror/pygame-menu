@@ -1226,12 +1226,12 @@ class DropSelect(Widget):
                     dist = mouse_x - (topleft + self._title_size[0])  # Distance from title
                     if dist > 0:  # User clicked the options, not title
                         self._toggle_drop()
-                        updated = True
+                        return True
 
                 else:
                     if self.active and not self.get_focus_rect().collidepoint(*event_pos):
                         self._toggle_drop()
-                        updated = True
+                        return True
 
             # Check mousemove
             # elif event.type == pygame.MOUSEMOTION:
