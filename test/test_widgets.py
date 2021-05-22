@@ -2285,7 +2285,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(drop3.get_focus_rect(), pygame.Rect(108, 468, 320, rh))
 
         # Test update list
-        def test_update(select: 'pygame_menu.widgets.DropSelect'):
+        def remove_selection_item(select: 'pygame_menu.widgets.DropSelect'):
             """
             Update list event.
             """
@@ -2295,13 +2295,14 @@ class WidgetsTest(unittest.TestCase):
             _items = select.get_items()
             _items.pop(_items.index(s_val[0]))
             select.update_items(_items)
+            print('removed {} left'.format(len(_items)))
 
         menu = MenuUtils.generic_menu()
 
         select1 = menu.add.dropselect('Subject Id',
                                       items=[('a',), ('b',), ('c',), ('d',), ('e',), ('f',)],
                                       dropselect_id='s0')
-        b_sel = menu.add.button('One', test_update, select1)
+        b_sel = menu.add.button('One', remove_selection_item, select1)
 
         b_sel.apply()
         select1.set_value(0)
@@ -2328,6 +2329,64 @@ class WidgetsTest(unittest.TestCase):
         select1.configured = True
         select1.readonly = True
         self.assertFalse(select1.update([]))
+
+        # Test touchscreen support
+        if not PYGAME_V2:
+            return
+
+        menu = MenuUtils.generic_menu(touchscreen=True)
+        sel = menu.add.dropselect(
+            'Subject Id', items=[('a',), ('b',), ('c',), ('d',), ('e',), ('f',)], dropselect_id='s0')
+        menu.add.button('One', remove_selection_item, sel)
+
+        # Select by touch
+        touch_sel = sel.get_rect(to_real_position=True).center
+        self.assertEqual(sel.get_index(), -1)
+        self.assertFalse(sel.active)
+
+        sel.update(PygameEventUtils.touch_click(touch_sel[0], touch_sel[1], menu=menu))
+        self.assertTrue(sel.active)
+
+        # Touch null option
+        sel.update(PygameEventUtils.touch_click(touch_sel[0], touch_sel[1] + 40, menu=menu))
+        self.assertTrue(sel.active)
+
+        # Select option a
+        sel.update(PygameEventUtils.touch_click(touch_sel[0], touch_sel[1] + 80, menu=menu))
+        self.assertEqual(sel.get_index(), 0)
+        self.assertFalse(sel.active)
+
+        # Touch outside
+        sel.update(PygameEventUtils.touch_click(touch_sel[0], touch_sel[1] + 400, menu=menu))
+        self.assertFalse(sel.active)
+
+        # Touch button
+        menu.update(PygameEventUtils.touch_click(touch_sel[0], touch_sel[1] + 40,
+                                                 menu=menu, evtype=FINGERDOWN))
+        menu.update(PygameEventUtils.touch_click(touch_sel[0], touch_sel[1] + 40,
+                                                 menu=menu))
+
+        # Touch again outside
+        sel.update(PygameEventUtils.touch_click(touch_sel[0], touch_sel[1] + 400, menu=menu))
+        self.assertFalse(sel.active)
+
+        # Select
+        sel.select(update_menu=True)
+        sel.update(PygameEventUtils.touch_click(touch_sel[0], touch_sel[1], menu=menu))
+        self.assertTrue(sel.active)
+
+        # Test touch scroll
+        # menu.mainloop(surface)
+
+        # Update the number of items
+        sel.update_items([('a',), ('b',)])
+        self.assertFalse(sel.active)
+        sel.update(PygameEventUtils.touch_click(touch_sel[0], touch_sel[1], menu=menu))
+        self.assertTrue(sel.active)
+        self.assertEqual(sel.get_index(), -1)
+        sel.update(PygameEventUtils.touch_click(touch_sel[0], touch_sel[1] + 80, menu=menu))
+        self.assertEqual(sel.get_index(), 0)
+        self.assertFalse(sel.active)
 
     def test_none(self) -> None:
         """
