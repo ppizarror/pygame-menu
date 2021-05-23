@@ -182,6 +182,7 @@ class Menu(Base):
     _widget_max_position: Tuple2IntType
     _widget_min_position: Tuple2IntType
     _widget_offset: List[int]
+    _widget_selected_update: bool  # Selected widget receives updates
     _widget_surface_cache_enabled: bool
     _widget_surface_cache_need_update: bool
     _widgets: List['Widget']
@@ -445,6 +446,7 @@ class Menu(Base):
         # issues can occur
         self.add = WidgetManager(self)
         self._widget_offset = [theme.widget_offset[0], theme.widget_offset[1]]
+        self._widget_selected_update = True
         self._widgets = []  # This list may change during execution (replaced by a new one)
 
         # Stores the frames which receive update events, updated and managed only
@@ -2391,7 +2393,8 @@ class Menu(Base):
             updated = True
 
         # Check selected widget
-        elif selected_widget is not None and selected_widget.update(events):
+        elif selected_widget is not None and self._current._widget_selected_update and \
+                selected_widget.update(events):
             updated = True
 
         # Check others
@@ -2655,6 +2658,15 @@ class Menu(Base):
                                 updated = True
                                 break
 
+                # Touchscreen events in selected widget
+                elif event.type == FINGERUP and self._current._touchscreen and \
+                        selected_widget is not None:
+                    self._current._sound.play_click_touch()
+                    if selected_widget_scrollarea.collide(selected_widget, event):
+                        updated = selected_widget.update([event])
+                        if updated:
+                            break
+
                 # Select widgets by touchscreen motion, this is valid only if the
                 # current selected widget is not active and the pointed widget is
                 # selectable
@@ -2678,15 +2690,6 @@ class Menu(Base):
                     if sel:
                         updated = True
                         break
-
-                # Touchscreen events in selected widget
-                elif event.type == FINGERUP and self._current._touchscreen and \
-                        selected_widget is not None:
-                    self._current._sound.play_click_mouse()
-                    if selected_widget_scrollarea.collide(selected_widget, event):
-                        updated = selected_widget.update([event])
-                        if updated:
-                            break
 
         if mouse_motion_event is not None:
             check_widget_mouseleave(event=mouse_motion_event)

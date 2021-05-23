@@ -28,6 +28,7 @@ Sound types are the following:
 Type                                                      Description
 ========================================================  =========================
 :py:data:`pygame_menu.sound.SOUND_TYPE_CLICK_MOUSE`       Mouse click
+:py:data:`pygame_menu.sound.SOUND_TYPE_CLICK_TOUCH`       Touch click
 :py:data:`pygame_menu.sound.SOUND_TYPE_CLOSE_MENU`        A menu is closed
 :py:data:`pygame_menu.sound.SOUND_TYPE_ERROR`             Generic error
 :py:data:`pygame_menu.sound.SOUND_TYPE_EVENT`             Generic event

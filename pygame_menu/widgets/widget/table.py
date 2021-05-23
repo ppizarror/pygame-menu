@@ -366,6 +366,17 @@ class Table(Frame):
 
             else:
                 assert isinstance(c, Widget)
+                assert c != self, '{0} cannot be appended to itself'.format(self.get_class_id())
+
+                # Check if Frame not recursive
+                if isinstance(c, Frame):
+                    print(self, c.get_widgets())
+                    assert self not in c.get_widgets(unpack_subframes_include_frame=True), \
+                        '{0} cannot be packed within {1}, recursive packing is ' \
+                        'not allowed (Table is within Frame to be inserted as ' \
+                        'row cell)' \
+                        ''.format(self.get_class_id(), c.get_class_id())
+
                 cell = c
                 if c._accept_events:
                     cell_widget_type = True

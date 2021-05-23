@@ -1198,13 +1198,14 @@ class DropSelect(Widget):
                     event.type == FINGERUP and self._touchscreen_enabled and \
                     self._menu is not None and \
                     not (self._drop_frame is not None and
+                         self._drop_frame.get_scrollarea(inner=True) is not None and
                          self._drop_frame.get_scrollarea(inner=True).is_scrolling()):
 
                 # Check for mouse clicks within
                 if self.active:
                     for btn in self._option_buttons:
                         btn.set_attribute('ignore_scroll_to_widget')
-                        updated = btn.update(events)
+                        updated = btn.update([event])
                         try:
                             btn.remove_attribute('ignore_scroll_to_widget')
                         except IndexError:
@@ -1225,12 +1226,12 @@ class DropSelect(Widget):
                     dist = mouse_x - (topleft + self._title_size[0])  # Distance from title
                     if dist > 0:  # User clicked the options, not title
                         self._toggle_drop()
-                        updated = True
+                        return True
 
                 else:
                     if self.active and not self.get_focus_rect().collidepoint(*event_pos):
                         self._toggle_drop()
-                        updated = True
+                        return True
 
             # Check mousemove
             # elif event.type == pygame.MOUSEMOTION:

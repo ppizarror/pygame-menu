@@ -994,7 +994,8 @@ class Frame(Widget):
             dw = x_left - x_right
             if dw > self._width and not self._relax:
                 raise _FrameSizeException(
-                    '{3} width ({0}) exceeds {2} width ({1})'
+                    '{3} width ({0}) exceeds {2} width ({1}). Set frame._relax=True'
+                    ' to ignore this Exception'
                     ''.format(dw, self._width, self.get_class_id(), w.get_class_id())
                 )
 
@@ -1003,7 +1004,8 @@ class Frame(Widget):
         if w_center > available and not self._relax:
             raise _FrameSizeException(
                 'cannot place center widgets as required width ({0}) is greater '
-                'than available ({1}) in {2}'
+                'than available ({1}) in {2}. Set frame._relax=True to ignore '
+                'this Exception'
                 ''.format(w_center, available, self.get_class_id())
             )
         x_center = int(self._width / 2 - w_center / 2)
@@ -1044,7 +1046,8 @@ class Frame(Widget):
             dh = y_top - y_bottom
             if dh > self._height and not self._relax:
                 raise _FrameSizeException(
-                    '{3} height ({0}) exceeds {2} height ({1})'
+                    '{3} height ({0}) exceeds {2} height ({1}). Set frame._relax=True'
+                    ' to ignore this Exception'
                     ''.format(dh, self._height, self.get_class_id(), w.get_class_id())
                 )
 
@@ -1053,7 +1056,8 @@ class Frame(Widget):
         if w_center > available and not self._relax:
             raise _FrameSizeException(
                 'cannot place center widgets as required height ({0}) is greater '
-                'than available ({1}) in {2}'
+                'than available ({1}) in {2}. Set frame._relax=True to ignore '
+                'this Exception'
                 ''.format(w_center, available, self.get_class_id())
             )
         y_center = int(self._height / 2 - w_center / 2)

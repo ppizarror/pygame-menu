@@ -60,6 +60,7 @@ class FrameWidgetTest(unittest.TestCase):
         """
         if SYS_PLATFORM_OSX:
             return
+
         menu = MenuUtils.generic_menu(theme=TEST_THEME.copy())
 
         menu.add.button('rr')
@@ -558,6 +559,7 @@ class FrameWidgetTest(unittest.TestCase):
         """
         if SYS_PLATFORM_OSX:
             return
+
         menu = MenuUtils.generic_menu(theme=THEME_NON_FIXED_TITLE)
         self.assertRaises(AssertionError, lambda: menu.add.frame_v(300, 400, max_width=400))
         self.assertRaises(AssertionError, lambda: menu.add.frame_v(300, 400, max_height=500))
@@ -1190,6 +1192,7 @@ class FrameWidgetTest(unittest.TestCase):
         self.assertAlmostEqual(f2.get_scroll_value_percentage(ORIENTATION_VERTICAL), 0)
         if PYGAME_V2:
             self.assertAlmostEqual(menu.get_scrollarea().get_scroll_value_percentage(ORIENTATION_VERTICAL), 0.467)
+
         menu._down()
         menu._down()
         self.assertEqual(menu.get_selected_widget(), b5)
@@ -1953,6 +1956,7 @@ class FrameWidgetTest(unittest.TestCase):
         """
         if SYS_PLATFORM_OSX:
             return
+
         menu = MenuUtils.generic_menu()
 
         # No title, no scrollable
@@ -2002,6 +2006,7 @@ class FrameWidgetTest(unittest.TestCase):
         """
         if not PYGAME_V2:
             return
+
         menu = MenuUtils.generic_menu()
         btn = menu.add.button('1')
         table = menu.add.table('table', background_color='red')
@@ -2243,3 +2248,8 @@ class FrameWidgetTest(unittest.TestCase):
         menu.draw(surface)
         self.assertEqual(table._update_widgets, [btn, sel])
         print(table.get_max_size())
+        self.assertRaises(AssertionError, lambda: table.add_row([table]))
+        f = menu.add.frame_h(100, 100)
+        f._relax = True
+        f.pack(table)
+        self.assertRaises(AssertionError, lambda: table.add_row([f]))

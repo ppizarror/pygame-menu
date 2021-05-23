@@ -36,7 +36,7 @@ import pygame_menu
 import pygame_menu.controls as ctrl
 
 from pygame_menu.locals import FINGERUP
-from pygame_menu.utils import is_callable, assert_color
+from pygame_menu.utils import is_callable, assert_color, get_finger_pos
 from pygame_menu.widgets.core import Widget
 
 from pygame_menu._types import Any, CallbackType, Callable, Union, List, Tuple, \
@@ -230,18 +230,16 @@ class Button(Widget):
 
             # User clicks the button; don't consider the mouse wheel (button 4 & 5)
             elif event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and \
-                    event.button in (1, 2, 3):
-                self._sound.play_click_mouse()
-                if rect.collidepoint(*event.pos):
-                    self.apply()
-                    updated = True
+                    event.button in (1, 2, 3) or \
+                    event.type == FINGERUP and self._touchscreen_enabled and \
+                    self._menu is not None:
+                if event.type == pygame.MOUSEBUTTONUP:
+                    self._sound.play_click_mouse()
+                else:
+                    self._sound.play_click_touch()
 
-            # User touches the button
-            elif event.type == FINGERUP and self._touchscreen_enabled and self._menu is not None:
-                self._sound.play_click_mouse()
-                window_size = self._menu.get_window_size()
-                finger_pos = (event.x * window_size[0], event.y * window_size[1])
-                if rect.collidepoint(*finger_pos):
+                event_pos = get_finger_pos(self._menu, event)
+                if rect.collidepoint(*event_pos):
                     self.apply()
                     updated = True
 

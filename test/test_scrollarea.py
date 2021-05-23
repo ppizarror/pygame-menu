@@ -36,6 +36,7 @@ import unittest
 from test._utils import MenuUtils, PygameEventUtils, surface, TEST_THEME, PYGAME_V2, \
     SYS_PLATFORM_OSX
 
+import pygame
 import pygame_menu
 
 from pygame_menu.locals import POSITION_SOUTHEAST, POSITION_CENTER, POSITION_NORTHWEST, \
@@ -156,6 +157,7 @@ class ScrollAreaTest(unittest.TestCase):
         """
         if SYS_PLATFORM_OSX:
             return
+
         menu = MenuUtils.generic_menu(title='menu', theme=TEST_THEME.copy())
         menu.render()
         self.assertEqual(menu.get_height(widget=True), 0)
@@ -210,6 +212,38 @@ class ScrollAreaTest(unittest.TestCase):
         rect_virtual = sa.to_real_position(btn.get_rect())
         event_click_widget = PygameEventUtils.middle_rect_click(rect_virtual, inlist=False)
         self.assertTrue(sa.collide(btn, event_click_widget))
+        self.assertEqual(sa.get_world_rect(absolute=True),
+                         pygame.Rect(0, 0, 600, 345))
+        self.assertEqual(sa.get_size(), (600, 345))
+        self.assertIsInstance(sa.mouse_is_over(), bool)
+
+        # Append many items within menu, thus, scrollbars will appear
+        self.assertEqual(sa.get_scrollbar_thickness(ORIENTATION_VERTICAL), 0)
+        self.assertEqual(sa.get_scrollbar_thickness(ORIENTATION_HORIZONTAL), 0)
+
+        sa._scrollbar_positions = (POSITION_NORTH, POSITION_EAST, POSITION_WEST, POSITION_SOUTH)
+        self.assertEqual(sa.get_view_rect(), pygame.Rect(0, 155, 600, 345))
+
+        for i in range(10):
+            menu.add.button('b{0}'.format(i)).scale(20, 1)
+
+        self.assertEqual(sa.get_scrollbar_thickness(ORIENTATION_VERTICAL), 20)
+        self.assertEqual(sa.get_scrollbar_thickness(ORIENTATION_HORIZONTAL), 20)
+
+        sa._on_vertical_scroll(0.5)
+        sa._on_horizontal_scroll(0.5)
+
+        self.assertEqual(sa.to_real_position((10, 10)), (10, 165))
+        sa.get_view_rect()
+
+        # Test rect
+        sa = pygame_menu._scrollarea.ScrollArea(100, 100)
+        self.assertEqual(sa.get_rect(to_real_position=True),
+                         pygame.Rect(0, 0, 100, 100))
+        self.assertEqual(sa.get_scrollbar_thickness(ORIENTATION_VERTICAL, visible=False), 0)
+        self.assertEqual(sa.get_scrollbar_thickness(ORIENTATION_HORIZONTAL, visible=False), 0)
+        self.assertEqual(sa.get_scrollbar_thickness(ORIENTATION_VERTICAL, visible=False), 0)
+        self.assertRaises(AssertionError, lambda: sa.get_scrollbar_thickness('fake', visible=False))
 
     # noinspection PyTypeChecker
     def test_widget_relative_to_view_rect(self) -> None:
@@ -218,6 +252,7 @@ class ScrollAreaTest(unittest.TestCase):
         """
         if not PYGAME_V2:
             return
+
         menu = MenuUtils.generic_menu()
         buttons = []
         for i in range(20):
@@ -250,3 +285,25 @@ class ScrollAreaTest(unittest.TestCase):
         sa.scroll_to(ORIENTATION_VERTICAL, 1)
         test_relative(buttons[0], 0.4689655172413793, -1.4375)
         test_relative(buttons[-1], 0.45517241379310347, 0.89)
+
+    def test_bg_image(self) -> None:
+        """
+        Test background image.
+        """
+        img = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU)
+        sa = pygame_menu._scrollarea.ScrollArea(100, 100, scrollbars=POSITION_EAST,
+                                                area_color=img)
+        sa._make_background_surface()
+        self.assertIsInstance(sa._area_color, pygame_menu.BaseImage)
+
+    def test_position(self) -> None:
+        """
+        Test different scrollbar and scrollarea positions.
+        """
+        sa = pygame_menu._scrollarea.ScrollArea(100, 100)
+        sa_scrolls = sa._scrollbar_positions
+
+        # Test invalid position
+        sa._scrollbar_positions = 'fake'
+        self.assertRaises(ValueError, lambda: sa._apply_size_changes())
+        sa._scrollbar_positions = sa_scrolls

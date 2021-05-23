@@ -52,6 +52,7 @@ class SoundTest(unittest.TestCase):
         """
         if SYS_PLATFORM_OSX:
             return
+
         sound_src = pygame_menu.sound.Sound()
         sound_src.load_example_sounds()
 
@@ -69,6 +70,7 @@ class SoundTest(unittest.TestCase):
         """
         if SYS_PLATFORM_OSX:
             return
+
         new_sound = pygame_menu.sound.Sound(uniquechannel=False)
         new_sound.load_example_sounds()
         new_sound.play_widget_selection()
@@ -85,6 +87,7 @@ class SoundTest(unittest.TestCase):
         """
         if SYS_PLATFORM_OSX:
             return
+
         new_sound = pygame_menu.sound.Sound(uniquechannel=False)
         new_sound.get_channel()
         self.sound.get_channel_info()
@@ -98,6 +101,7 @@ class SoundTest(unittest.TestCase):
         """
         if SYS_PLATFORM_OSX:
             return
+
         self.assertFalse(self.sound.set_sound(pygame_menu.sound.SOUND_TYPE_CLICK_MOUSE, None))
         self.assertRaises(ValueError, lambda: self.sound.set_sound('none', None))
         self.assertRaises(IOError,
@@ -112,6 +116,7 @@ class SoundTest(unittest.TestCase):
         self.sound.load_example_sounds()
 
         self.sound.play_click_mouse()
+        self.sound.play_click_touch()
         self.sound.play_close_menu()
         self.sound.play_error()
         self.sound.play_event()

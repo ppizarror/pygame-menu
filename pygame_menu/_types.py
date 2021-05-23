@@ -102,7 +102,7 @@ try:
 
     CursorInputType = Optional[Union[int, __Cursor]]
     CursorInputInstance = (int, __Cursor, type(None))
+
 except (AttributeError, ImportError):
-    CursorInputType = Optional[int]
-    CursorInputInstance = (int, type(None))
+    CursorInputType, CursorInputInstance = Optional[int], (int, type(None))
 CursorType = CursorInputType
