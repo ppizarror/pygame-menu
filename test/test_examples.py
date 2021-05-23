@@ -249,6 +249,7 @@ class ExamplesTest(unittest.TestCase):
         """
         if SYS_PLATFORM_OSX:
             return
+
         app = ui_solarsystem.main(test=True)
         self.assertFalse(app.menu._disable_draw)
         app.process_events(PygameEventUtils.keydown([pygame.K_p]), app.menu)

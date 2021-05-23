@@ -139,6 +139,7 @@ class MenuTest(unittest.TestCase):
         """
         if SYS_PLATFORM_OSX:
             return
+
         # Test centering
         theme_src = TEST_THEME.copy()
 
@@ -149,10 +150,7 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(menu.get_height(inner=True), 345)
         self.assertEqual(menu.get_menubar().get_height(), 55)
 
-        h = 41
-        if not PYGAME_V2:
-            h = 42
-
+        h = 41 if PYGAME_V2 else 42
         self.assertEqual(btn.get_height(), h)
         self.assertEqual(btn.get_size()[1], h)
         self.assertEqual(menu.get_height(widget=True), h)
@@ -297,6 +295,7 @@ class MenuTest(unittest.TestCase):
         """
         if SYS_PLATFORM_OSX:
             return
+
         menu = MenuUtils.generic_menu(width=400, theme=THEME_NON_FIXED_TITLE)
         btn = menu.add.button('button')
         self.assertEqual(menu.get_menubar().get_height(), 55)
@@ -762,6 +761,7 @@ class MenuTest(unittest.TestCase):
         """
         if SYS_PLATFORM_OSX:
             return
+
         # Vertical offset disables centering
         theme = pygame_menu.themes.THEME_BLUE.copy()
         theme.widget_offset = (0, 100)
@@ -1430,6 +1430,7 @@ class MenuTest(unittest.TestCase):
         """
         if SYS_PLATFORM_OSX:
             return
+
         menu = MenuUtils.generic_menu(title='menu', mouse_motion_selection=True)
         btn = menu.add.button('nice')
 
@@ -1442,6 +1443,7 @@ class MenuTest(unittest.TestCase):
             self.assertEqual(focus[2], ((0, 303), (262, 303), (262, 352), (0, 352)))
             self.assertEqual(focus[3], ((336, 303), (600, 303), (600, 352), (336, 352)))
             self.assertEqual(focus[4], ((0, 353), (600, 353), (600, 600), (0, 600)))
+
         else:
             self.assertEqual(focus[1], ((0, 0), (600, 0), (600, 303), (0, 303)))
             self.assertEqual(focus[2], ((0, 304), (262, 304), (262, 352), (0, 352)))
@@ -1761,6 +1763,7 @@ class MenuTest(unittest.TestCase):
         """
         if SYS_PLATFORM_OSX:
             return
+
         menu = MenuUtils.generic_menu(theme=TEST_THEME.copy())
         btn1 = menu.add.button('1')
         btn2 = menu.add.button('2')
@@ -1787,6 +1790,7 @@ class MenuTest(unittest.TestCase):
                       (0, 2, 2, 291, 204, 17, 41, 291, 359, 291, 204),
                       (1, 0, sel[2], 1, 0, 0, 0)))
                 ))
+
             else:
                 self.assertEqual(menu._test_widgets_status(), (
                     (('Button-' + button[0].get_title(),
@@ -2067,6 +2071,7 @@ class MenuTest(unittest.TestCase):
         expc_pos = (247, 153)
         if not PYGAME_V2:
             expc_pos = (247, 152)
+
         self.assertEqual(btn.get_position(), expc_pos)
         btn.set_float()
         self.assertEqual(btn.get_position(), expc_pos)

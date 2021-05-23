@@ -64,6 +64,7 @@ class BaseImageTest(unittest.TestCase):
         """
         if SYS_PLATFORM_OSX:
             return
+
         photo = 'R0lGODlhRgBGAPZUAAAAAAAAMwAAzAArAAArMwArzAAr/wBVmQBVzABV/zMAADMAMzMrADMrMzMrmTMrzDMr/zNVADNVMzNVZjNVmTN' \
                 'VzDNV/zOAADOAMzOAZjOA/zOqM2YAM2YrAGYrM2ZVAGZVM2ZVZmZVmWZVzGZV/2aAAGaAM2aAZmaAmWaAzGaA/2aqAGaqM2aqZmaqmW' \
                 'aqzJkrAJkrM5lVAJlVM5lVZplVmZmAAJmAM5mAZpmAmZmAzJmqZpmqmZmqzJmq/5nVmZnVzMxVAMxVM8xVZsyAAMyAM8yAZsyqZsyqm' \
@@ -279,6 +280,7 @@ class BaseImageTest(unittest.TestCase):
         self.assertTrue(image.equals(image4))
         if SYS_PLATFORM_OSX:
             return
+
         self.assertFalse(image.equals(image4a))
         self.assertTrue(image4a.equals(image4b))
 
@@ -288,6 +290,7 @@ class BaseImageTest(unittest.TestCase):
         """
         if SYS_PLATFORM_OSX:
             return
+
         image_original = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
         image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
         self.assertTrue(image.equals(image_original))
@@ -389,6 +392,7 @@ class BaseImageTest(unittest.TestCase):
 
         if not SYS_PLATFORM_OSX:
             self.assertEqual(image.get_at((10, 10)), (56, 56, 56, 255))
+
         image.set_at((10, 10), (0, 0, 0))
         # self.assertEqual(image.get_at((10, 10)), (0, 0, 0, 255))
 

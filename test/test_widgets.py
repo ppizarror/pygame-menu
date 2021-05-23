@@ -294,6 +294,7 @@ class WidgetsTest(unittest.TestCase):
         """
         if SYS_PLATFORM_OSX:
             return
+
         label = Label('my label is really long yeah, it should be scaled in the width')
         label.set_font(pygame_menu.font.FONT_OPEN_SANS, 25, (255, 255, 255), (0, 0, 0),
                        (0, 0, 0), (0, 0, 0), (0, 0, 0))
@@ -449,6 +450,7 @@ class WidgetsTest(unittest.TestCase):
         """
         if SYS_PLATFORM_OSX:
             return
+
         menu = MenuUtils.generic_menu()
         for mode in (MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_NONE, MENUBAR_STYLE_SIMPLE,
                      MENUBAR_STYLE_UNDERLINE, MENUBAR_STYLE_UNDERLINE_TITLE,
@@ -493,7 +495,6 @@ class WidgetsTest(unittest.TestCase):
         menu = MenuUtils.generic_menu(theme=theme, title='my title',
                                       onclose=pygame_menu.events.CLOSE,
                                       touchscreen=True)
-                                      onclose=pygame_menu.events.CLOSE)
         theme.widget_border_inflate = 0
         mb = menu.get_menubar()
         self.assertEqual(mb.get_scrollbar_style_change(POSITION_SOUTH), (0, (0, 0)))
@@ -874,9 +875,7 @@ class WidgetsTest(unittest.TestCase):
         widget = menu.add.color_input('title', color_type='hex', hex_format='upper', dynamic_width=True)
         self.assertEqual(widget.get_width(), 200)
         widget.set_value('#ffffff')
-        width = 342
-        if not PYGAME_V2:
-            width = 345
+        width = 342 if PYGAME_V2 else 345
         self.assertEqual(widget.get_width(), width)
         widget.set_value(None)
         self.assertEqual(widget.get_width(), 200)
@@ -1028,6 +1027,7 @@ class WidgetsTest(unittest.TestCase):
         """
         if SYS_PLATFORM_OSX:
             return
+
         menu = MenuUtils.generic_menu()
 
         # Assert bad settings
@@ -1580,9 +1580,11 @@ class WidgetsTest(unittest.TestCase):
         if PYGAME_V2:
             self.assertEqual(btn.get_rect(), pygame.Rect(253, 153, 94, 41))
             self.assertEqual(btn.get_rect(to_real_position=True), pygame.Rect(253, 308, 94, 41))
+
         else:
             self.assertEqual(btn.get_rect(), pygame.Rect(253, 152, 94, 42))
             self.assertEqual(btn.get_rect(to_real_position=True), pygame.Rect(253, 307, 94, 42))
+
         self.assertEqual(len(menu._update_frames), 0)
         self.assertEqual(len(menu.get_current()._update_frames), 0)
         btn.update(PygameEventUtils.mouse_click(click_pos[0], click_pos[1]))  # MOUSEBUTTONUP
@@ -1929,6 +1931,7 @@ class WidgetsTest(unittest.TestCase):
                    (-1, -1, -1, 0, 428, 356, 40, 261, 348, 0, 583),
                    (1, 0, 0, 0, 0, 1, 1))),)
             ))
+
         self.assertEqual(drop._drop_frame.get_attribute('height'),
                          (135 if PYGAME_V2 else 138) if not SYS_PLATFORM_OSX else 141)
         self.assertEqual(drop._drop_frame.get_attribute('width'),
@@ -1965,6 +1968,7 @@ class WidgetsTest(unittest.TestCase):
             if PYGAME_V2:
                 self.assertEqual(drop.get_scroll_value_percentage(ORIENTATION_VERTICAL),
                                  scroll_values[i])
+
         drop.update(PygameEventUtils.key(ctrl.KEY_MOVE_UP, keydown=True))  # Not infinite
         self.assertEqual(drop.get_index(), 11)  # Not infinite
         if PYGAME_V2:
@@ -2029,6 +2033,7 @@ class WidgetsTest(unittest.TestCase):
                                   3: ((468, 307), (600, 307), (600, 486), (468, 486)),
                                   4: ((0, 487), (600, 487), (600, 600), (0, 600))}
                                  )
+
             else:
                 self.assertEqual(menu._draw_focus_widget(surface, drop),
                                  {1: ((0, 0), (600, 0), (600, 305), (0, 305)),
@@ -2204,6 +2209,7 @@ class WidgetsTest(unittest.TestCase):
                   (-1, -1, -1, 116, 110, 207, 34, 204, 418, 116, -132),
                   (1, 0, 0, 0, 0, 1, 2)))
             ))
+
         self.assertEqual(drop2._drop_frame.get_attribute('height'),
                          (100 if PYGAME_V2 else 103) if not SYS_PLATFORM_OSX else 106)
         self.assertEqual(drop2._drop_frame.get_attribute('width'),
@@ -2300,6 +2306,7 @@ class WidgetsTest(unittest.TestCase):
         if PYGAME_V2:
             self.assertEqual(drop._drop_frame.get_position(), (196, 453))
             self.assertEqual(drop.get_focus_rect(), pygame.Rect(96, 312, 337, 41))
+
         self.assertFalse(drop.active)
         drop._toggle_drop()
         menu.render()
@@ -2313,6 +2320,7 @@ class WidgetsTest(unittest.TestCase):
                  3: ((403, 260), (600, 260), (600, 394), (403, 394)),
                  4: ((0, 395), (600, 395), (600, 600), (0, 600))}
             )
+
         drop._toggle_drop()
 
         drop2._open_middle = True
@@ -3062,6 +3070,7 @@ class WidgetsTest(unittest.TestCase):
         """
         if SYS_PLATFORM_OSX:
             return
+
         menu = MenuUtils.generic_menu(title='Example menu')
         img = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU)
         img.scale(0.3, 0.3)
