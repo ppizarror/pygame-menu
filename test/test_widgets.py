@@ -45,7 +45,9 @@ from pygame_menu.locals import ORIENTATION_VERTICAL, FINGERDOWN, ALIGN_LEFT, \
     POSITION_CENTER, POSITION_NORTHEAST, POSITION_SOUTHWEST, POSITION_NORTHWEST
 from pygame_menu.widgets import MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_NONE, \
     MENUBAR_STYLE_SIMPLE, MENUBAR_STYLE_UNDERLINE, MENUBAR_STYLE_UNDERLINE_TITLE, \
-    MENUBAR_STYLE_TITLE_ONLY, MENUBAR_STYLE_TITLE_ONLY_DIAGONAL
+    MENUBAR_STYLE_TITLE_ONLY, MENUBAR_STYLE_TITLE_ONLY_DIAGONAL, \
+    DROPSELECT_MULTIPLE_SFORMAT_LIST_COMMA, DROPSELECT_MULTIPLE_SFORMAT_LIST_HYPHEN, \
+    DROPSELECT_MULTIPLE_SFORMAT_TOTAL
 from pygame_menu.widgets import ScrollBar, Label, Button, MenuBar, NoneWidget, \
     NoneSelection
 from pygame_menu.widgets.core import Widget
@@ -491,6 +493,8 @@ class WidgetsTest(unittest.TestCase):
         menu = MenuUtils.generic_menu(theme=theme, title='my title',
                                       onclose=pygame_menu.events.CLOSE,
                                       touchscreen=True)
+                                      onclose=pygame_menu.events.CLOSE)
+        theme.widget_border_inflate = 0
         mb = menu.get_menubar()
         self.assertEqual(mb.get_scrollbar_style_change(POSITION_SOUTH), (0, (0, 0)))
         self.assertEqual(mb.get_scrollbar_style_change(POSITION_EAST), (-33, (0, 33)))
@@ -570,6 +574,7 @@ class WidgetsTest(unittest.TestCase):
         mb.set_padding()
         mb.set_border()
         mb.set_selection_effect()
+        menu.add.button('nice')
 
     # noinspection PyArgumentEqualDefault,PyTypeChecker
     def test_selector(self) -> None:
@@ -1000,6 +1005,10 @@ class WidgetsTest(unittest.TestCase):
         self.assertRaises(ValueError, lambda: label_e.set_value(''))
         label_e.set_title('')
         label_e.draw(surface)
+
+        # Test underline
+        label_u = menu.add.label('underlined', underline=True)
+        self.assertIsNotNone(label_u._last_underline[1])
 
     def test_clock(self) -> None:
         """
@@ -1507,6 +1516,11 @@ class WidgetsTest(unittest.TestCase):
         menu.full_reset()
         self.assertEqual(menu.get_current(), menu)
 
+        # Warns if adding button to menu
+        btn.set_menu(None)
+        btn.to_menu = True
+        menu2.add.generic_widget(btn)
+
     def test_draw_callback(self) -> None:
         """
         Test drawing callback.
@@ -1675,6 +1689,41 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(drop.get_value(), ([('epic', 2), ('item2', 2)], [1, 3]))
         self.assertEqual(drop._get_current_selected_text(), '2 selected')
 
+        # Change selection type
+        drop._selection_placeholder_format = DROPSELECT_MULTIPLE_SFORMAT_LIST_COMMA
+        self.assertEqual(drop._get_current_selected_text(), 'epic,item2 selected')
+        drop._selection_placeholder_format = DROPSELECT_MULTIPLE_SFORMAT_LIST_HYPHEN
+        self.assertEqual(drop._get_current_selected_text(), 'epic-item2 selected')
+        drop._selection_placeholder_format = '+'
+        self.assertEqual(drop._get_current_selected_text(), 'epic+item2 selected')
+
+        def format_string_list(items_list) -> str:
+            """
+            Receives the items list string and returns a function.
+
+            :param items_list: Items list
+            :return: Join string
+            """
+            if len(items_list) == 1:
+                return items_list[0]
+            elif len(items_list) == 2:
+                return items_list[0] + ' and ' + items_list[1]
+            return 'overflow'
+
+        drop._selection_placeholder_format = format_string_list
+        self.assertEqual(drop._get_current_selected_text(), 'epic and item2 selected')
+
+        # Invalid format
+        drop._selection_placeholder_format = 1
+        self.assertRaises(ValueError, lambda: drop._get_current_selected_text())
+        drop._selection_placeholder_format = lambda: print('nice')
+        self.assertRaises(ValueError, lambda: drop._get_current_selected_text())
+        drop._selection_placeholder_format = lambda x: 1
+        self.assertRaises(AssertionError, lambda: drop._get_current_selected_text())
+
+        # Back to default
+        drop._selection_placeholder_format = DROPSELECT_MULTIPLE_SFORMAT_TOTAL
+
         # Click item 2, this should unselect
         self.assertTrue(drop.active)
         drop.update(PygameEventUtils.middle_rect_click(drop._option_buttons[3]))
@@ -1794,6 +1843,22 @@ class WidgetsTest(unittest.TestCase):
         # Test none drop frame
         drop2._drop_frame = None
         self.assertEqual(drop2.get_scroll_value_percentage('any'), -1)
+
+        # Test format option from manager
+        menu._theme.widget_background_inflate_to_selection = True
+        menu._theme.widget_background_inflate = 0
+        # menu._theme.widget_border_inflate = 0
+        menu._theme.widget_margin = 0
+        drop2 = menu.add.dropselect_multiple('nice', [('This is a really long selection item', 1), ('epic', 2)],
+                                             placeholder_selected='nice {0}', placeholder='epic', max_selected=1,
+                                             selection_placeholder_format=lambda x: 'not EPIC')
+        self.assertEqual(drop2._get_current_selected_text(), 'epic')
+        drop2.set_value('epic', process_index=True)
+        self.assertEqual(drop2._get_current_selected_text(), 'nice not EPIC')
+        self.assertEqual(drop2.get_margin(), (0, 0))
+        self.assertEqual(drop2._background_inflate, (0, 0))
+        self.assertEqual(drop2._border_inflate, (0, 0))
+        menu._theme.widget_background_inflate_to_selection = False
 
     def test_dropselect(self) -> None:
         """
@@ -2948,11 +3013,12 @@ class WidgetsTest(unittest.TestCase):
         menu = MenuUtils.generic_menu()
         surf = pygame.Surface((150, 150))
         surf.fill((255, 192, 203))
-        surf_widget = menu.add.surface(surf)
+        surf_widget = menu.add.surface(surf, font_color='red')
 
         self.assertEqual(surf_widget.get_size(), (166, 158))
         self.assertEqual(surf_widget.get_size(apply_padding=False), (150, 150))
         self.assertEqual(surf_widget.get_surface(), surf)
+        self.assertEqual(surf_widget._font_color, (70, 70, 70, 255))  # not red
 
         surf_widget.rotate(10)
         self.assertEqual(surf_widget._angle, 0)
