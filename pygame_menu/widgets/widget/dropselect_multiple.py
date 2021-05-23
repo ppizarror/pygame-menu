@@ -29,19 +29,41 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-__all__ = ['DropSelectMultiple']
+__all__ = [
+
+    # Main Class
+    'DropSelectMultiple',
+
+    # Constants
+    'DROPSELECT_MULTIPLE_SFORMAT_LIST_COMMA',
+    'DROPSELECT_MULTIPLE_SFORMAT_LIST_HYPHEN',
+    'DROPSELECT_MULTIPLE_SFORMAT_TOTAL',
+
+    # Type
+    'DropSelectMultipleSFormatType'
+
+]
 
 import pygame
 
 from pygame_menu.font import FontType
 from pygame_menu.locals import POSITION_NORTHWEST, POSITION_SOUTHEAST
-from pygame_menu.utils import assert_color, assert_vector
+from pygame_menu.utils import assert_color, assert_vector, is_callable
 from pygame_menu.widgets.widget.button import Button
 from pygame_menu.widgets.widget.dropselect import DropSelect
 
 from pygame_menu._types import Tuple, Union, List, Any, Optional, CallbackType, \
     ColorType, ColorInputType, Tuple2IntType, Tuple3IntType, PaddingType, \
-    Tuple2NumberType, CursorInputType, NumberType
+    Tuple2NumberType, CursorInputType, NumberType, Literal, Callable
+
+DROPSELECT_MULTIPLE_SFORMAT_LIST_COMMA = 'comma-list'
+DROPSELECT_MULTIPLE_SFORMAT_LIST_HYPHEN = 'hyphen-list'
+DROPSELECT_MULTIPLE_SFORMAT_TOTAL = 'total'
+
+DropSelectMultipleSFormatType = Union[Literal[DROPSELECT_MULTIPLE_SFORMAT_TOTAL,
+                                              DROPSELECT_MULTIPLE_SFORMAT_LIST_COMMA,
+                                              DROPSELECT_MULTIPLE_SFORMAT_LIST_HYPHEN],
+                                      Callable[[List[str]], str]]
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -81,7 +103,7 @@ class DropSelectMultiple(DropSelect):
     :param open_middle: If ``True`` the selection box is opened in the middle of the menu
     :param placeholder: Text shown if no option is selected yet
     :param placeholder_add_to_selection_box: If ``True`` adds the placeholder button to the selection box
-    :param placeholder_selected: Text shown if option is selected. Accepts the number of selected options
+    :param placeholder_selected: Text shown if option is selected. Accepts the formatted option from ``selection_placeholder_format``
     :param scrollbar_color: Scrollbar color
     :param scrollbar_cursor: Cursor of the scrollbars if mouse is placed over. By default is ``None``
     :param scrollbar_shadow: Indicate if a shadow is drawn on each scrollbar
@@ -120,6 +142,7 @@ class DropSelectMultiple(DropSelect):
     :param selection_option_selected_box_height: Height of the selection box relative to the options height
     :param selection_option_selected_box_margin: Option box margin (left, right, vertical) in px
     :param selection_option_selected_font_color: Selected option(s) font color
+    :param selection_placeholder_format: Format of the string replaced in ``placeholder_selected``. Can be a predefined string type ("total", "comma-list", "hyphen-list", or any other string which will join the list) or a function that receives the list of selected items and returns a string
     :param kwargs: Optional keyword arguments
     """
     _max_selected: int
@@ -130,6 +153,7 @@ class DropSelectMultiple(DropSelect):
     _selection_option_selected_box: bool
     _selection_option_selected_box_color: ColorType
     _selection_option_selected_box_width: int
+    _selection_placeholder_format: DropSelectMultipleSFormatType
 
     def __init__(
             self,
@@ -183,6 +207,7 @@ class DropSelectMultiple(DropSelect):
             selection_option_selected_box_height: float = 0.5,
             selection_option_selected_box_margin: Tuple3IntType = (0, 5, 0),
             selection_option_selected_font_color: ColorInputType = (0, 0, 0),
+            selection_placeholder_format: DropSelectMultipleSFormatType = DROPSELECT_MULTIPLE_SFORMAT_TOTAL,
             *args,
             **kwargs
     ) -> None:
@@ -256,6 +281,7 @@ class DropSelectMultiple(DropSelect):
         self._selection_option_selected_box = selection_option_selected_box
         self._selection_option_selected_box_color = assert_color(selection_option_selected_box_color)
         self._selection_option_selected_box_width = selection_option_selected_box_border
+        self._selection_placeholder_format = selection_placeholder_format
 
         self.set_default_value(default)
 
@@ -303,10 +329,48 @@ class DropSelectMultiple(DropSelect):
 
     def _get_current_selected_text(self) -> str:
         if len(self._selected_indices) == 0:
-            current_selected = self._placeholder
+            return self._placeholder
+
+        # Apply selected format
+        if self._selection_placeholder_format == DROPSELECT_MULTIPLE_SFORMAT_TOTAL:
+            return self._placeholder_selected.format(len(self._selected_indices))
+
+        list_items = self._get_selected_items_list_str()
+        if self._selection_placeholder_format == DROPSELECT_MULTIPLE_SFORMAT_LIST_COMMA:
+            return self._placeholder_selected.format(','.join(list_items))
+
+        elif self._selection_placeholder_format == DROPSELECT_MULTIPLE_SFORMAT_LIST_HYPHEN:
+            return self._placeholder_selected.format('-'.join(list_items))
+
+        elif isinstance(self._selection_placeholder_format, str):
+            return self._placeholder_selected.format(self._selection_placeholder_format.join(list_items))
+
+        elif is_callable(self._selection_placeholder_format):
+            try:
+                o = self._selection_placeholder_format(list_items)
+            except TypeError:
+                raise ValueError('selection placeholder function receives only 1 '
+                                 'argument (a list of the selected items string)'
+                                 ' and must return a string')
+            assert isinstance(o, str), \
+                'output from selection placeholder format function must be a ' \
+                'string (List[str]=>str), not {0} type ({1} returned)' \
+                ''.format(type(o), o)
+            return self._placeholder_selected.format(o)
+
         else:
-            current_selected = self._placeholder_selected.format(len(self._selected_indices))
-        return current_selected
+            raise ValueError('invalid selection placeholder format type')
+
+    def _get_selected_items_list_str(self) -> List[str]:
+        """
+        Return the selected items list of strings.
+
+        :return: List string of selected items
+        """
+        sel_items = []
+        for i in self._selected_indices:
+            sel_items.append(self._items[i][0])
+        return sel_items
 
     def get_value(self) -> Tuple[List[Union[Tuple[Any, ...], str]], List[int]]:
         selected_items = []
