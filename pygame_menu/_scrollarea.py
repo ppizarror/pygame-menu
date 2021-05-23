@@ -538,8 +538,6 @@ class ScrollArea(Base):
         elif orientation == ORIENTATION_VERTICAL:
             return int(self._rect.width - self._view_rect.width)
 
-        return 0
-
     def get_world_rect(self, absolute: bool = False) -> 'pygame.Rect':
         """
         Return the world rect.
@@ -974,23 +972,6 @@ class ScrollArea(Base):
                     view_rect_absolute = parent.get_absolute_view_rect().clip(view_rect_absolute)
                     parent = parent._parent_scrollarea
         return view_rect_absolute
-
-    # def get_real_view_rect(self, visible: bool = False) -> 'pygame.Rect':
-    #     """
-    #     Return the ScrollArea real position view rect clipped if it is not visible by
-    #     it's parent ScrollArea.
-    #
-    #     :return: Clipped real position view rect
-    #     """
-    #     view_rect_real = self.to_real_position(self._view_rect, visible=visible)
-    #     if self._parent_scrollarea is not None:
-    #         parent = self._parent_scrollarea
-    #         while True:  # Recursive
-    #             if parent is None:
-    #                 break
-    #             view_rect_real = parent.get_real_view_rect(visible=visible).clip(view_rect_real)
-    #             parent = parent._parent_scrollarea
-    #     return view_rect_real
 
     def to_real_position(self, virtual: Union['pygame.Rect', Tuple2NumberType], visible: bool = False
                          ) -> Union['pygame.Rect', Tuple2IntType]:
