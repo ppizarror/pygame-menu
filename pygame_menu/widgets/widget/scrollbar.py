@@ -43,9 +43,6 @@ from pygame_menu._types import Optional, List, VectorIntType, ColorType, Literal
     Tuple2IntType, CallbackType, NumberInstance, ColorInputType, NumberType, \
     EventVectorType, VectorInstance
 
-# Scroll finger factor (x, y)
-S_FINGER_FACTOR = 3, 3
-
 
 # noinspection PyMissingOrEmptyDocstring
 class ScrollBar(Widget):
@@ -556,8 +553,8 @@ class ScrollBar(Widget):
                 # Get relative movement
                 h = self.get_orientation() == ORIENTATION_HORIZONTAL
                 rel = event.rel[self._orientation] if event.type == pygame.MOUSEMOTION else (
-                    event.dx * self._values_range[1] * S_FINGER_FACTOR[0] if h else
-                    event.dy * self._values_range[1] * S_FINGER_FACTOR[1]
+                    event.dx * 2 * self._menu.get_window_size()[0] if h else
+                    event.dy * 2 * self._menu.get_window_size()[1]
                 )
 
                 # If mouse outside region and scroll is on limits, ignore
