@@ -508,6 +508,7 @@ class MenuBar(Widget):
                     (self._backbox_rect.centerx, self._backbox_rect.centery),
                     (self._backbox_rect.left + 4, self._backbox_rect.top + 4)
                 )
+
             elif self._box_mode == _MODE_BACK:
                 # Make a back arrow for sub-menus
                 self._backbox_pos = (
@@ -549,7 +550,6 @@ class MenuBar(Widget):
 
         if self.readonly or not self.is_visible():
             return False
-        updated = False
 
         for event in events:
 
@@ -569,13 +569,13 @@ class MenuBar(Widget):
                     else:
                         self._sound.play_click_touch()
                     self.apply()
-                    updated = True
+                    return True
 
             # User applies joy back button
             elif event.type == pygame.JOYBUTTONDOWN and self._joystick_enabled:
                 if event.button == ctrl.JOY_BUTTON_BACK:
                     self._sound.play_key_del()
                     self.apply()
-                    updated = True
+                    return True
 
-        return updated
+        return False

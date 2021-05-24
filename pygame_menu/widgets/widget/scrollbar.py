@@ -523,7 +523,6 @@ class ScrollBar(Widget):
         if self.readonly or not self.is_visible():
             return False
 
-        updated = False
         rect = self.get_rect(to_absolute_position=True)
 
         for event in events:
@@ -544,7 +543,7 @@ class ScrollBar(Widget):
                 pixels = direction * step
                 if self._scroll(rect, pixels):
                     self.change()
-                    updated = True
+                    return True
 
             # User moves mouse while scrolling
             elif (event.type == pygame.MOUSEMOTION and self._mouse_enabled and hasattr(event, 'rel') or
@@ -575,7 +574,7 @@ class ScrollBar(Widget):
                 # Check scrolling
                 if self._scroll(rect, rel):
                     self.change()
-                    updated = True
+                    return True
 
             # Mouse enters or leaves the window
             elif event.type == pygame.ACTIVEEVENT:
@@ -606,7 +605,7 @@ class ScrollBar(Widget):
                     direction = -1 if event.button == 4 else 1
                     if self._scroll(rect, direction * self._single_step):
                         self.change()
-                        updated = True
+                        return True
 
                 # Click button (left, middle, right)
                 elif event.type == FINGERDOWN or event.button in (1, 2, 3):
@@ -618,6 +617,7 @@ class ScrollBar(Widget):
                         self.scrolling = True
                         self._clicked = True
                         self._render()
+                        return True
 
                     elif rect.collidepoint(*event_pos):
                         # Moves towards the click by one "page" (= slider length without pad)
@@ -626,17 +626,14 @@ class ScrollBar(Widget):
                         direction = 1 if event_pos[self._orientation] > pos[self._orientation] else -1
                         if self._scroll(rect, direction * self._page_step):
                             self.change()
-                            updated = True
+                            return True
 
             # User releases mouse button if scrolling
             elif (event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled or
                   event.type == FINGERUP and self._touchscreen_enabled) and self.scrolling:
                 self._clicked = False
                 self.scrolling = False
-                updated = True
                 self._render()
-
-            if updated:
                 return True
 
-        return updated
+        return False

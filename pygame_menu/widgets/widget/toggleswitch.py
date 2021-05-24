@@ -420,7 +420,6 @@ class ToggleSwitch(Widget):
 
         if self.readonly or not self.is_visible():
             return False
-        updated = False
 
         for event in events:
 
@@ -441,14 +440,14 @@ class ToggleSwitch(Widget):
                     joy_hatmotion and event.value == ctrl.JOY_LEFT or \
                     joy_axismotion and event.axis == ctrl.JOY_AXIS_X and event.value < ctrl.JOY_DEADZONE:
                 self._left()
-                updated = True
+                return True
 
             # Right button
             elif keydown and event.key == ctrl.KEY_RIGHT or \
                     joy_hatmotion and event.value == ctrl.JOY_RIGHT or \
                     joy_axismotion and event.axis == ctrl.JOY_AXIS_X and event.value > -ctrl.JOY_DEADZONE:
                 self._right()
-                updated = True
+                return True
 
             # Press enter
             elif keydown and event.key == ctrl.KEY_APPLY and self._total_states == 2 or \
@@ -457,8 +456,8 @@ class ToggleSwitch(Widget):
                 self._sound.play_key_add()
                 self._state = int(not self._state)
                 self.change()
-                updated = True
                 self.active = not self.active
+                return True
 
             # Click on switch; don't consider the mouse wheel (button 4 & 5)
             elif event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and \
@@ -485,7 +484,7 @@ class ToggleSwitch(Widget):
                                 self._left()
                             else:
                                 self._right()
-                            updated = True
+                            return True
 
                         else:
                             target_index = 0
@@ -500,6 +499,6 @@ class ToggleSwitch(Widget):
                                 self._sound.play_key_add()
                                 self._state = target_index
                                 self.change()
-                                updated = True
+                                return True
 
-        return updated
+        return False

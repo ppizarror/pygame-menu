@@ -455,7 +455,6 @@ class Selector(Widget):
 
         if self.readonly or not self.is_visible():
             return False
-        updated = False
 
         for event in events:
 
@@ -477,21 +476,21 @@ class Selector(Widget):
                     joy_hatmotion and event.value == ctrl.JOY_LEFT or \
                     joy_axismotion and event.axis == ctrl.JOY_AXIS_X and event.value < ctrl.JOY_DEADZONE:
                 self._left()
-                updated = True
+                return True
 
             # Right button
             elif keydown and event.key == ctrl.KEY_RIGHT or \
                     joy_hatmotion and event.value == ctrl.JOY_RIGHT or \
                     joy_axismotion and event.axis == ctrl.JOY_AXIS_X and event.value > -ctrl.JOY_DEADZONE:
                 self._right()
-                updated = True
+                return True
 
             # Press enter
             elif keydown and event.key == ctrl.KEY_APPLY or \
                     joy_button_down and event.button == ctrl.JOY_BUTTON_SELECT:
                 self._sound.play_key_add()
                 self.apply(*self._items[self._index][1:])
-                updated = True
+                return True
 
             # Click on selector; don't consider the mouse wheel (button 4 & 5)
             elif event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and \
@@ -516,6 +515,6 @@ class Selector(Widget):
                             self._left()
                         else:
                             self._right()
-                        updated = True
+                        return True
 
-        return updated
+        return False
