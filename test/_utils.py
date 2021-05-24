@@ -447,6 +447,7 @@ class PygameEventUtils(object):
             y: NumberType,
             inlist: bool = True,
             evtype: int = FINGERUP,
+            rel: Tuple2IntType = (0, 0),
             normalize: bool = True,
             menu: Union['pygame_menu.Menu', None] = None,
             testmode: bool = True
@@ -458,6 +459,7 @@ class PygameEventUtils(object):
         :param y: Y coordinate
         :param inlist: Return event in a list
         :param evtype: Event type, it can be FINGERUP, FINGERDOWN or FINGERMOTION
+        :param rel: Rel position (relative movement)
         :param normalize: Normalize event position
         :param menu: Menu reference
         :param testmode: Event is in test mode
@@ -465,6 +467,7 @@ class PygameEventUtils(object):
         """
         assert isinstance(x, NumberInstance)
         assert isinstance(y, NumberInstance)
+        assert_vector(rel, 2, int)
         if normalize:
             assert menu is not None, \
                 'menu reference must be provided if normalize is used (related to touch events)'
@@ -473,9 +476,10 @@ class PygameEventUtils(object):
             y /= display_size[1]
         event_obj = pygame.event.Event(evtype,
                                        {
-                                           'test': testmode,
                                            'x': x,
-                                           'y': y
+                                           'y': y,
+                                           'rel': rel,
+                                           'test': testmode
                                        })
         if inlist:
             event_obj = [event_obj]

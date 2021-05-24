@@ -1109,6 +1109,16 @@ class DropSelect(Widget):
             rect.width -= self._selection_box_border_width
         return rect
 
+    def _drop_frame_scrolling(self) -> bool:
+        """
+        Checks if drop frame is scrolling.
+
+        :return: ``True`` if scrolling
+        """
+        if self._drop_frame is None or self._drop_frame.get_scrollarea(inner=True) is None:
+            return False
+        return self._drop_frame.get_scrollarea(inner=True).is_scrolling()
+
     def update(self, events: EventVectorType) -> bool:
         self.apply_update_callbacks(events)
 
@@ -1181,11 +1191,9 @@ class DropSelect(Widget):
             # Click on dropselect; don't consider the mouse wheel (button 4 & 5)
             elif self.active and (
                     event.type == pygame.MOUSEBUTTONDOWN and self._mouse_enabled and
-                    event.button in (1, 2, 3) or (
-                            event.type == FINGERDOWN and self._touchscreen_enabled and
-                            self._drop_frame is not None and
-                            not self._drop_frame.get_scrollarea(inner=True).is_scrolling() and
-                            self._menu is not None)
+                    event.button in (1, 2, 3) or
+                    event.type == FINGERDOWN and self._touchscreen_enabled and
+                    self._menu is not None and not self._drop_frame_scrolling()
             ):
                 event_pos = get_finger_pos(self._menu, event)
                 if self._drop_frame.get_rect(apply_padding=False, to_real_position=True
@@ -1196,10 +1204,7 @@ class DropSelect(Widget):
             elif event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and \
                     event.button in (1, 2, 3) or \
                     event.type == FINGERUP and self._touchscreen_enabled and \
-                    self._menu is not None and \
-                    not (self._drop_frame is not None and
-                         self._drop_frame.get_scrollarea(inner=True) is not None and
-                         self._drop_frame.get_scrollarea(inner=True).is_scrolling()):
+                    self._menu is not None and not self._drop_frame_scrolling():
 
                 # Check for mouse clicks within
                 if self.active:
