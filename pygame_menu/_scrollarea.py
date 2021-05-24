@@ -114,6 +114,10 @@ class ScrollArea(Base):
     :param area_width: Width of scrollable area in px
     :param area_height: Height of scrollable area in px
     :param area_color: Background color, it can be a color or an image
+    :param controls_joystick: Use joystick events
+    :param controls_keyboard: Use keyboard events
+    :param controls_mouse: Use mouse events
+    :param controls_touchscreen: Use touchscreen events
     :param extend_x: Px to extend the surface on x axis in px from left. Recommended use only within Menus
     :param extend_y: Px to extend the surface on y axis in px from top. Recommended use only within Menus
     :param menubar: Menubar for style compatibility. ``None`` if ScrollArea is not used within a Menu (for example, in Frames)
@@ -153,6 +157,10 @@ class ScrollArea(Base):
             area_width: int,
             area_height: int,
             area_color: Optional[Union[ColorInputType, 'pygame_menu.BaseImage']] = None,
+            controls_joystick: bool = True,
+            controls_keyboard: bool = True,
+            controls_mouse: bool = True,
+            controls_touchscreen: bool = True,
             extend_x: int = 0,
             extend_y: int = 0,
             menubar: Optional['pygame_menu.widgets.MenuBar'] = None,
@@ -175,6 +183,10 @@ class ScrollArea(Base):
 
         assert isinstance(area_height, int)
         assert isinstance(area_width, int)
+        assert isinstance(controls_joystick, bool)
+        assert isinstance(controls_keyboard, bool)
+        assert isinstance(controls_mouse, bool)
+        assert isinstance(controls_touchscreen, bool)
         assert isinstance(extend_x, int)
         assert isinstance(extend_y, int)
         assert isinstance(scrollbar_slider_pad, NumberInstance)
@@ -254,7 +266,12 @@ class ScrollArea(Base):
                 position=shadow_position,
                 offset=shadow_offset
             )
-            sbar.set_controls(joystick=False)
+            sbar.set_controls(
+                joystick=controls_joystick,
+                mouse=controls_mouse,
+                touchscreen=controls_touchscreen,
+                keyboard=controls_keyboard
+            )
             sbar.set_cursor(cursor=scrollbar_cursor)
             sbar.set_scrollarea(self)
             sbar.configured = True
