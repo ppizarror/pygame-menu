@@ -516,6 +516,7 @@ class Frame(Widget):
                 (btn_rect.left + t, btn_rect.top + t)
             )
             border = 0
+
         elif style == FRAME_TITLE_BUTTON_MAXIMIZE:
             style_pos = (
                 (btn_rect.left + t, btn_rect.bottom - t),
@@ -523,11 +524,13 @@ class Frame(Widget):
                 (btn_rect.right - t, btn_rect.top + t),
                 (btn_rect.left + t, btn_rect.top + t)
             )
+
         elif style == FRAME_TITLE_BUTTON_MINIMIZE:
             style_pos = (
                 (btn_rect.left + t, btn_rect.centery + border),
                 (btn_rect.right - t, btn_rect.centery + border)
             )
+
         else:
             raise ValueError('unknown button style "{0}"'.format(style))
 
@@ -634,7 +637,7 @@ class Frame(Widget):
 
     def get_max_size(self) -> Tuple2IntType:
         """
-        Returns the max size of the frame.
+        Return the max size of the frame.
 
         :return: Max (width, height) in px
         """
@@ -1664,7 +1667,7 @@ class Frame(Widget):
 
     def contains_widget(self, widget: 'Widget') -> bool:
         """
-        Returns true if the frame contains the given widget.
+        Return true if the frame contains the given widget.
 
         :param widget: Widget to check
         :return: ``True`` if widget within frame
@@ -1769,6 +1772,7 @@ class Frame(Widget):
                 # User moves the mouse while drag
                 elif event.type == pygame.MOUSEMOTION and hasattr(event, 'rel') or \
                         event.type == FINGERMOTION and self._touchscreen_enabled and self._menu is not None:
+
                     if self._frame_title.get_attribute('drag', False) and self._draggable:
                         # Get relative movement
                         rx = event.rel[0] if event.type == pygame.MOUSEMOTION else \
@@ -1787,6 +1791,7 @@ class Frame(Widget):
                                     self.force_menu_surface_update()
                                     updated = True
                                 continue
+
                         elif self.get_scrollarea() is not None:
                             max_v = self.get_scrollarea().get_world_size()[1] - self._title_height()
                             if self._rect.y >= max_v:

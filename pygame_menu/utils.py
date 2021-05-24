@@ -355,7 +355,7 @@ def format_color(
 
 def get_cursor() -> CursorInputType:
     """
-    Returns the pygame cursor object.
+    Return the pygame cursor object.
 
     :return: Cursor object
     """
@@ -474,7 +474,7 @@ def make_surface(
 
 def mouse_motion_current_mouse_position() -> EventType:
     """
-    Returns a pygame event type MOUSEMOTION in the current mouse position.
+    Return a pygame event type MOUSEMOTION in the current mouse position.
 
     :return: Event
     """

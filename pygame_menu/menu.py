@@ -2038,7 +2038,7 @@ class Menu(Base):
         :param surface: Pygame surface to draw the Menu
         :param widget: Focused widget
         :param force: If ``True`` forces focus without any checks
-        :return: Returns the focus region, ``None`` if the focus could not be possible
+        :return: The focus region, ``None`` if the focus could not be possible
         """
         assert isinstance(surface, pygame.Surface)
         assert isinstance(widget, (Widget, type(None)))

@@ -672,7 +672,7 @@ class Table(Frame):
 
     def is_rectangular(self) -> bool:
         """
-        Returns ``True`` if the table is rectangular, that is, each row have the
+        Return ``True`` if the table is rectangular, that is, each row have the
         same number of columns.
 
         :return: Bool
