@@ -320,3 +320,15 @@ class ScrollAreaTest(unittest.TestCase):
         self.assertFalse(sb._keyboard_enabled)
         self.assertFalse(sb._mouse_enabled)
         self.assertFalse(sb._touchscreen_enabled)
+
+        # Test scrollarea within frame
+        drop = menu.add.dropselect('Subject Id', items=[('a',), ('b',), ('c',)],
+                                   dropselect_id='s0')
+        d_frame_sa = drop._drop_frame.get_scrollarea(inner=True)
+        sb_frame = d_frame_sa._scrollbars[0]
+        self.assertFalse(sb_frame._joystick_enabled)
+        self.assertFalse(sb_frame._keyboard_enabled)
+        self.assertFalse(sb_frame._mouse_enabled)
+        self.assertFalse(sb_frame._touchscreen_enabled)
+        self.assertEqual(sb_frame.get_menu(), menu)
+        self.assertEqual(d_frame_sa.get_menu(), menu)
