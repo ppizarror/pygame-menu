@@ -2505,6 +2505,16 @@ class WidgetsTest(unittest.TestCase):
         sel.update(PygameEventUtils.touch_click(touch_sel[0], touch_sel[1] + 80, menu=menu))
         self.assertEqual(sel.get_index(), 0)
         self.assertFalse(sel.active)
+        sel.update(PygameEventUtils.touch_click(touch_sel[0], touch_sel[1], menu=menu))
+        self.assertTrue(sel.active)
+        sel.update(PygameEventUtils.touch_click(touch_sel[0], touch_sel[1] + 80, menu=menu,
+                                                evtype=pygame.FINGERDOWN))
+        sel.update(PygameEventUtils.touch_click(touch_sel[0], touch_sel[1], menu=menu))
+        self.assertFalse(sel.active)
+
+        # Ignore buttons if not active
+        self.assertFalse(sel.update(PygameEventUtils.key(pygame_menu.controls.KEY_MOVE_UP,
+                                                         keydown=True)))
 
     def test_none(self) -> None:
         """
