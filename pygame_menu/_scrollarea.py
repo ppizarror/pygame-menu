@@ -249,6 +249,7 @@ class ScrollArea(Base):
                     slider_pad=scrollbar_slider_pad,
                     values_range=(0, max(1, self.get_hidden_height()))
                 )
+
             else:
                 sbar = ScrollBar(
                     length=self._view_rect.width,
@@ -260,6 +261,7 @@ class ScrollArea(Base):
                     slider_pad=scrollbar_slider_pad,
                     values_range=(0, max(1, self.get_hidden_width()))
                 )
+
             sbar.set_shadow(
                 enabled=shadow,
                 color=shadow_color,

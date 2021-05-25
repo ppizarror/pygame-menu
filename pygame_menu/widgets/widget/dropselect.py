@@ -500,8 +500,18 @@ class DropSelect(Widget):
         self._drop_frame.configured = True
         self._drop_frame.set_tab_size(self._tab_size)
         self._drop_frame._update__repr___(self)
+        self._drop_frame.set_controls(
+            joystick=self._joystick_enabled,
+            mouse=self._mouse_enabled,
+            touchscreen=self._touchscreen_enabled,
+            keyboard=self._keyboard_enabled
+        )
 
         if total_height > 0:
+            # Menu is needed while creating the scrollarea, as that reference
+            # is later passed to the scrollbars, which need menu for touchscreen
+            # events
+            self._drop_frame._menu = self._menu
             self._drop_frame.make_scrollarea(
                 max_width=frame_width,
                 max_height=max_height,
@@ -519,7 +529,10 @@ class DropSelect(Widget):
                 scrollbars=get_scrollbars_from_position(self._scrollbars)
             )
 
+        # Menu is formerly set in frame. That method adds the frame to update frames
+        # depending if frame is scrollable or not
         self._drop_frame.set_menu(self._menu)
+
         self._drop_frame.set_scrollarea(self._scrollarea)
         if self._frame is not None:
             self._drop_frame.set_frame(self._frame)
