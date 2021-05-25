@@ -329,6 +329,12 @@ class Table(Frame):
         row.set_menu(self._menu)
         row.set_scrollarea(self._scrollarea)
         row.set_attribute('is_row')
+        row.set_controls(
+            joystick=self._joystick_enabled,
+            mouse=self._mouse_enabled,
+            touchscreen=self._touchscreen_enabled,
+            keyboard=self._keyboard_enabled
+        )
         # row.set_frame(self) This cannot be executed as row is packed within
 
         # Create widgets
@@ -672,7 +678,7 @@ class Table(Frame):
 
     def is_rectangular(self) -> bool:
         """
-        Returns ``True`` if the table is rectangular, that is, each row have the
+        Return ``True`` if the table is rectangular, that is, each row have the
         same number of columns.
 
         :return: Bool

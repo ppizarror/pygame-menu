@@ -37,8 +37,13 @@ import pygame_menu
 pygame.init()
 
 
-def save_font_image(font_name: str, text: str, filename: str,
-                    font_size: int = 50, image_height: int = 26) -> None:
+def save_font_image(
+        font_name: str,
+        text: str,
+        filename: str,
+        font_size: int = 50,
+        image_height: int = 26
+) -> None:
     """
     Generate a font image and save as a png.
 

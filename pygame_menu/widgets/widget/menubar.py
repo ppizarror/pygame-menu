@@ -261,7 +261,7 @@ class MenuBar(Widget):
 
     def _backbox_visible(self) -> bool:
         """
-        Returns ``True`` if backbox is visible.
+        Return ``True`` if backbox is visible.
 
         :return: Bool
         """
@@ -269,7 +269,7 @@ class MenuBar(Widget):
         # to close the Menu, but onclose Menu method is None (Nothing is executed),
         # then the button will not be displayed
         # noinspection PyProtectedMember
-        return self._mouse_enabled and self._backbox and \
+        return (self._mouse_enabled or self._touchscreen_enabled) and self._backbox and \
                not (self._box_mode == _MODE_CLOSE and
                     self._menu is not None and
                     self._menu._onclose is None)
@@ -508,6 +508,7 @@ class MenuBar(Widget):
                     (self._backbox_rect.centerx, self._backbox_rect.centery),
                     (self._backbox_rect.left + 4, self._backbox_rect.top + 4)
                 )
+
             elif self._box_mode == _MODE_BACK:
                 # Make a back arrow for sub-menus
                 self._backbox_pos = (
@@ -549,7 +550,6 @@ class MenuBar(Widget):
 
         if self.readonly or not self.is_visible():
             return False
-        updated = False
 
         for event in events:
 
@@ -563,19 +563,19 @@ class MenuBar(Widget):
                     event.type == FINGERUP and self._touchscreen_enabled and \
                     self._menu is not None:
                 event_pos = get_finger_pos(self._menu, event)
-                if self._backbox_rect and self._backbox_rect.collidepoint(*event_pos):
+                if self._backbox_visible() and self._backbox_rect.collidepoint(*event_pos):
                     if event.type == pygame.MOUSEBUTTONUP:
                         self._sound.play_click_mouse()
                     else:
                         self._sound.play_click_touch()
                     self.apply()
-                    updated = True
+                    return True
 
             # User applies joy back button
             elif event.type == pygame.JOYBUTTONDOWN and self._joystick_enabled:
                 if event.button == ctrl.JOY_BUTTON_BACK:
                     self._sound.play_key_del()
                     self.apply()
-                    updated = True
+                    return True
 
-        return updated
+        return False

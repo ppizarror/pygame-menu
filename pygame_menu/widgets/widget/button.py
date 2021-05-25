@@ -208,7 +208,7 @@ class Button(Widget):
 
         if self.readonly or not self.is_visible():
             return False
-        updated = False
+
         rect = self.get_rect(to_real_position=True)
 
         for event in events:
@@ -226,7 +226,7 @@ class Button(Widget):
                 else:
                     self._sound.play_key_add()
                 self.apply()
-                updated = True
+                return True
 
             # User clicks the button; don't consider the mouse wheel (button 4 & 5)
             elif event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and \
@@ -241,6 +241,6 @@ class Button(Widget):
                 event_pos = get_finger_pos(self._menu, event)
                 if rect.collidepoint(*event_pos):
                     self.apply()
-                    updated = True
+                    return True
 
-        return updated
+        return False

@@ -56,7 +56,7 @@ from pygame_menu.locals import CURSOR_HAND, ORIENTATION_VERTICAL, ORIENTATION_HO
     FINGERMOTION
 from pygame_menu.font import FontType, assert_font
 from pygame_menu.utils import assert_alignment, make_surface, assert_vector, assert_orientation, \
-    assert_color, fill_gradient, parse_padding, uuid4, warn
+    assert_color, fill_gradient, parse_padding, uuid4, warn, get_finger_pos
 from pygame_menu.widgets.core.widget import Widget, check_widget_mouseleave
 from pygame_menu.widgets.widget.button import Button
 from pygame_menu.widgets.widget.label import Label
@@ -70,6 +70,7 @@ FRAME_DEFAULT_TITLE_BACKGROUND_COLOR = ((10, 36, 106), (166, 202, 240), False, T
 FRAME_TITLE_BUTTON_CLOSE = 'close'
 FRAME_TITLE_BUTTON_MAXIMIZE = 'maximize'
 FRAME_TITLE_BUTTON_MINIMIZE = 'minimize'
+S_FINGER_FACTOR = 0.25, 0.25
 
 # Types
 FrameTitleBackgroundColorType = Optional[Union[ColorInputType, ColorInputGradientType, BaseImage]]
@@ -515,6 +516,7 @@ class Frame(Widget):
                 (btn_rect.left + t, btn_rect.top + t)
             )
             border = 0
+
         elif style == FRAME_TITLE_BUTTON_MAXIMIZE:
             style_pos = (
                 (btn_rect.left + t, btn_rect.bottom - t),
@@ -522,11 +524,13 @@ class Frame(Widget):
                 (btn_rect.right - t, btn_rect.top + t),
                 (btn_rect.left + t, btn_rect.top + t)
             )
+
         elif style == FRAME_TITLE_BUTTON_MINIMIZE:
             style_pos = (
                 (btn_rect.left + t, btn_rect.centery + border),
                 (btn_rect.right - t, btn_rect.centery + border)
             )
+
         else:
             raise ValueError('unknown button style "{0}"'.format(style))
 
@@ -633,7 +637,7 @@ class Frame(Widget):
 
     def get_max_size(self) -> Tuple2IntType:
         """
-        Returns the max size of the frame.
+        Return the max size of the frame.
 
         :return: Max (width, height) in px
         """
@@ -722,6 +726,10 @@ class Frame(Widget):
             area_color=scrollarea_color,
             area_height=max_height + sx,
             area_width=max_width + sy,
+            controls_joystick=self._joystick_enabled,
+            controls_keyboard=self._keyboard_enabled,
+            controls_mouse=self._mouse_enabled,
+            controls_touchscreen=self._touchscreen_enabled,
             parent_scrollarea=self._scrollarea,
             scrollbar_color=scrollbar_color,
             scrollbar_cursor=scrollbar_cursor,
@@ -768,6 +776,9 @@ class Frame(Widget):
 
         # Configure size
         self._frame_size = (max_width + sy, max_height + sx)
+
+        # Set menu
+        self._frame_scrollarea.set_menu(self._menu)
 
         # If has title
         if self._has_title:
@@ -1663,7 +1674,7 @@ class Frame(Widget):
 
     def contains_widget(self, widget: 'Widget') -> bool:
         """
-        Returns true if the frame contains the given widget.
+        Return true if the frame contains the given widget.
 
         :param widget: Widget to check
         :return: ``True`` if widget within frame
@@ -1743,10 +1754,12 @@ class Frame(Widget):
                 self._frame_title._check_mouseover(event)
 
                 # If clicked in title
-                if (event.type == pygame.MOUSEBUTTONDOWN and self._mouse_enabled and event.button in (
-                        1, 2, 3) or event.type == FINGERDOWN and self._touchscreen_enabled) and \
+                if (event.type == pygame.MOUSEBUTTONDOWN and self._mouse_enabled and event.button in
+                    (1, 2, 3) or event.type == FINGERDOWN and self._touchscreen_enabled and self._menu is not None) and \
                         self._draggable:
-                    if self._frame_title.get_rect(to_real_position=True).collidepoint(*event.pos):
+                    event_pos = get_finger_pos(self._menu, event)
+
+                    if self._frame_title.get_rect(to_real_position=True).collidepoint(*event_pos):
                         if not self._frame_title.get_attribute('drag', False):
                             self._frame_title.set_attribute('drag', True)
                             updated = True
@@ -1765,26 +1778,31 @@ class Frame(Widget):
 
                 # User moves the mouse while drag
                 elif event.type == pygame.MOUSEMOTION and hasattr(event, 'rel') or \
-                        event.type == FINGERMOTION and self._touchscreen_enabled:
+                        event.type == FINGERMOTION and self._touchscreen_enabled and self._menu is not None:
+
                     if self._frame_title.get_attribute('drag', False) and self._draggable:
                         # Get relative movement
-                        rx = event.rel[0]
-                        ry = event.rel[1]
+                        rx = event.rel[0] if event.type == pygame.MOUSEMOTION else \
+                            event.dx * self._menu.get_window_size()[0] * S_FINGER_FACTOR[0]
+                        ry = event.rel[1] if event.type == pygame.MOUSEMOTION else \
+                            event.dy * self._menu.get_window_size()[1] * S_FINGER_FACTOR[1]
 
+                        event_pos = get_finger_pos(self._menu, event)
                         tx, ty = self.get_translate()
                         title_rect = self._frame_title.get_rect(to_real_position=True)
 
                         if self._rect.y <= 0:
-                            if not title_rect.collidepoint(*event.pos):
+                            if not title_rect.collidepoint(*event_pos):
                                 if ry > 0:
                                     self.translate(tx, ty - self._rect.y)
                                     self.force_menu_surface_update()
                                     updated = True
                                 continue
+
                         elif self.get_scrollarea() is not None:
                             max_v = self.get_scrollarea().get_world_size()[1] - self._title_height()
                             if self._rect.y >= max_v:
-                                if not title_rect.collidepoint(*event.pos):
+                                if not title_rect.collidepoint(*event_pos):
                                     if ry < 0:
                                         continue
                                 if ry > 0:

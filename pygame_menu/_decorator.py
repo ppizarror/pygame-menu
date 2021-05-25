@@ -1116,6 +1116,7 @@ class Decorator(Base):
         """
         if not use_center_positioning:
             return tuple(pos)
+
         cx, cy = rect.centerx, rect.centery  # Center position
 
         # Position of the rect has not changed and exists
@@ -1133,6 +1134,7 @@ class Decorator(Base):
             new_pos.append((int(p[0] + cx), int(p[1] + cy)))
         new_pos = tuple(new_pos)
         self._coord_cache[decoid] = (cx, cy, new_pos)
+
         return new_pos
 
 

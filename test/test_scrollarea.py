@@ -307,3 +307,28 @@ class ScrollAreaTest(unittest.TestCase):
         sa._scrollbar_positions = 'fake'
         self.assertRaises(ValueError, lambda: sa._apply_size_changes())
         sa._scrollbar_positions = sa_scrolls
+
+    def test_scrollbars(self) -> None:
+        """
+        Test scrollarea scrollbar's.
+        """
+        menu = MenuUtils.generic_menu(touchscreen=False, mouse_enabled=False,
+                                      joystick_enabled=False, keyboard_enabled=False)
+        sa = menu.get_scrollarea()
+        sb = sa._scrollbars[0]
+        self.assertFalse(sb._joystick_enabled)
+        self.assertFalse(sb._keyboard_enabled)
+        self.assertFalse(sb._mouse_enabled)
+        self.assertFalse(sb._touchscreen_enabled)
+
+        # Test scrollarea within frame
+        drop = menu.add.dropselect('Subject Id', items=[('a',), ('b',), ('c',)],
+                                   dropselect_id='s0')
+        d_frame_sa = drop._drop_frame.get_scrollarea(inner=True)
+        sb_frame = d_frame_sa._scrollbars[0]
+        self.assertFalse(sb_frame._joystick_enabled)
+        self.assertFalse(sb_frame._keyboard_enabled)
+        self.assertFalse(sb_frame._mouse_enabled)
+        self.assertFalse(sb_frame._touchscreen_enabled)
+        self.assertEqual(sb_frame.get_menu(), menu)
+        self.assertEqual(d_frame_sa.get_menu(), menu)

@@ -1050,6 +1050,7 @@ class Widget(Base):
 
         if self._border_position == WIDGET_BORDER_POSITION_NONE:
             return
+
         elif self._border_position == WIDGET_BORDER_POSITION_FULL:
             pygame.draw.rect(
                 surface,
@@ -1057,6 +1058,7 @@ class Widget(Base):
                 rect,
                 self._border_width
             )
+
         else:
             for pos in self._border_position:
                 if pos == POSITION_NORTH:
@@ -1110,15 +1112,16 @@ class Widget(Base):
 
         # Check positioning
         if POSITION_WEST in position and POSITION_SOUTH in position and \
-                POSITION_NORTH in position and \
-                POSITION_EAST in position:
+                POSITION_NORTH in position and POSITION_EAST in position:
             position = WIDGET_BORDER_POSITION_FULL
+
         else:
             for pos in position:
                 assert pos in (POSITION_NORTH, POSITION_SOUTH, POSITION_EAST,
                                POSITION_WEST), \
                     'only north, south, east, and west positions are valid, ' \
                     'but received "{0}"'.format(pos)
+
         if width == 0:
             position = WIDGET_BORDER_POSITION_NONE
 
@@ -1505,6 +1508,7 @@ class Widget(Base):
                 h = self._scale[2]
                 new_size = int(w * width), int(h * height)
                 smooth = self._scale[3]
+
         elif self._max_width[0] is not None:
             width_pad, height_pad = self.get_size()
             if width_pad > self._max_width[0]:
@@ -1513,6 +1517,7 @@ class Widget(Base):
                     height *= self._max_width[0] / width_pad
                 new_size = int(w), int(height)
                 smooth = self._max_width[2]
+
         elif self._max_height[0] is not None:
             width_pad, height_pad = self.get_size()
             if height_pad > self._max_height[0]:
@@ -1521,6 +1526,7 @@ class Widget(Base):
                     width *= self._max_height[0] / height_pad
                 new_size = int(width), int(h)
                 smooth = self._max_height[2]
+
         else:
             raise RuntimeError('max_width and max_height cannot be non-None at '
                                'the same time')
@@ -2348,24 +2354,34 @@ class Widget(Base):
         assert isinstance(status, bool)
         if not self.is_selectable:
             return self
+
+        # Update status
         self._selected = status
         self.active = False
+
+        # Toggle between focus and blur events
         if self._selected:
             self._focus()
             self._selection_time = time.time()
         else:
             self._blur()
             self._events = []  # Remove events
+
         self._force_render()
+
+        # Call selection event
         if self._onselect is not None:
             try:
                 self._onselect(self._selected, self, self._menu)
             except TypeError:
                 self._onselect()
+
+        # Update the menu object
         if update_menu:
             assert self._menu is not None
             self._menu.select_widget(None)  # Unselect previous one
             self._menu.select_widget(self)
+
         return self
 
     def get_selected_time(self) -> NumberType:
@@ -2711,7 +2727,7 @@ class Widget(Base):
 
         .. note::
 
-            Readonly widgets or Hidden widgets do not apply update callbacks.
+            Readonly widgets or hidden widgets do not apply update callbacks.
 
         :param events: Events list
         :return: Self reference
@@ -2876,7 +2892,7 @@ class Widget(Base):
         :param frame: Frame object
         :return: Self reference
         """
-        assert self._frame is None, 'Widget is already in another frame'
+        assert self._frame is None, 'widget is already in another frame'
         assert isinstance(frame, Widget)
         self._frame = frame
         return self

@@ -133,7 +133,6 @@ class Label(Widget):
             menu_update_widgets.remove(self)
         if generator is not None and self not in menu_update_widgets:
             menu_update_widgets.append(self)
-
         return self
 
     def set_title(self, title: str) -> 'Label':

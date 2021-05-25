@@ -34,9 +34,9 @@ __all__ = ['ScrollBar']
 import pygame
 
 from pygame_menu.locals import ORIENTATION_VERTICAL, ORIENTATION_HORIZONTAL, \
-    POSITION_NORTHWEST
+    POSITION_NORTHWEST, FINGERMOTION, FINGERUP, FINGERDOWN
 from pygame_menu.utils import make_surface, assert_orientation, \
-    mouse_motion_current_mouse_position, assert_color
+    mouse_motion_current_mouse_position, assert_color, get_finger_pos
 from pygame_menu.widgets.core import Widget
 
 from pygame_menu._types import Optional, List, VectorIntType, ColorType, Literal, \
@@ -523,7 +523,6 @@ class ScrollBar(Widget):
         if self.readonly or not self.is_visible():
             return False
 
-        updated = False
         rect = self.get_rect(to_absolute_position=True)
 
         for event in events:
@@ -544,13 +543,22 @@ class ScrollBar(Widget):
                 pixels = direction * step
                 if self._scroll(rect, pixels):
                     self.change()
-                    updated = True
+                    return True
 
             # User moves mouse while scrolling
-            elif event.type == pygame.MOUSEMOTION and self._mouse_enabled and \
-                    hasattr(event, 'rel') and self.scrolling:
+            elif (event.type == pygame.MOUSEMOTION and self._mouse_enabled and hasattr(event, 'rel') or
+                  event.type == FINGERMOTION and self._touchscreen_enabled and self._menu is not None) and \
+                    self.scrolling:
+                # Get relative movement
+                h = self.get_orientation() == ORIENTATION_HORIZONTAL
+                rel = event.rel[self._orientation] if event.type == pygame.MOUSEMOTION else (
+                    event.dx * 2 * self._menu.get_window_size()[0] if h else
+                    event.dy * 2 * self._menu.get_window_size()[1]
+                )
+
                 # If mouse outside region and scroll is on limits, ignore
-                mx, my = pygame.mouse.get_pos()
+                mx, my = pygame.mouse.get_pos() if event.type == pygame.MOUSEMOTION else \
+                    get_finger_pos(self._menu, event)
                 if self.get_value_percentage() in (0, 1) and \
                         self.get_scrollarea() is not None and \
                         self.get_scrollarea().get_parent() is not None:
@@ -564,9 +572,9 @@ class ScrollBar(Widget):
                             continue
 
                 # Check scrolling
-                if self._scroll(rect, event.rel[self._orientation]):
+                if self._scroll(rect, rel):
                     self.change()
-                    updated = True
+                    return True
 
             # Mouse enters or leaves the window
             elif event.type == pygame.ACTIVEEVENT:
@@ -585,40 +593,47 @@ class ScrollBar(Widget):
                             self._scroll(rect, my - lmy)
 
             # User clicks the slider rect
-            elif event.type == pygame.MOUSEBUTTONDOWN and self._mouse_enabled:
+            elif event.type == pygame.MOUSEBUTTONDOWN and self._mouse_enabled or \
+                    event.type == FINGERDOWN and self._touchscreen_enabled and \
+                    self._menu is not None:
                 # Vertical bar: scroll down (4) or up (5). Mouse must be placed
                 # over the area to enable this feature
-                if event.button in (4, 5) and self._orientation == 1 and \
+                if not event.type == FINGERDOWN and \
+                        event.button in (4, 5) and self._orientation == 1 and \
                         (self._scrollarea is not None and
                          self._scrollarea.mouse_is_over() or self._scrollarea is None):
                     direction = -1 if event.button == 4 else 1
                     if self._scroll(rect, direction * self._single_step):
                         self.change()
-                        updated = True
+                        return True
 
                 # Click button (left, middle, right)
-                elif event.button in (1, 2, 3):
+                elif event.type == FINGERDOWN or event.button in (1, 2, 3):
+                    event_pos = get_finger_pos(self._menu, event)
+
                     # The _slider_rect origin is related to the widget surface
-                    if self.get_slider_rect().collidepoint(*event.pos):
+                    if self.get_slider_rect().collidepoint(*event_pos):
                         # Initialize scrolling
                         self.scrolling = True
                         self._clicked = True
                         self._render()
+                        return True
 
-                    elif rect.collidepoint(*event.pos):
+                    elif rect.collidepoint(*event_pos):
                         # Moves towards the click by one "page" (= slider length without pad)
                         s_rect = self.get_slider_rect()
                         pos = (s_rect.x, s_rect.y)
-                        direction = 1 if event.pos[self._orientation] > pos[self._orientation] else -1
+                        direction = 1 if event_pos[self._orientation] > pos[self._orientation] else -1
                         if self._scroll(rect, direction * self._page_step):
                             self.change()
-                            updated = True
+                            return True
 
             # User releases mouse button if scrolling
-            elif event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and self.scrolling:
+            elif (event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled or
+                  event.type == FINGERUP and self._touchscreen_enabled) and self.scrolling:
                 self._clicked = False
                 self.scrolling = False
-                updated = True
                 self._render()
+                return True
 
-        return updated
+        return False

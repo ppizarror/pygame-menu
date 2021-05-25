@@ -840,7 +840,6 @@ class BaseImage(Base):
         offy = self._drawing_offset[1] - py
 
         if self._drawing_mode == IMAGE_MODE_FILL:
-
             # Check if exists the transformed surface
             if area.width == self._last_transform[0] and area.height == self._last_transform[1] and \
                     self._last_transform[2] is not None:
@@ -860,7 +859,6 @@ class BaseImage(Base):
                 ))
 
         elif self._drawing_mode == IMAGE_MODE_REPEAT_X:
-
             w = self._surface.get_width()
             times = int(math.ceil(float(area.width) / w))
             assert times > 0, \
@@ -876,7 +874,6 @@ class BaseImage(Base):
                 )
 
         elif self._drawing_mode == IMAGE_MODE_REPEAT_Y:
-
             h = self._surface.get_height()
             times = int(math.ceil(float(area.height) / h))
             assert times > 0, \
@@ -892,7 +889,6 @@ class BaseImage(Base):
                 )
 
         elif self._drawing_mode == IMAGE_MODE_REPEAT_XY:
-
             w, h = self._surface.get_size()
             timesx = int(math.ceil(float(area.width) / w))
             timesy = int(math.ceil(float(area.height) / h))
@@ -910,7 +906,6 @@ class BaseImage(Base):
                     )
 
         elif self._drawing_mode == IMAGE_MODE_CENTER:
-
             sw, hw = area.width, area.height  # Window
             w, h = self._surface.get_size()  # Image
             surface.blit(
@@ -923,7 +918,6 @@ class BaseImage(Base):
             )
 
         elif self._drawing_mode == IMAGE_MODE_SIMPLE:
-
             surface.blit(
                 self._surface,
                 (

@@ -285,6 +285,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             assert 0 <= b <= 255, 'green color must be between 0 and 255'
             format_color = '{0}{3}{1}{3}{2}'.format(r, g, b, self._separator)
             self._auto_separator_pos = [0, 1]
+
         elif self._color_type == COLORINPUT_TYPE_HEX:
             text = str(color).strip()
             if text == '':
@@ -327,17 +328,20 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         assert isinstance(as_string, bool)
         if as_string:
             return self._input_string
+
         if self._color_type == COLORINPUT_TYPE_RGB:
             color = self._input_string.split(self._separator)
             if len(color) == 3 and color[0] != '' and color[1] != '' and color[2] != '':
                 r, g, b = int(color[0]), int(color[1]), int(color[2])
                 if 0 <= r <= 255 and 0 <= g <= 255 and 0 <= g <= 255:
                     return r, g, b
+
         elif self._color_type == COLORINPUT_TYPE_HEX:
             if len(self._input_string) == 7:
                 color = self._input_string[1:]
                 color = tuple(int(color[i:i + 2], 16) for i in (0, 2, 4))
                 return color[0], color[1], color[2]
+
         return -1, -1, -1
 
     def is_valid(self) -> bool:
@@ -415,6 +419,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
 
         if self.readonly or not self.is_visible():
             return False
+
         input_str = self._input_string
         cursor_pos = self._cursor_position
         disable_remove_separator = True
@@ -437,7 +442,6 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                             input_str[cursor_pos] == self._separator and
                             len(input_str) == cursor_pos + 1
                     ):
-
                         # Backspace button, delete text from right
                         if event.key == pygame.K_BACKSPACE:
                             if len(input_str) >= 1 and \
@@ -453,7 +457,6 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                     # by TextInput on super call
                     key = str(event.unicode)
                     if key in self._valid_chars:
-
                         new_string = (
                                 self._input_string[:self._cursor_position]
                                 + key
@@ -465,10 +468,8 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                             return False
 
                         if len(input_str) > 1:
-
                             # Check separators
                             if key == self._separator:
-
                                 # If more than 2 separators
                                 total_separator = 0
                                 for ch in input_str:
@@ -511,7 +512,6 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
 
                 # User writes
                 if event.type == pygame.KEYDOWN and self._keyboard_enabled:
-
                     # Check if any key is pressed, if True the event is invalid
                     if not check_key_pressed_valid(event):
                         return True
@@ -540,7 +540,6 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
 
         # After
         if self._color_type == COLORINPUT_TYPE_RGB:
-
             total_separator = 0
             for ch in input_str:
                 if ch == self._separator:

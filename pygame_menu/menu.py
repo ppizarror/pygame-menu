@@ -624,6 +624,10 @@ class Menu(Base):
             area_color=self._theme.background_color,
             area_height=self._height - extend_y,
             area_width=self._width,
+            controls_joystick=self._joystick,
+            controls_keyboard=self._keyboard,
+            controls_mouse=self._mouse,
+            controls_touchscreen=self._touchscreen,
             extend_y=extend_y,
             menubar=self._menubar,
             scrollbar_color=self._theme.scrollbar_color,
@@ -2034,7 +2038,7 @@ class Menu(Base):
         :param surface: Pygame surface to draw the Menu
         :param widget: Focused widget
         :param force: If ``True`` forces focus without any checks
-        :return: Returns the focus region, ``None`` if the focus could not be possible
+        :return: The focus region, ``None`` if the focus could not be possible
         """
         assert isinstance(surface, pygame.Surface)
         assert isinstance(widget, (Widget, type(None)))

@@ -500,8 +500,18 @@ class DropSelect(Widget):
         self._drop_frame.configured = True
         self._drop_frame.set_tab_size(self._tab_size)
         self._drop_frame._update__repr___(self)
+        self._drop_frame.set_controls(
+            joystick=self._joystick_enabled,
+            mouse=self._mouse_enabled,
+            touchscreen=self._touchscreen_enabled,
+            keyboard=self._keyboard_enabled
+        )
 
         if total_height > 0:
+            # Menu is needed while creating the scrollarea, as that reference
+            # is later passed to the scrollbars, which need menu for touchscreen
+            # events
+            self._drop_frame._menu = self._menu
             self._drop_frame.make_scrollarea(
                 max_width=frame_width,
                 max_height=max_height,
@@ -519,7 +529,10 @@ class DropSelect(Widget):
                 scrollbars=get_scrollbars_from_position(self._scrollbars)
             )
 
+        # Menu is formerly set in frame. That method adds the frame to update frames
+        # depending if frame is scrollable or not
         self._drop_frame.set_menu(self._menu)
+
         self._drop_frame.set_scrollarea(self._scrollarea)
         if self._frame is not None:
             self._drop_frame.set_frame(self._frame)
@@ -1144,7 +1157,7 @@ class DropSelect(Widget):
                 if not self.active:
                     continue
                 self._down()
-                updated = True
+                return True
 
             # Right button
             elif keydown and event.key == ctrl.KEY_MOVE_UP or \
@@ -1154,7 +1167,7 @@ class DropSelect(Widget):
                 if not self.active:
                     continue
                 self._up()
-                updated = True
+                return True
 
             # Press enter
             elif keydown and event.key == ctrl.KEY_APPLY or \
@@ -1164,19 +1177,19 @@ class DropSelect(Widget):
                     self.apply(*self._items[self._index][1:])
                 if not (self.active and (not self._close_on_apply and self._index != -1)):
                     self._toggle_drop()
-                updated = True
+                return True
 
             # Press keys which active the drop but not apply
             elif keydown and (event.key == pygame.K_TAB):
                 self._toggle_drop()
-                updated = True
+                return True
 
             # Close the selection
             elif keydown and (event.key == pygame.K_ESCAPE or
                               event.key == pygame.K_BACKSPACE):
                 if self.active:
                     self._toggle_drop()
-                updated = True
+                return True
 
             # Click on dropselect; don't consider the mouse wheel (button 4 & 5)
             elif self.active and (
@@ -1190,7 +1203,7 @@ class DropSelect(Widget):
                 event_pos = get_finger_pos(self._menu, event)
                 if self._drop_frame.get_rect(apply_padding=False, to_real_position=True
                                              ).collidepoint(*event_pos):
-                    updated = True
+                    return True
 
             # Click on dropselect; don't consider the mouse wheel (button 4 & 5)
             elif event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and \
@@ -1238,7 +1251,7 @@ class DropSelect(Widget):
             #     for btn in self._option_buttons:
             #         btn._check_mouseover(event)
 
-        return updated
+        return False
 
 
 class _SelectionDropNotMadeException(Exception):
