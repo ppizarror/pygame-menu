@@ -726,6 +726,10 @@ class Frame(Widget):
             area_color=scrollarea_color,
             area_height=max_height + sx,
             area_width=max_width + sy,
+            controls_joystick=self._joystick_enabled,
+            controls_keyboard=self._keyboard_enabled,
+            controls_mouse=self._mouse_enabled,
+            controls_touchscreen=self._touchscreen_enabled,
             parent_scrollarea=self._scrollarea,
             scrollbar_color=scrollbar_color,
             scrollbar_cursor=scrollbar_cursor,
@@ -772,6 +776,9 @@ class Frame(Widget):
 
         # Configure size
         self._frame_size = (max_width + sy, max_height + sx)
+
+        # Set menu
+        self._frame_scrollarea.set_menu(self._menu)
 
         # If has title
         if self._has_title:
