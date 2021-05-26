@@ -1937,7 +1937,7 @@ class Menu(Base):
             for example, ``menu.get_current().draw(...)``
 
         :param surface: Pygame surface to draw the Menu
-        :param clear_surface: Clear surface using theme default color
+        :param clear_surface: Clear surface using theme ``surface_clear_color``
         :return: Self reference **(current)**
         """
         assert isinstance(surface, pygame.Surface)
