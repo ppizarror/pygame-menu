@@ -46,7 +46,8 @@ __all__ = [
     # Others
     'WIDGET_BORDER_POSITION_FULL',
     'WIDGET_BORDER_POSITION_NONE',
-    'WIDGET_FULL_BORDER'
+    'WIDGET_FULL_BORDER',
+    'WidgetTransformationNotImplemented'
 
 ]
 
@@ -2261,7 +2262,7 @@ class Widget(Base):
 
     def get_translate(self, virtual: bool = False) -> Tuple2IntType:
         """
-        Get Widget translate on x-axis and y-axis (x, y) in px.
+        Get Widget translation on x-axis and y-axis (x, y) in px.
 
         :param virtual: If ``True`` get virtual translation, usually applied within frame scrollarea
         :return: Translation on both axis
@@ -2999,5 +3000,12 @@ class _WidgetCopyException(Exception):
 class _WidgetNoValue(object):
     """
     No value class.
+    """
+    pass
+
+
+class WidgetTransformationNotImplemented(Exception):
+    """
+    Exception raised if widget does not implement a transformation.
     """
     pass
