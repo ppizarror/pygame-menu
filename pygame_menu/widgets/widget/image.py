@@ -38,7 +38,7 @@ import pygame
 
 from pygame_menu.baseimage import BaseImage
 from pygame_menu.utils import assert_vector
-from pygame_menu.widgets import Widget
+from pygame_menu.widgets.core.widget import Widget
 
 from pygame_menu._types import Union, NumberType, CallbackType, Tuple2NumberType, \
     Optional, NumberInstance, EventVectorType
@@ -114,17 +114,6 @@ class Image(Widget):
     def _apply_font(self) -> None:
         pass
 
-    def rotate(self, angle: NumberType) -> 'Image':
-        self._image.rotate(angle)
-        self._surface = None
-        return self
-
-    def flip(self, x: bool, y: bool) -> 'Image':
-        if x or y:
-            self._image.flip(x, y)
-            self._surface = None
-        return self
-
     def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'Image':
         self._image.scale(width, height, smooth)
         self._surface = None
@@ -139,6 +128,17 @@ class Image(Widget):
         return self
 
     def set_max_height(self, *args, **kwargs) -> 'Image':
+        return self
+
+    def rotate(self, angle: NumberType) -> 'Image':
+        self._image.rotate(angle)
+        self._surface = None
+        return self
+
+    def flip(self, x: bool, y: bool) -> 'Image':
+        if x or y:
+            self._image.flip(x, y)
+            self._surface = None
         return self
 
     def _draw(self, surface: 'pygame.Surface') -> None:

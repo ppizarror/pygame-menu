@@ -43,7 +43,7 @@ from pygame_menu.locals import ORIENTATION_VERTICAL, FINGERDOWN, FINGERUP, \
     POSITION_NORTHWEST, POSITION_SOUTHEAST
 from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, \
     make_surface, parse_padding, get_finger_pos, uuid4, assert_cursor, assert_position
-from pygame_menu.widgets.core import Widget
+from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImplemented
 from pygame_menu.widgets.widget.button import Button
 from pygame_menu.widgets.widget.frame import Frame
 from pygame_menu.widgets.widget.selector import check_selector_items
@@ -684,22 +684,22 @@ class DropSelect(Widget):
         return self
 
     def scale(self, *args, **kwargs) -> 'DropSelect':
-        return self
+        raise WidgetTransformationNotImplemented()
 
     def resize(self, *args, **kwargs) -> 'DropSelect':
-        return self
+        raise WidgetTransformationNotImplemented()
 
     def set_max_width(self, *args, **kwargs) -> 'DropSelect':
-        return self
+        raise WidgetTransformationNotImplemented()
 
     def set_max_height(self, *args, **kwargs) -> 'DropSelect':
-        return self
+        raise WidgetTransformationNotImplemented()
 
     def rotate(self, *args, **kwargs) -> 'DropSelect':
-        return self
+        raise WidgetTransformationNotImplemented()
 
     def flip(self, *args, **kwargs) -> 'DropSelect':
-        return self
+        raise WidgetTransformationNotImplemented()
 
     def _draw(self, surface: 'pygame.Surface') -> None:
         surface.blit(self._surface, self._rect.topleft)

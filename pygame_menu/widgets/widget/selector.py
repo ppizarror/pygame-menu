@@ -53,7 +53,7 @@ import pygame_menu.controls as ctrl
 from pygame_menu.locals import FINGERUP
 from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, \
     make_surface, get_finger_pos
-from pygame_menu.widgets.core import Widget
+from pygame_menu.widgets.core.widget import Widget
 
 from pygame_menu._types import Tuple, Union, List, Any, Optional, CallbackType, \
     Literal, ColorType, ColorInputType, Tuple2IntType, Tuple3IntType, EventVectorType, \

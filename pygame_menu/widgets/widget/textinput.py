@@ -39,7 +39,7 @@ import pygame_menu.controls as ctrl
 from pygame_menu.locals import FINGERDOWN, FINGERUP, INPUT_INT, INPUT_FLOAT, INPUT_TEXT
 from pygame_menu.utils import check_key_pressed_valid, make_surface, assert_color, \
     get_finger_pos, warn, assert_vector
-from pygame_menu.widgets.core import Widget
+from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImplemented
 
 from pygame_menu._types import Optional, Any, CallbackType, Tuple, List, ColorType, \
     NumberType, Tuple2IntType, Dict, Tuple2NumberType, NumberInstance, ColorInputType, \
@@ -425,20 +425,20 @@ class TextInput(Widget):
                 value = 0
         return value
 
-    def rotate(self, *args, **kwargs) -> 'TextInput':
-        return self
-
     def scale(self, *args, **kwargs) -> 'TextInput':
-        return self
-
-    def set_max_height(self, *args, **kwargs) -> 'TextInput':
-        return self
-
-    def set_max_width(self, *args, **kwargs) -> 'TextInput':
-        return self
+        raise WidgetTransformationNotImplemented()
 
     def resize(self, *args, **kwargs) -> 'TextInput':
-        return self
+        raise WidgetTransformationNotImplemented()
+
+    def set_max_width(self, *args, **kwargs) -> 'TextInput':
+        raise WidgetTransformationNotImplemented()
+
+    def set_max_height(self, *args, **kwargs) -> 'TextInput':
+        raise WidgetTransformationNotImplemented()
+
+    def rotate(self, *args, **kwargs) -> 'TextInput':
+        raise WidgetTransformationNotImplemented()
 
     def flip(self, x: bool, y: bool) -> 'TextInput':  # Actually flip on x axis is disabled
         super(TextInput, self).flip(False, y)
