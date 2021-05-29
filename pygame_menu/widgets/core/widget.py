@@ -402,7 +402,7 @@ class Widget(Base):
 
         # Menu reference
         self._menu = None  # Menu which contains the widget
-        self._menu_hook = None  # Menu the widget points to. Modified by menu._add_submenu
+        self._menu_hook = None  # Menu the widget points to. Modified by WidgetManager._add_submenu
 
         # Modified in set_font() method
         self._font = None

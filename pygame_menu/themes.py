@@ -413,14 +413,6 @@ class Theme(object):
         self.widget_tab_size = self._get(kwargs, 'widget_tab_size', int, 4)
         self.widget_url_color = self._get(kwargs, 'widget_url_color', 'color', (6, 69, 173))
 
-        # Compatibility check
-        if kwargs.get('menubar_close_button', None) is not None:
-            warn(
-                'menubar_close_button has been moved to title_close_button. '
-                'This alert will be removed in v4.1'
-            )
-            self.title_close_button = self._get(kwargs, 'menubar_close_button', bool)
-
         # Upon this, no more kwargs should exist, raise exception if there's more
         for invalid_keyword in kwargs.keys():
             raise ValueError('parameter Theme.{} does not exist'.format(invalid_keyword))
