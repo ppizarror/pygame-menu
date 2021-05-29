@@ -2994,7 +2994,7 @@ class Menu(Base):
         """
         if reset:
             self.full_reset()
-        for w in self._widgets:
+        for w in self._widgets.copy():
             self.remove_widget(w)
         del self._widgets[:]
         del self._submenus
@@ -3899,6 +3899,14 @@ class Menu(Base):
             indx += 1
         process_non_menu_frame(indx)
         close_frames(0)
+
+    def _copy_theme(self) -> None:
+        """
+        Updates theme reference with a copied one.
+
+        :return: None
+        """
+        self._theme = self._theme.copy()
 
 
 class _MenuStats(object):

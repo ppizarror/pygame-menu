@@ -88,9 +88,9 @@ class MenuBar(Widget):
     """
     MenuBar widget.
 
-    .. note::
+     .. note::
 
-        This widget does not accept scale/resize transformation.
+        MenuBar only accepts translation transformation.
 
     :param title: Title of the menubar
     :param width: Width of the widget, generally width of the Menu

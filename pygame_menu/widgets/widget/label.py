@@ -47,6 +47,10 @@ class Label(Widget):
     """
     Label widget.
 
+    .. note::
+
+        Label accepts all transformations.
+
     :param title: Label title/text
     :param label_id: Label ID
     :param onselect: Function when selecting the label widget

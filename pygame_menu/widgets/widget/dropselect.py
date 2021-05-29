@@ -80,7 +80,7 @@ class DropSelect(Widget):
 
     .. note::
 
-        DropSelect only implements translation.
+        DropSelect only accepts translation transformation.
 
     :param title: Drop select title
     :param items: Items of the drop select

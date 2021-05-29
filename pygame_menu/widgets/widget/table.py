@@ -62,11 +62,11 @@ class Table(Frame):
 
     .. note::
 
-        Table only implements translation transformation.
+        Table cannot be selected. Thus, it does not receive any selection effect.
 
     .. note::
 
-        Table cannot be selected. Thus, it does not receive any selection effect.
+        Table only accepts translation and resize transformations.
 
     :param table_id: ID of the table
     """

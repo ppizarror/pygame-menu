@@ -885,6 +885,7 @@ class WidgetsTest(unittest.TestCase):
         widget.update(
             PygameEventUtils.key(pygame.K_BACKSPACE, keydown=True))  # remove the last character, now color is invalid
         self.assertEqual(widget.get_value(as_string=True), '#FFFFF')  # is upper
+        widget.render()
         self.assertEqual(widget.get_width(), 200)
 
         widget = menu.add.color_input('title', color_type='hex', hex_format='upper', dynamic_width=False)
@@ -1088,6 +1089,7 @@ class WidgetsTest(unittest.TestCase):
         textinput._copy()
         textinput._paste()
         textinput._block_copy_paste = False
+        textinput._select_all()
         textinput._cut()
         self.assertEqual(textinput.get_value(), '')
         textinput._undo()
@@ -1114,6 +1116,7 @@ class WidgetsTest(unittest.TestCase):
         textinput_copy._copy()
         self.assertTrue(textinput_copy._block_copy_paste)
         textinput_copy._block_copy_paste = False
+        textinput_copy._select_all()
         textinput_copy._cut()
         self.assertEqual(textinput_copy.get_value(), '')
         textinput_copy._block_copy_paste = False
@@ -1151,6 +1154,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(textinput.get_value(), 'tes')
         textinput.update(PygameEventUtils.keydown_mod_ctrl(pygame.K_y))  # redo
         self.assertEqual(textinput.get_value(), 'test')
+        textinput._select_all()
         textinput.update(PygameEventUtils.keydown_mod_ctrl(pygame.K_x))  # cut
         self.assertEqual(textinput.get_value(), '')
         textinput.update(PygameEventUtils.keydown_mod_ctrl(pygame.K_z))  # undo
@@ -1268,6 +1272,48 @@ class WidgetsTest(unittest.TestCase):
         textinput._update_cursor_mouse(50)
         textinput._cursor_render = True
         textinput._render_cursor()
+
+        # Test multiple are selected
+        self.assertRaises(pygame_menu.menu._MenuMultipleSelectedWidgetsException, lambda: menu.draw(surface))
+        textinput.clear()
+        textinput.select(update_menu=True)
+        menu.draw(surface)
+
+        # Clear the menu
+        self.assertEqual(menu._stats.removed_widgets, 0)
+        self.assertEqual(textinput.get_menu(), menu)
+        menu.clear()
+        self.assertIsNone(textinput.get_menu())
+        self.assertEqual(menu._stats.removed_widgets, 6)
+        menu.add.generic_widget(textinput)
+        self.assertEqual(textinput.get_menu(), menu)
+        menu.clear()
+        self.assertEqual(menu._stats.removed_widgets, 7)
+
+        # Test text with max width and right overflow removal
+        menu._copy_theme()
+        menu._theme.widget_font_size = 20
+        textinput = menu.add.text_input(
+            'Some long text: ',
+            maxwidth=19,
+            textinput_id='long_text',
+            input_underline='_'
+        )
+        textinput.resize()
+        textinput.set_max_width()
+        textinput.set_max_height()
+        textinput.set_value('aaaaaaaaaaaaaaaaaaaaaaaaaa')
+        self.assertEqual(textinput._cursor_position, 26)
+        self.assertEqual(textinput._renderbox, [1, 26, 25])
+        textinput.update(PygameEventUtils.key(pygame.K_BACKSPACE, keydown=True))
+        self.assertEqual(textinput._cursor_position, 25)
+        self.assertEqual(textinput._renderbox, [0, 25, 25])
+        textinput.update(PygameEventUtils.key(pygame.K_a, keydown=True, char='a'))
+        self.assertEqual(textinput._cursor_position, 26)
+        self.assertEqual(textinput._renderbox, [1, 26, 25])
+        textinput.update(PygameEventUtils.key(pygame.K_BACKSPACE, keydown=True))
+        self.assertEqual(textinput._cursor_position, 25)
+        self.assertEqual(textinput._renderbox, [0, 25, 25])
 
         # Test underline edge cases
         theme = TEST_THEME.copy()

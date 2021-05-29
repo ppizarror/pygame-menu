@@ -96,10 +96,6 @@ class Frame(Widget):
 
     .. note::
 
-        Frame only implements translation and resize transformations.
-
-    .. note::
-
         Frame cannot be selected. Thus, it does not receive any selection effect.
 
     .. note::
@@ -107,6 +103,10 @@ class Frame(Widget):
         Frames should be appended to Menu scrollable frames if it's scrollable,
         be careful when removing. Check :py:class:`pygame_menu.widgets.DropSelect`
         as a complete example of Frame implementation within another Widgets.
+
+    .. note::
+
+        Frame only accepts translation and resize transformations.
 
     :param width: Frame width in px
     :param height: Frame height in px

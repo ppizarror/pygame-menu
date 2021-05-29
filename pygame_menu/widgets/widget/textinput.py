@@ -50,23 +50,7 @@ try:
     from pyperclip import copy, paste, PyperclipException
 
 except (ModuleNotFoundError, ImportError):
-    # noinspection PyUnusedLocal
-    def copy(text) -> None:
-        """
-        Copy method.
-
-        :return: None
-        """
-        pass
-
-
-    def paste() -> str:
-        """
-        Paste method.
-
-        :return: Empty string
-        """
-        return ''
+    copy, paste = lambda text: None, lambda: ''
 
 
     class PyperclipException(RuntimeError):
@@ -91,13 +75,13 @@ class TextInput(Widget):
 
     .. note::
 
-        This widget only accepts vertical flip and translation transformations.
-
-    .. note::
-
         TextInput text input is sensitive to the widget font, some fonts do not
         support some characters or languages (for example Chinese). Be careful
         about which font use.
+
+    .. note::
+
+        TextInput only accepts vertical flip and translation transformations.
 
     :param title: Text input title
     :param textinput_id: ID of the text input
@@ -120,10 +104,9 @@ class TextInput(Widget):
     :param onselect: Function when selecting the widget
     :param password: Input string is displayed as a password
     :param password_char: Character used by password type
-    :param repeat_keys_initial_ms: Time in ms before keys are repeated when held
-    :param repeat_keys_interval_ms: Interval between key press repetition when held
-    :param repeat_mouse_interval_ms: Interval between mouse events when held
-    :param repeat_touch_interval_ms: Interval between mouse events when held
+    :param repeat_keys_initial_ms: Time in ms before keys are repeated when held in ms
+    :param repeat_keys_interval_ms: Interval between key press repetition when held in ms
+    :param repeat_mouse_interval_ms: Interval between mouse events when held in ms
     :param text_ellipsis: Ellipsis text when overflow occurs (input length exceeds maxwidth)
     :param valid_chars: List of chars that are valid, ``None`` if all chars are valid
     :param kwargs: Optional keyword arguments
@@ -165,7 +148,6 @@ class TextInput(Widget):
     _keyrepeat_interval_ms: NumberType
     _keyrepeat_mouse_interval_ms: NumberType
     _keyrepeat_mouse_ms: NumberType
-    _keyrepeat_touch_interval_ms: NumberType
     _last_char: str
     _last_container_width: int
     _last_key: int
@@ -213,9 +195,8 @@ class TextInput(Widget):
             password: bool = False,
             password_char: str = '*',
             repeat_keys_initial_ms: NumberType = 400,
-            repeat_keys_interval_ms: NumberType = 100,
+            repeat_keys_interval_ms: NumberType = 50,
             repeat_mouse_interval_ms: NumberType = 400,
-            repeat_touch_interval_ms: NumberType = 400,
             text_ellipsis: str = '...',
             valid_chars: Optional[List[str]] = None,
             *args,
@@ -237,7 +218,6 @@ class TextInput(Widget):
         assert isinstance(repeat_keys_initial_ms, NumberInstance)
         assert isinstance(repeat_keys_interval_ms, NumberInstance)
         assert isinstance(repeat_mouse_interval_ms, NumberInstance)
-        assert isinstance(repeat_touch_interval_ms, NumberInstance)
         assert isinstance(text_ellipsis, str)
         assert isinstance(textinput_id, str)
         assert isinstance(valid_chars, (type(None), list))
@@ -250,6 +230,9 @@ class TextInput(Widget):
             'input underline length must be equal or greater than zero'
         assert cursor_switch_ms > 0, \
             'cursor switch in milliseconds must be greater than zero'
+        assert repeat_keys_initial_ms > 0, 'ms cannot be lower or equal than zero'
+        assert repeat_keys_interval_ms > 0, 'ms cannot be lower or equal than zero'
+        assert repeat_mouse_interval_ms > 0, 'ms cannot be lower or equal than zero'
 
         cursor_color = assert_color(cursor_color)
         cursor_selection_color = assert_color(cursor_selection_color)
@@ -305,9 +288,6 @@ class TextInput(Widget):
         self._keyrepeat_mouse_ms = 0
         self._keyrepeat_mouse_interval_ms = repeat_mouse_interval_ms
         self._mouse_is_pressed = False
-
-        # Touchscreen handling
-        self._keyrepeat_touch_interval_ms = repeat_touch_interval_ms
 
         # Render box (overflow)
         self._ellipsis = text_ellipsis
@@ -445,6 +425,15 @@ class TextInput(Widget):
     def scale(self, *args, **kwargs) -> 'TextInput':
         return self
 
+    def set_max_height(self, *args, **kwargs) -> 'TextInput':
+        return self
+
+    def set_max_width(self, *args, **kwargs) -> 'TextInput':
+        return self
+
+    def resize(self, *args, **kwargs) -> 'TextInput':
+        return self
+
     def flip(self, x: bool, y: bool) -> 'TextInput':  # Actually flip on x axis is disabled
         super(TextInput, self).flip(False, y)
         return self
@@ -469,8 +458,8 @@ class TextInput(Widget):
             x = self._rect.x + self._cursor_surface_pos[0]
             if self._flip[0]:  # Flip on x axis (bug)
                 x = self._surface.get_width() - x
-            surface.blit(self._cursor_surface,
-                         (x, self._rect.y + self._cursor_surface_pos[1]))
+            y = self._rect.y + self._cursor_surface_pos[1]
+            surface.blit(self._cursor_surface, (x, y))
 
     def _render(self) -> Optional[bool]:
         string = self._title + self._get_input_string()  # Render string
@@ -559,6 +548,11 @@ class TextInput(Widget):
                 delta *= 0
             x1 += delta
             x2 += delta
+
+            # Apply scale factor (experimental)
+            x *= self._scale_factor[0]
+            y *= self._scale_factor[1]
+            x1 *= self._scale_factor[0]
 
             # Create surface and fill
             self._selection_surface = make_surface(x, y, fill_color=self._selection_color)
@@ -736,9 +730,9 @@ class TextInput(Widget):
         # Move x position
         cursor_x_pos += 2
 
-        # Store position
-        self._cursor_surface_pos[0] = int(cursor_x_pos)
-        self._cursor_surface_pos[1] = int(cursor_y_pos)
+        # Store position, apply scale factor (experimental)
+        self._cursor_surface_pos[0] = int(cursor_x_pos) * self._scale_factor[0]
+        self._cursor_surface_pos[1] = int(cursor_y_pos) * self._scale_factor[1]
         self._cursor_render = False
 
     def _ellipsis_left(self) -> bool:
@@ -823,6 +817,7 @@ class TextInput(Widget):
         if self._maxwidth == 0:
             return
         len_string = len(self._input_string)
+        prev_renderbox = self._renderbox.copy()
 
         # Move cursor to end
         if end:
@@ -857,8 +852,10 @@ class TextInput(Widget):
                     self._renderbox[2] -= right
 
             # If text is typed increase inner position
-            self._renderbox[2] += left
-            self._renderbox[2] += right
+            if self._renderbox[0] == prev_renderbox[0]:
+                self._renderbox[2] += left
+                self._renderbox[2] += right
+
         else:
             if addition:  # If text is added
                 # If press del at the end of string
@@ -1290,13 +1287,6 @@ class TextInput(Widget):
         if self._selection_surface:
             self._remove_selection()
             return True
-        else:
-            self._cursor_position = 0
-            self._renderbox[0] = 0
-            self._renderbox[1] = 0
-            self._renderbox[2] = 0
-            self._update_input_string('')
-            self._cursor_render = True  # Due to manually updating renderbox
         return False
 
     def _get_char_size(self, char) -> int:
@@ -1616,60 +1606,66 @@ class TextInput(Widget):
                     if event.key == pygame.K_c:
                         if not self._copy_paste_enabled:
                             self._sound.play_event_error()
-                            return False
+                            break
                         self.active = True
                         copy_status = self._copy()
                         if not copy_status:
                             self._sound.play_event_error()
-                        return copy_status
+                        updated = updated or copy_status
+                        break
 
                     # Ctrl+V paste
                     elif event.key == pygame.K_v:
                         if not self._copy_paste_enabled:
                             self._sound.play_event_error()
-                            return False
+                            break
                         self.active = True
-                        return self._paste()
+                        updated = updated or self._paste()
+                        break
 
                     # Ctrl+Z undo
                     elif event.key == pygame.K_z:
                         if self._max_history == 0:
                             self._sound.play_event_error()
-                            return False
+                            break
                         self.active = True
                         self._sound.play_key_del()
-                        return self._undo()
+                        updated = updated or self._undo()
+                        break
 
                     # Ctrl+Y redo
                     elif event.key == pygame.K_y:
                         if self._max_history == 0:
                             self._sound.play_event_error()
-                            return False
+                            break
                         self.active = True
                         self._sound.play_key_add()
-                        return self._redo()
+                        updated = updated or self._redo()
+                        break
 
                     # Ctrl+X cut
                     elif event.key == pygame.K_x:
                         if not self._copy_paste_enabled:
                             self._sound.play_event_error()
-                            return False
+                            break
                         self.active = True
                         self._sound.play_key_del()
-                        return self._cut()
+                        updated = updated or self._cut()
+                        break
 
                     # Ctrl+A select all
                     elif event.key == pygame.K_a:
                         if not self._selection_enabled:
                             self._sound.play_event_error()
-                            return False
+                            break
                         self.active = True
                         self._select_all()
-                        return False
+                        updated = True
+                        break
 
                     # Command not found, returns
                     else:
-                        return False
+                        break
 
                 # User press alt+x get the unicode char from string
                 if pygame.key.get_mods() in (pygame.KMOD_ALT, pygame.KMOD_LALT) and \
@@ -1720,7 +1716,8 @@ class TextInput(Widget):
                     # If text is selected
                     if self._selection_surface:
                         self._remove_selection()
-                        return True
+                        updated = True
+                        break
 
                     self._backspace()
                     self.change()
@@ -1736,15 +1733,16 @@ class TextInput(Widget):
                     else:
                         self._sound.play_key_del()
 
+                    updated = True
+
                     # If text is selected
                     if self._selection_surface:
                         self._remove_selection()
-                        return True
+                        break
 
                     self._delete()
                     self.change()
                     self.active = True
-                    updated = True
 
                 # Right arrow
                 elif event.key == pygame.K_RIGHT:
@@ -1768,7 +1766,7 @@ class TextInput(Widget):
                                                          self._selection_box[0] + 1)
                     else:
                         if self._unselect_text():
-                            return False
+                            break
 
                     # Move cursor
                     self._move_cursor_right()
@@ -1796,7 +1794,7 @@ class TextInput(Widget):
                                                              self._selection_box[1] - 1)
                     else:
                         if self._unselect_text():
-                            return False
+                            break
 
                     # Move cursor
                     self._move_cursor_left()
@@ -1861,7 +1859,7 @@ class TextInput(Widget):
                         self._selection_box[0] = self._cursor_position
                         self._selection_box[1] = self._cursor_position
                     self.active = True
-                    return False
+                    break
 
                 # Any other key, add as input
                 elif event.key not in self._ignore_keys and hasattr(event, 'unicode'):

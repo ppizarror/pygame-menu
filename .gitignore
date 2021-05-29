@@ -23,6 +23,7 @@ dist/
 pygame_menu/examples/other/sources/**
 run_gource.bat
 pygame_menu/examples/other/_test.py
+pygame_menu/examples/other/_test_vkeyboard.py
 
 # Tox
 tox.ini

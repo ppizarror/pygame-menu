@@ -8,23 +8,23 @@ examples, simply execute these commands in a terminal:
 
 .. code-block:: bash
 
-    $> python -m pygame_menu.examples.game_selector
-    $> python -m pygame_menu.examples.multi_input
-    $> python -m pygame_menu.examples.scroll_menu
-    $> python -m pygame_menu.examples.simple
-    $> python -m pygame_menu.examples.timer_clock
+    $> python3 -m pygame_menu.examples.game_selector
+    $> python3 -m pygame_menu.examples.multi_input
+    $> python3 -m pygame_menu.examples.scroll_menu
+    $> python3 -m pygame_menu.examples.simple
+    $> python3 -m pygame_menu.examples.timer_clock
 
 Other examples that show specific use cases of the menu are also provided:
 
 .. code-block:: bash
 
-    $> python -m pygame_menu.examples.other.calculator
-    $> python -m pygame_menu.examples.other.dynamic_button_append
-    $> python -m pygame_menu.examples.other.dynamic_widget_update
-    $> python -m pygame_menu.examples.other.image_background
-    $> python -m pygame_menu.examples.other.scrollbar
-    $> python -m pygame_menu.examples.other.scrollbar_area
-    $> python -m pygame_menu.examples.other.ui_solar_system
+    $> python3 -m pygame_menu.examples.other.calculator
+    $> python3 -m pygame_menu.examples.other.dynamic_button_append
+    $> python3 -m pygame_menu.examples.other.dynamic_widget_update
+    $> python3 -m pygame_menu.examples.other.image_background
+    $> python3 -m pygame_menu.examples.other.scrollbar
+    $> python3 -m pygame_menu.examples.other.scrollbar_area
+    $> python3 -m pygame_menu.examples.other.ui_solar_system
 
 Them can also be imported as follows:
 
