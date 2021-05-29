@@ -43,11 +43,12 @@ from pygame_menu._types import Callable
 # noinspection PyMissingOrEmptyDocstring
 class MenuLink(NoneWidget):
     """
-    Menu link widget.
+    Menu link widget; adds a link to another Menu. The behaviour is similar to a
+    button, but this widget is invisible, and cannot be selectable.
 
     .. note::
 
-        This widget does not accept any transformation.
+        MenuLink does not accept any transformation.
 
     :param link_id: Link ID
     :param menu_opener_handler: Callback for opening the menu object

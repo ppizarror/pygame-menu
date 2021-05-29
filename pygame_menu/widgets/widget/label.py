@@ -49,7 +49,7 @@ class Label(Widget):
 
     .. note::
 
-        This widget accepts all transformations.
+        Label accepts all transformations.
 
     :param title: Label title/text
     :param label_id: Label ID

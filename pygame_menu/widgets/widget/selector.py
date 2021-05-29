@@ -107,7 +107,7 @@ class Selector(Widget):
 
     .. note::
 
-        This widget accepts all transformations.
+        Selector accepts all transformations.
 
     :param title: Selector title
     :param items: Items of the selector

@@ -55,6 +55,10 @@ class Button(Widget):
 
         onreturn(*args, **kwargs)
 
+    .. note::
+
+        Button accepts all transformations.
+
     :param title: Button title
     :param button_id: Button ID
     :param onreturn: Callback when pressing the button

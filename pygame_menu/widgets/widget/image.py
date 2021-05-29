@@ -40,7 +40,7 @@ from pygame_menu.baseimage import BaseImage
 from pygame_menu.utils import assert_vector
 from pygame_menu.widgets import Widget
 
-from pygame_menu._types import Union, NumberType, CallbackType, Tuple2NumberType,\
+from pygame_menu._types import Union, NumberType, CallbackType, Tuple2NumberType, \
     Optional, NumberInstance, EventVectorType
 
 
@@ -51,7 +51,7 @@ class Image(Widget):
 
     .. note::
 
-        This widget accepts all transformations.
+        Image accepts all transformations.
 
     :param image_path: Path of the image, BytesIO object, or :py:class:`pygame_menu.baseimage.BaseImage` object. If :py:class:`pygame_menu.baseimage.BaseImage` object is provided drawing mode is not considered
     :param image_id: Image ID

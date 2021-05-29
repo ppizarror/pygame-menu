@@ -50,8 +50,7 @@ try:
     from pyperclip import copy, paste, PyperclipException
 
 except (ModuleNotFoundError, ImportError):
-    copy = lambda text: None
-    paste = lambda: ''
+    copy, paste = lambda text: None, lambda: ''
 
 
     class PyperclipException(RuntimeError):
@@ -76,13 +75,13 @@ class TextInput(Widget):
 
     .. note::
 
-        This widget only accepts vertical flip and translation transformations.
-
-    .. note::
-
         TextInput text input is sensitive to the widget font, some fonts do not
         support some characters or languages (for example Chinese). Be careful
         about which font use.
+
+    .. note::
+
+        TextInput only accepts vertical flip and translation transformations.
 
     :param title: Text input title
     :param textinput_id: ID of the text input

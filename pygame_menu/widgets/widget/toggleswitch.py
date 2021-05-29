@@ -61,7 +61,7 @@ class ToggleSwitch(Widget):
 
     .. note::
 
-        This widget only accepts translation transformation.
+        ToggleSwitch only accepts translation transformation.
 
     :param title: Toggle switch title
     :param toggleswitch_id: ToggleSwitch ID
