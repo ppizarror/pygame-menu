@@ -221,20 +221,6 @@ class Menu(Base):
     ) -> None:
         super(Menu, self).__init__(object_id=menu_id)
 
-        # Compatibility from (height, width, title) to (title, width, height)
-        if not isinstance(title, str) and isinstance(height, str):
-            _title = title
-            title = height
-            height = _title
-            warn('Menu constructor changed from Menu(height, width, title, ...) to '
-                 'Menu(title, width, height, ...). This alert will be removed in v4.1')
-
-        # Check events compatibility
-        if onclose == _events.DISABLE_CLOSE:
-            warn('DISABLE_CLOSE event is deprecated and it will be removed in v4.1. '
-                 'Use events.NONE instead (or None)')
-            onclose = None
-
         assert isinstance(width, NumberInstance)
         assert isinstance(height, NumberInstance)
         assert isinstance(center_content, bool)
@@ -968,84 +954,6 @@ class Menu(Base):
         :return: Position on x-axis and y-axis (x,y) in px
         """
         return self._position[0] + self._translate[0], self._position[1] + self._translate[1]
-
-    @staticmethod
-    def _warn_widgetmanager(method: str, new_method: str) -> None:
-        """
-        Warn about a deprecated method.
-
-        :param method: Method's name to warn about
-        :param new_method: New method name
-        :return: None
-        """
-        warn(
-            'Menu method {0} is deprecated. Use menu.add.{1} instead, (see docs). '
-            'This method will be removed in v4.1'.format(method, new_method)
-        )
-
-    def add_button(self, *args, **kwargs) -> 'pygame_menu.widgets.Button':
-        """
-        Use :py:meth:`pygame_menu._widgetmanager.WidgetManager.button` instead.
-        This method shorthand will be removed in version 4.1.
-        """
-        self._warn_widgetmanager('add_button', 'button')
-        return self.add.button(*args, **kwargs)
-
-    def add_color_input(self, *args, **kwargs) -> 'pygame_menu.widgets.ColorInput':
-        """
-        Use :py:meth:`pygame_menu._widgetmanager.WidgetManager.color_input` instead.
-        This method shorthand will be removed in version 4.1.
-        """
-        self._warn_widgetmanager('add_color_input', 'color_input')
-        return self.add.color_input(*args, **kwargs)
-
-    def add_image(self, *args, **kwargs) -> 'pygame_menu.widgets.Image':
-        """
-        Use :py:meth:`pygame_menu._widgetmanager.WidgetManager.image` instead.
-        This method shorthand will be removed in version 4.1.
-        """
-        self._warn_widgetmanager('add_image', 'image')
-        return self.add.image(*args, **kwargs)
-
-    def add_label(self, *args, **kwargs) -> Union['pygame_menu.widgets.Label', List['pygame_menu.widgets.Label']]:
-        """
-        Use :py:meth:`pygame_menu._widgetmanager.WidgetManager.label` instead.
-        This method shorthand will be removed in version 4.1.
-        """
-        self._warn_widgetmanager('add_label', 'label')
-        return self.add.label(*args, **kwargs)
-
-    def add_selector(self, *args, **kwargs) -> 'pygame_menu.widgets.Selector':
-        """
-        Use :py:meth:`pygame_menu._widgetmanager.WidgetManager.selector` instead.
-        This method shorthand will be removed in version 4.1.
-        """
-        self._warn_widgetmanager('add_selector', 'selector')
-        return self.add.selector(*args, **kwargs)
-
-    def add_text_input(self, *args, **kwargs) -> 'pygame_menu.widgets.TextInput':
-        """
-        Use :py:meth:`pygame_menu._widgetmanager.WidgetManager.text_input` instead.
-        This method shorthand will be removed in version 4.1.
-        """
-        self._warn_widgetmanager('add_text_input', 'text_input')
-        return self.add.text_input(*args, **kwargs)
-
-    def add_vertical_margin(self, *args, **kwargs) -> 'pygame_menu.widgets.VMargin':
-        """
-        Use :py:meth:`pygame_menu._widgetmanager.WidgetManager.vertical_margin` instead.
-        This method shorthand will be removed in version 4.1.
-        """
-        self._warn_widgetmanager('add_vertical_margin', 'vertical_margin')
-        return self.add.vertical_margin(*args, **kwargs)
-
-    def add_generic_widget(self, *args, **kwargs) -> 'Widget':
-        """
-        Use :py:meth:`pygame_menu._widgetmanager.WidgetManager.generic_widget` instead.
-        This method shorthand will be removed in version 4.1.
-        """
-        self._warn_widgetmanager('add_generic_widget', 'generic_widget')
-        return self.add.generic_widget(*args, **kwargs)
 
     def select_widget(self, widget: Optional[Union['Widget', str]]) -> 'Menu':
         """
@@ -3399,26 +3307,6 @@ class Menu(Base):
                 if sm.in_submenu(menu, recursive):
                     return True
         return False
-
-    def _add_submenu(self, menu: 'Menu', hook: 'Widget') -> None:
-        """
-        Adds a submenu. Requires the menu instance and the widget that adds the
-        sub-menu.
-
-        :param menu: Menu reference
-        :param hook: Widget hook
-        :return: None
-        """
-        assert isinstance(menu, Menu)
-        assert menu != self, 'submenu cannot point to menu itself'
-        assert isinstance(hook, Widget)
-        if menu not in self._submenus.keys():
-            self._submenus[menu] = []
-        assert hook not in self._submenus[menu], \
-            'widget {0} already hooks submenu {1}' \
-            ''.format(hook.get_class_id(), menu.get_class_id())
-        self._submenus[menu].append(hook)
-        hook._menu_hook = menu
 
     def _remove_submenu(
             self,

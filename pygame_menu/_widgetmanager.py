@@ -83,6 +83,26 @@ class WidgetManager(Base):
         """
         return self._menu.get_theme()
 
+    def _add_submenu(self, menu: 'pygame_menu.Menu', hook: 'Widget') -> None:
+        """
+        Adds a submenu. Requires the menu instance and the widget that adds the
+        sub-menu.
+
+        :param menu: Menu reference
+        :param hook: Widget hook
+        :return: None
+        """
+        assert isinstance(menu, pygame_menu.Menu)
+        assert menu != self._menu, 'submenu cannot point to menu itself'
+        assert isinstance(hook, Widget)
+        if menu not in self._menu._submenus.keys():
+            self._menu._submenus[menu] = []
+        assert hook not in self._menu._submenus[menu], \
+            'widget {0} already hooks submenu {1}' \
+            ''.format(hook.get_class_id(), menu.get_class_id())
+        self._menu._submenus[menu].append(hook)
+        hook._menu_hook = menu
+
     def _filter_widget_attributes(self, kwargs: Dict) -> Dict[str, Any]:
         """
         Return the valid widgets attributes from a dictionary.
@@ -568,7 +588,7 @@ class WidgetManager(Base):
 
         # Add to submenu
         if widget.to_menu:
-            self._menu._add_submenu(action, widget)
+            self._add_submenu(action, widget)
 
         return widget
 
@@ -2642,7 +2662,7 @@ class WidgetManager(Base):
         )
         self.configure_defaults_widget(widget)
         self._append_widget(widget)
-        self._menu._add_submenu(menu, widget)
+        self._add_submenu(menu, widget)
 
         return widget
 

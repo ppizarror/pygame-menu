@@ -789,7 +789,7 @@ class MenuTest(unittest.TestCase):
             column_min_width=400,
             height=300,
             theme=theme,
-            title='Images in v4',
+            title='Images',
             width=400
         )
 
