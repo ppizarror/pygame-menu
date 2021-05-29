@@ -822,7 +822,7 @@ class Frame(Widget):
 
         :return: Title height in px
         """
-        if not self._has_title:
+        if not self._has_title or self._frame_title is None:
             return 0
         h = self._frame_title.get_height()
         h += self._frame_title.get_translate()[1]
@@ -1326,13 +1326,18 @@ class Frame(Widget):
         return self._scrollarea
 
     def set_frame(self, frame: 'pygame_menu.widgets.Frame') -> 'Frame':
-        assert self != frame, 'Frame cannot set itself as a Frame'
+        assert self != frame, \
+            '{0} cannot set itself as a frame'.format(frame.get_class_id())
         super(Frame, self).set_frame(frame)
         if self._frame_title is not None:
             self._frame_title.set_frame(frame)
         return self
 
     def set_scrollarea(self, scrollarea: Optional['pygame_menu._scrollarea.ScrollArea']) -> None:
+        if scrollarea is not None:
+            assert scrollarea != self._frame_scrollarea, \
+                'scrollarea cannot be {0}._frame_scrollarea {1}' \
+                ''.format(self.get_class_id(), scrollarea.get_class_id())
         self._scrollarea = scrollarea
         if self._frame_scrollarea is not None:
             self._frame_scrollarea.set_parent_scrollarea(scrollarea)

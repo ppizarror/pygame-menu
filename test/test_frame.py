@@ -329,6 +329,9 @@ class FrameWidgetTest(unittest.TestCase):
                           POSITION_SOUTHEAST, 'yellow', 'green', 0, 20,
                           get_scrollbars_from_position(POSITION_SOUTHEAST))
 
+        create_sa()
+        self.assertRaises(AssertionError, lambda: f.set_scrollarea(f._frame_scrollarea))
+
     def test_sort(self) -> None:
         """
         Test frame sorting.
