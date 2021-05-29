@@ -50,23 +50,8 @@ try:
     from pyperclip import copy, paste, PyperclipException
 
 except (ModuleNotFoundError, ImportError):
-    # noinspection PyUnusedLocal
-    def copy(text) -> None:
-        """
-        Copy method.
-
-        :return: None
-        """
-        pass
-
-
-    def paste() -> str:
-        """
-        Paste method.
-
-        :return: Empty string
-        """
-        return ''
+    copy = lambda text: None
+    paste = lambda: ''
 
 
     class PyperclipException(RuntimeError):
