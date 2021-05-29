@@ -45,7 +45,7 @@ class SurfaceWidget(Widget):
 
     .. note::
 
-        This class only implements translation transformation.
+        This widget only accepts translation transformation.
 
     :param surface: Pygame surface object
     :param surface_id: Surface ID

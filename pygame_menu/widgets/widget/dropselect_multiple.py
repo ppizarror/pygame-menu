@@ -90,7 +90,7 @@ class DropSelectMultiple(DropSelect):
 
     .. note::
 
-        DropSelectMultiple only implements translation.
+        This widget accepts the same transformations as :py:class:`pygame_menu.widgets.DropSelect`.
 
     :param title: Drop select title
     :param items: Items of the drop select

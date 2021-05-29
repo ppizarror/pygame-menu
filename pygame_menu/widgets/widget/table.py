@@ -62,7 +62,7 @@ class Table(Frame):
 
     .. note::
 
-        Table only implements translation transformation.
+        Frame only accepts translation and resize transformations.
 
     .. note::
 

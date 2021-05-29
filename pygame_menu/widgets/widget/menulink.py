@@ -45,6 +45,10 @@ class MenuLink(NoneWidget):
     """
     Menu link widget.
 
+    .. note::
+
+        This widget does not accept any transformation.
+
     :param link_id: Link ID
     :param menu_opener_handler: Callback for opening the menu object
     :param menu: Menu object

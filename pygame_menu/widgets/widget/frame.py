@@ -96,7 +96,7 @@ class Frame(Widget):
 
     .. note::
 
-        Frame only implements translation and resize transformations.
+        Frame only accepts translation and resize transformations.
 
     .. note::
 

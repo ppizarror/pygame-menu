@@ -51,7 +51,7 @@ class Image(Widget):
 
     .. note::
 
-        This class redefines all widget transformations.
+        This widget accepts all transformations.
 
     :param image_path: Path of the image, BytesIO object, or :py:class:`pygame_menu.baseimage.BaseImage` object. If :py:class:`pygame_menu.baseimage.BaseImage` object is provided drawing mode is not considered
     :param image_id: Image ID

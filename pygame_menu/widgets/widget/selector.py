@@ -105,6 +105,10 @@ class Selector(Widget):
 
     For example, if ``selected_index=0`` then ``selected_item=('Item1', a, b, c...)``.
 
+    .. note::
+
+        This widget accepts all transformations.
+
     :param title: Selector title
     :param items: Items of the selector
     :param selector_id: ID of the selector

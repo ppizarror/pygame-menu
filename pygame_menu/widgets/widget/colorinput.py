@@ -90,12 +90,11 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
 
     .. note::
 
-        This widget implements the same transformations as
-        :py:class:`pygame_menu.widgets.TextInput`.
+        This widget accepts the same transformations as :py:class:`pygame_menu.widgets.TextInput`.
 
     .. note::
 
-        This class cannot select text as :py:class:`pygame_menu.widgets.TextInput`
+        This widget cannot select text as :py:class:`pygame_menu.widgets.TextInput`
         does. Also, copy and paste is disabled.
 
     :param title: Color input title

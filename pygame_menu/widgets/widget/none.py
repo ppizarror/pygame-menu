@@ -47,7 +47,7 @@ class NoneWidget(Widget):
 
     .. note::
 
-        This widget does not implement any transformation.
+        This widget does not accept any transformation.
 
     :param widget_id: ID of the widget
     """

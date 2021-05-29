@@ -53,7 +53,7 @@ class ToggleSwitch(Widget):
 
     If the state of the widget changes the ``onchange`` callback is called. The
     state can change by pressing LEFT/RIGHT or RETURN if the widget only has two
-    states. This class can handle more than 2 states.
+    states. This widget can handle more than 2 states.
 
     .. code-block:: python
 
