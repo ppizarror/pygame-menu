@@ -1299,6 +1299,18 @@ class WidgetsTest(unittest.TestCase):
         textinput.resize()
         textinput.set_max_width()
         textinput.set_max_height()
+        textinput.set_value('aaaaaaaaaaaaaaaaaaaaaaaaaa')
+        self.assertEqual(textinput._cursor_position, 26)
+        self.assertEqual(textinput._renderbox, [1, 26, 25])
+        textinput.update(PygameEventUtils.key(pygame.K_BACKSPACE, keydown=True))
+        self.assertEqual(textinput._cursor_position, 25)
+        self.assertEqual(textinput._renderbox, [0, 25, 25])
+        textinput.update(PygameEventUtils.key(pygame.K_a, keydown=True, char='a'))
+        self.assertEqual(textinput._cursor_position, 26)
+        self.assertEqual(textinput._renderbox, [1, 26, 25])
+        textinput.update(PygameEventUtils.key(pygame.K_BACKSPACE, keydown=True))
+        self.assertEqual(textinput._cursor_position, 25)
+        self.assertEqual(textinput._renderbox, [0, 25, 25])
 
         # Test underline edge cases
         theme = TEST_THEME.copy()
