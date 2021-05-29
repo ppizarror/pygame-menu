@@ -625,11 +625,15 @@ class WidgetManager(Base):
             - ``font_size``                     (int) – Font size of the widget
             - ``input_underline_vmargin``       (int) – Vertical margin of underline in px
             - ``margin``                        (tuple, list) – Widget (left, bottom) margin in px
+            - ``maxwidth_dynamically_update``   (bool) - Dynamically update maxwidth depending on char size. ``True`` by default
             - ``padding``                       (int, float, tuple, list) – Widget padding according to CSS rules. General shape: (top, right, bottom, left)
             - ``previsualization_margin``       (int) – Pre-visualization left margin from text input in px. Default is ``0``
             - ``previsualization_width``        (int, float) – Pre-visualization width as a factor of the height. Default is ``3``
             - ``readonly_color``                (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the widget if readonly mode
             - ``readonly_selected_color``       (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the widget if readonly mode and is selected
+            - ``repeat_keys_initial_ms``        (int, float) - Time in ms before keys are repeated when held in ms. ``400`` by default
+            - ``repeat_keys_interval_ms``       (int, float) - Interval between key press repetition when held in ms. ``50`` by default
+            - ``repeat_mouse_interval_ms``      (int, float) - Interval between mouse events when held in ms. ``400`` by default
             - ``selection_color``               (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the selected widget; only affects the font color
             - ``selection_effect``              (:py:class:`pygame_menu.widgets.core.Selection`) – Widget selection effect
             - ``tab_size``                      (int) – Width of a tab character
@@ -1918,10 +1922,14 @@ class WidgetManager(Base):
             - ``selection_effect``              (:py:class:`pygame_menu.widgets.core.Selection`) – Widget selection effect
             - ``single_click_dir``              (bool) - Direction of the change if only 1 click is pressed. ``True`` for left direction (default), ``False`` for right
             - ``slider_color``                  (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the slider
+            - ``slider_height_factor``          (int, float) - Height of the slider (factor of the switch height). ``1`` by default
             - ``slider_thickness``              (int) – Slider thickness in px. ``20`` px by default
+            - ``slider_vmargin``                (int, float) - Vertical margin of the slider (factor of the switch height). ``0`` by default
             - ``state_color``                   (tuple) – 2-item color tuple for each state
+            - ``state_text_font``               (str, :py:class:`pathlib.Path`, :py:class:`pygame.font.Font`, None) - Font of the state text. If ``None`` uses the widget font. ``None`` by default
             - ``state_text_font_color``         (tuple) – 2-item color tuple for each font state text color
             - ``state_text_font_size``          (str, None) – Font size of the state text. If ``None`` uses the widget font size
+            - ``state_text_position``           (tuple) - Position of the state text respect to the switch rect. ``(0.5, 0.5)`` by default
             - ``switch_border_color``           (tuple, list, str, int, :py:class:`pygame.Color`) – Switch border color
             - ``switch_border_width``           (int) – Switch border width
             - ``switch_height``                 (int, float) – Height factor respect to the title font size height
@@ -2076,14 +2084,21 @@ class WidgetManager(Base):
             - ``font_shadow_position``          (str) – Font shadow position, see locals for position
             - ``font_shadow``                   (bool) – Font shadow is enabled or disabled
             - ``font_size``                     (int) – Font size of the widget
+            - ``history``                       (int) - Maximum number of editions stored. If ``0`` the feature is disabled. ``50`` by default
             - ``input_underline_vmargin``       (int) – Vertical margin of underline in px
             - ``margin``                        (tuple, list) – Widget (left, bottom) margin in px
+            - ``maxwidth_dynamically_update``   (bool) - Dynamically update maxwidth depending on char size. ``True`` by default
             - ``padding``                       (int, float, tuple, list) – Widget padding according to CSS rules. General shape: (top, right, bottom, left)
+            - ``password_char``                 (str) - Character used by password type. ``"*"`` by default
             - ``readonly_color``                (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the widget if readonly mode
             - ``readonly_selected_color``       (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the widget if readonly mode and is selected
+            - ``repeat_keys_initial_ms``        (int, float) - Time in ms before keys are repeated when held in ms. ``400`` by default
+            - ``repeat_keys_interval_ms``       (int, float) - Interval between key press repetition when held in ms. ``50`` by default
+            - ``repeat_mouse_interval_ms``      (int, float) - Interval between mouse events when held in ms. ``400`` by default
             - ``selection_color``               (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the selected widget; only affects the font color
             - ``selection_effect``              (:py:class:`pygame_menu.widgets.core.Selection`) – Widget selection effect
             - ``tab_size``                      (int) – Width of a tab character
+            - ``text_ellipsis``                 (str) - Ellipsis text when overflow occurs (input length exceeds maxwidth). ``"..."`` by default
 
         .. note::
 
