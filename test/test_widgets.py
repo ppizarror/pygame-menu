@@ -1089,6 +1089,7 @@ class WidgetsTest(unittest.TestCase):
         textinput._copy()
         textinput._paste()
         textinput._block_copy_paste = False
+        textinput._select_all()
         textinput._cut()
         self.assertEqual(textinput.get_value(), '')
         textinput._undo()
@@ -1115,6 +1116,7 @@ class WidgetsTest(unittest.TestCase):
         textinput_copy._copy()
         self.assertTrue(textinput_copy._block_copy_paste)
         textinput_copy._block_copy_paste = False
+        textinput_copy._select_all()
         textinput_copy._cut()
         self.assertEqual(textinput_copy.get_value(), '')
         textinput_copy._block_copy_paste = False
@@ -1152,6 +1154,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(textinput.get_value(), 'tes')
         textinput.update(PygameEventUtils.keydown_mod_ctrl(pygame.K_y))  # redo
         self.assertEqual(textinput.get_value(), 'test')
+        textinput._select_all()
         textinput.update(PygameEventUtils.keydown_mod_ctrl(pygame.K_x))  # cut
         self.assertEqual(textinput.get_value(), '')
         textinput.update(PygameEventUtils.keydown_mod_ctrl(pygame.K_z))  # undo
