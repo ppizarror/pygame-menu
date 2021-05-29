@@ -50,7 +50,7 @@ from pygame_menu.widgets import MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_NONE, \
     DROPSELECT_MULTIPLE_SFORMAT_TOTAL
 from pygame_menu.widgets import ScrollBar, Label, Button, MenuBar, NoneWidget, \
     NoneSelection
-from pygame_menu.widgets.core import Widget
+from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImplemented
 
 
 class WidgetsTest(unittest.TestCase):
@@ -226,67 +226,6 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(w._background_inflate[1], 10)
         w.set_background_color(pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES))
         w.draw(surface)
-
-    def test_transform(self) -> None:
-        """
-        Transform widgets.
-        """
-        menu = MenuUtils.generic_menu()
-        w = menu.add.label('Text')
-        w.rotate(45)
-        w.translate(10, 10)
-        w.scale(1, 1)
-        w.set_max_width(None)
-        self.assertFalse(w._scale[0])  # Scaling is disabled
-        w.scale(1.5, 1)
-        self.assertTrue(w._scale[0])  # Scaling is enabled
-        w.scale(1, 1)
-        self.assertFalse(w._scale[0])
-        w.resize(40, 40)
-        self.assertTrue(w._scale[0])  # Scaling is enabled
-        w.scale(1, 1)
-        self.assertFalse(w._scale[0])
-        w.flip(False, False)
-
-        # Test all widgets
-        widgs = [
-            menu.add.button('e'),
-            menu.add.selector('e', [('1', 2),
-                                    ('The second', 2),
-                                    ('The final mode', 3)]),
-            menu.add.color_input('color', 'rgb'),
-            menu.add.label('nice'),
-            menu.add.image(pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)),
-            menu.add.vertical_margin(10),
-            menu.add.text_input('nice')
-        ]
-        for w in widgs:
-            w.rotate(45)
-            w.translate(10, 10)
-            w.scale(1.5, 1.5)
-            w.resize(10, 10)
-            w.flip(True, True)
-        menu.draw(surface)
-
-        # If widget max width is enabled, disable scaling
-        w = menu.add.label('Text')
-        self.assertFalse(w._scale[0])  # Scaling is disabled
-        w.scale(1.5, 1)
-        self.assertTrue(w._scale[0])  # Scaling is enabled
-        w.set_max_width(100)
-        self.assertFalse(w._scale[0])
-
-        # Translate
-        w = menu.add.label('text')
-        x, y = w.get_position()
-        w.translate(10, 10)
-        xt, yt = w.get_position()
-        self.assertNotEqual(xt - x, 10)
-        self.assertNotEqual(yt - y, 10)
-        menu.render()
-        xt, yt = w.get_position()
-        self.assertEqual(xt - x, 10)
-        self.assertEqual(yt - y, 10)
 
     def test_max_width_height(self) -> None:
         """
@@ -548,27 +487,27 @@ class WidgetsTest(unittest.TestCase):
         mb.readonly = False
 
         # Test none methods
-        mb.rotate(10)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: mb.rotate(10))
         self.assertEqual(mb._angle, 0)
 
-        mb.resize(10, 10)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: mb.resize(10, 10))
         self.assertFalse(mb._scale[0])
         self.assertEqual(mb._scale[1], 1)
         self.assertEqual(mb._scale[2], 1)
 
-        mb.scale(100, 100)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: mb.scale(100, 100))
         self.assertFalse(mb._scale[0])
         self.assertEqual(mb._scale[1], 1)
         self.assertEqual(mb._scale[2], 1)
 
-        mb.flip(True, True)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: mb.flip(True, True))
         self.assertFalse(mb._flip[0])
         self.assertFalse(mb._flip[1])
 
-        mb.set_max_width(100)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: mb.set_max_width(100))
         self.assertIsNone(mb._max_width[0])
 
-        mb.set_max_height(100)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: mb.set_max_height(100))
         self.assertIsNone(mb._max_height[0])
 
         # Ignore others
@@ -1299,9 +1238,11 @@ class WidgetsTest(unittest.TestCase):
             textinput_id='long_text',
             input_underline='_'
         )
-        textinput.resize()
-        textinput.set_max_width()
-        textinput.set_max_height()
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: textinput.resize())
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: textinput.set_max_width())
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: textinput.set_max_height())
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: textinput.scale())
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: textinput.rotate())
         textinput.set_value('aaaaaaaaaaaaaaaaaaaaaaaaaa')
         self.assertEqual(textinput._cursor_position, 26)
         self.assertEqual(textinput._renderbox, [1, 26, 25])
@@ -2128,27 +2069,27 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(drop.get_translate(), (1, 1))
         drop.translate(0, 0)
 
-        drop.rotate(10)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: drop.rotate(10))
         self.assertEqual(drop._angle, 0)
 
-        drop.resize(10, 10)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: drop.resize(10, 10))
         self.assertFalse(drop._scale[0])
         self.assertEqual(drop._scale[1], 1)
         self.assertEqual(drop._scale[2], 1)
 
-        drop.scale(100, 100)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: drop.scale(100, 100))
         self.assertFalse(drop._scale[0])
         self.assertEqual(drop._scale[1], 1)
         self.assertEqual(drop._scale[2], 1)
 
-        drop.flip(True, True)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: drop.flip(True, True))
         self.assertFalse(drop._flip[0])
         self.assertFalse(drop._flip[1])
 
-        drop.set_max_width(100)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: drop.set_max_width(100))
         self.assertIsNone(drop._max_width[0])
 
-        drop.set_max_height(100)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: drop.set_max_height(100))
         self.assertIsNone(drop._max_height[0])
         self.assertFalse(drop.active)
 
@@ -2632,30 +2573,30 @@ class WidgetsTest(unittest.TestCase):
         wid.set_position(1, 1)
         self.assertEqual(wid.get_position(), (0, 0))
 
-        wid.translate(1, 1)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: wid.translate(1, 1))
         self.assertEqual(wid.get_translate(), (0, 0))
 
-        wid.rotate(10)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: wid.rotate(10))
         self.assertEqual(wid._angle, 0)
 
-        wid.resize(10, 10)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: wid.resize(10, 10))
         self.assertFalse(wid._scale[0])
         self.assertEqual(wid._scale[1], 1)
         self.assertEqual(wid._scale[2], 1)
 
-        wid.scale(100, 100)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: wid.scale(100, 100))
         self.assertFalse(wid._scale[0])
         self.assertEqual(wid._scale[1], 1)
         self.assertEqual(wid._scale[2], 1)
 
-        wid.flip(True, True)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: wid.flip(True, True))
         self.assertFalse(wid._flip[0])
         self.assertFalse(wid._flip[1])
 
-        wid.set_max_width(100)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: wid.set_max_width(100))
         self.assertIsNone(wid._max_width[0])
 
-        wid.set_max_height(100)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: wid.set_max_height(100))
         self.assertIsNone(wid._max_height[0])
 
         # Selection
@@ -2878,20 +2819,20 @@ class WidgetsTest(unittest.TestCase):
         self.assertTrue(sb._kwargs.get('onreturn', 0))
 
         # Scrollbar ignores scaling
-        sb.scale(2, 2)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: sb.scale(2, 2))
         self.assertFalse(sb._scale[0])
-        sb.resize(2, 2)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: sb.resize(2, 2))
         self.assertFalse(sb._scale[0])
-        sb.set_max_width(10)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: sb.set_max_width(10))
         self.assertIsNone(sb._max_width[0])
-        sb.set_max_height(10)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: sb.set_max_height(10))
         self.assertIsNone(sb._max_height[0])
         sb._apply_font()
         sb.set_padding(10)
         self.assertEqual(sb._padding[0], 0)
-        sb.rotate(10)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: sb.rotate(10))
         self.assertEqual(sb._angle, 0)
-        sb.flip(True, True)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: sb.flip(True, True))
         self.assertFalse(sb._flip[0])
         self.assertFalse(sb._flip[1])
 
@@ -2993,27 +2934,27 @@ class WidgetsTest(unittest.TestCase):
         switch.translate(1, 1)
         self.assertEqual(switch.get_translate(), (1, 1))
 
-        switch.rotate(10)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: switch.rotate(10))
         self.assertEqual(switch._angle, 0)
 
-        switch.scale(100, 100)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: switch.scale(100, 100))
         self.assertFalse(switch._scale[0])
         self.assertEqual(switch._scale[1], 1)
         self.assertEqual(switch._scale[2], 1)
 
-        switch.resize(100, 100)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: switch.resize(100, 100))
         self.assertFalse(switch._scale[0])
         self.assertEqual(switch._scale[1], 1)
         self.assertEqual(switch._scale[2], 1)
 
-        switch.flip(True, True)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: switch.flip(True, True))
         self.assertFalse(switch._flip[0])
         self.assertFalse(switch._flip[1])
 
-        switch.set_max_width(100)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: switch.set_max_width(100))
         self.assertIsNone(switch._max_width[0])
 
-        switch.set_max_height(100)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: switch.set_max_height(100))
         self.assertIsNone(switch._max_height[0])
 
         # Assert switch values
@@ -3084,27 +3025,27 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(surf_widget.get_surface(), surf)
         self.assertEqual(surf_widget._font_color, (70, 70, 70, 255))  # not red
 
-        surf_widget.rotate(10)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: surf_widget.rotate(10))
         self.assertEqual(surf_widget._angle, 0)
 
-        surf_widget.resize(10, 10)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: surf_widget.resize(10, 10))
         self.assertFalse(surf_widget._scale[0])
         self.assertEqual(surf_widget._scale[1], 1)
         self.assertEqual(surf_widget._scale[2], 1)
 
-        surf_widget.scale(100, 100)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: surf_widget.scale(100, 100))
         self.assertFalse(surf_widget._scale[0])
         self.assertEqual(surf_widget._scale[1], 1)
         self.assertEqual(surf_widget._scale[2], 1)
 
-        surf_widget.flip(True, True)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: surf_widget.flip(True, True))
         self.assertFalse(surf_widget._flip[0])
         self.assertFalse(surf_widget._flip[1])
 
-        surf_widget.set_max_width(100)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: surf_widget.set_max_width(100))
         self.assertIsNone(surf_widget._max_width[0])
 
-        surf_widget.set_max_height(100)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: surf_widget.set_max_height(100))
         self.assertIsNone(surf_widget._max_height[0])
 
         surf_widget.set_title('epic')

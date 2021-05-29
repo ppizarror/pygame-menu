@@ -44,6 +44,7 @@ import pygame_menu.controls as ctrl
 from pygame_menu.locals import ORIENTATION_VERTICAL, ORIENTATION_HORIZONTAL
 from pygame_menu.utils import set_pygame_cursor, get_cursor
 from pygame_menu.widgets import Button
+from pygame_menu.widgets.core.widget import WidgetTransformationNotImplemented
 
 
 class FrameWidgetTest(unittest.TestCase):
@@ -217,10 +218,10 @@ class FrameWidgetTest(unittest.TestCase):
         wid.translate(1, 1)
         self.assertEqual(wid.get_translate(), (1, 1))
 
-        wid.rotate(10)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: wid.rotate(10))
         self.assertEqual(wid._angle, 0)
 
-        wid.scale(100, 100)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: wid.scale(100, 100))
         self.assertFalse(wid._scale[0])
         self.assertEqual(wid._scale[1], 1)
         self.assertEqual(wid._scale[2], 1)
@@ -230,14 +231,14 @@ class FrameWidgetTest(unittest.TestCase):
         self.assertEqual(wid._scale[1], 1)
         self.assertEqual(wid._scale[2], 1)
 
-        wid.flip(True, True)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: wid.flip(True, True))
         self.assertFalse(wid._flip[0])
         self.assertFalse(wid._flip[1])
 
-        wid.set_max_width(100)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: wid.set_max_width(100))
         self.assertIsNone(wid._max_width[0])
 
-        wid.set_max_height(100)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: wid.set_max_height(100))
         self.assertIsNone(wid._max_height[0])
 
         # Selection
