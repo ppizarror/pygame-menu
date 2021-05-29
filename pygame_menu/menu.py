@@ -2994,7 +2994,7 @@ class Menu(Base):
         """
         if reset:
             self.full_reset()
-        for w in self._widgets:
+        for w in self._widgets.copy():
             self.remove_widget(w)
         del self._widgets[:]
         del self._submenus
