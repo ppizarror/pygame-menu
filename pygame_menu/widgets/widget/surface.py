@@ -35,7 +35,7 @@ import pygame
 
 from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImplemented
 
-from pygame_menu._types import NumberType, CallbackType, Optional, EventVectorType
+from pygame_menu._types import CallbackType, Optional, EventVectorType
 
 
 # noinspection PyMissingOrEmptyDocstring
