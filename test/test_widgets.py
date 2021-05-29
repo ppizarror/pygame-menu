@@ -1243,6 +1243,8 @@ class WidgetsTest(unittest.TestCase):
         self.assertRaises(WidgetTransformationNotImplemented, lambda: textinput.set_max_height())
         self.assertRaises(WidgetTransformationNotImplemented, lambda: textinput.scale())
         self.assertRaises(WidgetTransformationNotImplemented, lambda: textinput.rotate())
+        textinput.flip(True, True)
+        self.assertEqual(textinput._flip, (False, True))
         textinput.set_value('aaaaaaaaaaaaaaaaaaaaaaaaaa')
         self.assertEqual(textinput._cursor_position, 26)
         self.assertEqual(textinput._renderbox, [1, 26, 25])
@@ -1507,6 +1509,23 @@ class WidgetsTest(unittest.TestCase):
         btn.set_menu(None)
         btn.to_menu = True
         menu2.add.generic_widget(btn)
+
+        # Test extreme resize
+        btn.resize(1, 1)
+        btn.set_max_height(None)
+        btn.set_max_width(None)
+        btn.flip(True, True)
+        self.assertEqual(btn._flip, (True, True))
+
+        # Test consistency if active
+        btn.active = True
+        btn._selected = False
+        btn.draw(surface)
+        self.assertFalse(btn.active)
+
+        # Try onchange
+        btn._onchange = lambda: None
+        self.assertIsNone(btn.change())
 
     def test_draw_callback(self) -> None:
         """
@@ -1848,6 +1867,10 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(drop2._background_inflate, (0, 0))
         self.assertEqual(drop2._border_inflate, (0, 0))
         menu._theme.widget_background_inflate_to_selection = False
+
+        # Process index
+        drop2._index = -1
+        drop2._process_index()
 
     def test_dropselect(self) -> None:
         """
@@ -3000,16 +3023,53 @@ class WidgetsTest(unittest.TestCase):
         """
         menu = MenuUtils.generic_menu()
         image = menu.add.image(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES, font_color=(2, 9))
-        image.set_max_width(100)
-        self.assertIsNone(image._max_width[0])
-
-        image.set_max_height(100)
-        self.assertIsNone(image._max_height[0])
 
         image.set_title('epic')
         self.assertEqual(image.get_title(), '')
         self.assertEqual(image.get_image(), image._image)
         image.update(PygameEventUtils.middle_rect_mouse_motion(image))
+
+        self.assertEqual(image.get_height(apply_selection=True), 264)
+        self.assertFalse(image._selected)
+        self.assertEqual(image.get_selected_time(), 0)
+
+        # Test transformations
+        self.assertEqual(image.get_size(), (272, 264))
+        image.scale(2, 2)
+        self.assertEqual(image.get_size(), (528, 520))
+        image.resize(500, 500)
+
+        # Remove padding
+        image.set_padding(0)
+        self.assertEqual(image.get_size(), (500, 500))
+
+        # Set max width
+        image.set_max_width(400)
+        self.assertEqual(image.get_size(), (400, 500))
+        image.set_max_width(800)
+        self.assertEqual(image.get_size(), (400, 500))
+        image.set_max_width(300, scale_height=True)
+        self.assertEqual(image.get_size(), (300, 375))
+
+        # Set max height
+        image.set_max_height(400)
+        self.assertEqual(image.get_size(), (300, 375))
+        image.set_max_height(300)
+        self.assertEqual(image.get_size(), (300, 300))
+        image.set_max_height(200, scale_width=True)
+        self.assertEqual(image.get_size(), (200, 200))
+
+        self.assertEqual(image.get_angle(), 0)
+        image.rotate(90)
+        self.assertEqual(image.get_angle(), 90)
+        image.rotate(60)
+        self.assertEqual(image.get_angle(), 60)
+
+        # Flip
+        image.flip(True, True)
+        self.assertEqual(image._flip, (True, True))
+        image.flip(False, False)
+        self.assertEqual(image._flip, (False, False))
 
     def test_surface_widget(self) -> None:
         """
