@@ -59,6 +59,12 @@ except (ModuleNotFoundError, ImportError):
         """
         pass
 
+CTRL_KMOD = (
+    pygame.KMOD_CTRL, pygame.KMOD_CTRL | pygame.KMOD_CAPS,
+    pygame.KMOD_LCTRL, pygame.KMOD_LCTRL | pygame.KMOD_CAPS,
+    pygame.KMOD_RCTRL, pygame.KMOD_RCTRL | pygame.KMOD_CAPS
+)
+
 
 # noinspection PyMissingOrEmptyDocstring
 class TextInput(Widget):
@@ -1127,7 +1133,6 @@ class TextInput(Widget):
         """
         if string == '':  # Empty is valid
             return True
-
         if self._input_type == INPUT_TEXT:
             return True
 
@@ -1139,7 +1144,6 @@ class TextInput(Widget):
 
         if string == '-':
             return True
-
         if conv is None:
             return False
 
@@ -1594,8 +1598,7 @@ class TextInput(Widget):
                     self._keyrepeat_counters[event.key] = [0, event.unicode]
 
                 # User press ctrl+something
-                if pygame.key.get_mods() in (pygame.KMOD_CTRL, pygame.KMOD_RCTRL,
-                                             pygame.KMOD_LCTRL):
+                if pygame.key.get_mods() in CTRL_KMOD:
 
                     # If test, disable CTRL
                     if 'test' in event.dict and event.dict['test']:
