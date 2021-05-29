@@ -105,10 +105,9 @@ class TextInput(Widget):
     :param onselect: Function when selecting the widget
     :param password: Input string is displayed as a password
     :param password_char: Character used by password type
-    :param repeat_keys_initial_ms: Time in ms before keys are repeated when held
-    :param repeat_keys_interval_ms: Interval between key press repetition when held
-    :param repeat_mouse_interval_ms: Interval between mouse events when held
-    :param repeat_touch_interval_ms: Interval between mouse events when held
+    :param repeat_keys_initial_ms: Time in ms before keys are repeated when held in ms
+    :param repeat_keys_interval_ms: Interval between key press repetition when held in ms
+    :param repeat_mouse_interval_ms: Interval between mouse events when held in ms
     :param text_ellipsis: Ellipsis text when overflow occurs (input length exceeds maxwidth)
     :param valid_chars: List of chars that are valid, ``None`` if all chars are valid
     :param kwargs: Optional keyword arguments
@@ -150,7 +149,6 @@ class TextInput(Widget):
     _keyrepeat_interval_ms: NumberType
     _keyrepeat_mouse_interval_ms: NumberType
     _keyrepeat_mouse_ms: NumberType
-    _keyrepeat_touch_interval_ms: NumberType
     _last_char: str
     _last_container_width: int
     _last_key: int
@@ -198,9 +196,8 @@ class TextInput(Widget):
             password: bool = False,
             password_char: str = '*',
             repeat_keys_initial_ms: NumberType = 400,
-            repeat_keys_interval_ms: NumberType = 100,
+            repeat_keys_interval_ms: NumberType = 50,
             repeat_mouse_interval_ms: NumberType = 400,
-            repeat_touch_interval_ms: NumberType = 400,
             text_ellipsis: str = '...',
             valid_chars: Optional[List[str]] = None,
             *args,
@@ -222,7 +219,6 @@ class TextInput(Widget):
         assert isinstance(repeat_keys_initial_ms, NumberInstance)
         assert isinstance(repeat_keys_interval_ms, NumberInstance)
         assert isinstance(repeat_mouse_interval_ms, NumberInstance)
-        assert isinstance(repeat_touch_interval_ms, NumberInstance)
         assert isinstance(text_ellipsis, str)
         assert isinstance(textinput_id, str)
         assert isinstance(valid_chars, (type(None), list))
@@ -235,6 +231,9 @@ class TextInput(Widget):
             'input underline length must be equal or greater than zero'
         assert cursor_switch_ms > 0, \
             'cursor switch in milliseconds must be greater than zero'
+        assert repeat_keys_initial_ms > 0, 'ms cannot be lower or equal than zero'
+        assert repeat_keys_interval_ms > 0, 'ms cannot be lower or equal than zero'
+        assert repeat_mouse_interval_ms > 0, 'ms cannot be lower or equal than zero'
 
         cursor_color = assert_color(cursor_color)
         cursor_selection_color = assert_color(cursor_selection_color)
@@ -290,9 +289,6 @@ class TextInput(Widget):
         self._keyrepeat_mouse_ms = 0
         self._keyrepeat_mouse_interval_ms = repeat_mouse_interval_ms
         self._mouse_is_pressed = False
-
-        # Touchscreen handling
-        self._keyrepeat_touch_interval_ms = repeat_touch_interval_ms
 
         # Render box (overflow)
         self._ellipsis = text_ellipsis
@@ -822,6 +818,7 @@ class TextInput(Widget):
         if self._maxwidth == 0:
             return
         len_string = len(self._input_string)
+        prev_renderbox = self._renderbox.copy()
 
         # Move cursor to end
         if end:
@@ -856,8 +853,10 @@ class TextInput(Widget):
                     self._renderbox[2] -= right
 
             # If text is typed increase inner position
-            self._renderbox[2] += left
-            self._renderbox[2] += right
+            if self._renderbox[0] == prev_renderbox[0]:
+                self._renderbox[2] += left
+                self._renderbox[2] += right
+
         else:
             if addition:  # If text is added
                 # If press del at the end of string
@@ -1289,13 +1288,6 @@ class TextInput(Widget):
         if self._selection_surface:
             self._remove_selection()
             return True
-        else:
-            self._cursor_position = 0
-            self._renderbox[0] = 0
-            self._renderbox[1] = 0
-            self._renderbox[2] = 0
-            self._update_input_string('')
-            self._cursor_render = True  # Due to manually updating renderbox
         return False
 
     def _get_char_size(self, char) -> int:
@@ -1669,6 +1661,7 @@ class TextInput(Widget):
                             break
                         self.active = True
                         self._select_all()
+                        updated = True
                         break
 
                     # Command not found, returns
