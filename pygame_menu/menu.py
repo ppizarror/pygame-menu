@@ -3900,6 +3900,14 @@ class Menu(Base):
         process_non_menu_frame(indx)
         close_frames(0)
 
+    def _copy_theme(self) -> None:
+        """
+        Updates theme reference with a copied one.
+
+        :return: None
+        """
+        self._theme = self._theme.copy()
+
 
 class _MenuStats(object):
     """
