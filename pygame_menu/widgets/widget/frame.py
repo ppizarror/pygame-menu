@@ -1326,6 +1326,7 @@ class Frame(Widget):
         return self._scrollarea
 
     def set_frame(self, frame: 'pygame_menu.widgets.Frame') -> 'Frame':
+        assert self != frame, 'Frame cannot set itself as a Frame'
         super(Frame, self).set_frame(frame)
         if self._frame_title is not None:
             self._frame_title.set_frame(frame)
