@@ -369,6 +369,7 @@ class Widget(Base):
         self._angle = 0  # Rotation angle (degrees)
         self._flip = (False, False)  # x, y
         self._scale = [False, 1, 1, False]  # do_scale, x, y, smooth
+        self._scale_factor = (1, 1)  # Transformed/Original in x, y
         self._translate = (0, 0)
         self._translate_virtual = (0, 0)  # Translation virtual used by scrollarea's
 
@@ -1498,7 +1499,12 @@ class Widget(Base):
             self._surface = pygame.transform.flip(self._surface, self._flip[0], self._flip[1])
 
         self._padding_transform = self._padding  # Reset pad scaling
-        width, height = self.get_size(apply_padding=False)  # No padding
+
+        # Get width/height
+        width, height = self._surface.get_size()
+        width_pad, height_pad = width + self._padding[1] + self._padding[3], \
+                                height + self._padding[0] + self._padding[2]
+
         new_size, smooth = None, None
 
         # Compute scale factor
@@ -1510,7 +1516,6 @@ class Widget(Base):
                 smooth = self._scale[3]
 
         elif self._max_width[0] is not None:
-            width_pad, height_pad = self.get_size()
             if width_pad > self._max_width[0]:
                 w = width * self._max_width[0] / width_pad
                 if self._max_width[1]:  # If scale height
@@ -1519,7 +1524,6 @@ class Widget(Base):
                 smooth = self._max_width[2]
 
         elif self._max_height[0] is not None:
-            width_pad, height_pad = self.get_size()
             if height_pad > self._max_height[0]:
                 h = height * self._max_height[0] / height_pad
                 if self._max_height[1]:  # If scale width
@@ -1532,12 +1536,15 @@ class Widget(Base):
                                'the same time')
 
         # Apply scaling
+        self._scale_factor = (1, 1)
         if new_size is not None and smooth is not None and width > 0 and height > 0:
             # Apply surface transformation
             if smooth and self._surface.get_bitsize() >= 24:
                 self._surface = pygame.transform.smoothscale(self._surface, new_size)
             else:
                 self._surface = pygame.transform.scale(self._surface, new_size)
+
+            self._scale_factor = new_size[0] / width, new_size[1] / height
 
             # Scale pad
             w, h = new_size
