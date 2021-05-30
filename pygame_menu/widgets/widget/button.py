@@ -37,7 +37,7 @@ import pygame_menu.controls as ctrl
 
 from pygame_menu.locals import FINGERUP
 from pygame_menu.utils import is_callable, assert_color, get_finger_pos
-from pygame_menu.widgets.core import Widget
+from pygame_menu.widgets.core.widget import Widget
 
 from pygame_menu._types import Any, CallbackType, Callable, Union, List, Tuple, \
     Optional, ColorType, ColorInputType, EventVectorType

@@ -316,7 +316,7 @@ class ScrollArea(Base):
         :return: None
         """
         assert isinstance(parent, (ScrollArea, type(None)))
-        assert parent != self
+        assert parent != self, 'parent scrollarea cannot be set as itself'
         self._parent_scrollarea = parent
 
     def get_parent(self) -> Optional['ScrollArea']:

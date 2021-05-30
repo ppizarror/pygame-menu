@@ -38,7 +38,7 @@ import pygame
 
 from pygame_menu.baseimage import BaseImage
 from pygame_menu.utils import assert_vector
-from pygame_menu.widgets import Widget
+from pygame_menu.widgets.core.widget import Widget
 
 from pygame_menu._types import Union, NumberType, CallbackType, Tuple2NumberType, \
     Optional, NumberInstance, EventVectorType
@@ -100,6 +100,14 @@ class Image(Widget):
         """
         return self._image
 
+    def get_angle(self) -> NumberType:
+        """
+        Return the image angle.
+
+        :return: Angle in degrees
+        """
+        return self._image.get_angle()
+
     def set_image(self, image: 'BaseImage') -> None:
         """
         Set the :py:class:`pygame_menu.baseimage.BaseImage` object from widget.
@@ -114,31 +122,58 @@ class Image(Widget):
     def _apply_font(self) -> None:
         pass
 
-    def rotate(self, angle: NumberType) -> 'Image':
-        self._image.rotate(angle)
-        self._surface = None
-        return self
+    def _update_surface(self) -> 'Image':
+        """
+        Updates surface and renders.
 
-    def flip(self, x: bool, y: bool) -> 'Image':
-        if x or y:
-            self._image.flip(x, y)
-            self._surface = None
+        :return: Self reference
+        """
+        self._surface = None
+        self._render()
         return self
 
     def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'Image':
         self._image.scale(width, height, smooth)
-        self._surface = None
-        return self
+        return self._update_surface()
 
     def resize(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'Image':
         self._image.resize(width, height, smooth)
         self._surface = None
+        return self._update_surface()
+
+    def set_max_width(self, width: Optional[NumberType], scale_height: NumberType = False,
+                      smooth: bool = True) -> 'Image':
+        if width is not None and self._image.get_width() > width:
+            sx = width / self._image.get_width()
+            height = self._image.get_height()
+            if scale_height:
+                height *= sx
+            self._image.resize(width, height, smooth)
+            return self._update_surface()
         return self
 
-    def set_max_width(self, *args, **kwargs) -> 'Image':
+    def set_max_height(self, height: Optional[NumberType], scale_width: NumberType = False,
+                       smooth: bool = True) -> 'Image':
+        if height is not None and self._image.get_height() > height:
+            sy = height / self._image.get_height()
+            width = self._image.get_width()
+            if scale_width:
+                width *= sy
+            self._image.resize(width, height, smooth)
+            return self._update_surface()
         return self
 
-    def set_max_height(self, *args, **kwargs) -> 'Image':
+    def rotate(self, angle: NumberType) -> 'Image':
+        self._image.rotate(angle)
+        return self._update_surface()
+
+    def flip(self, x: bool, y: bool) -> 'Image':
+        assert isinstance(x, bool)
+        assert isinstance(y, bool)
+        self._flip = (x, y)
+        if x or y:
+            self._image.flip(x, y)
+            return self._update_surface()
         return self
 
     def _draw(self, surface: 'pygame.Surface') -> None:

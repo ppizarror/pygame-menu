@@ -33,9 +33,9 @@ __all__ = ['SurfaceWidget']
 
 import pygame
 
-from pygame_menu.widgets import Widget
+from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImplemented
 
-from pygame_menu._types import NumberType, CallbackType, Optional, EventVectorType
+from pygame_menu._types import CallbackType, Optional, EventVectorType
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -87,23 +87,23 @@ class SurfaceWidget(Widget):
     def _apply_font(self) -> None:
         pass
 
-    def rotate(self, angle: NumberType) -> 'SurfaceWidget':
-        return self
+    def scale(self, *args, **kwargs) -> 'SurfaceWidget':
+        raise WidgetTransformationNotImplemented()
 
-    def flip(self, x: bool, y: bool) -> 'SurfaceWidget':
-        return self
-
-    def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'SurfaceWidget':
-        return self
-
-    def resize(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'SurfaceWidget':
-        return self
+    def resize(self, *args, **kwargs) -> 'SurfaceWidget':
+        raise WidgetTransformationNotImplemented()
 
     def set_max_width(self, *args, **kwargs) -> 'SurfaceWidget':
-        return self
+        raise WidgetTransformationNotImplemented()
 
     def set_max_height(self, *args, **kwargs) -> 'SurfaceWidget':
-        return self
+        raise WidgetTransformationNotImplemented()
+
+    def rotate(self, *args, **kwargs) -> 'SurfaceWidget':
+        raise WidgetTransformationNotImplemented()
+
+    def flip(self, *args, **kwargs) -> 'SurfaceWidget':
+        raise WidgetTransformationNotImplemented()
 
     def _draw(self, surface: 'pygame.Surface') -> None:
         surface.blit(self._surface_obj, self._rect.topleft)

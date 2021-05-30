@@ -56,7 +56,7 @@ import pygame_menu.controls as ctrl
 from pygame_menu.locals import FINGERUP, POSITION_EAST, POSITION_WEST, POSITION_NORTH, \
     POSITION_SOUTH
 from pygame_menu.utils import assert_color, get_finger_pos, warn
-from pygame_menu.widgets.core import Widget
+from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImplemented
 
 from pygame_menu._types import Tuple, CallbackType, Tuple2IntType, Literal, Any, \
     Optional, NumberInstance, ColorInputType, EventVectorType, VectorInstance, \
@@ -183,27 +183,27 @@ class MenuBar(Widget):
         return self
 
     def scale(self, *args, **kwargs) -> 'MenuBar':
-        return self
+        raise WidgetTransformationNotImplemented()
 
     def resize(self, *args, **kwargs) -> 'MenuBar':
-        return self
-
-    def rotate(self, *args, **kwargs) -> 'MenuBar':
-        return self
-
-    def set_max_height(self, *args, **kwargs) -> 'MenuBar':
-        return self
+        raise WidgetTransformationNotImplemented()
 
     def set_max_width(self, *args, **kwargs) -> 'MenuBar':
-        return self
+        raise WidgetTransformationNotImplemented()
+
+    def set_max_height(self, *args, **kwargs) -> 'MenuBar':
+        raise WidgetTransformationNotImplemented()
+
+    def rotate(self, *args, **kwargs) -> 'MenuBar':
+        raise WidgetTransformationNotImplemented()
+
+    def flip(self, *args, **kwargs) -> 'MenuBar':
+        raise WidgetTransformationNotImplemented()
 
     def set_selection_effect(self, *args, **kwargs) -> 'MenuBar':
         return self
 
     def set_border(self, *args, **kwargs) -> 'MenuBar':
-        return self
-
-    def flip(self, *args, **kwargs) -> 'MenuBar':
         return self
 
     def _check_title_color(self, background_menu: bool) -> None:

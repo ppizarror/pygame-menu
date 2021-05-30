@@ -41,9 +41,17 @@ import pygame
 import pygame_menu
 import pygame_menu.controls as ctrl
 
-from pygame_menu.locals import ORIENTATION_VERTICAL, ORIENTATION_HORIZONTAL
+from pygame_menu.locals import ORIENTATION_VERTICAL, ORIENTATION_HORIZONTAL, \
+    POSITION_SOUTHEAST
 from pygame_menu.utils import set_pygame_cursor, get_cursor
 from pygame_menu.widgets import Button
+from pygame_menu.widgets.core.widget import WidgetTransformationNotImplemented
+
+# noinspection PyProtectedMember
+from pygame_menu._scrollarea import get_scrollbars_from_position
+
+# noinspection PyProtectedMember
+from pygame_menu.widgets.widget.frame import _FrameDoNotAcceptScrollarea
 
 
 class FrameWidgetTest(unittest.TestCase):
@@ -217,10 +225,10 @@ class FrameWidgetTest(unittest.TestCase):
         wid.translate(1, 1)
         self.assertEqual(wid.get_translate(), (1, 1))
 
-        wid.rotate(10)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: wid.rotate(10))
         self.assertEqual(wid._angle, 0)
 
-        wid.scale(100, 100)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: wid.scale(100, 100))
         self.assertFalse(wid._scale[0])
         self.assertEqual(wid._scale[1], 1)
         self.assertEqual(wid._scale[2], 1)
@@ -230,14 +238,14 @@ class FrameWidgetTest(unittest.TestCase):
         self.assertEqual(wid._scale[1], 1)
         self.assertEqual(wid._scale[2], 1)
 
-        wid.flip(True, True)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: wid.flip(True, True))
         self.assertFalse(wid._flip[0])
         self.assertFalse(wid._flip[1])
 
-        wid.set_max_width(100)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: wid.set_max_width(100))
         self.assertIsNone(wid._max_width[0])
 
-        wid.set_max_height(100)
+        self.assertRaises(WidgetTransformationNotImplemented, lambda: wid.set_max_height(100))
         self.assertIsNone(wid._max_height[0])
 
         # Selection
@@ -296,6 +304,33 @@ class FrameWidgetTest(unittest.TestCase):
         h.pack(btn)
         h.pack(menu.add.button('button legit'))
         self.assertTrue(h.contains_widget(btn))
+
+    def test_make_scrollarea(self) -> None:
+        """
+        Test make scrollarea.
+        """
+        menu = MenuUtils.generic_menu()
+        f = menu.add.frame_v(300, 800, frame_id='f1')
+
+        # Test invalid settings
+        create_sa = lambda: f.make_scrollarea(200, 300, 'red', 'white', None, True, 'red', 1,
+                                              POSITION_SOUTHEAST, 'yellow', 'green', 0, 20,
+                                              get_scrollbars_from_position(POSITION_SOUTHEAST))
+        create_sa()
+
+        # Disable
+        f._accepts_scrollarea = False
+        self.assertRaises(_FrameDoNotAcceptScrollarea, create_sa)
+        f._accepts_scrollarea = True
+
+        # Test none
+        f._has_title = True
+        f.make_scrollarea(None, None, 'red', 'white', None, True, 'red', 1,
+                          POSITION_SOUTHEAST, 'yellow', 'green', 0, 20,
+                          get_scrollbars_from_position(POSITION_SOUTHEAST))
+
+        create_sa()
+        self.assertRaises(AssertionError, lambda: f.set_scrollarea(f._frame_scrollarea))
 
     def test_sort(self) -> None:
         """
@@ -1835,6 +1870,9 @@ class FrameWidgetTest(unittest.TestCase):
         self.assertEqual(frame._frame_title.get_position(), (156, 59))
         frame.pack(menu.add.button('Button', background_color='green'))
 
+        # Test frame cannot set to itself
+        self.assertRaises(AssertionError, lambda: frame_title.set_frame(frame_title))
+
         # Add button to title
         test = [False]
 
@@ -1949,6 +1987,9 @@ class FrameWidgetTest(unittest.TestCase):
                          background_color=((10, 36, 106), (166, 202, 240), True, False))
         frame2.set_title('title',
                          background_color=((10, 36, 106), (166, 202, 240), False, False))
+
+        frame2.set_frame(frame_title)
+        frame2.set_scrollarea(frame2.get_scrollarea())
 
     def test_resize(self) -> None:
         """

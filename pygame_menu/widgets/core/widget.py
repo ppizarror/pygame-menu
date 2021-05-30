@@ -46,7 +46,8 @@ __all__ = [
     # Others
     'WIDGET_BORDER_POSITION_FULL',
     'WIDGET_BORDER_POSITION_NONE',
-    'WIDGET_FULL_BORDER'
+    'WIDGET_FULL_BORDER',
+    'WidgetTransformationNotImplemented'
 
 ]
 
@@ -1714,7 +1715,7 @@ class Widget(Base):
             assert_position(position)
             self._font_shadow_position = position
         assert isinstance(offset, int)
-        assert offset > 0, 'shadow offset must be greater than zero'
+        assert offset > 0, 'shadow offset must be greater than zero if enabled'
         self._font_shadow_offset = offset
 
         # Set position
@@ -2014,8 +2015,12 @@ class Widget(Base):
                 'for disabling such feature. This scaling will be ignored'
             )
 
-    def set_max_width(self, width: Optional[NumberType], scale_height: NumberType = False,
-                      smooth: bool = True) -> 'Widget':
+    def set_max_width(
+            self,
+            width: Optional[NumberType],
+            scale_height: NumberType = False,
+            smooth: bool = True
+    ) -> 'Widget':
         """
         Transformation: Set the Widget max width, it applies a scaling factor if
         the widget width is greater than the limit.
@@ -2073,7 +2078,7 @@ class Widget(Base):
 
     def set_max_height(
             self,
-            height: NumberType,
+            height: Optional[NumberType],
             scale_width: NumberType = False,
             smooth: bool = True
     ) -> 'Widget':
@@ -2261,7 +2266,7 @@ class Widget(Base):
 
     def get_translate(self, virtual: bool = False) -> Tuple2IntType:
         """
-        Get Widget translate on x-axis and y-axis (x, y) in px.
+        Get Widget translation on x-axis and y-axis (x, y) in px.
 
         :param virtual: If ``True`` get virtual translation, usually applied within frame scrollarea
         :return: Translation on both axis
@@ -2900,7 +2905,7 @@ class Widget(Base):
         :return: Self reference
         """
         assert self._frame is None, 'widget is already in another frame'
-        assert isinstance(frame, Widget)
+        assert isinstance(frame, pygame_menu.widgets.Frame)
         self._frame = frame
         return self
 
@@ -2999,5 +3004,12 @@ class _WidgetCopyException(Exception):
 class _WidgetNoValue(object):
     """
     No value class.
+    """
+    pass
+
+
+class WidgetTransformationNotImplemented(Exception):
+    """
+    Exception raised if widget does not implement a transformation.
     """
     pass

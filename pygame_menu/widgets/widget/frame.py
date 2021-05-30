@@ -51,19 +51,22 @@ import pygame_menu
 
 from pygame_menu._decorator import Decorator
 from pygame_menu.baseimage import BaseImage
-from pygame_menu.locals import CURSOR_HAND, ORIENTATION_VERTICAL, ORIENTATION_HORIZONTAL, ALIGN_CENTER, \
-    ALIGN_LEFT, ALIGN_RIGHT, POSITION_CENTER, POSITION_NORTH, POSITION_SOUTH, FINGERUP, FINGERDOWN, \
-    FINGERMOTION
+from pygame_menu.locals import CURSOR_HAND, ORIENTATION_VERTICAL, \
+    ORIENTATION_HORIZONTAL, ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT, POSITION_CENTER, \
+    POSITION_NORTH, POSITION_SOUTH, FINGERUP, FINGERDOWN, FINGERMOTION
 from pygame_menu.font import FontType, assert_font
-from pygame_menu.utils import assert_alignment, make_surface, assert_vector, assert_orientation, \
-    assert_color, fill_gradient, parse_padding, uuid4, warn, get_finger_pos
-from pygame_menu.widgets.core.widget import Widget, check_widget_mouseleave
+from pygame_menu.utils import assert_alignment, make_surface, assert_vector, \
+    assert_orientation, assert_color, fill_gradient, parse_padding, uuid4, warn, \
+    get_finger_pos
+from pygame_menu.widgets.core.widget import Widget, check_widget_mouseleave, \
+    WidgetTransformationNotImplemented
 from pygame_menu.widgets.widget.button import Button
 from pygame_menu.widgets.widget.label import Label
 
-from pygame_menu._types import Optional, NumberType, Dict, Tuple, Union, List, Vector2NumberType, Literal, \
-    Tuple2IntType, NumberInstance, Any, ColorInputType, EventVectorType, PaddingType, CallbackType, \
-    ColorInputGradientType, CursorInputType, VectorInstance
+from pygame_menu._types import Optional, NumberType, Dict, Tuple, Union, List, \
+    Vector2NumberType, Literal, Tuple2IntType, NumberInstance, Any, ColorInputType, \
+    EventVectorType, PaddingType, CallbackType, ColorInputGradientType, \
+    CursorInputType, VectorInstance
 
 # Constants
 FRAME_DEFAULT_TITLE_BACKGROUND_COLOR = ((10, 36, 106), (166, 202, 240), False, True)
@@ -74,7 +77,8 @@ S_FINGER_FACTOR = 0.25, 0.25
 
 # Types
 FrameTitleBackgroundColorType = Optional[Union[ColorInputType, ColorInputGradientType, BaseImage]]
-FrameTitleButtonType = Literal[FRAME_TITLE_BUTTON_CLOSE, FRAME_TITLE_BUTTON_MAXIMIZE, FRAME_TITLE_BUTTON_MINIMIZE]
+FrameTitleButtonType = Literal[FRAME_TITLE_BUTTON_CLOSE, FRAME_TITLE_BUTTON_MAXIMIZE,
+                               FRAME_TITLE_BUTTON_MINIMIZE]
 
 
 # noinspection PyMissingOrEmptyDocstring,PyProtectedMember
@@ -818,7 +822,7 @@ class Frame(Widget):
 
         :return: Title height in px
         """
-        if not self._has_title:
+        if not self._has_title or self._frame_title is None:
             return 0
         h = self._frame_title.get_height()
         h += self._frame_title.get_translate()[1]
@@ -833,19 +837,19 @@ class Frame(Widget):
         pass
 
     def scale(self, *args, **kwargs) -> 'Frame':
-        return self
+        raise WidgetTransformationNotImplemented()
 
     def set_max_width(self, *args, **kwargs) -> 'Frame':
-        return self
+        raise WidgetTransformationNotImplemented()
 
     def set_max_height(self, *args, **kwargs) -> 'Frame':
-        return self
+        raise WidgetTransformationNotImplemented()
 
     def rotate(self, *args, **kwargs) -> 'Frame':
-        return self
+        raise WidgetTransformationNotImplemented()
 
     def flip(self, *args, **kwargs) -> 'Frame':
-        return self
+        raise WidgetTransformationNotImplemented()
 
     def get_decorator(self) -> 'Decorator':
         """
@@ -1322,12 +1326,18 @@ class Frame(Widget):
         return self._scrollarea
 
     def set_frame(self, frame: 'pygame_menu.widgets.Frame') -> 'Frame':
+        assert self != frame, \
+            '{0} cannot set itself as a frame'.format(frame.get_class_id())
         super(Frame, self).set_frame(frame)
         if self._frame_title is not None:
             self._frame_title.set_frame(frame)
         return self
 
     def set_scrollarea(self, scrollarea: Optional['pygame_menu._scrollarea.ScrollArea']) -> None:
+        if scrollarea is not None:
+            assert scrollarea != self._frame_scrollarea, \
+                'scrollarea cannot be {0}._frame_scrollarea {1}' \
+                ''.format(self.get_class_id(), scrollarea.get_class_id())
         self._scrollarea = scrollarea
         if self._frame_scrollarea is not None:
             self._frame_scrollarea.set_parent_scrollarea(scrollarea)

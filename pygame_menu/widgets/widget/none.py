@@ -34,7 +34,7 @@ __all__ = ['NoneWidget']
 import pygame
 
 from pygame_menu.utils import make_surface
-from pygame_menu.widgets.core import Widget
+from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImplemented
 
 from pygame_menu._types import Optional, NumberType
 
@@ -114,26 +114,26 @@ class NoneWidget(Widget):
     def set_position(self, *args, **kwargs) -> 'NoneWidget':
         return self
 
-    def flip(self, *args, **kwargs) -> 'NoneWidget':
-        return self
-
-    def set_max_width(self, *args, **kwargs) -> 'NoneWidget':
-        return self
-
-    def set_max_height(self, *args, **kwargs) -> 'NoneWidget':
-        return self
-
     def scale(self, *args, **kwargs) -> 'NoneWidget':
-        return self
+        raise WidgetTransformationNotImplemented()
 
     def resize(self, *args, **kwargs) -> 'NoneWidget':
-        return self
+        raise WidgetTransformationNotImplemented()
 
-    def translate(self, *args, **kwargs) -> 'NoneWidget':
-        return self
+    def set_max_width(self, *args, **kwargs) -> 'NoneWidget':
+        raise WidgetTransformationNotImplemented()
+
+    def set_max_height(self, *args, **kwargs) -> 'NoneWidget':
+        raise WidgetTransformationNotImplemented()
 
     def rotate(self, *args, **kwargs) -> 'NoneWidget':
-        return self
+        raise WidgetTransformationNotImplemented()
+
+    def flip(self, *args, **kwargs) -> 'NoneWidget':
+        raise WidgetTransformationNotImplemented()
+
+    def translate(self, *args, **kwargs) -> 'NoneWidget':
+        raise WidgetTransformationNotImplemented()
 
     def set_alignment(self, *args, **kwargs) -> 'NoneWidget':
         return self

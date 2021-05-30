@@ -39,7 +39,7 @@ from pygame_menu.font import FontType, assert_font
 from pygame_menu.locals import FINGERUP
 from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, \
     make_surface, get_finger_pos
-from pygame_menu.widgets.core import Widget
+from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImplemented
 
 from pygame_menu._types import Any, CallbackType, Union, List, Tuple, Optional, \
     ColorType, NumberType, Tuple2NumberType, Tuple2IntType, NumberInstance, \
@@ -273,22 +273,22 @@ class ToggleSwitch(Widget):
         self._state = state
 
     def scale(self, *args, **kwargs) -> 'ToggleSwitch':
-        return self
+        raise WidgetTransformationNotImplemented()
 
     def resize(self, *args, **kwargs) -> 'ToggleSwitch':
-        return self
+        raise WidgetTransformationNotImplemented()
 
     def set_max_width(self, *args, **kwargs) -> 'ToggleSwitch':
-        return self
+        raise WidgetTransformationNotImplemented()
 
     def set_max_height(self, *args, **kwargs) -> 'ToggleSwitch':
-        return self
+        raise WidgetTransformationNotImplemented()
 
     def rotate(self, *args, **kwargs) -> 'ToggleSwitch':
-        return self
+        raise WidgetTransformationNotImplemented()
 
     def flip(self, *args, **kwargs) -> 'ToggleSwitch':
-        return self
+        raise WidgetTransformationNotImplemented()
 
     def get_value(self) -> Any:
         return self._state_values[self._state]

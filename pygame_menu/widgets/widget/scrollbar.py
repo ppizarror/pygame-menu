@@ -37,7 +37,7 @@ from pygame_menu.locals import ORIENTATION_VERTICAL, ORIENTATION_HORIZONTAL, \
     POSITION_NORTHWEST, FINGERMOTION, FINGERUP, FINGERDOWN
 from pygame_menu.utils import make_surface, assert_orientation, \
     mouse_motion_current_mouse_position, assert_color, get_finger_pos
-from pygame_menu.widgets.core import Widget
+from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImplemented
 
 from pygame_menu._types import Optional, List, VectorIntType, ColorType, Literal, \
     Tuple2IntType, CallbackType, NumberInstance, ColorInputType, NumberType, \
@@ -177,22 +177,22 @@ class ScrollBar(Widget):
         return self
 
     def scale(self, *args, **kwargs) -> 'ScrollBar':
-        return self
+        raise WidgetTransformationNotImplemented()
 
     def resize(self, *args, **kwargs) -> 'ScrollBar':
-        return self
+        raise WidgetTransformationNotImplemented()
 
     def set_max_width(self, *args, **kwargs) -> 'ScrollBar':
-        return self
+        raise WidgetTransformationNotImplemented()
 
     def set_max_height(self, *args, **kwargs) -> 'ScrollBar':
-        return self
+        raise WidgetTransformationNotImplemented()
 
     def rotate(self, *args, **kwargs) -> 'ScrollBar':
-        return self
+        raise WidgetTransformationNotImplemented()
 
     def flip(self, *args, **kwargs) -> 'ScrollBar':
-        return self
+        raise WidgetTransformationNotImplemented()
 
     def _apply_size_changes(self) -> None:
         """
