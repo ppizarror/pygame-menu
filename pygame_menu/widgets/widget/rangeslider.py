@@ -39,7 +39,7 @@ from pygame_menu.locals import POSITION_NORTH, POSITION_SOUTH
 from pygame_menu.font import FontType, assert_font
 from pygame_menu.locals import FINGERUP
 from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, \
-    make_surface, get_finger_pos
+    make_surface, get_finger_pos, assert_position, parse_padding
 from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImplemented
 
 from pygame_menu._types import Any, CallbackType, Union, List, Tuple, Optional, \
@@ -174,113 +174,119 @@ class RangeSlider(Widget):
             widget_id=rangeslider_id
         )
 
-        # Asserts
-        assert isinstance(default_state, int)
-        assert isinstance(infinite, bool)
-        assert isinstance(single_click, bool)
-        assert isinstance(single_click_dir, bool)
-        assert isinstance(state_values, tuple)
+        # Check ranges
+        assert_vector(range_values, 0)
+        assert len(range_values) >= 2, \
+            'range values length must be equal or greater than 2'
+        if len(range_values) == 2:
+            assert range_values[1] > range_values[0], \
+                'range values must be increasing and different numeric values'
+        else:
+            for i in range(len(range_values) - 1):
+                assert range_values[i] < range_values[i + 1], \
+                    'range values list must be ordered and different'
+        assert isinstance(range_width, int)
+        assert range_width > 0, 'range width must be greater than zero'
 
-        # Check the number of states
-        self._total_states = len(state_values)
-        assert 2 <= self._total_states, 'the minimum number of states is 2'
-        assert 0 <= default_state < self._total_states, 'invalid default state value'
+        # Check default value
+        if not isinstance(default_value, NumberInstance):
+            assert_vector(default_value, 2)
+            assert default_value[0] < default_value[1], \
+                'default value vector must be ordered and different (min,max)'
+            assert default_value[0] >= range_values[0], \
+                'minimum default value ({0}) must be equal or greater than ' \
+                'minimum value of the range ({1})' \
+                ''.format(default_value[0], range_values[0])
+            assert default_value[1] <= range_values[-1], \
+                'maximum default value ({0}) must be lower or equal than ' \
+                'maximum value of the range ({1})' \
+                ''.format(default_value[1], range_values[-1])
+        else:
+            assert range_values[0] <= default_value <= range_values[-1], \
+                'default value ({0}) must be between minimum and maximum of the ' \
+                'range values ({1}, {2}), that is, it must satisfy {0}<={1}<={2}' \
+                ''.format(default_value, range_values[0], range_values[-1])
 
-        # Check font sizes
-        if state_text_font is not None:
-            assert_font(state_text_font)
-        assert isinstance(state_text_font_size, (int, type(None)))
-        if state_text_font_size is not None:
-            assert state_text_font_size > 0, \
-                'state text font size must be equal or greater than zero'
+        # Check increment
+        assert isinstance(increment, NumberInstance)
+        assert increment >= 0, 'increment must be equal or greater than zero'
+
+        # Check fonts
+        if range_text_value_font is not None:
+            assert_font(range_text_value_font)
+        assert isinstance(range_text_value_font_height, NumberInstance)
+        assert 0 < range_text_value_font_height, \
+            'range text value font height must be greater than zero'
+        if slider_text_value_font is not None:
+            assert_font(slider_text_value_font)
+        assert isinstance(slider_text_value_font_height, NumberInstance)
+        assert 0 < slider_text_value_font_height, \
+            'slider text value font height must be greater than zero'
 
         # Check colors
-        assert_vector(state_text_position, 2)
-        switch_border_color = assert_color(switch_border_color)
-        assert isinstance(switch_border_width, int) and switch_border_width >= 0, \
-            'border width must be equal or greater than zero'
+        range_box_color = assert_color(range_box_color)
+        range_box_color_readonly = assert_color(range_box_color_readonly)
+        range_text_value_color = assert_color(range_text_value_color)
         slider_color = assert_color(slider_color)
+        slider_text_value_bgcolor = assert_color(slider_text_value_bgcolor)
+        slider_text_value_color = assert_color(slider_text_value_color)
 
         # Check dimensions and sizes
-        assert slider_height_factor > 0, 'slider height factor cannot be negative'
-        assert slider_thickness >= 0, 'slider thickness cannot be negative'
+        assert isinstance(range_box_height_factor, NumberInstance)
+        assert 0 < range_box_height_factor, 'height factor must be greater than zero'
+        assert isinstance(range_text_value_margin_factor, NumberInstance)
+        assert 0 < range_text_value_margin_factor, 'height factor must be greater than zero'
+        assert isinstance(slider_text_value_margin_factor, NumberInstance)
+        assert 0 < slider_text_value_margin_factor, 'height factor must be greater than zero'
+        assert isinstance(slider_height_factor, NumberInstance)
+        assert 0 < slider_height_factor, 'height factor must be greater than zero'
         assert isinstance(slider_vmargin, NumberInstance)
-        assert_vector(switch_margin, 2)
-        assert isinstance(switch_height, NumberInstance) and switch_height > 0, \
-            'switch height factor cannot be zero or negative'
-        assert isinstance(state_color, tuple) and len(state_color) == self._total_states
+        slider_text_value_padding = parse_padding(slider_text_value_padding)
+        assert isinstance(slider_thickness, int)
+        assert slider_thickness > 0, 'slider thickness must be greater than zero'
 
-        # Create state color
-        new_state_color = []
-        for c in state_color:
-            new_state_color.append(assert_color(c))
-        state_color = tuple(new_state_color)
+        # Check positions
+        assert_position(range_text_value_position)
+        assert range_text_value_position in (POSITION_NORTH, POSITION_SOUTH), \
+            'range text value position must be north or south'
+        assert_position(slider_text_value_position)
+        assert slider_text_value_position in (POSITION_NORTH, POSITION_SOUTH), \
+            'slider text value position must be north or south'
 
-        # Create state texts
-        assert isinstance(state_text, tuple) and len(state_text) == self._total_states
-        for c in state_text:
-            assert isinstance(c, str), 'all states text must be string-type'
-        assert isinstance(state_text_font_color, tuple) and \
-               len(state_text_font_color) == self._total_states
-
-        new_state_text_font_color = []
-        for c in state_text_font_color:
-            new_state_text_font_color.append(assert_color(c))
-        state_text_font_color = tuple(new_state_text_font_color)
-
-        # Crete state widths
-        self._switch_width = 0
-        if isinstance(state_width, NumberInstance):
-            state_width = [state_width]
-        assert_vector(state_width, self._total_states - 1, int)
-
-        for i in range(len(state_width)):
-            assert isinstance(state_width[i], int), 'each state width must be an integer'
-            assert state_width[i] > 0, 'each state width must be greater than zero'
-            self._switch_width += state_width[i]
-
-        # Finals
-        if single_click:
-            infinite = True
+        # Check boolean
+        assert isinstance(range_box_enabled, bool)
+        assert isinstance(range_text_value_enabled, bool)
+        assert isinstance(slider_color_selected, bool)
+        assert isinstance(slider_text_value_enabled, bool)
 
         # Store properties
-        self._switch_border_color = switch_border_color
-        self._switch_border_width = switch_border_width
-        self._infinite = infinite
-        self._single_click = single_click
-        self._single_click_dir = single_click_dir
+        self._range_values = range_values
+        self._range_width = range_width
+        self._default_value = default_value
+        self._increment = increment
+        self._range_box_color = range_box_color
+        self._range_box_color_readonly = range_box_color_readonly
+        self._range_box_enabled = range_box_enabled
+        self._range_box_height_factor = range_box_height_factor
+        self._range_text_value_color = range_text_value_color
+        self._range_text_value_enabled = range_text_value_enabled
+        self._range_text_value_font = range_text_value_font
+        self._range_text_value_font_height = range_text_value_font_height
+        self._range_text_value_margin_factor = range_text_value_margin_factor
+        self._range_text_value_position = range_text_value_position
         self._slider_color = slider_color
+        self._slider_color_selected = slider_color_selected
         self._slider_height_factor = slider_height_factor
+        self._slider_text_value_bgcolor = slider_text_value_bgcolor
+        self._slider_text_value_color = slider_text_value_color
+        self._slider_text_value_enabled = slider_text_value_enabled
+        self._slider_text_value_font = slider_text_value_font
+        self._slider_text_value_font_height = slider_text_value_font_height
+        self._slider_text_value_margin_factor = slider_text_value_margin_factor
+        self._slider_text_value_padding = slider_text_value_padding
+        self._slider_text_value_position = slider_text_value_position
         self._slider_thickness = slider_thickness
         self._slider_vmargin = slider_vmargin
-        self._state = default_state
-        self._state_color = state_color
-        self._state_text = state_text
-        self._state_text_font = state_text_font
-        self._state_text_font_color = state_text_font_color
-        self._state_text_font_size = state_text_font_size
-        self._state_text_position = state_text_position
-        self._state_values = state_values
-        self._state_width = state_width
-        self._switch_height_factor = float(switch_height)
-        self._switch_margin = switch_margin
-
-        # Compute state width accum
-        self._state_width_accum = [0]
-        accum = 0
-        for w in self._state_width:
-            accum += w
-            accum_width = accum - self._slider_thickness - 2 * self._switch_border_width
-            self._state_width_accum.append(accum_width)
-
-        # Inner properties
-        self._accept_events = True
-        self._slider_height = 0
-        self._slider_pos = (0, 0)  # to add to (rect.x, rect.y)
-        self._state_font = None
-        self._switch_font_rendered = []  # Stores font render for each state
-        self._switch_height = 0
-        self._switch_pos = (0, 0)  # horizontal pos, and delta to title
 
     def set_value(self, state: int) -> None:
         assert isinstance(state, int), 'state value can only be an integer'
