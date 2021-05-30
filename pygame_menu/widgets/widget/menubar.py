@@ -88,12 +88,12 @@ class MenuBar(Widget):
     """
     MenuBar widget.
 
-     .. note::
+    .. note::
 
         MenuBar only accepts translation transformation.
 
     :param title: Title of the menubar
-    :param width: Width of the widget, generally width of the Menu
+    :param width: Width of the widget, generally the same as the width of the menu
     :param background_color: Background color
     :param menubar_id: ID of the MenuBar
     :param back_box: Draw a back-box button on header
