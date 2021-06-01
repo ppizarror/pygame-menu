@@ -31,6 +31,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['RangeSlider']
 
+import math
+
 import pygame
 import pygame_menu
 import pygame_menu.controls as ctrl
@@ -43,9 +45,8 @@ from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vect
 from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImplemented
 
 from pygame_menu._types import Any, CallbackType, Union, List, Tuple, Optional, \
-    ColorType, NumberType, Tuple2NumberType, Tuple2IntType, NumberInstance, \
-    ColorInputType, EventVectorType, Vector2NumberType, VectorType, PaddingType, \
-    PaddingInstance, Tuple4IntType
+    ColorType, NumberType, Tuple2IntType, NumberInstance, ColorInputType, \
+    EventVectorType, Vector2NumberType, VectorType, PaddingType, Tuple4IntType
 
 RangeValuesType = Union[Vector2NumberType, VectorType]
 
@@ -69,9 +70,9 @@ class RangeSlider(Widget):
 
     :param title: Range slider title
     :param rangeslider_id: RangeSlider ID
+    :param default_value: Default range value, can accept a number or a tuple/list of 2 elements (min, max). If a single number is provided the rangeslider only accepts 1 value, if 2 are provided, the range is enabled (2 values)
     :param range_values: Tuple/list of 2 elements of min/max values of the range slider. Also range can accept a list of numbers, in which case the values of the range slider will be discrete. List must be sorted
     :param range_width: Width of the range in pixels
-    :param default_value: Default range value, can accept a number or a tuple/list of 2 elements (min, max). If a single number is provided the rangeslider only accepts 1 value, if 2 are provided, the range is enabled (2 values)
     :param increment: Increment of the value if using lef/right keys
     :param onchange: Callback when changing the state of the switch
     :param onselect: Function when selecting the widget
@@ -79,11 +80,15 @@ class RangeSlider(Widget):
     :param range_box_color_readonly: Color of the range box if widget in readonly state
     :param range_box_enabled: Enables a range box between two sliders
     :param range_box_height_factor: Height of the range box (factor of the range title height)
+    :param range_line_color: Color of the range line
+    :param range_line_height: Height of the range line in px
+    :param range_margin: Left/Right margin of the range in px
     :param range_text_value_color: Color of the range values text
     :param range_text_value_enabled: Enables the range values text
     :param range_text_value_font: Font of the ranges value. If ``None`` the same font as the widget is used
     :param range_text_value_font_height: Height factor of the range value font (factor of the range title height)
     :param range_text_value_margin_factor: Margin of the range text values (factor of the range title height)
+    :param range_text_value_number: Number of range value text, the values are placed uniformly distributed
     :param range_text_value_position: Position of the range text values, can be NORTH or SOUTH. See :py:mod:`pygame_menu.locals`
     :param slider_color: Slider color
     :param slider_color_selected: Selected slider color
@@ -101,23 +106,37 @@ class RangeSlider(Widget):
     :param args: Optional arguments for callbacks
     :param kwargs: Optional keyword arguments
     """
-    _range_values: RangeValuesType
-    _range_width: int
-    _default_value: Union[NumberType, Vector2NumberType]
+    _font_range_value: Optional['pygame.font.Font']
+    _font_slider_value: Optional['pygame.font.Font']
     _increment: NumberType
+    _range_box: 'pygame.Surface'
     _range_box_color: ColorType
     _range_box_color_readonly: ColorType
     _range_box_enabled: bool
     _range_box_height_factor: NumberType
+    _range_line: 'pygame.Surface'
+    _range_line_color: ColorType
+    _range_line_height: int
+    _range_line_pos: Tuple2IntType
+    _range_margin: Tuple2IntType
+    _range_pos: Tuple2IntType
     _range_text_value_color: ColorType
     _range_text_value_enabled: bool
     _range_text_value_font: Optional[FontType]
     _range_text_value_font_height: NumberType
     _range_text_value_margin_factor: NumberType
+    _range_text_value_number: int
     _range_text_value_position: str
+    _range_values: RangeValuesType
+    _range_width: int
+    _single: bool  # Range single or double
+    _slider: List['pygame.Surface']
     _slider_color: ColorType
-    _slider_color_selected: bool
+    _slider_height: int
     _slider_height_factor: NumberType
+    _slider_pos: Tuple[Tuple2IntType, Tuple2IntType]
+    _slider_selected: Tuple[bool, bool]
+    _slider_selected_color: ColorType
     _slider_text_value_bgcolor: ColorType
     _slider_text_value_color: ColorType
     _slider_text_value_enabled: bool
@@ -128,14 +147,15 @@ class RangeSlider(Widget):
     _slider_text_value_position: str
     _slider_thickness: int
     _slider_vmargin: NumberType
+    _value: Union[NumberType, Vector2NumberType]
 
     def __init__(
             self,
             title: Any,
             rangeslider_id: str = '',
+            default_value: Union[NumberType, Vector2NumberType] = 0,
             range_values: RangeValuesType = (0, 1),
             range_width: int = 150,
-            default_value: Union[NumberType, Vector2NumberType] = 0.5,
             increment: NumberType = 0.1,
             onchange: CallbackType = None,
             onselect: CallbackType = None,
@@ -143,16 +163,20 @@ class RangeSlider(Widget):
             range_box_color_readonly: ColorInputType = (220, 220, 220),
             range_box_enabled: bool = True,
             range_box_height_factor: NumberType = 0.4,
+            range_line_color: ColorInputType = (100, 100, 100),
+            range_line_height: int = 2,
+            range_margin: Tuple2IntType = (25, 0),
             range_text_value_color: ColorInputType = (30, 30, 30),
             range_text_value_enabled: bool = True,
             range_text_value_font: Optional[FontType] = None,
             range_text_value_font_height: NumberType = 0.5,
             range_text_value_margin_factor: NumberType = 0.8,
+            range_text_value_number: int = 2,
             range_text_value_position: str = POSITION_SOUTH,
-            slider_color: ColorInputType = (255, 255, 255),
-            slider_color_selected: bool = True,
-            slider_height_factor: NumberType = 0.6,
-            slider_text_value_bgcolor: ColorInputType = (200, 200, 200),
+            slider_color: ColorInputType = (200, 200, 200),
+            slider_height_factor: NumberType = 0.8,
+            slider_selected_color: ColorInputType = (30, 30, 30),
+            slider_text_value_bgcolor: ColorInputType = (120, 120, 120),
             slider_text_value_color: ColorInputType = (0, 0, 0),
             slider_text_value_enabled: bool = True,
             slider_text_value_font: Optional[FontType] = None,
@@ -160,7 +184,7 @@ class RangeSlider(Widget):
             slider_text_value_margin_factor: NumberType = 0.2,
             slider_text_value_padding: PaddingType = 2,
             slider_text_value_position: str = POSITION_NORTH,
-            slider_thickness: int = 25,
+            slider_thickness: int = 20,
             slider_vmargin: NumberType = 0,
             *args,
             **kwargs
@@ -201,6 +225,8 @@ class RangeSlider(Widget):
                 'maximum default value ({0}) must be lower or equal than ' \
                 'maximum value of the range ({1})' \
                 ''.format(default_value[1], range_values[-1])
+            default_value = tuple(default_value)
+
         else:
             assert range_values[0] <= default_value <= range_values[-1], \
                 'default value ({0}) must be between minimum and maximum of the ' \
@@ -226,8 +252,10 @@ class RangeSlider(Widget):
         # Check colors
         range_box_color = assert_color(range_box_color)
         range_box_color_readonly = assert_color(range_box_color_readonly)
+        range_line_color = assert_color(range_line_color)
         range_text_value_color = assert_color(range_text_value_color)
         slider_color = assert_color(slider_color)
+        slider_selected_color = assert_color(slider_selected_color)
         slider_text_value_bgcolor = assert_color(slider_text_value_bgcolor)
         slider_text_value_color = assert_color(slider_text_value_color)
 
@@ -244,6 +272,14 @@ class RangeSlider(Widget):
         slider_text_value_padding = parse_padding(slider_text_value_padding)
         assert isinstance(slider_thickness, int)
         assert slider_thickness > 0, 'slider thickness must be greater than zero'
+        assert isinstance(range_line_height, int)
+        assert range_line_height >= 0, 'range line height must be equal or greater than zero'
+        assert_vector(range_margin, 2, int)
+        assert range_margin[0] >= 0, 'left range margin must be equal or greater than zero'
+        assert range_margin[1] >= 0, 'right range margin must be equal or greater than zero'
+        assert isinstance(range_text_value_number, int)
+        if range_text_value_enabled:
+            assert range_text_value_number >= 2
 
         # Check positions
         assert_position(range_text_value_position)
@@ -256,27 +292,32 @@ class RangeSlider(Widget):
         # Check boolean
         assert isinstance(range_box_enabled, bool)
         assert isinstance(range_text_value_enabled, bool)
-        assert isinstance(slider_color_selected, bool)
         assert isinstance(slider_text_value_enabled, bool)
 
         # Store properties
-        self._range_values = range_values
-        self._range_width = range_width
-        self._default_value = default_value
         self._increment = increment
         self._range_box_color = range_box_color
         self._range_box_color_readonly = range_box_color_readonly
         self._range_box_enabled = range_box_enabled
         self._range_box_height_factor = range_box_height_factor
+        self._range_line_color = range_line_color
+        self._range_line_height = range_line_height
+        self._range_margin = range_margin
+        self._range_pos = (0, 0)
         self._range_text_value_color = range_text_value_color
         self._range_text_value_enabled = range_text_value_enabled
         self._range_text_value_font = range_text_value_font
         self._range_text_value_font_height = range_text_value_font_height
         self._range_text_value_margin_factor = range_text_value_margin_factor
         self._range_text_value_position = range_text_value_position
+        self._range_values = range_values
+        self._range_width = range_width
+        self._single = isinstance(default_value, NumberInstance)
         self._slider_color = slider_color
-        self._slider_color_selected = slider_color_selected
+        self._slider_height = 0
         self._slider_height_factor = slider_height_factor
+        self._slider_selected = (False, False)
+        self._slider_selected_color = slider_selected_color
         self._slider_text_value_bgcolor = slider_text_value_bgcolor
         self._slider_text_value_color = slider_text_value_color
         self._slider_text_value_enabled = slider_text_value_enabled
@@ -287,11 +328,10 @@ class RangeSlider(Widget):
         self._slider_text_value_position = slider_text_value_position
         self._slider_thickness = slider_thickness
         self._slider_vmargin = slider_vmargin
+        self._value = default_value
 
-    def set_value(self, state: int) -> None:
-        assert isinstance(state, int), 'state value can only be an integer'
-        assert 0 <= state < self._total_states, 'state value exceeds the total states'
-        self._state = state
+    def set_value(self, value: RangeValuesType) -> None:
+        print(value)
 
     def scale(self, *args, **kwargs) -> 'RangeSlider':
         raise WidgetTransformationNotImplemented()
@@ -312,95 +352,109 @@ class RangeSlider(Widget):
         raise WidgetTransformationNotImplemented()
 
     def get_value(self) -> Any:
-        return self._state_values[self._state]
+        return self._value
 
     def _apply_font(self) -> None:
-        if self._state_text_font is None:
-            self._state_text_font = self._font_name
-        if self._state_text_font_size is None:
-            self._state_text_font_size = self._font_size
-        self._state_font = pygame_menu.font.get_font(
-            self._state_text_font, self._state_text_font_size
+        if self._range_text_value_font is None:
+            self._range_text_value_font = self._font_name
+        if self._slider_text_value_font is None:
+            self._slider_text_value_font = self._font_name
+
+        self._font_range_value = pygame_menu.font.get_font(
+            self._range_text_value_font,
+            int(self._range_text_value_font_height * self._font_size)
+        )
+        self._font_slider_value = pygame_menu.font.get_font(
+            self._slider_text_value_font,
+            int(self._slider_text_value_font_height * self._font_size)
         )
 
         # Compute the height
         height = self._font_render_string('TEST').get_height()
-        self._switch_height = int(height * self._switch_height_factor)
-        self._slider_height = int(self._switch_height * self._slider_height_factor) \
-                              - 2 * self._switch_border_width
-
-        # Render the state texts
-        for t in range(self._total_states):
-            f_render = self._state_font.render(
-                self._state_text[t], True, self._state_text_font_color[t]
-            )
-            self._switch_font_rendered.append(f_render)
+        self._slider_height = int(height * self._slider_height_factor)
 
     def _draw(self, surface: 'pygame.Surface') -> None:
         # Draw title
-        surface.blit(self._surface, (self._rect.x, self._rect.y + self._switch_pos[1] - 1))
+        surface.blit(self._surface, self._rect.topleft)
 
-        # Draw switch
-        switch_x = self._rect.x + self._switch_margin[0] + self._switch_pos[0]
-        switch_y = self._rect.y + self._switch_margin[1]
-        surface.blit(self._switch, (switch_x, switch_y))
+        # Draw range line
+        surface.blit(self._range_line, (self._range_line_pos[0] + self._rect.x,
+                                        self._range_line_pos[1] + self._rect.y))
 
-        # Draw switch border
-        if self._switch_border_width > 0:
-            switch_rect = self._switch.get_rect()
-            switch_rect.x += switch_x
-            switch_rect.y += switch_y
-            pygame.draw.rect(
-                surface,
-                self._switch_border_color,
-                switch_rect,
-                self._switch_border_width
-            )
-
-        # Draw switch font render
-        if self._state_text[self._state] != '':
-            text = self._switch_font_rendered[self._state]
-            surface.blit(text, (
-                int(switch_x
-                    + (self._switch_width - text.get_width()) * self._state_text_position[0]),
-                int(switch_y
-                    + (self._switch_height - text.get_height()) * self._state_text_position[1])
-            ))
-
-        # Draw slider
-        slider_x = switch_x + self._slider_pos[0] + self._switch_border_width
-        slider_y = switch_y + self._slider_pos[1] + self._switch_border_width
-        surface.blit(self._slider, (slider_x, slider_y))
+        # Draw sliders
+        surface.blit(self._slider[0], (self._slider_pos[0][0] + self._rect.x,
+                                       self._slider_pos[0][1] + self._rect.y))
+        if not self._single:
+            surface.blit(self._slider[1], (self._slider_pos[1][0] + self._rect.x,
+                                           self._slider_pos[1][1] + self._rect.y))
 
     def _render(self) -> Optional[bool]:
         if not self._render_hash_changed(
                 self._selected, self._title, self._visible, self.readonly,
-                self._state):
+                self._range_values):
             return True
 
         # Create basic title
         self._surface = self._render_string(self._title, self.get_font_color_status())
         self._rect.width, self._rect.height = self._surface.get_size()
+        self._range_pos = (self._rect.width + self._range_margin[0],
+                           int(self._rect.height / 2))
 
         # Create slider
-        self._slider = make_surface(self._slider_thickness, self._slider_height,
-                                    fill_color=self._slider_color)
-        self._slider_pos = (self._state_width_accum[self._state],
-                            self._slider_vmargin * self._switch_height)
+        sel_s = self._slider_selected[0] and self._selected, self._slider_selected[1] and self._selected
+        self._slider = [
+            make_surface(self._slider_thickness, self._slider_height,
+                         fill_color=self._slider_color if not sel_s[0] else self._slider_selected_color),
+            make_surface(self._slider_thickness, self._slider_height,
+                         fill_color=self._slider_color if not sel_s[1] else self._slider_selected_color)
+        ]
+        slider_vm = int(self._slider_vmargin * self._rect.height)  # Vertical margin
+        if self._single:
+            self._slider_pos = ((self._range_pos[0] + self._get_pos_slider(self._value),
+                                 self._range_pos[1] + slider_vm - int(self._slider_height / 2)),
+                                (0, 0))
+        else:
+            self._slider_pos = ((self._range_pos[0] + self._get_pos_slider(self._value[0]),
+                                 self._range_pos[1] + slider_vm - int(self._slider_height / 2)),
+                                (self._range_pos[0] + self._get_pos_slider(self._value[1]),
+                                 self._range_pos[1] + slider_vm - int(self._slider_height / 2)))
 
-        # Create the switch surface
-        self._switch = make_surface(self._switch_width, self._switch_height,
-                                    fill_color=self._state_color[self._state])
-        self._switch_pos = (self._rect.width,
-                            int((self._switch_height - self._rect.height) / 2))
+        # Create the range line
+        self._range_line = make_surface(self._range_width, self._range_line_height,
+                                        fill_color=self._range_line_color)
+        self._range_line_pos = (self._rect.x + self._range_pos[0],
+                                int(self._rect.y + self._range_pos[1] - self._range_line_height / 2))
 
         # Update maximum rect height
-        self._rect.height = max(self._rect.height, self._switch_height,
-                                self._slider_height)
-        self._rect.width += self._switch_margin[0] + self._switch_width
+        self._rect.height = max(self._rect.height, self._slider_height,
+                                self._range_line_height)
+        self._rect.width += self._range_width + self._range_margin[0] + self._range_margin[1]
 
         # Finals
         self.force_menu_surface_update()
+
+    def _get_pos_slider(self, value: NumberType) -> int:
+        """
+        Return the position of the slider.
+
+        :param value: Value
+        :return: Position in px
+        """
+        if len(self._range_values) == 2:
+            d = float(value - self._range_values[0]) / (self._range_values[1] - self._range_values[0])
+            assert 0 <= d <= 1
+            return int(d * self._range_width - self._slider_thickness / 2)
+
+        # Find nearest position
+        n = 0  # Position of the nearest value
+        m = math.inf  # Maximum distance
+        t = len(self._range_values)  # Number of values
+        for j in range(t):
+            k = abs(self._range_values[j] - value)
+            if k < m:
+                m = k
+                n = j
+        return int((float(n) / t) * self._range_width - self._slider_thickness / 2)
 
     def update(self, events: EventVectorType) -> bool:
         self.apply_update_callbacks(events)
@@ -434,16 +488,6 @@ class RangeSlider(Widget):
                     joy_hatmotion and event.value == ctrl.JOY_RIGHT or \
                     joy_axismotion and event.axis == ctrl.JOY_AXIS_X and event.value > -ctrl.JOY_DEADZONE:
                 self._right()
-                return True
-
-            # Press enter
-            elif keydown and event.key == ctrl.KEY_APPLY and self._total_states == 2 or \
-                    event.type == pygame.JOYBUTTONDOWN and self._joystick_enabled and \
-                    event.button == ctrl.JOY_BUTTON_SELECT and self._total_states == 2:
-                self._sound.play_key_add()
-                self._state = int(not self._state)
-                self.change()
-                self.active = not self.active
                 return True
 
             # Click on switch; don't consider the mouse wheel (button 4 & 5)
