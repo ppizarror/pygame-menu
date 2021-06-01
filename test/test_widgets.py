@@ -3212,3 +3212,12 @@ class WidgetsTest(unittest.TestCase):
 
         # menu.mainloop(surface)
         sel.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
+
+    def test_rangeslider(self) -> None:
+        """
+        Test rangeslider widget.
+        """
+        menu = MenuUtils.generic_menu()
+        r_slider = pygame_menu.widgets.RangeSlider('Range')
+        menu.add.generic_widget(r_slider, True)
+        menu.mainloop(surface)
