@@ -120,7 +120,9 @@ class RangeSlider(Widget):
     _range_box_color: ColorType
     _range_box_color_readonly: ColorType
     _range_box_enabled: bool
+    _range_box_height: int
     _range_box_height_factor: NumberType
+    _range_box_pos: Tuple2IntType
     _range_line: 'pygame.Surface'
     _range_line_color: ColorType
     _range_line_height: int
@@ -178,10 +180,10 @@ class RangeSlider(Widget):
             increment: NumberType = 0.1,
             onchange: CallbackType = None,
             onselect: CallbackType = None,
-            range_box_color: ColorInputType = (150, 150, 150),
-            range_box_color_readonly: ColorInputType = (220, 220, 220),
+            range_box_color: ColorInputType = (109, 164, 206, 170),
+            range_box_color_readonly: ColorInputType = (200, 200, 200, 170),
             range_box_enabled: bool = True,
-            range_box_height_factor: NumberType = 0.4,
+            range_box_height_factor: NumberType = 0.5,
             range_line_color: ColorInputType = (100, 100, 100),
             range_line_height: int = 2,
             range_margin: Tuple2IntType = (25, 0),
@@ -196,9 +198,9 @@ class RangeSlider(Widget):
             range_text_value_tick_enabled: bool = True,
             range_text_value_tick_height_factor: NumberType = 0.4,
             range_text_value_tick_thickness: int = 1,
-            slider_color: ColorInputType = (200, 200, 200),
+            slider_color: ColorInputType = (130, 130, 130),
             slider_height_factor: NumberType = 0.8,
-            slider_selected_color: ColorInputType = (30, 30, 30),
+            slider_selected_color: ColorInputType = (180, 180, 180),
             slider_text_value_bgcolor: ColorInputType = (120, 120, 120),
             slider_text_value_color: ColorInputType = (0, 0, 0),
             slider_text_value_enabled: bool = True,
@@ -207,7 +209,7 @@ class RangeSlider(Widget):
             slider_text_value_margin_factor: NumberType = 0.2,
             slider_text_value_padding: PaddingType = 2,
             slider_text_value_position: str = POSITION_NORTH,
-            slider_thickness: int = 20,
+            slider_thickness: int = 15,
             slider_vmargin: NumberType = 0,
             value_format: ValueFormatType = lambda x: str(round(x, 3)),
             *args,
@@ -367,7 +369,7 @@ class RangeSlider(Widget):
         self._slider_color = slider_color
         self._slider_height = 0
         self._slider_height_factor = slider_height_factor
-        self._slider_selected = (False, False)
+        self._slider_selected = (True, False)
         self._slider_selected_color = slider_selected_color
         self._slider_text_value_bgcolor = slider_text_value_bgcolor
         self._slider_text_value_color = slider_text_value_color
@@ -423,6 +425,7 @@ class RangeSlider(Widget):
 
         # Compute the height
         height = self._font_render_string('TEST').get_height()
+        self._range_box_height = int(height * self._range_box_height_factor)
         self._slider_height = int(height * self._slider_height_factor)
         self._range_text_value_margin = int(height * self._range_text_value_margin_factor)
         self._range_text_value_tick_height = int(height * self._range_text_value_tick_height_factor)
@@ -436,7 +439,7 @@ class RangeSlider(Widget):
         surface.blit(self._range_line, (self._range_line_pos[0] + self._rect.x,
                                         self._range_line_pos[1] + self._rect.y))
 
-        # Draw range values
+        # Draw range values and ticks
         for i in range(len(self._range_text_value_surfaces)):
             if self._range_text_value_enabled:
                 surface.blit(self._range_text_value_surfaces[i],
@@ -447,6 +450,11 @@ class RangeSlider(Widget):
                 surface.blit(tick_i,
                              (self._rect.x + self._range_text_value_tick_surfaces_pos[i][0],
                               self._rect.y + self._range_text_value_tick_surfaces_pos[i][1]))
+
+        # Draw range box
+        if self._range_box_enabled and not self._single:
+            surface.blit(self._range_box, (self._range_box_pos[0] + self._rect.x,
+                                           self._range_box_pos[1] + self._rect.y))
 
         # Draw sliders
         surface.blit(self._slider[0], (self._slider_pos[0][0] + self._rect.x,
@@ -536,6 +544,13 @@ class RangeSlider(Widget):
             s = self._range_text_value_surfaces[0]
             range_values_size = (int(s.get_width() * 0.7),
                                  int(self._range_text_value_surfaces_pos[0][1] + s.get_height() * 0.9))
+
+        # Create the range box surface
+        r_width = self._get_pos_range(self._value[1], None) - self._get_pos_range(self._value[0], None)
+        self._range_box = make_surface(r_width, self._range_box_height,
+                                       fill_color=self._range_box_color if not self.readonly else self._range_box_color_readonly)
+        self._range_box_pos = (self._range_pos[0] + self._get_pos_range(self._value[0], None),
+                               self._range_pos[1] - int(self._range_box.get_height() / 2))
 
         # Update maximum rect height
         self._rect.height = max(self._rect.height, self._slider_height,
