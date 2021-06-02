@@ -41,14 +41,16 @@ from pygame_menu.locals import POSITION_NORTH, POSITION_SOUTH
 from pygame_menu.font import FontType, assert_font
 from pygame_menu.locals import FINGERUP
 from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, \
-    make_surface, get_finger_pos, assert_position, parse_padding
+    make_surface, get_finger_pos, assert_position, parse_padding, is_callable
 from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImplemented
 
 from pygame_menu._types import Any, CallbackType, Union, List, Tuple, Optional, \
     ColorType, NumberType, Tuple2IntType, NumberInstance, ColorInputType, \
-    EventVectorType, Vector2NumberType, VectorType, PaddingType, Tuple4IntType
+    EventVectorType, Vector2NumberType, VectorType, PaddingType, Tuple4IntType, \
+    Callable
 
 RangeValuesType = Union[Vector2NumberType, VectorType]
+ValueFormatType = Callable[[NumberType], str]
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -90,6 +92,10 @@ class RangeSlider(Widget):
     :param range_text_value_margin_factor: Margin of the range text values (factor of the range title height)
     :param range_text_value_number: Number of range value text, the values are placed uniformly distributed
     :param range_text_value_position: Position of the range text values, can be NORTH or SOUTH. See :py:mod:`pygame_menu.locals`
+    :param range_text_value_tick_color: Color of the range text value tick
+    :param range_text_value_tick_enabled: Range text value tick enabled
+    :param range_text_value_tick_height_factor: Height factor of the range text value tick (factor of the range title height)
+    :param range_text_value_tick_thickness: Thickness of the range text value tick in px
     :param slider_color: Slider color
     :param slider_color_selected: Selected slider color
     :param slider_height_factor: Height of the slider (factor of the range title height)
@@ -103,6 +109,7 @@ class RangeSlider(Widget):
     :param slider_text_value_position: Position of the slider text values, can be NORTH or SOUTH. See :py:mod:`pygame_menu.locals`
     :param slider_thickness: Slider thickness in px
     :param slider_vmargin: Vertical margin of the slider (factor of the range title height)
+    :param value_format: Function that format the value and returns a string that is used in the range and slider text
     :param args: Optional arguments for callbacks
     :param kwargs: Optional keyword arguments
     """
@@ -124,9 +131,19 @@ class RangeSlider(Widget):
     _range_text_value_enabled: bool
     _range_text_value_font: Optional[FontType]
     _range_text_value_font_height: NumberType
+    _range_text_value_margin: int
     _range_text_value_margin_factor: NumberType
     _range_text_value_number: int
     _range_text_value_position: str
+    _range_text_value_surfaces: List['pygame.Surface']
+    _range_text_value_surfaces_pos: List[Tuple2IntType]
+    _range_text_value_tick_color: ColorType
+    _range_text_value_tick_enabled: bool
+    _range_text_value_tick_height: int
+    _range_text_value_tick_height_factor: NumberType
+    _range_text_value_tick_surfaces: List['pygame.Surface']
+    _range_text_value_tick_surfaces_pos: List[Tuple2IntType]
+    _range_text_value_tick_thickness: int
     _range_values: RangeValuesType
     _range_width: int
     _single: bool  # Range single or double
@@ -142,12 +159,14 @@ class RangeSlider(Widget):
     _slider_text_value_enabled: bool
     _slider_text_value_font: Optional[FontType]
     _slider_text_value_font_height: NumberType
+    _slider_text_value_margin: int
     _slider_text_value_margin_factor: NumberType
     _slider_text_value_padding: Tuple4IntType
     _slider_text_value_position: str
     _slider_thickness: int
     _slider_vmargin: NumberType
     _value: Union[NumberType, Vector2NumberType]
+    _value_format: ValueFormatType
 
     def __init__(
             self,
@@ -166,13 +185,17 @@ class RangeSlider(Widget):
             range_line_color: ColorInputType = (100, 100, 100),
             range_line_height: int = 2,
             range_margin: Tuple2IntType = (25, 0),
-            range_text_value_color: ColorInputType = (30, 30, 30),
+            range_text_value_color: ColorInputType = (80, 80, 80),
             range_text_value_enabled: bool = True,
             range_text_value_font: Optional[FontType] = None,
             range_text_value_font_height: NumberType = 0.5,
             range_text_value_margin_factor: NumberType = 0.8,
             range_text_value_number: int = 2,
             range_text_value_position: str = POSITION_SOUTH,
+            range_text_value_tick_color: ColorInputType = (60, 60, 60),
+            range_text_value_tick_enabled: bool = True,
+            range_text_value_tick_height_factor: NumberType = 0.4,
+            range_text_value_tick_thickness: int = 1,
             slider_color: ColorInputType = (200, 200, 200),
             slider_height_factor: NumberType = 0.8,
             slider_selected_color: ColorInputType = (30, 30, 30),
@@ -186,6 +209,7 @@ class RangeSlider(Widget):
             slider_text_value_position: str = POSITION_NORTH,
             slider_thickness: int = 20,
             slider_vmargin: NumberType = 0,
+            value_format: ValueFormatType = lambda x: str(round(x, 3)),
             *args,
             **kwargs
     ) -> None:
@@ -254,6 +278,7 @@ class RangeSlider(Widget):
         range_box_color_readonly = assert_color(range_box_color_readonly)
         range_line_color = assert_color(range_line_color)
         range_text_value_color = assert_color(range_text_value_color)
+        range_text_value_tick_color = assert_color(range_text_value_tick_color)
         slider_color = assert_color(slider_color)
         slider_selected_color = assert_color(slider_selected_color)
         slider_text_value_bgcolor = assert_color(slider_text_value_bgcolor)
@@ -261,25 +286,37 @@ class RangeSlider(Widget):
 
         # Check dimensions and sizes
         assert isinstance(range_box_height_factor, NumberInstance)
-        assert 0 < range_box_height_factor, 'height factor must be greater than zero'
+        assert 0 < range_box_height_factor, \
+            'height factor must be greater than zero'
         assert isinstance(range_text_value_margin_factor, NumberInstance)
-        assert 0 < range_text_value_margin_factor, 'height factor must be greater than zero'
+        assert 0 < range_text_value_margin_factor, \
+            'height factor must be greater than zero'
         assert isinstance(slider_text_value_margin_factor, NumberInstance)
-        assert 0 < slider_text_value_margin_factor, 'height factor must be greater than zero'
+        assert 0 < slider_text_value_margin_factor, \
+            'height factor must be greater than zero'
         assert isinstance(slider_height_factor, NumberInstance)
-        assert 0 < slider_height_factor, 'height factor must be greater than zero'
+        assert 0 < slider_height_factor, \
+            'height factor must be greater than zero'
         assert isinstance(slider_vmargin, NumberInstance)
         slider_text_value_padding = parse_padding(slider_text_value_padding)
         assert isinstance(slider_thickness, int)
-        assert slider_thickness > 0, 'slider thickness must be greater than zero'
+        assert slider_thickness > 0, \
+            'slider thickness must be greater than zero'
         assert isinstance(range_line_height, int)
-        assert range_line_height >= 0, 'range line height must be equal or greater than zero'
+        assert range_line_height >= 0, \
+            'range line height must be equal or greater than zero'
         assert_vector(range_margin, 2, int)
-        assert range_margin[0] >= 0, 'left range margin must be equal or greater than zero'
-        assert range_margin[1] >= 0, 'right range margin must be equal or greater than zero'
+        assert range_margin[0] >= 0, \
+            'left range margin must be equal or greater than zero'
+        assert range_margin[1] >= 0, \
+            'right range margin must be equal or greater than zero'
         assert isinstance(range_text_value_number, int)
         if range_text_value_enabled:
-            assert range_text_value_number >= 2
+            assert range_text_value_number >= 2, \
+                'number of range value must be equal or greater than 2'
+        assert isinstance(range_text_value_tick_thickness, int)
+        assert range_text_value_tick_thickness >= 1, \
+            'range text tick thickness must be equal or greater than 1'
 
         # Check positions
         assert_position(range_text_value_position)
@@ -292,7 +329,14 @@ class RangeSlider(Widget):
         # Check boolean
         assert isinstance(range_box_enabled, bool)
         assert isinstance(range_text_value_enabled, bool)
+        assert isinstance(range_text_value_enabled, bool)
         assert isinstance(slider_text_value_enabled, bool)
+
+        # Check the value format function
+        assert is_callable(value_format)
+        assert isinstance(value_format(0), str), \
+            'value_format must be a function that accepts only 1 argument ' \
+            '(value) and must return a string'
 
         # Store properties
         self._increment = increment
@@ -308,8 +352,15 @@ class RangeSlider(Widget):
         self._range_text_value_enabled = range_text_value_enabled
         self._range_text_value_font = range_text_value_font
         self._range_text_value_font_height = range_text_value_font_height
+        self._range_text_value_margin = 0
         self._range_text_value_margin_factor = range_text_value_margin_factor
+        self._range_text_value_number = range_text_value_number
         self._range_text_value_position = range_text_value_position
+        self._range_text_value_tick_color = range_text_value_tick_color
+        self._range_text_value_tick_enabled = range_text_value_tick_enabled
+        self._range_text_value_tick_height = 0
+        self._range_text_value_tick_height_factor = range_text_value_tick_height_factor
+        self._range_text_value_tick_thickness = range_text_value_tick_thickness
         self._range_values = range_values
         self._range_width = range_width
         self._single = isinstance(default_value, NumberInstance)
@@ -329,6 +380,7 @@ class RangeSlider(Widget):
         self._slider_thickness = slider_thickness
         self._slider_vmargin = slider_vmargin
         self._value = default_value
+        self._value_format = value_format
 
     def set_value(self, value: RangeValuesType) -> None:
         print(value)
@@ -372,6 +424,9 @@ class RangeSlider(Widget):
         # Compute the height
         height = self._font_render_string('TEST').get_height()
         self._slider_height = int(height * self._slider_height_factor)
+        self._range_text_value_margin = int(height * self._range_text_value_margin_factor)
+        self._range_text_value_tick_height = int(height * self._range_text_value_tick_height_factor)
+        self._slider_text_value_margin = int(height * self._slider_text_value_margin_factor)
 
     def _draw(self, surface: 'pygame.Surface') -> None:
         # Draw title
@@ -381,6 +436,18 @@ class RangeSlider(Widget):
         surface.blit(self._range_line, (self._range_line_pos[0] + self._rect.x,
                                         self._range_line_pos[1] + self._rect.y))
 
+        # Draw range values
+        for i in range(len(self._range_text_value_surfaces)):
+            if self._range_text_value_enabled:
+                surface.blit(self._range_text_value_surfaces[i],
+                             (self._rect.x + self._range_text_value_surfaces_pos[i][0],
+                              self._rect.y + self._range_text_value_surfaces_pos[i][1]))
+            if self._range_text_value_tick_enabled:
+                tick_i = self._range_text_value_tick_surfaces[i]
+                surface.blit(tick_i,
+                             (self._rect.x + self._range_text_value_tick_surfaces_pos[i][0],
+                              self._rect.y + self._range_text_value_tick_surfaces_pos[i][1]))
+
         # Draw sliders
         surface.blit(self._slider[0], (self._slider_pos[0][0] + self._rect.x,
                                        self._slider_pos[0][1] + self._rect.y))
@@ -389,6 +456,9 @@ class RangeSlider(Widget):
                                            self._slider_pos[1][1] + self._rect.y))
 
     def _render(self) -> Optional[bool]:
+        if not (hasattr(self, '_font_range_value')):
+            return False
+
         if not self._render_hash_changed(
                 self._selected, self._title, self._visible, self.readonly,
                 self._range_values):
@@ -410,40 +480,85 @@ class RangeSlider(Widget):
         ]
         slider_vm = int(self._slider_vmargin * self._rect.height)  # Vertical margin
         if self._single:
-            self._slider_pos = ((self._range_pos[0] + self._get_pos_slider(self._value),
+            self._slider_pos = ((self._range_pos[0] + self._get_pos_range(self._value, self._slider[0]),
                                  self._range_pos[1] + slider_vm - int(self._slider_height / 2)),
                                 (0, 0))
         else:
-            self._slider_pos = ((self._range_pos[0] + self._get_pos_slider(self._value[0]),
+            self._slider_pos = ((self._range_pos[0] + self._get_pos_range(self._value[0], self._slider[0]),
                                  self._range_pos[1] + slider_vm - int(self._slider_height / 2)),
-                                (self._range_pos[0] + self._get_pos_slider(self._value[1]),
+                                (self._range_pos[0] + self._get_pos_range(self._value[1], self._slider[1]),
                                  self._range_pos[1] + slider_vm - int(self._slider_height / 2)))
 
         # Create the range line
         self._range_line = make_surface(self._range_width, self._range_line_height,
                                         fill_color=self._range_line_color)
-        self._range_line_pos = (self._rect.x + self._range_pos[0],
-                                int(self._rect.y + self._range_pos[1] - self._range_line_height / 2))
+        self._range_line_pos = (self._range_pos[0],
+                                int(self._range_pos[1] - self._range_line_height / 2))
+
+        # Create the range font surfaces
+        range_values: List[NumberType] = []
+        if len(self._range_values) == 2:
+            d_val = (self._range_values[1] - self._range_values[0]) / (self._range_text_value_number - 1)
+            v_i = self._range_values[0]
+            for i in range(self._range_text_value_number):
+                range_values.append(v_i)
+                v_i += d_val
+        else:
+            for i in self._range_values:
+                range_values.append(i)
+
+        # Create surfaces for each range value text & position + ticks
+        self._range_text_value_surfaces = []
+        self._range_text_value_surfaces_pos = []
+        self._range_text_value_tick_surfaces = []
+        self._range_text_value_tick_surfaces_pos = []
+        range_value_pos = 1 if self._range_text_value_position == POSITION_SOUTH else -1
+        for i in range_values:
+            s = self._font_range_value.render(self._value_format(i), self._font_antialias,
+                                              self._range_text_value_color)
+            self._range_text_value_surfaces.append(s)
+            s_x = self._range_pos[0] + self._get_pos_range(i, s)
+            s_y = self._range_pos[1] + self._range_text_value_margin / 2 * range_value_pos
+            self._range_text_value_surfaces_pos.append((int(s_x), int(s_y)))
+
+            # Create the tick
+            s_tick = make_surface(self._range_text_value_tick_thickness,
+                                  self._range_text_value_tick_height,
+                                  fill_color=self._range_text_value_tick_color)
+            self._range_text_value_tick_surfaces.append(s_tick)
+            t_x = self._range_pos[0] + self._get_pos_range(i, None)
+            t_y = self._range_pos[1] - s_tick.get_height() / 2
+            self._range_text_value_tick_surfaces_pos.append((int(t_x), int(t_y)))
+
+        # Computes the height of the ranges value text for modifying the rect box sizing
+        range_values_size = 0, 0  # Stores sizing
+        if self._range_text_value_enabled:
+            s = self._range_text_value_surfaces[0]
+            range_values_size = (int(s.get_width() * 0.7),
+                                 int(self._range_text_value_surfaces_pos[0][1] + s.get_height() * 0.9))
 
         # Update maximum rect height
         self._rect.height = max(self._rect.height, self._slider_height,
-                                self._range_line_height)
-        self._rect.width += self._range_width + self._range_margin[0] + self._range_margin[1]
+                                self._range_line_height, range_values_size[1])
+        self._rect.width += self._range_width + self._range_margin[0] + \
+                            self._range_margin[1] + range_values_size[0]
 
         # Finals
         self.force_menu_surface_update()
 
-    def _get_pos_slider(self, value: NumberType) -> int:
+    def _get_pos_range(self, value: NumberType, surface: Optional['pygame.Surface']) -> int:
         """
-        Return the position of the slider.
+        Return the position of the surface within range slider.
 
         :param value: Value
+        :param surface: Surface or None
         :return: Position in px
         """
+        sw = surface.get_width() / 2 if surface is not None else 0
         if len(self._range_values) == 2:
             d = float(value - self._range_values[0]) / (self._range_values[1] - self._range_values[0])
             assert 0 <= d <= 1
-            return int(d * self._range_width - self._slider_thickness / 2)
+            return int(d * self._range_width - sw)
 
         # Find nearest position
         n = 0  # Position of the nearest value
@@ -454,7 +569,7 @@ class RangeSlider(Widget):
             if k < m:
                 m = k
                 n = j
-        return int((float(n) / t) * self._range_width - self._slider_thickness / 2)
+        return int((float(n) / t) * self._range_width - sw)
 
     def update(self, events: EventVectorType) -> bool:
         self.apply_update_callbacks(events)
