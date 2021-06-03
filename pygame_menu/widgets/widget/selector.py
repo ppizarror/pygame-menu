@@ -86,7 +86,7 @@ def check_selector_items(items: Union[Tuple, List]) -> None:
 class Selector(Widget):
     """
     Selector widget: several items and two functions that are executed when changing
-    the selector (left/right) and pressing return button on the selected item.
+    the selector (left/right) and pressing return key on the selected item.
 
     The items of the selector are like:
 

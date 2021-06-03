@@ -1289,7 +1289,8 @@ class Widget(Base):
         """
         Draw Widget if selected after all widgets have been drawn. This method
         should also update ``last_surface``; see
-        :py:class:`pygame_menu.widgets.DropSelect` widget example.
+        :py:class:`pygame_menu.widgets.DropSelect` widget example or
+        :py:class:`pygame_menu.widgets.RangeSlider`.
 
         :param surface: Surface to draw. ``None`` if frame is requesting the draw, as some widgets are drawn outside the frame surface
         :return: Self reference
