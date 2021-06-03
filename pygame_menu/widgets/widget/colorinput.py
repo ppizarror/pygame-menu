@@ -431,9 +431,9 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                 # User writes
                 if event.type == pygame.KEYDOWN and self._keyboard_enabled:
 
-                    # Check if any key is pressed, if True the event is invalid
+                    # Check if any key is pressed
                     if not check_key_pressed_valid(event):
-                        return True
+                        continue
 
                     if disable_remove_separator and len(input_str) > 0 and \
                             len(input_str) > cursor_pos and (
@@ -511,9 +511,9 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
 
                 # User writes
                 if event.type == pygame.KEYDOWN and self._keyboard_enabled:
-                    # Check if any key is pressed, if True the event is invalid
+                    # Check if any key is pressed
                     if not check_key_pressed_valid(event):
-                        return True
+                        continue
 
                     # Backspace button, delete text from right
                     if event.key == pygame.K_BACKSPACE:
