@@ -50,6 +50,7 @@ from pygame_menu._types import Any, CallbackType, Union, List, Tuple, Optional, 
     Callable, Dict
 
 RangeValuesType = Union[Vector2NumberType, VectorType]
+SliderValue = Union[NumberType, Vector2NumberType]
 ValueFormatType = Callable[[NumberType], str]
 
 
@@ -190,14 +191,14 @@ class RangeSlider(Widget):
     _slider_text_value_surfaces_pos: List[Tuple2IntType]
     _slider_thickness: int
     _slider_vmargin: NumberType
-    _value: Union[NumberType, Vector2NumberType]
+    _value: List[NumberType]
     _value_format: ValueFormatType
 
     def __init__(
             self,
             title: Any,
             rangeslider_id: str = '',
-            default_value: Union[NumberType, Vector2NumberType] = 0,
+            default_value: SliderValue = 0,
             range_values: RangeValuesType = (0, 1),
             range_width: int = 150,
             increment: NumberType = 0.1,
@@ -449,8 +450,30 @@ class RangeSlider(Widget):
         self._value = default_value
         self._value_format = value_format
 
-    def set_value(self, value: RangeValuesType) -> None:
-        print(value)
+    def set_value(self, value: SliderValue) -> None:
+        if self._single:
+            assert isinstance(value, NumberInstance)
+            # noinspection PyTypeChecker
+            assert self._range_values[0] <= value <= self._range_values[-1], \
+                'value ({0}) must be within range {1} <= {0} <= {2}' \
+                ''.format(value, self._range_values[0], self._range_values[1])
+            if len(self._range_values) > 2:
+                assert value in self._range_values, \
+                    'value must be between range values discrete list'
+            value = [value, 0]
+
+        else:
+            assert_vector(value, 2)
+            assert self._range_values[0] <= value[0], \
+                'value must be equal or greater than minimum range value'
+            assert value[1] <= self._range_values[-1], \
+                'value must be lower or equal than maximum range value'
+            assert value[0] < value[1], 'value vector must be ordered'
+            assert value[0] in self._range_values
+            assert value[1] in self._range_values
+            value = [value[0], value[1]]
+
+        self._value = value
 
     def scale(self, *args, **kwargs) -> 'RangeSlider':
         raise WidgetTransformationNotImplemented()
@@ -473,7 +496,7 @@ class RangeSlider(Widget):
     def get_value(self) -> Union[NumberType, Tuple[NumberType, NumberType]]:
         if self._single:
             return self._value[0]
-        return tuple(self._value)
+        return self._value[0], self._value[1]
 
     def _apply_font(self) -> None:
         if self._range_text_value_font is None:
@@ -531,12 +554,12 @@ class RangeSlider(Widget):
                                            self._slider_pos[1][1] + self._rect.y))
 
         # Draw slider highlighted
-        if self._slider_selected[0] and not self.readonly:
+        if self._slider_selected[0] and not self.readonly and self.is_selected():
             pygame.draw.rect(
                 surface, self._slider_selected_highlight_color,
                 self._get_slider_inflate_rect(0), self._slider_selected_highlight_thickness
             )
-        if self._slider_selected[1] and not self.readonly:
+        if self._slider_selected[1] and not self.readonly and self.is_selected():
             pygame.draw.rect(
                 surface, self._slider_selected_highlight_color,
                 self._get_slider_inflate_rect(1), self._slider_selected_highlight_thickness
