@@ -705,8 +705,7 @@ class DropSelect(Widget):
         surface.blit(self._surface, self._rect.topleft)
 
     def draw_after_if_selected(self, surface: Optional['pygame.Surface']) -> 'DropSelect':
-        if self.is_selected() and self._selection_effect_draw_post:
-            self._selection_effect.draw(surface, self)
+        super(DropSelect, self).draw_after_if_selected(surface)
         if self.active and self.is_visible():
             self._check_drop_made()
 
@@ -1190,7 +1189,7 @@ class DropSelect(Widget):
                 return True
 
             # Press keys which active the drop but not apply
-            elif keydown and (event.key == pygame.K_TAB):
+            elif keydown and (event.key == ctrl.KEY_TAB):
                 self._toggle_drop()
                 return True
 
