@@ -228,17 +228,24 @@ class TextInput(Widget):
         assert isinstance(textinput_id, str)
         assert isinstance(valid_chars, (type(None), list))
 
-        assert history >= 0, 'history must be equal or greater than zero'
-        assert maxchar >= 0, 'maxchar must be equal or greater than zero'
-        assert maxwidth >= 0, 'maxwidth must be equal or greater than zero'
-        assert len(password_char) == 1, 'password char must be a character'
+        assert history >= 0, \
+            'history must be equal or greater than zero'
+        assert maxchar >= 0, \
+            'maxchar must be equal or greater than zero'
+        assert maxwidth >= 0, \
+            'maxwidth must be equal or greater than zero'
+        assert len(password_char) == 1, \
+            'password char must be a character'
         assert input_underline_len >= 0, \
             'input underline length must be equal or greater than zero'
         assert cursor_switch_ms > 0, \
             'cursor switch in milliseconds must be greater than zero'
-        assert repeat_keys_initial_ms > 0, 'ms cannot be lower or equal than zero'
-        assert repeat_keys_interval_ms > 0, 'ms cannot be lower or equal than zero'
-        assert repeat_mouse_interval_ms > 0, 'ms cannot be lower or equal than zero'
+        assert repeat_keys_initial_ms > 0, \
+            'ms cannot be lower or equal than zero'
+        assert repeat_keys_interval_ms > 0, \
+            'ms cannot be lower or equal than zero'
+        assert repeat_mouse_interval_ms > 0, \
+            'ms cannot be lower or equal than zero'
 
         cursor_color = assert_color(cursor_color)
         cursor_selection_color = assert_color(cursor_selection_color)
@@ -269,6 +276,7 @@ class TextInput(Widget):
         self._ignore_keys = (  # Ignore keys on keyrepeat event
             ctrl.KEY_MOVE_DOWN,
             ctrl.KEY_MOVE_UP,
+            ctrl.KEY_TAB,
             pygame.K_CAPSLOCK,
             pygame.K_END,
             pygame.K_ESCAPE,
@@ -278,8 +286,7 @@ class TextInput(Widget):
             pygame.K_NUMLOCK,
             pygame.K_RCTRL,
             pygame.K_RETURN,
-            pygame.K_RSHIFT,
-            pygame.K_TAB
+            pygame.K_RSHIFT
         )
 
         # Vars to make keydown repeat after user pressed a key for some time:
@@ -1831,7 +1838,7 @@ class TextInput(Widget):
                     updated = True
 
                 # Tab
-                elif event.key == pygame.K_TAB:
+                elif event.key == ctrl.KEY_TAB:
                     for _ in range(self._tab_size):
                         self._push_key_input(' ')
                         updated = True
