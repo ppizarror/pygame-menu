@@ -45,7 +45,9 @@ __all__ = [
     'surface',
     'test_reset_surface',
 
-    # Class utils (static)
+    # Class utils
+    'BaseTest',
+    'BaseRSTest',
     'PygameEventUtils',
     'MenuUtils'
 
@@ -53,6 +55,7 @@ __all__ = [
 
 import random
 import sys
+import unittest
 
 import pygame
 import pygame_menu
@@ -108,6 +111,24 @@ def test_reset_surface() -> None:
     """
     global surface
     surface = pygame.display.set_mode(WINDOW_SIZE)
+
+
+class BaseTest(unittest.TestCase):
+    """
+    Base test class.
+    """
+
+
+class BaseRSTest(unittest.TestCase):
+    """
+    Test class that Reset the Surface (RS) each time a test runs.
+    """
+
+    def setUp(self) -> None:
+        """
+        Reset the surface.
+        """
+        test_reset_surface()
 
 
 class PygameEventUtils(object):
@@ -580,7 +601,7 @@ class PygameEventUtils(object):
         assert_vector(rel, 2, int)
         assert_vector(delta, 2, int)
         if isinstance(rect, pygame_menu.widgets.Widget):
-            x, y = rect.get_rect(to_real_position=True, render=True).center
+            x, y = rect.get_rect(to_real_position=True, render=True, apply_padding=False).center
             menu = rect.get_menu()
         elif isinstance(rect, pygame.Rect):
             x, y = rect.center
