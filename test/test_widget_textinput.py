@@ -346,6 +346,14 @@ class TextInputWidgetTest(BaseTest):
         self.assertEqual(textinput._cursor_position, 25)
         self.assertEqual(textinput._renderbox, [0, 25, 25])
 
+    # noinspection PyTypeChecker
+    def test_textinput_underline(self) -> None:
+        """
+        Test underline.
+        """
+        if SYS_PLATFORM_OSX:
+            return
+
         # Test underline edge cases
         theme = TEST_THEME.copy()
         theme.title_font_size = 35
