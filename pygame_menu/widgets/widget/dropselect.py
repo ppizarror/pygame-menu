@@ -587,7 +587,7 @@ class DropSelect(Widget):
 
     def scrollh(self, value: NumberType) -> 'DropSelect':
         """
-        Scroll to horizontal value.
+        Scroll drop frame to horizontal value.
 
         :param value: Horizontal scroll value, if ``0`` scroll to left; ``1`` scroll to right
         :return: Self reference
@@ -598,7 +598,7 @@ class DropSelect(Widget):
 
     def scrollv(self, value: NumberType) -> 'DropSelect':
         """
-        Scroll to vertical value.
+        Scroll drop frame to vertical value.
 
         :param value: Vertical scroll value, if ``0`` scroll to top; ``1`` scroll to bottom
         :return: Self reference

@@ -1383,7 +1383,7 @@ class Widget(Base):
 
     def scroll_to_widget(self, margin: Tuple2NumberType = (0, 0), scroll_parent: bool = True) -> 'Widget':
         """
-        Scroll to widget.
+        The container ScrollArea scrolls to the Widget.
 
         :param margin: Extra margin around the rect in px on x-axis and y-axis
         :param scroll_parent: If ``True`` parent scroll also scrolls to widget
@@ -1792,7 +1792,7 @@ class Widget(Base):
 
     def get_font_info(self) -> Dict[str, Any]:
         """
-        Return a dict with the information of the widget font.
+        Return a dict with the information of the Widget font.
 
         :return: Font information dict
         """

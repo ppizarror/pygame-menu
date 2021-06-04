@@ -29,7 +29,17 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-__all__ = ['RangeSlider']
+__all__ = [
+
+    # Class
+    'RangeSlider',
+
+    # Input types
+    'RangeSliderRangeValueType',
+    'RangeSliderValueFormatType',
+    'RangeSliderValueType'
+
+]
 
 import math
 
@@ -49,9 +59,9 @@ from pygame_menu._types import Any, CallbackType, Union, List, Tuple, Optional, 
     EventVectorType, Vector2NumberType, VectorType, PaddingType, Tuple4IntType, \
     Callable, Dict
 
-RangeValuesType = Union[Vector2NumberType, VectorType]
-SliderValue = Union[NumberType, Vector2NumberType]
-ValueFormatType = Callable[[NumberType], str]
+RangeSliderRangeValueType = Union[Vector2NumberType, VectorType]
+RangeSliderValueFormatType = Callable[[NumberType], str]
+RangeSliderValueType = Union[NumberType, Vector2NumberType]
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -81,8 +91,8 @@ class RangeSlider(Widget):
     :param rangeslider_id: RangeSlider ID
     :param default_value: Default range value, can accept a number or a tuple/list of 2 elements (min, max). If a single number is provided the rangeslider only accepts 1 value, if 2 are provided, the range is enabled (2 values)
     :param range_values: Tuple/list of 2 elements of min/max values of the range slider. Also range can accept a list of numbers, in which case the values of the range slider will be discrete. List must be sorted
-    :param range_width: Width of the range in pixels
-    :param increment: Increment of the value if using lef/right keys
+    :param range_width: Width of the range in px
+    :param increment: Increment of the value if using left/right keys; used only if the range values are not discrete
     :param onchange: Callback when changing the value of the range slider
     :param onreturn: Callback when pressing return on the range slider
     :param onselect: Function when selecting the widget
@@ -98,27 +108,27 @@ class RangeSlider(Widget):
     :param range_text_value_enabled: Enables the range values text
     :param range_text_value_font: Font of the ranges value. If ``None`` the same font as the widget is used
     :param range_text_value_font_height: Height factor of the range value font (factor of the range title height)
-    :param range_text_value_margin_factor: Margin of the range text values (factor of the range title height)
+    :param range_text_value_margin_f: Margin of the range text values (factor of the range title height)
     :param range_text_value_position: Position of the range text values, can be NORTH or SOUTH. See :py:mod:`pygame_menu.locals`
     :param range_text_value_tick_color: Color of the range text value tick
     :param range_text_value_tick_enabled: Range text value tick enabled
-    :param range_text_value_tick_height_factor: Height factor of the range text value tick (factor of the range title height)
+    :param range_text_value_tick_hfactor: Height factor of the range text value tick (factor of the range title height)
     :param range_text_value_tick_number: Number of range value text, the values are placed uniformly distributed
-    :param range_text_value_tick_thickness: Thickness of the range text value tick in px
+    :param range_text_value_tick_thick: Thickness of the range text value tick in px
     :param repeat_keys_initial_ms: Time in ms before keys are repeated when held in ms
     :param repeat_keys_interval_ms: Interval between key press repetition when held in ms
     :param slider_color: Slider color
     :param slider_height_factor: Height of the slider (factor of the range title height)
+    :param slider_sel_highlight_color: Color of the selected slider highlight box effect
+    :param slider_sel_highlight_enabled: Selected slider is highlighted
+    :param slider_sel_highlight_thick: Thickness of the selected slider highlight
     :param slider_selected_color: Selected slider color
-    :param slider_selected_highlight_color: Color of the selected slider highlight box effect
-    :param slider_selected_highlight_enabled: Selected slider is highlighted
-    :param slider_selected_highlight_thickness: Thickness of the selected slider highlight
     :param slider_text_value_bgcolor: Background color of the value text on each slider
     :param slider_text_value_color: Color of value text on each slider
     :param slider_text_value_enabled: Enables a value text on each slider
     :param slider_text_value_font: Font of the slider value. If ``None`` the same font as the widget is used
     :param slider_text_value_font_height: Height factor of the slider font (factor of the range title height)
-    :param slider_text_value_margin_factor: Margin of the slider text values (factor of the range title height)
+    :param slider_text_value_margin_f: Margin of the slider text values (factor of the range title height)
     :param slider_text_value_padding: Padding of the slider text values
     :param slider_text_value_position: Position of the slider text values, can be NORTH or SOUTH. See :py:mod:`pygame_menu.locals`
     :param slider_text_value_triangle: Draws a triangle between slider text value and slider
@@ -166,7 +176,7 @@ class RangeSlider(Widget):
     _range_text_value_tick_surfaces: List['pygame.Surface']
     _range_text_value_tick_surfaces_pos: List[Tuple2IntType]
     _range_text_value_tick_thickness: int
-    _range_values: RangeValuesType
+    _range_values: RangeSliderRangeValueType
     _range_width: int
     _scrolling: bool  # Slider is scrolling
     _selected_mouse: bool
@@ -197,21 +207,21 @@ class RangeSlider(Widget):
     _slider_thickness: int
     _slider_vmargin: NumberType
     _value: List[NumberType]  # Public value of the slider, generated from the hidden
-    _value_format: ValueFormatType
+    _value_format: RangeSliderValueFormatType
     _value_hidden: List[NumberType]  # Hidden value of the slider, modified by events
 
     def __init__(
             self,
             title: Any,
             rangeslider_id: str = '',
-            default_value: SliderValue = 0,
-            range_values: RangeValuesType = (0, 1),
+            default_value: RangeSliderValueType = 0,
+            range_values: RangeSliderRangeValueType = (0, 1),
             range_width: int = 150,
             increment: NumberType = 0.1,
             onchange: CallbackType = None,
             onreturn: CallbackType = None,
             onselect: CallbackType = None,
-            range_box_color: ColorInputType = (109, 164, 206, 170),
+            range_box_color: ColorInputType = (6, 119, 206, 170),
             range_box_color_readonly: ColorInputType = (200, 200, 200, 170),
             range_box_enabled: bool = True,
             range_box_height_factor: NumberType = 0.45,
@@ -223,33 +233,33 @@ class RangeSlider(Widget):
             range_text_value_enabled: bool = True,
             range_text_value_font: Optional[FontType] = None,
             range_text_value_font_height: NumberType = 0.4,
-            range_text_value_margin_factor: NumberType = 0.8,
+            range_text_value_margin_f: NumberType = 0.8,
             range_text_value_position: str = POSITION_SOUTH,
             range_text_value_tick_color: ColorInputType = (60, 60, 60),
             range_text_value_tick_enabled: bool = True,
-            range_text_value_tick_height_factor: NumberType = 0.35,
+            range_text_value_tick_hfactor: NumberType = 0.35,
             range_text_value_tick_number: int = 2,
-            range_text_value_tick_thickness: int = 1,
+            range_text_value_tick_thick: int = 1,
             repeat_keys_initial_ms: NumberType = 400,
             repeat_keys_interval_ms: NumberType = 50,
             slider_color: ColorInputType = (120, 120, 120),
             slider_height_factor: NumberType = 0.7,
+            slider_sel_highlight_color: ColorInputType = (0, 0, 0),
+            slider_sel_highlight_enabled: bool = True,
+            slider_sel_highlight_thick: int = 1,
             slider_selected_color: ColorInputType = (180, 180, 180),
-            slider_selected_highlight_color: ColorInputType = (0, 0, 0),
-            slider_selected_highlight_enabled: bool = True,
-            slider_selected_highlight_thickness: int = 1,
             slider_text_value_bgcolor: ColorInputType = (140, 140, 140),
             slider_text_value_color: ColorInputType = (0, 0, 0),
             slider_text_value_enabled: bool = True,
             slider_text_value_font: Optional[FontType] = None,
             slider_text_value_font_height: NumberType = 0.4,
-            slider_text_value_margin_factor: NumberType = 1,
+            slider_text_value_margin_f: NumberType = 1,
             slider_text_value_padding: PaddingType = (0, 4),
             slider_text_value_position: str = POSITION_NORTH,
             slider_text_value_triangle: bool = True,
             slider_thickness: int = 15,
             slider_vmargin: NumberType = 0,
-            value_format: ValueFormatType = lambda x: str(round(x, 3)),
+            value_format: RangeSliderValueFormatType = lambda x: str(round(x, 3)),
             *args,
             **kwargs
     ) -> None:
@@ -333,7 +343,7 @@ class RangeSlider(Widget):
         range_text_value_tick_color = assert_color(range_text_value_tick_color)
         slider_color = assert_color(slider_color)
         slider_selected_color = assert_color(slider_selected_color)
-        slider_selected_highlight_color = assert_color(slider_selected_highlight_color)
+        slider_sel_highlight_color = assert_color(slider_sel_highlight_color)
         slider_text_value_bgcolor = assert_color(slider_text_value_bgcolor)
         slider_text_value_color = assert_color(slider_text_value_color)
 
@@ -341,11 +351,11 @@ class RangeSlider(Widget):
         assert isinstance(range_box_height_factor, NumberInstance)
         assert 0 < range_box_height_factor, \
             'height factor must be greater than zero'
-        assert isinstance(range_text_value_margin_factor, NumberInstance)
-        assert 0 < range_text_value_margin_factor, \
+        assert isinstance(range_text_value_margin_f, NumberInstance)
+        assert 0 < range_text_value_margin_f, \
             'height factor must be greater than zero'
-        assert isinstance(slider_text_value_margin_factor, NumberInstance)
-        assert 0 < slider_text_value_margin_factor, \
+        assert isinstance(slider_text_value_margin_f, NumberInstance)
+        assert 0 < slider_text_value_margin_f, \
             'height factor must be greater than zero'
         assert isinstance(slider_height_factor, NumberInstance)
         assert 0 < slider_height_factor, \
@@ -367,11 +377,11 @@ class RangeSlider(Widget):
         if range_text_value_enabled:
             assert range_text_value_tick_number >= 2, \
                 'number of range value must be equal or greater than 2'
-        assert isinstance(range_text_value_tick_thickness, int)
-        assert range_text_value_tick_thickness >= 1, \
+        assert isinstance(range_text_value_tick_thick, int)
+        assert range_text_value_tick_thick >= 1, \
             'range text tick thickness must be equal or greater than 1 px'
-        assert isinstance(slider_selected_highlight_thickness, int)
-        assert slider_selected_highlight_thickness >= 1, \
+        assert isinstance(slider_sel_highlight_thick, int)
+        assert slider_sel_highlight_thick >= 1, \
             'selected highlight thickness must be equal or greater than 1 px'
 
         # Check positions
@@ -387,7 +397,7 @@ class RangeSlider(Widget):
         assert isinstance(range_box_single_slider, bool)
         assert isinstance(range_text_value_enabled, bool)
         assert isinstance(range_text_value_enabled, bool)
-        assert isinstance(slider_selected_highlight_enabled, bool)
+        assert isinstance(slider_sel_highlight_enabled, bool)
         assert isinstance(slider_text_value_enabled, bool)
         assert isinstance(slider_text_value_triangle, bool)
 
@@ -428,14 +438,14 @@ class RangeSlider(Widget):
         self._range_text_value_font = range_text_value_font
         self._range_text_value_font_height = range_text_value_font_height
         self._range_text_value_margin = 0
-        self._range_text_value_margin_factor = range_text_value_margin_factor
+        self._range_text_value_margin_factor = range_text_value_margin_f
         self._range_text_value_position = range_text_value_position
         self._range_text_value_tick_color = range_text_value_tick_color
         self._range_text_value_tick_enabled = range_text_value_tick_enabled
         self._range_text_value_tick_height = 0
-        self._range_text_value_tick_height_factor = range_text_value_tick_height_factor
+        self._range_text_value_tick_height_factor = range_text_value_tick_hfactor
         self._range_text_value_tick_number = range_text_value_tick_number
-        self._range_text_value_tick_thickness = range_text_value_tick_thickness
+        self._range_text_value_tick_thickness = range_text_value_tick_thick
         self._range_values = tuple(range_values)
         self._range_width = range_width
         self._scrolling = False
@@ -446,15 +456,15 @@ class RangeSlider(Widget):
         self._slider_height_factor = slider_height_factor
         self._slider_selected = (True, False)
         self._slider_selected_color = slider_selected_color
-        self._slider_selected_highlight_color = slider_selected_highlight_color
-        self._slider_selected_highlight_enabled = slider_selected_highlight_enabled
-        self._slider_selected_highlight_thickness = slider_selected_highlight_thickness
+        self._slider_selected_highlight_color = slider_sel_highlight_color
+        self._slider_selected_highlight_enabled = slider_sel_highlight_enabled
+        self._slider_selected_highlight_thickness = slider_sel_highlight_thick
         self._slider_text_value_bgcolor = slider_text_value_bgcolor
         self._slider_text_value_color = slider_text_value_color
         self._slider_text_value_enabled = slider_text_value_enabled
         self._slider_text_value_font = slider_text_value_font
         self._slider_text_value_font_height = slider_text_value_font_height
-        self._slider_text_value_margin_factor = slider_text_value_margin_factor
+        self._slider_text_value_margin_factor = slider_text_value_margin_f
         self._slider_text_value_padding = slider_text_value_padding
         self._slider_text_value_position = slider_text_value_position
         self._slider_text_value_triangle = slider_text_value_triangle
@@ -465,7 +475,7 @@ class RangeSlider(Widget):
         self._value_format = value_format
         self._value_hidden = default_value.copy()  # Used when dragging mouse on discrete range
 
-    def set_value(self, value: SliderValue) -> None:
+    def set_value(self, value: RangeSliderValueType) -> None:
         if self._single:
             assert isinstance(value, NumberInstance)
             # noinspection PyTypeChecker

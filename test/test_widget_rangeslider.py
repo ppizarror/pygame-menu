@@ -453,3 +453,12 @@ class RangeSliderWidgetTest(BaseTest):
 
         self.assertEqual(slider._get_slider_inflate_rect(0, to_absolute_position=True),
                          pygame.Rect(301, 209, 15, 28))
+
+    def test_kwargs(self) -> None:
+        """
+        Test rangeslider kwargs from manager.
+        """
+        menu = MenuUtils.generic_menu()
+        slider = menu.add.range_slider('Range', 0.5, (0, 1), 1, range_margin=(100, 0))
+        self.assertEqual(len(slider._kwargs), 0)
+        self.assertEqual(slider._range_margin, (100, 0))
