@@ -2,7 +2,7 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-TEST FRAME WIDGET
+TEST WIDGET - FRAME
 Test Frame. Frame is the most complex widget as this interacts with menu, modifies
 it's layout and contains other widgets.
 
@@ -775,7 +775,6 @@ class FrameWidgetTest(unittest.TestCase):
         text.set_value('')
         self.assertTrue(text.active)
         menu.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
-        print(ctrl.KEY_APPLY)
         self.assertFalse(text.active)
 
         # Set widgets as floating
@@ -2288,7 +2287,7 @@ class FrameWidgetTest(unittest.TestCase):
         menu.render()
         menu.draw(surface)
         self.assertEqual(table._update_widgets, [btn, sel])
-        print(table.get_max_size())
+        self.assertIsNotNone(table.get_max_size())
         self.assertRaises(AssertionError, lambda: table.add_row([table]))
         f = menu.add.frame_h(100, 100)
         f._relax = True
