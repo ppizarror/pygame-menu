@@ -50,9 +50,9 @@ from pygame_menu.locals import ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT, \
 from pygame_menu._scrollarea import ScrollArea, get_scrollbars_from_position
 from pygame_menu.sound import Sound
 from pygame_menu.themes import Theme, THEME_DEFAULT
-from pygame_menu.utils import widget_terminal_title, TerminalColors, is_callable, \
-    assert_vector, make_surface, check_key_pressed_valid, mouse_motion_current_mouse_position, \
-    get_finger_pos, warn
+from pygame_menu.utils import is_callable, assert_vector, make_surface, warn, \
+    check_key_pressed_valid, mouse_motion_current_mouse_position, get_finger_pos, \
+    print_menu_widget_structure
 from pygame_menu.widgets import Frame, Widget, MenuBar
 from pygame_menu.widgets.core.widget import check_widget_mouseleave, WIDGET_MOUSEOVER
 
@@ -1369,7 +1369,8 @@ class Menu(Base):
 
             # If widget within frame update col/row position
             if widget.get_frame() is not None:
-                widget.set_position_relative_to_frame(index)
+                # noinspection PyProtectedMember
+                widget._set_position_relative_to_frame(index)
                 continue
 
             # Get column and row position
@@ -3706,87 +3707,9 @@ class Menu(Base):
         """
         Test printing widgets order.
 
-        .. note::
-
-            - Φ       Floating status
-            - ⇇      Selected
-            - !▲      Widget is not appended to current menu
-            - ╳      Widget is hidden
-            - ∑       Scrollable frame sizing
-            - β       Widget is not selectable
-            - {x,y}   Widget *column, row* position
-            - <x,y>   Frame indices (min, max)
-
         :return: None
         """
-        indx = 0
-        current_depth = 0
-        depth_widths = {}
-        c = TerminalColors
-
-        def close_frames(depth: int) -> None:
-            """
-            Close frames up to current depth.
-
-            :param depth: Depth to close
-            :return: None
-            """
-            d = current_depth - depth
-            for i in range(d):
-                j = depth + d - (i + 1)  # Current depth
-                line = '·   {0}└{1}'.format('│   ' * j, '┄' * 3)  # * depth_widths[j]
-                print(c.BRIGHT_WHITE + line.ljust(0, '━') + c.ENDC)  # 80 also work
-
-        non_menu_frame_widgets: Dict[int, List['Widget']] = {}
-
-        def process_non_menu_frame(w_indx: int) -> None:
-            """
-            Print non-menu frames list.
-
-            :param w_indx: Current iteration index to print widgets
-            :return: None
-            """
-            for nmi in list(non_menu_frame_widgets.keys()):
-                if nmi == w_indx:
-                    v = non_menu_frame_widgets[nmi]
-                    for v_wid in v:
-                        print(c.BRIGHT_WHITE + '·   ' + '│   ' * v_wid.get_frame_depth()
-                              + c.ENDC + widget_terminal_title(v_wid))
-                    del non_menu_frame_widgets[nmi]
-
-        for w in self._widgets:
-            w_depth = w.get_frame_depth()
-            close_frames(w.get_frame_depth())
-            title = widget_terminal_title(w, indx, self._index)
-            print('{0}{1}{2}'.format(
-                str(indx).ljust(3),
-                ' ' + c.BRIGHT_WHITE + '│   ' * w_depth + c.ENDC,
-                title
-            ))
-            if w_depth not in depth_widths.keys():
-                depth_widths[w_depth] = 0
-            # depth_widths[w_depth] = max(int(len(title) * 1.2) + 3, depth_widths[w_depth])
-            depth_widths[w_depth] = len(title) - 2
-            current_depth = w.get_frame_depth()
-            process_non_menu_frame(indx)
-            jw = self._widgets[0]
-            try:
-                if isinstance(w, Frame):  # Print ordered non-menu widgets
-                    current_depth += 1
-                    prev_indx = indx
-                    for jw in w.get_widgets(unpack_subframes=False):
-                        if jw.get_menu() is None or jw not in self._widgets:
-                            if prev_indx not in non_menu_frame_widgets.keys():
-                                non_menu_frame_widgets[prev_indx] = []
-                            non_menu_frame_widgets[prev_indx].append(jw)
-                        else:
-                            prev_indx = self._widgets.index(jw)
-            except ValueError as e:
-                print('[ERROR] while requesting widget {0}'.format(jw.get_class_id()))
-                warn(str(e))
-            indx += 1
-        process_non_menu_frame(indx)
-        close_frames(0)
+        print_menu_widget_structure(self._widgets, self._index)
 
     def _copy_theme(self) -> None:
         """

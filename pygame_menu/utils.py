@@ -50,6 +50,7 @@ __all__ = [
     'make_surface',
     'mouse_motion_current_mouse_position',
     'parse_padding',
+    'print_menu_widget_structure',
     'set_pygame_cursor',
     'uuid4',
     'warn',
@@ -520,6 +521,98 @@ def parse_padding(padding: PaddingType) -> Tuple4IntType:
             return int(padding[0]), int(padding[1]), int(padding[2]), int(padding[1])
         else:
             return int(padding[0]), int(padding[1]), int(padding[2]), int(padding[3])
+
+
+def print_menu_widget_structure(
+        widgets: List['pygame_menu.widgets.Widget'],
+        index: int
+) -> None:
+    """
+    Test printing widgets order.
+
+    .. note::
+
+        - Φ       Floating status
+        - ⇇      Selected
+        - !▲      Widget is not appended to current menu
+        - ╳      Widget is hidden
+        - ∑       Scrollable frame sizing
+        - β       Widget is not selectable
+        - {x,y}   Widget *column, row* position
+        - <x,y>   Frame indices (min, max)
+
+    :param widgets: Menu widgets list
+    :param index: Menu index
+    :return: None
+    """
+    indx = 0
+    current_depth = 0
+    depth_widths = {}
+    c = TerminalColors
+
+    def close_frames(depth: int) -> None:
+        """
+        Close frames up to current depth.
+
+        :param depth: Depth to close
+        :return: None
+        """
+        d = current_depth - depth
+        for i in range(d):
+            j = depth + d - (i + 1)  # Current depth
+            line = '·   {0}└{1}'.format('│   ' * j, '┄' * 3)  # * depth_widths[j]
+            print(c.BRIGHT_WHITE + line.ljust(0, '━') + c.ENDC)  # 80 also work
+
+    non_menu_frame_widgets: Dict[int, List['pygame_menu.widgets.Widget']] = {}
+
+    def process_non_menu_frame(w_indx: int) -> None:
+        """
+        Print non-menu frames list.
+
+        :param w_indx: Current iteration index to print widgets
+        :return: None
+        """
+        for nmi in list(non_menu_frame_widgets.keys()):
+            if nmi == w_indx:
+                v = non_menu_frame_widgets[nmi]
+                for v_wid in v:
+                    print(c.BRIGHT_WHITE + '·   ' + '│   ' * v_wid.get_frame_depth()
+                          + c.ENDC + widget_terminal_title(v_wid))
+                del non_menu_frame_widgets[nmi]
+
+    for w in widgets:
+        w_depth = w.get_frame_depth()
+        close_frames(w.get_frame_depth())
+        title = widget_terminal_title(w, indx, index)
+        print('{0}{1}{2}'.format(
+            str(indx).ljust(3),
+            ' ' + c.BRIGHT_WHITE + '│   ' * w_depth + c.ENDC,
+            title
+        ))
+        if w_depth not in depth_widths.keys():
+            depth_widths[w_depth] = 0
+        # depth_widths[w_depth] = max(int(len(title) * 1.2) + 3, depth_widths[w_depth])
+        depth_widths[w_depth] = len(title) - 2
+        current_depth = w.get_frame_depth()
+        process_non_menu_frame(indx)
+        jw = widgets[0]
+        try:
+            if isinstance(w, pygame_menu.widgets.Frame):  # Print ordered non-menu widgets
+                current_depth += 1
+                prev_indx = indx
+                for jw in w.get_widgets(unpack_subframes=False):
+                    if jw.get_menu() is None or jw not in widgets:
+                        if prev_indx not in non_menu_frame_widgets.keys():
+                            non_menu_frame_widgets[prev_indx] = []
+                        non_menu_frame_widgets[prev_indx].append(jw)
+                    else:
+                        prev_indx = widgets.index(jw)
+        except ValueError as e:
+            print('[ERROR] while requesting widget {0}'.format(jw.get_class_id()))
+            warn(str(e))
+        indx += 1
+    process_non_menu_frame(indx)
+    close_frames(0)
 
 
 def set_pygame_cursor(cursor: CursorInputType) -> None:
