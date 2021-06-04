@@ -1876,7 +1876,7 @@ class Widget(Base):
         """
         raise NotImplementedError('override is mandatory')
 
-    def set_position_relative_to_frame(self, index: int = -1) -> 'Widget':
+    def _set_position_relative_to_frame(self, index: int = -1) -> 'Widget':
         """
         Set the Widget position relative to its frame.
 

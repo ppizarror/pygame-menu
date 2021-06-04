@@ -670,10 +670,10 @@ class DropSelect(Widget):
             else:
                 self._drop_frame.set_position(*self._compute_position_middle())
             for w in self._option_buttons:
-                w.set_position_relative_to_frame()
+                w._set_position_relative_to_frame()
             if self._placeholder_add_to_selection_box:
                 placeholder_button: 'Button' = self._drop_frame.get_attribute('placeholder_button')
-                placeholder_button.set_position_relative_to_frame()
+                placeholder_button._set_position_relative_to_frame()
             self._drop_frame.update_position()
         return self
 
