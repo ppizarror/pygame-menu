@@ -31,18 +31,17 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['DecoratorTest']
 
-from test._utils import MenuUtils, surface, TEST_THEME
+from test._utils import MenuUtils, surface, TEST_THEME, BaseTest
 import copy
 import pygame
 import pygame_menu
 import timeit
-import unittest
 
 # Configure the tests
 TEST_TIME_DRAW = False
 
 
-class DecoratorTest(unittest.TestCase):
+class DecoratorTest(BaseTest):
 
     @staticmethod
     def test_time_draw() -> None:

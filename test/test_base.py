@@ -31,13 +31,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['BaseTest']
 
-import unittest
+from test._utils import BaseTest as _BaseTest
 
 # noinspection PyProtectedMember
 from pygame_menu._base import Base
 
 
-class BaseTest(unittest.TestCase):
+class BaseTest(_BaseTest):
 
     def test_counter(self) -> None:
         """

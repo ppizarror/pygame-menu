@@ -31,14 +31,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['ThemeTest']
 
-from test._utils import MenuUtils
+from test._utils import MenuUtils, BaseTest
 from pathlib import Path
-import unittest
 
 import pygame_menu
 
 
-class ThemeTest(unittest.TestCase):
+class ThemeTest(BaseTest):
 
     def test_validation(self) -> None:
         """

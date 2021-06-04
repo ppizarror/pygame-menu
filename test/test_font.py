@@ -32,13 +32,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['FontTest']
 
 from pathlib import Path
-from test._utils import MenuUtils
-import unittest
+from test._utils import MenuUtils, BaseTest
 
 import pygame_menu
 
 
-class FontTest(unittest.TestCase):
+class FontTest(BaseTest):
 
     def test_font_load(self) -> None:
         """
