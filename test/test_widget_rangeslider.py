@@ -160,6 +160,12 @@ class RangeSliderWidgetTest(BaseTest):
         slider.update(PygameEventUtils.middle_rect_click(slider_rect, evtype=pygame.MOUSEBUTTONDOWN))
         self.assertTrue(slider._scrolling)
         self.assertTrue(slider._selected_mouse)
+        dx = pos[0] - pos2[0]
+        slider.update(PygameEventUtils.mouse_motion(slider_rect, rel=(-dx, pos[1]), update_mouse=True))
+        self.assertEqual(slider.get_value(), 0.5)
+        self.assertTrue(slider._scrolling)
+        slider.update(PygameEventUtils.middle_rect_click(pos))
+        self.assertFalse(slider._scrolling)
 
         # Check invalid constructor for single slider
         self.assertRaises(AssertionError, lambda: pygame_menu.widgets.RangeSlider(

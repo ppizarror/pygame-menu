@@ -542,7 +542,7 @@ class PygameEventUtils(object):
         )
 
     @staticmethod
-    def middle_rect_mouse_motion(
+    def mouse_motion(
             rect: Union['pygame_menu.widgets.Widget', 'pygame.Rect', Tuple2NumberType],
             inlist: bool = True,
             rel: Tuple2IntType = (0, 0),

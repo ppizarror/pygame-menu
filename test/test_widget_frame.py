@@ -1934,14 +1934,14 @@ class FrameWidgetTest(unittest.TestCase):
         self.assertFalse(frame2._frame_title.get_attribute('drag'))
         menu.update(PygameEventUtils.middle_rect_click(frame2._frame_title, evtype=pygame.MOUSEBUTTONDOWN))
         self.assertTrue(frame2._frame_title.get_attribute('drag'))
-        menu.update(PygameEventUtils.middle_rect_mouse_motion(frame2._frame_title, rel=(10, 0)))
+        menu.update(PygameEventUtils.mouse_motion(frame2._frame_title, rel=(10, 0)))
         self.assertEqual(frame2.get_translate(), (10, 0))
-        menu.update(PygameEventUtils.middle_rect_mouse_motion(frame2._frame_title, rel=(0, -500)))
+        menu.update(PygameEventUtils.mouse_motion(frame2._frame_title, rel=(0, -500)))
         self.assertEqual(frame2.get_translate(), (10, -235))  # Apply top limit
         menu.render()
 
         # Test drag with position way over the item
-        menu.update(PygameEventUtils.middle_rect_mouse_motion(frame2._frame_title, rel=(0, 100), delta=(0, -100)))
+        menu.update(PygameEventUtils.mouse_motion(frame2._frame_title, rel=(0, 100), delta=(0, -100)))
         self.assertEqual(frame2.get_translate(), (10, -235))  # Apply top limit restriction
 
         menu.update(PygameEventUtils.middle_rect_click(frame2._frame_title))
@@ -1973,10 +1973,10 @@ class FrameWidgetTest(unittest.TestCase):
         menu.update(PygameEventUtils.middle_rect_click(frame2._frame_title, evtype=pygame.MOUSEBUTTONDOWN))
         self.assertTrue(frame2._frame_title.get_attribute('drag'))
         menu.render()
-        menu.update(PygameEventUtils.middle_rect_mouse_motion(frame2._frame_title, rel=(0, 350)))
+        menu.update(PygameEventUtils.mouse_motion(frame2._frame_title, rel=(0, 350)))
         self.assertEqual(frame2.get_translate(), (10, 115))
         menu.render()
-        menu.update(PygameEventUtils.middle_rect_mouse_motion(frame2._frame_title, rel=(0, 100)))
+        menu.update(PygameEventUtils.mouse_motion(frame2._frame_title, rel=(0, 100)))
         self.assertEqual(frame2.get_translate(), (10, 115))
 
         # Test more title gradients

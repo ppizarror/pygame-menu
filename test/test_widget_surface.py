@@ -88,5 +88,5 @@ class SurfaceWidgetTest(BaseTest):
         surf_widget.set_surface(new_surface)
         self.assertEqual(surf_widget.get_size(apply_padding=False), (160, 160))
         menu.draw(surface)
-        surf_widget.update(PygameEventUtils.middle_rect_mouse_motion(surf_widget))
+        surf_widget.update(PygameEventUtils.mouse_motion(surf_widget))
         surf_widget.draw(surface)

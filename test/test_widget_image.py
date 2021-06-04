@@ -47,7 +47,7 @@ class ImageWidgetTest(BaseTest):
         image.set_title('epic')
         self.assertEqual(image.get_title(), '')
         self.assertEqual(image.get_image(), image._image)
-        image.update(PygameEventUtils.middle_rect_mouse_motion(image))
+        image.update(PygameEventUtils.mouse_motion(image))
 
         self.assertEqual(image.get_height(apply_selection=True), 264)
         self.assertFalse(image._selected)

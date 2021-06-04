@@ -1924,7 +1924,7 @@ class MenuTest(BaseRSTest):
 
         deco.add_callable(draw_rect, prev=False, pass_args=False)
         self.assertEqual(get_cursor(), cur_none)
-        menu.update(PygameEventUtils.middle_rect_mouse_motion(btn1))
+        menu.update(PygameEventUtils.mouse_motion(btn1))
         self.assertEqual(menu.get_selected_widget(), btn1)
         self.assertEqual(test, [True, False, False, False])
         self.assertEqual(WIDGET_MOUSEOVER, [btn1, [btn1, cur_none, []]])
@@ -1938,7 +1938,7 @@ class MenuTest(BaseRSTest):
         self.assertEqual(get_cursor(), cur_none)
 
         # Place over widget 2
-        menu.update(PygameEventUtils.middle_rect_mouse_motion(btn2))
+        menu.update(PygameEventUtils.mouse_motion(btn2))
         self.assertEqual(test, [True, True, True, False])
         self.assertEqual(WIDGET_MOUSEOVER, [btn2, [btn2, cur_none, []]])
         self.assertEqual(get_cursor(), cur2)
@@ -1951,12 +1951,12 @@ class MenuTest(BaseRSTest):
 
         # Test immediate switch, from 1 to 2, then from 2 to 1, then off
         test = [False, False, False, False]
-        menu.update(PygameEventUtils.middle_rect_mouse_motion(btn1))
+        menu.update(PygameEventUtils.mouse_motion(btn1))
         self.assertEqual(menu.get_selected_widget(), btn1)
         self.assertEqual(test, [True, False, False, False])
         self.assertEqual(WIDGET_MOUSEOVER, [btn1, [btn1, cur_none, []]])
         self.assertEqual(get_cursor(), cur1)
-        menu.update(PygameEventUtils.middle_rect_mouse_motion(btn2))
+        menu.update(PygameEventUtils.mouse_motion(btn2))
         self.assertEqual(menu.get_selected_widget(), btn1)
         self.assertEqual(test, [True, True, True, False])
         self.assertEqual(WIDGET_MOUSEOVER, [btn2, [btn2, cur_none, []]])
@@ -1971,12 +1971,12 @@ class MenuTest(BaseRSTest):
         test = [False, False, False, False]
         menu.select_widget(btn2)
         self.assertEqual(menu.get_selected_widget(), btn2)
-        menu.update(PygameEventUtils.middle_rect_mouse_motion(btn1))
+        menu.update(PygameEventUtils.mouse_motion(btn1))
         self.assertEqual(menu.get_selected_widget(), btn1)
         self.assertEqual(test, [True, False, False, False])
         self.assertEqual(WIDGET_MOUSEOVER, [btn1, [btn1, cur_none, []]])
         self.assertEqual(get_cursor(), cur1)
-        menu.update(PygameEventUtils.middle_rect_mouse_motion(btn2))
+        menu.update(PygameEventUtils.mouse_motion(btn2))
         self.assertEqual(menu.get_selected_widget(), btn2)
         self.assertEqual(test, [True, True, True, False])
         self.assertEqual(WIDGET_MOUSEOVER, [btn2, [btn2, cur_none, []]])
@@ -1994,7 +1994,7 @@ class MenuTest(BaseRSTest):
         # Mouseover btn1, but then hide it
         menu._mouse_motion_selection = False
         test = [False, False, False, False]
-        menu.update(PygameEventUtils.middle_rect_mouse_motion(btn1))
+        menu.update(PygameEventUtils.mouse_motion(btn1))
         self.assertEqual(test, [True, False, False, False])
         self.assertEqual(WIDGET_MOUSEOVER, [btn1, [btn1, cur_none, []]])
         self.assertEqual(get_cursor(), cur1)
@@ -2003,7 +2003,7 @@ class MenuTest(BaseRSTest):
         self.assertEqual(get_cursor(), cur_none)
 
         # Test close
-        menu.update(PygameEventUtils.middle_rect_mouse_motion(btn2))
+        menu.update(PygameEventUtils.mouse_motion(btn2))
         self.assertEqual(test, [True, True, True, False])
         self.assertEqual(WIDGET_MOUSEOVER, [btn2, [btn2, cur_none, []]])
         self.assertEqual(get_cursor(), cur2)
@@ -2011,20 +2011,20 @@ class MenuTest(BaseRSTest):
         self.assertEqual(test, [True, True, True, True])
         self.assertEqual(WIDGET_MOUSEOVER, [None, []])
         self.assertEqual(get_cursor(), cur_none)
-        btn2.mouseleave(PygameEventUtils.middle_rect_mouse_motion(btn2))
+        btn2.mouseleave(PygameEventUtils.mouse_motion(btn2))
         self.assertEqual(test, [True, True, True, True])
         self.assertEqual(WIDGET_MOUSEOVER, [None, []])
         self.assertEqual(get_cursor(), cur_none)
 
         # Enable
         menu.enable()
-        menu.update(PygameEventUtils.middle_rect_mouse_motion(btn2))
+        menu.update(PygameEventUtils.mouse_motion(btn2))
         self.assertEqual(test, [True, True, False, True])
         self.assertEqual(WIDGET_MOUSEOVER, [btn2, [btn2, cur_none, []]])
         self.assertEqual(get_cursor(), cur2)
 
         # Move to hidden
-        menu.update(PygameEventUtils.middle_rect_mouse_motion(btn1))
+        menu.update(PygameEventUtils.mouse_motion(btn1))
         self.assertEqual(test, [True, True, False, False])
         self.assertEqual(WIDGET_MOUSEOVER, [None, []])
         self.assertEqual(get_cursor(), cur_none)
@@ -2032,7 +2032,7 @@ class MenuTest(BaseRSTest):
         # Unhide
         btn1.show()
         test = [False, False, False, False]
-        prev_pos1 = PygameEventUtils.middle_rect_mouse_motion(btn1)
+        prev_pos1 = PygameEventUtils.mouse_motion(btn1)
         menu.update(prev_pos1)
         self.assertEqual(test, [True, False, False, False])
         self.assertEqual(WIDGET_MOUSEOVER, [btn1, [btn1, cur_none, []]])
@@ -2052,7 +2052,7 @@ class MenuTest(BaseRSTest):
         menu._test_print_widgets()
 
         # Select btn1
-        menu.update(PygameEventUtils.middle_rect_mouse_motion(btn1))
+        menu.update(PygameEventUtils.mouse_motion(btn1))
         self.assertEqual(WIDGET_MOUSEOVER, [btn1, [btn1, cur_none, []]])
         self.assertEqual(get_cursor(), cur1)
 
