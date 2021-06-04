@@ -171,7 +171,7 @@ class ToggleSwitch(Widget):
         assert 2 <= self._total_states, 'the minimum number of states is 2'
         assert 0 <= default_state < self._total_states, 'invalid default state value'
 
-        # Check font sizes
+        # Check fonts
         if state_text_font is not None:
             assert_font(state_text_font)
         assert isinstance(state_text_font_size, (int, type(None)))
@@ -271,6 +271,7 @@ class ToggleSwitch(Widget):
         assert isinstance(state, int), 'state value can only be an integer'
         assert 0 <= state < self._total_states, 'state value exceeds the total states'
         self._state = state
+        self._render()
 
     def scale(self, *args, **kwargs) -> 'ToggleSwitch':
         raise WidgetTransformationNotImplemented()

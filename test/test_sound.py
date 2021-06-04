@@ -31,14 +31,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['SoundTest']
 
-from test._utils import MenuUtils, SYS_PLATFORM_OSX
+from test._utils import MenuUtils, SYS_PLATFORM_OSX, BaseTest
 import copy
-import unittest
 
 import pygame_menu
 
 
-class SoundTest(unittest.TestCase):
+class SoundTest(BaseTest):
 
     def setUp(self) -> None:
         """

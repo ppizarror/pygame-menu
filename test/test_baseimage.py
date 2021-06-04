@@ -32,11 +32,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['BaseImageTest']
 
 from pathlib import Path
-from test._utils import surface, PYGAME_V2, SYS_PLATFORM_OSX
+from test._utils import surface, PYGAME_V2, SYS_PLATFORM_OSX, BaseTest
 import base64
 import copy
 import io
-import unittest
 
 import pygame
 import pygame_menu
@@ -46,7 +45,7 @@ from pygame_menu.baseimage import IMAGE_MODE_CENTER, IMAGE_MODE_FILL, IMAGE_MODE
 from pygame_menu.utils import load_pygame_image_file
 
 
-class BaseImageTest(unittest.TestCase):
+class BaseImageTest(BaseTest):
 
     def test_pathlib(self) -> None:
         """

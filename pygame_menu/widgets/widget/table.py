@@ -901,7 +901,7 @@ class Table(Frame):
         for f in self._rows:
             f.set_position(x, y)
             for w in f.get_widgets(unpack_subframes=False):
-                w.set_position_relative_to_frame()
+                w._set_position_relative_to_frame()
             f.update_position()
         return self
 

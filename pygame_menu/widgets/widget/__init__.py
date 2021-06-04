@@ -40,6 +40,7 @@ from pygame_menu.widgets.widget.label import Label
 from pygame_menu.widgets.widget.menubar import MenuBar
 from pygame_menu.widgets.widget.menulink import MenuLink
 from pygame_menu.widgets.widget.none import NoneWidget
+from pygame_menu.widgets.widget.rangeslider import RangeSlider
 from pygame_menu.widgets.widget.scrollbar import ScrollBar
 from pygame_menu.widgets.widget.selector import Selector
 from pygame_menu.widgets.widget.surface import SurfaceWidget

@@ -553,7 +553,7 @@ class ScrollBar(Widget):
                 )
 
                 # If mouse outside region and scroll is on limits, ignore
-                mx, my = pygame.mouse.get_pos() if event.type == pygame.MOUSEMOTION else \
+                mx, my = event.pos if event.type == pygame.MOUSEMOTION else \
                     get_finger_pos(self._menu, event)
                 if self.get_value_percentage() in (0, 1) and \
                         self.get_scrollarea() is not None and \

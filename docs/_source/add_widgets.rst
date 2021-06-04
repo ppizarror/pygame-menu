@@ -435,6 +435,42 @@ drawing callbacks for being executed on each menu draw.
 .. automethod:: pygame_menu._widgetmanager.WidgetManager.none_widget
 
 
+Add a range slider
+------------------
+
+A range slider offers 1 or 2 sliders for defining a unique value or a range of numeric
+ones; values can be continuous or discrete.
+
+**Example:**
+
+.. image:: ../_static/widget_rangeslider.png
+    :scale: 75%
+    :align: center
+
+.. code-block:: python
+
+    menu = pygame_menu.Menu(...)
+
+    # Single value
+    menu.add.range_slider('Choose a number', 50, (0, 100), 1,
+                          rangeslider_id='range_slider',
+                          value_format=lambda x: str(int(x)))
+
+    # Range
+    menu.add.range_slider('Pick a range', (7, 10), (1, 10), 1)
+
+    # Discrete value
+    range_values_discrete = {0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E', 5: 'F'}
+    menu.add.range_slider('Pick a letter', 0, list(range_values_discrete.keys()),
+                          slider_text_value_enabled=False,
+                          value_format=lambda x: range_values_discrete[x])
+
+    # Numeric discrete range
+    menu.add.range_slider('Pick a discrete range', (2, 4), [0, 1, 2, 3, 4, 5], 1)
+
+.. automethod:: pygame_menu._widgetmanager.WidgetManager.range_slider
+
+
 Add a surface
 -------------
 

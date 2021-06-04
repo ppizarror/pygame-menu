@@ -31,9 +31,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['SelectionTest']
 
-from test._utils import MenuUtils, surface
+from test._utils import MenuUtils, surface, BaseTest
 import copy
-import unittest
 
 from pygame_menu.widgets import Button
 from pygame_menu.widgets.selection import LeftArrowSelection, RightArrowSelection, \
@@ -43,7 +42,7 @@ from pygame_menu.widgets.core.selection import Selection
 from pygame_menu.widgets.selection.arrow_selection import ArrowSelection
 
 
-class SelectionTest(unittest.TestCase):
+class SelectionTest(BaseTest):
 
     def setUp(self) -> None:
         """

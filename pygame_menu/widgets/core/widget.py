@@ -1289,7 +1289,8 @@ class Widget(Base):
         """
         Draw Widget if selected after all widgets have been drawn. This method
         should also update ``last_surface``; see
-        :py:class:`pygame_menu.widgets.DropSelect` widget example.
+        :py:class:`pygame_menu.widgets.DropSelect` widget example or
+        :py:class:`pygame_menu.widgets.RangeSlider`.
 
         :param surface: Surface to draw. ``None`` if frame is requesting the draw, as some widgets are drawn outside the frame surface
         :return: Self reference
@@ -1382,7 +1383,7 @@ class Widget(Base):
 
     def scroll_to_widget(self, margin: Tuple2NumberType = (0, 0), scroll_parent: bool = True) -> 'Widget':
         """
-        Scroll to widget.
+        The container ScrollArea scrolls to the Widget.
 
         :param margin: Extra margin around the rect in px on x-axis and y-axis
         :param scroll_parent: If ``True`` parent scroll also scrolls to widget
@@ -1791,7 +1792,7 @@ class Widget(Base):
 
     def get_font_info(self) -> Dict[str, Any]:
         """
-        Return a dict with the information of the widget font.
+        Return a dict with the information of the Widget font.
 
         :return: Font information dict
         """
@@ -1875,7 +1876,7 @@ class Widget(Base):
         """
         raise NotImplementedError('override is mandatory')
 
-    def set_position_relative_to_frame(self, index: int = -1) -> 'Widget':
+    def _set_position_relative_to_frame(self, index: int = -1) -> 'Widget':
         """
         Set the Widget position relative to its frame.
 

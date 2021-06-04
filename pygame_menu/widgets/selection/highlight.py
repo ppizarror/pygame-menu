@@ -82,7 +82,6 @@ class HighlightSelection(Selection):
         pygame.draw.rect(
             surface,
             self.color,
-            # self.inflate(widget.get_rect(), inflate=(-2 * self._border_width, -2 * self._border_width)),
             self.inflate(widget.get_rect()),
             self._border_width
         )

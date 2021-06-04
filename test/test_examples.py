@@ -31,9 +31,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['ExamplesTest']
 
-from test._utils import test_reset_surface, MenuUtils, PygameEventUtils, \
+from test._utils import BaseRSTest, MenuUtils, PygameEventUtils, \
     SYS_PLATFORM_OSX
-import unittest
 
 import pygame
 import pygame_menu
@@ -53,7 +52,7 @@ import pygame_menu.examples.other.scrollbar_area as scrollbar_area
 import pygame_menu.examples.other.ui_solar_system as ui_solarsystem
 
 
-class ExamplesTest(unittest.TestCase):
+class ExamplesTest(BaseRSTest):
 
     def test_example_game_selector(self) -> None:
         """
@@ -69,7 +68,6 @@ class ExamplesTest(unittest.TestCase):
         self.assertRaises(ValueError,
                           lambda: game_selector.play_function(['U'], font, test=True))
         game_selector.change_difficulty(('HARD', 1), 'HARD')
-        test_reset_surface()
 
     @staticmethod
     def test_example_multi_input() -> None:
@@ -89,7 +87,6 @@ class ExamplesTest(unittest.TestCase):
         # noinspection PyTypeChecker
         hex_color_widget: 'pygame_menu.widgets.ColorInput' = more_settings.get_widget('hex_color')
         hex_color_widget.apply()
-        test_reset_surface()
 
     @staticmethod
     def test_example_scroll_menu() -> None:
@@ -99,7 +96,6 @@ class ExamplesTest(unittest.TestCase):
         scroll_menu.main(test=True)
         scroll_menu.on_button_click('pygame-menu', 'epic')
         scroll_menu.on_button_click('pygame-menu')
-        test_reset_surface()
 
     @staticmethod
     def test_example_simple() -> None:
@@ -123,7 +119,6 @@ class ExamplesTest(unittest.TestCase):
         timer_clock.TestCallClassMethod.update_game_settings()
         color = (-1, -1, -1)
         timer_clock.change_color_bg((color, 'random',), color, write_on_console=True)
-        test_reset_surface()
 
     def test_example_other_calculator(self) -> None:
         """
@@ -188,8 +183,6 @@ class ExamplesTest(unittest.TestCase):
         b1.select(False)
         self.assertFalse(b1d.is_enabled(lay))
 
-        test_reset_surface()
-
     def test_example_other_dynamic_button_append(self) -> None:
         """
         Test dynamic button example.
@@ -199,7 +192,6 @@ class ExamplesTest(unittest.TestCase):
         btn.apply()
         self.assertEqual(btn.get_counter_attribute('count'), 1)
         dynamic_button.main(test=True)
-        test_reset_surface()
 
     @staticmethod
     def test_example_other_dynamic_widget_update() -> None:
@@ -212,7 +204,6 @@ class ExamplesTest(unittest.TestCase):
         dynamic_widget.main(test=True)
         app.fake_quit()
         app._on_selector_change(3, 3)
-        test_reset_surface()
 
     @staticmethod
     def test_example_other_image_background() -> None:
@@ -220,7 +211,6 @@ class ExamplesTest(unittest.TestCase):
         Test background image example.
         """
         image_background.main(test=True)
-        test_reset_surface()
 
     @staticmethod
     def test_example_other_scrollbar() -> None:
@@ -232,7 +222,6 @@ class ExamplesTest(unittest.TestCase):
         scrollbar.main(test=True)
         scrollbar.h_changed(1)
         scrollbar.v_changed(1)
-        test_reset_surface()
 
     @staticmethod
     def test_example_other_scrollbar_area() -> None:
@@ -241,7 +230,6 @@ class ExamplesTest(unittest.TestCase):
         """
         pygame.event.post(PygameEventUtils.keydown(pygame.K_ESCAPE, inlist=False))
         scrollbar_area.main(test=True)
-        test_reset_surface()
 
     def test_example_other_ui_solar_system(self) -> None:
         """
@@ -257,4 +245,3 @@ class ExamplesTest(unittest.TestCase):
         app.process_events(PygameEventUtils.keydown([pygame.K_p, pygame.K_q, pygame.K_e, pygame.K_s, pygame.K_c]),
                            app.menu)
         self.assertFalse(app.menu._disable_draw)
-        test_reset_surface()

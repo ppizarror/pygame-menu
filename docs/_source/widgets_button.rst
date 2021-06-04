@@ -9,4 +9,4 @@ Button
     :members:
     :show-inheritance:
     :inherited-members:
-    :exclude-members: set_onchange, change
+    :exclude-members: draw_after_if_selected, set_onchange, change, set_default_value, set_value, reset_value

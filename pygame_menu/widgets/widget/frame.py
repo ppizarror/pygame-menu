@@ -882,7 +882,7 @@ class Frame(Widget):
             tx, ty = self.get_translate()
             self._frame_title.set_position(x - pad[3] + tx, y - pad[0] + ty)
             for w in self._frame_title.get_widgets():
-                w.set_position_relative_to_frame()
+                w._set_position_relative_to_frame()
         super(Frame, self).set_position(x, y)
         if self.is_scrollable:
             self._frame_scrollarea.set_position(self._rect.x,

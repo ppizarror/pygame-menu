@@ -47,7 +47,7 @@ icon = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU).ge
 pygame.display.set_icon(icon)
 
 # Set example, only this should change
-EXAMPLE = 'DROPSELECT_MULTIPLE'
+EXAMPLE = 'RANGESLIDER'
 
 # Create example
 menu: 'pygame_menu.Menu'
@@ -101,6 +101,7 @@ def func(name):
     print('Hello world from', name)  # name will be 'foo'
 
 
+# Init examples
 if EXAMPLE == 'BUTTON':
     menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'Button')
     about_menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'About')
@@ -282,7 +283,6 @@ elif EXAMPLE == 'MENU_LINK':
         ('Menu 3', link3)
     ], onreturn=open_link)
 
-
 elif EXAMPLE == 'LABEL':
     menu = make_menu(pygame_menu.themes.THEME_BLUE, 'Label')
 
@@ -291,6 +291,26 @@ elif EXAMPLE == 'LABEL':
            'Press UP/DOWN to move through Menu ' \
            'Press LEFT/RIGHT to move through Selectors.'
     menu.add.label(HELP, max_char=-1, font_size=20)
+
+elif EXAMPLE == 'RANGESLIDER':
+    menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'Range Slider', widget_font_size=18)
+
+    # Single value
+    menu.add.range_slider('Choose a number', 50, (0, 100), 1,
+                          rangeslider_id='range_slider',
+                          value_format=lambda x: str(int(x)))
+
+    # Range
+    menu.add.range_slider('Pick a range', (7, 10), (1, 10), 1)
+
+    # Discrete value
+    range_values_discrete = {0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E', 5: 'F'}
+    menu.add.range_slider('Pick a letter', 0, list(range_values_discrete.keys()),
+                          slider_text_value_enabled=False,
+                          value_format=lambda x: range_values_discrete[x])
+
+    # Numeric discrete range
+    menu.add.range_slider('Pick a discrete range', (2, 4), [0, 1, 2, 3, 4, 5], 1)
 
 elif EXAMPLE == 'SELECTOR':
     menu = make_menu(pygame_menu.themes.THEME_ORANGE, 'Selector')

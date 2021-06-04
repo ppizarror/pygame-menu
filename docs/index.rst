@@ -137,6 +137,7 @@ class. The currently existing classes are:
     - :py:class:`~pygame_menu.widgets.MenuBar`
     - :py:class:`~pygame_menu.widgets.MenuLink`
     - :py:class:`~pygame_menu.widgets.NoneWidget`
+    - :py:class:`~pygame_menu.widgets.RangeSlider`
     - :py:class:`~pygame_menu.widgets.ScrollBar`
     - :py:class:`~pygame_menu.widgets.Selector`
     - :py:class:`~pygame_menu.widgets.SurfaceWidget`
@@ -167,6 +168,7 @@ to display large custom surfaces.
     _source/widgets_menubar
     _source/widgets_menulink
     _source/widgets_none
+    _source/widgets_rangeslider
     _source/widgets_scrollbar
     _source/widgets_selector
     _source/widgets_surface

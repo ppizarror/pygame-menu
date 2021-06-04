@@ -221,6 +221,22 @@ def main(test: bool = False) -> None:
                                     toggleswitch_id='second_switch',
                                     state_text=('Apagado', 'Encencido'))
 
+    # Single value from range
+    settings_menu.add.range_slider('Choose a number', 50, (0, 100), 1,
+                                   rangeslider_id='range_slider',
+                                   value_format=lambda x: str(int(x)))
+
+    # Range
+    settings_menu.add.range_slider('How do you rate pygame-menu?', (7, 10), (1, 10), 1,
+                                   rangeslider_id='range_slider_double')
+
+    # Create discrete range
+    range_values_discrete = {0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E', 5: 'F'}
+    settings_menu.add.range_slider('Pick a letter', 0, list(range_values_discrete.keys()),
+                                   rangeslider_id='range_slider_discrete',
+                                   slider_text_value_enabled=False,
+                                   value_format=lambda x: range_values_discrete[x])
+
     def data_fun() -> None:
         """
         Print data of the menu.

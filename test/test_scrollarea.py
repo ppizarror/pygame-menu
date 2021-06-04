@@ -32,9 +32,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['ScrollAreaTest']
 
 import copy
-import unittest
 from test._utils import MenuUtils, PygameEventUtils, surface, TEST_THEME, PYGAME_V2, \
-    SYS_PLATFORM_OSX
+    SYS_PLATFORM_OSX, BaseTest
 
 import pygame
 import pygame_menu
@@ -44,11 +43,12 @@ from pygame_menu.locals import POSITION_SOUTHEAST, POSITION_CENTER, POSITION_NOR
     POSITION_WEST, POSITION_NORTH, SCROLLAREA_POSITION_FULL, \
     SCROLLAREA_POSITION_BOTH_VERTICAL, SCROLLAREA_POSITION_BOTH_HORIZONTAL, \
     INPUT_TEXT, ORIENTATION_VERTICAL, ORIENTATION_HORIZONTAL
+
 # noinspection PyProtectedMember
 from pygame_menu._scrollarea import get_scrollbars_from_position
 
 
-class ScrollAreaTest(unittest.TestCase):
+class ScrollAreaTest(BaseTest):
 
     def test_scrollarea_position(self) -> None:
         """

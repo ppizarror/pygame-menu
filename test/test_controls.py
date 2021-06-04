@@ -31,15 +31,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['ControlsTest']
 
-from test._utils import MenuUtils, PygameEventUtils
-import unittest
+from test._utils import MenuUtils, PygameEventUtils, BaseTest
 
 from pygame import K_RETURN, K_END
 
 import pygame_menu.controls as ctrl
 
 
-class ControlsTest(unittest.TestCase):
+class ControlsTest(BaseTest):
 
     def test_config(self) -> None:
         """

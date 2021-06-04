@@ -587,7 +587,7 @@ class DropSelect(Widget):
 
     def scrollh(self, value: NumberType) -> 'DropSelect':
         """
-        Scroll to horizontal value.
+        Scroll drop frame to horizontal value.
 
         :param value: Horizontal scroll value, if ``0`` scroll to left; ``1`` scroll to right
         :return: Self reference
@@ -598,7 +598,7 @@ class DropSelect(Widget):
 
     def scrollv(self, value: NumberType) -> 'DropSelect':
         """
-        Scroll to vertical value.
+        Scroll drop frame to vertical value.
 
         :param value: Vertical scroll value, if ``0`` scroll to top; ``1`` scroll to bottom
         :return: Self reference
@@ -670,10 +670,10 @@ class DropSelect(Widget):
             else:
                 self._drop_frame.set_position(*self._compute_position_middle())
             for w in self._option_buttons:
-                w.set_position_relative_to_frame()
+                w._set_position_relative_to_frame()
             if self._placeholder_add_to_selection_box:
                 placeholder_button: 'Button' = self._drop_frame.get_attribute('placeholder_button')
-                placeholder_button.set_position_relative_to_frame()
+                placeholder_button._set_position_relative_to_frame()
             self._drop_frame.update_position()
         return self
 
@@ -705,8 +705,7 @@ class DropSelect(Widget):
         surface.blit(self._surface, self._rect.topleft)
 
     def draw_after_if_selected(self, surface: Optional['pygame.Surface']) -> 'DropSelect':
-        if self.is_selected() and self._selection_effect_draw_post:
-            self._selection_effect.draw(surface, self)
+        super(DropSelect, self).draw_after_if_selected(surface)
         if self.active and self.is_visible():
             self._check_drop_made()
 
@@ -1006,6 +1005,9 @@ class DropSelect(Widget):
                 btn.set_background_color(self._selection_box_bgcolor)
                 btn.update_font({'color': self._selection_option_font_style['color']})
 
+        # Force render
+        self._render()
+
     def update_items(self, items: Union[List[Tuple[Any, ...]], List[str]]) -> None:
         """
         Update drop select items.
@@ -1190,7 +1192,7 @@ class DropSelect(Widget):
                 return True
 
             # Press keys which active the drop but not apply
-            elif keydown and (event.key == pygame.K_TAB):
+            elif keydown and (event.key == ctrl.KEY_TAB):
                 self._toggle_drop()
                 return True
 
