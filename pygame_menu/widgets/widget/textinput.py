@@ -1210,7 +1210,7 @@ class TextInput(Widget):
             self._cursor_surface.fill(self._cursor_color)
         self._selection_active = False
         self.force_menu_surface_cache_update()
-        return removed
+        return True
 
     def _get_selected_text(self) -> str:
         """
@@ -1605,7 +1605,6 @@ class TextInput(Widget):
 
                 # User press ctrl+something
                 if pygame.key.get_mods() in CTRL_KMOD:
-
                     # If test, disable CTRL
                     if 'test' in event.dict and event.dict['test']:
                         # noinspection PyArgumentList
@@ -1715,7 +1714,6 @@ class TextInput(Widget):
 
                 # Backspace button, delete text from right
                 if event.key == pygame.K_BACKSPACE:
-
                     # Play sound
                     if self._cursor_position == 0:
                         self._sound.play_event_error()
@@ -1735,7 +1733,6 @@ class TextInput(Widget):
 
                 # Delete button, delete text from left
                 elif event.key == pygame.K_DELETE:
-
                     # Play sound
                     if self._cursor_position == len(self._input_string):
                         self._sound.play_event_error()
@@ -1755,7 +1752,6 @@ class TextInput(Widget):
 
                 # Right arrow
                 elif event.key == pygame.K_RIGHT:
-
                     # Play sound
                     if self._cursor_position == len(self._input_string):
                         self._sound.play_event_error()
@@ -1784,7 +1780,6 @@ class TextInput(Widget):
 
                 # Left arrow
                 elif event.key == pygame.K_LEFT:
-
                     # Play sound
                     if self._cursor_position == 0:
                         self._sound.play_event_error()
@@ -1878,6 +1873,7 @@ class TextInput(Widget):
                             'check if event has defined the proper unicode char'
                             ''.format(self.get_class_id(), event.unicode, event.key)
                         )
+                        break
 
                     # Error in char, not valid or string limit exceeds
                     if not self._push_key_input(event.unicode):
@@ -1947,16 +1943,10 @@ class TextInput(Widget):
                     0] = self._keyrepeat_initial_interval_ms - self._keyrepeat_interval_ms
 
                 event_key, event_unicode = key, self._keyrepeat_counters[key][1]
-                try:
-                    # noinspection PyArgumentList
-                    self._add_event(
-                        pygame.event.Event(pygame.KEYDOWN,
-                                           key=event_key,
-                                           unicode=event_unicode)
-                    )
-
-                # If the keys are too fast pygame can raise a Sound Exception
-                except pygame.error:
-                    pass
+                self._add_event(
+                    pygame.event.Event(pygame.KEYDOWN,
+                                       key=event_key,
+                                       unicode=event_unicode)
+                )
 
         return updated

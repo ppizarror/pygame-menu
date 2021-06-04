@@ -74,18 +74,6 @@ class TextInputWidgetTest(BaseTest):
         textinput.clear()
         self.assertEqual(textinput.get_value(), '')
 
-        password_input = menu.add.text_input('title', password=True, input_underline='_')
-        self.assertRaises(ValueError,  # Password cannot be set
-                          lambda: password_input.set_value('new_value'))
-        password_input.set_value('')  # No error
-        password_input._selected = False
-        password_input.draw(surface)
-        password_input.select(update_menu=True)
-        password_input.draw(surface)
-        self.assertEqual(password_input.get_value(), '')
-        password_input.clear()
-        self.assertEqual(password_input.get_value(), '')
-
         # Create selection box
         string = 'the text'
         textinput._cursor_render = True
@@ -95,62 +83,6 @@ class TextInputWidgetTest(BaseTest):
         textinput.draw(surface)
         textinput._unselect_text()
         textinput.draw(surface)
-
-        # Test maxchar and undo/redo
-        textinput = menu.add.text_input('title',
-                                        input_underline='_',
-                                        maxchar=20)
-        textinput.set_value('the size of this textinput is way greater than the limit')
-        self.assertEqual(textinput.get_value(), 'eater than the limit')  # same as maxchar
-        self.assertEqual(textinput._cursor_position, 20)
-        textinput._undo()  # This must set default at ''
-        self.assertEqual(textinput.get_value(), '')
-        textinput._redo()
-        self.assertEqual(textinput.get_value(), 'eater than the limit')
-        textinput.draw(surface)
-        textinput._copy()
-        textinput._paste()
-        textinput._block_copy_paste = False
-        textinput._select_all()
-        textinput._cut()
-        self.assertEqual(textinput.get_value(), '')
-        textinput._undo()
-        self.assertEqual(textinput.get_value(), 'eater than the limit')
-
-        # Test copy/paste
-        textinput_nocopy = menu.add.text_input('title',
-                                               input_underline='_',
-                                               maxwidth=20,
-                                               copy_paste_enable=False)
-        textinput_nocopy.set_value('this cannot be copied')
-        textinput_nocopy._copy()
-        textinput_nocopy._paste()
-        textinput_nocopy._cut()
-        self.assertEqual(textinput_nocopy.get_value(), 'this cannot be copied')
-
-        # Test copy/paste without block
-        textinput_copy = menu.add.text_input('title',
-                                             input_underline='_',
-                                             maxwidth=20,
-                                             maxchar=20)
-        textinput_copy.set_value('this value should be cropped as this is longer than the max char')
-        self.assertFalse(textinput_copy._block_copy_paste)
-        textinput_copy._copy()
-        self.assertTrue(textinput_copy._block_copy_paste)
-        textinput_copy._block_copy_paste = False
-        textinput_copy._select_all()
-        textinput_copy._cut()
-        self.assertEqual(textinput_copy.get_value(), '')
-        textinput_copy._block_copy_paste = False
-        textinput_copy._paste()
-        #  self.assertEqual(textinput_copy.get_value(), 'er than the max char')
-        textinput_copy._cut()
-        textinput_copy._block_copy_paste = False
-        # self.assertEqual(textinput_copy.get_value(), '')
-        textinput_copy._valid_chars = ['e', 'r']
-        textinput_copy._paste()
-        # noinspection SpellCheckingInspection
-        # self.assertEqual(textinput_copy.get_value(), 'erer')
 
         # Assert events
         textinput.update(PygameEventUtils.key(0, keydown=True, testmode=False))
@@ -186,6 +118,24 @@ class TextInputWidgetTest(BaseTest):
         textinput.update(PygameEventUtils.keydown_mod_ctrl(pygame.K_z))  # undo
         self.assertEqual(textinput.get_value(), 'test')
 
+        # Test ignore ctrl events
+        textinput._copy_paste_enabled = False
+        self.assertFalse(textinput.update(PygameEventUtils.keydown_mod_ctrl(pygame.K_c)))
+        self.assertFalse(textinput.update(PygameEventUtils.keydown_mod_ctrl(pygame.K_v)))
+        max_history = textinput._max_history
+        textinput._max_history = 0
+        self.assertFalse(textinput.update(PygameEventUtils.keydown_mod_ctrl(pygame.K_z)))
+        self.assertFalse(textinput.update(PygameEventUtils.keydown_mod_ctrl(pygame.K_y)))
+        self.assertFalse(textinput.update(PygameEventUtils.keydown_mod_ctrl(pygame.K_x)))
+        textinput._selection_enabled = False
+        self.assertFalse(textinput.update(PygameEventUtils.keydown_mod_ctrl(pygame.K_a)))
+        self.assertFalse(textinput.update(PygameEventUtils.keydown_mod_ctrl(pygame.K_r)))  # invalid
+
+        # Reset
+        textinput._copy_paste_enabled = True
+        textinput._max_history = max_history
+        textinput._selection_enabled = True
+
         # Test selection, if user selects all and types anything the selected
         # text must be destroyed
         textinput.update(PygameEventUtils.keydown_mod_ctrl(pygame.K_a))  # select all
@@ -198,7 +148,43 @@ class TextInputWidgetTest(BaseTest):
         textinput.update(PygameEventUtils.keydown_mod_ctrl(pygame.K_a))
         self.assertEqual(textinput._get_selected_text(), 'test')
         textinput.update(PygameEventUtils.key(pygame.K_t, keydown=True, char='t'))
-        textinput.update(PygameEventUtils.key(pygame.K_ESCAPE, keydown=True))
+        textinput._select_all()
+        self.assertTrue(textinput.update(PygameEventUtils.key(pygame.K_ESCAPE, keydown=True)))
+        textinput._select_all()
+        self.assertTrue(textinput.update(PygameEventUtils.key(pygame.K_BACKSPACE, keydown=True)))
+        self.assertEqual(textinput.get_value(), '')
+        textinput.set_value('t')
+
+        # Releasing shift disable selection
+        textinput._selection_active = True
+        textinput.update(PygameEventUtils.key(pygame.K_LSHIFT, keyup=True))
+        self.assertFalse(textinput._selection_active)
+
+        # Arrows while selection
+        textinput._select_all()
+        self.assertIsNotNone(textinput._selection_surface)
+        textinput.update(PygameEventUtils.key(pygame.K_LEFT, keydown=True))
+        self.assertIsNone(textinput._selection_surface)
+        textinput._select_all()
+        self.assertIsNotNone(textinput._selection_surface)
+        textinput.update(PygameEventUtils.key(pygame.K_RIGHT, keydown=True))
+        self.assertIsNone(textinput._selection_surface)
+
+        textinput._select_all()
+        textinput._selection_active = True
+        self.assertEqual(textinput._selection_box, [0, 1])
+        textinput.update(PygameEventUtils.key(pygame.K_LEFT, keydown=True))
+        self.assertEqual(textinput._selection_box, [0, 0])
+        textinput._select_all()
+        textinput._selection_active = True
+        textinput.update(PygameEventUtils.key(pygame.K_RIGHT, keydown=True))
+        self.assertEqual(textinput._selection_box, [0, 1])
+
+        # Remove while selection
+        textinput._select_all()
+        textinput.update(PygameEventUtils.key(pygame.K_DELETE, keydown=True))
+        self.assertEqual(textinput.get_value(), '')
+        textinput.set_value('t')
 
         # Now the value must be t
         self.assertEqual(textinput._get_selected_text(), '')
@@ -211,6 +197,113 @@ class TextInputWidgetTest(BaseTest):
         textinput.update(PygameEventUtils.key(pygame.K_t, keydown=True, char='k'))
         self.assertEqual(textinput.get_value(), 'tk')
         textinput.readonly = False
+
+        # Test keyup
+        self.assertIn(pygame.K_t, textinput._keyrepeat_counters.keys())
+        self.assertFalse(textinput.update(
+            PygameEventUtils.key(pygame.K_t, keyup=True, char='1')))
+        self.assertNotIn(pygame.K_t, textinput._keyrepeat_counters.keys())
+
+        # Test tab
+        self.assertEqual(textinput._tab_size, 4)
+        textinput.update(PygameEventUtils.key(pygame.K_TAB, keydown=True))
+        self.assertEqual(textinput.get_value(), 'tk    ')
+
+        # Test invalid unicode
+        self.assertFalse(textinput.update(PygameEventUtils.key(pygame.K_1, keydown=True)))
+
+        # Up/Down disable active status
+        textinput.active = True
+        textinput.update(PygameEventUtils.key(ctrl.KEY_MOVE_UP, keydown=True))
+        self.assertFalse(textinput.active)
+        textinput.active = True
+        textinput.update(PygameEventUtils.key(ctrl.KEY_MOVE_DOWN, keydown=True))
+        self.assertFalse(textinput.active)
+        textinput.active = True
+        self.assertTrue(textinput.update(PygameEventUtils.key(pygame.K_ESCAPE, keydown=True)))
+        self.assertFalse(textinput.active)
+
+        # Test mouse
+        textinput._selected = True
+        textinput._selection_time = 0
+        textinput.update(PygameEventUtils.middle_rect_click(textinput))
+        self.assertTrue(textinput._cursor_visible)
+        textinput._select_all()
+        textinput._selection_active = True
+        self.assertEqual(textinput._cursor_position, 6)
+        self.assertEqual(textinput._selection_box, [0, 6])
+        textinput.update(PygameEventUtils.middle_rect_click(textinput, evtype=pygame.MOUSEBUTTONDOWN))
+        self.assertEqual(textinput._selection_box, [0, 0])
+
+        # Check click pos
+        textinput._check_mouse_collide_input(PygameEventUtils.middle_rect_click(textinput)[0].pos)
+        self.assertEqual(textinput._cursor_position, 6)
+
+        # Test touch
+        textinput._cursor_position = 0
+        textinput._check_touch_collide_input(PygameEventUtils.middle_rect_click(textinput)[0].pos)
+        self.assertEqual(textinput._cursor_position, 6)
+
+        # Update mouse
+        for i in range(50):
+            textinput.update(PygameEventUtils.key(pygame.K_t, keydown=True, char='t'))
+        textinput._update_cursor_mouse(50)
+        textinput._cursor_render = True
+        textinput._render_cursor()
+
+        # Test multiple are selected
+        menu.add.text_input('title', password=True, input_underline='_').select()
+        self.assertRaises(pygame_menu.menu._MenuMultipleSelectedWidgetsException, lambda: menu.draw(surface))
+        textinput.clear()
+        textinput.select(update_menu=True)
+        menu.draw(surface)
+
+        # Clear the menu
+        self.assertEqual(menu._stats.removed_widgets, 0)
+        self.assertEqual(textinput.get_menu(), menu)
+        menu.clear()
+        self.assertIsNone(textinput.get_menu())
+        self.assertEqual(menu._stats.removed_widgets, 3)
+        menu.add.generic_widget(textinput)
+        self.assertEqual(textinput.get_menu(), menu)
+        menu.clear()
+        self.assertEqual(menu._stats.removed_widgets, 4)
+
+    def test_password(self) -> None:
+        """
+        Test password.
+        """
+        if SYS_PLATFORM_OSX:
+            return
+
+        menu = MenuUtils.generic_menu()
+
+        password_input = menu.add.text_input('title', password=True, input_underline='_')
+        self.assertRaises(ValueError,  # Password cannot be set
+                          lambda: password_input.set_value('new_value'))
+        password_input.set_value('')  # No error
+        password_input._selected = False
+        password_input.draw(surface)
+        password_input.select(update_menu=True)
+        password_input.draw(surface)
+        self.assertEqual(password_input.get_value(), '')
+        password_input.clear()
+        self.assertEqual(password_input.get_value(), '')
+
+        # Test none width password
+        password_input._password_char = ''
+        self.assertRaises(ValueError, lambda: password_input._apply_font())
+
+    def test_unicode(self) -> None:
+        """
+        Test unicode support.
+        """
+        if SYS_PLATFORM_OSX:
+            return
+
+        menu = MenuUtils.generic_menu()
+        textinput = menu.add.text_input('title', input_underline='_')
+        textinput.set_value('tk')
 
         # Test alt+x
         textinput.update(PygameEventUtils.key(pygame.K_SPACE, keydown=True))
@@ -267,57 +360,117 @@ class TextInputWidgetTest(BaseTest):
         textinput.update(PygameEventUtils.keydown_mod_alt(pygame.K_x))
         self.assertEqual(textinput.get_value(), '±±')
 
+        # Test keyup
+        self.assertIn(pygame.K_1, textinput._keyrepeat_counters.keys())
+        self.assertFalse(textinput.update(
+            PygameEventUtils.key(pygame.K_1, keyup=True, char='1')))
+        self.assertNotIn(pygame.K_1, textinput._keyrepeat_counters.keys())
+
         # Test tab
         self.assertEqual(textinput._tab_size, 4)
         textinput.update(PygameEventUtils.key(pygame.K_TAB, keydown=True))
         self.assertEqual(textinput.get_value(), '±±    ')
 
-        # Test mouse
-        textinput._selected = True
-        textinput._selection_time = 0
-        textinput.update(PygameEventUtils.middle_rect_click(textinput))
-        self.assertTrue(textinput._cursor_visible)
+        # Test invalid unicode
+        self.assertFalse(textinput.update(PygameEventUtils.key(pygame.K_1, keydown=True)))
+
+        # Test others
+        textinput._input_type = 'other'
+        self.assertTrue(textinput._check_input_type('-'))
+        self.assertFalse(textinput._check_input_type('x'))
+        textinput._maxwidth_update = None
+        self.assertIsNone(textinput._update_maxlimit_renderbox())
+
+    def test_undo_redo(self) -> None:
+        """
+        Test undo/redo.
+        """
+        if SYS_PLATFORM_OSX:
+            return
+
+        menu = MenuUtils.generic_menu()
+
+        # Test maxchar and undo/redo
+        textinput = menu.add.text_input('title',
+                                        input_underline='_',
+                                        maxchar=20)
+        textinput.set_value('the size of this textinput is way greater than the limit')
+        self.assertEqual(textinput.get_value(), 'eater than the limit')  # same as maxchar
+        self.assertEqual(textinput._cursor_position, 20)
+        textinput._undo()  # This must set default at ''
+        self.assertEqual(textinput.get_value(), '')
+        textinput._redo()
+        self.assertEqual(textinput.get_value(), 'eater than the limit')
+        textinput.draw(surface)
+        textinput._copy()
+        textinput._paste()
+        textinput._block_copy_paste = False
         textinput._select_all()
-        textinput._selection_active = True
-        self.assertEqual(textinput._cursor_position, 6)
-        self.assertEqual(textinput._selection_box, [0, 6])
-        textinput.update(PygameEventUtils.middle_rect_click(textinput, evtype=pygame.MOUSEBUTTONDOWN))
-        self.assertEqual(textinput._selection_box, [0, 0])
+        textinput._cut()
+        self.assertEqual(textinput.get_value(), '')
+        textinput._undo()
+        self.assertEqual(textinput.get_value(), 'eater than the limit')
 
-        # Check click pos
-        textinput._check_mouse_collide_input(PygameEventUtils.middle_rect_click(textinput)[0].pos)
-        self.assertEqual(textinput._cursor_position, 6)
+        self.assertEqual(textinput._history_index, 1)
+        textinput._history_index = 0
+        self.assertFalse(textinput._undo())
+        textinput._history_index = len(textinput._history) - 1
+        self.assertFalse(textinput._redo())
 
-        # Test touch
-        textinput._cursor_position = 0
-        textinput._check_touch_collide_input(PygameEventUtils.middle_rect_click(textinput)[0].pos)
-        self.assertEqual(textinput._cursor_position, 6)
+    def test_copy_paste(self) -> None:
+        """
+        Test copy/paste.
+        """
+        if SYS_PLATFORM_OSX:
+            return
 
-        # Update mouse
-        for i in range(50):
-            textinput.update(PygameEventUtils.key(pygame.K_t, keydown=True, char='t'))
-        textinput._update_cursor_mouse(50)
-        textinput._cursor_render = True
-        textinput._render_cursor()
+        menu = MenuUtils.generic_menu()
 
-        # Test multiple are selected
-        self.assertRaises(pygame_menu.menu._MenuMultipleSelectedWidgetsException, lambda: menu.draw(surface))
-        textinput.clear()
-        textinput.select(update_menu=True)
-        menu.draw(surface)
+        # Test copy/paste
+        textinput_nocopy = menu.add.text_input('title',
+                                               input_underline='_',
+                                               maxwidth=20,
+                                               copy_paste_enable=False)
+        textinput_nocopy.set_value('this cannot be copied')
+        textinput_nocopy._copy()
+        textinput_nocopy._paste()
+        textinput_nocopy._cut()
+        self.assertEqual(textinput_nocopy.get_value(), 'this cannot be copied')
 
-        # Clear the menu
-        self.assertEqual(menu._stats.removed_widgets, 0)
-        self.assertEqual(textinput.get_menu(), menu)
-        menu.clear()
-        self.assertIsNone(textinput.get_menu())
-        self.assertEqual(menu._stats.removed_widgets, 6)
-        menu.add.generic_widget(textinput)
-        self.assertEqual(textinput.get_menu(), menu)
-        menu.clear()
-        self.assertEqual(menu._stats.removed_widgets, 7)
+        # Test copy/paste without block
+        textinput_copy = menu.add.text_input('title',
+                                             input_underline='_',
+                                             maxwidth=20,
+                                             maxchar=20)
+        textinput_copy.set_value('this value should be cropped as this is longer than the max char')
+        self.assertFalse(textinput_copy._block_copy_paste)
+        textinput_copy._copy()
+        self.assertTrue(textinput_copy._block_copy_paste)
+        textinput_copy._block_copy_paste = False
+        textinput_copy._select_all()
+        textinput_copy._cut()
+        self.assertEqual(textinput_copy.get_value(), '')
+        textinput_copy._block_copy_paste = False
+        textinput_copy._paste()
+        #  self.assertEqual(textinput_copy.get_value(), 'er than the max char')
+        textinput_copy._cut()
+        textinput_copy._block_copy_paste = False
+        # self.assertEqual(textinput_copy.get_value(), '')
+        textinput_copy._valid_chars = ['e', 'r']
+        textinput_copy._paste()
 
-        # Test text with max width and right overflow removal
+        # Copy password
+        textinput_copy._password = True
+        self.assertFalse(textinput_copy._copy())
+
+    def test_overflow_removal(self) -> None:
+        """
+        Test text with max width and right overflow removal.
+        """
+        if SYS_PLATFORM_OSX:
+            return
+
+        menu = MenuUtils.generic_menu()
         menu._copy_theme()
         menu._theme.widget_font_size = 20
         textinput = menu.add.text_input(
@@ -333,6 +486,7 @@ class TextInputWidgetTest(BaseTest):
         self.assertRaises(WidgetTransformationNotImplemented, lambda: textinput.rotate())
         textinput.flip(True, True)
         self.assertEqual(textinput._flip, (False, True))
+        # noinspection SpellCheckingInspection
         textinput.set_value('aaaaaaaaaaaaaaaaaaaaaaaaaa')
         self.assertEqual(textinput._cursor_position, 26)
         self.assertEqual(textinput._renderbox, [1, 26, 25])
