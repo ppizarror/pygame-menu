@@ -1060,7 +1060,7 @@ class RangeSlider(Widget):
                 delta = (self._range_values[-1] - self._range_values[0]) * rel / self._range_width
 
                 # Check mouse position
-                mx, my = pygame.mouse.get_pos() if event.type == pygame.MOUSEMOTION else \
+                mx, my = event.pos if event.type == pygame.MOUSEMOTION else \
                     get_finger_pos(self._menu, event)
                 rect = self.get_rect(to_real_position=True, apply_padding=False)
 
