@@ -45,7 +45,7 @@ import pygame_menu.events as _events
 
 from pygame_menu._base import Base
 from pygame_menu.locals import CURSOR_HAND, INPUT_TEXT, ORIENTATION_VERTICAL, \
-    ORIENTATION_HORIZONTAL, POSITION_SOUTH, POSITION_NORTH
+    ORIENTATION_HORIZONTAL
 from pygame_menu.font import assert_font
 from pygame_menu._scrollarea import get_scrollbars_from_position
 from pygame_menu.utils import assert_vector, assert_color, assert_cursor, is_callable, \
@@ -2672,7 +2672,7 @@ class WidgetManager(Base):
             title: str,
             default: RangeSliderValueType,
             range_values: RangeSliderRangeValueType,
-            increment: NumberType = 0.1,
+            increment: Optional[NumberType] = None,
             onchange: CallbackType = None,
             onreturn: CallbackType = None,
             onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
@@ -2745,8 +2745,8 @@ class WidgetManager(Base):
             - ``range_text_value_tick_thick``   (int) - Thickness of the range text value tick in px
             - ``readonly_color``                (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the widget if readonly mode
             - ``readonly_selected_color``       (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the widget if readonly mode and is selected
-            - ``repeat_keys_initial_ms``        (int) - Time in ms before keys are repeated when held in ms
-            - ``repeat_keys_interval_ms``       (int) - Interval between key press repetition when held in ms
+            - ``repeat_keys_initial_ms``        (int) - Time in ms before keys are repeated when held in ms. ``400`` by default
+            - ``repeat_keys_interval_ms``       (int) - Interval between key press repetition when held in ms. ``50`` by default
             - ``selection_color``               (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the selected widget; only affects the font color
             - ``selection_effect``              (:py:class:`pygame_menu.widgets.core.Selection`) – Widget selection effect
             - ``slider_color``                  (tuple, list, str, int, :py:class:`pygame.Color`) - Slider color
@@ -2787,7 +2787,7 @@ class WidgetManager(Base):
         :param title: Title of the range slider
         :param default: Default range value, can accept a number or a tuple/list of 2 elements (min, max). If a single number is provided the rangeslider only accepts 1 value, if 2 are provided, the range is enabled (2 values)
         :param range_values: Tuple/list of 2 elements of min/max values of the range slider. Also range can accept a list of numbers, in which case the values of the range slider will be discrete. List must be sorted
-        :param increment: Increment of the value if using left/right keys
+        :param increment: Increment of the value if using left/right keys; used only if the range values are not discrete
         :param onchange: Callback executed when when changing the value of the range slider
         :param onreturn: Callback executed when pressing return on the range slider
         :param onselect: Callback executed when selecting the widget
@@ -2797,48 +2797,23 @@ class WidgetManager(Base):
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.RangeSlider`
         """
+        assert_vector(range_values, 0)
+        if len(range_values) == 2:
+            assert isinstance(increment, NumberInstance), \
+                'increment must be defined if the range values are not discrete'
+        else:
+            if increment is None:
+                increment = 1
+
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
 
-        # Unpack kwargs
-        range_box_color = kwargs.pop('range_box_color', (109, 164, 206, 170))
-        range_box_color_readonly = kwargs.pop('range_box_color_readonly', (200, 200, 200, 170))
-        range_box_enabled = kwargs.pop('range_box_enabled', True)
-        range_box_height_factor = kwargs.pop('range_box_height_factor', 0.45)
-        range_box_single_slider = kwargs.pop('range_box_single_slider', False)
-        range_line_color = kwargs.pop('range_line_color', (100, 100, 100))
-        range_line_height = kwargs.pop('range_line_height', 2)
-        range_margin = kwargs.pop('range_margin', (25, 0))
-        range_text_value_color = kwargs.pop('range_text_value_color', (80, 80, 80))
-        range_text_value_enabled = kwargs.pop('range_text_value_enabled', True)
-        range_text_value_font = kwargs.pop('range_text_value_font', None)
-        range_text_value_font_height = kwargs.pop('range_text_value_font_height', 0.4)
-        range_text_value_margin_f = kwargs.pop('range_text_value_margin_f', 0.8)
-        range_text_value_position = kwargs.pop('range_text_value_position', POSITION_SOUTH)
-        range_text_value_tick_color = kwargs.pop('range_text_value_tick_color', (60, 60, 60))
-        range_text_value_tick_enabled = kwargs.pop('range_text_value_tick_enabled', True)
-        range_text_value_tick_hfactor = kwargs.pop('range_text_value_tick_hfactor', 0.35)
-        range_text_value_tick_number = kwargs.pop('range_text_value_tick_number', 2)
-        range_text_value_tick_thick = kwargs.pop('range_text_value_tick_thick', 1)
-        repeat_keys_initial_ms = kwargs.pop('repeat_keys_initial_ms', 400)
-        repeat_keys_interval_ms = kwargs.pop('repeat_keys_interval_ms', 50)
-        slider_color = kwargs.pop('slider_color', (120, 120, 120))
-        slider_height_factor = kwargs.pop('slider_height_factor', 0.7)
-        slider_sel_highlight_color = kwargs.pop('slider_sel_highlight_color', (0, 0, 0))
-        slider_sel_highlight_enabled = kwargs.pop('slider_sel_highlight_enabled=', True)
-        slider_sel_highlight_thick = kwargs.pop('slider_sel_highlight_thick', 1)
-        slider_selected_color = kwargs.pop('slider_selected_color', (180, 180, 180))
-        slider_text_value_bgcolor = kwargs.pop('slider_text_value_bgcolor', (140, 140, 140))
-        slider_text_value_color = kwargs.pop('slider_text_value_color', (0, 0, 0))
-        slider_text_value_enabled = kwargs.pop('slider_text_value_enabled', True)
-        slider_text_value_font = kwargs.pop('slider_text_value_font', None)
-        slider_text_value_font_height = kwargs.pop('slider_text_value_font_height', 0.4)
-        slider_text_value_margin_f = kwargs.pop('slider_text_value_margin_f', 1)
-        slider_text_value_padding = kwargs.pop('slider_text_value_padding', (0, 4))
-        slider_text_value_position = kwargs.pop('slider_text_value_position', POSITION_NORTH)
-        slider_text_value_triangle = kwargs.pop('slider_text_value_triangle', True)
-        slider_thickness = kwargs.pop('slider_thickness', 15)
-        slider_vmargin = kwargs.pop('slider_vmargin', 0)
+        range_line_color = kwargs.pop('range_line_color', self._theme.widget_font_color)
+        range_text_value_color = kwargs.pop('range_text_value_color',
+                                            self._theme.widget_font_color)
+        range_text_value_font_height = kwargs.pop('range_text_value_font_height', 0.6)
+        range_text_value_tick_hfactor = kwargs.pop('range_text_value_tick_hfactor', 0.5)
+        slider_text_value_font_height = kwargs.pop('slider_text_value_font_height', 0.6)
 
         widget = pygame_menu.widgets.RangeSlider(
             title=title,
@@ -2850,44 +2825,11 @@ class WidgetManager(Base):
             onchange=onchange,
             onreturn=onreturn,
             onselect=onselect,
-            range_box_color=range_box_color,
-            range_box_color_readonly=range_box_color_readonly,
-            range_box_enabled=range_box_enabled,
-            range_box_height_factor=range_box_height_factor,
-            range_box_single_slider=range_box_single_slider,
             range_line_color=range_line_color,
-            range_line_height=range_line_height,
-            range_margin=range_margin,
             range_text_value_color=range_text_value_color,
-            range_text_value_enabled=range_text_value_enabled,
-            range_text_value_font=range_text_value_font,
             range_text_value_font_height=range_text_value_font_height,
-            range_text_value_margin_f=range_text_value_margin_f,
-            range_text_value_position=range_text_value_position,
-            range_text_value_tick_color=range_text_value_tick_color,
-            range_text_value_tick_enabled=range_text_value_tick_enabled,
             range_text_value_tick_hfactor=range_text_value_tick_hfactor,
-            range_text_value_tick_number=range_text_value_tick_number,
-            range_text_value_tick_thick=range_text_value_tick_thick,
-            repeat_keys_initial_ms=repeat_keys_initial_ms,
-            repeat_keys_interval_ms=repeat_keys_interval_ms,
-            slider_color=slider_color,
-            slider_height_factor=slider_height_factor,
-            slider_sel_highlight_color=slider_sel_highlight_color,
-            slider_sel_highlight_enabled=slider_sel_highlight_enabled,
-            slider_sel_highlight_thick=slider_sel_highlight_thick,
-            slider_selected_color=slider_selected_color,
-            slider_text_value_bgcolor=slider_text_value_bgcolor,
-            slider_text_value_color=slider_text_value_color,
-            slider_text_value_enabled=slider_text_value_enabled,
-            slider_text_value_font=slider_text_value_font,
             slider_text_value_font_height=slider_text_value_font_height,
-            slider_text_value_margin_f=slider_text_value_margin_f,
-            slider_text_value_padding=slider_text_value_padding,
-            slider_text_value_position=slider_text_value_position,
-            slider_text_value_triangle=slider_text_value_triangle,
-            slider_thickness=slider_thickness,
-            slider_vmargin=slider_vmargin,
             value_format=value_format,
             **kwargs
         )
