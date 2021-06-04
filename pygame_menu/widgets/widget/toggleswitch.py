@@ -271,6 +271,7 @@ class ToggleSwitch(Widget):
         assert isinstance(state, int), 'state value can only be an integer'
         assert 0 <= state < self._total_states, 'state value exceeds the total states'
         self._state = state
+        self._render()
 
     def scale(self, *args, **kwargs) -> 'ToggleSwitch':
         raise WidgetTransformationNotImplemented()

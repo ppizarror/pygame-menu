@@ -445,6 +445,7 @@ class DropSelectMultiple(DropSelect):
         self._index = -1
         self._selected_indices = self._default_value.copy()
         self._update_buttons()
+        self._render()
         return self
 
     def set_value(self, item: Union[str, int], process_index: bool = False) -> None:

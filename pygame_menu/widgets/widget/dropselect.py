@@ -1005,6 +1005,9 @@ class DropSelect(Widget):
                 btn.set_background_color(self._selection_box_bgcolor)
                 btn.update_font({'color': self._selection_option_font_style['color']})
 
+        # Force render
+        self._render()
+
     def update_items(self, items: Union[List[Tuple[Any, ...]], List[str]]) -> None:
         """
         Update drop select items.

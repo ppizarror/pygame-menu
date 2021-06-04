@@ -57,7 +57,6 @@ except (ModuleNotFoundError, ImportError):
         """
         Pyperclip exception thrown by pyperclip.
         """
-        pass
 
 CTRL_KMOD = (
     pygame.KMOD_CTRL, pygame.KMOD_CTRL | pygame.KMOD_CAPS,

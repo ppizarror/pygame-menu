@@ -431,6 +431,7 @@ class Selector(Widget):
                 'item index must be greater than zero and lower than the number ' \
                 'of items on the selector'
             self._index = item
+        self._render()
 
     def update_items(self, items: Union[List[Tuple[Any, ...]], List[str]]) -> None:
         """
