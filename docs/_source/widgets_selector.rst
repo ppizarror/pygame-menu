@@ -9,3 +9,4 @@ Selector
     :members:
     :show-inheritance:
     :inherited-members:
+    :exclude-members: draw_after_if_selected

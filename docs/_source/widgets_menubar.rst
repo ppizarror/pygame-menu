@@ -9,4 +9,4 @@ MenuBar
     :members:
     :show-inheritance:
     :inherited-members:
-    :exclude-members: set_padding, scale, resize, set_max_height, set_max_width, set_selection_effect, set_border, _draw_background_color, _draw_border, flip, rotate
+    :exclude-members: get_value, select, set_onselect, change, set_onchange, set_padding, scale, resize, set_max_height, set_max_width, set_selection_effect, set_border, flip, rotate, set_default_value, set_value, reset_value, draw_after_if_selected
