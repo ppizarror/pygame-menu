@@ -99,11 +99,11 @@ class RangeSlider(Widget):
     :param range_text_value_font: Font of the ranges value. If ``None`` the same font as the widget is used
     :param range_text_value_font_height: Height factor of the range value font (factor of the range title height)
     :param range_text_value_margin_factor: Margin of the range text values (factor of the range title height)
-    :param range_text_value_number: Number of range value text, the values are placed uniformly distributed
     :param range_text_value_position: Position of the range text values, can be NORTH or SOUTH. See :py:mod:`pygame_menu.locals`
     :param range_text_value_tick_color: Color of the range text value tick
     :param range_text_value_tick_enabled: Range text value tick enabled
     :param range_text_value_tick_height_factor: Height factor of the range text value tick (factor of the range title height)
+    :param range_text_value_tick_number: Number of range value text, the values are placed uniformly distributed
     :param range_text_value_tick_thickness: Thickness of the range text value tick in px
     :param repeat_keys_initial_ms: Time in ms before keys are repeated when held in ms
     :param repeat_keys_interval_ms: Interval between key press repetition when held in ms
@@ -155,7 +155,6 @@ class RangeSlider(Widget):
     _range_text_value_font_height: NumberType
     _range_text_value_margin: int
     _range_text_value_margin_factor: NumberType
-    _range_text_value_number: int
     _range_text_value_position: str
     _range_text_value_surfaces: List['pygame.Surface']
     _range_text_value_surfaces_pos: List[Tuple2IntType]
@@ -163,6 +162,7 @@ class RangeSlider(Widget):
     _range_text_value_tick_enabled: bool
     _range_text_value_tick_height: int
     _range_text_value_tick_height_factor: NumberType
+    _range_text_value_tick_number: int
     _range_text_value_tick_surfaces: List['pygame.Surface']
     _range_text_value_tick_surfaces_pos: List[Tuple2IntType]
     _range_text_value_tick_thickness: int
@@ -193,6 +193,7 @@ class RangeSlider(Widget):
     _slider_text_value_surfaces: List['pygame.Surface']
     _slider_text_value_surfaces_pos: List[Tuple2IntType]
     _slider_text_value_triangle: bool
+    _slider_text_value_vmargin: int
     _slider_thickness: int
     _slider_vmargin: NumberType
     _value: List[NumberType]  # Public value of the slider, generated from the hidden
@@ -223,11 +224,11 @@ class RangeSlider(Widget):
             range_text_value_font: Optional[FontType] = None,
             range_text_value_font_height: NumberType = 0.4,
             range_text_value_margin_factor: NumberType = 0.8,
-            range_text_value_number: int = 2,
             range_text_value_position: str = POSITION_SOUTH,
             range_text_value_tick_color: ColorInputType = (60, 60, 60),
             range_text_value_tick_enabled: bool = True,
             range_text_value_tick_height_factor: NumberType = 0.35,
+            range_text_value_tick_number: int = 2,
             range_text_value_tick_thickness: int = 1,
             repeat_keys_initial_ms: NumberType = 400,
             repeat_keys_interval_ms: NumberType = 50,
@@ -362,9 +363,9 @@ class RangeSlider(Widget):
             'left range margin must be equal or greater than zero'
         assert range_margin[1] >= 0, \
             'right range margin must be equal or greater than zero'
-        assert isinstance(range_text_value_number, int)
+        assert isinstance(range_text_value_tick_number, int)
         if range_text_value_enabled:
-            assert range_text_value_number >= 2, \
+            assert range_text_value_tick_number >= 2, \
                 'number of range value must be equal or greater than 2'
         assert isinstance(range_text_value_tick_thickness, int)
         assert range_text_value_tick_thickness >= 1, \
@@ -407,6 +408,7 @@ class RangeSlider(Widget):
 
         # Store properties
         self._clock = pygame.time.Clock()
+        self._default_value = default_value.copy()
         self._increment = increment
         self._increment_shift_factor = 0.5
         self._keyrepeat_counters = {}  # {event.key: (counter_int, event.unicode)} (look for "***")
@@ -427,12 +429,12 @@ class RangeSlider(Widget):
         self._range_text_value_font_height = range_text_value_font_height
         self._range_text_value_margin = 0
         self._range_text_value_margin_factor = range_text_value_margin_factor
-        self._range_text_value_number = range_text_value_number
         self._range_text_value_position = range_text_value_position
         self._range_text_value_tick_color = range_text_value_tick_color
         self._range_text_value_tick_enabled = range_text_value_tick_enabled
         self._range_text_value_tick_height = 0
         self._range_text_value_tick_height_factor = range_text_value_tick_height_factor
+        self._range_text_value_tick_number = range_text_value_tick_number
         self._range_text_value_tick_thickness = range_text_value_tick_thickness
         self._range_values = tuple(range_values)
         self._range_width = range_width
@@ -456,6 +458,7 @@ class RangeSlider(Widget):
         self._slider_text_value_padding = slider_text_value_padding
         self._slider_text_value_position = slider_text_value_position
         self._slider_text_value_triangle = slider_text_value_triangle
+        self._slider_text_value_vmargin = 0
         self._slider_thickness = slider_thickness
         self._slider_vmargin = slider_vmargin
         self._value = default_value
@@ -481,12 +484,14 @@ class RangeSlider(Widget):
             assert value[1] <= self._range_values[-1], \
                 'value must be lower or equal than maximum range value'
             assert value[0] < value[1], 'value vector must be ordered'
-            assert value[0] in self._range_values
-            assert value[1] in self._range_values
+            if len(self._range_values) > 2:
+                assert value[0] in self._range_values
+                assert value[1] in self._range_values
             value = [value[0], value[1]]
 
         self._value = value
         self._value_hidden = self._value.copy()
+        self._render()
 
     def scale(self, *args, **kwargs) -> 'RangeSlider':
         raise WidgetTransformationNotImplemented()
@@ -692,9 +697,9 @@ class RangeSlider(Widget):
         range_values: List[NumberType] = []
         if len(self._range_values) == 2:
             d_val = (self._range_values[1] - self._range_values[0]) \
-                    / (self._range_text_value_number - 1)
+                    / (self._range_text_value_tick_number - 1)
             v_i = self._range_values[0]
-            for i in range(self._range_text_value_number):
+            for i in range(self._range_text_value_tick_number):
                 range_values.append(v_i)
                 v_i += d_val
         else:
@@ -752,7 +757,8 @@ class RangeSlider(Widget):
                 t.get_width() + self._slider_text_value_padding[1] + self._slider_text_value_padding[3],
                 t.get_height() + self._slider_text_value_padding[0] + self._slider_text_value_padding[2],
                 fill_color=self._slider_text_value_bgcolor)
-            st.blit(t, (self._slider_text_value_padding[1], self._slider_text_value_padding[0]))
+            st.blit(t, (self._slider_text_value_padding[1],
+                        self._slider_text_value_padding[0] + self._slider_text_value_vmargin))
 
             # Create surface that considers st and the triangle
             tri_height = int(self._slider_text_value_margin / 2) - int(self._slider_height / 2)
@@ -1010,6 +1016,7 @@ class RangeSlider(Widget):
                         self._slider_selected = (False, True)
 
                 if old_slider_selected != self._slider_selected:
+                    updated = True
                     self._render()
 
                 # Check if slider is clicked
@@ -1073,7 +1080,7 @@ class RangeSlider(Widget):
                 if not self._single:
                     slider_idx = 0 if self._slider_selected[0] else 1
                     slider_pos = self._get_pos_range(self._value[slider_idx])
-                    x_max_min = slider_pos, slider_pos
+                    x_max_min = slider_pos - 1, slider_pos
 
                 # Check slider within rect
                 if delta < 0:
