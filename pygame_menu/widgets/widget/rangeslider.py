@@ -90,6 +90,7 @@ class RangeSlider(Widget):
     :param range_box_color_readonly: Color of the range box if widget in readonly state
     :param range_box_enabled: Enables a range box between two sliders
     :param range_box_height_factor: Height of the range box (factor of the range title height)
+    :param range_box_single_slider: Enables range box if there's only 1 slider instead of 2
     :param range_line_color: Color of the range line
     :param range_line_height: Height of the range line in px
     :param range_margin: Left/Right margin of the range in px
@@ -120,6 +121,7 @@ class RangeSlider(Widget):
     :param slider_text_value_margin_factor: Margin of the slider text values (factor of the range title height)
     :param slider_text_value_padding: Padding of the slider text values
     :param slider_text_value_position: Position of the slider text values, can be NORTH or SOUTH. See :py:mod:`pygame_menu.locals`
+    :param slider_text_value_triangle: Draws a triangle between slider text value and slider
     :param slider_thickness: Slider thickness in px
     :param slider_vmargin: Vertical margin of the slider (factor of the range title height)
     :param value_format: Function that format the value and returns a string that is used in the range and slider text
@@ -140,6 +142,7 @@ class RangeSlider(Widget):
     _range_box_height: int
     _range_box_height_factor: NumberType
     _range_box_pos: Tuple2IntType
+    _range_box_single_slider: bool
     _range_line: 'pygame.Surface'
     _range_line_color: ColorType
     _range_line_height: int
@@ -189,10 +192,12 @@ class RangeSlider(Widget):
     _slider_text_value_position: str
     _slider_text_value_surfaces: List['pygame.Surface']
     _slider_text_value_surfaces_pos: List[Tuple2IntType]
+    _slider_text_value_triangle: bool
     _slider_thickness: int
     _slider_vmargin: NumberType
-    _value: List[NumberType]
+    _value: List[NumberType]  # Public value of the slider, generated from the hidden
     _value_format: ValueFormatType
+    _value_hidden: List[NumberType]  # Hidden value of the slider, modified by events
 
     def __init__(
             self,
@@ -208,7 +213,8 @@ class RangeSlider(Widget):
             range_box_color: ColorInputType = (109, 164, 206, 170),
             range_box_color_readonly: ColorInputType = (200, 200, 200, 170),
             range_box_enabled: bool = True,
-            range_box_height_factor: NumberType = 0.5,
+            range_box_height_factor: NumberType = 0.45,
+            range_box_single_slider: bool = False,
             range_line_color: ColorInputType = (100, 100, 100),
             range_line_height: int = 2,
             range_margin: Tuple2IntType = (25, 0),
@@ -221,17 +227,17 @@ class RangeSlider(Widget):
             range_text_value_position: str = POSITION_SOUTH,
             range_text_value_tick_color: ColorInputType = (60, 60, 60),
             range_text_value_tick_enabled: bool = True,
-            range_text_value_tick_height_factor: NumberType = 0.4,
+            range_text_value_tick_height_factor: NumberType = 0.35,
             range_text_value_tick_thickness: int = 1,
             repeat_keys_initial_ms: NumberType = 400,
             repeat_keys_interval_ms: NumberType = 50,
-            slider_color: ColorInputType = (130, 130, 130),
-            slider_height_factor: NumberType = 0.8,
+            slider_color: ColorInputType = (120, 120, 120),
+            slider_height_factor: NumberType = 0.7,
             slider_selected_color: ColorInputType = (180, 180, 180),
             slider_selected_highlight_color: ColorInputType = (0, 0, 0),
             slider_selected_highlight_enabled: bool = True,
             slider_selected_highlight_thickness: int = 1,
-            slider_text_value_bgcolor: ColorInputType = (120, 120, 120),
+            slider_text_value_bgcolor: ColorInputType = (140, 140, 140),
             slider_text_value_color: ColorInputType = (0, 0, 0),
             slider_text_value_enabled: bool = True,
             slider_text_value_font: Optional[FontType] = None,
@@ -239,6 +245,7 @@ class RangeSlider(Widget):
             slider_text_value_margin_factor: NumberType = 1,
             slider_text_value_padding: PaddingType = (0, 4),
             slider_text_value_position: str = POSITION_NORTH,
+            slider_text_value_triangle: bool = True,
             slider_thickness: int = 15,
             slider_vmargin: NumberType = 0,
             value_format: ValueFormatType = lambda x: str(round(x, 3)),
@@ -376,10 +383,12 @@ class RangeSlider(Widget):
 
         # Check boolean
         assert isinstance(range_box_enabled, bool)
+        assert isinstance(range_box_single_slider, bool)
         assert isinstance(range_text_value_enabled, bool)
         assert isinstance(range_text_value_enabled, bool)
         assert isinstance(slider_selected_highlight_enabled, bool)
         assert isinstance(slider_text_value_enabled, bool)
+        assert isinstance(slider_text_value_triangle, bool)
 
         # Check the value format function
         assert is_callable(value_format)
@@ -407,6 +416,7 @@ class RangeSlider(Widget):
         self._range_box_color_readonly = range_box_color_readonly
         self._range_box_enabled = range_box_enabled
         self._range_box_height_factor = range_box_height_factor
+        self._range_box_single_slider = range_box_single_slider
         self._range_line_color = range_line_color
         self._range_line_height = range_line_height
         self._range_margin = range_margin
@@ -445,10 +455,12 @@ class RangeSlider(Widget):
         self._slider_text_value_margin_factor = slider_text_value_margin_factor
         self._slider_text_value_padding = slider_text_value_padding
         self._slider_text_value_position = slider_text_value_position
+        self._slider_text_value_triangle = slider_text_value_triangle
         self._slider_thickness = slider_thickness
         self._slider_vmargin = slider_vmargin
         self._value = default_value
         self._value_format = value_format
+        self._value_hidden = default_value.copy()  # Used when dragging mouse on discrete range
 
     def set_value(self, value: SliderValue) -> None:
         if self._single:
@@ -474,6 +486,7 @@ class RangeSlider(Widget):
             value = [value[0], value[1]]
 
         self._value = value
+        self._value_hidden = self._value.copy()
 
     def scale(self, *args, **kwargs) -> 'RangeSlider':
         raise WidgetTransformationNotImplemented()
@@ -542,7 +555,7 @@ class RangeSlider(Widget):
                               self._rect.y + self._range_text_value_tick_surfaces_pos[i][1]))
 
         # Draw range box
-        if self._range_box_enabled and not self._single:
+        if self._range_box_enabled and (not self._single or self._range_box_single_slider):
             surface.blit(self._range_box, (self._range_box_pos[0] + self._rect.x,
                                            self._range_box_pos[1] + self._rect.y))
 
@@ -634,7 +647,7 @@ class RangeSlider(Widget):
         if not self._render_hash_changed(
                 self._selected, self._title, self._visible, self.readonly,
                 self._range_values, self._slider_selected, self._value[0],
-                self._value[1]):
+                self._value[1], self._scrolling, self._selected_mouse):
             return True
 
         # Create basic title
@@ -708,7 +721,7 @@ class RangeSlider(Widget):
                                   self._range_text_value_tick_height,
                                   fill_color=self._range_text_value_tick_color)
             self._range_text_value_tick_surfaces.append(s_tick)
-            t_x = self._range_pos[0] + self._get_pos_range(i, None)
+            t_x = self._range_pos[0] + self._get_pos_range(i)
             t_y = self._range_pos[1] - s_tick.get_height() / 2
             self._range_text_value_tick_surfaces_pos.append((int(t_x), int(t_y)))
 
@@ -720,12 +733,13 @@ class RangeSlider(Widget):
                                  int(self._range_text_value_surfaces_pos[0][1] + s.get_height() * 0.9))
 
         # Create the range box surface
-        if not self._single:
-            r_width = self._get_pos_range(self._value[1], None) - self._get_pos_range(self._value[0], None)
+        if not self._single or self._range_box_single_slider:
+            r_pos = 0 if self._single else self._get_pos_range(self._value[0])
+            r_width = self._get_distance_between_sliders()
             self._range_box = make_surface(
                 max(0, r_width), self._range_box_height,
                 fill_color=self._range_box_color if not self.readonly else self._range_box_color_readonly)
-            self._range_box_pos = (self._range_pos[0] + self._get_pos_range(self._value[0], None),
+            self._range_box_pos = (self._range_pos[0] + r_pos,
                                    self._range_pos[1] - int(self._range_box.get_height() / 2))
 
         # Create the slider values
@@ -739,7 +753,21 @@ class RangeSlider(Widget):
                 t.get_height() + self._slider_text_value_padding[0] + self._slider_text_value_padding[2],
                 fill_color=self._slider_text_value_bgcolor)
             st.blit(t, (self._slider_text_value_padding[1], self._slider_text_value_padding[0]))
-            self._slider_text_value_surfaces.append(st)
+
+            # Create surface that considers st and the triangle
+            tri_height = int(self._slider_text_value_margin / 2) - int(self._slider_height / 2)
+            if tri_height and self._slider_text_value_triangle:
+                st_root = make_surface(st.get_width(), st.get_height() + tri_height)
+                st_root.blit(st, (0, 0))
+                mid = st.get_width() / 2
+                hig = st.get_height()
+                w = tri_height / math.sqrt(3)
+                tri_poly = ((mid - w, hig), (mid + w, hig), (mid, hig + tri_height))
+                pygame.draw.polygon(st_root, self._slider_text_value_bgcolor, tri_poly)
+            else:
+                st_root = st
+
+            self._slider_text_value_surfaces.append(st_root)
             st_x = self._range_pos[0] + self._get_pos_range(v, st)
             st_y = self._range_pos[1] - int(self._slider_text_value_margin / 2) - st.get_height()
             self._slider_text_value_surfaces_pos.append((st_x, st_y))
@@ -753,7 +781,7 @@ class RangeSlider(Widget):
         # Finals
         self.force_menu_surface_update()
 
-    def _get_pos_range(self, value: NumberType, surface: Optional['pygame.Surface']) -> int:
+    def _get_pos_range(self, value: NumberType, surface: Optional['pygame.Surface'] = None) -> int:
         """
         Return the position of the surface within range slider.
 
@@ -768,15 +796,35 @@ class RangeSlider(Widget):
             return int(d * self._range_width - sw)
 
         # Find nearest position
+        n, t = self._find_nearest_discrete_range(value), len(self._range_values)
+        return int((float(n) / (t - 1)) * self._range_width - sw)
+
+    def _get_distance_between_sliders(self) -> int:
+        """
+        Returns the distance between both sliders.
+
+        :return: Distance in px
+        """
+        if not self._single:
+            return self._get_pos_range(self._value[1]) - self._get_pos_range(self._value[0])
+        return self._get_pos_range(self._value[0])
+
+    def _find_nearest_discrete_range(self, value: NumberType) -> int:
+        """
+        Return the nearest position of value from range discrete list.
+
+        :param value: Value to find
+        :return: Position of the list
+        """
         n = 0  # Position of the nearest value
         m = math.inf  # Maximum distance
         t = len(self._range_values)  # Number of values
         for j in range(t):
             k = abs(self._range_values[j] - value)
             if k < m:
-                m = k
+                m = k  # Update max
                 n = j
-        return int((float(n) / t) * self._range_width - sw)
+        return n
 
     def _update_value(self, delta: NumberType) -> bool:
         """
@@ -789,27 +837,27 @@ class RangeSlider(Widget):
             return False
 
         old_value = self._value.copy()
-
+        old_value_hidden = self._value_hidden.copy()
         slider_idx = 0 if self._slider_selected[0] else 1
-        if len(self._range_values) == 2:
-            self._value[slider_idx] += delta
-            if self._value[0] >= self._value[1] and not self._single:
-                self._value = old_value
-            else:
-                self._value[slider_idx] = max(self._range_values[0],
-                                              min(self._range_values[1], self._value[slider_idx]))
 
+        self._value_hidden[slider_idx] += delta
+        if self._value_hidden[0] >= self._value_hidden[1] and not self._single:
+            self._value_hidden = old_value_hidden
         else:
-            val_index = self._range_values.index(self._value[slider_idx])
-            if delta < 0:
-                val_index = max(0, val_index - 1)
-            else:
-                val_index = min(len(self._range_values) - 1, val_index + 1)
-            self._value[slider_idx] = self._range_values[val_index]
+            self._value_hidden[slider_idx] = max(
+                self._range_values[0], min(self._range_values[-1], self._value_hidden[slider_idx]))
+
+        # Update real value
+        if len(self._range_values) == 2:
+            self._value = self._value_hidden
+        else:
+            # Find nearest
+            val_index_nearest = self._find_nearest_discrete_range(self._value_hidden[slider_idx])
+            self._value[slider_idx] = self._range_values[val_index_nearest]
             if self._value[0] >= self._value[1] and not self._single:
                 self._value = old_value
 
-        changed = old_value != self._value
+        changed = old_value_hidden != self._value_hidden
         if changed:
             self.change()
 
@@ -820,6 +868,61 @@ class RangeSlider(Widget):
 
     def _focus(self) -> None:
         self._selected_mouse = False
+
+    def _left_right(self, event, left: bool) -> bool:
+        """
+        Process left and right event keys.
+
+        :param event: Event
+        :param left: ``True`` if left, right otherwise
+        :return: ``True`` if updated
+        """
+        self._value_hidden = self._value.copy()  # Update hidden to real value
+        if event.key not in self._keyrepeat_counters:
+            self._keyrepeat_counters[event.key] = 0
+        keys_pressed = pygame.key.get_pressed()
+
+        # If not discrete, apply delta as increment
+        if len(self._range_values) == 2:
+            mod = 1 if not (keys_pressed[pygame.K_LSHIFT] or keys_pressed[pygame.K_RSHIFT]) \
+                else self._increment_shift_factor
+            if left:
+                mod *= -1
+            delta = self._increment * mod
+
+        # If discrete, find the current index and subtract +-1, then find the delta
+        # as the difference between two states
+        else:
+            if not self._single:
+                slider_idx = 0 if self._slider_selected[0] else 1
+            else:
+                slider_idx = 0
+            current_val_idx = self._find_nearest_discrete_range(self._value[slider_idx])
+            new_val_idx = current_val_idx
+            if left:
+                new_val_idx = max(0, new_val_idx - 1)
+            else:
+                new_val_idx = min(len(self._range_values) - 1, new_val_idx + 1)
+            delta = self._range_values[new_val_idx] - self._range_values[current_val_idx]
+
+        if self._update_value(delta):
+            self._sound.play_key_add()
+            return True
+        return False
+
+    def _test_get_pos_value(self, value: NumberType, dx: int = 0, dy: int = 0) -> Tuple2IntType:
+        """
+        Return the position of the value in real coordinates, used for testing.
+
+        :param value: Value to get position
+        :param dx: Delta for x position in px
+        :param dy: Delta for y position in px
+        :return: (x, y) position
+        """
+        rect = self.get_rect(to_real_position=True, apply_padding=False)
+        rect.x += self._range_pos[0] + self._get_pos_range(value)
+        rect.y += self._range_pos[1]
+        return rect.x + dx, rect.y + dy
 
     def update(self, events: EventVectorType) -> bool:
         self.apply_update_callbacks(events)
@@ -832,6 +935,7 @@ class RangeSlider(Widget):
         # Get time clock
         time_clock = self._clock.get_time()
 
+        updated = False
         events = self._merge_events(events)  # Extend events with custom events
 
         for event in events:
@@ -853,26 +957,14 @@ class RangeSlider(Widget):
             if keydown and event.key == ctrl.KEY_LEFT or \
                     joy_hatmotion and event.value == ctrl.JOY_LEFT or \
                     joy_axismotion and event.axis == ctrl.JOY_AXIS_X and event.value < ctrl.JOY_DEADZONE:
-                if event.key not in self._keyrepeat_counters:
-                    self._keyrepeat_counters[event.key] = 0
-                keys_pressed = pygame.key.get_pressed()
-                mod = 1 if not (keys_pressed[pygame.K_LSHIFT] or keys_pressed[pygame.K_RSHIFT]) \
-                    else self._increment_shift_factor
-                if self._update_value(-self._increment * mod):
-                    self._sound.play_key_add()
+                if self._left_right(event, True):
                     return True
 
             # Right button
             elif keydown and event.key == ctrl.KEY_RIGHT or \
                     joy_hatmotion and event.value == ctrl.JOY_RIGHT or \
                     joy_axismotion and event.axis == ctrl.JOY_AXIS_X and event.value > -ctrl.JOY_DEADZONE:
-                if event.key not in self._keyrepeat_counters:
-                    self._keyrepeat_counters[event.key] = 0
-                keys_pressed = pygame.key.get_pressed()
-                mod = 1 if not (keys_pressed[pygame.K_LSHIFT] or keys_pressed[pygame.K_RSHIFT]) \
-                    else self._increment_shift_factor
-                if self._update_value(self._increment * mod):
-                    self._sound.play_key_add()
+                if self._left_right(event, False):
                     return True
 
             # Press enter
@@ -906,27 +998,23 @@ class RangeSlider(Widget):
                 rc_1 = rect_slider_0.collidepoint(*event_pos)
                 rc_2 = rect_slider_1.collidepoint(*event_pos)
 
+                old_slider_selected = self._slider_selected
                 if not self._single:
-                    if rc_1:
+                    # Check sliders does not collide each other
+                    dist_sliders = self._get_distance_between_sliders()
+                    sliders_intersect = dist_sliders <= (self._slider_thickness - 1)
+
+                    if rc_1 and not sliders_intersect:
                         self._slider_selected = (True, False)
-                    elif rc_2:
+                    elif rc_2 and not sliders_intersect:
                         self._slider_selected = (False, True)
+
+                if old_slider_selected != self._slider_selected:
+                    self._render()
 
                 # Check if slider is clicked
                 self._scrolling = bool(rc_1 or rc_2)
                 self._selected_mouse = True
-
-            # User scrolls clicked slider
-            elif (event.type == pygame.MOUSEMOTION and self._mouse_enabled and hasattr(event, 'rel') or
-                  event.type == FINGERMOTION and self._touchscreen_enabled and self._menu is not None) and \
-                    self._scrolling:
-                rel = event.rel[0] if event.type == pygame.MOUSEMOTION else \
-                    event.dx * 2 * self._menu.get_window_size()[0]
-                delta = (self._range_values[-1] - self._range_values[0]) * rel / self._range_width
-
-                if delta != 0:  # If changed the position
-                    if self._update_value(delta):
-                        return True
 
             # User releases the mouse
             elif event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and \
@@ -947,20 +1035,57 @@ class RangeSlider(Widget):
 
                     # Current slider active value
                     val = self._value[0] if self._single else self._value[0 if self._slider_selected[0] else 1]
-                    val_px = self._get_pos_range(val, None)
+                    val_px = self._get_pos_range(val)
 
                     delta = (self._range_values[-1] - self._range_values[0]) * (dist - val_px) / self._range_width
 
-                    if delta != 0 and dist > 0:  # If clicked true value
+                    if delta != 0 and dist >= 0:  # If clicked true value
                         if self._update_value(delta):
-                            return True
+                            updated = True
 
                 self._selected_mouse = False
 
                 # Disables scrolling
                 if self._scrolling:
                     self._scrolling = False
-                    return True
+                    self._value_hidden = self._value.copy()
+                    updated = True
+
+            # User scrolls clicked slider
+            elif (event.type == pygame.MOUSEMOTION and self._mouse_enabled and hasattr(event, 'rel') or
+                  event.type == FINGERMOTION and self._touchscreen_enabled and self._menu is not None) and \
+                    self._scrolling and self._selected_mouse:
+                rel = event.rel[0] if event.type == pygame.MOUSEMOTION else \
+                    event.dx * 2 * self._menu.get_window_size()[0]
+                delta = (self._range_values[-1] - self._range_values[0]) * rel / self._range_width
+
+                # Check mouse position
+                mx, my = pygame.mouse.get_pos() if event.type == pygame.MOUSEMOTION else \
+                    get_finger_pos(self._menu, event)
+                rect = self.get_rect(to_real_position=True, apply_padding=False)
+
+                # Compute position of mouse within valid range
+                dist_x = mx - (rect.x + self._range_pos[0])
+                dist_y = my - rect.y
+
+                # Get current slider pos if not single
+                x_max_min = 0, self._range_width
+                if not self._single:
+                    slider_idx = 0 if self._slider_selected[0] else 1
+                    slider_pos = self._get_pos_range(self._value[slider_idx])
+                    x_max_min = slider_pos, slider_pos
+
+                # Check slider within rect
+                if delta < 0:
+                    in_x = -self._slider_height <= dist_x <= x_max_min[1]
+                else:
+                    in_x = x_max_min[0] <= dist_x <= self._range_width + self._slider_height
+                in_y = 0 <= dist_y <= rect.height
+
+                # Checks mouse changed position and within rect position
+                if delta != 0 and in_x and in_y:
+                    if self._update_value(delta):
+                        updated = True
 
         # Update key counters:
         for key in self._keyrepeat_counters:
@@ -971,4 +1096,4 @@ class RangeSlider(Widget):
                 self._keyrepeat_counters[key] = self._keyrepeat_initial_interval_ms - self._keyrepeat_interval_ms
                 self._add_event(pygame.event.Event(pygame.KEYDOWN, key=key))
 
-        return False
+        return updated
