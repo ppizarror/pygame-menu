@@ -177,6 +177,9 @@ class RangeSliderWidgetTest(BaseTest):
         self.assertRaises(AssertionError, lambda: pygame_menu.widgets.RangeSlider(
             'Range S', default_value='a'))
 
+        # Ignore tabs
+        self.assertFalse(slider.update(PygameEventUtils.key(ctrl.KEY_TAB, keydown=True)))
+
         # Single slider with range box
         slider_rb = pygame_menu.widgets.RangeSlider('Range', range_box_single_slider=True)
         menu.add.generic_widget(slider_rb, True)

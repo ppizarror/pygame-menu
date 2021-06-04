@@ -922,3 +922,48 @@ class DropSelectWidgetTest(BaseTest):
         # Process index
         drop2._index = -1
         drop2._process_index()
+
+    def test_frame_support(self) -> None:
+        """
+        Test drop selects within frames.
+        """
+        menu = MenuUtils.generic_menu()
+
+        menu.add.dropselect('Subject Id', items=[('a', 'a'), ('b', 'b'), ('c', 'c')], dropselect_id='s0')
+        frame_s = menu.add.frame_h(600, 58)
+        frame_s.pack(
+            menu.add.dropselect('Subject Id', items=[('a', 'a'), ('b', 'b'), ('c', 'c')], dropselect_id='s1',
+                                open_middle=True)
+        )
+        frame_s.pack(menu.add.button('One', lambda: print('1')))
+        frame_t = menu.add.frame_h(600, 58)
+        frame_t.pack(
+            menu.add.dropselect('Subject Id', items=[('a', 'a'), ('b', 'b'), ('c', 'c')], dropselect_id='s2')
+        )
+        frame_t.pack(menu.add.button('Two', lambda: print('2')))
+        menu.add.dropselect('Subject Id', items=[('a', 'a'), ('b', 'b'), ('c', 'c')], dropselect_id='s3')
+        menu.add.dropselect('Subject Id', items=[('a', 'a'), ('b', 'b'), ('c', 'c')], dropselect_id='s4',
+                            open_middle=True)
+
+        # Test draw surfaces
+        menu.draw(surface)
+        # noinspection PyTypeChecker
+        s0: 'pygame_menu.widgets.DropSelect' = menu.get_widget('s0')
+        # noinspection PyTypeChecker
+        s1: 'pygame_menu.widgets.DropSelect' = menu.get_widget('s1')
+        surf = menu._widgets_surface
+        self.assertTrue(s0.is_selected())
+        self.assertEqual(s0.last_surface, surf)
+        s0.active = True
+        menu.render()
+        menu.draw(surface)
+        self.assertEqual(s0.last_surface, surf)
+        s0._selection_effect_draw_post = True
+        menu.render()
+        menu.draw(surface)
+        s0.draw_after_if_selected(surface)
+
+        s1.select(update_menu=True)
+        s1.active = True
+        menu.draw(surface)
+        self.assertEqual(s1.last_surface, surf)
