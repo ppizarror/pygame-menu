@@ -55,6 +55,7 @@ from pygame_menu.widgets.core.widget import Widget, check_widget_mouseleave
 from pygame_menu.widgets.widget.colorinput import ColorInputColorType, ColorInputHexFormatType
 from pygame_menu.widgets.widget.dropselect_multiple import DropSelectMultipleSFormatType, \
     DROPSELECT_MULTIPLE_SFORMAT_TOTAL
+from pygame_menu.widgets.widget.progressbar import ProgressBarTextFormatType
 from pygame_menu.widgets.widget.rangeslider import RangeSliderRangeValueType, \
     RangeSliderValueType, RangeSliderValueFormatType
 from pygame_menu.widgets.widget.selector import SelectorStyleType, SELECTOR_STYLE_CLASSIC
@@ -124,8 +125,7 @@ class WidgetManager(Base):
 
         # background_color
         background_is_color = False
-        background_color = kwargs.pop('background_color',
-                                      self._theme.widget_background_color)
+        background_color = kwargs.pop('background_color', self._theme.widget_background_color)
         if background_color is not None:
             if isinstance(background_color, pygame_menu.BaseImage):
                 pass
@@ -253,8 +253,7 @@ class WidgetManager(Base):
         attributes['selection_color'] = assert_color(selection_color)
 
         # selection_effect
-        selection_effect = kwargs.pop('selection_effect',
-                                      self._theme.widget_selection_effect)
+        selection_effect = kwargs.pop('selection_effect', self._theme.widget_selection_effect)
         if selection_effect is None:
             selection_effect = pygame_menu.widgets.NoneSelection()
         else:
@@ -1525,38 +1524,31 @@ class WidgetManager(Base):
                                                    self._theme.widget_box_border_width)
         # selection_option_cursor = kwargs.pop('selection_option_cursor', None)
         selection_option_font = kwargs.pop('selection_option_font', None)
-        selection_option_font_color = kwargs.pop('selection_option_font_color',
-                                                 (0, 0, 0))
-        selection_option_font_size = kwargs.pop('selection_option_font_size',
-                                                None)
-        selection_option_padding = kwargs.pop('selection_option_padding',
-                                              (2, 5))
+        selection_option_font_color = kwargs.pop('selection_option_font_color', (0, 0, 0))
+        selection_option_font_size = kwargs.pop('selection_option_font_size', None)
+        selection_option_padding = kwargs.pop('selection_option_padding', (2, 5))
         selection_option_selected_bgcolor = kwargs.pop('selection_option_selected_bgcolor',
                                                        (188, 227, 244))
         selection_option_selected_font_color = kwargs.pop('selection_option_selected_font_color',
                                                           (0, 0, 0))
 
         # Get selection box scrollbar properties
-        scrollbar_color = kwargs.pop('scrollbar_color',
-                                     self._theme.scrollbar_color)
-        scrollbar_cursor = kwargs.pop('scrollbar_cursor',
-                                      self._theme.scrollbar_cursor)
+        scrollbar_color = kwargs.pop('scrollbar_color', self._theme.scrollbar_color)
+        scrollbar_cursor = kwargs.pop('scrollbar_cursor', self._theme.scrollbar_cursor)
         scrollbar_shadow_color = kwargs.pop('scrollbar_shadow_color',
                                             self._theme.scrollbar_shadow_color)
         scrollbar_shadow_offset = kwargs.pop('scrollbar_shadow_offset',
                                              self._theme.scrollbar_shadow_offset)
         scrollbar_shadow_position = kwargs.pop('scrollbar_shadow_position',
                                                self._theme.scrollbar_shadow_position)
-        scrollbar_shadow = kwargs.pop('scrollbar_shadow',
-                                      self._theme.scrollbar_shadow)
+        scrollbar_shadow = kwargs.pop('scrollbar_shadow', self._theme.scrollbar_shadow)
         scrollbar_slider_color = kwargs.pop('scrollbar_slider_color',
                                             self._theme.scrollbar_slider_color)
         scrollbar_slider_hover_color = kwargs.pop('scrollbar_slider_hover_color',
                                                   self._theme.scrollbar_slider_hover_color)
         scrollbar_slider_pad = kwargs.pop('scrollbar_slider_pad',
                                           self._theme.scrollbar_slider_pad)
-        scrollbar_thick = kwargs.pop('scrollbar_thick',
-                                     self._theme.scrollbar_thick)
+        scrollbar_thick = kwargs.pop('scrollbar_thick', self._theme.scrollbar_thick)
         scrollbars = kwargs.pop('scrollbars', self._theme.scrollarea_position)
 
         widget = pygame_menu.widgets.DropSelect(
@@ -1785,16 +1777,12 @@ class WidgetManager(Base):
                                                    self._theme.widget_box_border_width)
         # selection_option_cursor = kwargs.pop('selection_option_cursor', None)
         selection_option_font = kwargs.pop('selection_option_font', None)
-        selection_option_font_color = kwargs.pop('selection_option_font_color',
-                                                 (0, 0, 0))
-        selection_option_font_size = kwargs.pop('selection_option_font_size',
-                                                None)
-        selection_option_padding = kwargs.pop('selection_option_padding',
-                                              (2, 5))
+        selection_option_font_color = kwargs.pop('selection_option_font_color', (0, 0, 0))
+        selection_option_font_size = kwargs.pop('selection_option_font_size', None)
+        selection_option_padding = kwargs.pop('selection_option_padding', (2, 5))
         selection_option_selected_bgcolor = kwargs.pop('selection_option_selected_bgcolor',
                                                        (142, 247, 141))
-        selection_option_selected_box = kwargs.pop('selection_option_selected_box',
-                                                   True)
+        selection_option_selected_box = kwargs.pop('selection_option_selected_box', True)
         selection_option_selected_box_border = kwargs.pop('selection_option_selected_box_border',
                                                           self._theme.widget_box_border_width)
         selection_option_selected_box_color = kwargs.pop('selection_option_selected_box_color',
@@ -1808,26 +1796,22 @@ class WidgetManager(Base):
                                                           (0, 0, 0))
 
         # Get selection box scrollbar properties
-        scrollbar_color = kwargs.pop('scrollbar_color',
-                                     self._theme.scrollbar_color)
-        scrollbar_cursor = kwargs.pop('scrollbar_cursor',
-                                      self._theme.scrollbar_cursor)
+        scrollbar_color = kwargs.pop('scrollbar_color', self._theme.scrollbar_color)
+        scrollbar_cursor = kwargs.pop('scrollbar_cursor', self._theme.scrollbar_cursor)
         scrollbar_shadow_color = kwargs.pop('scrollbar_shadow_color',
                                             self._theme.scrollbar_shadow_color)
         scrollbar_shadow_offset = kwargs.pop('scrollbar_shadow_offset',
                                              self._theme.scrollbar_shadow_offset)
         scrollbar_shadow_position = kwargs.pop('scrollbar_shadow_position',
                                                self._theme.scrollbar_shadow_position)
-        scrollbar_shadow = kwargs.pop('scrollbar_shadow',
-                                      self._theme.scrollbar_shadow)
+        scrollbar_shadow = kwargs.pop('scrollbar_shadow', self._theme.scrollbar_shadow)
         scrollbar_slider_color = kwargs.pop('scrollbar_slider_color',
                                             self._theme.scrollbar_slider_color)
         scrollbar_slider_hover_color = kwargs.pop('scrollbar_slider_hover_color',
                                                   self._theme.scrollbar_slider_hover_color)
         scrollbar_slider_pad = kwargs.pop('scrollbar_slider_pad',
                                           self._theme.scrollbar_slider_pad)
-        scrollbar_thick = kwargs.pop('scrollbar_thick',
-                                     self._theme.scrollbar_thick)
+        scrollbar_thick = kwargs.pop('scrollbar_thick', self._theme.scrollbar_thick)
         scrollbars = kwargs.pop('scrollbars', self._theme.scrollarea_position)
 
         widget = pygame_menu.widgets.DropSelectMultiple(
@@ -2006,20 +1990,15 @@ class WidgetManager(Base):
         attributes = self._filter_widget_attributes(kwargs)
 
         infinite = kwargs.pop('infinite', False)
-        slider_color = kwargs.pop('slider_color',
-                                  self._theme.widget_box_background_color)
-        slider_thickness = kwargs.pop('slider_thickness',
-                                      self._theme.scrollbar_thick)
-        state_color = kwargs.pop('state_color',
-                                 ((178, 178, 178), (117, 185, 54)))
+        slider_color = kwargs.pop('slider_color', self._theme.widget_box_background_color)
+        slider_thickness = kwargs.pop('slider_thickness', self._theme.scrollbar_thick)
+        state_color = kwargs.pop('state_color', ((178, 178, 178), (117, 185, 54)))
         state_text_font_color = kwargs.pop('state_text_font_color',
                                            (self._theme.widget_box_background_color,
                                             self._theme.widget_box_background_color))
         state_text_font_size = kwargs.pop('state_text_font_size', None)
-        switch_border_color = kwargs.pop('switch_border_color',
-                                         self._theme.widget_box_border_color)
-        switch_border_width = kwargs.pop('switch_border_width',
-                                         self._theme.widget_box_border_width)
+        switch_border_color = kwargs.pop('switch_border_color', self._theme.widget_box_border_color)
+        switch_border_width = kwargs.pop('switch_border_width', self._theme.widget_box_border_width)
         switch_height = kwargs.pop('switch_height', 1)
         switch_margin = kwargs.pop('switch_margin', self._theme.widget_box_margin)
 
@@ -2273,8 +2252,7 @@ class WidgetManager(Base):
                                                     self._theme.scrollbar_slider_hover_color),
             scrollbar_slider_pad=kwargs.pop('scrollbar_slider_pad',
                                             self._theme.scrollbar_slider_pad),
-            scrollbar_thick=kwargs.pop('scrollbar_thick',
-                                       self._theme.scrollbar_thick),
+            scrollbar_thick=kwargs.pop('scrollbar_thick', self._theme.scrollbar_thick),
             scrollbars=get_scrollbars_from_position(
                 kwargs.pop('scrollbars', self._theme.scrollarea_position))
         )
@@ -2793,6 +2771,7 @@ class WidgetManager(Base):
         :param rangeslider_id: ID of the range slider
         :param value_format: Function that format the value and returns a string that is used in the range and slider text
         :param width: Width of the range in px
+        :param kwargs: Optional keyword arguments
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.RangeSlider`
         """
@@ -2832,6 +2811,124 @@ class WidgetManager(Base):
             range_text_value_tick_hfactor=range_text_value_tick_hfactor,
             slider_text_value_font_height=slider_text_value_font_height,
             value_format=value_format,
+            **kwargs
+        )
+        self._configure_widget(widget=widget, **attributes)
+        self._append_widget(widget)
+
+        return widget
+
+    def progress_bar(
+            self,
+            title: Any,
+            default: NumberType = 0,
+            onselect: CallbackType = None,
+            progressbar_id: str = '',
+            progress_text_format: ProgressBarTextFormatType = lambda x: str(round(x, 1)),
+            width: int = 150,
+            **kwargs
+    ) -> 'pygame_menu.widgets.ProgressBar':
+        """
+        Add a progress bar, which offers a bar that accepts a percentage from 0 to 100.
+
+        If ``onselect`` is defined, the callback is executed as follows, where
+        ``selected`` is a boolean representing the selected status:
+
+        .. code-block:: python
+
+            onselect(selected, widget, menu)
+
+        kwargs (Optional)
+            - ``align``                         (str) – Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/themes.html#alignment>`_
+            - ``background_color``              (tuple, list, str, int, :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage`) – Color of the background. ``None`` for no-color
+            - ``background_inflate``            (tuple, list) – Inflate background on x-axis and y-axis (x, y) in px
+            - ``border_color``                  (tuple, list, str, int, :py:class:`pygame.Color`) – Widget border color. ``None`` for no-color
+            - ``border_inflate``                (tuple, list) – Widget border inflate on x-axis and y-axis (x, y) in px
+            - ``border_position``               (str, tuple, list) – Widget border positioning. It can be a single position, or a tuple/list of positions. Only are accepted: north, south, east, and west. See :py:mod:`pygame_menu.locals`
+            - ``border_width``                  (int) – Border width in px. If ``0`` disables the border
+            - ``box_background_color``          (tuple, list, str, int, :py:class:`pygame.Color`) – Background color of the box
+            - ``box_border_color``              (tuple, list, str, int, :py:class:`pygame.Color`) – Border color of the box
+            - ``box_border_width``              (int) - Border width of the box in px
+            - ``box_margin``                    (tuple, list) - Box margin on x-axis and y-axis (x, y) respect to the title of the widget in px
+            - ``box_progress_color``            (tuple, list, str, int, :py:class:`pygame.Color`) – Box progress color
+            - ``box_progress_padding``          (int, float, tuple, list) – Box progress padding
+            - ``cursor``                        (int, :py:class:`pygame.cursors.Cursor`, None) – Cursor of the widget if the mouse is placed over
+            - ``font_background_color``         (tuple, list, str, int, :py:class:`pygame.Color`, None) – Widget font background color
+            - ``font_color``                    (tuple, list, str, int, :py:class:`pygame.Color`) – Widget font color
+            - ``font_name``                     (str, :py:class:`pathlib.Path`, :py:class:`pygame.font.Font`) – Widget font path
+            - ``font_shadow_color``             (tuple, list, str, int, :py:class:`pygame.Color`) – Font shadow color
+            - ``font_shadow_offset``            (int) – Font shadow offset in px
+            - ``font_shadow_position``          (str) – Font shadow position, see locals for position
+            - ``font_shadow``                   (bool) – Font shadow is enabled or disabled
+            - ``font_size``                     (int) – Font size of the widget
+            - ``margin``                        (tuple, list) – Widget (left, bottom) margin in px
+            - ``padding``                       (int, float, tuple, list) – Widget padding according to CSS rules. General shape: (top, right, bottom, left)
+            - ``progress_text_align``           (str) - Align of the progress text, can be CENTER, LEFT or RIGHT. See :py:mod:`pygame_menu.locals`
+            - ``progress_text_enabled``         (bool) - Enables the progress text over box
+            - ``progress_text_font_color``      (tuple, list, str, int, :py:class:`pygame.Color`) – Progress font color. If ``None`` uses the same as the widget font
+            - ``progress_text_font_hfactor``    (int, float) - Height factor of the font height relative to the widget font height
+            - ``progress_text_font``            (str, :py:class:`pathlib.Path`, :py:class:`pygame.font.Font`) – Progress font. If ``None`` uses the same as the widget font
+            - ``progress_text_margin``          (tuple, list) - Margin of the progress box on x-axis and y-axis in px
+            - ``progress_text_placeholder``     (str) - Placeholder of the progress text, which considers as format the output of ``progress_text_format``. ``"{0} %"`` by default
+            - ``readonly_color``                (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the widget if readonly mode
+            - ``readonly_selected_color``       (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the widget if readonly mode and is selected
+            - ``selection_color``               (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the selected widget; only affects the font color
+            - ``selection_effect``              (:py:class:`pygame_menu.widgets.core.Selection`) – Widget selection effect
+            - ``tab_size``                      (int) – Width of a tab character
+
+        .. note::
+
+            All theme-related optional kwargs use the default Menu theme if not
+            defined.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply to
+            :py:meth:`pygame_menu.menu.Menu.get_current` object.
+
+        .. warning::
+
+            Be careful with kwargs collision. Consider that all optional documented
+            kwargs keys are removed from the object.
+
+        :param title: Title of the progress bar
+        :param default: Default value of the progressbar, from ``0`` to ``100``
+        :param onselect: Callback executed when selecting the widget
+        :param progressbar_id: ID of the progress bar
+        :param progress_text_format: Format function of the progress text, which considers as input the progress value (0-100)
+        :param width: Progress bar width in px
+        :param kwargs: Optional keyword arguments
+        :return: Widget object
+        :rtype: :py:class:`pygame_menu.widgets.ProgressBar`
+        """
+        # Filter widget attributes to avoid passing them to the callbacks
+        attributes = self._filter_widget_attributes(kwargs)
+
+        box_background_color = kwargs.pop('box_background_color',
+                                          self._theme.widget_box_background_color)
+        box_border_color = kwargs.pop('box_border_color',
+                                      self._theme.widget_box_border_color)
+        box_border_width = kwargs.pop('box_border_width',
+                                      self._theme.widget_box_border_width)
+        box_margin = kwargs.pop('box_margin', self._theme.widget_box_margin)
+        box_progress_color = kwargs.pop('box_progress_color', (53, 172, 78))
+        progress_text_font_color = kwargs.pop('progress_text_font_color',
+                                              self._theme.widget_font_color)
+
+        widget = pygame_menu.widgets.ProgressBar(
+            title=title,
+            progressbar_id=progressbar_id,
+            default=default,
+            width=width,
+            onselect=onselect,
+            box_background_color=box_background_color,
+            box_border_color=box_border_color,
+            box_border_width=box_border_width,
+            box_margin=box_margin,
+            box_progress_color=box_progress_color,
+            progress_text_font_color=progress_text_font_color,
+            progress_text_format=progress_text_format,
             **kwargs
         )
         self._configure_widget(widget=widget, **attributes)
