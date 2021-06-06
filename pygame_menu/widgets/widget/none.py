@@ -36,7 +36,7 @@ import pygame
 from pygame_menu.utils import make_surface
 from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImplemented
 
-from pygame_menu._types import Optional, NumberType
+from pygame_menu._types import Optional, NumberType, EventVectorType
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -44,7 +44,8 @@ class NoneWidget(Widget):
     """
     None widget. Useful if used for filling column/row layout. None widget don't
     accept values, padding, margin, cursors, position, sound, controls, and
-    cannot be selected or updated. Also, none widget cannot accept callbacks.
+    cannot be selected. Also, none widget cannot accept callbacks, except draw
+    and update callbacks.
 
     .. note::
 
@@ -154,24 +155,6 @@ class NoneWidget(Widget):
     def set_controls(self, *args, **kwargs) -> 'NoneWidget':
         return self
 
-    def add_update_callback(self, *args, **kwargs) -> str:
-        pass
-
-    def remove_update_callback(self, *args, **kwargs) -> 'NoneWidget':
-        return self
-
-    def apply_update_callbacks(self, *args, **kwargs) -> 'NoneWidget':
-        return self
-
-    def add_draw_callback(self, *args, **kwargs) -> str:
-        pass
-
-    def remove_draw_callback(self, *args, **kwargs) -> 'NoneWidget':
-        return self
-
-    def apply_draw_callbacks(self, *args, **kwargs) -> 'NoneWidget':
-        return self
-
     def set_border(self, *args, **kwargs) -> 'NoneWidget':
         return self
 
@@ -208,5 +191,6 @@ class NoneWidget(Widget):
     def set_tab_size(self, *args, **kwargs) -> 'NoneWidget':
         return self
 
-    def update(self, *args, **kwargs) -> bool:
+    def update(self, events: EventVectorType) -> bool:
+        self.apply_update_callbacks(events)
         return False
