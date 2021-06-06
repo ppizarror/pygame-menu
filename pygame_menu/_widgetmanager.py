@@ -1368,7 +1368,7 @@ class WidgetManager(Base):
             self,
             title: Any,
             items: Union[List[Tuple[Any, ...]], List[str]],
-            default: int = -1,
+            default: Optional[int] = None,
             dropselect_id: str = '',
             onchange: CallbackType = None,
             onreturn: CallbackType = None,
@@ -1484,7 +1484,7 @@ class WidgetManager(Base):
 
         :param title: Drop select title
         :param items: Item list of the drop select; format ``[('Item1', a, b, c...), ('Item2', d, e, f...)]``
-        :param default: Index of default item to display
+        :param default: Index of default item to display. If ``None`` no item is selected
         :param dropselect_id: ID of the dropselect
         :param onchange: Callback when changing the drop select item
         :param onreturn: Callback when pressing return on the selected item
@@ -2048,7 +2048,6 @@ class WidgetManager(Base):
         )
         self._configure_widget(widget=widget, **attributes)
         self._append_widget(widget)
-        widget.set_default_value(default)
 
         return widget
 
@@ -2835,7 +2834,6 @@ class WidgetManager(Base):
         )
         self._configure_widget(widget=widget, **attributes)
         self._append_widget(widget)
-        widget.set_default_value(default)
 
         return widget
 
