@@ -374,6 +374,9 @@ class Selector(Widget):
         """
         return self._items[self._index], self._index
 
+    def value_changed(self) -> bool:
+        return self._index != self._default_value
+
     def _left(self) -> None:
         """
         Move selector to left.

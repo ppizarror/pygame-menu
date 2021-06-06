@@ -265,6 +265,12 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         self.change()
 
     def set_value(self, color: Optional[Union[str, Tuple3IntType]]) -> None:
+        """
+        Set the color value.
+
+        :param color: A string if the type is HEX, or a (r, g, b) tuple if RGB
+        :return: None
+        """
         if color is None:
             color = ''
         format_color = ''
@@ -287,7 +293,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
 
         elif self._color_type == COLORINPUT_TYPE_HEX:
             text = str(color).strip()
-            if text == '':
+            if text == '' or text == '#':
                 format_color = '#'
             else:
                 # Remove all invalid chars
@@ -307,11 +313,17 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                 if count_hash == 0:
                     text = '#' + text
                 assert len(text) == 7, \
-                    'invalid color, only formats "#RRGGBB" and "RRGGBB" are allowed'
+                    'invalid color, only formats "#RRGGBB" or "RRGGBB" are allowed'
                 format_color = text
 
         super(ColorInput, self).set_value(format_color)
         self._format_hex()
+
+    def value_changed(self) -> bool:
+        default = self._default_value
+        if self._color_type == COLORINPUT_TYPE_HEX and '#' not in default:
+            default = '#' + default
+        return self.get_value(as_string=True) != default
 
     def get_value(self, as_string: bool = False) -> Union[str, Tuple3IntType]:
         """

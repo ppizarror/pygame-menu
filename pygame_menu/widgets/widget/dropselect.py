@@ -85,7 +85,7 @@ class DropSelect(Widget):
     :param title: Drop select title
     :param items: Items of the drop select
     :param dropselect_id: ID of the drop select
-    :param default: Index of default item to display
+    :param default: Index of default item to display. If ``None`` no item is selected
     :param onchange: Callback when changing the drop select item
     :param onreturn: Callback when pressing return on the selected item
     :param onselect: Function when selecting the widget
@@ -174,7 +174,7 @@ class DropSelect(Widget):
             title: Any,
             items: Union[List[Tuple[Any, ...]], List[str]],
             dropselect_id: str = '',
-            default: int = -1,
+            default: Optional[int] = None,
             onchange: CallbackType = None,
             onreturn: CallbackType = None,
             onselect: CallbackType = None,
@@ -215,7 +215,7 @@ class DropSelect(Widget):
             *args,
             **kwargs
     ) -> None:
-        assert isinstance(default, int)
+        assert isinstance(default, (int, type(None)))
         assert isinstance(dropselect_id, str)
         assert isinstance(items, list)
         assert isinstance(open_middle, bool)
@@ -224,6 +224,8 @@ class DropSelect(Widget):
 
         # Check items list
         check_selector_items(items)
+        if default is None:
+            default = -1
         assert default >= -1, \
             'default position must be equal or greater than zero'
         assert default < len(items), \
@@ -903,6 +905,9 @@ class DropSelect(Widget):
         if self._index == -1:
             raise ValueError('any item has been selected yet as index is -1')
         return self._items[self._index], self._index
+
+    def value_changed(self) -> bool:
+        return self._index != self._default_value
 
     def _down(self) -> None:
         """
