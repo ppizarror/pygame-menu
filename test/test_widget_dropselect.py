@@ -923,6 +923,42 @@ class DropSelectWidgetTest(BaseTest):
         drop2._index = -1
         drop2._process_index()
 
+    def test_value(self) -> None:
+        """
+        Test dropselect value.
+        """
+        menu = MenuUtils.generic_menu()
+        values = [('a', 'a'), ('b', 'b'), ('c', 'c'), ('d', 'd'), ('e', 'e')]
+
+        drop = menu.add.dropselect('title', items=values)
+        self.assertRaises(ValueError, lambda: drop.get_value())
+        self.assertFalse(drop.value_changed())
+        drop.set_value(0)
+        self.assertEqual(drop.get_value(), (('a', 'a'), 0))
+        self.assertTrue(drop.value_changed())
+        drop.reset_value()
+        self.assertEqual(drop._default_value, -1)
+        self.assertRaises(ValueError, lambda: drop.get_value())
+
+        drop = menu.add.dropselect('title', items=values, default=1)
+        self.assertEqual(drop.get_value(), (('b', 'b'), 1))
+        self.assertFalse(drop.value_changed())
+        drop.set_value(0)
+        self.assertEqual(drop.get_value(), (('a', 'a'), 0))
+        self.assertTrue(drop.value_changed())
+        drop.reset_value()
+
+        drop_m = menu.add.dropselect_multiple('title', values)
+        self.assertEqual(drop_m._default_value, [])
+        self.assertEqual(drop_m.get_value(), ([], []))
+        self.assertFalse(drop_m.value_changed())
+        drop_m.set_value(0, process_index=True)
+        self.assertEqual(drop_m.get_value(), ([('a', 'a')], [0]))
+        self.assertTrue(drop_m.value_changed())
+        drop_m.reset_value()
+        self.assertEqual(drop_m.get_value(), ([], []))
+        self.assertFalse(drop_m.value_changed())
+
     def test_frame_support(self) -> None:
         """
         Test drop selects within frames.

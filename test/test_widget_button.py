@@ -214,3 +214,14 @@ class ButtonWidgetTest(BaseTest):
         # Try onchange
         btn._onchange = lambda: None
         self.assertIsNone(btn.change())
+
+    def test_value(self) -> None:
+        """
+        Test button value.
+        """
+        menu = MenuUtils.generic_menu()
+        btn = menu.add.button('button')
+        self.assertRaises(ValueError, lambda: btn.get_value())
+        self.assertRaises(ValueError, lambda: btn.set_value('value'))
+        self.assertFalse(btn.value_changed())
+        btn.reset_value()

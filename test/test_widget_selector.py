@@ -132,3 +132,21 @@ class SelectorWidgetTest(BaseTest):
         self.assertEqual(sel_fancy.get_items(), [('1 - Easy', 'EASY'),
                                                  ('2 - Medium', 'MEDIUM'),
                                                  ('3 - Hard', 'HARD')])
+        self.assertRaises(AssertionError, lambda: menu.add.selector(
+            'title', [('a', 'a'), ('b', 'b')], default=2))
+
+    def test_value(self) -> None:
+        """
+        Test selector value.
+        """
+        menu = MenuUtils.generic_menu()
+        sel = menu.add.selector('title', [('a', 'a'), ('b', 'b')], default=1)
+
+        self.assertEqual(sel.get_value(), (('b', 'b'), 1))
+        self.assertFalse(sel.value_changed())
+        sel.set_value('a')
+        self.assertEqual(sel.get_value(), (('a', 'a'), 0))
+        self.assertTrue(sel.value_changed())
+        sel.reset_value()
+        self.assertEqual(sel.get_value(), (('b', 'b'), 1))
+        self.assertFalse(sel.value_changed())

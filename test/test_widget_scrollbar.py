@@ -31,7 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['ScrollBarWidgetTest']
 
-from test._utils import surface, PygameEventUtils, WINDOW_SIZE, BaseTest
+from test._utils import surface, PygameEventUtils, WINDOW_SIZE, BaseTest, MenuUtils
 
 import pygame
 
@@ -167,3 +167,20 @@ class ScrollBarWidgetTest(BaseTest):
         # Test hide
         sb._mouseover = True
         sb.hide()
+
+    def test_value(self) -> None:
+        """
+        Test scrollbar value.
+        """
+        menu = MenuUtils.generic_menu()
+        sb = menu.get_scrollarea()._scrollbars[0]
+
+        self.assertEqual(sb._default_value, 0)
+        self.assertEqual(sb.get_value(), 0)
+        self.assertFalse(sb.value_changed())
+        sb.set_value(1)
+        self.assertEqual(sb.get_value(), 1)
+        self.assertTrue(sb.value_changed())
+        sb.reset_value()
+        self.assertEqual(sb.get_value(), 0)
+        self.assertFalse(sb.value_changed())

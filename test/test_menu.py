@@ -2210,7 +2210,6 @@ class MenuTest(BaseRSTest):
                     onreturn=open_menu,
                 )
                 self.selector.change()
-                # main_menu.mainloop(surface, disable_loop=False)
 
         s = Sample()
         s.main_menu.draw(surface)

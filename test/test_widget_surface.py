@@ -90,3 +90,14 @@ class SurfaceWidgetTest(BaseTest):
         menu.draw(surface)
         surf_widget.update(PygameEventUtils.mouse_motion(surf_widget))
         surf_widget.draw(surface)
+
+    def test_value(self) -> None:
+        """
+        Test surface value.
+        """
+        menu = MenuUtils.generic_menu()
+        surf = menu.add.surface(pygame.Surface((150, 150)))
+        self.assertRaises(ValueError, lambda: surf.get_value())
+        self.assertRaises(ValueError, lambda: surf.set_value('value'))
+        self.assertFalse(surf.value_changed())
+        surf.reset_value()

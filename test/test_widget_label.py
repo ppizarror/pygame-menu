@@ -167,3 +167,14 @@ class LabelWidgetTest(BaseTest):
         # Check title format
         self.assertRaises(AssertionError, lambda: menu.add.clock(title_format='bad'))
         self.assertIsInstance(clock, Label)
+
+    def test_value(self) -> None:
+        """
+        Test label value.
+        """
+        menu = MenuUtils.generic_menu()
+        label = menu.add.label('title')
+        self.assertRaises(ValueError, lambda: label.get_value())
+        self.assertRaises(ValueError, lambda: label.set_value('value'))
+        self.assertFalse(label.value_changed())
+        label.reset_value()

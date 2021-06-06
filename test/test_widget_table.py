@@ -291,3 +291,14 @@ class TableWidgetTest(BaseTest):
         f._relax = True
         f.pack(table)
         self.assertRaises(AssertionError, lambda: table.add_row([f]))
+
+    def test_value(self) -> None:
+        """
+        Test table value.
+        """
+        menu = MenuUtils.generic_menu()
+        table = menu.add.table()
+        self.assertRaises(ValueError, lambda: table.get_value())
+        self.assertRaises(ValueError, lambda: table.set_value('value'))
+        self.assertFalse(table.value_changed())
+        table.reset_value()
