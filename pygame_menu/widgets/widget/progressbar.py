@@ -58,7 +58,7 @@ ProgressBarTextFormatType = Callable[[NumberType], str]
 # noinspection PyMissingOrEmptyDocstring
 class ProgressBar(Widget):
     """
-    Progress bar widget, offers a bar that accepts a percentage from 0 to 100.
+    Progress bar widget, offers a bar that accepts a percentage from ``0`` to ``100``.
 
     .. note::
 

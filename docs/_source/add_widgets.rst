@@ -442,7 +442,7 @@ A progress bar widget, which accepts a percentage from ``0`` to ``100``.
 
 **Example:**
 
-.. image:: ../_static/widget_rangeslider.png
+.. image:: ../_static/widget_progressbar.png
     :scale: 75%
     :align: center
 

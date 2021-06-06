@@ -2830,7 +2830,8 @@ class WidgetManager(Base):
             **kwargs
     ) -> 'pygame_menu.widgets.ProgressBar':
         """
-        Add a progress bar, which offers a bar that accepts a percentage from 0 to 100.
+        Add a progress bar, which offers a bar that accepts a percentage from
+        ``0`` to ``100``.
 
         If ``onselect`` is defined, the callback is executed as follows, where
         ``selected`` is a boolean representing the selected status:
