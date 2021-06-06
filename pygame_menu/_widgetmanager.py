@@ -2807,6 +2807,7 @@ class WidgetManager(Base):
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
 
+        range_margin = kwargs.pop('range_margin', (self._theme.widget_box_margin[0], 0))
         range_line_color = kwargs.pop('range_line_color', self._theme.widget_font_color)
         range_text_value_color = kwargs.pop('range_text_value_color',
                                             self._theme.widget_font_color)
@@ -2825,6 +2826,7 @@ class WidgetManager(Base):
             onreturn=onreturn,
             onselect=onselect,
             range_line_color=range_line_color,
+            range_margin=range_margin,
             range_text_value_color=range_text_value_color,
             range_text_value_font_height=range_text_value_font_height,
             range_text_value_tick_hfactor=range_text_value_tick_hfactor,
