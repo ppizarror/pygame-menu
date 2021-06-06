@@ -32,7 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['MenuBarWidgetTest']
 
 from test._utils import MenuUtils, surface, PygameEventUtils, SYS_PLATFORM_OSX, \
-    BaseTest, PYGAME_V2
+    BaseTest
 
 import pygame
 import pygame_menu
