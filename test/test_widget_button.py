@@ -31,7 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['ButtonWidgetTest']
 
-from test._utils import MenuUtils, surface, PygameEventUtils, BaseTest
+from test._utils import MenuUtils, surface, PygameEventUtils, BaseTest, PYGAME_V2
 
 import pygame
 import pygame_menu
@@ -214,6 +214,16 @@ class ButtonWidgetTest(BaseTest):
         # Try onchange
         btn._onchange = lambda: None
         self.assertIsNone(btn.change())
+
+    def test_empty_title(self) -> None:
+        """
+        Test empty title.
+        """
+        menu = MenuUtils.generic_menu()
+        btn = menu.add.button('')
+        p = btn._padding
+        self.assertEqual(btn.get_width(), p[1] + p[3])
+        self.assertEqual(btn.get_height(), p[0] + p[2] + 41 if PYGAME_V2 else 42)
 
     def test_value(self) -> None:
         """

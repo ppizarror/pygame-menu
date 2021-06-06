@@ -140,6 +140,8 @@ class MenuBar(Widget):
         assert isinstance(width, NumberInstance)
         assert isinstance(back_box, bool)
 
+        assert width > 0, 'width must be greater or equal than zero'
+
         background_color = assert_color(background_color)
         back_box_background_color = assert_color(back_box_background_color)
 

@@ -463,6 +463,14 @@ class RangeSliderWidgetTest(BaseTest):
         self.assertEqual(len(slider._kwargs), 0)
         self.assertEqual(slider._range_margin, (100, 0))
 
+    def test_empty_title(self) -> None:
+        """
+        Test empty title.
+        """
+        menu = MenuUtils.generic_menu()
+        r = menu.add.range_slider('', 0.5, (0, 1), 0.1)
+        self.assertEqual(r.get_size(), (198, 66))
+
     def test_value(self) -> None:
         """
         Test rangeslider value.
