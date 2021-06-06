@@ -91,3 +91,14 @@ class ImageWidgetTest(BaseTest):
         image.flip(False, False)
         self.assertEqual(image._flip, (False, False))
         image.draw(surface)
+
+    def test_value(self) -> None:
+        """
+        Test image value.
+        """
+        menu = MenuUtils.generic_menu()
+        image = menu.add.image(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        self.assertRaises(ValueError, lambda: image.get_value())
+        self.assertRaises(ValueError, lambda: image.set_value('value'))
+        self.assertFalse(image.value_changed())
+        image.reset_value()

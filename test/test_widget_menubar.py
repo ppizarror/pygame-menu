@@ -182,3 +182,13 @@ class MenuBarWidgetTest(BaseTest):
         mb.set_border()
         mb.set_selection_effect()
         menu.add.button('nice')
+
+    def test_value(self) -> None:
+        """
+        Test menubar value.
+        """
+        mb = MenuBar('Menu', 500, (0, 0, 0), back_box=True)
+        self.assertRaises(ValueError, lambda: mb.get_value())
+        self.assertRaises(ValueError, lambda: mb.set_value('value'))
+        self.assertFalse(mb.value_changed())
+        mb.reset_value()

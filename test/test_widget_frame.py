@@ -305,6 +305,17 @@ class FrameWidgetTest(unittest.TestCase):
         h.pack(menu.add.button('button legit'))
         self.assertTrue(h.contains_widget(btn))
 
+    def test_value(self) -> None:
+        """
+        Test frame value.
+        """
+        menu = MenuUtils.generic_menu()
+        f = menu.add.frame_v(300, 800)
+        self.assertRaises(ValueError, lambda: f.get_value())
+        self.assertRaises(ValueError, lambda: f.set_value('value'))
+        self.assertFalse(f.value_changed())
+        f.reset_value()
+
     def test_make_scrollarea(self) -> None:
         """
         Test make scrollarea.

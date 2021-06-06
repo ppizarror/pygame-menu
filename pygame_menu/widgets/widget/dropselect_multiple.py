@@ -387,7 +387,7 @@ class DropSelectMultiple(DropSelect):
         return len(self._selected_indices)
 
     def set_default_value(self, default: Optional[Union[int, List[int]]]) -> 'DropSelectMultiple':
-        if default is None:
+        if default is None or default == -1:
             default = []
         if isinstance(default, int):
             default = [default]
@@ -447,6 +447,14 @@ class DropSelectMultiple(DropSelect):
         self._update_buttons()
         self._render()
         return self
+
+    def value_changed(self) -> bool:
+        if len(self._default_value) != len(self._selected_indices):
+            return True
+        for v in self._selected_indices:
+            if v not in self._default_value:
+                return True
+        return False
 
     def set_value(self, item: Union[str, int], process_index: bool = False) -> None:
         """

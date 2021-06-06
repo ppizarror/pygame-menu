@@ -418,7 +418,7 @@ class RangeSlider(Widget):
 
         # Store properties
         self._clock = pygame.time.Clock()
-        self._default_value = default_value.copy()
+        self._default_value = tuple(default_value)
         self._increment = increment
         self._increment_shift_factor = 0.5
         self._keyrepeat_counters = {}  # {event.key: (counter_int, event.unicode)} (look for "***")
@@ -474,6 +474,18 @@ class RangeSlider(Widget):
         self._value = default_value
         self._value_format = value_format
         self._value_hidden = default_value.copy()  # Used when dragging mouse on discrete range
+
+    def value_changed(self) -> bool:
+        if self._single:
+            return self.get_value() != self._default_value[0]
+        return self.get_value() != self._default_value
+
+    def reset_value(self) -> 'Widget':
+        if self._single:
+            self.set_value(self._default_value[0])
+        else:
+            self.set_value(self._default_value)
+        return self
 
     def set_value(self, value: RangeSliderValueType) -> None:
         if self._single:

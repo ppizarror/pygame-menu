@@ -827,3 +827,58 @@ class TextInputWidgetTest(BaseTest):
         self.assertEqual(widget.get_width(), width)
         widget.set_value('#ffffff')
         self.assertEqual(widget.get_width(), width)
+
+    def test_value(self) -> None:
+        """
+        Test textinput value.
+        """
+        menu = MenuUtils.generic_menu()
+
+        test = ['']
+
+        def onwidgetchange(m: 'pygame_menu.Menu', w: 'pygame_menu.widgets.Widget') -> None:
+            """
+            Callback executed if widget changes.
+            """
+            self.assertIn(w, m.get_widgets())
+            test[0] = w.get_value()
+
+        menu.set_onwidgetchange(onwidgetchange)
+
+        # Text
+        text = menu.add.text_input('title', 'value')
+        self.assertEqual(test[0], '')
+        self.assertEqual(text.get_value(), 'value')
+        self.assertFalse(text.value_changed())
+        text.set_value('new')
+        self.assertEqual(text.get_value(), 'new')
+        self.assertTrue(text.value_changed())
+        text.reset_value()
+        self.assertEqual(text.get_value(), 'value')
+        self.assertFalse(text.value_changed())
+        text.change()
+        self.assertEqual(test[0], 'value')
+
+        # Color
+        color = menu.add.color_input('title', color_type='hex', hex_format='none')
+        self.assertEqual(color._default_value, '')
+        self.assertEqual(color.get_value(), (-1, -1, -1))
+        self.assertFalse(color.value_changed())
+        self.assertRaises(AssertionError, lambda: color.set_value((255, 0, 0)))
+        color.set_value('ff0000')
+        self.assertEqual(color.get_value(), (255, 0, 0))
+        self.assertTrue(color.value_changed())
+        color.reset_value()
+        self.assertEqual(color.get_value(), (-1, -1, -1))
+        self.assertFalse(color.value_changed())
+
+        color = menu.add.color_input('title', color_type='hex', hex_format='none', default='#ff0000')
+        self.assertEqual(color._default_value, '#ff0000')
+        self.assertEqual(color.get_value(), (255, 0, 0))
+        self.assertFalse(color.value_changed())
+        color.set_value('#00ff00')
+        self.assertEqual(color.get_value(), (0, 255, 0))
+        self.assertTrue(color.value_changed())
+        color.reset_value()
+        self.assertEqual(color.get_value(), (255, 0, 0))
+        self.assertFalse(color.value_changed())

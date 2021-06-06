@@ -158,6 +158,7 @@ class Menu(Base):
     _onmouseover: Optional[Union[Callable[['Menu', EventType], Any], CallableNoArgsType]]
     _onreset: Optional[Union[Callable[['Menu'], Any], CallableNoArgsType]]
     _onupdate: Optional[Union[Callable[[EventListType, 'Menu'], Any], CallableNoArgsType]]
+    _onwidgetchange: Optional[Callable[['Menu', 'Widget'], Any]]
     _onwindowmouseleave: Optional[Union[Callable[['Menu'], Any], CallableNoArgsType]]
     _onwindowmouseover: Optional[Union[Callable[['Menu'], Any], CallableNoArgsType]]
     _overflow: Tuple2BoolType
@@ -405,6 +406,7 @@ class Menu(Base):
         self._onmouseleave = None
         self._onmouseover = None
         self._onupdate = None
+        self._onwidgetchange = None
         self._onwindowmouseleave = None
         self._onwindowmouseover = None
 
@@ -820,7 +822,7 @@ class Menu(Base):
         :param onwindowmouseover: Callback executed if user enters the window with the mouse; it can be a function or None
         :return: Self reference
         """
-        if onwindowmouseover:
+        if onwindowmouseover is not None:
             assert is_callable(onwindowmouseover), \
                 'onwindowmouseover must be callable (function-type) or None'
         self._onwindowmouseover = onwindowmouseover
@@ -831,7 +833,7 @@ class Menu(Base):
             onwindowmouseleave: Optional[Union[Callable[['Menu'], Any], CallableNoArgsType]]
     ) -> 'Menu':
         """
-        Set ``onmouseleave`` callback. This method is executed in
+        Set ``onwindowmouseleave`` callback. This method is executed in
         :py:meth:`pygame_menu.menu.Menu.update` method. The callback function
         receives the following arguments:
 
@@ -842,10 +844,32 @@ class Menu(Base):
         :param onwindowmouseleave: Callback executed if user leaves the window with the mouse; it can be a function or None
         :return: Self reference
         """
-        if onwindowmouseleave:
+        if onwindowmouseleave is not None:
             assert is_callable(onwindowmouseleave), \
                 'onwindowmouseleave must be callable (function-type) or None'
         self._onwindowmouseleave = onwindowmouseleave
+        return self
+
+    def set_onwidgetchange(
+            self,
+            onwidgetchange: Optional[Callable[['Menu', 'Widget'], Any]]
+    ) -> 'Menu':
+        """
+        Set ``onwidgetchange`` callback. This method is executed if any appended
+        widget changes its value. The callback function receives the following
+        arguments:
+
+        .. code-block:: python
+
+            onwidgetchange(menu, widget)
+
+        :param onwidgetchange: Callback executed if an appended widget changes its value
+        :return: Self reference
+        """
+        if onwidgetchange is not None:
+            assert is_callable(onwidgetchange), \
+                'onwidgetchange must be callable (function-type) or None'
+        self._onwidgetchange = onwidgetchange
         return self
 
     def set_onmouseover(
@@ -864,7 +888,7 @@ class Menu(Base):
         :param onmouseover: Callback executed if user enters the Menu with the mouse; it can be a function or None
         :return: Self reference
         """
-        if onmouseover:
+        if onmouseover is not None:
             assert is_callable(onmouseover), \
                 'onmouseover must be callable (function-type) or None'
         self._onmouseover = onmouseover
@@ -886,7 +910,7 @@ class Menu(Base):
         :param onmouseleave: Callback executed if user leaves the Menu with the mouse; it can be a function or None
         :return: Self reference
         """
-        if onmouseleave:
+        if onmouseleave is not None:
             assert is_callable(onmouseleave), \
                 'onmouseleave must be callable (function-type) or None'
         self._onmouseleave = onmouseleave

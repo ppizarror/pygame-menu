@@ -462,3 +462,32 @@ class RangeSliderWidgetTest(BaseTest):
         slider = menu.add.range_slider('Range', 0.5, (0, 1), 1, range_margin=(100, 0))
         self.assertEqual(len(slider._kwargs), 0)
         self.assertEqual(slider._range_margin, (100, 0))
+
+    def test_value(self) -> None:
+        """
+        Test rangeslider value.
+        """
+        menu = MenuUtils.generic_menu()
+
+        # Single
+        r = menu.add.range_slider('Range', 0.5, (0, 1), 0.1)
+        self.assertEqual(r.get_value(), 0.5)
+        self.assertFalse(r.value_changed())
+        r.set_value(0.8)
+        self.assertTrue(r.value_changed())
+        self.assertEqual(r.get_value(), 0.8)
+        r.reset_value()
+        self.assertEqual(r.get_value(), 0.5)
+        self.assertFalse(r.value_changed())
+
+        # Double
+        r = menu.add.range_slider('Range', [0.2, 0.6], (0, 1), 0.1)
+        self.assertEqual(r.get_value(), (0.2, 0.6))
+        self.assertFalse(r.value_changed())
+        self.assertRaises(AssertionError, lambda: r.set_value(0.8))
+        r.set_value((0.5, 1))
+        self.assertTrue(r.value_changed())
+        self.assertEqual(r.get_value(), (0.5, 1))
+        r.reset_value()
+        self.assertEqual(r.get_value(), (0.2, 0.6))
+        self.assertFalse(r.value_changed())

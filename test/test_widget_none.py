@@ -95,7 +95,6 @@ class NoneWidgetTest(BaseTest):
         wid.show()
         self.assertTrue(wid.is_visible())
 
-        wid.set_value('epic')
         self.assertRaises(ValueError, lambda: wid.get_value())
 
         wid.remove_update_callback('none')
@@ -185,10 +184,6 @@ class NoneWidgetTest(BaseTest):
         wid._mouseover = True
         wid._check_mouseover()
         self.assertFalse(wid._mouseover)
-
-        # Defaults
-        wid.set_default_value(None)
-        self.assertIsNotNone(wid._default_value)
 
     def test_hmargin(self) -> None:
         """
@@ -281,5 +276,23 @@ class NoneWidgetTest(BaseTest):
             ('Menu 3', menu.add.menu_link(menu3))
         ], onreturn=open_link, style=pygame_menu.widgets.SELECTOR_STYLE_FANCY)
 
-        # menu.mainloop(surface)
         sel.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
+
+    def test_value(self) -> None:
+        """
+        Test value.
+        """
+        menu = MenuUtils.generic_menu()
+        menu2 = MenuUtils.generic_menu()
+        widgets = [
+            menu.add.none_widget(),
+            menu.add.vertical_margin(1),
+            menu.add._horizontal_margin(1),
+            menu.add.menu_link(menu2)
+        ]
+        for w in widgets:
+            self.assertRaises(ValueError, lambda: w.get_value())
+            self.assertRaises(ValueError, lambda: w.set_value('value'))
+            self.assertRaises(ValueError, lambda: w.set_default_value('value'))
+            self.assertFalse(w.value_changed())
+            w.reset_value()

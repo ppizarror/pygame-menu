@@ -193,3 +193,18 @@ class ToggleSwitchWidgetTest(BaseTest):
         pygame_menu.widgets.ToggleSwitch('Epic', state_text_font=menu._theme.widget_font)
         self.assertRaises(AssertionError,
                           lambda: pygame_menu.widgets.ToggleSwitch('Epic', state_text_font_size=-1))
+
+    def test_value(self) -> None:
+        """
+        Test toggleswitch value.
+        """
+        menu = MenuUtils.generic_menu()
+        switch = menu.add.toggle_switch('toggle', False)
+        self.assertEqual(switch._default_value, 0)
+        self.assertFalse(switch.value_changed())
+        switch.set_value(1)
+        self.assertEqual(switch.get_value(), 1)
+        self.assertTrue(switch.value_changed())
+        switch.reset_value()
+        self.assertEqual(switch.get_value(), 0)
+        self.assertFalse(switch.value_changed())
