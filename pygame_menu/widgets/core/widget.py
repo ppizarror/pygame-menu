@@ -1241,6 +1241,17 @@ class Widget(Base):
                 pass
             return self._onchange(*args, **self._kwargs)
 
+    def value_changed(self) -> bool:
+        """
+        Return ``True`` if the Widget's value changed.
+
+        :return: ``True`` if changed
+        """
+        try:
+            return self.get_value() != self._default_value
+        except ValueError:
+            return False
+
     def draw(self, surface: 'pygame.Surface') -> 'Widget':
         """
         Draw the Widget on a given surface.
