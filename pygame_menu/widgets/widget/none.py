@@ -153,9 +153,6 @@ class NoneWidget(Widget):
     def set_controls(self, *args, **kwargs) -> 'NoneWidget':
         return self
 
-    def set_value(self, *args, **kwargs) -> None:
-        pass
-
     def add_update_callback(self, *args, **kwargs) -> None:
         pass
 
@@ -199,9 +196,6 @@ class NoneWidget(Widget):
         return self
 
     def set_tab_size(self, *args, **kwargs) -> 'NoneWidget':
-        return self
-
-    def set_default_value(self, *args, **kwargs) -> 'NoneWidget':
         return self
 
     def update(self, *args, **kwargs) -> bool:
