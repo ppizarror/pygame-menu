@@ -93,3 +93,4 @@ class ProgressBarWidgetTest(BaseTest):
         pb = menu.add.progress_bar('', box_margin=(0, 0), padding=0,
                                    progress_text_align=pygame_menu.locals.ALIGN_RIGHT)
         self.assertEqual(pb.get_size(), (150, 41 if PYGAME_V2 else 42))
+        self.assertFalse(pb.is_selected())

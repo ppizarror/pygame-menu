@@ -125,7 +125,7 @@ class ProgressBar(Widget):
             progress_text_enabled: bool = True,
             progress_text_font: Optional[FontType] = None,
             progress_text_font_color: ColorInputType = (0, 0, 0),
-            progress_text_font_hfactor: float = 0.5,
+            progress_text_font_hfactor: float = 0.8,
             progress_text_format: ProgressBarTextFormatType = lambda x: str(round(x, 1)),
             progress_text_margin: Tuple2IntType = (0, 0),
             progress_text_placeholder: str = '{0} %',
