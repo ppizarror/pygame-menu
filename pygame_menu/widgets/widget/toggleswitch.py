@@ -229,6 +229,7 @@ class ToggleSwitch(Widget):
             infinite = True
 
         # Store properties
+        self._default_value = default_state
         self._switch_border_color = switch_border_color
         self._switch_border_width = switch_border_width
         self._infinite = infinite
