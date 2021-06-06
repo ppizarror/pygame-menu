@@ -222,9 +222,9 @@ def main(test: bool = False) -> None:
                                     state_text=('Apagado', 'Encencido'))
 
     # Single value from range
-    settings_menu.add.range_slider('Choose a number', 50, (0, 100), 1,
-                                   rangeslider_id='range_slider',
-                                   value_format=lambda x: str(int(x)))
+    rslider = settings_menu.add.range_slider('Choose a number', 50, (0, 100), 1,
+                                             rangeslider_id='range_slider',
+                                             value_format=lambda x: str(int(x)))
 
     # Range
     settings_menu.add.range_slider('How do you rate pygame-menu?', (7, 10), (1, 10), 1,
@@ -237,18 +237,33 @@ def main(test: bool = False) -> None:
                                    slider_text_value_enabled=False,
                                    value_format=lambda x: range_values_discrete[x])
 
+    # Add a progress bar
+    progress = settings_menu.add.progress_bar('Progress', default=rslider.get_value(),
+                                              progressbar_id='progress')
+
+    def on_change_slider(val: int) -> None:
+        """
+        Updates the progress bar.
+
+        :param val: Value of the progress from 0 to 100
+        """
+        progress.set_value(val)
+
+    rslider.set_onchange(on_change_slider)
+
+    # Add a block
+    settings_menu.add.clock(clock_format='%Y/%m/%d %H:%M', title_format='Clock: {0}')
+
     def data_fun() -> None:
         """
         Print data of the menu.
-
-        :return: None
         """
         print('Settings data:')
         data = settings_menu.get_input_data()
         for k in data.keys():
             print(u'\t{0}\t=>\t{1}'.format(k, data[k]))
 
-    settings_menu.add.clock(clock_format='%Y/%m/%d %H:%M', title_format='Clock: {0}')
+    # Add final buttons
     settings_menu.add.button('Store data', data_fun, button_id='store')  # Call function
     settings_menu.add.button('Restore original values', settings_menu.reset_value)
     settings_menu.add.button('Return to main menu', pygame_menu.events.BACK,

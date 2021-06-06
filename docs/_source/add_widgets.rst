@@ -435,6 +435,27 @@ drawing callbacks for being executed on each menu draw.
 .. automethod:: pygame_menu._widgetmanager.WidgetManager.none_widget
 
 
+Add a progress bar
+------------------
+
+A progress bar widget, which accepts a percentage from ``0`` to ``100``.
+
+**Example:**
+
+.. image:: ../_static/widget_progressbar.png
+    :scale: 75%
+    :align: center
+
+.. code-block:: python
+
+    menu = pygame_menu.Menu(...)
+
+    progress1 = menu.add.progress_bar('My Progress', default=75.6)
+    progress2 = menu.add.progress_bar('Pygame-menu epicness?', default=99.9)
+
+.. automethod:: pygame_menu._widgetmanager.WidgetManager.progress_bar
+
+
 Add a range slider
 ------------------
 

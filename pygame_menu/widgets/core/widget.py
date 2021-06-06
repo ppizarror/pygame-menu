@@ -554,7 +554,11 @@ class Widget(Base):
         self._onmouseleave = onmouseleave
         return self
 
-    def mouseover(self, event: EventType, check_all_widget_mouseleave: bool = True) -> 'Widget':
+    def mouseover(
+            self,
+            event: EventType,
+            check_all_widget_mouseleave: bool = True
+    ) -> 'Widget':
         """
         Run the ``onmouseover`` if the mouse is placed over the Widget. The
         callback receive the Widget object reference and the mouse event:
@@ -616,7 +620,11 @@ class Widget(Base):
 
         return self
 
-    def mouseleave(self, event: EventType, check_all_widget_mouseleave: bool = True) -> 'Widget':
+    def mouseleave(
+            self,
+            event: EventType,
+            check_all_widget_mouseleave: bool = True
+    ) -> 'Widget':
         """
         Run the ``onmouseleave`` callback if the mouse is placed outside the Widget.
         The callback receive the Widget object reference and the mouse event:
@@ -2630,7 +2638,8 @@ class Widget(Base):
         .. note::
 
             Update is not performed if the Widget is in ``readonly`` state or
-            it's hidden.
+            it's hidden. However, ``apply_update_callbacks`` method is called
+            in most widgets, except :py:class:`pygame_menu.widgets.NoneWidget`.
 
         :param events: List/Tuple of pygame events
         :return: ``True`` if updated

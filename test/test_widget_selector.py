@@ -150,3 +150,11 @@ class SelectorWidgetTest(BaseTest):
         sel.reset_value()
         self.assertEqual(sel.get_value(), (('b', 'b'), 1))
         self.assertFalse(sel.value_changed())
+
+    def test_empty_title(self) -> None:
+        """
+        Test empty title.
+        """
+        menu = MenuUtils.generic_menu()
+        sel = menu.add.selector('', [('a', 'a'), ('b', 'b')])
+        self.assertEqual(sel.get_size(), (83, 49))

@@ -47,7 +47,7 @@ icon = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU).ge
 pygame.display.set_icon(icon)
 
 # Set example, only this should change
-EXAMPLE = 'RANGESLIDER'
+EXAMPLE = 'PROGRESSBAR'
 
 # Create example
 menu: 'pygame_menu.Menu'
@@ -291,6 +291,12 @@ elif EXAMPLE == 'LABEL':
            'Press UP/DOWN to move through Menu ' \
            'Press LEFT/RIGHT to move through Selectors.'
     menu.add.label(HELP, max_char=-1, font_size=20)
+
+elif EXAMPLE == 'PROGRESSBAR':
+    menu = make_menu(pygame_menu.themes.THEME_DARK, 'Progress Bar', widget_font_size=18)
+
+    progress1 = menu.add.progress_bar('My Progress', default=75.6)
+    progress2 = menu.add.progress_bar('Pygame-menu epicness?', default=99.9)
 
 elif EXAMPLE == 'RANGESLIDER':
     menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'Range Slider', widget_font_size=18)

@@ -97,12 +97,6 @@ class NoneWidgetTest(BaseTest):
 
         self.assertRaises(ValueError, lambda: wid.get_value())
 
-        wid.remove_update_callback('none')
-        wid.add_update_callback(None)
-        wid.apply_update_callbacks()
-
-        draw = [False]
-
         surf = wid.get_surface()
         self.assertEqual(surf.get_width(), 0)
         self.assertEqual(surf.get_height(), 0)
@@ -142,18 +136,6 @@ class NoneWidgetTest(BaseTest):
         self.assertFalse(wid.is_selected())
         self.assertFalse(wid.is_selectable)
 
-        # noinspection PyUnusedLocal
-        def _draw(*args) -> None:
-            draw[0] = True
-
-        draw_id = wid.add_draw_callback(_draw)
-        wid.draw(surface)
-        self.assertTrue(draw[0])
-        draw[0] = False
-        wid.remove_draw_callback(draw_id)
-        wid.draw(surface)
-        self.assertFalse(draw[0])
-
         # noinspection PyTypeChecker
         wid.set_sound(None)
         self.assertIsNotNone(wid._sound)
@@ -184,6 +166,46 @@ class NoneWidgetTest(BaseTest):
         wid._mouseover = True
         wid._check_mouseover()
         self.assertFalse(wid._mouseover)
+
+    def test_draw_update(self) -> None:
+        """
+        Test draw and update callbacks.
+        """
+        wid = NoneWidget()
+
+        # Test draw update
+        draw = [False]
+
+        # noinspection PyUnusedLocal
+        def _draw(*args) -> None:
+            draw[0] = True
+
+        draw_id = wid.add_draw_callback(_draw)
+        self.assertIsInstance(draw_id, str)
+        wid.draw(surface)
+        self.assertTrue(draw[0])
+        draw[0] = False
+        wid.remove_draw_callback(draw_id)
+        self.assertRaises(IndexError, lambda: wid.remove_draw_callback(draw_id))
+        wid.draw(surface)
+        self.assertFalse(draw[0])
+
+        # Test update
+        update = [False]
+
+        # noinspection PyUnusedLocal
+        def _update(*args) -> None:
+            update[0] = True
+
+        update_id = wid.add_update_callback(_update)
+        self.assertIsInstance(update_id, str)
+        self.assertFalse(wid.update(surface))
+        self.assertTrue(update[0])
+        update[0] = False
+        wid.remove_update_callback(update_id)
+        self.assertRaises(IndexError, lambda: wid.remove_update_callback(update_id))
+        wid.update(surface)
+        self.assertFalse(update[0])
 
     def test_hmargin(self) -> None:
         """

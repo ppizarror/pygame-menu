@@ -31,7 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['LabelWidgetTest']
 
-from test._utils import MenuUtils, surface, BaseTest
+from test._utils import MenuUtils, surface, BaseTest, PYGAME_V2
 
 from pygame_menu.locals import ALIGN_LEFT
 from pygame_menu.widgets import Label
@@ -167,6 +167,16 @@ class LabelWidgetTest(BaseTest):
         # Check title format
         self.assertRaises(AssertionError, lambda: menu.add.clock(title_format='bad'))
         self.assertIsInstance(clock, Label)
+
+    def test_empty_title(self) -> None:
+        """
+        Test empty title.
+        """
+        menu = MenuUtils.generic_menu()
+        label = menu.add.label('')
+        p = label._padding
+        self.assertEqual(label.get_width(), p[1] + p[3])
+        self.assertEqual(label.get_height(), p[0] + p[2] + 41 if PYGAME_V2 else 42)
 
     def test_value(self) -> None:
         """

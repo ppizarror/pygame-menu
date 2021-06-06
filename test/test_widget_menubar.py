@@ -183,6 +183,15 @@ class MenuBarWidgetTest(BaseTest):
         mb.set_selection_effect()
         menu.add.button('nice')
 
+    def test_empty_title(self) -> None:
+        """
+        Test empty title.
+        """
+        title = MenuBar('', 500, (0, 0, 0), back_box=True)
+        p = title._padding
+        self.assertEqual(title.get_width(), p[1] + p[3])
+        self.assertEqual(title.get_height(), p[0] + p[2])
+
     def test_value(self) -> None:
         """
         Test menubar value.

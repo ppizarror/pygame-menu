@@ -882,3 +882,11 @@ class TextInputWidgetTest(BaseTest):
         color.reset_value()
         self.assertEqual(color.get_value(), (255, 0, 0))
         self.assertFalse(color.value_changed())
+
+    def test_empty_title(self) -> None:
+        """
+        Test empty title.
+        """
+        menu = MenuUtils.generic_menu()
+        text = menu.add.text_input('')
+        self.assertEqual(text.get_size(), (16, 49))

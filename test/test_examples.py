@@ -69,8 +69,7 @@ class ExamplesTest(BaseRSTest):
                           lambda: game_selector.play_function(['U'], font, test=True))
         game_selector.change_difficulty(('HARD', 1), 'HARD')
 
-    @staticmethod
-    def test_example_multi_input() -> None:
+    def test_example_multi_input(self) -> None:
         """
         Test multi-input example.
         """
@@ -82,6 +81,14 @@ class ExamplesTest(BaseRSTest):
         # Test methods within submenus
         settings = multi_input.main_menu.get_submenus()[0]
         settings.get_widget('store').apply()
+
+        # Check range slider has event
+        rslider = settings.get_widget('range_slider')
+        self.assertIsNotNone(rslider._onchange)
+        self.assertEqual(rslider.get_value(), 50)
+        rslider.set_value(69)
+        rslider.change()
+        self.assertEqual(settings.get_widget('progress').get_value(), 69)
 
         more_settings = multi_input.main_menu.get_submenus()[1]
         # noinspection PyTypeChecker

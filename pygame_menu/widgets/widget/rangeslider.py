@@ -103,7 +103,7 @@ class RangeSlider(Widget):
     :param range_box_single_slider: Enables range box if there's only 1 slider instead of 2
     :param range_line_color: Color of the range line
     :param range_line_height: Height of the range line in px
-    :param range_margin: Left/Right margin of the range in px
+    :param range_margin: Range margin on x-axis and y-axis (x, y) from title in px
     :param range_text_value_color: Color of the range values text
     :param range_text_value_enabled: Enables the range values text
     :param range_text_value_font: Font of the ranges value. If ``None`` the same font as the widget is used
@@ -369,10 +369,6 @@ class RangeSlider(Widget):
         assert range_line_height >= 0, \
             'range line height must be equal or greater than zero'
         assert_vector(range_margin, 2, int)
-        assert range_margin[0] >= 0, \
-            'left range margin must be equal or greater than zero'
-        assert range_margin[1] >= 0, \
-            'right range margin must be equal or greater than zero'
         assert isinstance(range_text_value_tick_number, int)
         if range_text_value_enabled:
             assert range_text_value_tick_number >= 2, \
@@ -668,7 +664,7 @@ class RangeSlider(Widget):
         return rect
 
     def _render(self) -> Optional[bool]:
-        if not (hasattr(self, '_font_range_value')):
+        if not hasattr(self, '_font_range_value'):
             return False
 
         if not self._render_hash_changed(
@@ -681,7 +677,7 @@ class RangeSlider(Widget):
         self._surface = self._render_string(self._title, self.get_font_color_status())
         self._rect.width, self._rect.height = self._surface.get_size()
         self._range_pos = (self._rect.width + self._range_margin[0],
-                           int(self._rect.height / 2))
+                           int(self._rect.height / 2) + self._range_margin[1])
 
         # Create slider
         sel_s = self._slider_selected[0] and self._selected and not self.readonly, \
@@ -803,8 +799,8 @@ class RangeSlider(Widget):
         # Update maximum rect height
         self._rect.height = max(self._rect.height, self._slider_height,
                                 self._range_line_height, range_values_size[1])
-        self._rect.width += self._range_width + self._range_margin[0] + \
-                            self._range_margin[1] + range_values_size[0]
+        self._rect.height += self._range_margin[1]
+        self._rect.width += self._range_width + self._range_margin[0] + range_values_size[0]
 
         # Finals
         self.force_menu_surface_update()

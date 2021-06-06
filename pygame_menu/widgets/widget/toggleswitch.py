@@ -116,7 +116,7 @@ class ToggleSwitch(Widget):
     _switch_font_rendered: List['pygame.Surface']
     _switch_height: int
     _switch_height_factor: float
-    _switch_margin: Tuple2NumberType
+    _switch_margin: Tuple2IntType
     _switch_pos: Tuple2IntType
     _switch_width: int
     _total_states: int
@@ -146,7 +146,7 @@ class ToggleSwitch(Widget):
             switch_border_color: ColorInputType = (40, 40, 40),
             switch_border_width: int = 1,
             switch_height: NumberType = 1.25,
-            switch_margin: Tuple2NumberType = (25, 0),
+            switch_margin: Tuple2IntType = (25, 0),
             *args,
             **kwargs
     ) -> None:
@@ -190,7 +190,7 @@ class ToggleSwitch(Widget):
         assert slider_height_factor > 0, 'slider height factor cannot be negative'
         assert slider_thickness >= 0, 'slider thickness cannot be negative'
         assert isinstance(slider_vmargin, NumberInstance)
-        assert_vector(switch_margin, 2)
+        assert_vector(switch_margin, 2, int)
         assert isinstance(switch_height, NumberInstance) and switch_height > 0, \
             'switch height factor cannot be zero or negative'
         assert isinstance(state_color, tuple) and len(state_color) == self._total_states

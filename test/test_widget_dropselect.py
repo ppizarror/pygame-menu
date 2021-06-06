@@ -968,6 +968,17 @@ class DropSelectWidgetTest(BaseTest):
         self.assertTrue(drop_m._selected_indices, [1, 2])
         self.assertFalse(drop_m.value_changed())
 
+    def test_empty_title(self) -> None:
+        """
+        Test empty title.
+        """
+        menu = MenuUtils.generic_menu()
+        values = [('a', 'a'), ('b', 'b'), ('c', 'c'), ('d', 'd'), ('e', 'e')]
+        drop = menu.add.dropselect('', items=values)
+        self.assertEqual(drop.get_size(), (309, 49))
+        drop = menu.add.dropselect_multiple('', items=values)
+        self.assertEqual(drop.get_size(), (309, 49))
+
     def test_frame_support(self) -> None:
         """
         Test drop selects within frames.

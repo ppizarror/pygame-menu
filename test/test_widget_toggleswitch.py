@@ -208,3 +208,11 @@ class ToggleSwitchWidgetTest(BaseTest):
         switch.reset_value()
         self.assertEqual(switch.get_value(), 0)
         self.assertFalse(switch.value_changed())
+
+    def test_empty_title(self) -> None:
+        """
+        Test empty title.
+        """
+        menu = MenuUtils.generic_menu()
+        switch = menu.add.toggle_switch('')
+        self.assertEqual(switch.get_size(), (191, 49))
