@@ -138,6 +138,7 @@ class ScrollBar(Widget):
         self._page_ctrl_thick = page_ctrl_thick
 
         # Slider
+        self._default_value = 0
         self._slider_color = slider_color
         self._slider_hover_color = slider_hover_color
         self._slider_pad = slider_pad
