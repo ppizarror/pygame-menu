@@ -2825,6 +2825,7 @@ class WidgetManager(Base):
             onselect: CallbackType = None,
             progressbar_id: str = '',
             progress_text_format: ProgressBarTextFormatType = lambda x: str(round(x, 1)),
+            selectable: bool = False,
             width: int = 150,
             **kwargs
     ) -> 'pygame_menu.widgets.ProgressBar':
@@ -2897,11 +2898,14 @@ class WidgetManager(Base):
         :param onselect: Callback executed when selecting the widget
         :param progressbar_id: ID of the progress bar
         :param progress_text_format: Format function of the progress text, which considers as input the progress value (0-100)
+        :param selectable: Progress bar accepts user selection
         :param width: Progress bar width in px
         :param kwargs: Optional keyword arguments
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.ProgressBar`
         """
+        assert isinstance(selectable, bool)
+
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
 
@@ -2931,6 +2935,8 @@ class WidgetManager(Base):
             progress_text_format=progress_text_format,
             **kwargs
         )
+        widget.is_selectable = selectable
+
         self._configure_widget(widget=widget, **attributes)
         self._append_widget(widget)
 
