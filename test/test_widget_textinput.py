@@ -834,8 +834,20 @@ class TextInputWidgetTest(BaseTest):
         """
         menu = MenuUtils.generic_menu()
 
+        test = ['']
+
+        def onwidgetchange(m: 'pygame_menu.Menu', w: 'pygame_menu.widgets.Widget') -> None:
+            """
+            Callback executed if widget changes.
+            """
+            self.assertIn(w, m.get_widgets())
+            test[0] = w.get_value()
+
+        menu.set_onwidgetchange(onwidgetchange)
+
         # Text
         text = menu.add.text_input('title', 'value')
+        self.assertEqual(test[0], '')
         self.assertEqual(text.get_value(), 'value')
         self.assertFalse(text.value_changed())
         text.set_value('new')
@@ -844,6 +856,8 @@ class TextInputWidgetTest(BaseTest):
         text.reset_value()
         self.assertEqual(text.get_value(), 'value')
         self.assertFalse(text.value_changed())
+        text.change()
+        self.assertEqual(test[0], 'value')
 
         # Color
         color = menu.add.color_input('title', color_type='hex', hex_format='none')

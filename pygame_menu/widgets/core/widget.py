@@ -1230,20 +1230,24 @@ class Widget(Base):
         :param args: Extra arguments passed to the callback
         :return: Callback return value
         """
+        val = None
         self.scroll_to_widget(scroll_parent=False)
         if self.readonly:
-            return
+            return val
         if self._onchange:
             args = list(args) + list(self._args)
             try:
                 args.insert(0, self.get_value())
             except ValueError:
                 pass
-            return self._onchange(*args, **self._kwargs)
+            val = self._onchange(*args, **self._kwargs)
+        if self._menu is not None and self._menu._onwidgetchange is not None:
+            self._menu._onwidgetchange(self._menu, self)
+        return val
 
     def value_changed(self) -> bool:
         """
-        Return ``True`` if the Widget's value changed.
+        Return ``True`` if the Widget's value changed from the default value.
 
         :return: ``True`` if changed
         """

@@ -1404,6 +1404,7 @@ class MenuTest(BaseRSTest):
         btn = menu.add.button('hidden')
         btn.hide()
         self.assertEqual(menu.get_height(widget=True), 0)
+        menu._runtime_errors.throw(False, 'error')
 
     # noinspection SpellCheckingInspection
     def test_beforeopen(self) -> None:
