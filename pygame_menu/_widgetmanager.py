@@ -2730,7 +2730,7 @@ class WidgetManager(Base):
             - ``range_box_single_slider``       (bool) - Enables range box if there's only 1 slider instead of 2
             - ``range_line_color``              (tuple, list, str, int, :py:class:`pygame.Color`) - Color of the range line
             - ``range_line_height``             (int) - Height of the range line in px
-            - ``range_margin``                  (tuple, list) - Left/Right margin of the range in px
+            - ``range_margin``                  (tuple, list) - Range margin on x-axis and y-axis (x, y) from title in px
             - ``range_text_value_color``        (tuple, list, str, int, :py:class:`pygame.Color`) - Color of the range values text
             - ``range_text_value_enabled``      (bool) - Enables the range values text
             - ``range_text_value_font_height``  (int, float) - Height factor of the range value font (factor of the range title height)
@@ -2807,7 +2807,7 @@ class WidgetManager(Base):
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
 
-        range_margin = kwargs.pop('range_margin', (self._theme.widget_box_margin[0], 0))
+        range_margin = kwargs.pop('range_margin', self._theme.widget_box_margin)
         range_line_color = kwargs.pop('range_line_color', self._theme.widget_font_color)
         range_text_value_color = kwargs.pop('range_text_value_color',
                                             self._theme.widget_font_color)
