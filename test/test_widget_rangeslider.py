@@ -471,6 +471,23 @@ class RangeSliderWidgetTest(BaseTest):
         r = menu.add.range_slider('', 0.5, (0, 1), 0.1)
         self.assertEqual(r.get_size(), (198, 66))
 
+    def test_invalid_range(self) -> None:
+        """
+        Test invalid ranges. #356
+        """
+        menu = MenuUtils.generic_menu()
+        r = menu.add.range_slider('Infection Rate', default=2, increment=0.5, range_values=(2, 10))
+        self.assertEqual(r.get_value(), 2)
+        self.assertTrue(r.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True)))
+        self.assertEqual(r.get_value(), 2.5)
+        self.assertTrue(r.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True)))
+        self.assertEqual(r.get_value(), 2)
+        self.assertFalse(r.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True)))
+        self.assertEqual(r.get_value(), 2)
+        for _ in range(20):
+            r.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
+        self.assertEqual(r.get_value(), 10)
+
     def test_value(self) -> None:
         """
         Test rangeslider value.
