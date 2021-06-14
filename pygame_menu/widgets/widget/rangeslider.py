@@ -816,7 +816,6 @@ class RangeSlider(Widget):
         sw = surface.get_width() / 2 if surface is not None else 0
         if len(self._range_values) == 2:
             d = float(value - self._range_values[0]) / (self._range_values[1] - self._range_values[0])
-            assert 0 <= d <= 1
             return int(d * self._range_width - sw)
 
         # Find nearest position
