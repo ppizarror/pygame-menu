@@ -34,6 +34,11 @@ __all__ = ['ControlsTest']
 from test._utils import MenuUtils, PygameEventUtils, BaseTest
 
 import pygame
+import os
+
+# Fix pyautogui travis tests
+if 'DISPLAY' not in os.environ.keys():
+    os.environ['DISPLAY'] = ':0'
 
 # noinspection PyPackageRequirements
 from pyautogui import press
