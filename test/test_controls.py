@@ -36,12 +36,24 @@ from test._utils import MenuUtils, PygameEventUtils, BaseTest
 import pygame
 import os
 
-# Fix pyautogui travis tests
-if 'DISPLAY' not in os.environ.keys():
-    os.environ['DISPLAY'] = ':0'
 
-# noinspection PyPackageRequirements
-from pyautogui import press
+# Fix pyautogui travis tests
+def press(key: str) -> None:
+    """
+    Press a key.
+    """
+    print(key)
+
+
+PY_AUTO_GUI = False
+if 'DISPLAY' in os.environ.keys():
+    try:
+        # noinspection PyPackageRequirements
+        from pyautogui import press
+
+        PY_AUTO_GUI = True
+    except (ImportError, ModuleNotFoundError, FileNotFoundError, KeyError):
+        pass
 
 import pygame_menu.controls as ctrl
 
@@ -114,7 +126,10 @@ class ControlsTest(BaseTest):
                 #     print('Up')
                 if event.key == pygame.K_DOWN:
                     down = True
-        self.assertTrue(down)
+        if PY_AUTO_GUI:
+            self.assertTrue(down)
+        else:
+            self.assertFalse(down)
         self.assertEqual(main_menu.get_index(), 0)
 
         main_menu.update(events)
@@ -122,7 +137,7 @@ class ControlsTest(BaseTest):
 
         main_menu._keyboard_ignore_nonphysical = False
         main_menu.update(events)
-        self.assertEqual(main_menu.get_index(), 1)  # Does not changed
+        self.assertEqual(main_menu.get_index(), 1 if PY_AUTO_GUI else 0)  # Does not changed
 
         # Ignore only applies to menus, currently appended widgets does not change
         self.assertTrue(b0._keyboard_ignore_nonphysical)

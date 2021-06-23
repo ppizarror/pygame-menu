@@ -52,7 +52,7 @@ requirements_docs.extend([
 requirements_tests = requirements.copy()
 requirements_tests.extend([
     'codecov',
-    'pyautogui'
+    # 'pyautogui'
 ])
 
 # Setup library
