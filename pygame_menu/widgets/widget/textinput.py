@@ -1588,9 +1588,8 @@ class TextInput(Widget):
 
             # User press a key
             if event.type == pygame.KEYDOWN and self._keyboard_enabled:
-
                 # Check if any key is pressed, if True the event is invalid
-                if not check_key_pressed_valid(event):
+                if self._ignores_keyboard_nonphysical() and not check_key_pressed_valid(event):
                     continue
 
                 self._cursor_visible = True  # So the user sees where he writes

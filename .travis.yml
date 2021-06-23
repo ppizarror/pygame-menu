@@ -9,9 +9,7 @@ cache: pip
 
 # Pip installs
 install:
-  - pip install codecov
-  - pip install -r requirements.txt
-  - pip install -e .
+  - pip install -e .[test]
 env:
   global:
     - SDL_VIDEODRIVER=dummy

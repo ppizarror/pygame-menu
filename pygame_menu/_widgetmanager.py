@@ -336,6 +336,7 @@ class WidgetManager(Base):
             widget.background_inflate_to_selection_effect()
 
         widget._update__repr___(self)
+        widget._keyboard_ignore_nonphysical = self._menu._keyboard_ignore_nonphysical
 
         widget.configured = True
         widget._configure()

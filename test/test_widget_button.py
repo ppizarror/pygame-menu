@@ -138,6 +138,7 @@ class ButtonWidgetTest(BaseTest):
             self.assertTrue(kwargs.get('key', False))
 
         btn = Button('epic', onreturn=callback, key=True)
+        self.assertTrue(btn._ignores_keyboard_nonphysical())
         btn.apply()
         btn = menu.add.button('epic', callback, accept_kwargs=True, key=True)
         btn.apply()
