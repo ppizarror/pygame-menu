@@ -1154,7 +1154,7 @@ class DropSelect(Widget):
         for event in events:
 
             if event.type == pygame.KEYDOWN:  # Check key is valid
-                if not check_key_pressed_valid(event):
+                if self._ignores_keyboard_nonphysical() and not check_key_pressed_valid(event):
                     continue
 
             # Check mouse over

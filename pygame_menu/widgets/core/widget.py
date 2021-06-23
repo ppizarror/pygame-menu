@@ -269,6 +269,8 @@ class Widget(Base):
     _font_size: int
     _frame: Optional['pygame_menu.widgets.Frame']
     _joystick_enabled: bool
+    _keyboard_enabled: bool
+    _keyboard_ignore_nonphysical: bool
     _kwargs: Dict[Any, Any]
     _last_render_hash: int
     _margin: Tuple2IntType
@@ -443,6 +445,7 @@ class Widget(Base):
 
         # Inputs
         self._keyboard_enabled = True
+        self._keyboard_ignore_nonphysical = True  # Ignores non physical keyboard buttons pressed
         self._joystick_enabled = True
         self._mouse_enabled = True  # Accept mouse interaction
         self._touchscreen_enabled = True
@@ -458,6 +461,16 @@ class Widget(Base):
         self.lock_position = False  # If True, the widget don't updates the position if .set_position() is executed
         self.readonly = False  # If True, widget ignores all input
         self.selection_expand_background = False  # If True, the widget background will inflate to match selection margin if selected
+
+    def _ignores_keyboard_nonphysical(self) -> bool:
+        """
+        Ignores the keyboard non-physical button events.
+
+        :return: True if ignored
+        """
+        if self._menu is None:
+            return self._keyboard_ignore_nonphysical
+        return self._keyboard_ignore_nonphysical and self._menu._keyboard_ignore_nonphysical
 
     def set_onchange(self, onchange: CallbackType) -> 'Widget':
         """

@@ -142,6 +142,7 @@ class Menu(Base):
     _joy_event_repeat: int
     _joystick: bool
     _keyboard: bool
+    _keyboard_ignore_nonphysical: bool
     _last_scroll_thickness: List[Union[Tuple2IntType, int]]
     _last_selected_type: str
     _mainloop: bool
@@ -532,6 +533,7 @@ class Menu(Base):
 
         # Init keyboard
         self._keyboard = keyboard_enabled
+        self._keyboard_ignore_nonphysical = True  # Ignores non physical keyboard buttons pressed
 
         # Init mouse
         if mouse_motion_selection:
@@ -2355,7 +2357,7 @@ class Menu(Base):
                 elif event.type == pygame.KEYDOWN and self._current._keyboard:
 
                     # Check key event is valid
-                    if not check_key_pressed_valid(event):
+                    if self._keyboard_ignore_nonphysical and not check_key_pressed_valid(event):
                         continue
 
                     if event.key == ctrl.KEY_MOVE_DOWN:
