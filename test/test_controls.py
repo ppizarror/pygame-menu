@@ -33,7 +33,10 @@ __all__ = ['ControlsTest']
 
 from test._utils import MenuUtils, PygameEventUtils, BaseTest
 
-from pygame import K_RETURN, K_END
+import pygame
+
+# noinspection PyPackageRequirements
+from pyautogui import press
 
 import pygame_menu.controls as ctrl
 
@@ -44,11 +47,11 @@ class ControlsTest(BaseTest):
         """
         Configure controls.
         """
-        self.assertEqual(ctrl.KEY_APPLY, K_RETURN)
+        self.assertEqual(ctrl.KEY_APPLY, pygame.K_RETURN)
 
         # Change apply to new key
-        ctrl.KEY_APPLY = K_END
-        self.assertEqual(ctrl.KEY_APPLY, K_END)
+        ctrl.KEY_APPLY = pygame.K_END
+        self.assertEqual(ctrl.KEY_APPLY, pygame.K_END)
 
         # Create new button
         menu = MenuUtils.generic_menu()
@@ -69,13 +72,53 @@ class ControlsTest(BaseTest):
         self.assertFalse(test[0])
 
         # Now test new apply button
-        button.update(PygameEventUtils.key(K_END, keydown=True))
+        button.update(PygameEventUtils.key(pygame.K_END, keydown=True))
         self.assertTrue(test[0])
 
         # Rollback change
-        ctrl.KEY_APPLY = K_RETURN
+        ctrl.KEY_APPLY = pygame.K_RETURN
 
-        button.update(PygameEventUtils.key(K_END, keydown=True))
+        button.update(PygameEventUtils.key(pygame.K_END, keydown=True))
         self.assertTrue(test[0])
         button.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
         self.assertFalse(test[0])
+
+    def test_pyautogui(self) -> None:
+        """
+        Test pyautogui support.
+        """
+        main_menu = MenuUtils.generic_menu()
+
+        b0 = main_menu.add.button('Input Test')
+        main_menu.add.button('Steering Wheel Test')
+        main_menu.add.button('Motor Test')
+        main_menu.add.button('Coin Chute Test')
+        main_menu.add.button('Time Settings')
+
+        # Menu ignores non physical events
+        press('down')  # This emulates the arrow down key being pressed
+        events = pygame.event.get()  # The press down is captured here
+        down = False
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                # if event.key == pygame.K_LEFT:
+                #     print('Left')
+                # elif event.key == pygame.K_RIGHT:
+                #     print('Right')
+                # elif event.key == pygame.K_UP:
+                #     print('Up')
+                if event.key == pygame.K_DOWN:
+                    down = True
+        self.assertTrue(down)
+        self.assertEqual(main_menu.get_index(), 0)
+
+        main_menu.update(events)
+        self.assertEqual(main_menu.get_index(), 0)  # Does not changed
+
+        main_menu._keyboard_ignore_nonphysical = False
+        main_menu.update(events)
+        self.assertEqual(main_menu.get_index(), 1)  # Does not changed
+
+        # Ignore only applies to menus, currently appended widgets does not change
+        self.assertTrue(b0._keyboard_ignore_nonphysical)
+        self.assertFalse(b0._ignores_keyboard_nonphysical())
