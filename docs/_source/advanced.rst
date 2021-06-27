@@ -24,6 +24,7 @@ most basic widget should contain this code:
 .. code-block:: python
 
     from pygame_menu.widgets.core.widget import Widget
+    from pygame_menu._types import EventVectorType
 
     class MyWidget(Widget):
 
@@ -31,14 +32,14 @@ most basic widget should contain this code:
             super(MyWidget, self).__init__(params)
             ...
 
-        def _apply_font(self):
+        def _apply_font(self) -> None:
             """
             Function triggered after a font is applied to the widget
             by Menu._configure_widget() method.
             """
             ...
 
-        def _draw(self, surface):
+        def _draw(self, surface: 'pygame.Surface') -> None:
             """
             Draw the widget on a given surface.
             This method must be overridden by all classes.
@@ -46,12 +47,12 @@ most basic widget should contain this code:
             # Draw the self._surface pygame object on the given surface
             surface.blit(self._surface, self._rect.topleft)
 
-        def _render(self):
+        def _render(self) -> Optional[bool]:
             """
-            Render the widget surface.
+            Render the Widget surface.
 
             This method shall update the attribute ``_surface`` with a :py:class:`pygame.Surface`
-            representing the outer borders of the widget.
+            object representing the outer borders of the widget.
 
             .. note::
 
@@ -60,8 +61,11 @@ most basic widget should contain this code:
 
             .. note::
 
-                Render methods should call :py:meth:`pygame_menu.widgets.core.widget.Widget.force_menu_surface_update`
+                Render methods should call
+                :py:meth:`pygame_menu.widgets.core.widget.Widget.force_menu_surface_update`
                 to force Menu to update the drawing surface.
+
+            :return: ``True`` if widget has rendered a new state, ``None`` if the widget has not changed, so render used a cache
             """
             ...
 
@@ -74,11 +78,20 @@ most basic widget should contain this code:
             # Force menu to update its surface on next Menu.render() call
             self.force_menu_surface_update()
 
-        def update(self, events):
+        def update(self, events: EventVectorType) -> bool:
             """
-            Update according to the given events list and fire the callbacks.
-            This method must return ``True`` if it updated (the internal variables
+            Update according to the given events list and fire the callbacks. This
+            method must return ``True`` if it updated (the internal variables
             changed during user input).
+
+            .. note::
+
+                Update is not performed if the Widget is in ``readonly`` state or
+                it's hidden. However, ``apply_update_callbacks`` method is called
+                in most widgets, except :py:class:`pygame_menu.widgets.NoneWidget`.
+
+            :param events: List/Tuple of pygame events
+            :return: ``True`` if updated
             """
             ...
             return False
@@ -86,9 +99,9 @@ most basic widget should contain this code:
 .. warning:: After creating the widget, it must be added to the ``__init__.py`` file of the
              :py:mod:`pygame_menu.widgets` package.
 
-             .. code-block:: python
+    .. code-block:: python
 
-                 from pygame_menu.widgets.widget.mywidget import MyWidget
+        from pygame_menu.widgets.widget.mywidget import MyWidget
 
 To add the widget to the :py:class:`pygame_menu.menu.Menu` class, a public method
 :py:meth:`add_mywidget` must be added to the :py:class:`pygame_menu._widgetmanager.WidgetManager`

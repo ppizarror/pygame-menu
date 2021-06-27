@@ -10,11 +10,14 @@ menu. For an easier usage, all of them are gathered in a specific object called
 a ``theme``. It is used to customize the menu window itself and all its widgets.
 
 .. code-block:: python
-    :emphasize-lines: 2
+    :emphasize-lines: 3
 
-    menu = pygame_menu.Menu(300, 400,
-                           theme=pygame_menu.themes.THEME_BLUE,
-                           title='Welcome')
+    menu = pygame_menu.Menu(
+        height=300,
+        theme=pygame_menu.themes.THEME_BLUE,
+        title='Welcome',
+        width=400
+    )
 
 .. note::
 
