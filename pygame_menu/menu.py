@@ -255,23 +255,20 @@ class Menu(Base):
 
         # Column/row asserts
         assert columns >= 1, \
-            'the number of columns must be equal or greater than 1 (current={0})' \
-            ''.format(columns)
+            f'the number of columns must be equal or greater than 1 (current={columns})'
         if columns > 1:
             assert rows is not None, \
                 'rows cannot be None if the number of columns is greater than 1'
             if isinstance(rows, int):
                 assert rows >= 1, \
-                    'if number of columns is greater than 1 (current={0}) then the' \
-                    'number of rows must be equal or greater than 1 (current={1})' \
-                    ''.format(columns, rows)
+                    f'if number of columns is greater than 1 (current={columns}) then the ' \
+                    f'number of rows must be equal or greater than 1 (current={rows})'
                 rows = [rows for _ in range(columns)]
             assert isinstance(rows, VectorInstance), \
                 'if rows is not an integer it must be a tuple/list'
             assert len(rows) == columns, \
-                'the length of the rows vector must be the same as the number of' \
-                ' columns (current={0}, expected={1})' \
-                ''.format(len(rows), columns)
+                f'the length of the rows vector must be the same as the number of' \
+                f' columns (current={rows}, expected={columns})'
 
             for i in rows:
                 assert isinstance(i, int), \
@@ -297,18 +294,18 @@ class Menu(Base):
             if columns != 1:
                 if column_min_width > 0:  # Ignore the default value
                     warn(
-                        'column_min_width can be a single number if there is only '
-                        '1 column, but there is {0} columns. Thus, column_min_width '
-                        'should be a vector of {0} items. By default a vector has '
-                        'been created using the same value for each column'.format(columns)
+                        f'column_min_width can be a single number if there is only '
+                        f'1 column, but there is {columns} columns. Thus, column_min_width '
+                        f'should be a vector of {columns} items. By default a vector has '
+                        f'been created using the same value for each column'
                     )
                 column_min_width = [column_min_width for _ in range(columns)]
             else:
                 column_min_width = [column_min_width]
 
         assert len(column_min_width) == columns, \
-            'column_min_width length must be the same as the number of columns, ' \
-            'but size is different {0}!={1}'.format(len(column_min_width), columns)
+            f'column_min_width length must be the same as the number of columns, ' \
+            f'but size is different {len(column_min_width)}!={columns}'
         for i in column_min_width:
             assert isinstance(i, NumberInstance), \
                 'each item of column_min_width must be an integer/float'
@@ -326,8 +323,8 @@ class Menu(Base):
                     column_max_width = [column_max_width]
 
             assert len(column_max_width) == columns, \
-                'column_max_width length must be the same as the number of columns, ' \
-                'but size is different {0}!={1}'.format(len(column_max_width), columns)
+                f'column_max_width length must be the same as the number of columns, ' \
+                f'but size is different {len(column_max_width)}!={columns}'
 
             for i in column_max_width:
                 assert isinstance(i, type(None)) or isinstance(i, NumberInstance), \
@@ -344,9 +341,8 @@ class Menu(Base):
         for i in range(len(column_max_width)):
             if column_max_width[i] is not None:
                 assert column_max_width[i] >= column_min_width[i], \
-                    'item {0} of column_max_width ({1}) must be equal or greater ' \
-                    'than column_min_width ({2})' \
-                    ''.format(i, column_max_width[i], column_min_width[i])
+                    f'item {i} of column_max_width ({column_max_width[i]}) must be equal or greater ' \
+                    f'than column_min_width ({column_min_width[i]})'
 
         # Element size and position asserts
         assert_vector(position, 2)
@@ -368,8 +364,8 @@ class Menu(Base):
         self._window_size = (int(self._window_size[0]), int(self._window_size[1]))
         window_width, window_height = self._window_size
         assert width <= window_width and height <= window_height, \
-            'menu size ({0}x{1}) must be lower or equal than the size of the ' \
-            'window ({2}x{3})'.format(width, height, window_width, window_height)
+            f'menu size ({width}x{height}) must be lower or equal than the size of the ' \
+            f'window ({window_width}x{window_height})'
 
         # Assert overflow
         if isinstance(overflow, bool):  # If single value
@@ -473,9 +469,9 @@ class Menu(Base):
         # than zero a warning is raised
         if self._auto_centering and self._widget_offset[1] != 0:
             warn(
-                'menu (title "{0}") is vertically centered (center_content=True), '
-                'but widget offset (from theme) is different than zero ({1}px). '
-                'Auto-centering has been disabled'.format(title, self._widget_offset[1])
+                f'menu (title "{title}") is vertically centered (center_content=True), '
+                f'but widget offset (from theme) is different than zero ({self._widget_offset[1]}px). '
+                f'Auto-centering has been disabled'
             )
             self._auto_centering = False
 
@@ -494,10 +490,9 @@ class Menu(Base):
         # different than zero a warning is raised
         if self._auto_centering and self._scrollarea_margin[1] != 0:
             warn(
-                'menu (title "{0}") is vertically centered (center_content=True)'
-                ', but ScrollArea outer margin (from theme) is different than '
-                'zero ({1}px). Auto-centering has been disabled'
-                ''.format(title, round(self._scrollarea_margin[1], 3))
+                f'menu (title "{title}") is vertically centered (center_content=True)'
+                f', but ScrollArea outer margin (from theme) is different than '
+                f'zero ({round(self._scrollarea_margin[1], 3)}px). Auto-centering has been disabled'
             )
             self._auto_centering = False
 
@@ -605,8 +600,7 @@ class Menu(Base):
         # Scrolling area
         menubar_height = self._menubar.get_height()
         if self._height - menubar_height <= 0:
-            raise ValueError('menubar is higher than menu height ({0} > {1})'
-                             .format(menubar_height, self._height))
+            raise ValueError(f'menubar is higher than menu height ({menubar_height} > {self._height})')
 
         extend_y = 0 if self._theme.title_fixed else menubar_height
 
@@ -1003,15 +997,14 @@ class Menu(Base):
             widget = self.get_widget(widget)
         assert isinstance(widget, Widget)
         if not widget.is_selectable:
-            raise ValueError('{0} is not selectable'.format(widget.get_class_id()))
+            raise ValueError(f'{widget.get_class_id()} is not selectable')
         if not widget.is_visible():  # Considers frame
-            raise ValueError('{0} is not visible'.format(widget.get_class_id()))
+            raise ValueError(f'{widget.get_class_id()} is not visible')
         try:
             index = self._widgets.index(widget)  # If not exists this raises ValueError
         except ValueError:
-            raise ValueError('{0} is not in Menu, check if exists on the current '
-                             'with menu.get_current().remove_widget(widget)'
-                             ''.format(widget.get_class_id()))
+            raise ValueError(f'{widget.get_class_id()} is not in Menu, check if exists on the current '
+                             f'with menu.get_current().remove_widget(widget)')
         self._select(index, 1, SELECT_WIDGET, False)
         return self
 
@@ -1161,10 +1154,9 @@ class Menu(Base):
         # Set column/row of each widget and compute maximum width of each column if None
         self._used_columns = 0
         max_elements_msg = \
-            'total visible/non-floating widgets ([widg]) cannot exceed columns*rows' \
-            '({0} elements). Menu position update failed. If using frames, please' \
-            'pack before adding new widgets' \
-            ''.format(self._max_row_column_elements)
+            f'total visible/non-floating widgets ([widg]) cannot exceed columns*rows' \
+            f'({self._max_row_column_elements} elements). Menu position update failed. If using frames, please' \
+            f'pack before adding new widgets'
         i_index = 0
         has_frame = False
 
@@ -1191,7 +1183,7 @@ class Menu(Base):
                 try:
                     widget.update_position()
                 except:
-                    warn('{0} failed to update'.format(widget.get_class_id()))
+                    warn(f'{widget.get_class_id()} failed to update')
                     raise
                 has_frame = True
 
@@ -1244,10 +1236,9 @@ class Menu(Base):
         if len(invalid_selection_widgets) > 0:
             self._index = -1
             raise _MenuMultipleSelectedWidgetsException(
-                'several widgets are selected at the same time, current selected '
-                '(sorted by index): {0}, but the following are also selected: {1}. '
-                'If widget is selected outside the menu, use widget.select(update_menu=True)'
-                ''.format(selected_widget, ','.join(invalid_selection_widgets))
+                f'several widgets are selected at the same time, current selected '
+                f"(sorted by index): {selected_widget}, but the following are also selected: {','.join(invalid_selection_widgets)}. "
+                f'If widget is selected outside the menu, use widget.select(update_menu=True)'
             )
 
         # Apply max width column limit
@@ -1424,8 +1415,7 @@ class Menu(Base):
             max_column_width = self._column_max_width[col]
             if max_column_width is not None and width > max_column_width:
                 raise _MenuSizingException(
-                    '{0} widget width ({1}) exceeds column {2} max width ({3})'
-                    ''.format(widget.get_class_id(), width, col + 1, max_column_width)
+                    f'{widget.get_class_id()} widget width ({width}) exceeds column {col + 1} max width ({max_column_width})'
                 )
 
             # Calculate Y position
@@ -1586,8 +1576,7 @@ class Menu(Base):
         for widget in self._widgets:
             if widget.get_id() == widget_id:
                 raise IndexError(
-                    'widget id "{0}" already exists on the current menu ({1})'
-                    ''.format(widget_id, widget.get_class_id())
+                    f'widget id "{widget_id}" already exists on the current menu ({widget.get_class_id()})'
                 )
 
     def _close(self) -> bool:
@@ -2813,8 +2802,7 @@ class Menu(Base):
                 sub_data_keys = data_submenu.keys()
                 for key in sub_data_keys:
                     if key in data_keys:
-                        raise ValueError('collision between widget data ID="{0}" at depth={1}'
-                                         ''.format(key, depth))
+                        raise ValueError(f'collision between widget data ID="{key}" at depth={depth}')
 
                 # Update data
                 data.update(data_submenu)
@@ -3146,10 +3134,7 @@ class Menu(Base):
 
         widget_scroll = widget.get_scrollarea()
         if widget_scroll is None:
-            warn(
-                '{0} scrollarea is None, thus, scroll to widget cannot be performed'
-                ''.format(widget.get_class_id())
-            )
+            warn(f'{widget.get_class_id()} scrollarea is None, thus, scroll to widget cannot be performed')
             return self
 
         # Scroll to rect
@@ -3542,9 +3527,8 @@ class Menu(Base):
                         invalid_w.append(w.get_class_id())
             if len(invalid_w) > 0:
                 raise _MenuMultipleSelectedWidgetsException(
-                    'several widgets are selected at the same time, current selected '
-                    '(sorted by index): {0}, but the following are also selected: {1}'
-                    ''.format(selected, ','.join(invalid_w))
+                    f"several widgets are selected at the same time, current selected "
+                    f"(sorted by index): {selected}, but the following are also selected: {','.join(invalid_w)}"
                 )
             return
 
@@ -3591,28 +3575,23 @@ class Menu(Base):
         try:
             widget_index = self._widgets.index(widget)
         except ValueError:
-            raise ValueError('{0} widget is not on widgets list'
-                             ''.format(widget.get_class_id()))
+            raise ValueError(f'{widget.get_class_id()} widget is not on widgets list')
         assert widget in self._widgets, \
-            '{0} does not exist on current menu widgets list' \
-            ''.format(widget.get_class_id())
+            f'{widget.get_class_id()} does not exist on current menu widgets list'
         assert isinstance(index, (Widget, int, type(None)))
         if isinstance(index, Widget):
             assert index in self._widgets, \
-                '{0} does not exist on current menu widgets list' \
-                ''.format(index.get_class_id())
+                f'{index.get_class_id()} does not exist on current menu widgets list'
             index = self._widgets.index(index)
         elif isinstance(index, int):
             assert 0 <= index < len(self._widgets), \
-                'index {0} must be between 0 and the number of widgets ({1})' \
-                ''.format(index, len(self._widgets))
+                f'index {index} must be between 0 and the number of widgets ({len(self._widgets)})'
         elif index is None:
             index = len(self._widgets) - 1
         else:
             raise ValueError('index must be a widget, int, or None')
         assert widget_index != index, \
-            'target index must be different than the current widget index ({0})' \
-            ''.format(index)
+            f'target index must be different than the current widget index ({index})'
 
         target_index = index
         target_widget = self._widgets[target_index]
