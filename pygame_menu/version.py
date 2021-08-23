@@ -46,8 +46,8 @@ class Version(tuple):
         return tuple.__new__(cls, (major, minor, patch))
 
     def __repr__(self) -> str:
-        fields = ('{}={}'.format(fld, val) for fld, val in zip(self.fields, self))
-        return '{}({})'.format(str(self.__class__.__name__), ', '.join(fields))
+        fields = (f'{fld}={val}' for fld, val in zip(self.fields, self))
+        return f"{str(self.__class__.__name__)}({', '.join(fields)})"
 
     def __str__(self) -> str:
         return '{}.{}.{}'.format(*self)

@@ -51,9 +51,9 @@ def on_button_click(value: str, text: Any = None) -> None:
     :return: None
     """
     if not text:
-        print('Hello from {}'.format(value))
+        print(f'Hello from {value}')
     else:
-        print('Hello from {} with {}'.format(text, value))
+        print(f'Hello from {text} with {value}')
 
 
 def paint_background(surface: 'pygame.Surface') -> None:
@@ -134,11 +134,11 @@ def make_long_menu() -> 'pygame_menu.Menu':
         if i % 2 == 0:
             menu.add.button(label1.format(i),
                             on_button_click,
-                            'Button n°{}'.format(i))
+                            f'Button n°{i}')
         else:
             menu.add.text_input(label2.format(i),
                                 onchange=on_button_click,
-                                text='Text n°{}'.format(i))
+                                text=f'Text n°{i}')
     menu.add.button('Exit', pygame_menu.events.EXIT)
 
     label = 'Button n°{}'

@@ -166,8 +166,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         assert input_separator not in ('0', '1', '2', '3', '4', '5', '6', '7', '8',
                                        '9'), 'input_separator cannot be a number'
         assert color_type in (COLORINPUT_TYPE_HEX, COLORINPUT_TYPE_RGB), \
-            'color type must be "{0}" or "{1}"' \
-            ''.format(COLORINPUT_TYPE_HEX, COLORINPUT_TYPE_RGB)
+            f'color type must be "{COLORINPUT_TYPE_HEX}" or "{COLORINPUT_TYPE_RGB}"'
         assert hex_format in (COLORINPUT_HEX_FORMAT_NONE, COLORINPUT_HEX_FORMAT_LOWER,
                               COLORINPUT_HEX_FORMAT_UPPER), \
             'invalid hex format mode, it must be "none", "lower" or "upper"'
@@ -244,7 +243,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                 for i in ('a', 'b', 'c', 'd', 'e', 'f'):
                     max_width = max(
                         max_width,
-                        self._font_render_string('#{0}'.format(i * 6)).get_width()
+                        self._font_render_string(f'#{i * 6}').get_width()
                     )
 
             char = math.ceil(max_width / self._input_underline_size)

@@ -41,9 +41,9 @@ from typing import Tuple, Any, Optional, List
 # -----------------------------------------------------------------------------
 # Constants and global variables
 # -----------------------------------------------------------------------------
-ABOUT = ['pygame-menu {0}'.format(pygame_menu.__version__),
-         'Author: {0}'.format(pygame_menu.__author__),
-         'Email: {0}'.format(pygame_menu.__email__)]
+ABOUT = [f'pygame-menu {pygame_menu.__version__}',
+         f'Author: {pygame_menu.__author__}',
+         f'Email: {pygame_menu.__email__}']
 DIFFICULTY = ['EASY']
 FPS = 60
 WINDOW_SIZE = (640, 480)
@@ -64,8 +64,7 @@ def change_difficulty(value: Tuple[Any, int], difficulty: str) -> None:
     :param difficulty: Optional parameter passed as argument to add_selector
     """
     selected, index = value
-    print('Selected difficulty: "{0}" ({1}) at index {2}'
-          ''.format(selected, difficulty, index))
+    print(f'Selected difficulty: "{selected}" ({difficulty}) at index {index}')
     DIFFICULTY[0] = difficulty
 
 
@@ -102,7 +101,7 @@ def play_function(difficulty: List, font: 'pygame.font.Font', test: bool = False
     elif difficulty == 'HARD':
         f = font.render('Playing as a champion (hard)', True, (255, 255, 255))
     else:
-        raise ValueError('unknown difficulty {0}'.format(difficulty))
+        raise ValueError(f'unknown difficulty {difficulty}')
     f_esc = font.render('Press ESC to open the menu', True, (255, 255, 255))
 
     # Draw random color and text
@@ -200,7 +199,7 @@ def main(test: bool = False) -> None:
         width=WINDOW_SIZE[0] * 0.7
     )
     for i in range(30):
-        play_submenu.add.button('Back {0}'.format(i), pygame_menu.events.BACK)
+        play_submenu.add.button(f'Back {i}', pygame_menu.events.BACK)
     play_submenu.add.button('Return to main menu', pygame_menu.events.RESET)
 
     play_menu.add.button('Start',  # When pressing return -> play(DIFFICULTY[0], font)

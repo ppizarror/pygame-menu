@@ -426,7 +426,7 @@ class ScrollBar(Widget):
         """
         assert isinstance(value, NumberInstance)
         assert value > self._values_range[0], \
-            'maximum value shall greater than {}'.format(self._values_range[0])
+            f'maximum value shall greater than {self._values_range[0]}'
         self._values_range[1] = value
 
     def set_minimum(self, value: NumberType) -> None:
@@ -438,7 +438,7 @@ class ScrollBar(Widget):
         """
         assert isinstance(value, NumberInstance)
         assert 0 <= value < self._values_range[1], \
-            'minimum value shall lower than {}'.format(self._values_range[1])
+            f'minimum value shall lower than {self._values_range[1]}'
         self._values_range[0] = value
 
     def set_orientation(self, orientation: str) -> None:
@@ -493,8 +493,7 @@ class ScrollBar(Widget):
         """
         assert isinstance(position_value, NumberInstance)
         assert self._values_range[0] <= position_value <= self._values_range[1], \
-            '{} < {} < {}'.format(self._values_range[0], position_value,
-                                  self._values_range[1])
+            f'{self._values_range[0]} < {position_value} < {self._values_range[1]}'
 
         pixels = (position_value - self._values_range[0]) * \
                  (self._page_ctrl_length - self._page_step)

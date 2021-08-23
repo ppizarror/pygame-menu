@@ -312,12 +312,12 @@ class RangeSlider(Widget):
         if len(range_values) > 2:
             if not isinstance(default_value, NumberInstance):
                 assert default_value[0] in range_values, \
-                    'min default value ({0}) must be within range'.format(default_value[0])
+                    f'min default value ({default_value[0]}) must be within range'
                 assert default_value[1] in range_values, \
-                    'max default value ({0}) must be within range'.format(default_value[1])
+                    f'max default value ({default_value[1]}) must be within range'
             else:
                 assert default_value in range_values, \
-                    'default value ({0}) must be within range values'.format(default_value)
+                    f'default value ({default_value}) must be within range values'
 
         # Check increment
         assert isinstance(increment, NumberInstance)

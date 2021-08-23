@@ -488,8 +488,7 @@ class DropSelectMultiple(DropSelect):
                     found = True
                     break
             if not found:
-                raise ValueError('no value "{}" found in drop select multiple'
-                                 ''.format(item))
+                raise ValueError(f'no value "{item}" found in drop select multiple')
         elif isinstance(item, int):
             assert -1 <= item < len(self._items), \
                 'item index must be greater than zero and lower than the number ' \

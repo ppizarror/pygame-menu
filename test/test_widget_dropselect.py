@@ -53,7 +53,7 @@ class DropSelectWidgetTest(BaseTest):
         menu = MenuUtils.generic_menu(mouse_motion_selection=True, theme=THEME_NON_FIXED_TITLE)
         items = [('This is a really long selection item', 1), ('epic', 2)]
         for i in range(10):
-            items.append(('item{}'.format(i + 1), i + 1))
+            items.append((f'item{i + 1}', i + 1))
         # noinspection SpellCheckingInspection
         drop = pygame_menu.widgets.DropSelect('dropsel', items,
                                               selection_option_font_size=int(0.75 * menu._theme.widget_font_size),
@@ -587,7 +587,7 @@ class DropSelectWidgetTest(BaseTest):
             _items = select.get_items()
             _items.pop(_items.index(s_val[0]))
             select.update_items(_items)
-            print('removed {} left'.format(len(_items)))
+            print(f'removed {len(_items)} left')
 
         menu = MenuUtils.generic_menu()
 
@@ -711,7 +711,7 @@ class DropSelectWidgetTest(BaseTest):
         menu = MenuUtils.generic_menu(mouse_motion_selection=True, theme=theme)
         items = [('This is a really long selection item', 1), ('epic', 2)]
         for i in range(10):
-            items.append(('item{}'.format(i + 1), i + 1))
+            items.append((f'item{i + 1}', i + 1))
         # noinspection SpellCheckingInspection
         drop = pygame_menu.widgets.DropSelectMultiple('dropsel', items, open_middle=True, selection_box_height=5)
         self.assertNotEqual(id(items), id(drop._items))

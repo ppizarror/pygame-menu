@@ -225,7 +225,7 @@ class ScrollAreaTest(BaseTest):
         self.assertEqual(sa.get_view_rect(), pygame.Rect(0, 155, 600, 345))
 
         for i in range(10):
-            menu.add.button('b{0}'.format(i)).scale(20, 1)
+            menu.add.button(f'b{i}').scale(20, 1)
 
         self.assertEqual(sa.get_scrollbar_thickness(ORIENTATION_VERTICAL), 20)
         self.assertEqual(sa.get_scrollbar_thickness(ORIENTATION_HORIZONTAL), 20)
@@ -256,7 +256,7 @@ class ScrollAreaTest(BaseTest):
         menu = MenuUtils.generic_menu()
         buttons = []
         for i in range(20):
-            btn_title = 'b{0}'.format(i)
+            btn_title = f'b{i}'
             buttons.append(menu.add.button(btn_title, button_id=btn_title))
         sa = menu.get_scrollarea()
 

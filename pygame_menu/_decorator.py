@@ -842,7 +842,7 @@ class Decorator(Base):
         :return: Self reference
         """
         if decorid not in self._decor_enabled.keys():
-            raise IndexError('decoration<"{0}"> was not found'.format(decorid))
+            raise IndexError(f'decoration<"{decorid}"> was not found')
         self._decor_enabled[decorid] = False
         self.force_cache_update(prev=decorid in self._decor_prev_id)
         return self
@@ -856,7 +856,7 @@ class Decorator(Base):
         :return: Self reference
         """
         if decorid not in self._decor_enabled.keys():
-            raise IndexError('decoration<"{0}"> was not found'.format(decorid))
+            raise IndexError(f'decoration<"{decorid}"> was not found')
         self._decor_enabled[decorid] = True
         self.force_cache_update(prev=decorid in self._decor_prev_id)
         return self
@@ -870,7 +870,7 @@ class Decorator(Base):
         :return: ``True`` if enabled
         """
         if decorid not in self._decor_enabled.keys():
-            raise IndexError('decoration<"{0}"> was not found'.format(decorid))
+            raise IndexError(f'decoration<"{decorid}"> was not found')
         return self._decor_enabled[decorid]
 
     def remove(self, decorid: str) -> 'Decorator':
@@ -893,7 +893,7 @@ class Decorator(Base):
                         self._decor_prev_id.remove(decorid)
                     del self._decor_enabled[decorid]
                     return self
-        raise IndexError('decoration<"{0}"> was not found'.format(decorid))
+        raise IndexError(f'decoration<"{decorid}"> was not found')
 
     def remove_all(self, prev: Optional[bool] = None) -> 'Decorator':
         """

@@ -118,7 +118,7 @@ class Table(Frame):
         self.relax()
 
     def pack(self, *args, **kwargs) -> None:
-        raise RuntimeError('{0} cannot pack external widgets'.format(self.get_class_id()))
+        raise RuntimeError(f'{self.get_class_id()} cannot pack external widgets')
 
     def remove_row(self, row: 'Frame') -> None:
         """
@@ -133,7 +133,7 @@ class Table(Frame):
         assert row != self, 'table cannot unpack itself'
         assert len(self._widgets) > 0, 'table is empty'
         assert row in self._rows and row.get_id() in self._widgets.keys(), \
-            'row {0} does not exist on {1}'.format(row.get_class_id(), self.get_class_id())
+            f'row {row.get_class_id()} does not exist on {self.get_class_id()}'
         wid = row.get_id()
         assert row._frame == self, 'widget frame differs from current'
         row._frame = None
@@ -372,7 +372,7 @@ class Table(Frame):
 
             else:
                 assert isinstance(c, Widget)
-                assert c != self, '{0} cannot be appended to itself'.format(self.get_class_id())
+                assert c != self, f'{self.get_class_id()} cannot be appended to itself'
 
                 # Check if Frame not recursive
                 if isinstance(c, Frame):
@@ -420,8 +420,7 @@ class Table(Frame):
 
             # Check the cell frame is None
             assert cell.get_frame() != self, \
-                '{0} cannot be added as it already exists in table' \
-                ''.format(cell.get_class_id())
+                f'{cell.get_class_id()} cannot be added as it already exists in table'
             assert cell.get_frame() is None, \
                 '{0} is already packed in {1}, it cannot be added to {2}' \
                 ''.format(cell.get_class_id(), cell.get_frame().get_class_id(),
@@ -592,7 +591,7 @@ class Table(Frame):
         :return: Column/Row
         """
         assert cell.has_attribute('column') and cell.has_attribute('row'), \
-            '{0} does not have the table attributes'.format(cell.get_class_id())
+            f'{cell.get_class_id()} does not have the table attributes'
         return cell.get_attribute('column'), cell.get_attribute('row')
 
     def _draw_cell_borders(self, surface: 'pygame.Surface') -> None:
@@ -643,7 +642,7 @@ class Table(Frame):
                     elif pos == POSITION_WEST:
                         start, end = rect.topleft, rect.bottomleft
                     else:
-                        raise RuntimeError('invalid border position "{0}"'.format(pos))
+                        raise RuntimeError(f'invalid border position "{pos}"')
                     pygame.draw.line(
                         surface,
                         border_color,
@@ -667,8 +666,7 @@ class Table(Frame):
         assert isinstance(column, int) and column >= 1, \
             'column index must be an integer equal or greater than 1'
         assert row <= len(self._rows), \
-            'row index ({0}) cannot exceed the number of rows ({1})' \
-            ''.format(row, len(self._rows))
+            f'row index ({row}) cannot exceed the number of rows ({len(self._rows)})'
         f = self._rows[row - 1]
         w = f.get_widgets(unpack_subframes=False)
         assert column <= len(w), \
