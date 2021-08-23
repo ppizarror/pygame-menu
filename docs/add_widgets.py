@@ -244,7 +244,7 @@ elif EXAMPLE == 'FRAME_TITLE':
         selection_option_font_size=20
     ))
     for i in range(20):
-        frame.pack(menu.add.button(i, font_color='white', button_id='b{}'.format(i)))
+        frame.pack(menu.add.button(i, font_color='white', button_id=f'b{i}'))
 
     # Don't copy
     menu.select_widget('b0')
@@ -416,7 +416,7 @@ elif EXAMPLE == 'VERTICALMARGIN':
     menu.add.label('Text #2')
 
 else:
-    raise ValueError('unknown example "{}"'.format(EXAMPLE))
+    raise ValueError(f'unknown example "{EXAMPLE}"')
 
 # Execute menu
 menu.mainloop(surface)

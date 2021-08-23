@@ -165,11 +165,10 @@ def get_font(name: FontType, size: int) -> '__font.Font':
                         break
                 examples.sort()
                 fonts_random = ', '.join(examples)
-                sys_message_2 = 'some examples: {0}'.format(fonts_random)
+                sys_message_2 = f'some examples: {fonts_random}'
 
                 # Raise the exception
-                raise ValueError('{0}\n{1}\n{2}'
-                                 ''.format(sys_suggestion, sys_message, sys_message_2))
+                raise ValueError(f'{sys_suggestion}\n{sys_message}\n{sys_message_2}')
 
         # Try to load the font
         font = None
@@ -182,6 +181,6 @@ def get_font(name: FontType, size: int) -> '__font.Font':
 
         # If font was not loaded throw an exception
         if font is None:
-            raise IOError('font file "{0}" cannot be loaded'.format(font))
+            raise IOError(f'font file "{font}" cannot be loaded')
         _cache[(name, size)] = font
         return font

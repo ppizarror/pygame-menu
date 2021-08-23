@@ -153,9 +153,9 @@ class Frame(Widget):
         assert isinstance(width, NumberInstance)
         assert isinstance(height, NumberInstance)
         assert width > 0, \
-            'width must be greater than zero ({0} received)'.format(width)
+            f'width must be greater than zero ({width} received)'
         assert height > 0, \
-            'height must be greater than zero ({0} received)'.format(height)
+            f'height must be greater than zero ({height} received)'
         assert_orientation(orientation)
 
         # Internals
@@ -222,7 +222,7 @@ class Frame(Widget):
         :return: Title frame object
         """
         assert self.configured, \
-            '{0} must be configured before setting a title'.format(self.get_class_id())
+            f'{self.get_class_id()} must be configured before setting a title'
         if not self._accepts_title:
             raise _FrameDoNotAcceptTitle('{0} does not accept a title'
                                          ''.format(self.get_class_id()))
@@ -415,12 +415,11 @@ class Frame(Widget):
             ''.format(self.get_class_id())
         assert isinstance(button, Button)
         assert button.get_menu() is None, \
-            '{0} menu reference must be None'.format(button.get_class_id())
+            f'{button.get_class_id()} menu reference must be None'
         assert button.configured, \
-            '{0} must be configured before addition to title' \
-            ''.format(button.get_class_id())
+            f'{button.get_class_id()} must be configured before addition to title'
         assert button.get_frame() is None, \
-            '{0} frame must be None'.format(button.get_class_id())
+            f'{button.get_class_id()} frame must be None'
 
         # Check sizing
         total_title_height = self._frame_title.get_height(apply_padding=False)
@@ -536,7 +535,7 @@ class Frame(Widget):
             )
 
         else:
-            raise ValueError('unknown button style "{0}"'.format(style))
+            raise ValueError(f'unknown button style "{style}"')
 
         # Draw style
         style_surface = make_surface(h, h, alpha=True)
@@ -686,7 +685,7 @@ class Frame(Widget):
         :return: Self reference
         """
         if not self._accepts_scrollarea:
-            raise _FrameDoNotAcceptScrollarea('{0} does not accept a scrollarea'.format(self.get_class_id()))
+            raise _FrameDoNotAcceptScrollarea(f'{self.get_class_id()} does not accept a scrollarea')
         assert len(self._widgets.keys()) == 0, 'frame widgets must be empty if creating the scrollarea'
         assert self.configured, 'frame must be configured before adding the scrollarea'
         if max_width is None:
@@ -786,7 +785,7 @@ class Frame(Widget):
 
         # If has title
         if self._has_title:
-            warn('previous {0} title has been removed'.format(self.get_class_id()))
+            warn(f'previous {self.get_class_id()} title has been removed')
             self.remove_title()
 
         return self
@@ -1327,7 +1326,7 @@ class Frame(Widget):
 
     def set_frame(self, frame: 'pygame_menu.widgets.Frame') -> 'Frame':
         assert self != frame, \
-            '{0} cannot set itself as a frame'.format(frame.get_class_id())
+            f'{frame.get_class_id()} cannot set itself as a frame'
         super(Frame, self).set_frame(frame)
         if self._frame_title is not None:
             self._frame_title.set_frame(frame)
@@ -1550,7 +1549,7 @@ class Frame(Widget):
         :return: Added widget references
         """
         assert self._menu is not None or self._menu_can_be_none_pack, \
-            '{0} menu must be set before packing widgets'.format(self.get_class_id())
+            f'{self.get_class_id()} menu must be set before packing widgets'
         if isinstance(widget, VectorInstance):
             for w in widget:
                 self.pack(widget=w, align=align, vertical_position=vertical_position)
@@ -1558,9 +1557,9 @@ class Frame(Widget):
         assert isinstance(widget, Widget)
         if isinstance(widget, Frame):
             assert widget.get_menu() is not None or self._menu_can_be_none_pack, \
-                '{0} menu cannot be None'.format(widget.get_class_id())
+                f'{widget.get_class_id()} menu cannot be None'
         assert widget.get_id() not in self._widgets.keys(), \
-            '{0} already exists in {1}'.format(widget.get_class_id(), self.get_class_id())
+            f'{widget.get_class_id()} already exists in {self.get_class_id()}'
         assert widget.get_menu() == self._menu or widget.get_menu() is None, \
             'widget menu to be added to frame must be in same menu as frame, or ' \
             'it can have any Menu instance'
@@ -1572,7 +1571,7 @@ class Frame(Widget):
             'vertical position must be NORTH, CENTER, or SOUTH'
         assert_vector(margin, 2)
         assert widget.configured, \
-            '{0} must be configured before packing'.format(widget.get_class_id())
+            f'{widget.get_class_id()} must be configured before packing'
 
         if widget.get_margin() != (0, 0) and self._pack_margin_warning:
             warn(

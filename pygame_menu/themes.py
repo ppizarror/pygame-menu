@@ -414,7 +414,7 @@ class Theme(object):
 
         # Upon this, no more kwargs should exist, raise exception if there's more
         for invalid_keyword in kwargs.keys():
-            raise ValueError('parameter Theme.{} does not exist'.format(invalid_keyword))
+            raise ValueError(f'parameter Theme.{invalid_keyword} does not exist')
 
         # Test purpose only, if True disables any validation
         self._disable_validation = False
@@ -591,14 +591,14 @@ class Theme(object):
         else:
             if check_length == 0:
                 raise ValueError('object is not a vector')
-            raise ValueError('object is not a vector of length {0}'.format(check_length))
+            raise ValueError(f'object is not a vector of length {check_length}')
         if check_length > 0:
             if len(v) != check_length:
-                raise ValueError('object is not a vector of length {0}'.format(check_length))
+                raise ValueError(f'object is not a vector of length {check_length}')
         if check_instance is not Any:
             for i in v:
                 assert isinstance(i, check_instance), \
-                    '{} element of tuple {} is not {} instance'.format(i, v, check_instance)
+                    f'{i} element of tuple {v} is not {check_instance} instance'
         return v
 
     def copy(self) -> 'Theme':
@@ -651,7 +651,7 @@ class Theme(object):
             elif len(color) == 3:
                 color = color[0], color[1], color[2], 255
         else:
-            raise ValueError('invalid color type {0}, only tuple or list are valid'.format(color))
+            raise ValueError(f'invalid color type {color}, only tuple or list are valid')
         return color
 
     # noinspection PyTypeChecker
@@ -753,14 +753,14 @@ class Theme(object):
 
                 else:  # Unknown type
                     assert isinstance(val_type, type), \
-                        'allowed type "{0}" is not a type-class'.format(val_type)
+                        f'allowed type "{val_type}" is not a type-class'
                     other_types.append(val_type)
 
             # Check other types
             if len(other_types) > 0:
                 others = tuple(other_types)
                 assert isinstance(value, others), \
-                    'Theme.{} type shall be in {} types (got {})'.format(key, others, type(value))
+                    f'Theme.{key} type shall be in {others} types (got {type(value)})'
 
         return value
 

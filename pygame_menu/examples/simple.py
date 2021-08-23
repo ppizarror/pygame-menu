@@ -43,7 +43,7 @@ def set_difficulty(selected: Tuple, value: Any) -> None:
 
     :return: None
     """
-    print('Set difficulty to {} ({})'.format(selected[0], value))
+    print(f'Set difficulty to {selected[0]} ({value})')
 
 
 def start_the_game() -> None:
@@ -54,7 +54,7 @@ def start_the_game() -> None:
     :return: None
     """
     global user_name
-    print('{0}, Do the job here!'.format(user_name.get_value()))
+    print(f'{user_name.get_value()}, Do the job here!')
 
 
 menu = pygame_menu.Menu(

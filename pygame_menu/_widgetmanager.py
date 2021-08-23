@@ -102,8 +102,7 @@ class WidgetManager(Base):
         if menu not in self._menu._submenus.keys():
             self._menu._submenus[menu] = []
         assert hook not in self._menu._submenus[menu], \
-            'widget {0} already hooks submenu {1}' \
-            ''.format(hook.get_class_id(), menu.get_class_id())
+            f'widget {hook.get_class_id()} already hooks submenu {menu.get_class_id()}'
         self._menu._submenus[menu].append(hook)
         hook._menu_hook = menu
 
@@ -351,7 +350,7 @@ class WidgetManager(Base):
         """
         for invalid_keyword in kwargs.keys():
             raise ValueError(
-                'widget addition optional parameter kwargs.{} is not valid'.format(invalid_keyword)
+                f'widget addition optional parameter kwargs.{invalid_keyword} is not valid'
             )
 
     def _append_widget(self, widget: 'Widget') -> None:

@@ -343,9 +343,9 @@ class TextInput(Widget):
                 _char = str(valid_chars[ch])
                 valid_chars[ch] = _char
                 assert isinstance(_char, str), \
-                    'element "{0}" of valid_chars must be a string'.format(_char)
+                    f'element "{_char}" of valid_chars must be a string'
                 assert len(_char) == 1, \
-                    'element "{0}" of valid_chars must be character'.format(_char)
+                    f'element "{_char}" of valid_chars must be character'
             assert len(valid_chars) > 0, \
                 'valid_chars list must contain at least 1 element'
         self._valid_chars = valid_chars

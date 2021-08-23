@@ -51,7 +51,7 @@ def add_dynamic_button() -> 'pygame_menu.widgets.Button':
 
     :return: Appended button
     """
-    print('Adding a button dynamically, total: {0}'.format(len(menu.get_widgets()) - 2))
+    print(f'Adding a button dynamically, total: {len(menu.get_widgets()) - 2}')
     btn = menu.add.button(randrange(0, 10))
 
     def _update_button() -> None:

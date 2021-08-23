@@ -478,7 +478,7 @@ class MenuBar(Widget):
             self._check_title_color(background_menu=True)
 
         else:
-            raise ValueError('invalid menubar mode {0}'.format(self._style))
+            raise ValueError(f'invalid menubar mode {self._style}')
         self._rect.height += dy
 
         # Create the back box

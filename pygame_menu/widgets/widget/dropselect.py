@@ -989,7 +989,7 @@ class DropSelect(Widget):
                     found = True
                     break
             if not found:
-                raise ValueError('no value "{}" found in drop select'.format(item))
+                raise ValueError(f'no value "{item}" found in drop select')
         elif isinstance(item, int):
             assert -1 <= item < len(self._items), \
                 'item index must be greater than zero and lower than the number ' \
@@ -1100,11 +1100,9 @@ class DropSelect(Widget):
         h -= self._menu.get_menubar().get_height()
         bw, bh = self._selection_box_width, self._drop_frame.get_attribute('height')
         assert w >= bw, \
-            'selection box width ({0}) cannot be greater than menu width ({1})' \
-            ''.format(bw, w)
+            f'selection box width ({bw}) cannot be greater than menu width ({w})'
         assert h >= bh, \
-            'selection box height ({0}) cannot be greater than menu height ({1})' \
-            ''.format(bh, h)
+            f'selection box height ({bh}) cannot be greater than menu height ({h})'
         x = (w - bw) / 2 + offx
         y = (h - bh) / 2 + offy
         return x, y

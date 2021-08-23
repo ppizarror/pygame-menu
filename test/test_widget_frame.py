@@ -547,7 +547,7 @@ class FrameWidgetTest(unittest.TestCase):
         f_rec = []
         n = 10
         for i in range(n):
-            f_rec.append(menu.add.frame_v(100, 100, frame_id='f_rec{}'.format(i)))
+            f_rec.append(menu.add.frame_v(100, 100, frame_id=f'f_rec{i}'))
             f_rec[i].relax()
             if i >= 1:
                 f_rec[i - 1].pack(f_rec[i])
@@ -1603,7 +1603,7 @@ class FrameWidgetTest(unittest.TestCase):
             self.assertEqual(widget, f1)
             test[0] = not test[0]
             if print_events:
-                print('{0} f1'.format('Enter' if test[0] else 'Leave'))
+                print(f"{'Enter' if test[0] else 'Leave'} f1")
 
         def onb1(widget, _) -> None:
             """
@@ -1612,7 +1612,7 @@ class FrameWidgetTest(unittest.TestCase):
             self.assertEqual(widget, b1)
             test[1] = not test[1]
             if print_events:
-                print('{0} b1'.format('Enter' if test[1] else 'Leave'))
+                print(f"{'Enter' if test[1] else 'Leave'} b1")
 
         def onf2(widget, _) -> None:
             """
@@ -1621,7 +1621,7 @@ class FrameWidgetTest(unittest.TestCase):
             self.assertEqual(widget, f2)
             test[2] = not test[2]
             if print_events:
-                print('{0} f2'.format('Enter' if test[2] else 'Leave'))
+                print(f"{'Enter' if test[2] else 'Leave'} f2")
 
         def onb2(widget, _) -> None:
             """
@@ -1630,7 +1630,7 @@ class FrameWidgetTest(unittest.TestCase):
             self.assertEqual(widget, b2)
             test[3] = not test[3]
             if print_events:
-                print('{0} b2'.format('Enter' if test[3] else 'Leave'))
+                print(f"{'Enter' if test[3] else 'Leave'} b2")
 
         def onf3(widget, _) -> None:
             """
@@ -1639,7 +1639,7 @@ class FrameWidgetTest(unittest.TestCase):
             self.assertEqual(widget, f3)
             test[4] = not test[4]
             if print_events:
-                print('{0} f3'.format('Enter' if test[4] else 'Leave'))
+                print(f"{'Enter' if test[4] else 'Leave'} f3")
 
         def onb3(widget, _) -> None:
             """
@@ -1648,7 +1648,7 @@ class FrameWidgetTest(unittest.TestCase):
             self.assertEqual(widget, b3)
             test[5] = not test[5]
             if print_events:
-                print('{0} b3'.format('Enter' if test[5] else 'Leave'))
+                print(f"{'Enter' if test[5] else 'Leave'} b3")
 
         f1.set_onmouseover(onf1)
         f1.set_onmouseleave(onf1)

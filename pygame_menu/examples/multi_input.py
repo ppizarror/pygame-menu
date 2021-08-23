@@ -68,7 +68,7 @@ def check_name_test(value: str) -> None:
     :param value: The widget value
     :return: None
     """
-    print('User name: {0}'.format(value))
+    print(f'User name: {value}')
 
 
 def update_menu_sound(value: Tuple, enabled: bool) -> None:
@@ -261,7 +261,7 @@ def main(test: bool = False) -> None:
         print('Settings data:')
         data = settings_menu.get_input_data()
         for k in data.keys():
-            print(u'\t{0}\t=>\t{1}'.format(k, data[k]))
+            print(f'\t{k}\t=>\t{data[k]}')
 
     # Add final buttons
     settings_menu.add.button('Store data', data_fun, button_id='store')  # Call function
@@ -338,7 +338,7 @@ def main(test: bool = False) -> None:
         width=WINDOW_SIZE[0] * 0.9
     )
     for i in range(4):
-        button_column_menu.add.button('Button {0}'.format(i), pygame_menu.events.BACK)
+        button_column_menu.add.button(f'Button {i}', pygame_menu.events.BACK)
     button_column_menu.add.button(
         'Return to main menu', pygame_menu.events.BACK,
         background_color=pygame_menu.BaseImage(

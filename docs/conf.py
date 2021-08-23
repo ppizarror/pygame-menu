@@ -102,7 +102,7 @@ html_theme = 'sphinx_rtd_theme'
 # so a file named "default.css" will overwrite the builtin "default.css"
 html_static_path = ['_static']
 
-html_title = '%s %s Documentation' % (project, release)
+html_title = f'{project} {release} Documentation'
 
 html_logo = '_static/pygame_menu_small.png'
 
@@ -122,8 +122,8 @@ latex_elements = {
 latex_documents = [
     (
         'index',  # source start file
-        '%s.tex' % project,  # target filename
-        '%s Documentation' % project,  # title
+        f'{project}.tex',  # target filename
+        f'{project} Documentation',  # title
         author,  # author
         'manual',  # documentclass
         True,  # documents ref'd from toc-tree only

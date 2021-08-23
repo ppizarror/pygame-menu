@@ -96,9 +96,9 @@ def assert_alignment(align: str) -> None:
     :param align: Align value
     :return: None
     """
-    assert isinstance(align, str), 'alignment "{0}" must be a string'.format(align)
+    assert isinstance(align, str), f'alignment "{align}" must be a string'
     assert align in (ALIGN_LEFT, ALIGN_CENTER, ALIGN_RIGHT), \
-        'incorrect alignment value "{0}"'.format(align)
+        f'incorrect alignment value "{align}"'
 
 
 def assert_color(
@@ -114,7 +114,7 @@ def assert_color(
     """
     color = format_color(color, warn_if_invalid=warn_if_invalid)
     assert isinstance(color, VectorInstance), \
-        'color must be a tuple or list, not type "{0}"'.format(type(color))
+        f'color must be a tuple or list, not type "{type(color)}"'
     assert 4 >= len(color) >= 3, \
         'color must be a tuple or list of 3 or 4 numbers'
     for i in range(3):
@@ -156,7 +156,7 @@ def assert_list_vector(list_vector: Union[List[Vector2NumberType], Tuple[Vector2
     :return: None
     """
     assert isinstance(list_vector, VectorInstance), \
-        'list_vector "{0}" must be a tuple or list'.format(list_vector)
+        f'list_vector "{list_vector}" must be a tuple or list'
     for v in list_vector:
         assert_vector(v, length)
 
@@ -169,9 +169,9 @@ def assert_orientation(orientation: str) -> None:
     :return: None
     """
     assert isinstance(orientation, str), \
-        'orientation "{0}" must be a string'.format(orientation)
+        f'orientation "{orientation}" must be a string'
     assert orientation in (ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL), \
-        'invalid orientation value "{0}"'.format(orientation)
+        f'invalid orientation value "{orientation}"'
 
 
 def assert_position(position: str) -> None:
@@ -182,11 +182,11 @@ def assert_position(position: str) -> None:
     :return: None
     """
     assert isinstance(position, str), \
-        'position "{0}" must be a string'.format(position)
+        f'position "{position}" must be a string'
     assert position in (POSITION_WEST, POSITION_SOUTHWEST, POSITION_SOUTH,
                         POSITION_SOUTHEAST, POSITION_EAST, POSITION_NORTH,
                         POSITION_NORTHWEST, POSITION_NORTHEAST, POSITION_CENTER), \
-        'invalid position value "{0}"'.format(position)
+        f'invalid position value "{position}"'
 
 
 def assert_position_vector(position: Union[str, List[str], Tuple[str, ...]]) -> None:
@@ -233,8 +233,7 @@ def assert_vector(
         if instance == int and isinstance(num, float) and int(num) == num:
             num = int(num)
         assert isinstance(num, instance), \
-            'item {0} of vector must be {1}, not type "{2}"' \
-            ''.format(num, instance, type(num))
+            f'item {num} of vector must be {instance}, not type "{type(num)}"'
 
 
 def check_key_pressed_valid(event: EventType) -> bool:
@@ -345,7 +344,7 @@ def format_color(
                 c = pygame.Color(color)
         except ValueError:
             if warn_if_invalid:
-                warn('invalid color value "{0}"'.format(color))
+                warn(f'invalid color value "{color}"')
             else:
                 raise
             return color
@@ -433,8 +432,7 @@ def load_pygame_image_file(image_path: str, **kwargs) -> 'pygame.Surface':
                 raise
 
             except pil_invalid_exception:
-                warn('The image "{0}" could not be loaded using Pillow'
-                     ''.format(image_path))
+                warn(f'The image "{image_path}" could not be loaded using Pillow')
                 raise
 
         else:
@@ -560,7 +558,7 @@ def print_menu_widget_structure(
         d = current_depth - depth
         for i in range(d):
             j = depth + d - (i + 1)  # Current depth
-            line = '·   {0}└{1}'.format('│   ' * j, '┄' * 3)  # * depth_widths[j]
+            line = f"·   {'│   ' * j}└{'┄' * 3}"  # * depth_widths[j]
             print(c.BRIGHT_WHITE + line.ljust(0, '━') + c.ENDC)  # 80 also work
 
     non_menu_frame_widgets: Dict[int, List['pygame_menu.widgets.Widget']] = {}
@@ -608,7 +606,7 @@ def print_menu_widget_structure(
                     else:
                         prev_indx = widgets.index(jw)
         except ValueError as e:
-            print('[ERROR] while requesting widget {0}'.format(jw.get_class_id()))
+            print(f'[ERROR] while requesting widget {jw.get_class_id()}')
             warn(str(e))
         indx += 1
     process_non_menu_frame(indx)
@@ -627,7 +625,7 @@ def set_pygame_cursor(cursor: CursorInputType) -> None:
             # noinspection PyArgumentList
             pygame.mouse.set_cursor(cursor)
     except (pygame.error, TypeError):
-        warn('could not establish widget cursor, invalid value {0}'.format(cursor))
+        warn(f'could not establish widget cursor, invalid value {cursor}')
 
 
 def uuid4(short: bool = False) -> str:
@@ -694,14 +692,14 @@ def widget_terminal_title(
         if widget.is_scrollable:
             wsz = widget.get_inner_size()
             wsm = widget.get_max_size()
-            wsh = wsm[0] if wsm[0] == wsz[0] else '{0}→{1}'.format(wsm[0], wsz[0])
-            wsv = wsm[1] if wsm[1] == wsz[1] else '{0}→{1}'.format(wsm[1], wsz[1])
-            w_title += '∑ [{0},{1}] '.format(wsh, wsv)
+            wsh = wsm[0] if wsm[0] == wsz[0] else f'{wsm[0]}→{wsz[0]}'
+            wsv = wsm[1] if wsm[1] == wsz[1] else f'{wsm[1]}→{wsz[1]}'
+            w_title += f'∑ [{wsh},{wsv}] '
         w_title += TerminalColors.ENDC
     else:
         if widget.get_title() != '':
             title_f = TerminalColors.UNDERLINE + widget.get_title() + TerminalColors.ENDC
-            w_title = '{0} - {1} - '.format(w_class_id, title_f)
+            w_title = f'{w_class_id} - {title_f} - '
         else:
             w_title = w_class_id + ' - '
 
@@ -732,7 +730,7 @@ def widget_terminal_title(
     if widget.is_selected():
         w_title += TerminalColors.BOLD + ' ⟵'
         if current_index != -1 and current_index != widget_index:
-            w_title += '! [{0}->{1}]'.format(widget_index, current_index)
+            w_title += f'! [{widget_index}->{current_index}]'
     if widget.get_menu() is None:
         w_title += ' !▲'
     w_title += TerminalColors.ENDC

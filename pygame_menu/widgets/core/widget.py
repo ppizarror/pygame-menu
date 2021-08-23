@@ -1507,7 +1507,7 @@ class Widget(Base):
 
         :return: Widget data value
         """
-        raise ValueError('{0} does not accept value'.format(self.get_class_id()))
+        raise ValueError(f'{self.get_class_id()} does not accept value')
 
     def add_self_to_kwargs(self, key: str = 'widget') -> 'Widget':
         """
@@ -2608,7 +2608,7 @@ class Widget(Base):
         :param value: Value to be set on the widget
         :return: None
         """
-        raise ValueError('{0} does not accept value'.format(self.get_class_id()))
+        raise ValueError(f'{self.get_class_id()} does not accept value')
 
     def set_default_value(self, value: Any) -> 'Widget':
         """
@@ -2712,7 +2712,7 @@ class Widget(Base):
         """
         assert isinstance(callback_id, str)
         if callback_id not in self._draw_callbacks.keys():
-            raise IndexError('callback ID "{0}" does not exist'.format(callback_id))
+            raise IndexError(f'callback ID "{callback_id}" does not exist')
         del self._draw_callbacks[callback_id]
         return self
 
@@ -2767,7 +2767,7 @@ class Widget(Base):
         """
         assert isinstance(callback_id, str)
         if callback_id not in self._update_callbacks.keys():
-            raise IndexError('callback<"{0}"> does not exist'.format(callback_id))
+            raise IndexError(f'callback<"{callback_id}"> does not exist')
         del self._update_callbacks[callback_id]
         return self
 

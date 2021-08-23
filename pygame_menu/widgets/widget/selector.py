@@ -428,7 +428,7 @@ class Selector(Widget):
                     found = True
                     break
             if not found:
-                raise ValueError('no value "{}" found in selector'.format(item))
+                raise ValueError(f'no value "{item}" found in selector')
         elif isinstance(item, int):
             assert 0 <= item < len(self._items), \
                 'item index must be greater than zero and lower than the number ' \

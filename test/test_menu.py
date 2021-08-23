@@ -467,7 +467,7 @@ class MenuTest(BaseRSTest):
         menu_prev = menu
         menu_ = None
         for i in range(1, 11):
-            menu_ = MenuUtils.generic_menu(title='submenu {0}'.format(i))
+            menu_ = MenuUtils.generic_menu(title=f'submenu {i}')
             button = menu_prev.add.button('open', menu_)
             button.apply()
             menu_prev = menu_

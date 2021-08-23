@@ -42,10 +42,10 @@ from typing import List, Tuple, Optional
 # -----------------------------------------------------------------------------
 # Constants and global variables
 # -----------------------------------------------------------------------------
-ABOUT = ['pygame-menu {0}'.format(pygame_menu.__version__),
-         'Author: {0}'.format(pygame_menu.__author__),
+ABOUT = [f'pygame-menu {pygame_menu.__version__}',
+         f'Author: {pygame_menu.__author__}',
          '',
-         'Email: {0}'.format(pygame_menu.__email__)]
+         f'Email: {pygame_menu.__email__}']
 COLOR_BACKGROUND = [128, 0, 128]
 FPS = 60
 H_SIZE = 600  # Height of window size

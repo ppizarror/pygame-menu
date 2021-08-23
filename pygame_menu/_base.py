@@ -72,7 +72,7 @@ class Base(object):
             return self.get_class_id()
         if self._id__repr__:
             return sup_repr.replace(' object at ',
-                                    '["{0}"] object at '.format(self.get_id()))
+                                    f'["{self.get_id()}"] object at ')
         return sup_repr
 
     def _update__repr___(self, obj: 'Base') -> None:
@@ -159,7 +159,7 @@ class Base(object):
         :return: Self reference
         """
         if not self.has_attribute(key):
-            raise IndexError('attribute "{0}" does not exists on object'.format(key))
+            raise IndexError(f'attribute "{key}" does not exists on object')
         del self._attributes[key]
         return self
 
@@ -169,7 +169,7 @@ class Base(object):
 
         :return: Class+ID format
         """
-        return '{0}<"{1}">'.format(self.__class__.__name__, self._id)
+        return f'{self.__class__.__name__}<"{self._id}">'
 
     def get_id(self) -> str:
         """
