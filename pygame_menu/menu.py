@@ -1048,11 +1048,10 @@ class Menu(Base):
             widget._menu_hook = None
 
         widget.on_remove_from_menu()
-        widget.set_menu(None)  # Removes Menu reference from widget
+        # Removes Menu reference from widget. If Frame, it removes from _update_frames
+        widget.set_menu(None)
 
         # Remove widget from update lists
-        if isinstance(widget, Frame) and widget in self._update_frames:
-            self._update_frames.remove(widget)
         if widget in self._update_widgets:
             self._update_widgets.remove(widget)
 
@@ -1155,8 +1154,8 @@ class Menu(Base):
         self._used_columns = 0
         max_elements_msg = \
             f'total visible/non-floating widgets ([widg]) cannot exceed columns*rows' \
-            f'({self._max_row_column_elements} elements). Menu position update failed. If using frames, please' \
-            f'pack before adding new widgets'
+            f'({self._max_row_column_elements} elements). Menu position update failed.' \
+            f' If using frames, please pack before adding new widgets'
         i_index = 0
         has_frame = False
 
@@ -1397,6 +1396,7 @@ class Menu(Base):
             # Calculate X position
             column_width = self._column_widths[col]
             selection_margin = 0
+            dx = 0
             if align == ALIGN_CENTER:
                 dx = -width / 2
             elif align == ALIGN_LEFT:
@@ -1405,8 +1405,6 @@ class Menu(Base):
             elif align == ALIGN_RIGHT:
                 selection_margin = selection_effect.get_margin()[3]  # right
                 dx = column_width / 2 - width - selection_margin
-            else:
-                dx = 0
             d_border = int(math.ceil(widget.get_border()[1] / 2))
             x_coord = self._column_pos_x[col] + dx + margin[0] + padding[3]
             x_coord = max(selection_margin, x_coord)
@@ -1643,8 +1641,6 @@ class Menu(Base):
 
         :return: Menu depth
         """
-        if self._top is None:
-            return 0
         prev = self._top._prev
         depth = 0
         if prev is not None:

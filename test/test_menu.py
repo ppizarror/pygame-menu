@@ -129,6 +129,7 @@ class MenuTest(BaseRSTest):
         self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(width=-200, height=300))
         self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(width=inf_size, height=300))
         self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(width=300, height=inf_size))
+        self.assertRaises(ValueError, lambda: MenuUtils.generic_menu(width=300, height=1))
 
     # noinspection SpellCheckingInspection
     def test_position(self) -> None:
@@ -441,6 +442,10 @@ class MenuTest(BaseRSTest):
         menu.reset(1)
         self.assertEqual(menu2.get_current(), menu2)
 
+        # Close if not enabled
+        menu.disable()
+        self.assertRaises(RuntimeError, lambda: menu.close())
+
     def test_enabled(self) -> None:
         """
         Test menu enable/disable feature.
@@ -462,6 +467,10 @@ class MenuTest(BaseRSTest):
         """
         menu = MenuUtils.generic_menu(title='mainmenu')
         self.assertEqual(menu._get_depth(), 0)
+        top = menu._top
+        menu._top = None
+        self.assertEqual(menu._get_depth(), 0)
+        menu._top = top
 
         # Adds some menus
         menu_prev = menu
@@ -1260,6 +1269,22 @@ class MenuTest(BaseRSTest):
             btn = menu.get_selected_widget()
             self.assertTrue(btn.get_selected_time() >= 0)
 
+    def test_remove_widget(self) -> None:
+        """
+        Test widget remove.
+        """
+        menu = MenuUtils.generic_menu()
+        f = menu.add.frame_h(100, 200)
+        menu._update_frames.append(f)
+        btn = menu.add.button('epic')
+        menu._update_widgets.append(btn)
+
+        menu.remove_widget(f)
+        self.assertNotIn(f, menu._update_frames)
+
+        menu.remove_widget(btn)
+        self.assertNotIn(btn, menu._update_widgets)
+
     # noinspection SpellCheckingInspection
     def test_reset_value(self) -> None:
         """
@@ -1759,6 +1784,26 @@ class MenuTest(BaseRSTest):
 
         menu.update(PygameEventUtils.enter_window())
         menu.update(PygameEventUtils.leave_window())
+
+    def test_theme_params(self) -> None:
+        """
+        Test menu theme parameters.
+        """
+        th = TEST_THEME.copy()
+
+        # Change title visibility
+        th.title = False
+        menu = MenuUtils.generic_menu(theme=th)
+        self.assertFalse(menu.get_menubar().is_visible())
+        th.title = True
+        menu = MenuUtils.generic_menu(theme=th)
+        self.assertTrue(menu.get_menubar().is_visible())
+
+        # Updates window title
+        th.title_updates_pygame_display = True
+        menu = MenuUtils.generic_menu(theme=th, title='Epic')
+        menu.draw(surface)
+        self.assertEqual(pygame.display.get_caption()[0], menu.get_title())
 
     # noinspection PyTypeChecker
     def test_widget_move_index(self) -> None:
