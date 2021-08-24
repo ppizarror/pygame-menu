@@ -498,7 +498,7 @@ def parse_padding(padding: PaddingType) -> Tuple4IntType:
 
     if isinstance(padding, NumberInstance):
         assert padding >= 0, 'padding cannot be a negative number'
-        return padding, padding, padding, padding
+        return int(padding), int(padding), int(padding), int(padding)
     else:
         assert 1 <= len(padding) <= 4, 'padding must be a tuple of 2, 3 or 4 elements'
         for i in range(len(padding)):

@@ -595,7 +595,7 @@ class BaseImage(Base):
     def pick_channels(self, channels: ChannelType) -> 'BaseImage':
         """
         Pick certain channels of the image, channels are ``"r"`` (red), ``"g"``
-        (green) and ``"b"`` (blue), ``channels param`` is a list/tuple of channels
+        (green) and ``"b"`` (blue); ``channels param`` is a list/tuple of channels
         (non empty).
 
         For example, ``pick_channels(['r', 'g'])``: All channels not included on

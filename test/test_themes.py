@@ -72,7 +72,7 @@ class ThemeTest(BaseTest):
         theme.background_color = image
 
         # Copy the theme
-        theme_copy = theme.copy()
+        theme_copy = theme.__copy__()
         self.assertNotEqual(theme.background_color, theme_copy.background_color)
         self.assertNotEqual(theme.background_color, pygame_menu.themes.THEME_DEFAULT.background_color)
 
@@ -118,6 +118,10 @@ class ThemeTest(BaseTest):
         theme.background_color = image
 
         self.assertRaises(AssertionError, lambda: theme.set_background_color_opacity(0.5))
+
+        # Test color
+        self.assertEqual(theme._format_color_opacity([1, 1, 1, 1]), (1, 1, 1, 1))
+        self.assertEqual(theme._format_color_opacity([1, 1, 1]), (1, 1, 1, 255))
 
     def test_invalid_kwargs(self) -> None:
         """
