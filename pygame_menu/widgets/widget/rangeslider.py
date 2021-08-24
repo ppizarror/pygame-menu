@@ -293,20 +293,18 @@ class RangeSlider(Widget):
             assert default_value[0] < default_value[1], \
                 'default value vector must be ordered and different (min,max)'
             assert default_value[0] >= range_values[0], \
-                'minimum default value ({0}) must be equal or greater than ' \
-                'minimum value of the range ({1})' \
-                ''.format(default_value[0], range_values[0])
+                f'minimum default value ({default_value[0]}) must be equal or ' \
+                f'greater than minimum value of the range ({range_values[0]})'
             assert default_value[1] <= range_values[-1], \
-                'maximum default value ({0}) must be lower or equal than ' \
-                'maximum value of the range ({1})' \
-                ''.format(default_value[1], range_values[-1])
+                f'maximum default value ({default_value[1]}) must be lower or ' \
+                f'equal than maximum value of the range ({range_values[-1]})'
             default_value = tuple(default_value)
 
         else:
             assert range_values[0] <= default_value <= range_values[-1], \
-                'default value ({0}) must be between minimum and maximum of the ' \
-                'range values ({1}, {2}), that is, it must satisfy {0}<={1}<={2}' \
-                ''.format(default_value, range_values[0], range_values[-1])
+                f'default value ({default_value}) must be between minimum and maximum' \
+                f' of the range values ({range_values[0]}, {range_values[-1]}), that ' \
+                f'is, it must satisfy {range_values[0]}<={default_value}<={range_values[-1]}'
 
         # If range is discrete, check default value within list
         if len(range_values) > 2:
@@ -488,8 +486,8 @@ class RangeSlider(Widget):
             assert isinstance(value, NumberInstance)
             # noinspection PyTypeChecker
             assert self._range_values[0] <= value <= self._range_values[-1], \
-                'value ({0}) must be within range {1} <= {0} <= {2}' \
-                ''.format(value, self._range_values[0], self._range_values[1])
+                f'value ({value}) must be within range {self._range_values[0]} <=' \
+                f' {value} <= {self._range_values[1]}'
             if len(self._range_values) > 2:
                 assert value in self._range_values, \
                     'value must be between range values discrete list'

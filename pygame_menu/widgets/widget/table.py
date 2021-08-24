@@ -210,8 +210,8 @@ class Table(Frame):
         # Border positioning
         for pos in border_position:
             assert pos in (POSITION_NORTH, POSITION_SOUTH, POSITION_EAST, POSITION_WEST), \
-                'only north, south, east, and west border positions are valid, ' \
-                'but received "{0}"'.format(pos)
+                f'only north, south, east, and west border positions are valid, ' \
+                f'but received "{pos}"'
 
     def add_row(
             self,
@@ -378,20 +378,20 @@ class Table(Frame):
                 if isinstance(c, Frame):
                     print(self, c.get_widgets())
                     assert self not in c.get_widgets(unpack_subframes_include_frame=True), \
-                        '{0} cannot be packed within {1}, recursive packing is ' \
-                        'not allowed (Table is within Frame to be inserted as ' \
-                        'row cell)' \
-                        ''.format(self.get_class_id(), c.get_class_id())
+                        f'{self.get_class_id()} cannot be packed within {c.get_class_id()},' \
+                        f' recursive packing is not allowed (Table is within Frame' \
+                        f' to be inserted as row cell)'
 
                 cell = c
                 if c._accept_events:
                     cell_widget_type = True
-                    warn('{0} does not accept events in current pygame-menu '
-                         'v{1}; thus appended cell row widget {2} (pos {3}) would'
-                         ' not work properly, as it will ignore all inputs. Also, '
-                         'widgets within Tables cannot be selected. Consider Tables'
-                         'as visual-only'
-                         .format(self.get_class_id(), ver, c.get_class_id(), j))
+                    warn(
+                        f'{self.get_class_id()} does not accept events in current'
+                        f' pygame-menu v{ver}; thus appended cell row widget '
+                        f'{c.get_class_id()} (pos {j}) would not work properly, '
+                        f'as it will ignore all inputs. Also, widgets within Tables'
+                        f' cannot be selected. Consider Tables as visual-only'
+                    )
                 # self._append_menu_update_frame(self)
 
             # Configure cell
@@ -422,9 +422,8 @@ class Table(Frame):
             assert cell.get_frame() != self, \
                 f'{cell.get_class_id()} cannot be added as it already exists in table'
             assert cell.get_frame() is None, \
-                '{0} is already packed in {1}, it cannot be added to {2}' \
-                ''.format(cell.get_class_id(), cell.get_frame().get_class_id(),
-                          self.get_class_id())
+                f'{cell.get_class_id()} is already packed in ' \
+                f'{cell.get_frame().get_class_id()}, it cannot be added to {self.get_class_id()}'
 
             # If cell is frame and scrollable
             if isinstance(cell, Frame):
@@ -670,8 +669,7 @@ class Table(Frame):
         f = self._rows[row - 1]
         w = f.get_widgets(unpack_subframes=False)
         assert column <= len(w), \
-            'column index ({0}) cannot exceed the number of columns ({1}) of row {2}' \
-            ''.format(column, len(w), row)
+            f'column index ({column}) cannot exceed the number of columns ({len(w)}) of row {row}'
         return w[column - 1]
 
     def is_rectangular(self) -> bool:
@@ -734,16 +732,15 @@ class Table(Frame):
                 if row_k[1] == -1:
                     row_k[1] = len(self._rows)
                 assert 1 <= row_k[0] <= row_k[1] <= max_rows, \
-                    '(from, to) of rows vector must be increasing and between 1-{0}' \
-                    ''.format(max_rows)
+                    f'(from, to) of rows vector must be increasing and between 1-{max_rows}'
                 row = [row_k[0]]
                 for i in range(row_k[1] - row_k[0]):
                     row.append(row_k[0] + (i + 1))
             if isinstance(column, VectorInstance) and column != [1, -1]:
                 assert self.is_rectangular(), \
-                    'only rectangular tables (same number of columns for each row) ' \
-                    'accept a variable column different than -1 or [1, -1], but ' \
-                    'received "{0}"'.format(column)
+                    f'only rectangular tables (same number of columns for each row) ' \
+                    f'accept a variable column different than -1 or [1, -1], but ' \
+                    f'received "{column}"'
             updated_wid = []
             for i in row:
                 w = self.update_cell_style(
@@ -767,8 +764,7 @@ class Table(Frame):
             return updated_wid
         if column == -1 or isinstance(column, VectorInstance):
             assert isinstance(row, int) and 1 <= row <= len(self._rows), \
-                'row index ({0}) cannot exceed the number of rows ({1})' \
-                ''.format(row, len(self._rows))
+                f'row index ({row}) cannot exceed the number of rows ({len(self._rows)})'
             max_columns = self._rows[row - 1].get_total_packed()
             if column == -1:
                 column = []
@@ -780,8 +776,7 @@ class Table(Frame):
                 if column_k[1] == -1:
                     column_k[1] = max_columns
                 assert 1 <= column_k[0] <= column_k[1] <= max_columns, \
-                    '(from, to) of column vector must be increasing and between 1-{0} for row {1}' \
-                    ''.format(max_columns, row)
+                    f'(from, to) of column vector must be increasing and between 1-{max_columns} for row {row}'
                 column = [column_k[0]]
                 for i in range(column_k[1] - column_k[0]):
                     column.append(column_k[0] + (i + 1))

@@ -47,7 +47,7 @@ class Version(tuple):
 
     def __repr__(self) -> str:
         fields = (f'{fld}={val}' for fld, val in zip(self.fields, self))
-        return f"{str(self.__class__.__name__)}({', '.join(fields)})"
+        return f'{str(self.__class__.__name__)}({", ".join(fields)})'
 
     def __str__(self) -> str:
         return '{}.{}.{}'.format(*self)

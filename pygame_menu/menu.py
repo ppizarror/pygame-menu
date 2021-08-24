@@ -1237,8 +1237,9 @@ class Menu(Base):
             self._index = -1
             raise _MenuMultipleSelectedWidgetsException(
                 f'several widgets are selected at the same time, current selected '
-                f"(sorted by index): {selected_widget}, but the following are also selected: {','.join(invalid_selection_widgets)}. "
-                f'If widget is selected outside the menu, use widget.select(update_menu=True)'
+                f'(sorted by index): {selected_widget}, but the following are also'
+                f' selected: {", ".join(invalid_selection_widgets)}. If widget is'
+                f' selected outside the menu, use widget.select(update_menu=True)'
             )
 
         # Apply max width column limit
@@ -2401,7 +2402,8 @@ class Menu(Base):
                             break
 
                 # User moves joy axis motion
-                elif event.type == pygame.JOYAXISMOTION and self._current._joystick:
+                elif event.type == pygame.JOYAXISMOTION and self._current._joystick and \
+                        hasattr(event, 'axis'):
                     prev = self._current._joy_event
                     self._current._joy_event = 0
 
@@ -3527,8 +3529,9 @@ class Menu(Base):
                         invalid_w.append(w.get_class_id())
             if len(invalid_w) > 0:
                 raise _MenuMultipleSelectedWidgetsException(
-                    f"several widgets are selected at the same time, current selected "
-                    f"(sorted by index): {selected}, but the following are also selected: {','.join(invalid_w)}"
+                    f'several widgets are selected at the same time, current '
+                    f'selected (sorted by index): {selected}, but the following '
+                    f'are also selected: {", ".join(invalid_w)}'
                 )
             return
 

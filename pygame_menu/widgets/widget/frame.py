@@ -224,8 +224,7 @@ class Frame(Widget):
         assert self.configured, \
             f'{self.get_class_id()} must be configured before setting a title'
         if not self._accepts_title:
-            raise _FrameDoNotAcceptTitle('{0} does not accept a title'
-                                         ''.format(self.get_class_id()))
+            raise _FrameDoNotAcceptTitle(f'{self.get_class_id()} does not accept a title')
         self._title = title
 
         # If has previous title
@@ -378,8 +377,7 @@ class Frame(Widget):
         :return: Self reference
         """
         if not self._accepts_title:
-            raise _FrameDoNotAcceptTitle('{0} does not accept a title'
-                                         ''.format(self.get_class_id()))
+            raise _FrameDoNotAcceptTitle(f'{self.get_class_id()} does not accept a title')
         if self._has_title:
             self._frame_title = None
             self._has_title = False
@@ -408,11 +406,9 @@ class Frame(Widget):
         :return: Self reference
         """
         if not self._accepts_title:
-            raise _FrameDoNotAcceptTitle('{0} does not accept a title'
-                                         ''.format(self.get_class_id()))
+            raise _FrameDoNotAcceptTitle(f'{self.get_class_id()} does not accept a title')
         assert self._has_title, \
-            '{0} does not have any title, call set_title(...) beforehand' \
-            ''.format(self.get_class_id())
+            f'{self.get_class_id()} does not have any title, call set_title(...) beforehand'
         assert isinstance(button, Button)
         assert button.get_menu() is None, \
             f'{button.get_class_id()} menu reference must be None'
@@ -424,17 +420,15 @@ class Frame(Widget):
         # Check sizing
         total_title_height = self._frame_title.get_height(apply_padding=False)
         assert button.get_height() <= total_title_height, \
-            '{0} height ({0}) must be lower than frame title height ({1})' \
-            ''.format(button.get_class_id(), button.get_height(), total_title_height)
+            f'{button.get_class_id()} height ({button.get_height()}) must be lower' \
+            f' than frame title height ({total_title_height})'
 
         # Add frame to button kwargs
         if 'frame' in button._kwargs.keys():
-            raise ValueError('{0} already has "frame" kwargs option'
-                             ''.format(button.get_class_id()))
+            raise ValueError(f'{button.get_class_id()} already has "frame" kwargs option')
         button._kwargs['frame'] = self
         if 'button' in button._kwargs.keys():
-            raise ValueError('{0} already has "button" kwargs option'
-                             ''.format(button.get_class_id()))
+            raise ValueError(f'{button.get_class_id()} already has "button" kwargs option')
         button._kwargs['button'] = button
 
         # Pack
@@ -476,11 +470,9 @@ class Frame(Widget):
         :return: Added button
         """
         if not self._accepts_title:
-            raise _FrameDoNotAcceptTitle('{0} does not accept a title'
-                                         ''.format(self.get_class_id()))
+            raise _FrameDoNotAcceptTitle(f'{self.get_class_id()} does not accept a title')
         assert self._has_title, \
-            '{0} does not have any title, call set_title(...) beforehand' \
-            ''.format(self.get_class_id())
+            f'{self.get_class_id()} does not have any title, call set_title(...) beforehand'
         assert isinstance(symbol_height, NumberInstance) and 0 <= symbol_height <= 1
         assert isinstance(symbol_margin, int) and 0 <= symbol_margin
         h = self._frame_title.get_height(apply_padding=False) * symbol_height
@@ -548,7 +540,7 @@ class Frame(Widget):
 
     def get_title(self) -> str:
         if not self._has_title:
-            # raise ValueError('{0} does not have any title'.format(self.get_class_id()))
+            # raise ValueError(f'{self.get_class_id()} does not have any title')
             return ''
         return self._title
 
@@ -695,11 +687,9 @@ class Frame(Widget):
         assert isinstance(max_width, NumberInstance)
         assert isinstance(max_height, NumberInstance)
         assert 0 < max_width <= self._width, \
-            'scroll area width ({0}) cannot exceed frame width ({1})' \
-            ''.format(max_width, self._width)
+            f'scroll area width ({max_width}) cannot exceed frame width ({self._width})'
         assert 0 < max_height <= self._height, \
-            'scroll area height ({0}) cannot exceed frame height ({1})' \
-            ''.format(max_height, self._height)
+            f'scroll area height ({max_height}) cannot exceed frame height ({self._height})'
         # if not self._relax:
         #     pass
         # else:
@@ -872,8 +862,7 @@ class Frame(Widget):
         try:
             return w.index(widget)
         except ValueError:
-            raise IndexError('{0} widget does not exist on {1}'
-                             ''.format(widget.get_class_id(), self.get_class_id()))
+            raise IndexError(f'{widget.get_class_id()} widget does not exist on {self.get_class_id()}')
 
     def set_position(self, x: NumberType, y: NumberType) -> 'Frame':
         if self._has_title:
@@ -944,11 +933,10 @@ class Frame(Widget):
         # Some systems introduce 1px margin
         if w > (self._width + 1) and not self._relax:
             raise _FrameSizeException(
-                '{0} width ({1}) is greater than {3} width ({2}), try using '
-                'widget.set_max_width(...) for avoiding this issue, or set '
-                'the widget as floating'.format(
-                    widget.get_class_id(), w, self._width, self.get_class_id()
-                ))
+                f'{widget.get_class_id()} width ({w}) is greater than {self.get_class_id()}'
+                f' width ({self._width}), try using widget.set_max_width(...) for '
+                f'avoiding this issue, or set the widget as floating'
+            )
         if a == ALIGN_CENTER:
             return int((self._width - w) / 2)
         elif a == ALIGN_RIGHT:
@@ -967,11 +955,10 @@ class Frame(Widget):
         h = widget.get_height()
         if h > (self._height + 1) and not self._relax:
             raise _FrameSizeException(
-                '{0} height ({1}) is greater than {3} height ({2}), try using '
-                'widget.set_max_height(...) for avoiding this issue, or set '
-                'the widget as floating'.format(
-                    widget.get_class_id(), h, self._height, self.get_class_id()
-                ))
+                f'{widget.get_class_id()} height ({h}) is greater than {self.get_class_id()}'
+                f' height ({self._height}), try using widget.set_max_height(...) '
+                f'for avoiding this issue, or set the widget as floating'
+            )
         if v == POSITION_CENTER:
             return int((self._height - h) / 2)
         elif v == POSITION_SOUTH:
@@ -1008,19 +995,17 @@ class Frame(Widget):
             dw = x_left - x_right
             if dw > self._width and not self._relax:
                 raise _FrameSizeException(
-                    '{3} width ({0}) exceeds {2} width ({1}). Set frame._relax=True'
-                    ' to ignore this Exception'
-                    ''.format(dw, self._width, self.get_class_id(), w.get_class_id())
+                    f'{w.get_class_id()} width ({dw}) exceeds {self.get_class_id()}'
+                    f' width ({self._width}). Set frame._relax=True to ignore this Exception'
                 )
 
         # Now center widgets
         available = self._width - (x_left - x_right)
         if w_center > available and not self._relax:
             raise _FrameSizeException(
-                'cannot place center widgets as required width ({0}) is greater '
-                'than available ({1}) in {2}. Set frame._relax=True to ignore '
-                'this Exception'
-                ''.format(w_center, available, self.get_class_id())
+                f'cannot place center widgets as required width ({w_center}) is '
+                f'greater than available ({available}) in {self.get_class_id()}.'
+                f' Set frame._relax=True to ignore this Exception'
             )
         x_center = int(self._width / 2 - w_center / 2)
         for w in self._widgets.values():
@@ -1060,19 +1045,18 @@ class Frame(Widget):
             dh = y_top - y_bottom
             if dh > self._height and not self._relax:
                 raise _FrameSizeException(
-                    '{3} height ({0}) exceeds {2} height ({1}). Set frame._relax=True'
-                    ' to ignore this Exception'
-                    ''.format(dh, self._height, self.get_class_id(), w.get_class_id())
+                    f'{w.get_class_id()} height ({dh}) exceeds {self.get_class_id()}'
+                    f' height ({self._height}). Set frame._relax=True to ignore '
+                    f'this Exception'
                 )
 
         # Now center widgets
         available = self._height - (y_top - y_bottom)
         if w_center > available and not self._relax:
             raise _FrameSizeException(
-                'cannot place center widgets as required height ({0}) is greater '
-                'than available ({1}) in {2}. Set frame._relax=True to ignore '
-                'this Exception'
-                ''.format(w_center, available, self.get_class_id())
+                f'cannot place center widgets as required height ({w_center}) is'
+                f' greater than available ({available}) in {self.get_class_id()}.'
+                f' Set frame._relax=True to ignore this Exception'
             )
         y_center = int(self._height / 2 - w_center / 2)
         for w in self._widgets.values():
@@ -1335,8 +1319,7 @@ class Frame(Widget):
     def set_scrollarea(self, scrollarea: Optional['pygame_menu._scrollarea.ScrollArea']) -> None:
         if scrollarea is not None:
             assert scrollarea != self._frame_scrollarea, \
-                'scrollarea cannot be {0}._frame_scrollarea {1}' \
-                ''.format(self.get_class_id(), scrollarea.get_class_id())
+                f'scrollarea cannot be {self.get_class_id()}._frame_scrollarea {scrollarea.get_class_id()}'
         self._scrollarea = scrollarea
         if self._frame_scrollarea is not None:
             self._frame_scrollarea.set_parent_scrollarea(scrollarea)
@@ -1398,8 +1381,7 @@ class Frame(Widget):
         assert len(self._widgets) > 0, 'frame is empty'
         wid = widget.get_id()
         if wid not in self._widgets.keys():
-            raise ValueError('{0} does not exist in {1}'
-                             ''.format(widget.get_class_id(), self.get_class_id()))
+            raise ValueError(f'{widget.get_class_id()} does not exist in {self.get_class_id()}')
         assert widget._frame == self, 'widget frame differs from current'
         widget.set_float()
         if self._menu is not None:
@@ -1564,8 +1546,7 @@ class Frame(Widget):
             'widget menu to be added to frame must be in same menu as frame, or ' \
             'it can have any Menu instance'
         assert widget.get_frame() is None, \
-            '{0} is already packed in {1}' \
-            ''.format(widget.get_class_id(), widget.get_frame().get_class_id())
+            f'{widget.get_class_id()} is already packed in {widget.get_frame().get_class_id()}'
         assert_alignment(align)
         assert vertical_position in (POSITION_NORTH, POSITION_CENTER, POSITION_SOUTH), \
             'vertical position must be NORTH, CENTER, or SOUTH'
@@ -1575,10 +1556,10 @@ class Frame(Widget):
 
         if widget.get_margin() != (0, 0) and self._pack_margin_warning:
             warn(
-                '{0} margin should be (0, 0) if packed, but received {1}; {2}.pack() '
-                'does not consider previous widget margin. Set '
-                'frame._pack_margin_warning=False to hide this warning'
-                ''.format(widget.get_class_id(), widget.get_margin(), self.get_class_id())
+                f'{widget.get_class_id()} margin should be (0, 0) if packed, but'
+                f' received {widget.get_margin()}; {self.get_class_id()}.pack() '
+                f'does not consider previous widget margin. Set '
+                f'frame._pack_margin_warning=False to hide this warning'
             )
 
         if isinstance(widget, Frame):

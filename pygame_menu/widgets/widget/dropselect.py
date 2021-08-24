@@ -378,8 +378,7 @@ class DropSelect(Widget):
         from pygame_menu._scrollarea import get_scrollbars_from_position
 
         if not self.configured:
-            raise RuntimeError('{0} must be configured before creating selection drop'
-                               ''.format(self.get_class_id()))
+            raise RuntimeError(f'{self.get_class_id()} must be configured before creating selection drop')
 
         # Create options buttons
         total_height = 0
@@ -1048,8 +1047,8 @@ class DropSelect(Widget):
         """
         if self._drop_frame is None:
             raise _SelectionDropNotMadeException(
-                'selection drop has not been made yet. Call {0}._make_selection_drop()'
-                'for avoiding this exception'.format(self.get_class_id())
+                f'selection drop has not been made yet. Call {self.get_class_id()}'
+                f'._make_selection_drop() for avoiding this exception'
             )
 
     def get_items(self) -> Union[List[Tuple[Any, ...]], List[str]]:

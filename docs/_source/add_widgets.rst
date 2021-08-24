@@ -323,7 +323,7 @@ the way the widgets are added to the frame (packed).
         selection_option_font_size=20
     ))
     for i in range(20):
-        frame.pack(menu.add.button(i, font_color='white', button_id='b{}'.format(i)))
+        frame.pack(menu.add.button(i, font_color='white', button_id=f'b{i}'))
 
 .. automethod:: pygame_menu._widgetmanager.WidgetManager.frame_h
 

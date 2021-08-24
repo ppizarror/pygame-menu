@@ -161,16 +161,15 @@ class BaseImage(Base):
                 _, file_extension = path.splitext(image_path)
                 file_extension = file_extension.lower()
                 assert path.isfile(image_path), \
-                    'file {0} does not exist or could not be found, please ' \
-                    'check if the path of the image is valid'.format(image_path)
+                    f'file {image_path} does not exist or could not be found, please ' \
+                    f'check if the path of the image is valid'
             else:
                 file_extension = 'base64'
         else:
             file_extension = 'BytesIO'
 
         assert file_extension in _VALID_IMAGE_FORMATS, \
-            'file extension {0} not valid, please use: {1}' \
-            ''.format(file_extension, ','.join(_VALID_IMAGE_FORMATS))
+            f'file extension {file_extension} not valid, please use: {", ".join(_VALID_IMAGE_FORMATS)}'
 
         self._filepath = image_path
         if isinstance(self._filepath, str) and not frombase64:
