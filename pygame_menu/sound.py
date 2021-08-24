@@ -355,10 +355,7 @@ class Sound(Base):
             # noinspection PyTypeChecker
             sound_data = mixer.Sound(file=sound_file)
         except pygame_error:
-            warn(
-                'the sound file "{0}" could not be loaded, it has been disabled'
-                ''.format(sound_file)
-            )
+            warn(f'the sound file "{sound_file}" could not be loaded, it has been disabled')
             self._sound[sound_type] = {}
             return False
 

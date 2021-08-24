@@ -536,11 +536,11 @@ class WidgetManager(Base):
             # Check for recursive
             if action == self._menu or action.in_submenu(self._menu, recursive=True):
                 raise ValueError(
-                    '{0} title "{1}" is already on submenu structure, recursive menus'
-                    ' lead to unexpected behaviours. For returning to previous menu'
-                    'use pygame_menu.events.BACK event defining an optional '
-                    'back_count number of menus to return from, default is 1'
-                    ''.format(action.get_class_id(), action.get_title())
+                    f'{action.get_class_id()} title "{action.get_title()}" is '
+                    f'already on submenu structure, recursive menus lead to '
+                    f'unexpected behaviours. For returning to previous menu'
+                    f'use pygame_menu.events.BACK event defining an optional '
+                    f'back_count number of menus to return from, default is 1'
                 )
 
             widget = pygame_menu.widgets.Button(title, button_id, self._menu._open, action)
@@ -1982,8 +1982,8 @@ class WidgetManager(Base):
             assert 0 <= default <= 1, 'default value can be 0 or 1'
         else:
             raise ValueError(
-                'invalid value type, default can be 0, False, 1, or True, but'
-                'received "{0}"'.format(default)
+                f'invalid value type, default can be 0, False, 1, or True, but'
+                f'received "{default}"'
             )
 
         # Filter widget attributes to avoid passing them to the callbacks
@@ -2216,11 +2216,9 @@ class WidgetManager(Base):
         pad_v = pad[0] + pad[2]
 
         assert width > pad_h, \
-            'frame width ({0}) cannot be lower than horizontal padding size ({1})' \
-            ''.format(width, pad_h)
+            f'frame width ({width}) cannot be lower than horizontal padding size ({pad_h})'
         assert height > pad_v, \
-            'frame height ({0}) cannot be lower than vertical padding size ({1})' \
-            ''.format(height, pad_v)
+            f'frame height ({height}) cannot be lower than vertical padding size ({pad_v})'
 
         widget = pygame_menu.widgets.Frame(
             width=width - pad_h,
@@ -2623,11 +2621,11 @@ class WidgetManager(Base):
             # Check for recursive
             if menu == self._menu or menu.in_submenu(self._menu, recursive=True):
                 raise ValueError(
-                    'Menu "{0}" is already on submenu structure, recursive menus'
-                    'lead to unexpected behaviours. For returning to previous menu'
-                    'use pygame_menu.events.BACK event defining an optional '
-                    'back_count number of menus to return from, default is 1'
-                    ''.format(menu.get_title())
+                    f'Menu "{menu.get_title()}" is already on submenu structure,'
+                    f' recursive menus lead to unexpected behaviours. For '
+                    f'returning to previous menu use pygame_menu.events.BACK '
+                    f'event defining an optional back_count number of menus to '
+                    f'return from, default is 1'
                 )
 
         else:

@@ -353,9 +353,8 @@ class DropSelectMultiple(DropSelect):
                                  'argument (a list of the selected items string)'
                                  ' and must return a string')
             assert isinstance(o, str), \
-                'output from selection placeholder format function must be a ' \
-                'string (List[str]=>str), not {0} type ({1} returned)' \
-                ''.format(type(o), o)
+                f'output from selection placeholder format function must be a ' \
+                f'string (List[str]=>str), not {type(o)} type ({o} returned)'
             return self._placeholder_selected.format(o)
 
         else:
@@ -393,9 +392,8 @@ class DropSelectMultiple(DropSelect):
             default = [default]
         for i in default:
             assert isinstance(i, int) and 0 <= i < len(self._items), \
-                'each default index must be an integer between 0 and the number ' \
-                'of elements ({0})' \
-                ''.format(len(self._items) - 1)
+                f'each default index must be an integer between 0 and the number ' \
+                f'of elements ({len(self._items) - 1})'
         self._default_value = default.copy()
         self._selected_indices = default.copy()
         if self._drop_frame is not None:

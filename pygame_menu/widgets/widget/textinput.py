@@ -1115,8 +1115,7 @@ class TextInput(Widget):
                 self._update_renderbox(right=1, addition=True)
             self._update_input_string(default_text)
         else:
-            raise ValueError('value "{0}" type is not correct according to input_type'
-                             ''.format(text))
+            raise ValueError(f'value "{text}" type is not correct according to input_type')
         self._update_renderbox()  # Updates cursor
         self._render()  # Renders the selection box
 
@@ -1868,9 +1867,9 @@ class TextInput(Widget):
                 elif event.key not in self._ignore_keys and hasattr(event, 'unicode'):
                     if event.unicode == ' ' and event.key != 32:
                         warn(
-                            '{0} received "{1}" unicode but key is different than 32 ({2}), '
-                            'check if event has defined the proper unicode char'
-                            ''.format(self.get_class_id(), event.unicode, event.key)
+                            f'{self.get_class_id()} received "{event.unicode}" '
+                            f'unicode but key is different than 32 ({event.key}), '
+                            f'check if event has defined the proper unicode char'
                         )
                         break
 

@@ -238,7 +238,8 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             max_width = 0  # Max expected width
             if self._color_type == COLORINPUT_TYPE_RGB:
                 max_width = self._font_render_string(
-                    '255{0}255{0}255'.format(self._separator)).get_width()
+                    f'255{self._separator}255{self._separator}255'
+                ).get_width()
             else:
                 for i in ('a', 'b', 'c', 'd', 'e', 'f'):
                     max_width = max(
@@ -287,7 +288,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             assert 0 <= r <= 255, 'red color must be between 0 and 255'
             assert 0 <= g <= 255, 'blue color must be between 0 and 255'
             assert 0 <= b <= 255, 'green color must be between 0 and 255'
-            format_color = '{0}{3}{1}{3}{2}'.format(r, g, b, self._separator)
+            format_color = f'{r}{self._separator}{g}{self._separator}{b}'
             self._auto_separator_pos = [0, 1]
 
         elif self._color_type == COLORINPUT_TYPE_HEX:
@@ -447,7 +448,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
 
                     if disable_remove_separator and len(input_str) > 0 and \
                             len(input_str) > cursor_pos and (
-                            '{0}{0}'.format(self._separator) not in input_str or
+                            f'{self._separator}{self._separator}' not in input_str or
                             input_str[cursor_pos] == self._separator and
                             len(input_str) == cursor_pos + 1
                     ):

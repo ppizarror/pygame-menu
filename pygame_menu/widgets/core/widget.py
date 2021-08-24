@@ -158,11 +158,11 @@ def _check_widget_mouseleave(
             if prev_cursor != WIDGET_TOP_CURSOR[0]:
                 if WIDGET_TOP_CURSOR_WARNING:
                     warn(
-                        'expected {0} to be the top cursor (WIDGET_TOP_CURSOR), '
-                        'but {1} is the current previous cursor from WIDGET_MOUSEOVER '
-                        'recursive list. The top cursor {0} will be established '
-                        'as the pygame default mouse cursor'
-                        ''.format(WIDGET_TOP_CURSOR[0], prev_cursor)
+                        f'expected {WIDGET_TOP_CURSOR[0]} to be the top cursor '
+                        f'(WIDGET_TOP_CURSOR), but {prev_cursor} is the current '
+                        f'previous cursor from WIDGET_MOUSEOVER recursive list. '
+                        f'The top cursor {WIDGET_TOP_CURSOR[0]} will be established '
+                        f'as the pygame default mouse cursor'
                     )
                 set_pygame_cursor(WIDGET_TOP_CURSOR[0])
             WIDGET_TOP_CURSOR[0] = None
@@ -1142,8 +1142,8 @@ class Widget(Base):
             for pos in position:
                 assert pos in (POSITION_NORTH, POSITION_SOUTH, POSITION_EAST,
                                POSITION_WEST), \
-                    'only north, south, east, and west positions are valid, ' \
-                    'but received "{0}"'.format(pos)
+                    f'only north, south, east, and west positions are valid, ' \
+                    f'but received "{pos}"'
 
         if width == 0:
             position = WIDGET_BORDER_POSITION_NONE
@@ -1926,7 +1926,7 @@ class Widget(Base):
             self.set_col_row_index(c, r, index)
             self._frame.update_indices()
         else:
-            # raise ValueError('{0} is not within a frame'.format(self.get_class_id()))
+            # raise ValueError(f'{self.get_class_id()} is not within a frame')
             pass
         return self
 

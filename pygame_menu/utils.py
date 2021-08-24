@@ -119,18 +119,15 @@ def assert_color(
         'color must be a tuple or list of 3 or 4 numbers'
     for i in range(3):
         assert isinstance(color[i], int), \
-            '"{0}" in element color {1} must be an integer, not type "{2}"' \
-            ''.format(color[i], color, type(color))
+            f'"{color[i]}" in element color {color} must be an integer, not type "{type(color)}"'
         assert 0 <= color[i] <= 255, \
-            '"{0}" in element color {1} must be an integer between 0 and 255' \
-            ''.format(color[i], color)
+            f'"{color[i]}" in element color {color} must be an integer between 0 and 255'
     if len(color) == 4:
         assert isinstance(color[3], int), \
-            'alpha channel must be an integer between 0 and 255, not type "{0}"' \
-            ''.format(type(color))
+            f'alpha channel must be an integer between 0 and 255, not type "{type(color)}"'
         assert 0 <= color[3] <= 255, \
-            'opacity of color {0} must be an integer between 0 and 255; where ' \
-            '0 is fully-transparent and 255 is fully-opaque'.format(color)
+            f'opacity of color {color} must be an integer between 0 and 255; ' \
+            f'where 0 is fully-transparent and 255 is fully-opaque'
     return color
 
 
@@ -222,12 +219,11 @@ def assert_vector(
     :return: None
     """
     assert isinstance(num_vector, VectorInstance), \
-        'vector "{0}" must be a list or tuple of {1} items if type {2}' \
-        ''.format(num_vector, length, instance)
+        f'vector "{num_vector}" must be a list or tuple of {length} items if type {instance}'
     if length != 0:
         assert len(num_vector) == length, \
-            'vector "{0}" must contain {1} numbers only, ' \
-            'but {2} were given'.format(num_vector, length, len(num_vector))
+            f'vector "{num_vector}" must contain {length} numbers only, ' \
+            f'but {num_vector} were given'
     for i in range(len(num_vector)):
         num = num_vector[i]
         if instance == int and isinstance(num, float) and int(num) == num:
@@ -426,9 +422,8 @@ def load_pygame_image_file(image_path: str, **kwargs) -> 'pygame.Surface':
                     img_pil.tobytes(), img_pil.size, img_pil.mode).convert()
 
             except (ModuleNotFoundError, ImportError):
-                warn('Image file "{0}" could not be loaded, as pygame.error is '
-                     'raised. To avoid this issue install the Pillow library'
-                     ''.format(image_path))
+                warn(f'Image file "{image_path}" could not be loaded, as pygame.error '
+                     f'is raised. To avoid this issue install the Pillow library')
                 raise
 
             except pil_invalid_exception:
@@ -558,7 +553,7 @@ def print_menu_widget_structure(
         d = current_depth - depth
         for i in range(d):
             j = depth + d - (i + 1)  # Current depth
-            line = f"·   {'│   ' * j}└{'┄' * 3}"  # * depth_widths[j]
+            line = f'·   {"│   " * j}└{"┄" * 3}'  # * depth_widths[j]
             print(c.BRIGHT_WHITE + line.ljust(0, '━') + c.ENDC)  # 80 also work
 
     non_menu_frame_widgets: Dict[int, List['pygame_menu.widgets.Widget']] = {}
@@ -684,7 +679,7 @@ def widget_terminal_title(
     w_class_id = TerminalColors.BOLD + widget.get_class_id() + TerminalColors.ENDC
     if isinstance(widget, pygame_menu.widgets.Frame):
         w_title = TerminalColors.BRIGHT_WHITE + '┌━' + TerminalColors.ENDC
-        w_title += '{0} - {3}[{1},{2},'.format(w_class_id, *widget.get_indices(), TerminalColors.LGREEN)
+        w_title += f'{0} - {3}[{1},{2},'.format(w_class_id, *widget.get_indices(), TerminalColors.LGREEN)
         if widget.horizontal:
             w_title += 'H] '
         else:
