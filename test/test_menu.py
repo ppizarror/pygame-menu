@@ -467,10 +467,6 @@ class MenuTest(BaseRSTest):
         """
         menu = MenuUtils.generic_menu(title='mainmenu')
         self.assertEqual(menu._get_depth(), 0)
-        top = menu._top
-        menu._top = None
-        self.assertEqual(menu._get_depth(), 0)
-        menu._top = top
 
         # Adds some menus
         menu_prev = menu
