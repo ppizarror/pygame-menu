@@ -78,6 +78,12 @@ Pygame-menu can be installed via pip. Simply run:
 .. code-block:: bash
 
     $> pip install pygame-menu
+    
+If you are using Pygame<2.0.1, please upgrade:
+
+.. code-block:: bash
+    
+    $> pip install -U pygame
 
 To build the documentation from a Git repository:
 
