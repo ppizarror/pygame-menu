@@ -2,8 +2,7 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-VERSION
-Library version.
+BUILD
 
 License:
 -------------------------------------------------------------------------------
@@ -29,34 +28,33 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-__all__ = ['Version', 'vernum', 'ver', 'rev']
+import os
+import sys
 
-from typing import Tuple
+assert len(sys.argv) == 2, 'Argument is required, usage: build.py pip/twine/gource'
+mode = sys.argv[1].strip()
+python = 'python3' if not sys.platform == 'win32' else 'py -3.7'
 
+if mode == 'pip':
+    if os.path.isdir('dist/pip'):
+        for k in os.listdir('dist/pip'):
+            if 'pygame_menu-' in k:
+                os.remove(f'dist/pip/{k}')
+    if os.path.isdir('build'):
+        for k in os.listdir('build'):
+            if 'bdist.' in k or k == 'lib':
+                os.system(f'rm -rf build/{k}')
+    os.system(f'{python} setup.py sdist --dist-dir dist/pip bdist_wheel --dist-dir dist/pip')
 
-class Version(tuple):
-    """
-    Version class.
-    """
+elif mode == 'twine':
+    if os.path.isdir('dist/pip'):
+        os.system(f'{python} -m twine upload dist/pip/*')
+    else:
+        raise FileNotFoundError('Not distribution been found, execute build.py pip first')
 
-    __slots__ = ()
-    fields = 'major', 'minor', 'patch'
+elif mode == 'gource':
+    os.system('gource -s 0.25 --title pygame-menu --disable-auto-rotate --key '
+              '--highlight-users --disable-bloom --multi-sampling -w --transparent --path ./')
 
-    def __new__(cls, major, minor, patch) -> Tuple:
-        return tuple.__new__(cls, (major, minor, patch))
-
-    def __repr__(self) -> str:
-        fields = (f'{fld}={val}' for fld, val in zip(self.fields, self))
-        return f'{str(self.__class__.__name__)}({", ".join(fields)})'
-
-    def __str__(self) -> str:
-        return '{}.{}.{}'.format(*self)
-
-    major = property(lambda self: self[0])
-    minor = property(lambda self: self[1])
-    patch = property(lambda self: self[2])
-
-
-vernum = Version(4, 1, 5)
-ver = str(vernum)
-rev = ''
+else:
+    raise ValueError(f'Unknown mode {mode}')
