@@ -2310,5 +2310,7 @@ class MenuTest(BaseRSTest):
             else:
                 menu.resize(300, 300)
 
-        menu.add.button('Resize', _resize)
-        menu.mainloop(surface)
+        btn = menu.add.button('Resize', _resize)
+        self.assertEqual(menu.get_size()[0], 600)
+        btn.apply()
+        self.assertEqual(menu.get_size()[0], 300)
