@@ -31,7 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['ProgressBarWidgetTest']
 
-from test._utils import MenuUtils, surface, BaseTest, PYGAME_V2
+from test._utils import MenuUtils, surface, BaseTest, PYGAME_V2, SYS_PLATFORM_OSX
 
 import pygame_menu
 
@@ -53,7 +53,7 @@ class ProgressBarWidgetTest(BaseTest):
         self.assertRaises(AssertionError, lambda: pygame_menu.widgets.ProgressBar(
             'progress', default=-1))
 
-        self.assertEqual(pb.get_size(), (312, 49))
+        self.assertEqual(pb.get_size(), (312, 49 if not SYS_PLATFORM_OSX else 51))
         self.assertEqual(pb._width, 150)
 
         # Test invalid transforms
@@ -92,5 +92,7 @@ class ProgressBarWidgetTest(BaseTest):
         menu = MenuUtils.generic_menu()
         pb = menu.add.progress_bar('', box_margin=(0, 0), padding=0,
                                    progress_text_align=pygame_menu.locals.ALIGN_RIGHT)
-        self.assertEqual(pb.get_size(), (150, 41 if PYGAME_V2 else 42))
+        self.assertEqual(pb.get_size(),
+                         (150 if not SYS_PLATFORM_OSX else 151,
+                          41 if PYGAME_V2 else (42 if not SYS_PLATFORM_OSX else 43)))
         self.assertFalse(pb.is_selected())

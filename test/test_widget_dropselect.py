@@ -975,9 +975,9 @@ class DropSelectWidgetTest(BaseTest):
         menu = MenuUtils.generic_menu()
         values = [('a', 'a'), ('b', 'b'), ('c', 'c'), ('d', 'd'), ('e', 'e')]
         drop = menu.add.dropselect('', items=values)
-        self.assertEqual(drop.get_size(), (309, 49))
+        self.assertEqual(drop.get_size(), (309, 49) if not SYS_PLATFORM_OSX else (310, 51))
         drop = menu.add.dropselect_multiple('', items=values)
-        self.assertEqual(drop.get_size(), (309, 49))
+        self.assertEqual(drop.get_size(), (309, 49) if not SYS_PLATFORM_OSX else (310, 51))
 
     def test_frame_support(self) -> None:
         """
