@@ -2273,5 +2273,42 @@ class MenuTest(BaseRSTest):
         """
         Test menu resize.
         """
-        menu = MenuUtils.generic_menu()
+        theme = pygame_menu.themes.THEME_DEFAULT.copy()
+        menu = MenuUtils.generic_menu(theme=theme)
         self.assertEqual(menu.get_size(), (600, 400))
+
+        # Disable auto centering depending on the case
+        menu._auto_centering = True
+        theme.widget_offset = (0, 10)
+        menu.resize(300, 300)
+        self.assertFalse(menu._auto_centering)
+        theme.widget_offset = (0, 0)
+
+        menu._auto_centering = True
+        theme.scrollarea_outer_margin = (0, 10)
+        menu.resize(300, 300)
+        self.assertFalse(menu._auto_centering)
+        theme.widget_offset = (0, 0)
+
+        # Test resize
+        menu = MenuUtils.generic_menu(theme=theme, column_max_width=[0])
+        self.assertEqual(menu._column_max_width_zero, [True])
+        self.assertEqual(menu._column_max_width, [600])
+        self.assertEqual(menu._menubar._width, 600)
+        menu.resize(300, 300)
+        self.assertEqual(menu.get_size(), (300, 300))
+        self.assertEqual(menu._column_max_width, [300])
+        self.assertEqual(menu._menubar._width, 300)
+
+        # Add button to resize
+        menu = MenuUtils.generic_menu()
+
+        # noinspection PyMissingTypeHints
+        def _resize():
+            if menu.get_size()[0] == 300:
+                menu.resize(600, 400)
+            else:
+                menu.resize(300, 300)
+
+        menu.add.button('Resize', _resize)
+        menu.mainloop(surface)

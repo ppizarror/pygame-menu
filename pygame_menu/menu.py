@@ -165,6 +165,7 @@ class Menu(Base):
     _onwindowmouseover: Optional[Union[Callable[['Menu'], Any], CallableNoArgsType]]
     _overflow: Tuple2BoolType
     _position: Tuple2IntType
+    _position_default: Tuple2IntType
     _prev: Optional[List[Union['Menu', List['Menu']]]]
     _runtime_errors: '_MenuRuntimeErrorConfig'
     _scrollarea: 'ScrollArea'
@@ -451,34 +452,17 @@ class Menu(Base):
             self._max_row_column_elements += r
 
         # Position of Menu
-        self._set_size(
-            width=width,
-            height=height,
-            screen_dimension=screen_dimension
-        )
+        self._position_default = position
         self._position = (0, 0)
         self._translate = (0, 0)
-        self.set_relative_position(position[0], position[1])
 
-        # If centering is enabled, but widget offset in the vertical is different
-        # than zero a warning is raised
-        if self._auto_centering and self._widget_offset[1] != 0:
-            warn(
-                f'menu (title "{title}") is vertically centered (center_content=True), '
-                f'but widget offset (from theme) is different than zero ({self._widget_offset[1]}px). '
-                f'Auto-centering has been disabled'
-            )
-            self._auto_centering = False
-
-        # If centering is enabled, but ScrollArea margin in the vertical is
-        # different than zero a warning is raised
-        if self._auto_centering and self._scrollarea_margin[1] != 0:
-            warn(
-                f'menu (title "{title}") is vertically centered (center_content=True)'
-                f', but ScrollArea outer margin (from theme) is different than '
-                f'zero ({round(self._scrollarea_margin[1], 3)}px). Auto-centering has been disabled'
-            )
-            self._auto_centering = False
+        # Set the size
+        self.resize(
+            width=width,
+            height=height,
+            screen_dimension=screen_dimension,
+            position=position
+        )
 
         # Init joystick
         self._joystick = joystick_enabled
@@ -603,18 +587,28 @@ class Menu(Base):
         self._disable_update = False
         self._validate_frame_widgetmove = True
 
-    def _set_size(self, width: int, height: int, screen_dimension: Optional[Vector2IntType] = None) -> None:
+    def resize(
+            self,
+            width: NumberType,
+            height: NumberType,
+            screen_dimension: Optional[Vector2IntType] = None,
+            position: Optional[Vector2NumberType] = None
+    ) -> None:
         """
-        Set menu width and height.
+        Resize the menu to another width/height
 
         :param width: Menu width (px)
         :param height: Menu height (px)
         :param screen_dimension: List/Tuple representing the dimensions the Menu should reference for sizing/positioning (width, height), if ``None`` pygame is queried for the display mode. This value defines the ``window_size`` of the Menu
+        :param position: Position on x-axis and y-axis (%) respect to the window size. If ``None`` use the default from the menu constructor
         """
         assert isinstance(width, NumberInstance)
         assert isinstance(height, NumberInstance)
         assert width > 0 and height > 0, \
             'menu width and height must be greater than zero'
+
+        # Convert to int
+        width, height = int(width), int(height)
 
         # Get window size if not given explicitly
         if screen_dimension is not None:
@@ -637,8 +631,8 @@ class Menu(Base):
             f'window ({window_width}x{window_height})'
 
         # Store width and height
-        self._height = int(height)
-        self._width = int(width)
+        self._height = height
+        self._width = width
 
         # Compute widget offset
         self._widget_offset = [self._theme.widget_offset[0], self._theme.widget_offset[1]]
@@ -651,6 +645,16 @@ class Menu(Base):
         self._widget_offset[0] = int(self._widget_offset[0])
         self._widget_offset[1] = int(self._widget_offset[1])
 
+        # If centering is enabled, but widget offset in the vertical is different
+        # than zero a warning is raised
+        if self._auto_centering and self._widget_offset[1] != 0:
+            warn(
+                f'menu is vertically centered (center_content=True), but widget '
+                f'offset (from theme) is different than zero ({self._widget_offset[1]}px). '
+                f'Auto-centering has been disabled'
+            )
+            self._auto_centering = False
+
         # Scroll area outer margin
         self._scrollarea_margin = [self._theme.scrollarea_outer_margin[0],
                                    self._theme.scrollarea_outer_margin[1]]
@@ -660,6 +664,16 @@ class Menu(Base):
             self._scrollarea_margin[1] *= self._height
         self._scrollarea_margin[0] = int(self._scrollarea_margin[0])
         self._scrollarea_margin[1] = int(self._scrollarea_margin[1])
+
+        # If centering is enabled, but ScrollArea margin in the vertical is
+        # different than zero a warning is raised
+        if self._auto_centering and self._scrollarea_margin[1] != 0:
+            warn(
+                f'menu is vertically centered (center_content=True), but '
+                f'ScrollArea outer margin (from theme) is different than zero '
+                f'({round(self._scrollarea_margin[1], 3)}px). Auto-centering has been disabled'
+            )
+            self._auto_centering = False
 
         # Configure menubar
         extend_y = 0
@@ -678,6 +692,14 @@ class Menu(Base):
         for i in range(len(self._column_max_width)):
             if self._column_max_width_zero[i]:
                 self._column_max_width[i] = self._width
+
+        # Update the menu position
+        if position is None:
+            position = self._position_default
+        self.set_relative_position(position[0], position[1])
+
+        # Force the rendering
+        self._widgets_surface_need_update = True
 
     def __copy__(self) -> 'Menu':
         """
