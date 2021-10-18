@@ -2295,10 +2295,19 @@ class MenuTest(BaseRSTest):
         self.assertEqual(menu._column_max_width_zero, [True])
         self.assertEqual(menu._column_max_width, [600])
         self.assertEqual(menu._menubar._width, 600)
+        self.assertFalse(menu._widgets_surface_need_update)
         menu.resize(300, 300)
+        self.assertFalse(menu._widgets_surface_need_update)
         self.assertEqual(menu.get_size(), (300, 300))
         self.assertEqual(menu._column_max_width, [300])
         self.assertEqual(menu._menubar._width, 300)
+
+        # render
+        self.assertIsNone(menu._widgets_surface)
+        menu.render()
+        self.assertIsNotNone(menu._widgets_surface)
+        menu.resize(200, 200)
+        self.assertTrue(menu._widgets_surface_need_update)
 
         # Add button to resize
         menu = MenuUtils.generic_menu()

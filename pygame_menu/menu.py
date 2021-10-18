@@ -693,13 +693,14 @@ class Menu(Base):
             if self._column_max_width_zero[i]:
                 self._column_max_width[i] = self._width
 
+        # Force the rendering
+        if self._widgets_surface is not None:
+            self._widgets_surface_need_update = True
+
         # Update the menu position
         if position is None:
             position = self._position_default
         self.set_relative_position(position[0], position[1])
-
-        # Force the rendering
-        self._widgets_surface_need_update = True
 
     def __copy__(self) -> 'Menu':
         """

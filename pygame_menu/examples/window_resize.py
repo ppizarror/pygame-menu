@@ -51,8 +51,8 @@ def on_resize() -> None:
     """
     window_size = surface.get_size()
     new_w, new_h = 0.75 * window_size[0], 0.7 * window_size[1]
-    print(f'New menu size: ({new_w},{new_h})')
     menu.resize(new_w, new_h)
+    print(f'New menu size: {menu.get_size()}')
 
 
 menu.add.label('Resize the window!')
