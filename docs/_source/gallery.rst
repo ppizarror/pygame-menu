@@ -73,6 +73,17 @@ Multiple input example
 Source: `examples/multi_input.py <https://github.com/ppizarror/pygame-menu/blob/master/pygame_menu/examples/multi_input.py>`_
 
 
+Resizable window example
+------------------------
+
+.. image:: ../_static/example_window_resize.gif
+    :align: center
+    :alt: Reizable window example
+    :width: 600
+
+Source: `examples/window_resize.py <https://github.com/ppizarror/pygame-menu/blob/master/pygame_menu/examples/window_resize.py>`_
+
+
 Scroll menu example
 -------------------
 
