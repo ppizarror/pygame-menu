@@ -2268,3 +2268,10 @@ class MenuTest(BaseRSTest):
         s.selector.apply()
         self.assertEqual(s.icon.get_size(), (176, 168))
         self.assertEqual(s.main_menu.get_current().get_title(), 'SUB MENU 2')
+
+    def test_resize(self) -> None:
+        """
+        Test menu resize.
+        """
+        menu = MenuUtils.generic_menu()
+        self.assertEqual(menu.get_size(), (600, 400))
