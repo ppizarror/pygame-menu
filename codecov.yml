@@ -1,4 +1,6 @@
 ignore:
   - "docs/*.py"
+  - "examples/*.py"
+  - "examples/other/*.py"
   - "pygame_menu/__pyinstaller/*py"
   - "test/*.py"
