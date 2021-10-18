@@ -2323,3 +2323,9 @@ class MenuTest(BaseRSTest):
         self.assertEqual(menu.get_size()[0], 600)
         btn.apply()
         self.assertEqual(menu.get_size()[0], 300)
+
+        # Resize with another surface size
+        menu.resize(300, 300, (500, 500))
+
+        # Invalid size
+        self.assertRaises(ValueError, lambda: menu.resize(50, 10))
