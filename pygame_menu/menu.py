@@ -118,7 +118,7 @@ class Menu(Base):
     :param overflow: Enables overflow on x/y axes. If ``False`` then scrollbars will not work and the maximum width/height of the scrollarea is the same as the Menu container. Style: (overflow_x, overflow_y). If ``False`` or ``True`` the value will be set on both axis
     :param position: Position on x-axis and y-axis (%) respect to the window size
     :param rows: Number of rows of each column, if there's only 1 column ``None`` can be used for no-limit. Also a tuple can be provided for defining different number of rows for each column, for example ``rows=10`` (each column can have a maximum 10 widgets), or ``rows=[2, 3, 5]`` (first column has 2 widgets, second 3, and third 5)
-    :param screen_dimension: List/Tuple representing the dimensions the Menu should reference for sizing/positioning, if ``None`` pygame is queried for the display mode. This value defines the ``window_size`` of the Menu
+    :param screen_dimension: List/Tuple representing the dimensions the Menu should reference for sizing/positioning (width, height), if ``None`` pygame is queried for the display mode. This value defines the ``window_size`` of the Menu
     :param theme: Menu theme
     :param touchscreen: Enable/disable touch action inside the Menu. Only available on pygame 2
     :param touchscreen_motion_selection: Select widgets using touchscreen motion. If ``True`` menu draws a ``focus`` on the selected widget
@@ -127,6 +127,7 @@ class Menu(Base):
     _background_function: Tuple[bool, Optional[Union[Callable[['Menu'], Any], CallableNoArgsType]]]
     _clock: 'pygame.time.Clock'
     _column_max_width: VectorType
+    _column_max_width_zero: List[bool]
     _column_min_width: VectorType
     _column_pos_x: List[NumberType]
     _column_widths: List[NumberType]
@@ -164,6 +165,7 @@ class Menu(Base):
     _onwindowmouseover: Optional[Union[Callable[['Menu'], Any], CallableNoArgsType]]
     _overflow: Tuple2BoolType
     _position: Tuple2IntType
+    _position_default: Tuple2IntType
     _prev: Optional[List[Union['Menu', List['Menu']]]]
     _runtime_errors: '_MenuRuntimeErrorConfig'
     _scrollarea: 'ScrollArea'
@@ -223,8 +225,6 @@ class Menu(Base):
     ) -> None:
         super(Menu, self).__init__(object_id=menu_id)
 
-        assert isinstance(width, NumberInstance)
-        assert isinstance(height, NumberInstance)
         assert isinstance(center_content, bool)
         assert isinstance(column_max_width, (VectorInstance, type(None), NumberInstance))
         assert isinstance(column_min_width, (VectorInstance, NumberInstance))
@@ -346,26 +346,6 @@ class Menu(Base):
 
         # Element size and position asserts
         assert_vector(position, 2)
-        assert width > 0 and height > 0, \
-            'menu width and height must be greater than zero'
-
-        # Get window size if not given explicitly
-        if screen_dimension is not None:
-            assert_vector(screen_dimension, 2)
-            assert screen_dimension[0] > 0, 'screen width must be higher than zero'
-            assert screen_dimension[1] > 0, 'screen height must be higher than zero'
-            self._window_size = screen_dimension
-        else:
-            surface = pygame.display.get_surface()
-            if surface is None:
-                raise RuntimeError('pygame surface could not be retrieved, check '
-                                   'if pygame.display.set_mode() was called')
-            self._window_size = surface.get_size()
-        self._window_size = (int(self._window_size[0]), int(self._window_size[1]))
-        window_width, window_height = self._window_size
-        assert width <= window_width and height <= window_height, \
-            f'menu size ({width}x{height}) must be lower or equal than the size of the ' \
-            f'window ({window_width}x{window_height})'
 
         # Assert overflow
         if isinstance(overflow, bool):  # If single value
@@ -383,7 +363,6 @@ class Menu(Base):
         self._clock = pygame.time.Clock()
         self._decorator = Decorator(self)
         self._enabled = enabled  # Menu is enabled or not. If disabled menu can't update or draw
-        self._height = int(height)
         self._index = -1  # Selected index, if -1 the widget does not have been selected yet
         self._last_scroll_thickness = [(0, 0), 0]  # scroll and the number of recursive states
         self._last_selected_type = ''  # Last type selection, used for test purposes
@@ -393,7 +372,6 @@ class Menu(Base):
         self._stats = _MenuStats()
         self._submenus = {}
         self._theme = theme
-        self._width = int(width)
 
         # Set callbacks
         self.set_onclose(onclose)
@@ -422,15 +400,9 @@ class Menu(Base):
         # Top is the same for the menus and submenus if the user moves through them
         self._top = self
 
-        # Position of Menu
-        self._position = (0, 0)
-        self._translate = (0, 0)
-        self.set_relative_position(position[0], position[1])
-
         # Menu widgets, it should not be accessed outside the object as strange
         # issues can occur
         self.add = WidgetManager(self)
-        self._widget_offset = [theme.widget_offset[0], theme.widget_offset[1]]
         self._widget_selected_update = True
         self._widgets = []  # This list may change during execution (replaced by a new one)
 
@@ -441,15 +413,6 @@ class Menu(Base):
         # Stores the widgets which receive update even if not selected or events
         # is empty
         self._update_widgets = []
-
-        if abs(self._widget_offset[0]) < 1:
-            self._widget_offset[0] *= self._width
-        if abs(self._widget_offset[1]) < 1:
-            self._widget_offset[1] *= self._height
-
-        # Cast to int offset
-        self._widget_offset[0] = int(self._widget_offset[0])
-        self._widget_offset[1] = int(self._widget_offset[1])
 
         # Widget surface
         self._widgets_surface = None
@@ -465,41 +428,13 @@ class Menu(Base):
         # thus, the state only is used once
         self._widget_surface_cache_need_update = True
 
-        # If centering is enabled, but widget offset in the vertical is different
-        # than zero a warning is raised
-        if self._auto_centering and self._widget_offset[1] != 0:
-            warn(
-                f'menu (title "{title}") is vertically centered (center_content=True), '
-                f'but widget offset (from theme) is different than zero ({self._widget_offset[1]}px). '
-                f'Auto-centering has been disabled'
-            )
-            self._auto_centering = False
-
-        # Scroll area outer margin
-        self._scrollarea_margin = [theme.scrollarea_outer_margin[0],
-                                   theme.scrollarea_outer_margin[1]]
-        if abs(self._scrollarea_margin[0]) < 1:
-            self._scrollarea_margin[0] *= self._width
-        if abs(self._scrollarea_margin[1]) < 1:
-            self._scrollarea_margin[1] *= self._height
-
-        self._scrollarea_margin[0] = int(self._scrollarea_margin[0])
-        self._scrollarea_margin[1] = int(self._scrollarea_margin[1])
-
-        # If centering is enabled, but ScrollArea margin in the vertical is
-        # different than zero a warning is raised
-        if self._auto_centering and self._scrollarea_margin[1] != 0:
-            warn(
-                f'menu (title "{title}") is vertically centered (center_content=True)'
-                f', but ScrollArea outer margin (from theme) is different than '
-                f'zero ({round(self._scrollarea_margin[1], 3)}px). Auto-centering has been disabled'
-            )
-            self._auto_centering = False
-
         # Columns and rows
+        self._column_max_width_zero = []
         for i in range(len(column_max_width)):
             if column_max_width[i] == 0:
-                column_max_width[i] = width
+                self._column_max_width_zero.append(True)
+            else:
+                self._column_max_width_zero.append(False)
 
         self._column_max_width = column_max_width
         self._column_min_width = column_min_width
@@ -515,6 +450,19 @@ class Menu(Base):
 
         for r in self._rows:
             self._max_row_column_elements += r
+
+        # Position of Menu
+        self._position_default = position
+        self._position = (0, 0)
+        self._translate = (0, 0)
+
+        # Set the size
+        self.resize(
+            width=width,
+            height=height,
+            screen_dimension=screen_dimension,
+            position=position
+        )
 
         # Init joystick
         self._joystick = joystick_enabled
@@ -638,6 +586,121 @@ class Menu(Base):
         self._disable_widget_update_mousepos_mouseselection = False
         self._disable_update = False
         self._validate_frame_widgetmove = True
+
+    def resize(
+            self,
+            width: NumberType,
+            height: NumberType,
+            screen_dimension: Optional[Vector2IntType] = None,
+            position: Optional[Vector2NumberType] = None
+    ) -> None:
+        """
+        Resize the menu to another width/height
+
+        :param width: Menu width (px)
+        :param height: Menu height (px)
+        :param screen_dimension: List/Tuple representing the dimensions the Menu should reference for sizing/positioning (width, height), if ``None`` pygame is queried for the display mode. This value defines the ``window_size`` of the Menu
+        :param position: Position on x-axis and y-axis (%) respect to the window size. If ``None`` use the default from the menu constructor
+        """
+        assert isinstance(width, NumberInstance)
+        assert isinstance(height, NumberInstance)
+        assert width > 0 and height > 0, \
+            'menu width and height must be greater than zero'
+
+        # Convert to int
+        width, height = int(width), int(height)
+
+        # Get window size if not given explicitly
+        if screen_dimension is not None:
+            assert_vector(screen_dimension, 2)
+            assert screen_dimension[0] > 0, 'screen width must be higher than zero'
+            assert screen_dimension[1] > 0, 'screen height must be higher than zero'
+            self._window_size = screen_dimension
+        else:
+            surface = pygame.display.get_surface()
+            if surface is None:
+                raise RuntimeError('pygame surface could not be retrieved, check '
+                                   'if pygame.display.set_mode() was called')
+            self._window_size = surface.get_size()
+        self._window_size = (int(self._window_size[0]), int(self._window_size[1]))
+
+        # Check menu sizing
+        window_width, window_height = self._window_size
+        assert width <= window_width and height <= window_height, \
+            f'menu size ({width}x{height}) must be lower or equal than the size of the ' \
+            f'window ({window_width}x{window_height})'
+
+        # Store width and height
+        self._height = height
+        self._width = width
+
+        # Compute widget offset
+        self._widget_offset = [self._theme.widget_offset[0], self._theme.widget_offset[1]]
+        if abs(self._widget_offset[0]) < 1:
+            self._widget_offset[0] *= self._width
+        if abs(self._widget_offset[1]) < 1:
+            self._widget_offset[1] *= self._height
+
+        # Cast to int offset
+        self._widget_offset[0] = int(self._widget_offset[0])
+        self._widget_offset[1] = int(self._widget_offset[1])
+
+        # If centering is enabled, but widget offset in the vertical is different
+        # than zero a warning is raised
+        if self._auto_centering and self._widget_offset[1] != 0:
+            warn(
+                f'menu is vertically centered (center_content=True), but widget '
+                f'offset (from theme) is different than zero ({self._widget_offset[1]}px). '
+                f'Auto-centering has been disabled'
+            )
+            self._auto_centering = False
+
+        # Scroll area outer margin
+        self._scrollarea_margin = [self._theme.scrollarea_outer_margin[0],
+                                   self._theme.scrollarea_outer_margin[1]]
+        if abs(self._scrollarea_margin[0]) < 1:
+            self._scrollarea_margin[0] *= self._width
+        if abs(self._scrollarea_margin[1]) < 1:
+            self._scrollarea_margin[1] *= self._height
+        self._scrollarea_margin[0] = int(self._scrollarea_margin[0])
+        self._scrollarea_margin[1] = int(self._scrollarea_margin[1])
+
+        # If centering is enabled, but ScrollArea margin in the vertical is
+        # different than zero a warning is raised
+        if self._auto_centering and self._scrollarea_margin[1] != 0:
+            warn(
+                f'menu is vertically centered (center_content=True), but '
+                f'ScrollArea outer margin (from theme) is different than zero '
+                f'({round(self._scrollarea_margin[1], 3)}px). Auto-centering has been disabled'
+            )
+            self._auto_centering = False
+
+        # Configure menubar
+        extend_y = 0
+        if hasattr(self, '_menubar'):
+            self._menubar._width = self._width
+            menubar_height = self._menubar.get_height()
+            if self._height - menubar_height <= 0:
+                raise ValueError(f'menubar is higher than menu height ({menubar_height} > {self._height})')
+            extend_y = 0 if self._theme.title_fixed else menubar_height
+
+        # Configure scrollbar
+        if hasattr(self, '_scrollarea'):
+            self._scrollarea.create_rect(self._width, self._height - extend_y)
+
+        # Update column max width
+        for i in range(len(self._column_max_width)):
+            if self._column_max_width_zero[i]:
+                self._column_max_width[i] = self._width
+
+        # Force the rendering
+        if self._widgets_surface is not None:
+            self._widgets_surface_need_update = True
+
+        # Update the menu position
+        if position is None:
+            position = self._position_default
+        self.set_relative_position(position[0], position[1])
 
     def __copy__(self) -> 'Menu':
         """

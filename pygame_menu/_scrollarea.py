@@ -55,7 +55,7 @@ from pygame_menu.widgets import ScrollBar
 
 from pygame_menu._types import Union, NumberType, Tuple, List, Dict, Tuple2NumberType, \
     CursorInputType, Optional, Tuple2IntType, NumberInstance, ColorInputType, \
-    EventVectorType, EventType, VectorInstance, StringVector
+    EventVectorType, EventType, VectorInstance, StringVector, Any
 
 
 def get_scrollbars_from_position(
@@ -145,6 +145,7 @@ class ScrollArea(Base):
     _menubar: 'pygame_menu.widgets.MenuBar'
     _parent_scrollarea: 'ScrollArea'
     _rect: 'pygame.Rect'
+    _scrollbars_props: Tuple[Any, ...]
     _scrollbar_positions: Tuple[str, ...]
     _scrollbar_thick: int
     _scrollbars: List['ScrollBar']
@@ -220,10 +221,8 @@ class ScrollArea(Base):
         self._bg_surface = None
         self._bg_surface = None
         self._decorator = Decorator(self)
-        self._rect = pygame.Rect(0, 0, int(area_width), int(area_height))
         self._scrollbar_positions = tuple(unique_scrolls)  # Ensure unique
         self._scrollbar_thick = scrollbar_thick
-        self._scrollbars = []
         self._translate = (0, 0)
         self._world = world
 
@@ -231,8 +230,36 @@ class ScrollArea(Base):
         self._extend_y = extend_y
         self._menubar = menubar
 
+        self._scrollbars_props = (scrollbar_color, scrollbar_thick, scrollbar_slider_color,
+                                  scrollbar_slider_hover_color, scrollbar_slider_pad,
+                                  scrollbar_cursor, shadow, shadow_color, shadow_position,
+                                  shadow_offset, controls_joystick, controls_mouse,
+                                  controls_touchscreen, controls_keyboard)
         self.set_parent_scrollarea(parent_scrollarea)
+        self.create_rect(area_width, area_height)
+
+        # Menu reference
+        self._menu = None
+
+    def create_rect(self, width: int, height: int) -> None:
+        """
+        Create rect object.
+
+        :param width: Area width
+        :param height: Area height
+        """
+        assert isinstance(width, int)
+        assert isinstance(height, int)
+        self._rect = pygame.Rect(0, 0, int(width), int(height))
+        self._scrollbars = []
         self._view_rect = self.get_view_rect()
+
+        # Unpack properties
+        (scrollbar_color, scrollbar_thick, scrollbar_slider_color,
+         scrollbar_slider_hover_color, scrollbar_slider_pad,
+         scrollbar_cursor, shadow, shadow_color, shadow_position,
+         shadow_offset, controls_joystick, controls_mouse, controls_touchscreen,
+         controls_keyboard) = self._scrollbars_props
 
         for pos in self._scrollbar_positions:
             assert_position(pos)
@@ -282,9 +309,6 @@ class ScrollArea(Base):
             self._scrollbars.append(sbar)
 
         self._apply_size_changes()
-
-        # Menu reference
-        self._menu = None
 
     def _make_background_surface(self) -> None:
         """

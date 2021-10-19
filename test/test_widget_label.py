@@ -31,7 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['LabelWidgetTest']
 
-from test._utils import MenuUtils, surface, BaseTest, PYGAME_V2
+from test._utils import MenuUtils, surface, BaseTest, PYGAME_V2, SYS_PLATFORM_OSX
 
 from pygame_menu.locals import ALIGN_LEFT
 from pygame_menu.widgets import Label
@@ -172,6 +172,8 @@ class LabelWidgetTest(BaseTest):
         """
         Test empty title.
         """
+        if SYS_PLATFORM_OSX:
+            return
         menu = MenuUtils.generic_menu()
         label = menu.add.label('')
         p = label._padding
