@@ -327,7 +327,7 @@ class MenuBar(Widget):
         menu_prev_condition = not self._menu or not self._menu._top or not self._menu._top._prev
 
         if not self._render_hash_changed(
-                self._menu.get_id(), self._rect.x, self._rect.y, self._title,
+                self._menu.get_id(), self._rect.x, self._rect.y, self._title, self._width,
                 self._visible, self._font_selected_color, menu_prev_condition):
             return True
 

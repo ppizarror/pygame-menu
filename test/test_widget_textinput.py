@@ -889,4 +889,4 @@ class TextInputWidgetTest(BaseTest):
         """
         menu = MenuUtils.generic_menu()
         text = menu.add.text_input('')
-        self.assertEqual(text.get_size(), (16, 49))
+        self.assertEqual(text.get_size(), (16 if not SYS_PLATFORM_OSX else 17, 49))

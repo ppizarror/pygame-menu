@@ -42,6 +42,7 @@ import pygame_menu.examples.multi_input as multi_input
 import pygame_menu.examples.scroll_menu as scroll_menu
 import pygame_menu.examples.simple as simple
 import pygame_menu.examples.timer_clock as timer_clock
+import pygame_menu.examples.window_resize as window_resize
 
 import pygame_menu.examples.other.calculator as calculator
 import pygame_menu.examples.other.dynamic_button_append as dynamic_button
@@ -113,6 +114,14 @@ class ExamplesTest(BaseRSTest):
         sel.change(sel.get_value())
         btn = simple.menu.get_widgets()[2]
         btn.apply()
+
+    def test_example_resizable_window(self) -> None:
+        """
+        Test resizable window.
+        """
+        window_resize.on_resize()
+        self.assertEqual(window_resize.menu.get_window_size(), (600, 600))
+        self.assertEqual(window_resize.menu.get_size(), (450, 420))
 
     @staticmethod
     def test_example_timer_clock() -> None:

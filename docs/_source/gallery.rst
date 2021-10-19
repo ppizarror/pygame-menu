@@ -13,6 +13,7 @@ examples, simply execute these commands in a terminal:
     $> python3 -m pygame_menu.examples.scroll_menu
     $> python3 -m pygame_menu.examples.simple
     $> python3 -m pygame_menu.examples.timer_clock
+    $> python3 -m pygame_menu.examples.window_resize
 
 Other examples that show specific use cases of the menu are also provided:
 
@@ -39,16 +40,6 @@ Example sources can also be found in the
 Also, check out widget-specific examples in the
 `Adding Widgets <https://pygame-menu.readthedocs.io/en/latest/_source/add_widgets.html>`_
 documentation page.
-
-Simple example
---------------
-
-.. image:: ../_static/example_simple.gif
-    :align: center
-    :alt: A basic button menu
-    :width: 600
-
-Source: `examples/simple.py <https://github.com/ppizarror/pygame-menu/blob/master/pygame_menu/examples/simple.py>`_
 
 
 Game selector example
@@ -84,6 +75,17 @@ Scroll menu example
 Source: `examples/scroll_menu.py <https://github.com/ppizarror/pygame-menu/blob/master/pygame_menu/examples/scroll_menu.py>`_
 
 
+Simple example
+--------------
+
+.. image:: ../_static/example_simple.gif
+    :align: center
+    :alt: A basic button menu
+    :width: 600
+
+Source: `examples/simple.py <https://github.com/ppizarror/pygame-menu/blob/master/pygame_menu/examples/simple.py>`_
+
+
 Timer clock example
 -------------------
 
@@ -93,6 +95,17 @@ Timer clock example
     :width: 600
 
 Source: `examples/timer_clock.py <https://github.com/ppizarror/pygame-menu/blob/master/pygame_menu/examples/timer_clock.py>`_
+
+
+Window resize example
+------------------------
+
+.. image:: ../_static/example_window_resize.gif
+    :align: center
+    :alt: Reizable window example
+    :width: 600
+
+Source: `examples/window_resize.py <https://github.com/ppizarror/pygame-menu/blob/master/pygame_menu/examples/window_resize.py>`_
 
 
 Other - Calculator (Decoration, Events, OOP, Frames)

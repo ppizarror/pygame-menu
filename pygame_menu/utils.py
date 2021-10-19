@@ -620,7 +620,8 @@ def set_pygame_cursor(cursor: CursorInputType) -> None:
             # noinspection PyArgumentList
             pygame.mouse.set_cursor(cursor)
     except (pygame.error, TypeError):
-        warn(f'could not establish widget cursor, invalid value {cursor}')
+        if PYGAME_V2:
+            warn(f'could not establish widget cursor, invalid value {cursor}')
 
 
 def uuid4(short: bool = False) -> str:

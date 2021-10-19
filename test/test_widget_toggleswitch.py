@@ -31,7 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['ToggleSwitchWidgetTest']
 
-from test._utils import MenuUtils, surface, PygameEventUtils, BaseTest
+from test._utils import MenuUtils, surface, PygameEventUtils, BaseTest, SYS_PLATFORM_OSX
 
 import pygame_menu
 import pygame_menu.controls as ctrl
@@ -215,4 +215,4 @@ class ToggleSwitchWidgetTest(BaseTest):
         """
         menu = MenuUtils.generic_menu()
         switch = menu.add.toggle_switch('')
-        self.assertEqual(switch.get_size(), (191, 49))
+        self.assertEqual(switch.get_size(), (191, 49) if not SYS_PLATFORM_OSX else (192, 51))

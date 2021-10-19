@@ -31,7 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['ButtonWidgetTest']
 
-from test._utils import MenuUtils, surface, PygameEventUtils, BaseTest, PYGAME_V2
+from test._utils import MenuUtils, surface, PygameEventUtils, BaseTest, PYGAME_V2, SYS_PLATFORM_OSX
 
 import pygame
 import pygame_menu
@@ -220,6 +220,8 @@ class ButtonWidgetTest(BaseTest):
         """
         Test empty title.
         """
+        if SYS_PLATFORM_OSX:
+            return
         menu = MenuUtils.generic_menu()
         btn = menu.add.button('')
         p = btn._padding
