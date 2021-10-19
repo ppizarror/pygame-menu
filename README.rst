@@ -54,6 +54,10 @@ pygame-menu
 .. image:: https://static.pepy.tech/personalized-badge/pygame-menu?period=total&units=international_system&left_color=grey&right_color=lightgrey&left_text=total%20downloads
     :target: https://pepy.tech/project/pygame-menu
     :alt: Total downloads
+    
+.. image:: https://img.shields.io/badge/Buy%20me%20a-Ko--fi-02b9fe
+    :target: https://ko-fi.com/ppizarror
+    :alt: Buy me a Ko-fi
 
 Source repo on `GitHub <https://github.com/ppizarror/pygame-menu>`_, 
 and run it on `Repl.it <https://repl.it/github/ppizarror/pygame-menu>`_
