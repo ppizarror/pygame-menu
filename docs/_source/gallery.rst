@@ -26,6 +26,7 @@ Other examples that show specific use cases of the menu are also provided:
     $> python3 -m pygame_menu.examples.other.scrollbar
     $> python3 -m pygame_menu.examples.other.scrollbar_area
     $> python3 -m pygame_menu.examples.other.ui_solar_system
+    $> python3 -m pygame_menu.examples.other.widget_positioning
 
 Them can also be imported as follows:
 
@@ -161,3 +162,14 @@ Other - Solar System (OOP, UI, Advanced, Decorations)
     :width: 600
 
 Source: `examples/other/ui_solar_system.py <https://github.com/ppizarror/pygame-menu/blob/master/pygame_menu/examples/other/ui_solar_system.py>`_
+
+
+Other - Widget positioning (OOP, UI, Advanced, Decorations)
+-----------------------------------------------------
+
+.. image:: ../_static/example_other_widget_positioning.png
+    :align: center
+    :alt: Set custom positions to each widget
+    :width: 600
+
+Source: `examples/other/widget_positioning.py <https://github.com/ppizarror/pygame-menu/blob/master/pygame_menu/examples/other/widget_positioning.py>`_
