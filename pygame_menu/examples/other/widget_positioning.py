@@ -24,36 +24,53 @@ menu = pygame_menu.Menu(
     width=640
 )
 
-w = menu.add.label('My App')
-w.set_background_color('#333333', inflate=(30, 0))
-w.set_float()
+menu.add.label(
+    'My App',
+    background_color='#333',
+    background_inflate=(30, 0),
+    float=True  # Widget does not add size to the menu
+).translate(0, 10)
 
-w = menu.add.label('Lorem ipsum', font_name=pygame_menu.font.FONT_OPEN_SANS_ITALIC, font_size=25)
-w.rotate(90)
-w.translate(300, 160)
+label = menu.add.label(
+    'Lorem ipsum',
+    float=True,
+    font_name=pygame_menu.font.FONT_OPEN_SANS_ITALIC,
+    font_size=25)
+label.rotate(90)
+label.translate(300, 160)
 
 # Button options
-menu.add.button('Main Menu', lambda: print(f'My method')).set_float().translate(-200,60)
+b1 = menu.add.button(
+    'Main Menu',
+    lambda: print(f'My method'),
+    align=pygame_menu.locals.ALIGN_LEFT,
+    float=True,
+    selection_color='#fff'
+)
+b1.translate(10, 170)
+b2 = menu.add.button(
+    'Exit',
+    pygame_menu.events.EXIT,
+    align=pygame_menu.locals.ALIGN_LEFT,
+    float=True,
+    selection_color='#fff'
+)
+b2.translate(10, 235)
 
 # Bottom scrollable text
 f = menu.add.frame_v(
-    width=200,
-    height=500,
-    max_height=100,
     background_color='#6b6e5e',
     border_color='#36372f',
-    border_width=1
+    border_width=1,
+    float=True,
+    height=480,
+    max_height=100,
+    width=200
 )
-f.set_float()
 f.translate(220, 390)
 labels = [menu.add.label(f'  Lorem ipsum #{i}', font_size=15, font_color='#000000', padding=0) for i in range(20)]
 for j in labels:
     f.pack(j)
-    menu.render()
-menu.render()
-
-# Button options
-menu.add.button('Main Menu 2', lambda: print(f'My method')).set_float().translate(-200,60)
 
 if __name__ == '__main__':
     menu.mainloop(surface)
