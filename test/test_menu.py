@@ -273,9 +273,28 @@ class MenuTest(BaseRSTest):
 
         a = menu.add.label('nice')
         a.set_float()
-        print(a.get_position())
-        menu.render()
-        print(a.get_position())
+        b = menu.add.label('nice')
+        b.set_float()
+        self.assertEqual(a.get_position(), b.get_position())
+
+        z = menu.add.label('nice', float=True)
+        self.assertEqual(a.get_position(), z.get_position())
+
+        # Now add a frame
+        f = menu.add.frame_v(1000, 1000)
+        f.set_float()
+        self.assertEqual(a.get_position()[1], f.get_position()[1])
+        c = menu.add.label('nice')
+        c.set_float()
+        self.assertEqual(a.get_position(), c.get_position())
+        self.assertEqual(c.get_position()[1], f.get_position()[1])
+        labels = [menu.add.label(f'Lorem ipsum #{i}', font_size=15, font_color='#000', padding=0) for i in range(20)]
+        for j in labels:
+            f.pack(j)
+        d = menu.add.label('nice')
+        d.set_float()
+        self.assertEqual(a.get_position(), d.get_position())
+        self.assertEqual(len(menu.get_widgets()), 26)
 
     def test_translate(self) -> None:
         """
