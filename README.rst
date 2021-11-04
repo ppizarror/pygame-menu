@@ -27,7 +27,7 @@ pygame-menu
     :target: https://pypi.org/project/pygame-menu
     :alt: PyPi package
 
-.. image:: https://github.com/ppizarror/pygame-menu/actions/workflows/tests.yml/badge.svg
+.. image:: https://img.shields.io/github/workflow/status/ppizarror/pygame-menu/Run%20Tests
     :target: https://github.com/ppizarror/pygame-menu/actions/workflows/tests.yml
     :alt: Build status
 
