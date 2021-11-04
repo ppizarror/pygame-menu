@@ -19,13 +19,11 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -e .[test]
-          
-      - name: Set envs
-        run: |
-          export SDL_VIDEODRIVER=dummy
-          export SDL_AUDIODRIVER=disk
 
       - name: Run nosetests
+        env:
+          SDL_VIDEODRIVER: "dummy"
+          SDL_AUDIODRIVER: "disk"
         run: nosetests test/ -v --with-coverage
 
       - name: Coverage report
