@@ -4,29 +4,6 @@ https://github.com/ppizarror/pygame-menu
 
 MENU WIDGET MANAGER
 Easy widget add/remove to Menus.
-
-License:
--------------------------------------------------------------------------------
-The MIT License (MIT)
-Copyright 2017-2021 Pablo Pizarro R. @ppizarror
-
-Permission is hereby granted, free of charge, to any person obtaining a
-copy of this software and associated documentation files (the "Software"),
-to deal in the Software without restriction, including without limitation
-the rights to use, copy, modify, merge, publish, distribute, sublicense,
-and/or sell copies of the Software, and to permit persons to whom the Software
-is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
--------------------------------------------------------------------------------
 """
 
 __all__ = ['WidgetManager']
@@ -349,9 +326,7 @@ class WidgetManager(Base):
         :return: None
         """
         for invalid_keyword in kwargs.keys():
-            raise ValueError(
-                f'widget addition optional parameter kwargs.{invalid_keyword} is not valid'
-            )
+            raise ValueError(f'widget addition optional parameter kwargs.{invalid_keyword} is not valid')
 
     def _append_widget(self, widget: 'Widget') -> None:
         """
@@ -2295,8 +2270,8 @@ class WidgetManager(Base):
             - ``border_width``                  (int) – Border width in px. If ``0`` disables the border
             - ``cursor``                        (int, :py:class:`pygame.cursors.Cursor`, None) – Cursor of the frame if the mouse is placed over
             - ``margin``                        (tuple, list) – Widget (left, bottom) margin in px
-            - ``max_height``                    (int) – Max height in px. If lower than the frame height a scrollbar will appear on vertical axis. ``None`` by default (same height)
-            - ``max_width``                     (int) – Max width in px. If lower than the frame width a scrollbar will appear on horizontal axis. ``None`` by default (same width)
+            - ``max_height``                    (int) – Max height in px. If this value is lower than the frame ``height`` a scrollbar will appear on vertical axis. ``None`` by default (same height)
+            - ``max_width``                     (int) – Max width in px. If this value is lower than the frame ``width`` a scrollbar will appear on horizontal axis. ``None`` by default (same width)
             - ``padding``                       (int, float, tuple, list) – Widget padding according to CSS rules. General shape: (top, right, bottom, left)
             - ``scrollarea_color``              (tuple, list, str, int, :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage`,None) – Scroll area color. If ``None`` area is transparent
             - ``scrollbar_color``               (tuple, list, str, int, :py:class:`pygame.Color`) – Scrollbar color
@@ -2388,8 +2363,8 @@ class WidgetManager(Base):
             - ``border_width``                  (int) – Border width in px. If ``0`` disables the border
             - ``cursor``                        (int, :py:class:`pygame.cursors.Cursor`, None) – Cursor of the frame if the mouse is placed over
             - ``margin``                        (tuple, list) – Widget (left, bottom) margin in px
-            - ``max_height``                    (int) – Max height in px. If lower than the frame height a scrollbar will appear on vertical axis. ``None`` by default (same height)
-            - ``max_width``                     (int) – Max width in px. If lower than the frame width a scrollbar will appear on horizontal axis. ``None`` by default (same width)
+            - ``max_height``                    (int) – Max height in px. If this value is lower than the frame ``height`` a scrollbar will appear on vertical axis. ``None`` by default (same height)
+            - ``max_width``                     (int) – Max width in px. If this value is lower than the frame ``width`` a scrollbar will appear on horizontal axis. ``None`` by default (same width)
             - ``padding``                       (int, float, tuple, list) – Widget padding according to CSS rules. General shape: (top, right, bottom, left)
             - ``scrollarea_color``              (tuple, list, str, int, :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage`,None) – Scroll area color. If ``None`` area is transparent
             - ``scrollbar_color``               (tuple, list, str, int, :py:class:`pygame.Color`) – Scrollbar color
