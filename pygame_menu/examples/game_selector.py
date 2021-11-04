@@ -15,9 +15,7 @@ from pygame_menu.examples import create_example_window
 from random import randrange
 from typing import Tuple, Any, Optional, List
 
-# -----------------------------------------------------------------------------
 # Constants and global variables
-# -----------------------------------------------------------------------------
 ABOUT = [f'pygame-menu {pygame_menu.__version__}',
          f'Author: {pygame_menu.__author__}',
          f'Email: {pygame_menu.__email__}']
@@ -30,9 +28,6 @@ main_menu: Optional['pygame_menu.Menu'] = None
 surface: Optional['pygame.Surface'] = None
 
 
-# -----------------------------------------------------------------------------
-# Methods
-# -----------------------------------------------------------------------------
 def change_difficulty(value: Tuple[Any, int], difficulty: str) -> None:
     """
     Change difficulty of the game.

@@ -4,29 +4,6 @@ https://github.com/ppizarror/pygame-menu
 
 EXAMPLE - IMAGE BACKGROUND
 Menu using background image + BaseImage object.
-
-License:
--------------------------------------------------------------------------------
-The MIT License (MIT)
-Copyright 2017-2021 Pablo Pizarro R. @ppizarror
-
-Permission is hereby granted, free of charge, to any person obtaining a
-copy of this software and associated documentation files (the "Software"),
-to deal in the Software without restriction, including without limitation
-the rights to use, copy, modify, merge, publish, distribute, sublicense,
-and/or sell copies of the Software, and to permit persons to whom the Software
-is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
--------------------------------------------------------------------------------
 """
 
 __all__ = ['main']
@@ -37,9 +14,7 @@ from pygame_menu.examples import create_example_window
 
 from typing import Optional
 
-# -----------------------------------------------------------------------------
 # Constants and global variables
-# -----------------------------------------------------------------------------
 FPS = 60
 WINDOW_SIZE = (640, 480)
 
@@ -47,17 +22,12 @@ sound: Optional['pygame_menu.sound.Sound'] = None
 surface: Optional['pygame.Surface'] = None
 main_menu: Optional['pygame_menu.Menu'] = None
 
-# -----------------------------------------------------------------------------
 # Load image
-# -----------------------------------------------------------------------------
 background_image = pygame_menu.BaseImage(
     image_path=pygame_menu.baseimage.IMAGE_EXAMPLE_WALLPAPER
 )
 
 
-# -----------------------------------------------------------------------------
-# Methods
-# -----------------------------------------------------------------------------
 def main_background() -> None:
     """
     Background color of the main menu, on this function user can plot
@@ -75,23 +45,15 @@ def main(test: bool = False) -> None:
     :param test: Indicate function is being tested
     :return: None
     """
-
-    # -------------------------------------------------------------------------
-    # Globals
-    # -------------------------------------------------------------------------
     global main_menu
     global sound
     global surface
 
-    # -------------------------------------------------------------------------
     # Create window
-    # -------------------------------------------------------------------------
     surface = create_example_window('Example - Image Background', WINDOW_SIZE)
     clock = pygame.time.Clock()
 
-    # -------------------------------------------------------------------------
     # Create menus: Main menu
-    # -------------------------------------------------------------------------
     main_menu_theme = pygame_menu.themes.THEME_ORANGE.copy()
     main_menu_theme.set_background_color_opacity(0.5)  # 50% opacity
 
@@ -143,9 +105,7 @@ def main(test: bool = False) -> None:
     main_menu.add.button('Another fancy button', lambda: print('This button has been pressed'))
     main_menu.add.button('Quit', pygame_menu.events.EXIT)
 
-    # -------------------------------------------------------------------------
     # Main loop
-    # -------------------------------------------------------------------------
     while True:
 
         # Tick

@@ -14,9 +14,7 @@ from pygame_menu.examples import create_example_window
 
 from typing import Tuple, Optional
 
-# -----------------------------------------------------------------------------
 # Constants and global variables
-# -----------------------------------------------------------------------------
 FPS = 60
 WINDOW_SIZE = (640, 480)
 
@@ -25,9 +23,6 @@ surface: Optional['pygame.Surface'] = None
 main_menu: Optional['pygame_menu.Menu'] = None
 
 
-# -----------------------------------------------------------------------------
-# Methods
-# -----------------------------------------------------------------------------
 def main_background() -> None:
     """
     Background color of the main menu, on this function user can plot
