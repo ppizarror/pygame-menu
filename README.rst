@@ -27,9 +27,9 @@ pygame-menu
     :target: https://pypi.org/project/pygame-menu
     :alt: PyPi package
 
-.. image:: https://travis-ci.com/ppizarror/pygame-menu.svg?branch=master
-    :target: https://app.travis-ci.com/github/ppizarror/pygame-menu
-    :alt: Travis
+.. image:: https://img.shields.io/github/workflow/status/ppizarror/pygame-menu/Run%20Tests
+    :target: https://github.com/ppizarror/pygame-menu/actions/workflows/tests.yml
+    :alt: Build status
 
 .. image:: https://img.shields.io/lgtm/alerts/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18
     :target: https://lgtm.com/projects/g/ppizarror/pygame-menu/alerts

@@ -4,29 +4,6 @@ https://github.com/ppizarror/pygame-menu
 
 THEMES
 Theme class and predefined themes.
-
-License:
--------------------------------------------------------------------------------
-The MIT License (MIT)
-Copyright 2017-2021 Pablo Pizarro R. @ppizarror
-
-Permission is hereby granted, free of charge, to any person obtaining a
-copy of this software and associated documentation files (the "Software"),
-to deal in the Software without restriction, including without limitation
-the rights to use, copy, modify, merge, publish, distribute, sublicense,
-and/or sell copies of the Software, and to permit persons to whom the Software
-is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
--------------------------------------------------------------------------------
 """
 
 __all__ = [
@@ -340,8 +317,7 @@ class Theme(object):
         self.title_bar_modify_scrollarea = self._get(kwargs, 'title_bar_modify_scrollarea', bool, True)
         self.title_bar_style = self._get(kwargs, 'title_bar_style', int, MENUBAR_STYLE_ADAPTIVE)
         self.title_close_button = self._get(kwargs, 'title_close_button', bool, True)
-        self.title_close_button_background_color = self._get(kwargs, 'title_close_button_background_color',
-                                                             'color', (255, 255, 255))
+        self.title_close_button_background_color = self._get(kwargs, 'title_close_button_background_color', 'color', (255, 255, 255))
         self.title_close_button_cursor = self._get(kwargs, 'title_close_button_cursor', 'cursor')
         self.title_fixed = self._get(kwargs, 'title_fixed', bool, True)
         self.title_floating = self._get(kwargs, 'title_floating', bool, False)
@@ -351,8 +327,7 @@ class Theme(object):
         self.title_font_shadow = self._get(kwargs, 'title_font_shadow', bool, False)
         self.title_font_shadow_color = self._get(kwargs, 'title_font_shadow_color', 'color', (0, 0, 0))
         self.title_font_shadow_offset = self._get(kwargs, 'title_font_shadow_offset', int, 2)
-        self.title_font_shadow_position = self._get(kwargs, 'title_font_shadow_position', 'position',
-                                                    POSITION_NORTHWEST)
+        self.title_font_shadow_position = self._get(kwargs, 'title_font_shadow_position', 'position', POSITION_NORTHWEST)
         self.title_font_size = self._get(kwargs, 'title_font_size', int, 40)
         self.title_offset = self._get(kwargs, 'title_offset', 'tuple2', (5, -1))
         self.title_updates_pygame_display = self._get(kwargs, 'title_updates_pygame_display', bool, False)
@@ -367,8 +342,7 @@ class Theme(object):
         self.scrollbar_shadow = self._get(kwargs, 'scrollbar_shadow', bool, False)
         self.scrollbar_shadow_color = self._get(kwargs, 'scrollbar_shadow_color', 'color', (0, 0, 0))
         self.scrollbar_shadow_offset = self._get(kwargs, 'scrollbar_shadow_offset', int, 2)
-        self.scrollbar_shadow_position = self._get(kwargs, 'scrollbar_shadow_position', 'position',
-                                                   POSITION_NORTHWEST)
+        self.scrollbar_shadow_position = self._get(kwargs, 'scrollbar_shadow_position', 'position', POSITION_NORTHWEST)
         self.scrollbar_slider_color = self._get(kwargs, 'scrollbar_slider_color', 'color', (200, 200, 200))
         self.scrollbar_slider_hover_color = self._get(kwargs, 'scrollbar_slider_hover_color', 'color', (170, 170, 170))
         self.scrollbar_slider_pad = self._get(kwargs, 'scrollbar_slider_pad', NumberInstance, 0)
@@ -378,8 +352,7 @@ class Theme(object):
         self.widget_alignment = self._get(kwargs, 'widget_alignment', 'alignment', ALIGN_CENTER)
         self.widget_background_color = self._get(kwargs, 'widget_background_color', 'color_image_none')
         self.widget_background_inflate = self._get(kwargs, 'background_inflate', 'tuple2int', (0, 0))
-        self.widget_background_inflate_to_selection = self._get(kwargs, 'widget_background_inflate_to_selection',
-                                                                bool, False)
+        self.widget_background_inflate_to_selection = self._get(kwargs, 'widget_background_inflate_to_selection', bool, False)
         self.widget_border_color = self._get(kwargs, 'widget_border_color', 'color', (0, 0, 0))
         self.widget_border_inflate = self._get(kwargs, 'widget_border_inflate', 'tuple2int', (0, 0))
         self.widget_border_position = self._get(kwargs, 'widget_border_position', 'position_vector', WIDGET_FULL_BORDER)
@@ -395,20 +368,17 @@ class Theme(object):
         self.widget_font = self._get(kwargs, 'widget_font', 'font', FONT_OPEN_SANS)
         self.widget_font_antialias = self._get(kwargs, 'widget_font_antialias', bool, True)
         self.widget_font_background_color = self._get(kwargs, 'widget_font_background_color', 'color_none', )
-        self.widget_font_background_color_from_menu = self._get(kwargs, 'widget_font_background_color_from_menu',
-                                                                bool, False)
+        self.widget_font_background_color_from_menu = self._get(kwargs, 'widget_font_background_color_from_menu', bool, False)
         self.widget_font_color = self._get(kwargs, 'widget_font_color', 'color', (70, 70, 70))
         self.widget_font_shadow = self._get(kwargs, 'widget_font_shadow', bool, False)
         self.widget_font_shadow_color = self._get(kwargs, 'widget_font_shadow_color', 'color', (0, 0, 0))
         self.widget_font_shadow_offset = self._get(kwargs, 'widget_font_shadow_offset', int, 2)
-        self.widget_font_shadow_position = self._get(kwargs, 'widget_font_shadow_position', 'position',
-                                                     POSITION_NORTHWEST)
+        self.widget_font_shadow_position = self._get(kwargs, 'widget_font_shadow_position', 'position', POSITION_NORTHWEST)
         self.widget_font_size = self._get(kwargs, 'widget_font_size', int, 30)
         self.widget_margin = self._get(kwargs, 'widget_margin', 'tuple2', (0, 0))
         self.widget_offset = self._get(kwargs, 'widget_offset', 'tuple2', (0, 0))
         self.widget_padding = self._get(kwargs, 'widget_padding', PaddingInstance, (4, 8))
-        self.widget_selection_effect = self._get(kwargs, 'widget_selection_effect', Selection,
-                                                 HighlightSelection(margin_x=0, margin_y=0))
+        self.widget_selection_effect = self._get(kwargs, 'widget_selection_effect', Selection, HighlightSelection(margin_x=0, margin_y=0))
         self.widget_tab_size = self._get(kwargs, 'widget_tab_size', int, 4)
         self.widget_url_color = self._get(kwargs, 'widget_url_color', 'color', (6, 69, 173))
 

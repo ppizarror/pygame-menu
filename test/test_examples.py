@@ -4,35 +4,12 @@ https://github.com/ppizarror/pygame-menu
 
 TEST EXAMPLES
 Test example files.
-
-License:
--------------------------------------------------------------------------------
-The MIT License (MIT)
-Copyright 2017-2021 Pablo Pizarro R. @ppizarror
-
-Permission is hereby granted, free of charge, to any person obtaining a
-copy of this software and associated documentation files (the "Software"),
-to deal in the Software without restriction, including without limitation
-the rights to use, copy, modify, merge, publish, distribute, sublicense,
-and/or sell copies of the Software, and to permit persons to whom the Software
-is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
--------------------------------------------------------------------------------
 """
 
 __all__ = ['ExamplesTest']
 
 from test._utils import BaseRSTest, MenuUtils, PygameEventUtils, \
-    SYS_PLATFORM_OSX
+    SYS_PLATFORM_OSX, test_reset_surface
 
 import pygame
 import pygame_menu
@@ -51,6 +28,10 @@ import pygame_menu.examples.other.image_background as image_background
 import pygame_menu.examples.other.scrollbar as scrollbar
 import pygame_menu.examples.other.scrollbar_area as scrollbar_area
 import pygame_menu.examples.other.ui_solar_system as ui_solarsystem
+import pygame_menu.examples.other.widget_positioning as widget_positioning
+
+# Reset the surface as some example could have changed it
+test_reset_surface()
 
 
 class ExamplesTest(BaseRSTest):
@@ -261,3 +242,12 @@ class ExamplesTest(BaseRSTest):
         app.process_events(PygameEventUtils.keydown([pygame.K_p, pygame.K_q, pygame.K_e, pygame.K_s, pygame.K_c]),
                            app.menu)
         self.assertFalse(app.menu._disable_draw)
+
+    def test_example_other_widget_positioning(self) -> None:
+        """
+        Test widget positioning.
+        """
+        widget_positioning.menu.render()
+        self.assertTrue(widget_positioning.f.is_floating())
+        self.assertTrue(widget_positioning.b1.is_floating())
+        self.assertTrue(widget_positioning.b2.is_floating())
