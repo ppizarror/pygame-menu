@@ -16,7 +16,7 @@ python = 'python3' if not sys.platform == 'win32' else 'py -3.7'
 if mode == 'pip':
     if os.path.isdir('dist'):
         for k in os.listdir('dist'):
-            if 'pygame_menu-' in k:
+            if 'pygame_menu-' in k or 'pygame-menu-' in k:
                 os.remove(f'dist/{k}')
     if os.path.isdir('build'):
         for k in os.listdir('build'):
