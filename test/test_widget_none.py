@@ -295,3 +295,12 @@ class NoneWidgetTest(BaseTest):
             self.assertRaises(ValueError, lambda: w.set_default_value('value'))
             self.assertFalse(w.value_changed())
             w.reset_value()
+
+    def test_shadow(self) -> None:
+        """
+        Test shadow.
+        """
+        menu = MenuUtils.generic_menu()
+        w = menu.add.vertical_margin(1)
+        w.set_shadow(10, 10)
+        self.assertFalse(w._shadow['enabled'])

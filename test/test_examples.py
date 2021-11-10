@@ -9,7 +9,7 @@ Test example files.
 __all__ = ['ExamplesTest']
 
 from test._utils import BaseRSTest, MenuUtils, PygameEventUtils, \
-    SYS_PLATFORM_OSX, test_reset_surface
+    test_reset_surface
 
 import pygame
 import pygame_menu
@@ -232,9 +232,6 @@ class ExamplesTest(BaseRSTest):
         """
         Test solar system.
         """
-        if SYS_PLATFORM_OSX:
-            return
-
         app = ui_solarsystem.main(test=True)
         self.assertFalse(app.menu._disable_draw)
         app.process_events(PygameEventUtils.keydown([pygame.K_p]), app.menu)

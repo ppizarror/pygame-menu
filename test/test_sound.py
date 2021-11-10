@@ -8,7 +8,7 @@ Test sound management.
 
 __all__ = ['SoundTest']
 
-from test._utils import MenuUtils, SYS_PLATFORM_OSX, BaseTest
+from test._utils import MenuUtils, BaseTest
 import copy
 
 import pygame_menu
@@ -26,9 +26,6 @@ class SoundTest(BaseTest):
         """
         Test sound copy.
         """
-        if SYS_PLATFORM_OSX:
-            return
-
         sound_src = pygame_menu.sound.Sound()
         sound_src.load_example_sounds()
 
@@ -44,9 +41,6 @@ class SoundTest(BaseTest):
         """
         Test none channel.
         """
-        if SYS_PLATFORM_OSX:
-            return
-
         new_sound = pygame_menu.sound.Sound(uniquechannel=False)
         new_sound.load_example_sounds()
         new_sound.play_widget_selection()
@@ -61,9 +55,6 @@ class SoundTest(BaseTest):
         """
         Test channel.
         """
-        if SYS_PLATFORM_OSX:
-            return
-
         new_sound = pygame_menu.sound.Sound(uniquechannel=False)
         new_sound.get_channel()
         self.sound.get_channel_info()
@@ -75,9 +66,6 @@ class SoundTest(BaseTest):
         """
         Test load sounds.
         """
-        if SYS_PLATFORM_OSX:
-            return
-
         self.assertFalse(self.sound.set_sound(pygame_menu.sound.SOUND_TYPE_CLICK_MOUSE, None))
         self.assertRaises(ValueError, lambda: self.sound.set_sound('none', None))
         self.assertRaises(IOError,

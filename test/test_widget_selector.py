@@ -8,7 +8,7 @@ Test Selector widget.
 
 __all__ = ['SelectorWidgetTest']
 
-from test._utils import MenuUtils, surface, PygameEventUtils, BaseTest, SYS_PLATFORM_OSX
+from test._utils import MenuUtils, surface, PygameEventUtils, BaseTest
 
 import pygame_menu
 import pygame_menu.controls as ctrl
@@ -134,4 +134,4 @@ class SelectorWidgetTest(BaseTest):
         """
         menu = MenuUtils.generic_menu()
         sel = menu.add.selector('', [('a', 'a'), ('b', 'b')])
-        self.assertEqual(sel.get_size(), (83, 49 if not SYS_PLATFORM_OSX else 51))
+        self.assertEqual(sel.get_size(), (83, 49))

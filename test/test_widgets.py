@@ -9,7 +9,7 @@ Test general widget properties.
 __all__ = ['WidgetsTest']
 
 from test._utils import MenuUtils, surface, PygameEventUtils, test_reset_surface, \
-    TEST_THEME, PYGAME_V2, SYS_PLATFORM_OSX, BaseTest
+    TEST_THEME, PYGAME_V2, BaseTest
 import copy
 
 import pygame
@@ -208,9 +208,6 @@ class WidgetsTest(BaseTest):
         """
         Test widget max width/height.
         """
-        if SYS_PLATFORM_OSX:
-            return
-
         label = Label('my label is really long yeah, it should be scaled in the width')
         label.set_font(pygame_menu.font.FONT_OPEN_SANS, 25, (255, 255, 255), (0, 0, 0),
                        (0, 0, 0), (0, 0, 0), (0, 0, 0))
@@ -384,8 +381,6 @@ class WidgetsTest(BaseTest):
         """
         Test update callback.
         """
-        if SYS_PLATFORM_OSX:
-            return
 
         def update(event, widget, _) -> None:
             """
@@ -521,9 +516,6 @@ class WidgetsTest(BaseTest):
         """
         Test widgets with zero position if float.
         """
-        if SYS_PLATFORM_OSX:
-            return
-
         menu = MenuUtils.generic_menu(title='Example menu')
         img = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU)
         img.scale(0.3, 0.3)
@@ -546,3 +538,8 @@ class WidgetsTest(BaseTest):
         image_widget.translate(-50, 0)
         menu.render()
         self.assertEqual(image_widget.get_position(), (-42, 60))
+
+    def test_widget_shadow(self) -> None:
+        """
+        Test widget shadow.
+        """

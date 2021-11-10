@@ -9,7 +9,7 @@ Test TextInput and ColorInput widgets.
 __all__ = ['TextInputWidgetTest']
 
 from test._utils import MenuUtils, surface, PygameEventUtils, TEST_THEME, PYGAME_V2, \
-    SYS_PLATFORM_OSX, BaseTest
+    BaseTest
 
 import pygame
 import pygame_menu
@@ -25,9 +25,6 @@ class TextInputWidgetTest(BaseTest):
         """
         Test TextInput widget.
         """
-        if SYS_PLATFORM_OSX:
-            return
-
         menu = MenuUtils.generic_menu()
 
         # Assert bad settings
@@ -250,9 +247,6 @@ class TextInputWidgetTest(BaseTest):
         """
         Test password.
         """
-        if SYS_PLATFORM_OSX:
-            return
-
         menu = MenuUtils.generic_menu()
 
         password_input = menu.add.text_input('title', password=True, input_underline='_')
@@ -275,9 +269,6 @@ class TextInputWidgetTest(BaseTest):
         """
         Test unicode support.
         """
-        if SYS_PLATFORM_OSX:
-            return
-
         menu = MenuUtils.generic_menu()
         textinput = menu.add.text_input('title', input_underline='_')
         textinput.set_value('tk')
@@ -362,9 +353,6 @@ class TextInputWidgetTest(BaseTest):
         """
         Test undo/redo.
         """
-        if SYS_PLATFORM_OSX:
-            return
-
         menu = MenuUtils.generic_menu()
 
         # Test maxchar and undo/redo
@@ -398,9 +386,6 @@ class TextInputWidgetTest(BaseTest):
         """
         Test copy/paste.
         """
-        if SYS_PLATFORM_OSX:
-            return
-
         menu = MenuUtils.generic_menu()
 
         # Test copy/paste
@@ -444,9 +429,6 @@ class TextInputWidgetTest(BaseTest):
         """
         Test text with max width and right overflow removal.
         """
-        if SYS_PLATFORM_OSX:
-            return
-
         menu = MenuUtils.generic_menu()
         menu._copy_theme()
         menu._theme.widget_font_size = 20
@@ -482,9 +464,6 @@ class TextInputWidgetTest(BaseTest):
         """
         Test underline.
         """
-        if SYS_PLATFORM_OSX:
-            return
-
         # Test underline edge cases
         theme = TEST_THEME.copy()
         theme.title_font_size = 35
@@ -585,8 +564,6 @@ class TextInputWidgetTest(BaseTest):
         """
         Test ColorInput widget.
         """
-        if SYS_PLATFORM_OSX:
-            return
 
         def _assert_invalid_color(widg) -> None:
             """
@@ -866,4 +843,4 @@ class TextInputWidgetTest(BaseTest):
         """
         menu = MenuUtils.generic_menu()
         text = menu.add.text_input('')
-        self.assertEqual(text.get_size(), (16 if not SYS_PLATFORM_OSX else 17, 49))
+        self.assertEqual(text.get_size(), (16, 49))

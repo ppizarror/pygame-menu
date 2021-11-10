@@ -8,7 +8,7 @@ Test Label widget.
 
 __all__ = ['LabelWidgetTest']
 
-from test._utils import MenuUtils, surface, BaseTest, PYGAME_V2, SYS_PLATFORM_OSX
+from test._utils import MenuUtils, surface, BaseTest, PYGAME_V2
 
 from pygame_menu.locals import ALIGN_LEFT
 from pygame_menu.widgets import Label
@@ -149,8 +149,6 @@ class LabelWidgetTest(BaseTest):
         """
         Test empty title.
         """
-        if SYS_PLATFORM_OSX:
-            return
         menu = MenuUtils.generic_menu()
         label = menu.add.label('')
         p = label._padding

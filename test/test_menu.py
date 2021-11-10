@@ -10,7 +10,7 @@ __all__ = ['MenuTest']
 
 from test._utils import BaseRSTest, surface, MenuUtils, PygameEventUtils, \
     TEST_THEME, PYGAME_V2, WIDGET_MOUSEOVER, WIDGET_TOP_CURSOR, reset_widgets_over, \
-    THEME_NON_FIXED_TITLE, SYS_PLATFORM_OSX
+    THEME_NON_FIXED_TITLE
 from typing import Any, Tuple, List
 import copy
 import math
@@ -113,9 +113,6 @@ class MenuTest(BaseRSTest):
         """
         Test position.
         """
-        if SYS_PLATFORM_OSX:
-            return
-
         # Test centering
         theme_src = TEST_THEME.copy()
 
@@ -300,9 +297,6 @@ class MenuTest(BaseRSTest):
         """
         Test menu translation.
         """
-        if SYS_PLATFORM_OSX:
-            return
-
         menu = MenuUtils.generic_menu(width=400, theme=THEME_NON_FIXED_TITLE)
         btn = menu.add.button('button')
         self.assertEqual(menu.get_menubar().get_height(), 55)
@@ -774,9 +768,6 @@ class MenuTest(BaseRSTest):
         """
         Test centering menu.
         """
-        if SYS_PLATFORM_OSX:
-            return
-
         # Vertical offset disables centering
         theme = pygame_menu.themes.THEME_BLUE.copy()
         theme.widget_offset = (0, 100)
@@ -1254,10 +1245,6 @@ class MenuTest(BaseRSTest):
         # Add some widgets
         button = menu.add.button('button', _some_event)
 
-        # Check touch
-        if SYS_PLATFORM_OSX:
-            return
-
         if hasattr(pygame, 'FINGERUP'):
             click_pos = button.get_rect(to_real_position=True).center
             menu.enable()
@@ -1461,9 +1448,6 @@ class MenuTest(BaseRSTest):
         """
         Test menu focus effect.
         """
-        if SYS_PLATFORM_OSX:
-            return
-
         menu = MenuUtils.generic_menu(title='menu', mouse_motion_selection=True)
         btn = menu.add.button('nice')
 
@@ -1814,9 +1798,6 @@ class MenuTest(BaseRSTest):
         """
         Test widget index moving.
         """
-        if SYS_PLATFORM_OSX:
-            return
-
         menu = MenuUtils.generic_menu(theme=TEST_THEME.copy())
         btn1 = menu.add.button('1')
         btn2 = menu.add.button('2')
@@ -2174,9 +2155,6 @@ class MenuTest(BaseRSTest):
         """
         Test baseimage selector + menulink interaction.
         """
-        if SYS_PLATFORM_OSX:
-            return
-
         x = 400
         y = 400
 
