@@ -74,9 +74,6 @@ class SolarSystemApp(object):
     surface: 'pygame.Surface'
 
     def __init__(self) -> None:
-        """
-        Constructor.
-        """
         self.surface = create_example_window('Example - Dynamic Widget Update',
                                              (640, 480), flags=pygame.NOFRAME)
 

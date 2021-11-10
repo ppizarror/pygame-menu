@@ -753,9 +753,6 @@ class ShadowGenerator(object):
     _short_term_rect_cache: Dict[str, 'pygame.Surface']
 
     def __init__(self) -> None:
-        """
-        Constructor.
-        """
         self._created_ellipse_shadows = {}
         self._preloaded_shadow_corners = {}
         self._short_term_rect_cache = {}
