@@ -11,13 +11,16 @@ __all__ = [
     # Main class
     'Theme',
 
-    # Custom colors
+    # Custom themes
     'THEME_BLUE',
     'THEME_DARK',
     'THEME_DEFAULT',
     'THEME_GREEN',
     'THEME_ORANGE',
-    'THEME_SOLARIZED'
+    'THEME_SOLARIZED',
+
+    # Colors
+    'TRANSPARENT_COLOR'
 
 ]
 
@@ -39,6 +42,8 @@ from pygame_menu.widgets.core.widget import WidgetBorderPositionType, WIDGET_FUL
 from pygame_menu._types import ColorType, ColorInputType, Tuple, List, Union, Dict, \
     Any, Tuple2IntType, VectorInstance, Tuple2NumberType, NumberType, PaddingType, \
     Optional, Type, NumberInstance, PaddingInstance, Tuple3IntType, CursorType
+
+TRANSPARENT_COLOR: ColorType = (0, 0, 0, 0)
 
 
 def _check_menubar_style(style: int) -> bool:
