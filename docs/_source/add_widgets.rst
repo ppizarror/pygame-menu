@@ -28,6 +28,7 @@ to a button by defining the ``action`` parameter with one of the three values:
    :py:data:`pygame_menu.events.BACK`      Go back to previously opened menu
    :py:data:`pygame_menu.events.CLOSE`     Close the menu
    :py:data:`pygame_menu.events.EXIT`      Exit the program (not only the menu)
+   :py:data:`pygame_menu.events.NONE`      Literally this event does nothing
    :py:data:`pygame_menu.events.RESET`     Go back to first opened menu
    =====================================   =====================================
 

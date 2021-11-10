@@ -165,7 +165,7 @@ Source: `examples/other/ui_solar_system.py <https://github.com/ppizarror/pygame-
 
 
 Other - Widget positioning (OOP, UI, Advanced, Decorations)
------------------------------------------------------
+-----------------------------------------------------------
 
 .. image:: ../_static/example_other_widget_positioning.png
     :align: center
