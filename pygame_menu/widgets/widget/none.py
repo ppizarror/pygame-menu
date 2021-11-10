@@ -168,6 +168,9 @@ class NoneWidget(Widget):
     def set_tab_size(self, *args, **kwargs) -> 'NoneWidget':
         return self
 
+    def set_shadow(self, *args, **kwargs) -> 'NoneWidget':
+        return self
+
     def update(self, events: EventVectorType) -> bool:
         self.apply_update_callbacks(events)
         return False
