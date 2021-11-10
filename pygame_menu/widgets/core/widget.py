@@ -24,6 +24,8 @@ __all__ = [
     'WIDGET_BORDER_POSITION_FULL',
     'WIDGET_BORDER_POSITION_NONE',
     'WIDGET_FULL_BORDER',
+    'WIDGET_SHADOW_TYPE_ELLIPSE',
+    'WIDGET_SHADOW_TYPE_RECTANGULAR',
     'WidgetTransformationNotImplemented'
 
 ]
@@ -44,7 +46,7 @@ from pygame_menu.sound import Sound
 from pygame_menu.utils import make_surface, assert_alignment, assert_color, \
     assert_position, assert_vector, is_callable, parse_padding, uuid4, \
     mouse_motion_current_mouse_position, PYGAME_V2, set_pygame_cursor, warn, \
-    get_cursor
+    get_cursor, ShadowGenerator
 from pygame_menu.widgets.core.selection import Selection
 
 from pygame_menu._types import Optional, ColorType, Tuple2IntType, NumberType, \
@@ -67,6 +69,11 @@ WIDGET_TOP_CURSOR_WARNING = False
 WIDGET_BORDER_POSITION_NONE = 'border-none'
 WIDGET_BORDER_POSITION_FULL = 'border-position-border-full'
 WIDGET_FULL_BORDER = (POSITION_NORTH, POSITION_SOUTH, POSITION_EAST, POSITION_WEST)
+
+# Creates the shadow generator
+WIDGET_SHADOW_GENERATOR = ShadowGenerator()
+WIDGET_SHADOW_TYPE_ELLIPSE = 'ellipse'
+WIDGET_SHADOW_TYPE_RECTANGULAR = 'rectangular'
 
 
 def check_widget_mouseleave(event: Optional[EventType] = None, force: bool = False) -> None:
@@ -190,6 +197,8 @@ CallbackMouseType = Optional[Union[Callable[['Widget', EventType], Any], Callabl
 CallbackSelectType = Optional[Union[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any], CallableNoArgsType]]
 WidgetBorderPositionType = Union[str, List[str], Tuple[str, ...]]
 WidgetBorderType = Tuple[ColorType, int, WidgetBorderPositionType, Tuple2IntType]
+WidgetShadowType = Dict[str, Union[Optional['pygame.Surface'], Optional['pygame.Rect'],
+                                   bool, Tuple[str, int, int, int, Tuple3IntType]]]
 
 
 # noinspection PyProtectedMember
@@ -275,6 +284,7 @@ class Widget(Base):
     _selection_effect: 'Selection'
     _selection_effect_draw_post: bool
     _selection_time: NumberType
+    _shadow: WidgetShadowType
     _sound: 'Sound'
     _surface: Optional['pygame.Surface']
     _tab_size: int
@@ -401,6 +411,14 @@ class Widget(Base):
         self._font_shadow_offset = 2.0
         self._font_shadow_position = POSITION_NORTHWEST
         self._font_shadow_tuple = (0, 0)  # (x px offset, y px offset)
+
+        # Widget shadow
+        self._shadow = {
+            'enabled': False,
+            'properties': (),
+            'rect': None,
+            'surface': None
+        }
 
         # Border
         self._border_color = (0, 0, 0)
@@ -797,6 +815,8 @@ class Widget(Base):
         This method automatically updates widget decoration cache as Menu render
         forces it to re-render.
 
+        This method also should be aclled by each widget after render.
+
         .. note::
 
             This method is expensive, as menu surface update forces re-rendering
@@ -810,6 +830,7 @@ class Widget(Base):
             # an Error. The usage of _widgets_surface_need_update is only on
             # Menu _render()
             self._menu._widgets_surface_need_update = True
+        self._shadow['surface'] = None
         return self
 
     def force_menu_surface_cache_update(self) -> 'Widget':
@@ -983,6 +1004,18 @@ class Widget(Base):
         self._background_surface = None
         return self
 
+    def _get_background_inflate(self) -> Tuple[int, int]:
+        """
+        Returns the background inflate.
+
+        :return: Background inflte
+        """
+        if not (self.selection_expand_background and self._selected):
+            inflate = self._background_inflate
+        else:
+            inflate = self._selection_effect.get_xy_margin()
+        return inflate
+
     def _draw_background_color(
             self,
             surface: 'pygame.Surface',
@@ -997,14 +1030,8 @@ class Widget(Base):
         """
         if self._background_color is None:
             return
-
-        # Create rect
-        if not (self.selection_expand_background and self._selected):
-            inflate = self._background_inflate
-        else:
-            inflate = self._selection_effect.get_xy_margin()
         if rect is None:
-            rect = self.get_rect(inflate=inflate)
+            rect = self.get_rect(inflate=self._get_background_inflate())
 
         # Create the background surface
         if self._background_surface is None or self._background_surface[0] != rect:
@@ -1254,6 +1281,50 @@ class Widget(Base):
         except ValueError:
             return False
 
+    def _draw_shadow(
+            self,
+            surface: 'pygame.Surface', rect: Optional['pygame.Rect'] = None
+    ) -> None:
+        """
+        Draw the widget shadow.
+
+        :param surface: Surface to draw the shadow
+        :param rect: Which rect use to compute surfaces
+        """
+        if self._shadow['enabled']:
+            if not rect:
+                rect = self.get_rect(inflate=self._get_background_inflate())
+            if not self._shadow['surface'] or self._shadow['rect'] != rect:
+                shadow_type, shadow_width, corner_radius, aa_amount, color = self._shadow['properties']
+                s: 'pygame.Surface'
+                w, h = rect.width + 2 * shadow_width, rect.height + 2 * shadow_width
+                if shadow_type == WIDGET_SHADOW_TYPE_RECTANGULAR:
+                    s = WIDGET_SHADOW_GENERATOR.create_new_rectangle_shadow(
+                        width=w,
+                        height=h,
+                        shadow_width_param=shadow_width,
+                        corner_radius_param=corner_radius,
+                        aa_amount=aa_amount,
+                        color=color
+                    )
+                else:
+                    s = WIDGET_SHADOW_GENERATOR.create_new_ellipse_shadow(
+                        width=w,
+                        height=h,
+                        shadow_width_param=shadow_width,
+                        aa_amount=aa_amount,
+                        color=color
+                    )
+                WIDGET_SHADOW_GENERATOR.clear_short_term_caches()
+                self._shadow['surface'] = s
+            if not self._shadow['surface']:
+                warn(f'{self.get_class_id()} shadow computation failed, check if'
+                     f' the radius is smaller than the width and height of the menu')
+                self._shadow['enabled'] = False
+                return
+            w = self._shadow['properties'][1]
+            surface.blit(self._shadow['surface'], (rect.x - w, rect.y - w))
+
     def draw(self, surface: 'pygame.Surface') -> 'Widget':
         """
         Draw the Widget on a given surface.
@@ -1284,6 +1355,7 @@ class Widget(Base):
         if self.is_selected() and not self._selection_effect_draw_post:
             self._selection_effect.draw(surface, self)
 
+        self._draw_shadow(surface)
         self._draw_background_color(surface)
         self._decorator.draw_prev(surface)
         self._draw(surface)
@@ -1629,6 +1701,34 @@ class Widget(Base):
 
         surface.blit(text, (0, 0))
         return surface
+
+    def shadow(
+            self,
+            shadow_type: str = WIDGET_SHADOW_TYPE_RECTANGULAR,
+            shadow_width: int = 10,
+            corner_radius: int = 0,
+            color: ColorInputType = (0, 0, 0),
+            aa_amount: int = 4
+    ) -> 'Widget':
+        """
+        Configure the widget shadow.
+
+        :param shadow_type: Shadow type, it can be rectangular or ellipse
+        :param shadow_width: Shadow width in px. If ``0`` the shadow is disabled
+        :param corner_radius: Shadow corner radius if rectangular in px
+        :param color: Shadow color
+        :param aa_amount: Antialiasing amout
+        :return: Self reference
+        """
+        assert shadow_type in (WIDGET_SHADOW_TYPE_ELLIPSE, WIDGET_SHADOW_TYPE_RECTANGULAR)
+        assert isinstance(shadow_width, int) and shadow_width >= 0
+        assert isinstance(corner_radius, int) and corner_radius >= 0
+        assert isinstance(aa_amount, int) and aa_amount > 0
+        color = assert_color(color)
+        self._shadow['enabled'] = shadow_width > 0
+        self._shadow['properties'] = (shadow_type, shadow_width, shadow_width + corner_radius, aa_amount, color[0:3])
+        self._shadow['surface'] = None
+        return self
 
     def get_font_color_status(self, check_selection: bool = True) -> ColorType:
         """
