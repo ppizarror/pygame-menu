@@ -538,8 +538,3 @@ class WidgetsTest(BaseTest):
         image_widget.translate(-50, 0)
         menu.render()
         self.assertEqual(image_widget.get_position(), (-42, 60))
-
-    def test_widget_shadow(self) -> None:
-        """
-        Test widget shadow.
-        """

@@ -302,5 +302,5 @@ class NoneWidgetTest(BaseTest):
         """
         menu = MenuUtils.generic_menu()
         w = menu.add.vertical_margin(1)
-        w.set_shadow(10, 10)
+        w.shadow(10, 10)
         self.assertFalse(w._shadow['enabled'])
