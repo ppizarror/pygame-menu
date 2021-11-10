@@ -9,6 +9,7 @@ Base class for widgets.
 __all__ = [
 
     # Main class
+    'AbstractWidgetManager',
     'Widget',
 
     # Utils
@@ -3128,3 +3129,84 @@ class WidgetTransformationNotImplemented(Exception):
     Exception raised if widget does not implement a transformation.
     """
     pass
+
+
+class AbstractWidgetManager(object):
+    """
+    Add/Remove widgets to the Menu.
+    """
+    _menu: 'pygame_menu.Menu'
+
+    def __init__(self) -> None:
+        pass
+
+    @property
+    def _theme(self) -> 'pygame_menu.Theme':
+        """
+        Return menu theme.
+
+        :return: Menu theme reference
+        """
+        raise NotImplementedError('override is mandatory')
+
+    def _add_submenu(self, menu: 'pygame_menu.Menu', hook: 'Widget') -> None:
+        """
+        Adds a submenu. Requires the menu instance and the widget that adds the
+        sub-menu.
+
+        :param menu: Menu reference
+        :param hook: Widget hook
+        :return: None
+        """
+        raise NotImplementedError('override is mandatory')
+
+    def _filter_widget_attributes(self, kwargs: Dict) -> Dict[str, Any]:
+        """
+        Return the valid widgets attributes from a dictionary.
+
+        The valid (key, value) are removed from the initial dictionary.
+
+        :param kwargs: Optional keyword arguments (input attributes)
+        :return: Dictionary of valid attributes
+        """
+        raise NotImplementedError('override is mandatory')
+
+    def _configure_widget(self, widget: 'Widget', **kwargs) -> None:
+        """
+        Update the given widget with the parameters defined at the Menu level.
+        This method does not add widget to Menu.
+
+        :param widget: Widget object
+        :param kwargs: Optional keywords arguments
+        :return: None
+        """
+        raise NotImplementedError('override is mandatory')
+
+    @staticmethod
+    def _check_kwargs(kwargs: Dict) -> None:
+        """
+        Check kwargs after widget addition. It should be empty. Raises ``ValueError``.
+
+        :param kwargs: Kwargs dict
+        :return: None
+        """
+        raise NotImplementedError('override is mandatory')
+
+    def _append_widget(self, widget: 'Widget') -> None:
+        """
+        Add a widget to the list of widgets.
+
+        :param widget: Widget object
+        :return: None
+        """
+        raise NotImplementedError('override is mandatory')
+
+    def configure_defaults_widget(self, widget: 'Widget') -> None:
+        """
+        Apply default menu settings to widget. This method does not add widget to
+        the Menu.
+
+        :param widget: Widget to be configured
+        :return: None
+        """
+        raise NotImplementedError('override is mandatory')
