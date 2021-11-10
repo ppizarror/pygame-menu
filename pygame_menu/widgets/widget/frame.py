@@ -863,6 +863,7 @@ class Frame(Widget):
         # Simple case, no scrollarea
         if not self.is_scrollable:
             self.last_surface = surface
+            self._draw_shadow(surface)
             self._draw_background_color(surface)
             self._decorator.draw_prev(surface)
             for widget in self._widgets.values():
@@ -876,6 +877,7 @@ class Frame(Widget):
         else:
             self.last_surface = self._surface
             self._surface.fill((255, 255, 255, 0))
+            self._draw_shadow(self._surface, rect=self._real_rect)
             self._draw_background_color(self._surface, rect=self._real_rect)
             scrollarea_decorator = self.get_decorator()
             scrollarea_decorator.force_cache_update()
