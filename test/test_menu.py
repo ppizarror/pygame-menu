@@ -2336,3 +2336,11 @@ class MenuTest(BaseRSTest):
 
         # Invalid size
         self.assertRaises(ValueError, lambda: menu.resize(50, 10))
+
+        # Resize but using position absolute
+        menu.resize(400, 400, position=(50, 50))
+        self.assertTrue(menu._position_relative)
+        self.assertEqual(menu._position, (100, 100))
+        menu.resize(400, 400, position=(50, 50, False))
+        self.assertFalse(menu._position_relative)
+        self.assertEqual(menu._position, (50, 50))
