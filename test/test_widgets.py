@@ -9,7 +9,7 @@ Test general widget properties.
 __all__ = ['WidgetsTest']
 
 from test._utils import MenuUtils, surface, PygameEventUtils, test_reset_surface, \
-    TEST_THEME, PYGAME_V2, SYS_PLATFORM_OSX, BaseTest
+    TEST_THEME, PYGAME_V2, BaseTest
 import copy
 
 import pygame
@@ -19,7 +19,7 @@ from pygame_menu.locals import POSITION_SOUTHEAST, POSITION_NORTH, POSITION_SOUT
     POSITION_EAST, POSITION_WEST, POSITION_CENTER, POSITION_NORTHEAST, \
     POSITION_SOUTHWEST, POSITION_NORTHWEST
 from pygame_menu.widgets import Label, Button
-from pygame_menu.widgets.core.widget import Widget
+from pygame_menu.widgets.core.widget import Widget, AbstractWidgetManager
 
 
 class WidgetsTest(BaseTest):
@@ -29,6 +29,20 @@ class WidgetsTest(BaseTest):
         Setup widgets test.
         """
         test_reset_surface()
+
+    # noinspection PyTypeChecker
+    def test_abstract_widget_manager(self) -> None:
+        """
+        Test abstract widget manager.
+        """
+        wm = AbstractWidgetManager()
+        self.assertRaises(NotImplementedError, lambda: wm._theme)
+        self.assertRaises(NotImplementedError, lambda: wm._add_submenu(None, None))
+        self.assertRaises(NotImplementedError, lambda: wm._filter_widget_attributes({}))
+        self.assertRaises(NotImplementedError, lambda: wm._configure_widget(None))
+        self.assertRaises(NotImplementedError, lambda: wm._check_kwargs({}))
+        self.assertRaises(NotImplementedError, lambda: wm._append_widget(None))
+        self.assertRaises(NotImplementedError, lambda: wm.configure_defaults_widget(None))
 
     def test_abstract_widget(self) -> None:
         """
@@ -208,9 +222,6 @@ class WidgetsTest(BaseTest):
         """
         Test widget max width/height.
         """
-        if SYS_PLATFORM_OSX:
-            return
-
         label = Label('my label is really long yeah, it should be scaled in the width')
         label.set_font(pygame_menu.font.FONT_OPEN_SANS, 25, (255, 255, 255), (0, 0, 0),
                        (0, 0, 0), (0, 0, 0), (0, 0, 0))
@@ -384,8 +395,6 @@ class WidgetsTest(BaseTest):
         """
         Test update callback.
         """
-        if SYS_PLATFORM_OSX:
-            return
 
         def update(event, widget, _) -> None:
             """
@@ -521,9 +530,6 @@ class WidgetsTest(BaseTest):
         """
         Test widgets with zero position if float.
         """
-        if SYS_PLATFORM_OSX:
-            return
-
         menu = MenuUtils.generic_menu(title='Example menu')
         img = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU)
         img.scale(0.3, 0.3)

@@ -8,7 +8,7 @@ Test RangeSlider widget.
 
 __all__ = ['RangeSliderWidgetTest']
 
-from test._utils import MenuUtils, surface, PygameEventUtils, BaseTest, SYS_PLATFORM_OSX
+from test._utils import MenuUtils, surface, PygameEventUtils, BaseTest
 
 import pygame
 import pygame_menu
@@ -316,8 +316,7 @@ class RangeSliderWidgetTest(BaseTest):
         pos = slider._test_get_pos_value(0.5)
         pos2 = slider._test_get_pos_value(0.6)
         slider_rect = slider._get_slider_inflate_rect(0, to_real_position=True)
-        self.assertEqual(slider_rect,
-                         pygame.Rect(344, 311 if not SYS_PLATFORM_OSX else 309, 15, 28 if not SYS_PLATFORM_OSX else 30))
+        self.assertEqual(slider_rect, pygame.Rect(344, 311, 15, 28))
         slider.update(PygameEventUtils.middle_rect_click(slider_rect, evtype=pygame.MOUSEBUTTONDOWN))
         self.assertTrue(slider._slider_selected[0])
         self.assertTrue(slider._scrolling)
@@ -430,8 +429,7 @@ class RangeSliderWidgetTest(BaseTest):
         self.assertEqual(slider.get_value(), (1, 2))
 
         self.assertEqual(slider._get_slider_inflate_rect(0, to_absolute_position=True),
-                         pygame.Rect(301, 209 if not SYS_PLATFORM_OSX else 207,
-                                     15, 28 if not SYS_PLATFORM_OSX else 30))
+                         pygame.Rect(301, 209, 15, 28))
 
     def test_kwargs(self) -> None:
         """
@@ -448,7 +446,7 @@ class RangeSliderWidgetTest(BaseTest):
         """
         menu = MenuUtils.generic_menu()
         r = menu.add.range_slider('', 0.5, (0, 1), 0.1)
-        self.assertEqual(r.get_size(), (198, 66) if not SYS_PLATFORM_OSX else (199, 69))
+        self.assertEqual(r.get_size(), (198, 66))
 
     def test_invalid_range(self) -> None:
         """

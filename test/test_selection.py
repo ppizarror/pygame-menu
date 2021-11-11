@@ -107,6 +107,10 @@ class SelectionTest(BaseTest):
         sel._border_width = 0
         sel.draw(surface, w)
 
+        # Test background color
+        sel.set_background_color('red')
+        self.assertEqual(sel.get_background_color(), (255, 0, 0, 255))
+
     def test_none(self) -> None:
         """
         Test none selection.

@@ -8,7 +8,7 @@ Test Label widget.
 
 __all__ = ['LabelWidgetTest']
 
-from test._utils import MenuUtils, surface, BaseTest, PYGAME_V2, SYS_PLATFORM_OSX
+from test._utils import MenuUtils, surface, BaseTest, PYGAME_V2
 
 from pygame_menu.locals import ALIGN_LEFT
 from pygame_menu.widgets import Label
@@ -72,6 +72,14 @@ class LabelWidgetTest(BaseTest):
         self.assertEqual(label[0].get_title(), 'This label should split, this line is really')
         self.assertEqual(label[1].get_title(), 'long so it should split.')
         self.assertEqual(label[2].get_title(), 'The second line')
+
+        # Split label with -1 double \n
+        label = menu.add.label('a\n\nb\n\nc', max_char=-1)
+        self.assertEqual(label[0].get_title(), 'a')
+        self.assertEqual(label[1].get_title(), '')
+        self.assertEqual(label[2].get_title(), 'b')
+        self.assertEqual(label[3].get_title(), '')
+        self.assertEqual(label[4].get_title(), 'c')
 
         # Add underline
         label = menu.add.label('nice')
@@ -149,8 +157,6 @@ class LabelWidgetTest(BaseTest):
         """
         Test empty title.
         """
-        if SYS_PLATFORM_OSX:
-            return
         menu = MenuUtils.generic_menu()
         label = menu.add.label('')
         p = label._padding

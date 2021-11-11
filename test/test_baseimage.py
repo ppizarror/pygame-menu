@@ -9,7 +9,7 @@ Test base image management.
 __all__ = ['BaseImageTest']
 
 from pathlib import Path
-from test._utils import surface, PYGAME_V2, SYS_PLATFORM_OSX, BaseTest
+from test._utils import surface, PYGAME_V2, BaseTest
 import base64
 import copy
 import io
@@ -38,9 +38,6 @@ class BaseImageTest(BaseTest):
         """
         Test image load from base64.
         """
-        if SYS_PLATFORM_OSX:
-            return
-
         photo = 'R0lGODlhRgBGAPZUAAAAAAAAMwAAzAArAAArMwArzAAr/wBVmQBVzABV/zMAADMAMzMrADMrMzMrmTMrzDMr/zNVADNVMzNVZjNVmTN' \
                 'VzDNV/zOAADOAMzOAZjOA/zOqM2YAM2YrAGYrM2ZVAGZVM2ZVZmZVmWZVzGZV/2aAAGaAM2aAZmaAmWaAzGaA/2aqAGaqM2aqZmaqmW' \
                 'aqzJkrAJkrM5lVAJlVM5lVZplVmZmAAJmAM5mAZpmAmZmAzJmqZpmqmZmqzJmq/5nVmZnVzMxVAMxVM8xVZsyAAMyAM8yAZsyqZsyqm' \
@@ -254,9 +251,6 @@ class BaseImageTest(BaseTest):
 
         # Check if equal
         self.assertTrue(image.equals(image4))
-        if SYS_PLATFORM_OSX:
-            return
-
         self.assertFalse(image.equals(image4a))
         self.assertTrue(image4a.equals(image4b))
 
@@ -264,9 +258,6 @@ class BaseImageTest(BaseTest):
         """
         Test the file operations.
         """
-        if SYS_PLATFORM_OSX:
-            return
-
         image_original = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
         image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
         self.assertTrue(image.equals(image_original))
@@ -289,9 +280,6 @@ class BaseImageTest(BaseTest):
         """
         Test invalid image opening.
         """
-        if SYS_PLATFORM_OSX:
-            return
-
         image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYTHON)
         self.assertEqual(image.get_size(), (110, 109))
 
@@ -366,8 +354,7 @@ class BaseImageTest(BaseTest):
         # noinspection PyTypeChecker
         image.pick_channels(('r', 'g', 'b'))
 
-        if not SYS_PLATFORM_OSX:
-            self.assertEqual(image.get_at((10, 10)), (56, 56, 56, 255))
+        self.assertEqual(image.get_at((10, 10)), (56, 56, 56, 255))
 
         image.set_at((10, 10), (0, 0, 0))
         # self.assertEqual(image.get_at((10, 10)), (0, 0, 0, 255))

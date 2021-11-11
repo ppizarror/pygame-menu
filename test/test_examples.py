@@ -9,7 +9,7 @@ Test example files.
 __all__ = ['ExamplesTest']
 
 from test._utils import BaseRSTest, MenuUtils, PygameEventUtils, \
-    SYS_PLATFORM_OSX, test_reset_surface
+    test_reset_surface
 
 import pygame
 import pygame_menu
@@ -25,6 +25,7 @@ import pygame_menu.examples.other.calculator as calculator
 import pygame_menu.examples.other.dynamic_button_append as dynamic_button
 import pygame_menu.examples.other.dynamic_widget_update as dynamic_widget
 import pygame_menu.examples.other.image_background as image_background
+import pygame_menu.examples.other.maze as maze
 import pygame_menu.examples.other.scrollbar as scrollbar
 import pygame_menu.examples.other.scrollbar_area as scrollbar_area
 import pygame_menu.examples.other.ui_solar_system as ui_solarsystem
@@ -209,6 +210,26 @@ class ExamplesTest(BaseRSTest):
         """
         image_background.main(test=True)
 
+    def test_example_other_maze(self) -> None:
+        """
+        Test maze app example.
+        """
+        app = maze.MazeApp(rows=10)
+        btn = app._menu.get_widget('clear')
+        app._path_found = True
+        btn.apply()
+        self.assertFalse(app._path_found)
+        app._visualize = False
+        # noinspection PyTypeChecker
+        gen: 'pygame_menu.widgets.DropSelect' = app._menu.get_widget('generator')
+        # noinspection PyTypeChecker
+        sol: 'pygame_menu.widgets.DropSelect' = app._menu.get_widget('solver')
+        for i in range(4):
+            gen.set_value(i)
+            sol.set_value(i)
+            app._run_generator()
+            app._run_solver()
+
     @staticmethod
     def test_example_other_scrollbar() -> None:
         """
@@ -232,9 +253,6 @@ class ExamplesTest(BaseRSTest):
         """
         Test solar system.
         """
-        if SYS_PLATFORM_OSX:
-            return
-
         app = ui_solarsystem.main(test=True)
         self.assertFalse(app.menu._disable_draw)
         app.process_events(PygameEventUtils.keydown([pygame.K_p]), app.menu)

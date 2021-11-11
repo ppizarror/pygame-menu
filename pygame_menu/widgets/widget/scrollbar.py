@@ -55,8 +55,8 @@ class ScrollBar(Widget):
     _page_ctrl_length: NumberType
     _page_ctrl_thick: int
     _page_step: NumberType
-    _shadow: bool
     _shadow_color: ColorType
+    _shadow_enabled: bool
     _shadow_offset: NumberType
     _shadow_position: str
     _shadow_tuple: Tuple2IntType
@@ -123,8 +123,8 @@ class ScrollBar(Widget):
         self._slider_rect = None
 
         # Shadow
-        self._shadow = False
         self._shadow_color = (0, 0, 0)
+        self._shadow_enabled = False
         self._shadow_offset = 2.0
         self._shadow_position = POSITION_NORTHWEST
         self._shadow_tuple = (0, 0)  # (x px offset, y px offset)
@@ -215,8 +215,8 @@ class ScrollBar(Widget):
         super(ScrollBar, self).set_font_shadow(enabled, color, position, offset)
 
         # Store shadow from font
-        self._shadow = self._font_shadow
         self._shadow_color = self._font_shadow_color
+        self._shadow_enabled = self._font_shadow
         self._shadow_offset = self._font_shadow_offset
         self._shadow_position = self._font_shadow_position
         self._shadow_tuple = self._font_shadow_tuple
@@ -316,7 +316,7 @@ class ScrollBar(Widget):
         slider_color = self._slider_color if not self.readonly else self._font_readonly_color
         mouse_hover = (self.scrolling and self._clicked) or self._mouseover
         slider_color = self._slider_hover_color if mouse_hover else slider_color
-        if self._shadow:
+        if self._shadow_enabled:
             lit_rect = pygame.Rect(self._slider_rect)
             slider_rect = lit_rect.inflate(-self._shadow_offset * 2, -self._shadow_offset * 2)
             shadow_rect = lit_rect.inflate(-self._shadow_offset, -self._shadow_offset)
@@ -494,6 +494,7 @@ class ScrollBar(Widget):
         self.apply_update_callbacks(events)
 
         if self.readonly or not self.is_visible():
+            self._readonly_check_mouseover(events)
             return False
 
         rect = self.get_rect(to_absolute_position=True)

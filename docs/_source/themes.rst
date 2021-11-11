@@ -137,23 +137,28 @@ This library also has some fonts to use (TTF format). To load a font, run this c
     font = pygame_menu.font.FONT_NAME
     my_theme = Theme(widget_font=font, ...)
 
-==================================================  ===============================================
-Available fonts                                     Preview
-==================================================  ===============================================
-:py:class:`pygame_menu.font.FONT_8BIT`              .. image:: ../_static/font_8bit.png
-:py:class:`pygame_menu.font.FONT_BEBAS`             .. image:: ../_static/font_bebas.png
-:py:class:`pygame_menu.font.FONT_COMIC_NEUE`        .. image:: ../_static/font_comic_neue.png
-:py:class:`pygame_menu.font.FONT_DIGITAL`           .. image:: ../_static/font_digital.png
-:py:class:`pygame_menu.font.FONT_FRANCHISE`         .. image:: ../_static/font_franchise.png
-:py:class:`pygame_menu.font.FONT_HELVETICA`         .. image:: ../_static/font_helvetica.png
-:py:class:`pygame_menu.font.FONT_MUNRO`             .. image:: ../_static/font_munro.png
-:py:class:`pygame_menu.font.FONT_NEVIS`             .. image:: ../_static/font_nevis.png
-:py:class:`pygame_menu.font.FONT_OPEN_SANS`         .. image:: ../_static/font_open_sans.png
-:py:class:`pygame_menu.font.FONT_OPEN_SANS_BOLD`    .. image:: ../_static/font_open_sans_bold.png
-:py:class:`pygame_menu.font.FONT_OPEN_SANS_ITALIC`  .. image:: ../_static/font_open_sans_italic.png
-:py:class:`pygame_menu.font.FONT_OPEN_SANS_LIGHT`   .. image:: ../_static/font_open_sans_light.png
-:py:class:`pygame_menu.font.FONT_PT_SERIF`          .. image:: ../_static/font_pt_serif.png
-==================================================  ===============================================
+======================================================  ===============================================
+Available fonts                                         Preview
+======================================================  ===============================================
+:py:class:`pygame_menu.font.FONT_8BIT`                  .. image:: ../_static/font_8bit.png
+:py:class:`pygame_menu.font.FONT_BEBAS`                 .. image:: ../_static/font_bebas.png
+:py:class:`pygame_menu.font.FONT_COMIC_NEUE`            .. image:: ../_static/font_comic_neue.png
+:py:class:`pygame_menu.font.FONT_DIGITAL`               .. image:: ../_static/font_digital.png
+:py:class:`pygame_menu.font.FONT_FIRACODE`              .. image:: ../_static/font_firacode.png
+:py:class:`pygame_menu.font.FONT_FIRACODE_BOLD`         .. image:: ../_static/font_firacode_bold.png
+:py:class:`pygame_menu.font.FONT_FIRACODE_BOLD_ITALIC`  .. image:: ../_static/font_firacode_bold_italic.png
+:py:class:`pygame_menu.font.FONT_FIRACODE_ITALIC`       .. image:: ../_static/font_firacode_italic.png
+:py:class:`pygame_menu.font.FONT_FIRACODE`              .. image:: ../_static/font_firacode.png
+:py:class:`pygame_menu.font.FONT_FRANCHISE`             .. image:: ../_static/font_franchise.png
+:py:class:`pygame_menu.font.FONT_HELVETICA`             .. image:: ../_static/font_helvetica.png
+:py:class:`pygame_menu.font.FONT_MUNRO`                 .. image:: ../_static/font_munro.png
+:py:class:`pygame_menu.font.FONT_NEVIS`                 .. image:: ../_static/font_nevis.png
+:py:class:`pygame_menu.font.FONT_OPEN_SANS`             .. image:: ../_static/font_open_sans.png
+:py:class:`pygame_menu.font.FONT_OPEN_SANS_BOLD`        .. image:: ../_static/font_open_sans_bold.png
+:py:class:`pygame_menu.font.FONT_OPEN_SANS_ITALIC`      .. image:: ../_static/font_open_sans_italic.png
+:py:class:`pygame_menu.font.FONT_OPEN_SANS_LIGHT`       .. image:: ../_static/font_open_sans_light.png
+:py:class:`pygame_menu.font.FONT_PT_SERIF`              .. image:: ../_static/font_pt_serif.png
+======================================================  ===============================================
 
 System fonts can also be used. The available system fonts can be listed using the
 following command in a python shell:

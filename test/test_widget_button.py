@@ -8,12 +8,13 @@ Test Button widget.
 
 __all__ = ['ButtonWidgetTest']
 
-from test._utils import MenuUtils, surface, PygameEventUtils, BaseTest, PYGAME_V2, SYS_PLATFORM_OSX
+from test._utils import MenuUtils, surface, PygameEventUtils, BaseTest, PYGAME_V2
 
 import pygame
 import pygame_menu
 
 from pygame_menu.widgets import Button
+from pygame_menu.widgets.core.widget import WIDGET_SHADOW_TYPE_ELLIPSE
 
 
 class ButtonWidgetTest(BaseTest):
@@ -197,13 +198,56 @@ class ButtonWidgetTest(BaseTest):
         """
         Test empty title.
         """
-        if SYS_PLATFORM_OSX:
-            return
         menu = MenuUtils.generic_menu()
         btn = menu.add.button('')
         p = btn._padding
         self.assertEqual(btn.get_width(), p[1] + p[3])
         self.assertEqual(btn.get_height(), p[0] + p[2] + 41 if PYGAME_V2 else 42)
+
+    def test_shadow(self) -> None:
+        """
+        Test button shadow.
+        """
+        menu = MenuUtils.generic_menu()
+        menu.add.button('my button')
+        btn = menu.add.button('my buton 2')
+        btn.shadow(shadow_width=20, color='black')
+        self.assertTrue(btn._shadow['enabled'])
+        self.assertEqual(btn._shadow['properties'][4], (0, 0, 0))
+        btn.shadow(shadow_width=0, color=(250, 250, 30, 40))
+        self.assertFalse(btn._shadow['enabled'])
+        self.assertEqual(btn._shadow['properties'][4], (250, 250, 30))
+        self.assertIsNone(btn._shadow['surface'])
+        btn.shadow(shadow_width=0, color=(250, 250, 100))
+        self.assertFalse(btn._shadow['enabled'])
+        self.assertEqual(btn._shadow['properties'][4], (250, 250, 100))
+
+        # Check size modify
+        btn.shadow(shadow_width=20, color='black')
+        self.assertIsNone(btn._shadow['surface'])
+        btn.draw(surface)
+        self.assertIsNotNone(btn._shadow['surface'])
+        s = btn._shadow['surface'].get_size()
+        self.assertEqual(btn.get_size()[0] + 40, s[0])
+        self.assertEqual(btn.get_size()[1] + 40, s[1])
+
+        btn.scale(2, 2)
+        self.assertIsNone(btn._shadow['surface'])
+        btn.draw(surface)
+        s = btn._shadow['surface'].get_size()
+        self.assertEqual(btn.get_size()[0] + 40, s[0])
+        self.assertEqual(btn.get_size()[1] + 40, s[1])
+
+        # Add ellipse shadow
+        btn2 = menu.add.button('my buton 3')
+        btn2.shadow(WIDGET_SHADOW_TYPE_ELLIPSE, 50)
+        btn2.draw(surface)
+
+        # Set invalid width
+        btn2.shadow(corner_radius=4000)
+        self.assertTrue(btn2._shadow['enabled'])
+        btn2.draw(surface)
+        self.assertFalse(btn2._shadow['enabled'])
 
     def test_value(self) -> None:
         """

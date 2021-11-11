@@ -41,3 +41,20 @@ class UtilsTest(BaseTest):
         w.hide()
         s = ut.widget_terminal_title(w)
         self.assertIn('╳', s)
+
+    def test_shadows(self) -> None:
+        """
+        Test shadows.
+        """
+        shadow = ut.ShadowGenerator()
+        s1 = shadow.create_new_rectangle_shadow(100, 100, 15, 25)
+        s2 = shadow.create_new_ellipse_shadow(100, 100, 10)
+        shadow.create_new_ellipse_shadow(100, 100, 10)
+        self.assertIsNone(shadow.create_new_ellipse_shadow(100, 100, 0))
+        self.assertEqual(s1.get_size(), (100, 100))
+        self.assertEqual(s2.get_size(), (100, 100))
+        # Use cache
+        shadow.create_new_rectangle_shadow(100, 100, 15, 25)
+        shadow.create_new_rectangle_shadow(100, 150, 15, 25)
+        # Remove cache
+        shadow.clear_short_term_caches(force=True)

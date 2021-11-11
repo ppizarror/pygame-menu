@@ -10,7 +10,7 @@ __all__ = ['ScrollAreaTest']
 
 import copy
 from test._utils import MenuUtils, PygameEventUtils, surface, TEST_THEME, PYGAME_V2, \
-    SYS_PLATFORM_OSX, BaseTest
+    BaseTest
 
 import pygame
 import pygame_menu
@@ -132,9 +132,6 @@ class ScrollAreaTest(BaseTest):
         """
         Test size.
         """
-        if SYS_PLATFORM_OSX:
-            return
-
         menu = MenuUtils.generic_menu(title='menu', theme=TEST_THEME.copy())
         menu.render()
         self.assertEqual(menu.get_height(widget=True), 0)

@@ -28,9 +28,6 @@ class CalculatorApp(object):
 
     # noinspection PyArgumentEqualDefault
     def __init__(self) -> None:
-        """
-        Constructor.
-        """
         self.surface = create_example_window('Example - Calculator', (320, 480))
 
         # Configure theme

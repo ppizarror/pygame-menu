@@ -8,8 +8,7 @@ Test MenuBar widget.
 
 __all__ = ['MenuBarWidgetTest']
 
-from test._utils import MenuUtils, surface, PygameEventUtils, SYS_PLATFORM_OSX, \
-    BaseTest
+from test._utils import MenuUtils, surface, PygameEventUtils, BaseTest
 
 import pygame
 import pygame_menu
@@ -31,9 +30,6 @@ class MenuBarWidgetTest(BaseTest):
         """
         Test menubar widget.
         """
-        if SYS_PLATFORM_OSX:
-            return
-
         menu = MenuUtils.generic_menu()
         for mode in (MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_NONE, MENUBAR_STYLE_SIMPLE,
                      MENUBAR_STYLE_UNDERLINE, MENUBAR_STYLE_UNDERLINE_TITLE,
