@@ -1793,6 +1793,10 @@ class MenuTest(BaseRSTest):
 
         menu.update(PygameEventUtils.enter_window())
         menu.update(PygameEventUtils.leave_window())
+        self.assertEqual(menu.get_last_update_mode()[0], pygame_menu.events.MENU_LAST_MOUSE_LEAVE_WINDOW)
+
+        menu.update([])
+        self.assertEqual(menu.get_last_update_mode()[0], pygame_menu.events.MENU_LAST_NONE)
 
     def test_theme_params(self) -> None:
         """

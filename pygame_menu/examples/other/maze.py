@@ -432,15 +432,16 @@ class MazeApp(object):
 
         # Create about menu
         menu_about = pygame_menu.Menu(
-            height=self._screen_width,
+            height=self._screen_width + 20,
             mouse_motion_selection=True,
-            position=(645, 25, False),
+            position=(645, 8, False),
             theme=theme,
             title='',
             width=240
         )
         menu_about.add.label('pygame-menu\nMaze', font_name=pygame_menu.font.FONT_FIRACODE_BOLD, font_size=25,
                              margin=(0, 5))
+        menu_about.add.vertical_margin(10)
         text = 'Left click to create a wall or move the start and end points.\n' \
                'Hold left CTRL and left click to create a sticky mud patch (whi' \
                'ch reduces movement speed to 1/3).\n'
@@ -1135,8 +1136,8 @@ class MazeApp(object):
         time_taken = end - start
 
         # Print timings
-        print(f'Program finished in {time_taken:.4f} seconds after checking {num_visited}'
-              f' nodes. That is {time_taken / num_visited:.8f} seconds per node.')
+        print(f'Program finished in {time_taken:.4f}s after checking {num_visited}'
+              f' nodes ({time_taken / num_visited:.8f} s/node)')
 
         return False if v_distances[goal_node] == float('inf') else True
 
@@ -1310,10 +1311,19 @@ class MazeApp(object):
         """
         print('Press [ESC] to skip process if Visualize is On')
         while True:
+
             # Application events
             events = pygame.event.get()
-            if self._menu.update(events):  # If menu updated, remove the events
+
+            # Update the menu
+            self._menu.update(events)
+
+            # If a menu widget disable its active state, disable the events, this is due to
+            # user can click outside a dropselection box, and that triggers the disable active
+            # state. If so, the event is destroyed, thus avoiding clicking the canvas
+            if pygame_menu.events.MENU_LAST_WIDGET_DISABLE_ACTIVE_STATE in self._menu.get_last_update_mode()[0]:
                 events = []
+
             for event in events:
                 # User closes
                 if event.type == pygame.QUIT:
