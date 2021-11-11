@@ -4,6 +4,7 @@ https://github.com/ppizarror/pygame-menu
 
 EXAMPLE - MAZE
 Maze solver app, an improved version from https://github.com/ChrisKneller/pygame-pathfinder.
+License: GNU General Public License v3.0
 """
 
 import heapq
@@ -250,10 +251,10 @@ class MazeApp(object):
             """
             Called if the select is changed.
             """
-            for b in (self._menu.get_widget('run_generator'), self._menu.get_widget('run_solver')):
-                b.readonly = False
-                b.is_selectable = True
-                b.set_cursor(pygame_menu.locals.CURSOR_HAND)
+            b = self._menu.get_widget('run_generator')
+            b.readonly = False
+            b.is_selectable = True
+            b.set_cursor(pygame_menu.locals.CURSOR_HAND)
 
         def button_onmouseover(w: 'pygame_menu.widgets.Widget', _) -> None:
             """
@@ -364,7 +365,6 @@ class MazeApp(object):
         btn = self._menu.add.button(
             'Run Generator',
             self._run_generator,
-            background_color=(75, 79, 81),
             button_id='run_generator',
             font_size=20,
             margin=(0, 30),
@@ -372,8 +372,6 @@ class MazeApp(object):
         )
         btn.readonly = True
         btn.is_selectable = False
-        btn.set_onmouseover(button_onmouseover)
-        btn.set_onmouseleave(button_onmouseleave)
 
         self._menu.add.label(
             'Maze Solver',
@@ -390,7 +388,6 @@ class MazeApp(object):
             default=0,
             dropselect_id='solver',
             font_size=16,
-            onchange=onchange_dropselect,
             padding=0,
             placeholder='Select one',
             selection_box_height=5,
@@ -402,17 +399,15 @@ class MazeApp(object):
             shadow_width=20
         )
         self._menu.add.vertical_margin(10)
-        btn = self._menu.add.button(
+        self._menu.add.button(
             'Run Solver',
             self._run_solver,
-            background_color=(75, 79, 81),
             button_id='run_solver',
+            cursor=pygame_menu.locals.CURSOR_HAND,
             font_size=20,
             margin=(0, 75),
             shadow_width=10,
         )
-        btn.set_onmouseover(button_onmouseover)
-        btn.set_onmouseleave(button_onmouseleave)
 
         # Clears
         btn = self._menu.add.button(
@@ -420,12 +415,69 @@ class MazeApp(object):
             self._clear_maze,
             background_color=(205, 92, 92),
             button_id='clear',
+            cursor=pygame_menu.locals.CURSOR_HAND,
             font_size=20,
             margin=(0, 30),
             shadow_width=10,
         )
         btn.set_onmouseover(button_onmouseover_clear)
         btn.set_onmouseleave(button_onmouseleave_clear)
+        btn.translate(-50, 0)
+
+        # Create about menu
+        menu_about = pygame_menu.Menu(
+            height=self._screen_width,
+            mouse_motion_selection=True,
+            position=(640, 25, False),
+            theme=theme,
+            title='',
+            width=240
+        )
+        menu_about.add.label('pygame-menu\nMaze', font_name=pygame_menu.font.FONT_FIRACODE_BOLD, font_size=25,
+                             margin=(0, 5))
+        text = 'Left click to create a wall or move the start and end points.\n' \
+               'Hold left CTRL and left click to create a sticky mud patch (whi' \
+               'ch reduces movement speed to 1/3).\n'
+        text += 'The point of these mud patches is to showcase Dijkstra\'s algor' \
+                'ithm (first) and A* (second) by adjusting the "distances" betwe' \
+                'en the nodes.\n\n'
+        text += 'After a pathfinding algorithm has been run you can drag the sta' \
+                'rt/end points around and see the visualisation update instantly' \
+                ' for the new path using the algorithm that was last run.\n'
+        menu_about.add.label(text, font_name=pygame_menu.font.FONT_FIRACODE, font_size=12,
+                             margin=(0, 5), max_char=-1, padding=0)
+        menu_about.add.label('License: GNU GPL v3.0', margin=(0, 5),
+                             font_name=pygame_menu.font.FONT_FIRACODE, font_size=12)
+        menu_about.add.url('https://github.com/ChrisKneller/pygame-pathfinder', 'ChrisKneller/pygame-pathfinder',
+                           font_name=pygame_menu.font.FONT_FIRACODE, font_size=12,
+                           font_color='#00bfff')
+        menu_about.add.vertical_margin(20)
+        menu_about.add.button(
+            'Back',
+            pygame_menu.events.BACK,
+            button_id='about_back',
+            cursor=pygame_menu.locals.CURSOR_HAND,
+            font_size=20,
+            shadow_width=10
+        )
+
+        btn = self._menu.add.button(
+            'About',
+            menu_about,
+            button_id='about',
+            float=True,
+            font_size=20,
+            margin=(0, 75),
+            shadow_width=10
+        )
+        btn.translate(50, 0)
+
+        # Configure buttons
+        for btn in self._menu.get_widgets(['run_generator', 'run_solver', 'about', 'about_back']):
+            btn.set_onmouseover(button_onmouseover)
+            btn.set_onmouseleave(button_onmouseleave)
+            btn.set_cursor(pygame_menu.locals.CURSOR_HAND)
+            btn.set_background_color((75, 79, 81))
 
     def _clear_maze(self) -> None:
         """
@@ -466,7 +518,7 @@ class MazeApp(object):
         o_visualize = self._visualize
         solver_type = self._menu.get_widget('solver').get_value()[1]
         self._clear_visited()
-        self._update_gui(draw_background=False)
+        self._update_gui()
         if self._visualize:
             pygame.display.flip()
         if solver_type == 0:
@@ -491,12 +543,10 @@ class MazeApp(object):
         """
         if self._visualize:
             for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    exit()
                 if event.type == event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                     self._visualize = False
-                elif event.type == pygame.QUIT:
-                    exit()
-                else:
-                    break
 
     @staticmethod
     def _sleep(ms: float) -> None:
@@ -867,7 +917,7 @@ class MazeApp(object):
                     self._grid[row][column].update(nodetype='blank', is_visited=False, is_path=False)
                 else:
                     self._grid[row][column].update(is_visited=False, is_path=False)
-        self._update_gui(draw_background=False)
+        self._update_gui()
 
     def _update_path(self) -> Union[bool, _MazeType]:
         """
