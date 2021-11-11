@@ -750,7 +750,7 @@ class DropSelect(Widget):
             vi = (title.get_height() - current.get_height()) / 2
 
         current_rect_bg = current.get_rect()
-        current_rect_bg.x += title.get_width() + self._selection_box_margin[0]
+        current_rect_bg.x += title.get_width() + self._selection_box_margin[0] + 1
         current_rect_bg.y += int((self._selection_box_inflate[1]) / 2
                                  + vi + self._selection_box_margin[1])
         current_rect_bg.width = self._selection_box_width
@@ -768,7 +768,7 @@ class DropSelect(Widget):
                 + self._selection_box_margin[0]
                 + self._selection_box_width - h),
             int(self._selection_box_arrow_margin[2]
-                + (self._selection_box_inflate[1] + vi / 2) / 2
+                + (self._selection_box_inflate[1] + vi) / 4
                 + delta_title_height
                 + self._selection_box_margin[1]),
             h,
@@ -1121,6 +1121,7 @@ class DropSelect(Widget):
         self.apply_update_callbacks(events)
 
         if self.readonly or not self.is_visible():
+            self._readonly_check_mouseover(events)
             return False
 
         # Check scroll
@@ -1326,6 +1327,10 @@ class DropSelectManager(AbstractWidgetManager, ABC):
             - ``readonly_selected_color``       (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the widget if readonly mode and is selected
             - ``selection_color``               (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the selected widget; only affects the font color
             - ``selection_effect``              (:py:class:`pygame_menu.widgets.core.Selection`) – Widget selection effect
+            - ``shadow_color``                  (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the widget shadow
+            - ``shadow_radius``                 (int) - Border radius of the shadow
+            - ``shadow_type``                   (str) - Shadow type, it can be ``'rectangular'`` or ``'ellipse'``
+            - ``shadow_width``                  (int) - Width of the shadow. If ``0`` the shadow is disabled
             - ``tab_size``                      (int) – Width of a tab character
 
         kwargs for modifying selection box/option style (Optional)
@@ -1345,10 +1350,10 @@ class DropSelectManager(AbstractWidgetManager, ABC):
             - ``selection_box_bgcolor``                 (tuple, list, str, int, :py:class:`pygame.Color`) – Selection box background color
             - ``selection_box_border_color``            (tuple, list, str, int, :py:class:`pygame.Color`) – Selection box border color
             - ``selection_box_border_width``            (int) – Selection box border width
-            - ``selection_box_height``                  (int) – Selection box height, counted as how many options are packed before showing scroll
+            - ``selection_box_height``                  (int) – Number of the options which can be packed before showing scroll
             - ``selection_box_inflate``                 (tuple) – Selection box inflate on x-axis and y-axis (x, y) in px
             - ``selection_box_margin``                  (tuple, list) – Selection box on x-axis and y-axis (x, y) margin from title in px
-            - ``selection_box_text_margin``             (int) – Selection box text margin (left) in px
+            - ``selection_box_text_margin``             (int) – Left margin of the text inside the selection box in px
             - ``selection_box_width``                   (int) – Selection box width in px. If ``0`` compute automatically to fit placeholder
             - ``selection_infinite``                    (bool) – If ``True`` selection can rotate through bottom/top
             - ``selection_option_border_color``         (tuple, list, str, int, :py:class:`pygame.Color`) – Option border color
@@ -1445,6 +1450,10 @@ class DropSelectManager(AbstractWidgetManager, ABC):
                                           self._theme.scrollbar_slider_pad)
         scrollbar_thick = kwargs.pop('scrollbar_thick', self._theme.scrollbar_thick)
         scrollbars = kwargs.pop('scrollbars', self._theme.scrollarea_position)
+
+        # Convert to tuple if enabled
+        if isinstance(selection_box_margin, NumberInstance):
+            selection_box_margin = (selection_box_margin, selection_box_margin)
 
         widget = DropSelect(
             default=default,
