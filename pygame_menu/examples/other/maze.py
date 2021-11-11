@@ -547,7 +547,7 @@ class MazeApp(object):
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     exit()
-                if event.type == event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                     self._visualize = False
 
     @staticmethod
@@ -897,7 +897,6 @@ class MazeApp(object):
         if draw_background:
             # Draw a black background to set everything on
             self._surface.fill(BACKGROUND)
-            pass
 
         if draw_grid:
             # Draw the grid
