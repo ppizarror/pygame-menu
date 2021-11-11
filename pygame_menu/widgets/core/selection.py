@@ -15,7 +15,7 @@ import pygame_menu
 from pygame_menu.utils import assert_color
 
 from pygame_menu._types import NumberType, ColorType, ColorInputType, Tuple2IntType, \
-    Tuple4IntType, NumberInstance, Optional
+    Tuple4IntType, NumberInstance, Optional, Union
 
 
 class Selection(object):
@@ -32,6 +32,7 @@ class Selection(object):
     :param margin_bottom: Bottom margin
     """
     color: ColorType
+    color_bg: Optional[ColorType]
     margin_bottom: NumberType
     margin_left: NumberType
     margin_right: NumberType
@@ -55,6 +56,7 @@ class Selection(object):
         assert margin_bottom >= 0, 'bottom margin of widget selection cannot be negative'
 
         self.color = (0, 0, 0)  # Main color of the selection effect
+        self.color_bg = None
         self.margin_bottom = margin_bottom
         self.margin_left = margin_left
         self.margin_right = margin_right
@@ -114,6 +116,27 @@ class Selection(object):
         """
         self.color = assert_color(color)
         return self
+
+    def set_background_color(self, color: Union[ColorInputType, 'pygame_menu.BaseImage']) -> 'Selection':
+        """
+        Set the selection background color. It will replace the background color of the widget
+        if selected.
+
+        :param color: Background color
+        :return: Self reference
+        """
+        self.color_bg = color
+        if not isinstance(color, pygame_menu.BaseImage):
+            self.color_bg = assert_color(self.color_bg)
+        return self
+
+    def get_background_color(self) -> Optional[Union[ColorType, 'pygame_menu.BaseImage']]:
+        """
+        Return the background color.
+
+        :return: Background color or None
+        """
+        return self.color_bg
 
     def get_margin(self) -> Tuple4IntType:
         """
