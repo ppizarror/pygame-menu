@@ -7,6 +7,8 @@ Maze solver app, an improved version from https://github.com/ChrisKneller/pygame
 License: GNU General Public License v3.0
 """
 
+__all__ = ['MazeApp']
+
 import heapq
 import pygame
 import pygame_menu
@@ -530,7 +532,7 @@ class MazeApp(object):
         elif solver_type == 2:
             self._path_found = self._xfs(self._grid, self._start_point, self._end_point, x='d')
             self._algorithm_run = 'dfs'
-        elif self._algorithm_run == 'bfs':
+        elif solver_type == 3:
             self._path_found = self._xfs(self._grid, self._start_point, self._end_point, x='b')
             self._algorithm_run = 'bfs'
         self._visualize = o_visualize
