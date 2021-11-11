@@ -73,6 +73,14 @@ class LabelWidgetTest(BaseTest):
         self.assertEqual(label[1].get_title(), 'long so it should split.')
         self.assertEqual(label[2].get_title(), 'The second line')
 
+        # Split label with -1 double \n
+        label = menu.add.label('a\n\nb\n\nc', max_char=-1)
+        self.assertEqual(label[0].get_title(), 'a')
+        self.assertEqual(label[1].get_title(), '')
+        self.assertEqual(label[2].get_title(), 'b')
+        self.assertEqual(label[3].get_title(), '')
+        self.assertEqual(label[4].get_title(), 'c')
+
         # Add underline
         label = menu.add.label('nice')
         self.assertEqual(label._decorator._total_decor(), 0)

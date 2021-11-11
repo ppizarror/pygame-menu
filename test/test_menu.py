@@ -860,6 +860,7 @@ class MenuTest(BaseRSTest):
             button = menu.add.button('button', _some_event)
             wid.append(button.get_id())
         self.assertEqual(len(menu.get_widgets()), 5)
+        self.assertEqual(len(menu.get_widgets(wid)), 5)
 
         # Create a event in pygame
         menu.update(PygameEventUtils.key(ctrl.KEY_MOVE_UP, keydown=True))
