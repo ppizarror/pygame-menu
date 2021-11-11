@@ -561,7 +561,7 @@ class MazeApp(object):
         if self._visualize:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    exit()
+                    self._quit()
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                     self._visualize = False
 
@@ -1294,6 +1294,14 @@ class MazeApp(object):
         y = pos[1] - self._offset[1]
         return 1 <= x <= self._screen_width and 1 <= y <= self._screen_width
 
+    @staticmethod
+    def _quit() -> None:
+        """
+        Quit app.
+        """
+        pygame.quit()
+        exit()
+
     def mainloop(self, test: bool) -> None:
         """
         Executes the main loop of the app.
@@ -1304,10 +1312,12 @@ class MazeApp(object):
         while True:
             # Application events
             events = pygame.event.get()
+            if self._menu.update(events):  # If menu updated, remove the events
+                events = []
             for event in events:
                 # User closes
                 if event.type == pygame.QUIT:
-                    exit()
+                    self._quit()
 
                 # Write in the board
                 elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -1413,9 +1423,6 @@ class MazeApp(object):
                                 self._grid[self._end_point[0]][self._end_point[1]].update(nodetype='start')
 
                     pygame.display.flip()
-
-            # Update the menu events
-            self._menu.update(events)
 
             # Update the app
             self._update_gui()
