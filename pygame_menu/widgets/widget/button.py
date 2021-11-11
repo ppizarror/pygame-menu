@@ -193,16 +193,16 @@ class Button(Widget):
 
     def update(self, events: EventVectorType) -> bool:
         self.apply_update_callbacks(events)
-
         rect = self.get_rect(to_real_position=True)
+
+        if self.readonly or not self.is_visible():
+            self._readonly_check_mouseover(events, rect)
+            return False
 
         for event in events:
 
             # Check mouse over
             self._check_mouseover(event, rect)
-
-            if self.readonly or not self.is_visible():
-                return False
 
             # User applies with key
             if event.type == pygame.KEYDOWN and self._keyboard_enabled and \

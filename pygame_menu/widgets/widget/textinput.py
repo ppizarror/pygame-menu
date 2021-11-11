@@ -1545,7 +1545,10 @@ class TextInput(Widget):
         self._mouse_is_pressed = (mouse_left or mouse_right or mouse_middle) and \
                                  self._mouse_enabled
 
+        rect = self.get_rect(to_real_position=True)
+
         if self.readonly or not self.is_visible():
+            self._readonly_check_mouseover(events, rect)
             return False
 
         # Get time clock
@@ -1560,7 +1563,6 @@ class TextInput(Widget):
 
         updated = False
         events = self._merge_events(events)  # Extend events with custom events
-        rect = self.get_rect(to_real_position=True)
 
         for event in events:
 

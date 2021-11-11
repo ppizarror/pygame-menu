@@ -1710,6 +1710,7 @@ class Frame(Widget):
 
         updated = False
         if self.readonly or not self.is_visible():
+            self._readonly_check_mouseover(events)
             return updated
 
         # Check title events

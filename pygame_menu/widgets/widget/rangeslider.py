@@ -930,6 +930,7 @@ class RangeSlider(Widget):
         self._clock.tick(60)
 
         if self.readonly or not self.is_visible():
+            self._readonly_check_mouseover(events)
             return False
 
         # Get time clock

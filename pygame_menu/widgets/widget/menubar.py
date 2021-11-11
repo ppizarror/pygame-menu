@@ -528,6 +528,7 @@ class MenuBar(Widget):
         self.apply_update_callbacks(events)
 
         if self.readonly or not self.is_visible():
+            self._readonly_check_mouseover(events)
             return False
 
         for event in events:

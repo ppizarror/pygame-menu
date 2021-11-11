@@ -494,6 +494,7 @@ class ScrollBar(Widget):
         self.apply_update_callbacks(events)
 
         if self.readonly or not self.is_visible():
+            self._readonly_check_mouseover(events)
             return False
 
         rect = self.get_rect(to_absolute_position=True)

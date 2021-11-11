@@ -409,6 +409,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         self.apply_update_callbacks(events)
 
         if self.readonly or not self.is_visible():
+            self._readonly_check_mouseover(events)
             return False
 
         input_str = self._input_string
