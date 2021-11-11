@@ -37,7 +37,8 @@ from pygame_menu.widgets import HighlightSelection, NoneSelection, MENUBAR_STYLE
     MENUBAR_STYLE_SIMPLE, MENUBAR_STYLE_TITLE_ONLY, MENUBAR_STYLE_TITLE_ONLY_DIAGONAL, \
     MENUBAR_STYLE_NONE, MENUBAR_STYLE_UNDERLINE, MENUBAR_STYLE_UNDERLINE_TITLE
 from pygame_menu.widgets.core import Selection
-from pygame_menu.widgets.core.widget import WidgetBorderPositionType, WIDGET_FULL_BORDER
+from pygame_menu.widgets.core.widget import WidgetBorderPositionType, WIDGET_FULL_BORDER, \
+    WIDGET_SHADOW_TYPE_ELLIPSE, WIDGET_SHADOW_TYPE_RECTANGULAR
 
 from pygame_menu._types import ColorType, ColorInputType, Tuple, List, Union, Dict, \
     Any, Tuple2IntType, VectorInstance, Tuple2NumberType, NumberType, PaddingType, \
@@ -219,7 +220,17 @@ class Theme(object):
     :param widget_offset: x-axis and y-axis (x, y) offset of widgets within Menu in px respect to top-left corner. If value less than ``1`` use percentage of width/height. It cannot be a negative value
     :type widget_offset: tuple, list
     :param widget_selection_effect: Widget selection effect object. This is visual-only, the selection properties does not affect widget height/width
-    :type widget_selection_effect: :py:class:`pygame_menu.widgets.core.Selection`
+    :type widget_selection_effect: :py:class:`pygame_menu.widgets.core.Selection`, None
+    :param widget_shadow_aa: Widget shadow antialiasing factor, default is x4
+    :type widget_shadow_aa: int
+    :param widget_shadow_color: The color of the widget shadow
+    :type widget_shadow_color: tuple, list, str, int, :py:class:`pygame.Color`
+    :param widget_shadow_radius: The border radius of the widget shadow
+    :type widget_shadow_radius: int
+    :param widget_shadow_type: The shadow type, it can be 'rectangular' or 'ellipse'
+    :type widget_shadow_type: str
+    :param widget_shadow_width: The width of the shadow in px
+    :type widget_shadow_width: int
     :param widget_tab_size: Widget tab size
     :type widget_tab_size: int
     :param widget_url_color: Color of url text links
@@ -297,6 +308,11 @@ class Theme(object):
     widget_offset: Tuple2NumberType
     widget_padding: PaddingType
     widget_selection_effect: 'pygame_menu.widgets.core.Selection'
+    widget_shadow_aa: int
+    widget_shadow_color: ColorType
+    widget_shadow_radius: int
+    widget_shadow_type: str
+    widget_shadow_width: int
     widget_tab_size: int
     widget_url_color: ColorType
 
@@ -322,7 +338,8 @@ class Theme(object):
         self.title_bar_modify_scrollarea = self._get(kwargs, 'title_bar_modify_scrollarea', bool, True)
         self.title_bar_style = self._get(kwargs, 'title_bar_style', int, MENUBAR_STYLE_ADAPTIVE)
         self.title_close_button = self._get(kwargs, 'title_close_button', bool, True)
-        self.title_close_button_background_color = self._get(kwargs, 'title_close_button_background_color', 'color', (255, 255, 255))
+        self.title_close_button_background_color = self._get(kwargs, 'title_close_button_background_color', 'color',
+                                                             (255, 255, 255))
         self.title_close_button_cursor = self._get(kwargs, 'title_close_button_cursor', 'cursor')
         self.title_fixed = self._get(kwargs, 'title_fixed', bool, True)
         self.title_floating = self._get(kwargs, 'title_floating', bool, False)
@@ -332,7 +349,8 @@ class Theme(object):
         self.title_font_shadow = self._get(kwargs, 'title_font_shadow', bool, False)
         self.title_font_shadow_color = self._get(kwargs, 'title_font_shadow_color', 'color', (0, 0, 0))
         self.title_font_shadow_offset = self._get(kwargs, 'title_font_shadow_offset', int, 2)
-        self.title_font_shadow_position = self._get(kwargs, 'title_font_shadow_position', 'position', POSITION_NORTHWEST)
+        self.title_font_shadow_position = self._get(kwargs, 'title_font_shadow_position', 'position',
+                                                    POSITION_NORTHWEST)
         self.title_font_size = self._get(kwargs, 'title_font_size', int, 40)
         self.title_offset = self._get(kwargs, 'title_offset', 'tuple2', (5, -1))
         self.title_updates_pygame_display = self._get(kwargs, 'title_updates_pygame_display', bool, False)
@@ -357,7 +375,8 @@ class Theme(object):
         self.widget_alignment = self._get(kwargs, 'widget_alignment', 'alignment', ALIGN_CENTER)
         self.widget_background_color = self._get(kwargs, 'widget_background_color', 'color_image_none')
         self.widget_background_inflate = self._get(kwargs, 'background_inflate', 'tuple2int', (0, 0))
-        self.widget_background_inflate_to_selection = self._get(kwargs, 'widget_background_inflate_to_selection', bool, False)
+        self.widget_background_inflate_to_selection = self._get(kwargs, 'widget_background_inflate_to_selection', bool,
+                                                                False)
         self.widget_border_color = self._get(kwargs, 'widget_border_color', 'color', (0, 0, 0))
         self.widget_border_inflate = self._get(kwargs, 'widget_border_inflate', 'tuple2int', (0, 0))
         self.widget_border_position = self._get(kwargs, 'widget_border_position', 'position_vector', WIDGET_FULL_BORDER)
@@ -373,17 +392,25 @@ class Theme(object):
         self.widget_font = self._get(kwargs, 'widget_font', 'font', FONT_OPEN_SANS)
         self.widget_font_antialias = self._get(kwargs, 'widget_font_antialias', bool, True)
         self.widget_font_background_color = self._get(kwargs, 'widget_font_background_color', 'color_none', )
-        self.widget_font_background_color_from_menu = self._get(kwargs, 'widget_font_background_color_from_menu', bool, False)
+        self.widget_font_background_color_from_menu = self._get(kwargs, 'widget_font_background_color_from_menu', bool,
+                                                                False)
         self.widget_font_color = self._get(kwargs, 'widget_font_color', 'color', (70, 70, 70))
         self.widget_font_shadow = self._get(kwargs, 'widget_font_shadow', bool, False)
         self.widget_font_shadow_color = self._get(kwargs, 'widget_font_shadow_color', 'color', (0, 0, 0))
         self.widget_font_shadow_offset = self._get(kwargs, 'widget_font_shadow_offset', int, 2)
-        self.widget_font_shadow_position = self._get(kwargs, 'widget_font_shadow_position', 'position', POSITION_NORTHWEST)
+        self.widget_font_shadow_position = self._get(kwargs, 'widget_font_shadow_position', 'position',
+                                                     POSITION_NORTHWEST)
         self.widget_font_size = self._get(kwargs, 'widget_font_size', int, 30)
         self.widget_margin = self._get(kwargs, 'widget_margin', 'tuple2', (0, 0))
         self.widget_offset = self._get(kwargs, 'widget_offset', 'tuple2', (0, 0))
         self.widget_padding = self._get(kwargs, 'widget_padding', PaddingInstance, (4, 8))
-        self.widget_selection_effect = self._get(kwargs, 'widget_selection_effect', Selection, HighlightSelection(margin_x=0, margin_y=0))
+        self.widget_selection_effect = self._get(kwargs, 'widget_selection_effect', Selection,
+                                                 HighlightSelection(margin_x=0, margin_y=0))
+        self.widget_shadow_aa = self._get(kwargs, 'widget_shadow_aa', int, 4)
+        self.widget_shadow_color = self._get(kwargs, 'widget_shadow_color', 'color', (0, 0, 0))
+        self.widget_shadow_radius = self._get(kwargs, 'widget_shadow_radius', int, 0)
+        self.widget_shadow_type = self._get(kwargs, 'widget_shadow_type', str, WIDGET_SHADOW_TYPE_RECTANGULAR)
+        self.widget_shadow_width = self._get(kwargs, 'widget_shadow_width', int, 0)
         self.widget_tab_size = self._get(kwargs, 'widget_tab_size', int, 4)
         self.widget_url_color = self._get(kwargs, 'widget_url_color', 'color', (6, 69, 173))
 
@@ -454,6 +481,9 @@ class Theme(object):
         assert isinstance(self.widget_font_size, int)
         assert isinstance(self.widget_padding, PaddingInstance)
         assert isinstance(self.widget_selection_effect, Selection)
+        assert isinstance(self.widget_shadow_aa, int)
+        assert isinstance(self.widget_shadow_radius, int)
+        assert isinstance(self.widget_shadow_width, int)
         assert isinstance(self.widget_tab_size, int)
 
         # Format colors, this converts all color lists to tuples automatically,
@@ -482,6 +512,7 @@ class Theme(object):
         self.widget_font_background_color = self._format_color_opacity(self.widget_font_background_color, none=True)
         self.widget_font_color = self._format_color_opacity(self.widget_font_color)
         self.widget_font_shadow_color = self._format_color_opacity(self.widget_font_shadow_color)
+        self.widget_shadow_color = self._format_color_opacity(self.widget_shadow_color)
         self.widget_url_color = self._format_color_opacity(self.widget_url_color)
 
         # List to tuple
@@ -517,6 +548,12 @@ class Theme(object):
             'widget border inflate must be equal or greater than zero on both axis'
         assert self.widget_box_inflate[0] >= 0 and self.widget_box_inflate[1] >= 0, \
             'widget box inflate inflate must be equal or greater than zero on both axis'
+        assert self.widget_shadow_width >= 0 and self.widget_shadow_radius >= 0, \
+            'widget shadow width and radius must be equal or greater than zero'
+
+        # Check shadow type
+        assert self.widget_shadow_type in (WIDGET_SHADOW_TYPE_ELLIPSE, WIDGET_SHADOW_TYPE_RECTANGULAR), \
+            'widget shadow type must be ellipse or rectangular'
 
         assert self.cursor_switch_ms > 0, 'cursor switch ms must be greater than zero'
         assert self.fps >= 0, 'fps must be equal or greater than zero'
@@ -528,6 +565,7 @@ class Theme(object):
         assert self.widget_box_border_width >= 0, 'widget border box width must be equal or greater than zero'
         assert self.widget_font_shadow_offset > 0, 'widget font shadow offset must be greater than zero'
         assert self.widget_font_size > 0, 'widget font size must be greater than zero'
+        assert self.widget_shadow_aa >= 1, 'widget shadow antialiasing must be equal or greater than one'
         assert self.widget_tab_size >= 0, 'widget tab size must be equal or greater than zero'
 
         # Color asserts
@@ -796,10 +834,3 @@ THEME_SOLARIZED = Theme(
     title_font_color=(38, 158, 151),
     widget_font_color=(102, 122, 130)
 )
-
-# THEME_WINDOWS = Theme(
-#     background_color=(240, 240, 240),
-#     widget_background_color=(240, 240, 240),
-#     widget_border_color=(168, 168, 168),
-#     widget_border_width=0
-# )
