@@ -25,6 +25,7 @@ import pygame_menu.examples.other.calculator as calculator
 import pygame_menu.examples.other.dynamic_button_append as dynamic_button
 import pygame_menu.examples.other.dynamic_widget_update as dynamic_widget
 import pygame_menu.examples.other.image_background as image_background
+import pygame_menu.examples.other.maze as maze
 import pygame_menu.examples.other.scrollbar as scrollbar
 import pygame_menu.examples.other.scrollbar_area as scrollbar_area
 import pygame_menu.examples.other.ui_solar_system as ui_solarsystem
@@ -208,6 +209,26 @@ class ExamplesTest(BaseRSTest):
         Test background image example.
         """
         image_background.main(test=True)
+
+    def test_example_other_maze(self) -> None:
+        """
+        Test maze app example.
+        """
+        app = maze.MazeApp(rows=10)
+        btn = app._menu.get_widget('clear')
+        app._path_found = True
+        btn.apply()
+        self.assertFalse(app._path_found)
+        app._visualize = False
+        # noinspection PyTypeChecker
+        gen: 'pygame_menu.widgets.DropSelect' = app._menu.get_widget('generator')
+        # noinspection PyTypeChecker
+        sol: 'pygame_menu.widgets.DropSelect' = app._menu.get_widget('solver')
+        for i in range(4):
+            gen.set_value(i)
+            sol.set_value(i)
+            app._run_generator()
+            app._run_solver()
 
     @staticmethod
     def test_example_other_scrollbar() -> None:
