@@ -243,6 +243,13 @@ class WidgetManager(
         selection_effect.set_color(attributes['selection_color'])
         attributes['selection_effect'] = selection_effect
 
+        # shadow
+        attributes['shadow_aa'] = kwargs.pop('shadow_aa', self._theme.widget_shadow_aa)
+        attributes['shadow_color'] = kwargs.pop('shadow_color', self._theme.widget_shadow_color)
+        attributes['shadow_radius'] = kwargs.pop('shadow_radius', self._theme.widget_shadow_radius)
+        attributes['shadow_type'] = kwargs.pop('shadow_type', self._theme.widget_shadow_type)
+        attributes['shadow_width'] = kwargs.pop('shadow_width', self._theme.widget_shadow_width)
+
         # tab_size
         attributes['tab_size'] = kwargs.pop('tab_size',
                                             self._theme.widget_tab_size)
@@ -317,6 +324,14 @@ class WidgetManager(
 
         widget.set_tab_size(
             tab_size=kwargs['tab_size']
+        )
+
+        widget.shadow(
+            aa_amount=kwargs['shadow_aa'],
+            color=kwargs['shadow_color'],
+            corner_radius=kwargs['shadow_radius'],
+            shadow_type=kwargs['shadow_type'],
+            shadow_width=kwargs['shadow_width']
         )
 
         if self._theme.widget_background_inflate_to_selection:

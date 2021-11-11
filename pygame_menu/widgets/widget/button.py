@@ -194,15 +194,15 @@ class Button(Widget):
     def update(self, events: EventVectorType) -> bool:
         self.apply_update_callbacks(events)
 
-        if self.readonly or not self.is_visible():
-            return False
-
         rect = self.get_rect(to_real_position=True)
 
         for event in events:
 
             # Check mouse over
             self._check_mouseover(event, rect)
+
+            if self.readonly or not self.is_visible():
+                return False
 
             # User applies with key
             if event.type == pygame.KEYDOWN and self._keyboard_enabled and \
@@ -300,6 +300,10 @@ class ButtonManager(AbstractWidgetManager, ABC):
             - ``readonly_selected_color``       (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the widget if readonly mode and is selected
             - ``selection_color``               (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the selected widget; only affects the font color
             - ``selection_effect``              (:py:class:`pygame_menu.widgets.core.Selection`) – Widget selection effect
+            - ``shadow_color``                  (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the widget shadow
+            - ``shadow_radius``                 (int) - Border radius of the shadow
+            - ``shadow_type``                   (str) - Shadow type, it can be ``'rectangular'`` or ``'ellipse'``
+            - ``shadow_width``                  (int) - Width of the shadow. If ``0`` the shadow is disabled
             - ``tab_size``                      (int) – Width of a tab character
             - ``underline_color``               (tuple, list, str, int, :py:class:`pygame.Color`, None) – Color of the underline. If ``None`` use the same color of the text
             - ``underline_offset``              (int) – Vertical offset in px. ``2`` by default

@@ -936,6 +936,10 @@ class TableManager(AbstractWidgetManager, ABC):
             - ``max_height``                    (int) – Max height in px. If lower than the frame height a scrollbar will appear on vertical axis. ``None`` by default (same height)
             - ``max_width``                     (int) – Max width in px. If lower than the frame width a scrollbar will appear on horizontal axis. ``None`` by default (same width)
             - ``padding``                       (int, float, tuple, list) – Widget padding according to CSS rules. General shape: (top, right, bottom, left)
+            - ``shadow_color``                  (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the widget shadow
+            - ``shadow_radius``                 (int) - Border radius of the shadow
+            - ``shadow_type``                   (str) - Shadow type, it can be ``'rectangular'`` or ``'ellipse'``
+            - ``shadow_width``                  (int) - Width of the shadow. If ``0`` the shadow is disabled
 
         .. note::
 

@@ -646,6 +646,10 @@ class ColorInputManager(AbstractWidgetManager, ABC):
             - ``repeat_mouse_interval_ms``      (int, float) - Interval between mouse events when held in ms. ``400`` by default
             - ``selection_color``               (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the selected widget; only affects the font color
             - ``selection_effect``              (:py:class:`pygame_menu.widgets.core.Selection`) – Widget selection effect
+            - ``shadow_color``                  (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the widget shadow
+            - ``shadow_radius``                 (int) - Border radius of the shadow
+            - ``shadow_type``                   (str) - Shadow type, it can be ``'rectangular'`` or ``'ellipse'``
+            - ``shadow_width``                  (int) - Width of the shadow. If ``0`` the shadow is disabled
             - ``tab_size``                      (int) – Width of a tab character
 
         .. note::

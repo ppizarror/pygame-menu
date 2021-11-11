@@ -1964,6 +1964,10 @@ class FrameManager(AbstractWidgetManager, ABC):
             - ``scrollbar_slider_pad``          (int, float) – Space between slider and scrollbars borders in px
             - ``scrollbar_thick``               (int) – Scrollbar thickness in px
             - ``scrollbars``                    (str) – Scrollbar position. See :py:mod:`pygame_menu.locals`
+            - ``shadow_color``                  (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the widget shadow
+            - ``shadow_radius``                 (int) - Border radius of the shadow
+            - ``shadow_type``                   (str) - Shadow type, it can be ``'rectangular'`` or ``'ellipse'``
+            - ``shadow_width``                  (int) - Width of the shadow. If ``0`` the shadow is disabled
 
         .. note::
 
@@ -2059,6 +2063,10 @@ class FrameManager(AbstractWidgetManager, ABC):
             - ``scrollbar_slider_pad``          (int, float) – Space between slider and scrollbars borders in px
             - ``scrollbar_thick``               (int) – Scrollbar thickness in px
             - ``scrollbars``                    (str) – Scrollbar position. See :py:mod:`pygame_menu.locals`
+            - ``shadow_color``                  (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the widget shadow
+            - ``shadow_radius``                 (int) - Border radius of the shadow
+            - ``shadow_type``                   (str) - Shadow type, it can be ``'rectangular'`` or ``'ellipse'``
+            - ``shadow_width``                  (int) - Width of the shadow. If ``0`` the shadow is disabled
 
         .. note::
 
