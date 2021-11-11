@@ -23,6 +23,7 @@ Other examples that show specific use cases of the menu are also provided:
     $> python3 -m pygame_menu.examples.other.dynamic_button_append
     $> python3 -m pygame_menu.examples.other.dynamic_widget_update
     $> python3 -m pygame_menu.examples.other.image_background
+    $> python3 -m pygame_menu.examples.other.maze
     $> python3 -m pygame_menu.examples.other.scrollbar
     $> python3 -m pygame_menu.examples.other.scrollbar_area
     $> python3 -m pygame_menu.examples.other.ui_solar_system
@@ -151,6 +152,17 @@ Other - Image background
     :width: 600
 
 Source: `examples/other/image_background.py <https://github.com/ppizarror/pygame-menu/blob/master/pygame_menu/examples/other/image_background.py>`_
+
+
+Other - Maze Pathfinder (GUI)
+-----------------------------
+
+.. image:: ../_static/example_other_maze.gif
+    :align: center
+    :alt: Maze App
+    :width: 600
+
+Source: `examples/other/maze.py <https://github.com/ppizarror/pygame-menu/blob/master/pygame_menu/examples/other/maze.py>`_
 
 
 Other - Solar System (OOP, UI, Advanced, Decorations)
