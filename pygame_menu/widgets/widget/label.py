@@ -282,10 +282,13 @@ class LabelManager(AbstractWidgetManager, ABC):
 
         # Wrap text to Menu width (imply additional calls to render functions)
         if max_char < 0:
-            dummy_attrs = self._filter_widget_attributes(kwargs.copy())
-            dummy = pygame_menu.widgets.Label(title=title)
-            self._configure_widget(dummy, **dummy_attrs)
-            max_char = int(1.0 * self._menu.get_width(inner=True) * len(title) / dummy.get_width())
+            if len(title) > 0:
+                dummy_attrs = self._filter_widget_attributes(kwargs.copy())
+                dummy = pygame_menu.widgets.Label(title=title)
+                self._configure_widget(dummy, **dummy_attrs)
+                max_char = int(1.0 * self._menu.get_width(inner=True) * len(title) / dummy.get_width())
+            else:
+                max_char = 0
 
         # If no overflow
         if len(title) <= max_char or max_char == 0:
