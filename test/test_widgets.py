@@ -19,7 +19,7 @@ from pygame_menu.locals import POSITION_SOUTHEAST, POSITION_NORTH, POSITION_SOUT
     POSITION_EAST, POSITION_WEST, POSITION_CENTER, POSITION_NORTHEAST, \
     POSITION_SOUTHWEST, POSITION_NORTHWEST
 from pygame_menu.widgets import Label, Button
-from pygame_menu.widgets.core.widget import Widget
+from pygame_menu.widgets.core.widget import Widget, AbstractWidgetManager
 
 
 class WidgetsTest(BaseTest):
@@ -29,6 +29,20 @@ class WidgetsTest(BaseTest):
         Setup widgets test.
         """
         test_reset_surface()
+
+    # noinspection PyTypeChecker
+    def test_abstract_widget_manager(self) -> None:
+        """
+        Test abstract widget manager.
+        """
+        wm = AbstractWidgetManager()
+        self.assertRaises(NotImplementedError, lambda: wm._theme)
+        self.assertRaises(NotImplementedError, lambda: wm._add_submenu(None, None))
+        self.assertRaises(NotImplementedError, lambda: wm._filter_widget_attributes({}))
+        self.assertRaises(NotImplementedError, lambda: wm._configure_widget(None))
+        self.assertRaises(NotImplementedError, lambda: wm._check_kwargs({}))
+        self.assertRaises(NotImplementedError, lambda: wm._append_widget(None))
+        self.assertRaises(NotImplementedError, lambda: wm.configure_defaults_widget(None))
 
     def test_abstract_widget(self) -> None:
         """

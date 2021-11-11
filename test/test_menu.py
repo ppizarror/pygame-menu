@@ -262,6 +262,20 @@ class MenuTest(BaseRSTest):
         self.assertEqual(b6.get_col_row_index(), (0, 0, 3))
         self.assertEqual(b7.get_col_row_index(), (0, 1, 4))
 
+        # Test position relative/absolute
+        menu.set_relative_position(50, 50)
+        self.assertEqual(menu._position, (0, 100))
+        menu.set_absolute_position(50, 50)
+        self.assertEqual(menu._position, (50, 50))
+
+        # Test absolute position constructor
+        menu = pygame_menu.Menu('', 200, 300, position=(50, 50))
+        self.assertEqual(menu._position, (200, 150))
+        menu = pygame_menu.Menu('', 200, 300, position=(50, 50, True))
+        self.assertEqual(menu._position, (200, 150))
+        menu = pygame_menu.Menu('', 200, 300, position=(50, 50, False))
+        self.assertEqual(menu._position, (50, 50))
+
     def test_float_position(self) -> None:
         """
         Tests float position.
@@ -663,6 +677,12 @@ class MenuTest(BaseRSTest):
         menu._index = '0'
         self.assertIsNone(menu.get_selected_widget())
         self.assertEqual(menu._index, 0)
+
+        # Add new index
+        btn = menu.add.button('epic')
+        self.assertEqual(menu.get_selected_widget(), btn)
+        menu.unselect_widget()
+        self.assertIsNone(menu.get_selected_widget())
 
     def test_submenu(self) -> None:
         """

@@ -93,7 +93,7 @@ class Menu(Base):
     :param onclose: Event or function executed when closing the Menu. If not ``None`` the menu disables and executes the event or function it points to. If a function (callable) is provided it can be both non-argument or single argument (Menu instance)
     :param onreset: Function executed when resetting the Menu. The function must be non-argument or single argument (Menu instance)
     :param overflow: Enables overflow on x/y axes. If ``False`` then scrollbars will not work and the maximum width/height of the scrollarea is the same as the Menu container. Style: (overflow_x, overflow_y). If ``False`` or ``True`` the value will be set on both axis
-    :param position: Position on x-axis and y-axis (%) respect to the window size
+    :param position: Position on x-axis and y-axis. If the value is only 2 elements, the position is relative to the window width (thus, values must be 0-100%); else, the third element defines if the position is relative or not. If ``(x, y, False)`` the values of ``(x, y)`` are in px
     :param rows: Number of rows of each column, if there's only 1 column ``None`` can be used for no-limit. Also a tuple can be provided for defining different number of rows for each column, for example ``rows=10`` (each column can have a maximum 10 widgets), or ``rows=[2, 3, 5]`` (first column has 2 widgets, second 3, and third 5)
     :param screen_dimension: List/Tuple representing the dimensions the Menu should reference for sizing/positioning (width, height), if ``None`` pygame is queried for the display mode. This value defines the ``window_size`` of the Menu
     :param theme: Menu theme
@@ -143,6 +143,7 @@ class Menu(Base):
     _overflow: Tuple2BoolType
     _position: Tuple2IntType
     _position_default: Tuple2IntType
+    _position_relative: bool
     _prev: Optional[List[Union['Menu', List['Menu']]]]
     _runtime_errors: '_MenuRuntimeErrorConfig'
     _scrollarea: 'ScrollArea'
@@ -193,7 +194,7 @@ class Menu(Base):
             onclose: Optional[Union['_events.MenuAction', Callable[['Menu'], Any], CallableNoArgsType]] = None,
             onreset: Optional[Union[Callable[['Menu'], Any], CallableNoArgsType]] = None,
             overflow: Union[Vector2BoolType, bool] = (True, True),
-            position: Vector2NumberType = (50, 50),
+            position: Union[Vector2NumberType, Tuple[NumberType, NumberType, bool]] = (50, 50, True),
             rows: MenuRowsType = None,
             screen_dimension: Optional[Vector2IntType] = None,
             theme: 'Theme' = THEME_DEFAULT.copy(),
@@ -322,6 +323,12 @@ class Menu(Base):
                     f'than column_min_width ({column_min_width[i]})'
 
         # Element size and position asserts
+        if len(position) == 3:
+            # noinspection PyTypeChecker
+            self._position_relative = position[2]
+            position = position[0:2]
+        else:
+            self._position_relative = True
         assert_vector(position, 2)
 
         # Assert overflow
@@ -437,8 +444,7 @@ class Menu(Base):
         self.resize(
             width=width,
             height=height,
-            screen_dimension=screen_dimension,
-            position=position
+            screen_dimension=screen_dimension
         )
 
         # Init joystick
@@ -569,7 +575,7 @@ class Menu(Base):
             width: NumberType,
             height: NumberType,
             screen_dimension: Optional[Vector2IntType] = None,
-            position: Optional[Vector2NumberType] = None
+            position: Optional[Union[Vector2NumberType, Tuple[NumberType, NumberType, bool]]] = None
     ) -> None:
         """
         Resize the menu to another width/height
@@ -577,7 +583,7 @@ class Menu(Base):
         :param width: Menu width (px)
         :param height: Menu height (px)
         :param screen_dimension: List/Tuple representing the dimensions the Menu should reference for sizing/positioning (width, height), if ``None`` pygame is queried for the display mode. This value defines the ``window_size`` of the Menu
-        :param position: Position on x-axis and y-axis (%) respect to the window size. If ``None`` use the default from the menu constructor
+        :param position: Position on x-axis and y-axis. If the value is only 2 elements, the position is relative to the window width (thus, values must be 0-100%); else, the third element defines if the position is relative or not. If ``(x, y, False)`` the values of ``(x, y)`` are in px. If ``None`` use the default from the menu constructor
         """
         assert isinstance(width, NumberInstance)
         assert isinstance(height, NumberInstance)
@@ -677,7 +683,16 @@ class Menu(Base):
         # Update the menu position
         if position is None:
             position = self._position_default
-        self.set_relative_position(position[0], position[1])
+        else:
+            if len(position) == 3:
+                # noinspection PyTypeChecker
+                self._position_relative = position[2]
+            else:
+                self._position_relative = True
+        if self._position_relative:
+            self.set_relative_position(position[0], position[1])
+        else:
+            self.set_absolute_position(position[0], position[1])
 
     def __copy__(self) -> 'Menu':
         """
@@ -1046,7 +1061,22 @@ class Menu(Base):
             raise ValueError(f'{widget.get_class_id()} is not in Menu, check if exists on the current '
                              f'with menu.get_current().remove_widget(widget)')
         self._select(index, 1, SELECT_WIDGET, False)
+        self.force_surface_cache_update()
         return self
+
+    def unselect_widget(self) -> 'Menu':
+        """
+        Unselects the current widget.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply to
+            :py:meth:`pygame_menu.menu.Menu.get_current` object.
+
+        :return: Self reference
+        """
+        return self.select_widget(None)
 
     def remove_widget(self, widget: Union['Widget', str]) -> 'Menu':
         """
@@ -1705,6 +1735,26 @@ class Menu(Base):
         """
         check_widget_mouseleave(force=True)
         self._top._enabled = False
+        return self
+
+    def set_absolute_position(self, position_x: NumberType, position_y: NumberType) -> 'Menu':
+        """
+        Set the absolute Menu position.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply to
+            :py:meth:`pygame_menu.menu.Menu.get_current` object.
+
+        :param position_x: Left position of the window
+        :param position_y: Top position of the window
+        :return: Self reference
+        """
+        assert isinstance(position_x, NumberInstance)
+        assert isinstance(position_y, NumberInstance)
+        self._position = (position_x, position_y)
+        self._widgets_surface = None  # This forces an update of the widgets
         return self
 
     def set_relative_position(self, position_x: NumberType, position_y: NumberType) -> 'Menu':
