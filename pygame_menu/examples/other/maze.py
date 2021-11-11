@@ -175,6 +175,7 @@ class MazeApp(object):
     Maze class.
     """
 
+    _algorithms: dict
     _diagonals: bool
     _end_point: _Point2
     _grid: _MazeType
@@ -190,8 +191,8 @@ class MazeApp(object):
 
     def __init__(
             self,
-            width: int = 7,
-            rows: int = 85,
+            width: int = 8,
+            rows: int = 75,
             margin: int = 0
     ) -> None:
         """
@@ -231,8 +232,9 @@ class MazeApp(object):
         self._drag_end_point = False
 
         # Used for deciding what to do in different situations
-        self._path_found = False
         self._algorithm_run = False
+        self._algorithms = {0: 'dijkstra', 1: 'astar', 2: 'dfs', 3: 'bfs'}
+        self._path_found = False
 
         # Create the window
         self._clock = pygame.time.Clock()
@@ -297,6 +299,8 @@ class MazeApp(object):
             Changes diagonals
             """
             self._diagonals = value
+            if self._algorithm_run:
+                self._path_found = self._update_path()
 
         theme = pygame_menu.Theme(
             background_color=pygame_menu.themes.TRANSPARENT_COLOR,
@@ -309,7 +313,7 @@ class MazeApp(object):
         self._menu = pygame_menu.Menu(
             height=self._screen_width,
             mouse_motion_selection=True,
-            position=(640, 25, False),
+            position=(645, 25, False),
             theme=theme,
             title='',
             width=240
@@ -349,7 +353,7 @@ class MazeApp(object):
             items=[('Prim', 0),
                    ('Alt Prim', 1),
                    ('Recursive', 2),
-                   ('Terrain', 3)],
+                   ('(+) Terrain', 3)],
             dropselect_id='generator',
             font_size=16,
             onchange=onchange_dropselect,
@@ -430,7 +434,7 @@ class MazeApp(object):
         menu_about = pygame_menu.Menu(
             height=self._screen_width,
             mouse_motion_selection=True,
-            position=(640, 25, False),
+            position=(645, 25, False),
             theme=theme,
             title='',
             width=240
@@ -478,7 +482,8 @@ class MazeApp(object):
         for btn in self._menu.get_widgets(['run_generator', 'run_solver', 'about', 'about_back']):
             btn.set_onmouseover(button_onmouseover)
             btn.set_onmouseleave(button_onmouseleave)
-            btn.set_cursor(pygame_menu.locals.CURSOR_HAND)
+            if not btn.readonly:
+                btn.set_cursor(pygame_menu.locals.CURSOR_HAND)
             btn.set_background_color((75, 79, 81))
 
     def _clear_maze(self) -> None:
@@ -491,6 +496,7 @@ class MazeApp(object):
             for column in range(self._rows):
                 if (row, column) != self._start_point and (row, column) != self._end_point:
                     self._grid[row][column].update(nodetype='blank', is_visited=False, is_path=False)
+        self._clear_visited()
 
     def _run_generator(self) -> None:
         """
@@ -499,30 +505,37 @@ class MazeApp(object):
         if self._visualize:
             ut.set_pygame_cursor(pygame_menu.locals.CURSOR_NO)
         o_visualize = self._visualize
-        self._clear_maze()
         gen_type = self._menu.get_widget('generator').get_value()[1]
+        if gen_type != 3:
+            self._clear_maze()
         if gen_type == 0:
-            self._grid = self._prim()
+            self._grid = self._prim(start_point=self._start_point)
         elif gen_type == 1:
-            self._grid = self._better_prim()
+            self._grid = self._better_prim(start_point=self._start_point)
         elif gen_type == 2:
+            pygame.display.flip()
             self._recursive_division()
         elif gen_type == 3:
             self._random_terrain()
         self._visualize = o_visualize
+        if self._visualize:
+            ut.set_pygame_cursor(pygame_menu.locals.CURSOR_ARROW)
 
     def _run_solver(self) -> None:
         """
         Run the solver.
         """
-        if self._visualize:
-            ut.set_pygame_cursor(pygame_menu.locals.CURSOR_NO)
         o_visualize = self._visualize
         solver_type = self._menu.get_widget('solver').get_value()[1]
-        self._clear_visited()
-        self._update_gui()
         if self._visualize:
             pygame.display.flip()
+        if self._path_found and self._algorithms[solver_type] == self._algorithm_run:
+            self._visualize = False
+        else:
+            self._clear_visited()
+            pygame.display.flip()
+        if self._visualize:
+            ut.set_pygame_cursor(pygame_menu.locals.CURSOR_NO)
         if solver_type == 0:
             self._path_found = self._dijkstra(self._grid, self._start_point, self._end_point)
             self._algorithm_run = 'dijkstra'
@@ -538,6 +551,8 @@ class MazeApp(object):
         self._visualize = o_visualize
         self._grid[self._start_point[0]][self._start_point[1]].update(nodetype='start')
         self._update_path()
+        if self._visualize:
+            ut.set_pygame_cursor(pygame_menu.locals.CURSOR_ARROW)
 
     def _check_esc(self) -> None:
         """
@@ -559,7 +574,7 @@ class MazeApp(object):
         """
         time.sleep(ms)
 
-    def _better_prim(self, mazearray: Optional[_MazeType] = None, start_point: bool = False) -> _MazeType:
+    def _better_prim(self, mazearray: Optional[_MazeType] = None, start_point: Optional[_Point2] = None) -> _MazeType:
         """
         Randomized Prim's algorithm for creating random mazes.
         This version maintains the traditional "maze" look, where a route cannot
@@ -646,12 +661,18 @@ class MazeApp(object):
 
             walls.remove(wall)
 
+        # Iterate through each dormant, if so, change to blank
+        for row in range(self._rows):
+            for column in range(self._rows):
+                if mazearray[row][column].nodetype == 'dormant':
+                    mazearray[row][column].update(nodetype='blank')
+
         mazearray[self._end_point[0]][self._end_point[1]].update(nodetype='end')
         mazearray[self._start_point[0]][self._start_point[1]].update(nodetype='start')
 
         return mazearray
 
-    def _prim(self, mazearray: Optional[_MazeType] = None, start_point: bool = False) -> _MazeType:
+    def _prim(self, mazearray: Optional[_MazeType] = None, start_point: Optional[_Point2] = None) -> _MazeType:
         """
         Randomized Prim's algorithm for creating random mazes.
 
@@ -828,7 +849,7 @@ class MazeApp(object):
                         y += 1
                 if y >= self._rows:
                     y = self._rows - 1
-            self._grid[x][y].update(nodetype="blank")
+            self._grid[x][y].update(nodetype='blank')
             self._draw_square(self._grid, x, y)
             if self._visualize:
                 self._update_square(x, y)
@@ -925,10 +946,8 @@ class MazeApp(object):
         Updates the path.
         """
         self._clear_visited()
-        valid_algorithms = ['dijkstra', 'astar', 'dfs', 'bfs']
-
-        assert self._algorithm_run in valid_algorithms, \
-            f'last algorithm used ({self._algorithm_run}) is not in valid algorithms: {valid_algorithms}'
+        assert self._algorithm_run in self._algorithms.values(), \
+            f'last algorithm used ({self._algorithm_run}) is not in valid algorithms: {self._algorithms.values()}'
 
         visualize = self._visualize
         self._visualize = False
@@ -1281,6 +1300,7 @@ class MazeApp(object):
 
         :param test: If True, runs only 1 frame
         """
+        print('Press [ESC] to skip process if Visualize is On')
         while True:
             # Application events
             events = pygame.event.get()
