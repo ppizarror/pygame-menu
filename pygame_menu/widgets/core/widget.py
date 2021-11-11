@@ -194,6 +194,8 @@ def _check_widget_mouseleave(
 
 
 # Types
+BackgroundSurfaceType = Optional[List[Union['pygame.Rect', 'pygame.Surface',
+                                            Optional[Union[ColorType, 'pygame_menu.BaseImage']]]]]
 CallbackMouseType = Optional[Union[Callable[['Widget', EventType], Any], CallableNoArgsType]]
 CallbackSelectType = Optional[Union[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any], CallableNoArgsType]]
 WidgetBorderPositionType = Union[str, List[str], Tuple[str, ...]]
@@ -225,7 +227,7 @@ class Widget(Base):
     _args: List[Any]
     _background_color: Optional[Union[ColorType, 'pygame_menu.BaseImage']]
     _background_inflate: Tuple2IntType
-    _background_surface: Optional[List[Union['pygame.Rect', 'pygame.Surface']]]
+    _background_surface: BackgroundSurfaceType
     _border_color: ColorType
     _border_inflate: Tuple2IntType
     _border_position: WidgetBorderPositionType
@@ -266,6 +268,7 @@ class Widget(Base):
     _menu: Optional['pygame_menu.Menu']  # Menu which contains the Widget
     _menu_hook: Optional['pygame_menu.Menu']  # Menu the Widget points to (submenu)
     _mouse_enabled: bool
+    _mouseleave_called: bool
     _mouseover: bool  # Check if mouse is over
     _mouseover_called: Optional[bool]  # Check if the mouseover/mouseleave callbacks were called
     _mouseover_check_rect: Callable[[], 'pygame.Rect']
@@ -334,6 +337,7 @@ class Widget(Base):
         self._margin = (0, 0)
         self._max_height = [None, False, True]  # size, width_scale, smooth
         self._max_width = [None, False, True]  # size, height_scale, smooth
+        self._mouseleave_called = False
         self._mouseover = False
         self._mouseover_called = None
         self._padding = (0, 0, 0, 0)  # top, right, bottom, left
@@ -611,6 +615,7 @@ class Widget(Base):
                 except TypeError:
                     self._onmouseover()
                 self._mouseover_called = True
+        self._mouseleave_called = False
 
         # Check previous state
         if check_all_widget_mouseleave:
@@ -653,12 +658,14 @@ class Widget(Base):
         """
         # Check for consistency
         if WIDGET_MOUSEOVER[0] != self or not check_all_widget_mouseleave:
-            if self._onmouseleave is not None and self._mouseover_called:
-                try:
-                    self._onmouseleave(self, event)
-                except TypeError:
-                    self._onmouseleave()
+            if self._onmouseleave is not None and self._mouseover_called or self._onmouseover is None:
+                if self._onmouseleave and not self._mouseleave_called:
+                    try:
+                        self._onmouseleave(self, event)
+                    except TypeError:
+                        self._onmouseleave()
                 self._mouseover_called = False
+                self._mouseleave_called = True
         if check_all_widget_mouseleave:
             check_widget_mouseleave(event)
         return self
@@ -1029,30 +1036,48 @@ class Widget(Base):
         :param rect: If given, use that rect instead of widget rect
         :return: None
         """
-        if self._background_color is None:
+        bg = self._background_color
+        if self.is_selected() and self._selection_effect.get_background_color():
+            bg = self._selection_effect.get_background_color()
+
+        if bg is None:
             return
         if rect is None:
             rect = self.get_rect(inflate=self._get_background_inflate())
 
-        # Create the background surface
-        if self._background_surface is None or self._background_surface[0] != rect:
+        # Create the background surface if none, if the rect changed, or if the background color changed
+        if self._background_surface is None or self._background_surface[0] != rect or \
+                self._background_surface[2] != bg:
             background_surface = make_surface(rect.width, rect.height, alpha=True)
-            if isinstance(self._background_color, pygame_menu.BaseImage):
-                self._background_color.draw(
+            if isinstance(bg, pygame_menu.BaseImage):
+                bg.draw(
                     surface=background_surface,
                     area=background_surface.get_rect(),
                     position=(0, 0)
                 )
             else:
-                background_surface.fill(self._background_color, background_surface.get_rect())
+                background_surface.fill(bg, background_surface.get_rect())
             if self._background_surface is None:
-                self._background_surface = [rect, background_surface]
+                self._background_surface = [rect, background_surface, bg]
             else:
                 self._background_surface[0] = rect
                 self._background_surface[1] = background_surface
+                self._background_surface[2] = bg
 
         # Draw the background surface
         surface.blit(self._background_surface[1], rect)
+
+    def _readonly_check_mouseover(self, events: EventListType, rect: Optional['pygame.Rect'] = None) -> None:
+        """
+        Check mouseover if readonly.
+
+        :param events: Event list
+        :param rect: Rect object
+        """
+        if self.readonly:
+            for event in events:
+                if self._check_mouseover(event, rect):
+                    return
 
     def get_border(self) -> WidgetBorderType:
         """
