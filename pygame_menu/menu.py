@@ -111,6 +111,7 @@ class Menu(Base):
     _columns: int
     _current: 'Menu'
     _decorator: 'Decorator'
+    _disable_exit: bool
     _disable_draw: bool
     _disable_update: bool
     _enabled: bool
@@ -569,6 +570,7 @@ class Menu(Base):
         self._last_update_mode = []
 
         # These can be changed without any major problem
+        self._disable_exit = False
         self._disable_draw = False
         self._disable_widget_update_mousepos_mouseselection = False
         self._disable_update = False
@@ -2145,6 +2147,8 @@ class Menu(Base):
 
         :return: None
         """
+        if self._disable_exit:
+            return
         self.disable()
         pygame.quit()
         try:
@@ -2366,7 +2370,7 @@ class Menu(Base):
             This method should not be used along :py:meth:`pygame_menu.menu.Menu.get_current`,
             for example, ``menu.get_current().update(...)``.
 
-        :param events: Pygame event list
+        :param events: List of pygame events
         :return: ``True`` if the menu updated (or a widget)
         """
         # Check events
@@ -2377,7 +2381,6 @@ class Menu(Base):
         if not self.is_enabled():
             self._current._runtime_errors.throw(self._current._runtime_errors.update,
                                                 'menu is not enabled')
-            return False
         self._current._stats.update += 1
 
         # Call onupdate callback
@@ -2422,7 +2425,7 @@ class Menu(Base):
 
         # Update scroll bars
         elif not selected_widget_disable_frame_update and self._current._scrollarea.update(events):
-            self._current._last_update_mode.append(_events.MENU_LAST_SCROLLBAR)
+            self._current._last_update_mode.append(_events.MENU_LAST_SCROLL_AREA)
             updated = True
 
         # Update the menubar, it may change the status of the widget because
@@ -2449,10 +2452,9 @@ class Menu(Base):
             for event in events:
 
                 # User closes window
-                if event.type == _events.PYGAME_QUIT or (
-                        event.type == pygame.KEYDOWN and event.key == pygame.K_F4 and (
-                        event.mod == pygame.KMOD_LALT or event.mod == pygame.KMOD_RALT)) or \
-                        event.type == _events.PYGAME_WINDOWCLOSE:
+                close_altf4 = event.type == pygame.KEYDOWN and event.key == pygame.K_F4 and (
+                        event.mod == pygame.KMOD_LALT or event.mod == pygame.KMOD_RALT)
+                if event.type == _events.PYGAME_QUIT or close_altf4 or event.type == _events.PYGAME_WINDOWCLOSE:
                     self._current._last_update_mode.append(_events.MENU_LAST_QUIT)
                     self._current._exit()
                     return True

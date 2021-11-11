@@ -122,10 +122,10 @@ class ScrollArea(Base):
     _menubar: 'pygame_menu.widgets.MenuBar'
     _parent_scrollarea: 'ScrollArea'
     _rect: 'pygame.Rect'
-    _scrollbars_props: Tuple[Any, ...]
     _scrollbar_positions: Tuple[str, ...]
     _scrollbar_thick: int
     _scrollbars: List['ScrollBar']
+    _scrollbars_props: Tuple[Any, ...]
     _translate: Tuple2IntType
     _view_rect: 'pygame.Rect'
     _world: 'pygame.Surface'
@@ -1072,7 +1072,7 @@ class ScrollArea(Base):
         :param events: List of pygame events
         :return: ``True`` if updated
         """
-        updated = [0, 0]
+        updated = [False, False]
         for sbar in self._scrollbars:
             if not sbar.is_visible():
                 continue
