@@ -14,6 +14,10 @@ __all__ = [
     'FONT_COMIC_NEUE',
     'FONT_DIGITAL',
     'FONT_FRANCHISE',
+    'FONT_FIRACODE',
+    'FONT_FIRACODE_BOLD',
+    'FONT_FIRACODE_BOLD_ITALIC',
+    'FONT_FIRACODE_ITALIC',
     'FONT_HELVETICA',
     'FONT_MUNRO',
     'FONT_NEVIS',
@@ -47,6 +51,10 @@ FONT_8BIT = __fonts_path__.format('8bit.ttf')
 FONT_BEBAS = __fonts_path__.format('bebas.ttf')
 FONT_COMIC_NEUE = __fonts_path__.format('comic_neue.ttf')
 FONT_DIGITAL = __fonts_path__.format('digital.ttf')
+FONT_FIRACODE = __fonts_path__.format('FiraCode-Regular.ttf')
+FONT_FIRACODE_BOLD = __fonts_path__.format('FiraCode-Bold.ttf')
+FONT_FIRACODE_BOLD_ITALIC = __fonts_path__.format('FiraMono-BoldItalic.ttf')
+FONT_FIRACODE_ITALIC = __fonts_path__.format('FiraMono-RegularItalic.ttf')
 FONT_FRANCHISE = __fonts_path__.format('franchise.ttf')
 FONT_HELVETICA = __fonts_path__.format('helvetica.ttf')
 FONT_MUNRO = __fonts_path__.format('munro.ttf')
@@ -60,7 +68,8 @@ FONT_PT_SERIF = __fonts_path__.format('ptserif_regular.ttf')
 FONT_EXAMPLES = (FONT_8BIT, FONT_BEBAS, FONT_COMIC_NEUE, FONT_DIGITAL, FONT_FRANCHISE,
                  FONT_HELVETICA, FONT_MUNRO, FONT_NEVIS, FONT_OPEN_SANS,
                  FONT_OPEN_SANS_BOLD, FONT_OPEN_SANS_ITALIC, FONT_OPEN_SANS_LIGHT,
-                 FONT_PT_SERIF)
+                 FONT_PT_SERIF, FONT_FIRACODE, FONT_FIRACODE_BOLD, FONT_FIRACODE_ITALIC,
+                 FONT_FIRACODE_BOLD_ITALIC)
 
 # Stores font cache
 _cache = {}
