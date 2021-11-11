@@ -3264,20 +3264,6 @@ class Menu(Base):
         """
         return self._window_size
 
-    def get_widgets(self) -> Tuple['Widget', ...]:
-        """
-        Return the Menu widgets as a tuple.
-
-        .. note::
-
-            This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply to
-            :py:meth:`pygame_menu.menu.Menu.get_current` object.
-
-        :return: Widgets tuple
-        """
-        return tuple(self._widgets)
-
     def get_submenus(self, recursive: bool = False) -> Tuple['Menu', ...]:
         """
         Return the Menu submenus as a tuple.
@@ -3365,6 +3351,26 @@ class Menu(Base):
                 if widget:
                     return widget
         return None
+
+    def get_widgets(self, ids: Optional[Union[List[str], Tuple[str, ...]]] = None) -> Tuple['Widget', ...]:
+        """
+        Return the Menu widgets as a tuple.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply to
+            :py:meth:`pygame_menu.menu.Menu.get_current` object.
+
+        :param ids: Widget id list. If ``None``, return all the widgets, otherwise, return the widgets from that list
+        :return: Widgets tuple
+        """
+        if not ids:
+            return tuple(self._widgets)
+        widgets = []
+        for i in ids:
+            widgets.append(self.get_widget(i, recursive=True))
+        return tuple(widgets)
 
     def reset_value(self, recursive: bool = False) -> 'Menu':
         """
