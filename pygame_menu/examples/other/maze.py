@@ -9,6 +9,7 @@ Maze solver app, an improved version from https://github.com/ChrisKneller/pygame
 import heapq
 import pygame
 import pygame_menu
+import pygame_menu.utils as ut
 import random
 import time
 
@@ -218,10 +219,7 @@ class MazeApp(object):
         self._start_point = (random.randrange(2, rows - 1, 2) - 1, random.randrange(2, rows - 1, 2) - 1)
         self._end_point = (random.randrange(2, rows - 1, 2), random.randrange(2, rows - 1, 2))
 
-        self._grid[self._start_point[0]][self._end_point[1]].update(nodetype='start')
-        self._grid[self._end_point[0]][self._end_point[1]].update(nodetype='end')
-
-        self._diagonals = False
+        self._diagonals = True
         self._visualize = False
 
         # Used for handling click & drag
@@ -245,15 +243,8 @@ class MazeApp(object):
         """
         Setups the menu.
         """
-        theme = pygame_menu.Theme(
-            # background_color=pygame_menu.themes.TRANSPARENT_COLOR,
-            title=False,
-            widget_font=pygame_menu.font.FONT_FIRACODE,
-            widget_font_color=(255, 255, 255),
-            widget_margin=(0, 15),
-            widget_selection_effect=pygame_menu.widgets.NoneSelection()
-        )
 
+        # Creates the events
         # noinspection PyUnusedLocal
         def onchange_dropselect(*args) -> None:
             """
@@ -278,6 +269,40 @@ class MazeApp(object):
             """
             w.set_background_color((75, 79, 81))
 
+        def button_onmouseover_clear(w: 'pygame_menu.widgets.Widget', _) -> None:
+            """
+            Set the background color of buttons if enter.
+            """
+            if w.readonly:
+                return
+            w.set_background_color((139, 0, 0))
+
+        def button_onmouseleave_clear(w: 'pygame_menu.widgets.Widget', _) -> None:
+            """
+            Set the background color of buttons if leave.
+            """
+            w.set_background_color((205, 92, 92))
+
+        def _visualize(value: bool) -> None:
+            """
+            Changes visualize.
+            """
+            self._visualize = value
+
+        def _diagonals(value: bool) -> None:
+            """
+            Changes diagonals
+            """
+            self._diagonals = value
+
+        theme = pygame_menu.Theme(
+            background_color=pygame_menu.themes.TRANSPARENT_COLOR,
+            title=False,
+            widget_font=pygame_menu.font.FONT_FIRACODE,
+            widget_font_color=(255, 255, 255),
+            widget_margin=(0, 15),
+            widget_selection_effect=pygame_menu.widgets.NoneSelection()
+        )
         self._menu = pygame_menu.Menu(
             height=self._screen_width,
             mouse_motion_selection=True,
@@ -287,43 +312,35 @@ class MazeApp(object):
             width=240
         )
 
-        def _visualize(value: bool) -> None:
-            """
-            Changes visualize.
-            """
-            self._visualize = value
-
         self._menu.add.toggle_switch(
             'Visualize',
             self._visualize,
             font_size=20,
-            margin=(0, 30),
+            margin=(0, 5),
             onchange=_visualize,
             state_text_font_color=((0, 0, 0), (0, 0, 0)),
             state_text_font_size=15,
             switch_margin=(15, 0),
             width=80
         )
+        self._menu.add.toggle_switch(
+            'Diagonals',
+            self._diagonals,
+            font_size=20,
+            margin=(0, 30),
+            onchange=_diagonals,
+            state_text_font_color=((0, 0, 0), (0, 0, 0)),
+            switch_margin=(15, 0),
+            toggleswitch_id='diagonals',
+            width=80
+        )
 
-        # self._menu.add.toggle_switch(
-        #     'Diagonals',
-        #     self._diagonals,
-        #     font_size=20,
-        #     margin=(0, 30),
-        #     state_text_font_color=((0, 0, 0), (0, 0, 0)),
-        #     switch_margin=(15, 0),
-        #     toggleswitch_id='diagonals',
-        #     width=80
-        # )
-
-        # Add elements to the menu
         self._menu.add.label(
             'Maze generator',
             font_name=pygame_menu.font.FONT_FIRACODE_BOLD,
             font_size=22,
             margin=(0, 5)
         ).translate(-12, 0)
-
         self._menu.add.dropselect(
             title='',
             items=[('Prim', 0),
@@ -343,8 +360,6 @@ class MazeApp(object):
             selection_option_font_size=20,
             shadow_width=20
         )
-
-        # Run generator button
         self._menu.add.vertical_margin(10)
         btn = self._menu.add.button(
             'Run Generator',
@@ -366,7 +381,6 @@ class MazeApp(object):
             font_size=22,
             margin=(0, 5)
         ).translate(-30, 0)
-
         self._menu.add.dropselect(
             title='',
             items=[('Dijkstra', 0),
@@ -387,27 +401,38 @@ class MazeApp(object):
             selection_option_font_size=20,
             shadow_width=20
         )
-
-        # Run generator button
         self._menu.add.vertical_margin(10)
         btn = self._menu.add.button(
             'Run Solver',
-            self._update_path,
+            self._run_solver,
             background_color=(75, 79, 81),
             button_id='run_solver',
+            font_size=20,
+            margin=(0, 75),
+            shadow_width=10,
+        )
+        btn.set_onmouseover(button_onmouseover)
+        btn.set_onmouseleave(button_onmouseleave)
+
+        # Clears
+        btn = self._menu.add.button(
+            'Clear',
+            self._clear_maze,
+            background_color=(205, 92, 92),
+            button_id='clear',
             font_size=20,
             margin=(0, 30),
             shadow_width=10,
         )
-        btn.readonly = True
-        btn.is_selectable = False
-        btn.set_onmouseover(button_onmouseover)
-        btn.set_onmouseleave(button_onmouseleave)
+        btn.set_onmouseover(button_onmouseover_clear)
+        btn.set_onmouseleave(button_onmouseleave_clear)
 
     def _clear_maze(self) -> None:
         """
         Clear the maze.
         """
+        self._path_found = False
+        self._algorithm_run = False
         for row in range(self._rows):
             for column in range(self._rows):
                 if (row, column) != self._start_point and (row, column) != self._end_point:
@@ -417,6 +442,8 @@ class MazeApp(object):
         """
         Run the generator.
         """
+        if self._visualize:
+            ut.set_pygame_cursor(pygame_menu.locals.CURSOR_NO)
         o_visualize = self._visualize
         self._clear_maze()
         gen_type = self._menu.get_widget('generator').get_value()[1]
@@ -430,6 +457,34 @@ class MazeApp(object):
             self._random_terrain()
         self._visualize = o_visualize
 
+    def _run_solver(self) -> None:
+        """
+        Run the solver.
+        """
+        if self._visualize:
+            ut.set_pygame_cursor(pygame_menu.locals.CURSOR_NO)
+        o_visualize = self._visualize
+        solver_type = self._menu.get_widget('solver').get_value()[1]
+        self._clear_visited()
+        self._update_gui(draw_background=False)
+        if self._visualize:
+            pygame.display.flip()
+        if solver_type == 0:
+            self._path_found = self._dijkstra(self._grid, self._start_point, self._end_point)
+            self._algorithm_run = 'dijkstra'
+        elif solver_type == 1:
+            self._path_found = self._dijkstra(self._grid, self._start_point, self._end_point, astar=True)
+            self._algorithm_run = 'astar'
+        elif solver_type == 2:
+            self._path_found = self._xfs(self._grid, self._start_point, self._end_point, x='d')
+            self._algorithm_run = 'dfs'
+        elif self._algorithm_run == 'bfs':
+            self._path_found = self._xfs(self._grid, self._start_point, self._end_point, x='b')
+            self._algorithm_run = 'bfs'
+        self._visualize = o_visualize
+        self._grid[self._start_point[0]][self._start_point[1]].update(nodetype='start')
+        self._update_path()
+
     def _check_esc(self) -> None:
         """
         Check if ESC button was pressed.
@@ -442,6 +497,15 @@ class MazeApp(object):
                     exit()
                 else:
                     break
+
+    @staticmethod
+    def _sleep(ms: float) -> None:
+        """
+        Sleep time.
+
+        :param ms: Sleep in ms
+        """
+        time.sleep(ms)
 
     def _better_prim(self, mazearray: Optional[_MazeType] = None, start_point: bool = False) -> _MazeType:
         """
@@ -505,7 +569,7 @@ class MazeApp(object):
                 if self._visualize:
                     self._draw_square(mazearray, wall[0], wall[1])
                     self._update_square(wall[0], wall[1])
-                    time.sleep(0.0001)
+                    self._sleep(0.0001)
 
                 # A 'dormant' node (below) is a different type of node I had to create for this algo
                 # otherwise the maze generated doesn't look like a traditional maze.
@@ -522,7 +586,7 @@ class MazeApp(object):
                     if self._visualize:
                         self._draw_square(mazearray, cell[0], cell[1])
                         self._update_square(cell[0], cell[1])
-                        time.sleep(0.0001)
+                        self._sleep(0.0001)
 
                     for cell_neighbour, ntype in self._get_neighbours(cell, n):
                         if mazearray[cell_neighbour[0]][cell_neighbour[1]].nodetype == 'wall':
@@ -594,7 +658,7 @@ class MazeApp(object):
                 if self._visualize:
                     self._draw_square(mazearray, wall[0], wall[1])
                     self._update_square(wall[0], wall[1])
-                    time.sleep(0.000001)
+                    self._sleep(0.000001)
 
                 walls.update(neighbouring_walls)
 
@@ -656,7 +720,7 @@ class MazeApp(object):
                 self._draw_square(self._grid, chamber_left + x_divide, chamber_top + y)
                 if self._visualize:
                     self._update_square(chamber_left + x_divide, chamber_top + y)
-                    time.sleep(sleep_walls)
+                    self._sleep(sleep_walls)
 
         if chamber_height < 3:
             pass
@@ -667,7 +731,7 @@ class MazeApp(object):
                 self._draw_square(self._grid, chamber_left + x, chamber_top + y_divide)
                 if self._visualize:
                     self._update_square(chamber_left + x, chamber_top + y_divide)
-                    time.sleep(sleep_walls)
+                    self._sleep(sleep_walls)
 
         # Base case: stop dividing
         if chamber_width < 3 and chamber_height < 3:
@@ -716,7 +780,7 @@ class MazeApp(object):
             self._draw_square(self._grid, x, y)
             if self._visualize:
                 self._update_square(x, y)
-                time.sleep(sleep)
+                self._sleep(sleep)
 
         # recursively apply the algorithm to all chambers
         for num, chamber in enumerate(chambers):
@@ -757,7 +821,7 @@ class MazeApp(object):
 
                     if self._visualize:
                         self._update_square(node[0], node[1])
-                        time.sleep(0.000001)
+                        self._sleep(0.000001)
 
                 neighbour_cycles += 1
 
@@ -803,7 +867,7 @@ class MazeApp(object):
                     self._grid[row][column].update(nodetype='blank', is_visited=False, is_path=False)
                 else:
                     self._grid[row][column].update(is_visited=False, is_path=False)
-        self._update_gui(draw_background=False, draw_menu=False)
+        self._update_gui(draw_background=False)
 
     def _update_path(self) -> Union[bool, _MazeType]:
         """
@@ -943,6 +1007,7 @@ class MazeApp(object):
 
         # Main algorithm loop
         while current_node != goal_node and len(unvisited_nodes) > 0:
+            self._check_esc()
             if current_node in visited_nodes:
                 if len(queue.show()) == 0:
                     return False
@@ -980,7 +1045,7 @@ class MazeApp(object):
                 # then we update the grid with each loop
                 if self._visualize:
                     self._update_square(current_node[0], current_node[1])
-                    time.sleep(0.000001)
+                    self._sleep(0.000001)
 
             # If there are no nodes in the queue then we return False (no path)
             if len(queue.show()) == 0:
@@ -1098,6 +1163,7 @@ class MazeApp(object):
 
         # Main algorithm loop
         while len(mydeque) > 0:
+            self._check_esc()
             if x == 'd':
                 current_node = mydeque.pop()
             elif x == 'b':
@@ -1125,7 +1191,7 @@ class MazeApp(object):
                 self._draw_square(mazearray, current_node[0], current_node[1])
                 if self._visualize:
                     self._update_square(current_node[0], current_node[1])
-                    time.sleep(0.001)
+                    self._sleep(0.001)
 
                 for neighbour, ntype in self._get_neighbours(current_node, n):
                     mydeque.append(neighbour)
@@ -1165,9 +1231,6 @@ class MazeApp(object):
         :param test: If True, runs only 1 frame
         """
         while True:
-            # Tick
-            self._clock.tick(self._fps)
-
             # Application events
             events = pygame.event.get()
             for event in events:
@@ -1286,8 +1349,14 @@ class MazeApp(object):
             # Update the app
             self._update_gui()
 
+            self._grid[self._start_point[0]][self._start_point[1]].update(nodetype='start')
+            self._grid[self._end_point[0]][self._end_point[1]].update(nodetype='end')
+
             # Flip surface
             pygame.display.flip()
+
+            # Update clock
+            self._clock.tick(self._fps)
 
             # At first loop returns
             if test:
