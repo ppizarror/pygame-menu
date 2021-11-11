@@ -983,6 +983,11 @@ class MenuTest(BaseRSTest):
 
         # Assert append more widgets than number of rows*columns
         column_menu = MenuUtils.generic_menu(columns=2, rows=4, enabled=False)
+
+        # Check move if empty
+        self.assertFalse(column_menu._right())
+        self.assertFalse(column_menu._left())
+
         for _ in range(8):
             column_menu.add.button('test', pygame_menu.events.BACK)
         self.assertRaises(RuntimeError, lambda: column_menu.mainloop(surface, bgfun=dummy_function, disable_loop=True))
@@ -1710,6 +1715,16 @@ class MenuTest(BaseRSTest):
         menu._mouse_motion_selection = True
         menu_top.update(PygameEventUtils.middle_rect_click(wid_g, evtype=pygame.MOUSEBUTTONDOWN))
         self.assertFalse(wid_g.active)
+        self.assertIn(pygame_menu.events.MENU_LAST_WIDGET_DISABLE_ACTIVE_STATE, menu_top.get_last_update_mode()[0])
+
+        # Test same effect but with touchbar
+        menu._mouse_motion_selection = True
+        menu._touchscreen = True
+        menu._touchscreen_motion_selection = True
+        wid_g.active = True
+        menu_top.update(PygameEventUtils.middle_rect_click(wid_g, evtype=pygame.FINGERDOWN))
+        self.assertFalse(wid_g.active)
+        self.assertIn(pygame_menu.events.MENU_LAST_WIDGET_DISABLE_ACTIVE_STATE, menu_top.get_last_update_mode()[0])
 
         # Test mouseover and mouseleave
         test: Any = [None]
@@ -1792,7 +1807,45 @@ class MenuTest(BaseRSTest):
         menu.set_onwindowmouseleave(lambda: print('Window mouse leave'))
 
         menu.update(PygameEventUtils.enter_window())
+        menu._mouseover = True
         menu.update(PygameEventUtils.leave_window())
+        self.assertEqual(menu.get_last_update_mode()[0], pygame_menu.events.MENU_LAST_MOUSE_LEAVE_WINDOW)
+
+        menu.update([])
+        self.assertEqual(menu.get_last_update_mode()[0], pygame_menu.events.MENU_LAST_NONE)
+
+        # Test if not enabled
+        menu.disable()
+        self.assertRaises(RuntimeError, lambda: menu.update([]))
+
+        menu.enable()
+        menu._disable_update = True
+        self.assertFalse(menu.update([]))
+        menu._disable_update = False
+
+        # Test scrollbars
+        menu._scrollarea.update = lambda _: True
+        self.assertTrue(menu.update([]))
+        self.assertEqual(menu.get_last_update_mode()[0], pygame_menu.events.MENU_LAST_SCROLL_AREA)
+        menu._scrollarea.update = lambda _: False
+
+        # Test menubar
+        menu._menubar.update = lambda _: True
+        self.assertTrue(menu.update([]))
+        self.assertEqual(menu.get_last_update_mode()[0], pygame_menu.events.MENU_LAST_MENUBAR)
+        menu._menubar.update = lambda _: False
+
+        # Test quit
+        menu._disable_exit = True
+        self.assertTrue(menu.update([pygame.event.Event(pygame.QUIT)]))
+        self.assertEqual(menu.get_last_update_mode()[0], pygame_menu.events.MENU_LAST_QUIT)
+        self.assertTrue(menu.update([pygame.event.Event(pygame_menu.events.PYGAME_WINDOWCLOSE)]))
+        self.assertEqual(menu.get_last_update_mode()[0], pygame_menu.events.MENU_LAST_QUIT)
+
+        # Test menu close
+        menu._onclose = lambda: None
+        self.assertTrue(menu.update(PygameEventUtils.key(ctrl.KEY_CLOSE_MENU, keydown=True)))
+        self.assertEqual(menu.get_last_update_mode()[0], pygame_menu.events.MENU_LAST_MENU_CLOSE)
 
     def test_theme_params(self) -> None:
         """

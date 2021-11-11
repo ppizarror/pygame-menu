@@ -750,7 +750,7 @@ class DropSelect(Widget):
             vi = (title.get_height() - current.get_height()) / 2
 
         current_rect_bg = current.get_rect()
-        current_rect_bg.x += title.get_width() + self._selection_box_margin[0] + 1
+        current_rect_bg.x += title.get_width() + self._selection_box_margin[0]
         current_rect_bg.y += int((self._selection_box_inflate[1]) / 2
                                  + vi + self._selection_box_margin[1])
         current_rect_bg.width = self._selection_box_width
@@ -834,7 +834,7 @@ class DropSelect(Widget):
                                      + self._selection_box_inflate[0] / 2
                                      + self._selection_box_border_width,
                                      max(title.get_height() + self._selection_box_inflate[1],
-                                         current_rect_bg.height))
+                                         current_rect_bg.height - self.active * self._selection_box_border_width))
         self._surface.blit(title, (0, int(self._selection_box_inflate[1] / 2 + delta_title_height)))
         pygame.draw.rect(self._surface, self._selection_box_bgcolor, current_rect_bg)
         pygame.draw.rect(self._surface, self._selection_box_border_color, current_rect_bg,
