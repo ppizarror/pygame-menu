@@ -123,6 +123,7 @@ class Menu(Base):
     _keyboard_ignore_nonphysical: bool
     _last_scroll_thickness: List[Union[Tuple2IntType, int]]
     _last_selected_type: str
+    _last_update_mode: List[str]
     _mainloop: bool
     _max_row_column_elements: int
     _menubar: 'MenuBar'
@@ -563,6 +564,9 @@ class Menu(Base):
 
         # Controls the behaviour of runtime errors
         self._runtime_errors = _MenuRuntimeErrorConfig()
+
+        # Stores the last update
+        self._last_update_mode = []
 
         # These can be changed without any major problem
         self._disable_draw = False
@@ -2337,6 +2341,21 @@ class Menu(Base):
             return self._current._move_selected_left_right(1)
         return False
 
+    def get_last_update_mode(self) -> List[str]:
+        """
+        Return the update mode.
+
+        .. warning::
+
+            This method should not be used along :py:meth:`pygame_menu.menu.Menu.get_current`,
+            for example, ``menu.get_current().update(...)``.
+
+        :return: Returns a string that represents the update status, see ``pygame_menu.events``. Some also indicate which widget updated in the format ``EVENT_NAME#widget_id``
+        """
+        if len(self._current._last_update_mode) == 0:
+            return [_events.MENU_LAST_NONE]
+        return self._current._last_update_mode
+
     def update(self, events: EventVectorType) -> bool:
         """
         Update the status of the Menu using external events. The update event is
@@ -2347,11 +2366,12 @@ class Menu(Base):
             This method should not be used along :py:meth:`pygame_menu.menu.Menu.get_current`,
             for example, ``menu.get_current().update(...)``.
 
-        :param events: Pygame events as a list
-        :return: ``True`` if mainloop must be stopped
+        :param events: Pygame event list
+        :return: ``True`` if the menu updated (or a widget)
         """
         # Check events
         assert isinstance(events, list)
+        self._current._last_update_mode = []
 
         # If menu is not enabled
         if not self.is_enabled():
@@ -2367,6 +2387,7 @@ class Menu(Base):
             except TypeError:
                 self._current._onupdate()
         if self._current._disable_update:
+            self._current._last_update_mode.append(_events.MENU_LAST_DISABLE_UPDATE)
             return False
 
         # If any widget status changes, set the status as True
@@ -2396,20 +2417,26 @@ class Menu(Base):
 
         # Frames have updated
         if frames_updated:
+            self._current._last_update_mode.append(_events.MENU_LAST_FRAMES)
             updated = True
 
         # Update scroll bars
         elif not selected_widget_disable_frame_update and self._current._scrollarea.update(events):
+            self._current._last_update_mode.append(_events.MENU_LAST_SCROLLBAR)
             updated = True
 
         # Update the menubar, it may change the status of the widget because
         # of the button back/close
         elif self._current._menubar.update(events):
+            self._current._last_update_mode.append(_events.MENU_LAST_MENUBAR)
             updated = True
 
         # Check selected widget
         elif selected_widget is not None and self._current._widget_selected_update and \
                 selected_widget.update(events):
+            self._current._last_update_mode.append(
+                f'{_events.MENU_LAST_SELECTED_WIDGET_EVENT}#{selected_widget.get_id()}'
+            )
             updated = True
 
         # Check others
@@ -2426,6 +2453,7 @@ class Menu(Base):
                         event.type == pygame.KEYDOWN and event.key == pygame.K_F4 and (
                         event.mod == pygame.KMOD_LALT or event.mod == pygame.KMOD_RALT)) or \
                         event.type == _events.PYGAME_WINDOWCLOSE:
+                    self._current._last_update_mode.append(_events.MENU_LAST_QUIT)
                     self._current._exit()
                     return True
 
@@ -2438,52 +2466,63 @@ class Menu(Base):
 
                     if event.key == ctrl.KEY_MOVE_DOWN:
                         if self._current._down():
+                            self._current._last_update_mode.append(_events.MENU_LAST_MOVE_DOWN)
                             updated = True
                             break
 
                     elif event.key == ctrl.KEY_MOVE_UP:
                         if self._current._up():
+                            self._current._last_update_mode.append(_events.MENU_LAST_MOVE_UP)
                             updated = True
                             break
 
                     elif event.key == ctrl.KEY_LEFT:
                         if self._current._left():
+                            self._current._last_update_mode.append(_events.MENU_LAST_MOVE_LEFT)
                             updated = True
                             break
 
                     elif event.key == ctrl.KEY_RIGHT:
                         if self._current._right():
+                            self._current._last_update_mode.append(_events.MENU_LAST_MOVE_RIGHT)
                             updated = True
                             break
 
                     elif event.key == ctrl.KEY_BACK and self._top._prev is not None:
                         self._current._sound.play_close_menu()
                         self.reset(1)  # public, do not use _current
+                        self._current._last_update_mode.append(_events.MENU_LAST_MENU_BACK)
+                        updated = True
 
                     elif event.key == ctrl.KEY_CLOSE_MENU:
                         self._current._sound.play_close_menu()
                         if self._current._close():
+                            self._current._last_update_mode.append(_events.MENU_LAST_MENU_CLOSE)
                             updated = True
 
                 # User moves hat joystick
                 elif event.type == pygame.JOYHATMOTION and self._current._joystick:
                     if event.value == ctrl.JOY_UP:
                         if self._current._down(apply_sound=True):
+                            self._current._last_update_mode.append(_events.MENU_LAST_MOVE_DOWN)
                             updated = True
                             break
 
                     elif event.value == ctrl.JOY_DOWN:
                         if self._current._up(apply_sound=True):
+                            self._current._last_update_mode = _events.MENU_LAST_MOVE_UP
                             updated = True
                             break
 
                     elif event.value == ctrl.JOY_LEFT:
                         if self._current._left(apply_sound=True):
+                            self._current._last_update_mode = _events.MENU_LAST_MOVE_LEFT
                             updated = True
                             break
 
                     elif event.value == ctrl.JOY_RIGHT:
                         if self._current._right(apply_sound=True):
+                            self._current._last_update_mode = _events.MENU_LAST_MOVE_RIGHT
                             updated = True
                             break
 
@@ -2514,6 +2553,7 @@ class Menu(Base):
                         else:
                             pygame.time.set_timer(self._current._joy_event_repeat, ctrl.JOY_DELAY)
                         if sel:
+                            self._current._last_update_mode.append(_events.MENU_LAST_JOY_REPEAT)
                             updated = True
                             break
                     else:
@@ -2525,6 +2565,7 @@ class Menu(Base):
                         sel = self._current._handle_joy_event(True)
                         pygame.time.set_timer(self._current._joy_event_repeat, ctrl.JOY_REPEAT)
                         if sel:
+                            self._current._last_update_mode.append(_events.MENU_LAST_JOY_REPEAT)
                             updated = True
                             break
                     else:
@@ -2547,17 +2588,23 @@ class Menu(Base):
                                 break
 
                         if sel:
+                            self._current._last_update_mode.append(
+                                f'{_events.MENU_LAST_WIDGET_SELECT}#{self._current.get_selected_widget().get_id()}'
+                            )
                             updated = True
                             break
 
                     # If mouse motion selection, clicking will disable the active state
                     # only if the user clicked outside the widget
                     else:
-                        if selected_widget is not None:
+                        if selected_widget is not None and selected_widget.active:
                             focus_rect = selected_widget.get_focus_rect()
                             if not selected_widget_scrollarea.collide(focus_rect, event):
                                 selected_widget.active = False
                                 selected_widget.render()  # Some widgets need to be rendered
+                                self._current._last_update_mode.append(
+                                    f'{_events.MENU_LAST_WIDGET_DISABLE_ACTIVE_STATE}#{selected_widget.get_id()}'
+                                )
                                 updated = True
                                 break
 
@@ -2570,6 +2617,7 @@ class Menu(Base):
                             except TypeError:
                                 self._current._onwindowmouseover()
                             check_widget_mouseleave()
+                        self._current._last_update_mode.append(_events.MENU_LAST_MOUSE_ENTER_WINDOW)
                     else:  # Leave
                         if self._current._onwindowmouseleave is not None:
                             try:
@@ -2584,6 +2632,7 @@ class Menu(Base):
                                 except TypeError:
                                     self._current._onmouseleave()
                             check_widget_mouseleave(force=True)
+                        self._current._last_update_mode.append(_events.MENU_LAST_MOUSE_LEAVE_WINDOW)
 
                 # Mouse motion. It changes the cursor of the mouse if enabled
                 elif event.type == pygame.MOUSEMOTION and self._current._mouse:
@@ -2598,6 +2647,8 @@ class Menu(Base):
                                     self._current._onmouseover(self._current, event)
                                 except TypeError:
                                     self._current._onmouseover()
+                            self._current._last_update_mode.append(_events.MENU_LAST_MOUSE_ENTER_MENU)
+
                     else:
                         if not self._current.collide(event):
                             self._current._mouseover = False
@@ -2608,6 +2659,7 @@ class Menu(Base):
                                     self._current._onmouseleave()
                             mouse_motion_event = None
                             check_widget_mouseleave(force=True)
+                            self._current._last_update_mode.append(_events.MENU_LAST_MOUSE_LEAVE_MENU)
 
                     # If selected widget is active then motion should not select
                     # or change mouseover widget
@@ -2619,6 +2671,7 @@ class Menu(Base):
                     if not hasattr(event, 'rel'):
                         continue
 
+                    # Select if mouse motion
                     sel = False  # Widget has been selected
                     for index in range(len(self._current._widgets)):
                         widget = self._current._widgets[index]
@@ -2632,6 +2685,9 @@ class Menu(Base):
                         if sel:
                             break
                     if sel:
+                        self._current._last_update_mode.append(
+                            f'{_events.MENU_LAST_WIDGET_SELECT_MOTION}#{self._current.get_selected_widget().get_id()}'
+                        )
                         updated = True
                         break
 
@@ -2642,6 +2698,9 @@ class Menu(Base):
                     if selected_widget_scrollarea.collide(selected_widget, event):
                         updated = selected_widget.update([event])
                         if updated:
+                            self._current._last_update_mode.append(
+                                f'{_events.MENU_LAST_SELECTED_WIDGET_BUTTON_UP}#{selected_widget.get_id()}'
+                            )
                             break
 
                 # Touchscreen event:
@@ -2661,16 +2720,22 @@ class Menu(Base):
                                 if not isinstance(widget, Frame):
                                     break
                         if sel:
+                            self._current._last_update_mode.append(
+                                f'{_events.MENU_LAST_WIDGET_SELECT}#{self._current.get_selected_widget().get_id()}'
+                            )
                             updated = True
                             break
 
                     # If touchscreen motion selection, clicking will disable the
                     # active state only if the user clicked outside the widget
                     else:
-                        if selected_widget is not None:
+                        if selected_widget is not None and selected_widget.active:
                             if not selected_widget_scrollarea.collide(selected_widget, event):
                                 selected_widget.active = False
                                 selected_widget.render()  # Some widgets need to be rendered
+                                self._current._last_update_mode.append(
+                                    f'{_events.MENU_LAST_WIDGET_DISABLE_ACTIVE_STATE}#{selected_widget.get_id()}'
+                                )
                                 updated = True
                                 break
 
@@ -2681,6 +2746,9 @@ class Menu(Base):
                     if selected_widget_scrollarea.collide(selected_widget, event):
                         updated = selected_widget.update([event])
                         if updated:
+                            self._current._last_update_mode.append(
+                                f'{_events.MENU_LAST_SELECTED_WIDGET_FINGER_UP}#{selected_widget.get_id()}'
+                            )
                             break
 
                 # Select widgets by touchscreen motion, this is valid only if the
@@ -2704,6 +2772,9 @@ class Menu(Base):
                             if not isinstance(widget, Frame):
                                 break
                     if sel:
+                        self._current._last_update_mode.append(
+                            f'{_events.MENU_LAST_WIDGET_SELECT_MOTION}#{self._current.get_selected_widget().get_id()}'
+                        )
                         updated = True
                         break
 
