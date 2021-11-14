@@ -121,10 +121,10 @@ __email__ = 'pablo@ppizarror.com'
 __keywords__ = 'pygame menu menus gui widget input button pygame-menu image sound ui'
 __license__ = 'MIT'
 __module_name__ = 'pygame-menu'
-__url__ = 'https://pygame-menu.readthedocs.io/en/latest/'
+__url__ = 'https://pygame-menu.readthedocs.io'
 __url_bug_tracker__ = 'https://github.com/ppizarror/pygame-menu/issues'
-__url_documentation__ = 'https://pygame-menu.readthedocs.io/en/latest/'
-__url_source_code__ = 'https://github.com/ppizarror/pygame-menu/tree/master/pygame_menu'
+__url_documentation__ = 'https://pygame-menu.readthedocs.io'
+__url_source_code__ = 'https://github.com/ppizarror/pygame-menu'
 __version__ = pygame_menu.version.ver
 
 """
