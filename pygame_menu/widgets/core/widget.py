@@ -703,8 +703,10 @@ class Widget(Base):
         menu_enabled = True if self._menu is None else self._menu.is_enabled()
 
         # Check if mouse is over the widget, the widget must be visible
-        if self.is_visible() and self._mouse_enabled and \
-                rect.collidepoint(*event.pos) and menu_enabled:
+        if self.is_visible() and \
+                self._mouse_enabled and \
+                hasattr(event, 'pos') and rect.collidepoint(*event.pos) and \
+                menu_enabled:
             if not self._mouseover:
                 self._mouseover = True
                 self.mouseover(event, check_all_widget_mouseleave)
