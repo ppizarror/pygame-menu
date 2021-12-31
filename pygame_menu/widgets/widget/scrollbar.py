@@ -551,7 +551,7 @@ class ScrollBar(Widget):
                     return True
 
             # Mouse enters or leaves the window
-            elif event.type == pygame.ACTIVEEVENT:
+            elif event.type == pygame.ACTIVEEVENT and hasattr(event, 'gain'):
                 mx, my = pygame.mouse.get_pos()
                 if event.gain != 1:  # Leave
                     self._last_mouse_pos = (mx, my)
