@@ -688,7 +688,7 @@ class Widget(Base):
             return False
 
         # If mouse out from window
-        if event.type == pygame.ACTIVEEVENT:
+        if event.type == pygame.ACTIVEEVENT and hasattr(event, 'gain'):
             if event.gain == 1:
                 return False
             else:  # Mouse out from window

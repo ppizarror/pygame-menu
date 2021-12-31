@@ -2611,7 +2611,7 @@ class Menu(Base):
                                 break
 
                 # Mouse enters or leaves the window
-                elif event.type == pygame.ACTIVEEVENT:
+                elif event.type == pygame.ACTIVEEVENT and hasattr(event, 'gain'):
                     if event.gain == 1:  # Enter
                         if self._current._onwindowmouseover is not None:
                             try:
