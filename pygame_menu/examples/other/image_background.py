@@ -65,6 +65,20 @@ def main(test: bool = False) -> None:
         width=WINDOW_SIZE[0] * 0.8
     )
 
+    theme_bg_image = main_menu_theme.copy()
+    theme_bg_image.background_color = pygame_menu.BaseImage(
+        image_path=pygame_menu.baseimage.IMAGE_EXAMPLE_CARBON_FIBER
+    )
+    theme_bg_image.title_font_size = 25
+    menu_with_bg_image = pygame_menu.Menu(
+        height=WINDOW_SIZE[1] * 0.7,
+        onclose=pygame_menu.events.EXIT,
+        theme=theme_bg_image,
+        title='Menu with background image',
+        width=WINDOW_SIZE[0] * 0.8
+    )
+    menu_with_bg_image.add.button('Back', pygame_menu.events.BACK)
+
     widget_colors_theme = pygame_menu.themes.THEME_ORANGE.copy()
     widget_colors_theme.widget_margin = (0, 10)
     widget_colors_theme.widget_padding = 0
@@ -101,6 +115,7 @@ def main(test: bool = False) -> None:
                              font_color=(255, 255, 255), font_size=15
                              ).background_inflate_to_selection_effect()
 
+    main_menu.add.button('Menu with background image', menu_with_bg_image)
     main_menu.add.button('Test different widget colors', widget_colors)
     main_menu.add.button('Another fancy button', lambda: print('This button has been pressed'))
     main_menu.add.button('Quit', pygame_menu.events.EXIT)

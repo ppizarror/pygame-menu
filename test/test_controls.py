@@ -25,7 +25,7 @@ def press(key: str) -> None:
 PY_AUTO_GUI = False
 if 'DISPLAY' in os.environ.keys():
     try:
-        # noinspection PyPackageRequirements
+        # noinspection PyPackageRequirements,PyUnresolvedReferences
         from pyautogui import press
 
         PY_AUTO_GUI = True
