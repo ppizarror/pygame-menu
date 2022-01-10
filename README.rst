@@ -42,6 +42,10 @@ pygame-menu
 .. image:: https://codecov.io/gh/ppizarror/pygame-menu/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/ppizarror/pygame-menu
     :alt: Codecov
+    
+.. image:: https://app.fossa.com/api/projects/git%2Bgithub.com%2Fppizarror%2Fpygame-menu.svg?type=shield
+    :target: https://app.fossa.com/projects/git%2Bgithub.com%2Fppizarror%2Fpygame-menu?ref=badge_shield
+    :alt: FOSSA Status
 
 .. image:: https://img.shields.io/github/issues/ppizarror/pygame-menu
     :target: https://github.com/ppizarror/pygame-menu/issues
