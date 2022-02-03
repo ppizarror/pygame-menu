@@ -57,7 +57,6 @@ class Base(object):
         Update __repr__ from other Base object.
 
         :param obj: External base object to copy from
-        :return: None
         """
         self._class_id__repr__ = obj._class_id__repr__
         self._id__repr__ = obj._id__repr__
@@ -107,7 +106,7 @@ class Base(object):
         Get an attribute value.
 
         :param key: Key of the attribute
-        :param default: Value if does not exists
+        :param default: Value if it does not exist
         :return: Attribute data
         """
         assert isinstance(key, str)

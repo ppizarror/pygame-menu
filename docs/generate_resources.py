@@ -29,7 +29,6 @@ def save_font_image(
     :param filename: File to save the font
     :param font_size: Font size
     :param image_height: Image size in px
-    :return: None
     """
     assert isinstance(font_size, int)
     assert isinstance(image_height, int)
@@ -45,8 +44,6 @@ def save_font_image(
 def generate_fonts_doc() -> None:
     """
     Generate images for all fonts.
-
-    :return: None
     """
     text = 'pygame menu'
     save_font_image(pygame_menu.font.FONT_8BIT, text, '_static/font_8bit.png')

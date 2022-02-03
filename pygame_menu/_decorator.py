@@ -172,8 +172,6 @@ class Decorator(Base):
     def _total_decor(self) -> int:
         """
         Return total number of decorations.
-
-        :return: None
         """
         return len(self._decor[DECOR_TYPE_PREV]) + len(self._decor[DECOR_TYPE_POST])
 
@@ -240,7 +238,7 @@ class Decorator(Base):
             **kwargs
     ) -> str:
         """
-        Adds a bezier curve.
+        Adds a Bézier curve.
 
         kwargs (Optional)
             - ``use_center_positioning``    (bool) – Uses object center position as *(0, 0)*. ``True`` by default
@@ -362,7 +360,7 @@ class Decorator(Base):
             **kwargs
     ) -> str:
         """
-        Adds a unfilled pie.
+        Adds an unfilled pie.
 
         kwargs (Optional)
             - ``use_center_positioning``    (bool) – Uses object center position as *(0, 0)*. ``True`` by default
@@ -901,7 +899,6 @@ class Decorator(Base):
         :param prev: Mode
         :param deco: Decoration lists
         :param surface: Source surface to draw from
-        :return: None
         """
         if len(deco) == 0:
             return
@@ -909,7 +906,7 @@ class Decorator(Base):
         w, h = surface.get_size()
         rect = self._obj.get_rect()
 
-        # If needs update, or the surface size changed, or the rect position changed
+        # If it needs update, or the surface size changed, or the rect position changed
         prev_surf_changed = self._cache_last_status[prev][0] != w or \
                             self._cache_last_status[prev][1] != h
         prev_rect_changed = self._cache_last_status[prev][2] != rect.x or \
@@ -960,7 +957,6 @@ class Decorator(Base):
 
         :param deco: Decoration list
         :param surface: Pygame surface
-        :return: None
         """
         if len(deco) == 0:
             return

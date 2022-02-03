@@ -95,8 +95,8 @@ class ScrollArea(Base):
     :param controls_keyboard: Use keyboard events
     :param controls_mouse: Use mouse events
     :param controls_touchscreen: Use touchscreen events
-    :param extend_x: Px to extend the surface on x axis in px from left. Recommended use only within Menus
-    :param extend_y: Px to extend the surface on y axis in px from top. Recommended use only within Menus
+    :param extend_x: Px to extend the surface on x-axis in px from left. Recommended use only within Menus
+    :param extend_y: Px to extend the surface on y-axis in px from top. Recommended use only within Menus
     :param menubar: Menubar for style compatibility. ``None`` if ScrollArea is not used within a Menu (for example, in Frames)
     :param parent_scrollarea: Parent ScrollArea if the new one is added within another area
     :param scrollarea_id: Scrollarea ID
@@ -290,10 +290,8 @@ class ScrollArea(Base):
     def _make_background_surface(self) -> None:
         """
         Create background surface.
-
-        :return: None
         """
-        # If bg surface is created and it's the same size
+        # If bg surface is created, and it's the same size
         if self._bg_surface is not None and \
                 self._bg_surface.get_width() == self._rect.width and \
                 self._bg_surface.get_height() == self._rect.height:
@@ -314,7 +312,6 @@ class ScrollArea(Base):
         Set parent ScrollArea.
 
         :param parent: Parent ScrollArea
-        :return: None
         """
         assert isinstance(parent, (ScrollArea, type(None)))
         assert parent != self, 'parent scrollarea cannot be set as itself'
@@ -398,8 +395,6 @@ class ScrollArea(Base):
     def _apply_size_changes(self) -> None:
         """
         Apply size changes to scrollbar.
-
-        :return: None
         """
         self._view_rect = self.get_view_rect()
 
@@ -540,7 +535,7 @@ class ScrollArea(Base):
         Return the scroll thickness of the area. If it's hidden return zero.
 
         :param orientation: Orientation of the scroll. See :py:mod:`pygame_menu.locals`
-        :param visible: If ``True`` returns the real thickness depending if it is visible or not
+        :param visible: If ``True`` returns the real thickness depending on if it is visible or not
         :return: Thickness in px
         """
         assert_orientation(orientation)
@@ -705,7 +700,6 @@ class ScrollArea(Base):
         position of the opposite one if it exists.
 
         :param value: New position of the slider
-        :return: None
         """
         for sbar in self._scrollbars:
             if sbar.get_orientation() == ORIENTATION_HORIZONTAL \
@@ -719,7 +713,6 @@ class ScrollArea(Base):
         position of the opposite one if it exists.
 
         :param value: New position of the slider
-        :return: None
         """
         for sbar in self._scrollbars:
             if sbar.get_orientation() == ORIENTATION_VERTICAL \
@@ -943,7 +936,7 @@ class ScrollArea(Base):
         """
         Return parent ScrollArea position.
 
-        :return: Position on x, y axis in px
+        :return: Position on x, y-axis in px
         """
         if self._parent_scrollarea is not None:
             px, py = self._parent_scrollarea.get_position()
@@ -978,7 +971,7 @@ class ScrollArea(Base):
     def get_absolute_view_rect(self) -> 'pygame.Rect':
         """
         Return the ScrollArea absolute view rect clipped if it is not visible by
-        it's parent ScrollArea.
+        its parent ScrollArea.
 
         :return: Clipped absolute view rect
         """

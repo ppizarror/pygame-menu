@@ -71,7 +71,6 @@ def assert_alignment(align: str) -> None:
     Assert that a certain alignment is valid.
 
     :param align: Align value
-    :return: None
     """
     assert isinstance(align, str), f'alignment "{align}" must be a string'
     assert align in (ALIGN_LEFT, ALIGN_CENTER, ALIGN_RIGHT), \
@@ -113,7 +112,6 @@ def assert_cursor(cursor: CursorInputType) -> None:
     Assert a given cursor is valid.
 
     :param cursor: Cursor object
-    :return: None
     """
     assert isinstance(cursor, CursorInputInstance), \
         'cursor instance invalid, it can be None, an integer, ' \
@@ -127,7 +125,6 @@ def assert_list_vector(list_vector: Union[List[Vector2NumberType], Tuple[Vector2
 
     :param list_vector: Numeric list vector
     :param length: Length of the required vector. If ``0`` don't check the length
-    :return: None
     """
     assert isinstance(list_vector, VectorInstance), \
         f'list_vector "{list_vector}" must be a tuple or list'
@@ -140,7 +137,6 @@ def assert_orientation(orientation: str) -> None:
     Assert that a certain widget orientation is valid.
 
     :param orientation: Object orientation
-    :return: None
     """
     assert isinstance(orientation, str), \
         f'orientation "{orientation}" must be a string'
@@ -153,7 +149,6 @@ def assert_position(position: str) -> None:
     Assert that a certain position is valid.
 
     :param position: Object position
-    :return: None
     """
     assert isinstance(position, str), \
         f'position "{position}" must be a string'
@@ -168,7 +163,6 @@ def assert_position_vector(position: Union[str, List[str], Tuple[str, ...]]) -> 
     Assert that a position vector is valid.
 
     :param position: Object position
-    :return: None
     """
     if isinstance(position, str):
         assert_position(position)
@@ -193,7 +187,6 @@ def assert_vector(
     :param num_vector: Numeric vector
     :param length: Length of the required vector. If ``0`` don't check the length
     :param instance: Instance of each item of the vector
-    :return: None
     """
     assert isinstance(num_vector, VectorInstance), \
         f'vector "{num_vector}" must be a list or tuple of {length} items if type {instance}'
@@ -245,7 +238,6 @@ def fill_gradient(
     :param rect: Area to fill; default is surface's rect
     :param vertical: True=vertical; False=horizontal
     :param forward: True=forward; False=reverse
-    :return: None
     """
     if rect is None:
         rect = surface.get_rect()
@@ -388,7 +380,7 @@ def load_pygame_image_file(image_path: str, **kwargs) -> 'pygame.Surface':
         surface = pygame.image.load(image_path)
 
     except pygame.error as exc:
-        # Check if file is not a windows file
+        # Check if file is not a Windows file
         if str(exc) == 'File is not a Windows BMP file':
             pil_invalid_exception = Exception
 
@@ -399,6 +391,7 @@ def load_pygame_image_file(image_path: str, **kwargs) -> 'pygame.Surface':
 
                 pil_invalid_exception = UnidentifiedImageError
                 img_pil = Image.open(image_path)
+                # noinspection PyTypeChecker
                 surface = pygame.image.fromstring(
                     img_pil.tobytes(), img_pil.size, img_pil.mode).convert()
 
@@ -517,7 +510,6 @@ def print_menu_widget_structure(
 
     :param widgets: Menu widgets list
     :param index: Menu index
-    :return: None
     """
     indx = 0
     current_depth = 0
@@ -529,7 +521,6 @@ def print_menu_widget_structure(
         Close frames up to current depth.
 
         :param depth: Depth to close
-        :return: None
         """
         d = current_depth - depth
         for i in range(d):
@@ -544,7 +535,6 @@ def print_menu_widget_structure(
         Print non-menu frames list.
 
         :param w_indx: Current iteration index to print widgets
-        :return: None
         """
         for nmi in list(non_menu_frame_widgets.keys()):
             if nmi == w_indx:
@@ -594,7 +584,6 @@ def set_pygame_cursor(cursor: CursorInputType) -> None:
     Set pygame cursor.
 
     :param cursor: Cursor object
-    :return: None
     """
     try:
         if cursor is not None:
@@ -621,7 +610,6 @@ def warn(message: str, print_stack: bool = True) -> None:
 
     :param message: Message to warn about
     :param print_stack: Print stack trace of the call
-    :return: None
     """
     assert isinstance(message, str)
 
@@ -741,8 +729,8 @@ class ShadowGenerator(object):
     surface are generated with an algorithm, then when one is requested at a specific size the
     closest pre-generated shadow surface is picked and then scaled to the exact size requested.
 
-    By default it creates a four base shadows in a small range of sizes. If you find the shadow
-    appearance unsatisfactory then it is possible to create more closer to the size of the
+    By default, it creates four base shadows in a small range of sizes. If you find the shadow
+    appearance unsatisfactory then it is possible to create closer to the size of the
     elements you are having trouble with.
 
     Source: https://github.com/MyreMylar/pygame_gui with many edits.
@@ -759,7 +747,7 @@ class ShadowGenerator(object):
 
     def clear_short_term_caches(self, force: bool = False) -> None:
         """
-        Empties short term caches so we aren't hanging on to so many surfaces.
+        Empties short term caches, so we aren't hanging on to so many surfaces.
 
         :param force: Force clear
         """
@@ -1010,7 +998,7 @@ class ShadowGenerator(object):
             color: Tuple3IntType = (0, 0, 0)
     ) -> Optional['pygame.Surface']:
         """
-        Creates a ellipse shaped shadow surface at the specified size and stores it for later use.
+        Creates an ellipse shaped shadow surface at the specified size and stores it for later use.
 
         :param width: The width of the shadow to create
         :param height: The height of the shadow to create

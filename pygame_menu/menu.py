@@ -94,7 +94,7 @@ class Menu(Base):
     :param onreset: Function executed when resetting the Menu. The function must be non-argument or single argument (Menu instance)
     :param overflow: Enables overflow on x/y axes. If ``False`` then scrollbars will not work and the maximum width/height of the scrollarea is the same as the Menu container. Style: (overflow_x, overflow_y). If ``False`` or ``True`` the value will be set on both axis
     :param position: Position on x-axis and y-axis. If the value is only 2 elements, the position is relative to the window width (thus, values must be 0-100%); else, the third element defines if the position is relative or not. If ``(x, y, False)`` the values of ``(x, y)`` are in px
-    :param rows: Number of rows of each column, if there's only 1 column ``None`` can be used for no-limit. Also a tuple can be provided for defining different number of rows for each column, for example ``rows=10`` (each column can have a maximum 10 widgets), or ``rows=[2, 3, 5]`` (first column has 2 widgets, second 3, and third 5)
+    :param rows: Number of rows of each column, if there's only 1 column ``None`` can be used for no-limit. Also, a tuple can be provided for defining different number of rows for each column, for example ``rows=10`` (each column can have a maximum 10 widgets), or ``rows=[2, 3, 5]`` (first column has 2 widgets, second 3, and third 5)
     :param screen_dimension: List/Tuple representing the dimensions the Menu should reference for sizing/positioning (width, height), if ``None`` pygame is queried for the display mode. This value defines the ``window_size`` of the Menu
     :param theme: Menu theme
     :param touchscreen: Enable/disable touch action inside the Menu. Only available on pygame 2
@@ -461,7 +461,7 @@ class Menu(Base):
 
         # Init keyboard
         self._keyboard = keyboard_enabled
-        self._keyboard_ignore_nonphysical = True  # Ignores non physical keyboard buttons pressed
+        self._keyboard_ignore_nonphysical = True  # Ignores non-physical keyboard buttons pressed
 
         # Init mouse
         if mouse_motion_selection:
@@ -635,7 +635,7 @@ class Menu(Base):
         self._widget_offset[1] = int(self._widget_offset[1])
 
         # If centering is enabled, but widget offset in the vertical is different
-        # than zero a warning is raised
+        # from zero a warning is raised
         if self._auto_centering and self._widget_offset[1] != 0:
             warn(
                 f'menu is vertically centered (center_content=True), but widget '
@@ -655,7 +655,7 @@ class Menu(Base):
         self._scrollarea_margin[1] = int(self._scrollarea_margin[1])
 
         # If centering is enabled, but ScrollArea margin in the vertical is
-        # different than zero a warning is raised
+        # different from zero a warning is raised
         if self._auto_centering and self._scrollarea_margin[1] != 0:
             warn(
                 f'menu is vertically centered (center_content=True), but '
@@ -999,7 +999,6 @@ class Menu(Base):
 
         :param x: +X in px
         :param y: +Y in px
-        :return: None
         """
         assert isinstance(x, NumberInstance)
         assert isinstance(y, NumberInstance)
@@ -1108,7 +1107,7 @@ class Menu(Base):
             raise ValueError('widget is not in Menu, check if exists on the current '
                              'with menu.get_current().remove_widget(widget)')
         self._widgets.pop(index)
-        self._update_after_remove_or_hidden(index)  # This forces surface update
+        self._update_after_remove_or_hidden(index)  # Forces surface update
         self._stats.removed_widgets += 1
 
         # If widget is within a frame, remove from frame
@@ -1152,7 +1151,6 @@ class Menu(Base):
 
         :param index: Removed index, if ``-1`` then select next index, if equal to ``self._index`` select the same
         :param update_surface: Updates Menu surface
-        :return: None
         """
         # Check if there's more selectable widgets
         n_select = 0
@@ -1187,8 +1185,6 @@ class Menu(Base):
     def _back(self) -> None:
         """
         Go to previous Menu or close if the top Menu is currently displayed.
-
-        :return: None
         """
         if self._top._prev is not None:
             self.reset(1)
@@ -1198,8 +1194,6 @@ class Menu(Base):
     def _update_selection_if_hidden(self) -> None:
         """
         Updates the Menu widget selection if a widget was hidden.
-
-        :return: None
         """
         if len(self._widgets) > 0:
             if self._index != -1:
@@ -1213,8 +1207,6 @@ class Menu(Base):
     def _update_widget_position(self) -> None:
         """
         Update the position of each widget. Also checks widget consistency.
-
-        :return: None
         """
         # Column widgets
         self._widget_columns = {}
@@ -1290,7 +1282,7 @@ class Menu(Base):
             # Update used columns
             self._used_columns = max(self._used_columns, col + 1)
 
-            # Get the next widget, if don't exist use the same
+            # Get the next widget; if it doesn't exist, use the same
             next_widget = widget
             if index < len(self._widgets) - 1:
                 next_widget = self._widgets[index + 1]
@@ -1388,7 +1380,7 @@ class Menu(Base):
                         mod_width -= column_widths[col]
                         non_max -= 1
 
-                # Now, update the rest (non maximum set)
+                # Now, update the rest (non-maximum set)
                 if non_max > 0:
                     for col in range(self._used_columns):
                         if self._column_max_width[col] is None:
@@ -1558,8 +1550,6 @@ class Menu(Base):
         """
         Create the surface used to draw widgets according the required width and
         height.
-
-        :return: None
         """
         self._stats.build_surface += 1
         t0 = time.time()
@@ -1645,7 +1635,6 @@ class Menu(Base):
         duplicated.
 
         :param widget_id: New widget ID
-        :return: None
         """
         assert isinstance(widget_id, str)
         for widget in self._widgets:
@@ -1734,7 +1723,7 @@ class Menu(Base):
 
         .. note::
 
-            This method does not fires ``onclose`` callback. Use ``Menu.close()``
+            This method does not fire ``onclose`` callback. Use ``Menu.close()``
             instead.
 
         :return: Self reference
@@ -1817,7 +1806,7 @@ class Menu(Base):
         :return: Self reference
         """
         self._stats.center_content += 1
-        if len(self._widgets) == 0:  # If this happen, get_widget_max returns an immense value
+        if len(self._widgets) == 0:  # If this happens, get_widget_max returns an immense value
             self._widget_offset[1] = 0
             return self
         if self._widgets_surface is None:
@@ -1993,7 +1982,7 @@ class Menu(Base):
         if not self._current._widget_surface_cache_enabled or \
                 (render or self._current._widget_surface_cache_need_update):
 
-            # This should be update before drawing widgets. As widget
+            # This should be updated before drawing widgets. As widget
             # draw may trigger surface cache updating. Don't move this
             # line or unexpected errors may occur
             self._current._widget_surface_cache_need_update = False
@@ -2144,8 +2133,6 @@ class Menu(Base):
     def _exit(self) -> None:
         """
         Internal exit function.
-
-        :return: None
         """
         if self._disable_exit:
             return
@@ -2176,8 +2163,6 @@ class Menu(Base):
     def _sort_update_frames(self) -> None:
         """
         Sort the update frames (frames which receive updates).
-
-        :return: None
         """
         if len(self._update_frames) <= 1:
             return
@@ -2445,7 +2430,7 @@ class Menu(Base):
         # Check others
         else:
 
-            # If mouse motion enabled, add the current mouse position to event list
+            # If mouse motion enabled, add the current mouse position to the events list
             if self._current._mouse and self._current._mouse_motion_selection:
                 events.append(mouse_motion_current_mouse_position())
 
@@ -2923,7 +2908,7 @@ class Menu(Base):
         Return input data from a Menu. The results are given as a dict object.
         The keys are the ID of each element.
 
-        With ``recursive=True`` it collect also data inside the all sub-menus.
+        With ``recursive=True`` it collects also data inside the all sub-menus.
 
         .. note::
 
@@ -2941,7 +2926,7 @@ class Menu(Base):
         Return input data from a Menu. The results are given as a dict object.
         The keys are the ID of each element.
 
-        With ``recursive=True``: it collect also data inside the all sub-menus.
+        With ``recursive=True``: it collects also data inside the all sub-menus.
 
         :param recursive: Look in Menu and sub-menus
         :param depth: Depth of the input data
@@ -2956,6 +2941,7 @@ class Menu(Base):
         if recursive:
             depth += 1
             for menu in self._submenus.keys():
+                # noinspection PyProtectedMember
                 data_submenu = menu._get_input_data(recursive=recursive, depth=depth)
 
                 # Check if there is a collision between keys
@@ -3098,7 +3084,6 @@ class Menu(Base):
             for example, ``menu.get_current().reset(...)``.
 
         :param menu: Menu object
-        :return: None
         """
         current = self
 
@@ -3179,7 +3164,7 @@ class Menu(Base):
             - ``update_mouse_position``     (bool) – Update mouse position
 
         :param new_index: Widget index
-        :param dwidget: Direction to search if ``new_index`` widget is non selectable
+        :param dwidget: Direction to search if ``new_index`` widget is non-selectable
         :param select_type: Select type identifier
         :param apply_sound: Apply widget sound if selected
         :param kwargs: Optional keyword arguments
@@ -3215,7 +3200,7 @@ class Menu(Base):
         # If new widget is not selectable or visible
         if not new_widget.is_selectable or not new_widget.is_visible():
 
-            # If frame, select the first selectable object
+            # If it is a frame, select the first selectable object
             if isinstance(new_widget, Frame):
                 if dwidget == 1:
                     min_index = new_widget.first_index
@@ -3303,7 +3288,7 @@ class Menu(Base):
         widget_frame = widget.get_frame()
         widget_border = widget.get_border()[1]
 
-        # Compute margin depending of widget position
+        # Compute margin depending on widget position
         _, ry = widget_scroll.get_widget_position_relative_to_view_rect(widget)
         mx = 0
         my = 0
@@ -3318,7 +3303,7 @@ class Menu(Base):
         # The first set the scrolls
         widget_scroll.scroll_to_rect(rect, (mx, my), scroll_parent)
 
-        # The later updates to active object
+        # The latter updates to active object
         widget_scroll.scroll_to_rect(rect, (mx, my), scroll_parent)
 
         return self
@@ -3639,7 +3624,7 @@ class Menu(Base):
 
     def _test_widgets_status(self) -> Tuple[Tuple[Any, ...], ...]:
         """
-        Get the status of each widget as a tuple (position, indices, values, etc).
+        Get the status of each widget as a tuple (position, indices, values, etc.).
 
         :return: Widget status
         """
@@ -3879,16 +3864,12 @@ class Menu(Base):
     def _test_print_widgets(self) -> None:
         """
         Test printing widgets order.
-
-        :return: None
         """
         print_menu_widget_structure(self._widgets, self._index)
 
     def _copy_theme(self) -> None:
         """
         Updates theme reference with a copied one.
-
-        :return: None
         """
         self._theme = self._theme.copy()
 
@@ -3941,7 +3922,7 @@ class _MenuRuntimeErrorConfig(object):
         self.close = True
         self.draw = True
         self.mainloop = True
-        self.update = True  # It should be True, as non active Menus SHOULD NOT receive updates
+        self.update = True  # It should be True, as non-active Menus SHOULD NOT receive updates
 
     @staticmethod
     def throw(throw_runtime: bool, msg: str) -> None:
@@ -3951,7 +3932,6 @@ class _MenuRuntimeErrorConfig(object):
 
         :param throw_runtime: If error is raised
         :param msg: Message
-        :return: None
         """
         if throw_runtime:
             raise RuntimeError(msg)
