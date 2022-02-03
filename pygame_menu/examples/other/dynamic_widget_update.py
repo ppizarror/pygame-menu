@@ -117,7 +117,6 @@ class App(object):
 
         :param widget: Widget to be updated
         :param menu: Menu
-        :return: None
         """
         if self.current == 3:
             t = widget.get_counter_attribute('t', menu.get_clock().get_time() * 0.0075, math.pi)
@@ -132,8 +131,6 @@ class App(object):
     def fake_quit() -> None:
         """
         Function executed by fake quit button.
-
-        :return: None
         """
         print('I said that you cannot quit')
 
@@ -142,7 +139,6 @@ class App(object):
         Change widgets depending on index.
 
         :param index: Index
-        :return: None
         """
         self.current = index
         self.image_widget.set_image(self.modes[index]['image'])
@@ -165,7 +161,6 @@ class App(object):
 
         :param selected: Selector data containing text and index
         :param value: Value from the selected option
-        :return: None
         """
         print('Selected data:', selected)
         self._update_from_selection(value)

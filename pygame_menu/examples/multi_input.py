@@ -27,8 +27,6 @@ def main_background() -> None:
     """
     Background color of the main menu, on this function user can plot
     images, play sounds, etc.
-
-    :return: None
     """
     surface.fill((40, 40, 40))
 
@@ -38,7 +36,6 @@ def check_name_test(value: str) -> None:
     This function tests the text input widget.
 
     :param value: The widget value
-    :return: None
     """
     print(f'User name: {value}')
 
@@ -49,7 +46,6 @@ def update_menu_sound(value: Tuple, enabled: bool) -> None:
 
     :param value: Value of the selector (Label and index)
     :param enabled: Parameter of the selector, (True/False)
-    :return: None
     """
     assert isinstance(value, tuple)
     if enabled:
@@ -65,7 +61,6 @@ def main(test: bool = False) -> None:
     Main program.
 
     :param test: Indicate function is being tested
-    :return: None
     """
 
     # -------------------------------------------------------------------------
@@ -272,7 +267,6 @@ def main(test: bool = False) -> None:
         Test onchange/onreturn.
 
         :param color: Color tuple
-        :return: None
         """
         print('Returned color: ', color)
 

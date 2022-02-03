@@ -25,7 +25,6 @@ def on_button_click(value: str, text: Any = None) -> None:
 
     :param value: Button value
     :param text: Button text
-    :return: None
     """
     if not text:
         print(f'Hello from {value}')
@@ -38,7 +37,6 @@ def paint_background(surface: 'pygame.Surface') -> None:
     Paints a given surface with background color.
 
     :param surface: Pygame surface
-    :return: None
     """
     surface.fill((128, 230, 198))
 
@@ -149,7 +147,6 @@ def main(test: bool = False) -> None:
     Main function.
 
     :param test: Indicate function is being tested
-    :return: None
     """
     screen = create_example_window('Example - Scrolling Menu', WINDOW_SIZE)
 

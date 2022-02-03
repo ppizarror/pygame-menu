@@ -208,7 +208,6 @@ class CalculatorApp(object):
         Press calculator digit.
 
         :param digit: Number or symbol
-        :return: None
         """
         if digit in ('+', '-', 'x', '/'):
             if self.curr != '':

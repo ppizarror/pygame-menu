@@ -17,8 +17,6 @@ surface = create_example_window('Example - Simple', (600, 400))
 def set_difficulty(selected: Tuple, value: Any) -> None:
     """
     Set the difficulty of the game.
-
-    :return: None
     """
     print(f'Set difficulty to {selected[0]} ({value})')
 
@@ -27,8 +25,6 @@ def start_the_game() -> None:
     """
     Function that starts a game. This is raised by the menu button,
     here menu can be disabled, etc.
-
-    :return: None
     """
     global user_name
     print(f'{user_name.get_value()}, Do the job here!')

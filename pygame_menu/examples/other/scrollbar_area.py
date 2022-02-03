@@ -90,7 +90,6 @@ def iter_world(area: 'ScrollArea') -> Generator:
     Iterate through worlds.
 
     :param area: Scroll area
-    :return: None
     """
     for name in itertools.cycle(WORLDS):
         params = WORLDS[name]
@@ -110,7 +109,6 @@ def main(test: bool = False) -> None:
     Main function.
 
     :param test: Indicate function is being tested
-    :return: None
     """
     screen = create_example_window('Example - Scrolling Area', (W_SIZE, H_SIZE))
     clock = pygame.time.Clock()

@@ -49,7 +49,6 @@ def main(test: bool = False) -> None:
     Main function.
 
     :param test: Indicate function is being tested
-    :return: None
     """
     menu.mainloop(surface, disable_loop=test)
 
