@@ -28,7 +28,6 @@ def _append_to_datas(file_path: str, target_folder: str, base_target_folder: str
     :param target_folder: Folder to paste the resources. If empty uses the containing folder of the file as ``base_target_folder+target_folder``
     :param base_target_folder: Base folder of the resource
     :param relative: If ``True`` append ``pygame_menu_folder``
-    :return: None
     """
     global datas
     if relative:

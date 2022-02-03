@@ -337,8 +337,6 @@ class SolarSystemApp(object):
     def add_shooting_star(self) -> None:
         """
         Add a new shooting star to the simulation.
-
-        :return: None
         """
         dx = random.randrange(-25, 25) * random.random()
         dy = random.randrange(-25, 25) * random.random()
@@ -356,8 +354,6 @@ class SolarSystemApp(object):
     def add_star(self) -> None:
         """
         Add a new star to the simulation.
-
-        :return: None
         """
         self.stars.append([
             random.randrange(1, self.menu.get_width()),  # x position
@@ -372,7 +368,6 @@ class SolarSystemApp(object):
 
         :param surface: Surface to draw
         :param args: Optional arguments
-        :return: None
         """
         t = self.menu.get_counter_attribute('t', self.menu.get_clock().get_time() * 0.001)
 
@@ -410,7 +405,6 @@ class SolarSystemApp(object):
 
         :param events: Events
         :param menu: Menu
-        :return: None
         """
         for event in events:
             if event.type == pygame.KEYDOWN:
@@ -435,7 +429,6 @@ class SolarSystemApp(object):
 
         :param widget: Widget to rotate
         :param menu: Widget's menu
-        :return: None
         """
         # Get planet from attributes
         planet: 'Planet' = widget.get_attribute('planet')

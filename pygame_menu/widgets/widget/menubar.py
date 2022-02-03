@@ -189,8 +189,6 @@ class MenuBar(Widget):
         """
         Performs title color and prints a warning if the color is similar to the
         background.
-
-        :return: None
         """
         if background_menu and self._menu is not None:
             c_back = self._menu.get_theme().background_color
@@ -226,7 +224,6 @@ class MenuBar(Widget):
         Set backbox border width in px.
 
         :param width: Width in px
-        :return: None
         """
         assert isinstance(width, int)
         assert width > 0

@@ -72,7 +72,6 @@ def main(test: bool = False) -> None:
     Main function.
 
     :param test: Indicate function is being tested
-    :return: None
     """
     scr_size = (480, 480)
     screen = create_example_window('Example - Scrollbar', scr_size)

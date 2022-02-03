@@ -74,8 +74,6 @@ SYS_PLATFORM_OSX = sys.platform == 'darwin'
 def reset_widgets_over() -> None:
     """
     Reset widget over.
-
-    :return: None
     """
     check_widget_mouseleave(force=True)
 
@@ -83,8 +81,6 @@ def reset_widgets_over() -> None:
 def test_reset_surface() -> None:
     """
     Reset test surface.
-
-    :return: None
     """
     global surface
     surface = pygame.display.set_mode(WINDOW_SIZE)
@@ -233,7 +229,6 @@ class PygameEventUtils(object):
 
         :param widget: Widget object
         :param testmode: Event is in test mode
-        :return: None
         """
         widget.update(PygameEventUtils.key(pygame.K_BACKSPACE, keydown=True, testmode=testmode))
         widget.update(PygameEventUtils.key(pygame.K_DELETE, keydown=True, testmode=testmode))
@@ -271,8 +266,6 @@ class PygameEventUtils(object):
     def release_key_mod() -> None:
         """
         Release pygame key mods.
-
-        :return: None
         """
         # noinspection PyArgumentList
         pygame.key.set_mods(pygame.KMOD_NONE)
@@ -687,7 +680,7 @@ class MenuUtils(object):
 
         :param center_content: Center menu content
         :param column_max_width: List/Tuple representing the maximum width of each column in px, ``None`` equals no limit. For example ``column_max_width=500`` (each column width can be 500px max), or ``column_max_width=(400, 500)`` (first column 400px, second 500). If ``0` is given uses the menu width. This method does not resize the widgets, only determines the dynamic width of the column layout
-        :param column_min_width: List/Tuple representing the minimum width of each column in px. For example ``column_min_width=500`` (each column width is 500px min), or ``column_max_width=(400, 500)`` (first column 400px, second 500). By default it's ``0``. Negative values are not accepted
+        :param column_min_width: List/Tuple representing the minimum width of each column in px. For example ``column_min_width=500`` (each column width is 500px min), or ``column_max_width=(400, 500)`` (first column 400px, second 500). By default, it's ``0``. Negative values are not accepted
         :param columns: Number of columns
         :param enabled: Menu is enabled. If ``False`` Menu cannot be drawn
         :param height: Menu height in px

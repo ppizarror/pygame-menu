@@ -262,7 +262,7 @@ class MazeApp(object):
 
         def button_onmouseover(w: 'pygame_menu.widgets.Widget', _) -> None:
             """
-            Set the background color of buttons if enter.
+            Set the background color of buttons if entered.
             """
             if w.readonly:
                 return
@@ -270,13 +270,13 @@ class MazeApp(object):
 
         def button_onmouseleave(w: 'pygame_menu.widgets.Widget', _) -> None:
             """
-            Set the background color of buttons if leave.
+            Set the background color of buttons if leaved.
             """
             w.set_background_color((75, 79, 81))
 
         def button_onmouseover_clear(w: 'pygame_menu.widgets.Widget', _) -> None:
             """
-            Set the background color of buttons if enter.
+            Set the background color of buttons if entered.
             """
             if w.readonly:
                 return
@@ -284,7 +284,7 @@ class MazeApp(object):
 
         def button_onmouseleave_clear(w: 'pygame_menu.widgets.Widget', _) -> None:
             """
-            Set the background color of buttons if leave.
+            Set the background color of buttons if leaved.
             """
             w.set_background_color((205, 92, 92))
 
@@ -1104,7 +1104,7 @@ class MazeApp(object):
             visited_nodes.add(current_node)
             unvisited_nodes.discard(current_node)
 
-            # Add the distance to the visited distances dictionary (used for traceback)
+            # Add the distance to the visited distances' dictionary (used for traceback)
             v_distances[current_node] = current_distance
 
             # Pygame part: visited nodes mark visited nodes as green
@@ -1121,7 +1121,7 @@ class MazeApp(object):
             # If there are no nodes in the queue then we return False (no path)
             if len(queue.show()) == 0:
                 return False
-            # Otherwise we take the minimum distance as the new current node
+            # Otherwise, we take the minimum distance as the new current node
             else:
                 priority, current_distance, current_node = queue.pop()
 
@@ -1319,7 +1319,7 @@ class MazeApp(object):
             self._menu.update(events)
 
             # If a menu widget disable its active state, disable the events, this is due to
-            # user can click outside a dropselection box, and that triggers the disable active
+            # user can click outside a dropselection box, and that triggers to disable active
             # state. If so, the event is destroyed, thus avoiding clicking the canvas
             if pygame_menu.events.MENU_LAST_WIDGET_DISABLE_ACTIVE_STATE in self._menu.get_last_update_mode()[0]:
                 events = []

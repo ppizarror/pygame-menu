@@ -32,8 +32,6 @@ def main_background() -> None:
     """
     Background color of the main menu, on this function user can plot
     images, play sounds, etc.
-
-    :return: None
     """
     background_image.draw(surface)
 
@@ -43,7 +41,6 @@ def main(test: bool = False) -> None:
     Main program.
 
     :param test: Indicate function is being tested
-    :return: None
     """
     global main_menu
     global sound

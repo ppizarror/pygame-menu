@@ -84,7 +84,6 @@ def check_widget_mouseleave(event: Optional[EventType] = None, force: bool = Fal
 
     :param event: Mouse motion event. If ``None`` this method creates the event
     :param force: If ``True`` calls all mouse leave without checking if the mouse is still over
-    :return: None
     """
     return _check_widget_mouseleave(event, force)
 
@@ -102,7 +101,6 @@ def _check_widget_mouseleave(
     :param event: Mouse motion event. If ``None`` this method creates the event
     :param force: If ``True`` calls all mouse leave without checking if the mouse is still over
     :param recursive: If ``True`` the call is recursive
-    :return: None
     """
     # If no widget is over, return
     if WIDGET_MOUSEOVER[0] is None:
@@ -445,7 +443,7 @@ class Widget(Base):
 
         # Inputs
         self._keyboard_enabled = True
-        self._keyboard_ignore_nonphysical = True  # Ignores non physical keyboard buttons pressed
+        self._keyboard_ignore_nonphysical = True  # Ignores non-physical keyboard buttons pressed
         self._joystick_enabled = True
         self._mouse_enabled = True  # Accept mouse interaction
         self._touchscreen_enabled = True
@@ -454,11 +452,11 @@ class Widget(Base):
         # methods (safe to update)
         self.active = False  # Widget requests focus if selected
         self.configured = False  # Widget has been configured
-        self.force_menu_draw_focus = False  # If True Menu draw focus if widget is selected, don't considering the previous requisites
+        self.force_menu_draw_focus = False  # If True Menu draw focus if widget is selected, don't consider the previous requisites
         self.is_scrollable = False  # Some widgets can be scrolled, such as the Frame
         self.is_selectable = True  # Some widgets cannot be selected like labels
         self.last_surface = None  # Stores the last surface the widget has been drawn
-        self.lock_position = False  # If True, the widget don't updates the position if .set_position() is executed
+        self.lock_position = False  # If True, the widget don't update the position if .set_position() is executed
         self.readonly = False  # If True, widget ignores all input
         self.selection_expand_background = False  # If True, the widget background will inflate to match selection margin if selected
 
@@ -1000,7 +998,7 @@ class Widget(Base):
         Expand the Widget background inflate to match the selection effect
         (the Widget don't require to be selected).
 
-        This is a permanent change; for dynamic purposes, depending if the widget
+        This is a permanent change; for dynamic purposes, depending on if the widget
         is selected or not, setting ``widget.selection_expand_background`` to
         ``True`` may help.
 
@@ -1036,7 +1034,6 @@ class Widget(Base):
 
         :param surface: Surface to fill
         :param rect: If given, use that rect instead of widget rect
-        :return: None
         """
         bg = self._background_color
         if self.is_selected() and self._selection_effect.get_background_color():
@@ -1095,7 +1092,6 @@ class Widget(Base):
         Draw Widget border in the surface.
 
         :param surface: Surface to draw the border
-        :return: None
         """
         if self._border_width == 0 or self._border_color is None:
             return
@@ -1418,7 +1414,6 @@ class Widget(Base):
         classes.
 
         :param surface: Surface to draw
-        :return: None
         """
         raise NotImplementedError('override is mandatory')
 
@@ -1481,7 +1476,6 @@ class Widget(Base):
         Set scrollarea reference. Mostly used for events.
 
         :param scrollarea: Scrollarea object
-        :return: None
         """
         assert isinstance(scrollarea, (type(None), pygame_menu._scrollarea.ScrollArea))
         self._scrollarea = scrollarea
@@ -1604,8 +1598,6 @@ class Widget(Base):
         """
         Apply surface transforms: angle, flip and scaling. Translation is applied
         on Widget positioning.
-
-        :return: None
         """
         if self._angle != 0:
             self._surface = pygame.transform.rotate(self._surface, self._angle)
@@ -1807,7 +1799,7 @@ class Widget(Base):
         if background_color is not None:
             background_color = assert_color(background_color)
 
-            # If background is a color and it's transparent raise a warning
+            # If background is a color, and it's transparent raise a warning
             # Font background color must be opaque, otherwise the results are quite bad
             if len(background_color) == 4 and background_color[3] != 255:
                 background_color = None
@@ -1893,7 +1885,7 @@ class Widget(Base):
 
     def update_font(self, style: Dict[str, Any]) -> 'Widget':
         """
-        Updates the Widget font. This method receives a style dict (non empty).
+        Updates the Widget font. This method receives a style dict (non-empty).
 
         Optional style keys
             - ``antialias``                 (bool) – Font antialias
@@ -2003,8 +1995,6 @@ class Widget(Base):
     def _menu_render(self) -> None:
         """
         Call menu _render if reference is not ``None``.
-
-        :return: None
         """
         if self._menu is not None:
             self._menu._render()
@@ -2012,8 +2002,6 @@ class Widget(Base):
     def _apply_font(self) -> None:
         """
         Function triggered after a font is applied to the widget.
-
-        :return: None
         """
         raise NotImplementedError('override is mandatory')
 
@@ -2119,8 +2107,6 @@ class Widget(Base):
     def _disable_scale(self) -> None:
         """
         Disables Widget scale.
-
-        :return: None
         """
         self._scale[0] = False
         self._scale[1] = 1
@@ -2141,7 +2127,6 @@ class Widget(Base):
         :param scale: Warn about scale
         :param maxwidth: Warn bout maxwidth
         :param maxheight: Warn about maxheight
-        :return: None
         """
         if self._scale[0] and scale:
             warn('widget already has a scaling factor applied. Scaling has '
@@ -2382,7 +2367,7 @@ class Widget(Base):
         .. note::
 
             Translate is only applied when updating the widget position (calling
-            :py:meth:`pygame_menu.widgets.core.widget.Widget.set_position`. This
+            :py:meth:`pygame_menu.widgets.core.widget.Widget.set_position`). This
             is done by Menu when rendering the surface. Thus, the position change
             is not immediate. To force translation update you may call Menu render
             method.
@@ -2398,7 +2383,6 @@ class Widget(Base):
 
         :param x: +X in px
         :param y: +Y in px
-        :return: None
         """
         assert isinstance(x, NumberInstance)
         assert isinstance(y, NumberInstance)
@@ -2425,7 +2409,7 @@ class Widget(Base):
 
         .. note::
 
-            Not all widgets accepts rotation. Also this rotation only affects the
+            Not all widgets accepts rotation. Also, this rotation only affects the
             text or images, the selection or background is not rotated.
 
         .. note::
@@ -2632,32 +2616,24 @@ class Widget(Base):
         """
         Function that is executed when the Widget receives the user focus (is
         selected).
-
-        :return: None
         """
         pass
 
     def _blur(self) -> None:
         """
         Function that is executed when the Widget loses the focus.
-
-        :return: None
         """
         pass
 
     def _configure(self) -> None:
         """
         Function that is executed after the Widget is configured.
-
-        :return: None
         """
         pass
 
     def _append_to_menu(self) -> None:
         """
         Function that is executed after the Widget is appended to the Menu.
-
-        :return: None
         """
         pass
 
@@ -2711,7 +2687,6 @@ class Widget(Base):
             This behavior is deliberately chosen to avoid infinite loops.
 
         :param value: Value to be set on the widget
-        :return: None
         """
         raise ValueError(f'{self.get_class_id()} does not accept value')
 
@@ -2755,7 +2730,7 @@ class Widget(Base):
 
         .. note::
 
-            Update is not performed if the Widget is in ``readonly`` state or
+            Update is not performed if the Widget is in ``readonly`` state, or
             it's hidden. However, ``apply_update_callbacks`` method is called
             in most widgets, except :py:class:`pygame_menu.widgets.NoneWidget`.
 
@@ -2781,7 +2756,7 @@ class Widget(Base):
             def draw_update_function(widget, menu):
                 t = widget.get_attribute('t', 0)
                 t += menu.get_clock().get_time()
-                widget.set_padding(10*(1 + math.sin(t)))) # Oscillating padding
+                widget.set_padding(10*(1 + math.sin(t))) # Oscillating padding
 
             button = menu.add.button('This button updates its padding', None)
             button.set_draw_callback(draw_update_function)
@@ -2898,7 +2873,6 @@ class Widget(Base):
         Add a custom event to the Widget for the next update.
 
         :param event: Custom event
-        :return: None
         """
         self._events.append(event)
 
@@ -2926,10 +2900,10 @@ class Widget(Base):
             origin_position: bool = False
     ) -> 'Widget':
         """
-        Set the floating status. If ``True`` the Widget don't contributes its
+        Set the floating status. If ``True`` the Widget don't contribute its
         width/height to the Menu widget positioning computation (for example,
         the surface area or the column/row layout), and don't add one unit to
-        the rows (use the same vertical place as the previous widget.
+        the rows (use the same vertical place as the previous widget).
 
         For example, before floating:
 
@@ -2950,14 +2924,13 @@ class Widget(Base):
                 ----------------------------
 
         If the Widget is within a Frame, it does not contribute to the
-        width/height of the layout. Also, it is been set to the *(0, 0)* position,
+        width/height of the layout. Also, it is being set to the *(0, 0)* position,
         thus, the only way to move the Widget to a desired position is by
         translating it.
 
         :param float_status: Float status
         :param menu_render: If ``True`` forces the Menu to render instantly; else, rendering is controlled by menu
         :param origin_position: If ``True`` the widget position is set to the top-left position of the Menu if the widget is floating (updated by the Menu render phase)
-        :return: None
         """
         assert isinstance(float_status, bool)
         assert isinstance(menu_render, bool)
@@ -3070,7 +3043,7 @@ class Widget(Base):
 
     def _get_status(self) -> Tuple[Any, ...]:
         """
-        Get the status of the Widget as a tuple (position, indices, values, etc).
+        Get the status of the Widget as a tuple (position, indices, values, etc.).
 
         :return: Data
         """
@@ -3183,7 +3156,6 @@ class AbstractWidgetManager(object):
 
         :param menu: Menu reference
         :param hook: Widget hook
-        :return: None
         """
         raise NotImplementedError('override is mandatory')
 
@@ -3205,7 +3177,6 @@ class AbstractWidgetManager(object):
 
         :param widget: Widget object
         :param kwargs: Optional keywords arguments
-        :return: None
         """
         raise NotImplementedError('override is mandatory')
 
@@ -3215,7 +3186,6 @@ class AbstractWidgetManager(object):
         Check kwargs after widget addition. It should be empty. Raises ``ValueError``.
 
         :param kwargs: Kwargs dict
-        :return: None
         """
         raise NotImplementedError('override is mandatory')
 
@@ -3224,7 +3194,6 @@ class AbstractWidgetManager(object):
         Add a widget to the list of widgets.
 
         :param widget: Widget object
-        :return: None
         """
         raise NotImplementedError('override is mandatory')
 
@@ -3234,6 +3203,5 @@ class AbstractWidgetManager(object):
         the Menu.
 
         :param widget: Widget to be configured
-        :return: None
         """
         raise NotImplementedError('override is mandatory')

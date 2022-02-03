@@ -56,7 +56,6 @@ def play_function(difficulty: List, font: 'pygame.font.Font', test: bool = False
     :param difficulty: Difficulty of the game
     :param font: Pygame font
     :param test: Test method, if ``True`` only one loop is allowed
-    :return: None
     """
     assert isinstance(difficulty, list)
     difficulty = difficulty[0]
@@ -102,7 +101,7 @@ def play_function(difficulty: List, font: 'pygame.font.Font', test: bool = False
                 if e.key == pygame.K_ESCAPE:
                     main_menu.enable()
 
-                    # Quit this function, then skip to loop of main-menu on line 256
+                    # Quit this function, then skip to loop of main-menu on line 223
                     return
 
         # Pass events to main_menu
@@ -125,8 +124,6 @@ def play_function(difficulty: List, font: 'pygame.font.Font', test: bool = False
 def main_background() -> None:
     """
     Function used by menus, draw on background while menu is active.
-
-    :return: None
     """
     global surface
     surface.fill((128, 0, 128))
@@ -137,7 +134,6 @@ def main(test: bool = False) -> None:
     Main program.
 
     :param test: Indicate function is being tested
-    :return: None
     """
 
     # -------------------------------------------------------------------------

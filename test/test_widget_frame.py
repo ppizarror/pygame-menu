@@ -4,7 +4,7 @@ https://github.com/ppizarror/pygame-menu
 
 TEST WIDGET - FRAME
 Test Frame. Frame is the most complex widget as this interacts with menu, modifies
-it's layout and contains other widgets.
+its layout and contains other widgets.
 """
 
 __all__ = ['FrameWidgetTest']
@@ -180,7 +180,7 @@ class FrameWidgetTest(unittest.TestCase):
         frame_numbers.pack(menu.add.frame_v(10, 10), align=pygame_menu.locals.ALIGN_RIGHT)
         frame_numbers.pack(menu.add.frame_v(10, 10))
 
-        frame_v = menu.add.frame_v(400, 100, font_color=(2000, 0, 0))  # Clearly a invalid font color
+        frame_v = menu.add.frame_v(400, 100, font_color=(2000, 0, 0))  # Clearly an invalid font color
         frame_v._pack_margin_warning = False
         self.assertRaises(size_exception, lambda: frame_v.pack(menu.add.frame_v(100, 400)))
         self.assertRaises(size_exception, lambda: frame_v.pack(menu.add.frame_v(500, 100)))
@@ -1212,11 +1212,11 @@ class FrameWidgetTest(unittest.TestCase):
         menu._down()
         self.assertEqual(menu.get_selected_widget(), b5)
 
-        # Check all widgets are non floating
+        # Check all widgets are non-floating
         for w in menu.get_widgets():
             self.assertFalse(w.is_floating())
 
-        # Pack all widgets within deepest frame
+        # Pack all widgets within the deepest frame
         f4.unpack(b4)
         self.assertRaises(AssertionError, lambda: f4.pack(f1.unpack(f1)))
         f4.pack(f1.unpack(b1))

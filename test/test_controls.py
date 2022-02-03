@@ -110,11 +110,11 @@ class ControlsTest(BaseTest):
         self.assertEqual(main_menu.get_index(), 0)
 
         main_menu.update(events)
-        self.assertEqual(main_menu.get_index(), 0)  # Does not changed
+        self.assertEqual(main_menu.get_index(), 0)  # Does not change
 
         main_menu._keyboard_ignore_nonphysical = False
         main_menu.update(events)
-        self.assertEqual(main_menu.get_index(), 1 if PY_AUTO_GUI else 0)  # Does not changed
+        self.assertEqual(main_menu.get_index(), 1 if PY_AUTO_GUI else 0)  # Does not change
 
         # Ignore only applies to menus, currently appended widgets does not change
         self.assertTrue(b0._keyboard_ignore_nonphysical)

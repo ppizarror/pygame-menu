@@ -206,7 +206,7 @@ class Frame(Widget):
             raise _FrameDoNotAcceptTitle(f'{self.get_class_id()} does not accept a title')
         self._title = title
 
-        # If has previous title
+        # If it has previous title
         self.remove_title()
 
         assert isinstance(draggable, bool)
@@ -548,8 +548,6 @@ class Frame(Widget):
     def _sort_menu_update_frames(self) -> None:
         """
         Sort the menu update frames (frames which receive updates).
-
-        :return: None
         """
         if self._menu is not None:
             self._menu._sort_update_frames()
@@ -559,7 +557,6 @@ class Frame(Widget):
         Append update frame to menu and sort.
 
         :param frame: Frame to append
-        :return: None
         """
         assert isinstance(frame, Frame)
         update_frames = self._get_menu_update_frames()
@@ -572,7 +569,6 @@ class Frame(Widget):
         Remove update frame to menu and sort.
 
         :param frame: Frame to append
-        :return: None
         """
         assert isinstance(frame, Frame)
         update_frames = self._get_menu_update_frames()
@@ -752,7 +748,7 @@ class Frame(Widget):
         # Set menu
         self._frame_scrollarea.set_menu(self._menu)
 
-        # If has title
+        # If it has title
         if self._has_title:
             warn(f'previous {self.get_class_id()} title has been removed')
             self.remove_title()
@@ -950,8 +946,6 @@ class Frame(Widget):
     def _update_position_horizontal(self) -> None:
         """
         Compute widget position for horizontal orientation.
-
-        :return: None
         """
         x_left = 0  # Total added to left
         x_right = 0  # Total added to right
@@ -1002,8 +996,6 @@ class Frame(Widget):
     def _update_position_vertical(self) -> None:
         """
         Compute widget position for vertical orientation.
-
-        :return: None
         """
         y_top = 0  # Total added to top
         y_bottom = 0  # Total added to bottom
@@ -1188,7 +1180,7 @@ class Frame(Widget):
         self._real_rect = pygame.Rect(0, 0, width, height)
         self._width = int(width)
 
-        # Get previous buttons if has title
+        # Get previous buttons if it has title
         prev_has_title = self._has_title
         prev_title_frame = self._frame_title
         prev_title_buttons = list(self._frame_title.get_widgets()) if self._has_title else []
@@ -1685,8 +1677,6 @@ class Frame(Widget):
     def _update_indices(self) -> None:
         """
         Private update indices method.
-
-        :return: None
         """
         self.first_index = -1
         self.last_index = -1
@@ -1947,7 +1937,7 @@ class FrameManager(AbstractWidgetManager, ABC):
             - ``border_position``               (str, tuple, list) – Widget border positioning. It can be a single position, or a tuple/list of positions. Only are accepted: north, south, east, and west. See :py:mod:`pygame_menu.locals`
             - ``border_width``                  (int) – Border width in px. If ``0`` disables the border
             - ``cursor``                        (int, :py:class:`pygame.cursors.Cursor`, None) – Cursor of the frame if the mouse is placed over
-            - ``float``                         (bool) - If ``True`` the widget don't contributes width/height to the Menu widget positioning computation, and don't add one unit to the rows
+            - ``float``                         (bool) - If ``True`` the widget don't contribute width/height to the Menu widget positioning computation, and don't add one unit to the rows
             - ``float_origin_position``         (bool) - If ``True`` the widget position is set to the top-left position of the Menu if the widget is floating
             - ``margin``                        (tuple, list) – Widget (left, bottom) margin in px
             - ``max_height``                    (int) – Max height in px. If this value is lower than the frame ``height`` a scrollbar will appear on vertical axis. ``None`` by default (same height)
@@ -2046,7 +2036,7 @@ class FrameManager(AbstractWidgetManager, ABC):
             - ``border_position``               (str, tuple, list) – Widget border positioning. It can be a single position, or a tuple/list of positions. Only are accepted: north, south, east, and west. See :py:mod:`pygame_menu.locals`
             - ``border_width``                  (int) – Border width in px. If ``0`` disables the border
             - ``cursor``                        (int, :py:class:`pygame.cursors.Cursor`, None) – Cursor of the frame if the mouse is placed over
-            - ``float``                         (bool) - If ``True`` the widget don't contributes width/height to the Menu widget positioning computation, and don't add one unit to the rows
+            - ``float``                         (bool) - If ``True`` the widget don't contribute width/height to the Menu widget positioning computation, and don't add one unit to the rows
             - ``float_origin_position``         (bool) - If ``True`` the widget position is set to the top-left position of the Menu if the widget is floating
             - ``margin``                        (tuple, list) – Widget (left, bottom) margin in px
             - ``max_height``                    (int) – Max height in px. If this value is lower than the frame ``height`` a scrollbar will appear on vertical axis. ``None`` by default (same height)

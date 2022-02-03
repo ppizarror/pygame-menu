@@ -101,7 +101,7 @@ class Theme(object):
     :type scrollarea_position: str
     :param scrollbar_color: Scrollbars color
     :type scrollbar_color: tuple, list, str, int, :py:class:`pygame.Color`
-    :param scrollbar_cursor: Scrollbar cursor if mouse is placed over. If ``None`` the scrollbar don't changes the cursor
+    :param scrollbar_cursor: Scrollbar cursor if mouse is placed over. If ``None`` the scrollbar don't change the cursor
     :type scrollbar_cursor: int, :py:class:`pygame.cursors.Cursor`, None
     :param scrollbar_shadow: Indicate if a shadow is drawn on each scrollbar
     :type scrollbar_shadow: bool
@@ -139,7 +139,7 @@ class Theme(object):
     :type title_close_button_cursor: int, :py:class:`pygame.cursors.Cursor`, None
     :param title_fixed: If ``True`` title is drawn over the scrollarea, forcing widget surface area to be drawn behind the title
     :type title_fixed: bool
-    :param title_floating: If ``True`` title don't contributes height to the Menu. Thus, scroll uses full menu width/height
+    :param title_floating: If ``True`` title don't contribute height to the Menu. Thus, scroll uses full menu width/height
     :type title_floating: bool
     :param title_font: Title font
     :type title_font: str, :py:class:`pygame.font.Font`, :py:class:`pathlib.Path`
@@ -165,7 +165,7 @@ class Theme(object):
     :type widget_alignment: str
     :param widget_background_color: Background color of a widget, it can be a color, ``None`` (transparent), or a BaseImage object. Background fills the entire widget + the padding
     :type widget_background_color: tuple, list, str, int, :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage`, None
-    :param widget_background_inflate: Inflate background on x-axis and y-axis (x, y) in px. By default it uses the highlight margin. This parameter is visual only. For modifying widget size use padding instead
+    :param widget_background_inflate: Inflate background on x-axis and y-axis (x, y) in px. By default, it uses the highlight margin. This parameter is visual only. For modifying widget size use padding instead
     :type widget_background_inflate: tuple, list
     :param widget_background_inflate_to_selection: If ``True`` widget will inflate to match selection effect margin and overrides ``widget_background_inflate``
     :type widget_background_inflate_to_selection: bool
@@ -175,7 +175,7 @@ class Theme(object):
     :type widget_border_inflate: tuple, list
     :param widget_border_position: Widget border positioning. It can be a single position, or a tuple/list of positions. Only are accepted: north, south, east, and west. See :py:mod:`pygame_menu.locals`
     :type widget_border_position: str, tuple, list
-    :param widget_border_width: Widget border width in px. If ``0`` the border is disabled. Border width don't contributes to the widget width/height, it's visual-only
+    :param widget_border_width: Widget border width in px. If ``0`` the border is disabled. Border width don't contribute to the widget width/height, it's visual-only
     :type widget_border_width: int
     :param widget_box_arrow_color: Widget box arrow color, used by some widgets such as DropSelect, Fancy Selector, etc.
     :type widget_box_arrow_color: tuple, list, str, int, :py:class:`pygame.Color`
@@ -191,13 +191,13 @@ class Theme(object):
     :type widget_box_inflate: tuple, list
     :param widget_box_margin: Box margin on x-axis and y-axis (x, y) in px
     :type widget_box_margin: tuple, list
-    :param widget_cursor: Widget cursor if mouse is placed over. If ``None`` the widget don't changes the cursor
+    :param widget_cursor: Widget cursor if mouse is placed over. If ``None`` the widget don't change the cursor
     :type widget_cursor: int, :py:class:`pygame.cursors.Cursor`, None
     :param widget_font: Widget font path or name
     :type widget_font: str, :py:class:`pygame.font.Font`, :py:class:`pathlib.Path`
     :param widget_font_antialias: Widget font renders with antialiasing
     :type widget_font_antialias: bool
-    :param widget_font_background_color: Widget font background color. If ``None`` the value will be the same as ``background_color`` if it's is a color object and if ``widget_font_background_color_from_menu`` is ``True`` and ``widget_background_color`` is ``None``
+    :param widget_font_background_color: Widget font background color. If ``None`` the value will be the same as ``background_color`` if it is a color object and if ``widget_font_background_color_from_menu`` is ``True`` and ``widget_background_color`` is ``None``
     :type widget_font_background_color: tuple, list, str, int, :py:class:`pygame.Color`, None
     :param widget_font_background_color_from_menu: Use Menu background color as font background color. Disabled by default
     :type widget_font_background_color_from_menu: bool
@@ -423,7 +423,7 @@ class Theme(object):
 
     def validate(self) -> 'Theme':
         """
-        Validate the values of the theme. If there's a invalid parameter throws an
+        Validate the values of the theme. If there's an invalid parameter throws an
         ``AssertionError``.
 
         This function also converts all lists to tuples. This is done because lists
@@ -487,7 +487,7 @@ class Theme(object):
         assert isinstance(self.widget_tab_size, int)
 
         # Format colors, this converts all color lists to tuples automatically,
-        # if image, return the same object
+        # if it is an image, return the same object
         self.background_color = self._format_color_opacity(self.background_color)
         self.cursor_color = self._format_color_opacity(self.cursor_color)
         self.cursor_selection_color = self._format_color_opacity(self.cursor_selection_color)

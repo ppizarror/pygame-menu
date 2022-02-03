@@ -86,7 +86,7 @@ class DropSelectMultiple(DropSelect):
     :param placeholder_add_to_selection_box: If ``True`` adds the placeholder button to the selection box
     :param placeholder_selected: Text shown if option is selected. Accepts the formatted option from ``selection_placeholder_format``
     :param scrollbar_color: Scrollbar color
-    :param scrollbar_cursor: Cursor of the scrollbars if mouse is placed over. By default is ``None``
+    :param scrollbar_cursor: Cursor of the scrollbars if mouse is placed over. By default, is ``None``
     :param scrollbar_shadow: Indicate if a shadow is drawn on each scrollbar
     :param scrollbar_shadow_color: Color of the shadow of each scrollbar
     :param scrollbar_shadow_offset: Offset of the scrollbar shadow in px
@@ -120,7 +120,7 @@ class DropSelectMultiple(DropSelect):
     :param selection_option_selected_box: Draws a box in the selected option(s)
     :param selection_option_selected_box_border: Box border width in px
     :param selection_option_selected_box_color: Box color
-    :param selection_option_selected_box_height: Height of the selection box relative to the options height
+    :param selection_option_selected_box_height: Height of the selection box relative to the options' height
     :param selection_option_selected_box_margin: Option box margin (left, right, vertical) in px
     :param selection_option_selected_font_color: Selected option(s) font color
     :param selection_placeholder_format: Format of the string replaced in ``placeholder_selected``. Can be a predefined string type ("total", "comma-list", "hyphen-list", or any other string which will join the list) or a function that receives the list of selected items and returns a string
@@ -391,12 +391,11 @@ class DropSelectMultiple(DropSelect):
 
         .. note::
 
-            If the length of the list is different than the previous one, the new
+            If the length of the list is different from the previous one, the new
             index of the select will be the ``-1``, that is, same as the unselected
             status.
 
         :param items: New drop select items; format ``[('Item1', a, b, c...), ('Item2', d, e, f...)]``
-        :return: None
         """
         super(DropSelectMultiple, self).update_items(items)
         self._default_value = []
@@ -405,8 +404,6 @@ class DropSelectMultiple(DropSelect):
     def _process_index(self) -> None:
         """
         Process current index, add to selected or remove if present.
-
-        :return: None
         """
         if self._index == -1:
             return
@@ -455,7 +452,6 @@ class DropSelectMultiple(DropSelect):
 
         :param item: Item to select, can be a string or an integer
         :param process_index: Adds/Removes the index from the selected indices list
-        :return: None
         """
         assert isinstance(item, (str, int)), 'item must be a string or an integer'
 
@@ -483,8 +479,6 @@ class DropSelectMultiple(DropSelect):
     def _update_buttons(self) -> None:
         """
         Update buttons.
-
-        :return: None
         """
         for b_ind_x in range(len(self._option_buttons)):
             btn = self._option_buttons[b_ind_x]
@@ -597,7 +591,7 @@ class DropSelectMultipleManager(AbstractWidgetManager, ABC):
             - ``border_position``               (str, tuple, list) – Widget border positioning. It can be a single position, or a tuple/list of positions. Only are accepted: north, south, east, and west. See :py:mod:`pygame_menu.locals`
             - ``border_width``                  (int) – Border width in px. If ``0`` disables the border
             - ``cursor``                        (int, :py:class:`pygame.cursors.Cursor`, None) – Cursor of the widget if the mouse is placed over
-            - ``float``                         (bool) - If ``True`` the widget don't contributes width/height to the Menu widget positioning computation, and don't add one unit to the rows
+            - ``float``                         (bool) - If ``True`` the widget don't contribute width/height to the Menu widget positioning computation, and don't add one unit to the rows
             - ``float_origin_position``         (bool) - If ``True`` the widget position is set to the top-left position of the Menu if the widget is floating
             - ``font_background_color``         (tuple, list, str, int, :py:class:`pygame.Color`, None) – Widget font background color
             - ``font_color``                    (tuple, list, str, int, :py:class:`pygame.Color`) – Widget font color
@@ -653,7 +647,7 @@ class DropSelectMultipleManager(AbstractWidgetManager, ABC):
             - ``selection_option_selected_bgcolor``     (tuple, list, str, int, :py:class:`pygame.Color`) – Selected option background color
             - ``selection_option_selected_box_border``  (int) – Box border width in px
             - ``selection_option_selected_box_color``   (tuple, list, str, int, :py:class:`pygame.Color`) – Box color
-            - ``selection_option_selected_box_height``  (int, float) – Height of the selection box relative to the options height
+            - ``selection_option_selected_box_height``  (int, float) – Height of the selection box relative to the options' height
             - ``selection_option_selected_box_margin``  (tuple, list) – Option box margin (left, right, vertical) in px
             - ``selection_option_selected_box``         (bool) – Draws a box in the selected option(s)
             - ``selection_option_selected_font_color``  (tuple, list, str, int, :py:class:`pygame.Color`) – Selected option font color

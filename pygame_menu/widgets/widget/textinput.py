@@ -3,7 +3,7 @@ pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 TEXT INPUT
-Text input class, this widget lets user to write text.
+Text input class, this widget lets user write text.
 """
 
 __all__ = [
@@ -383,8 +383,6 @@ class TextInput(Widget):
     def clear(self) -> None:
         """
         Clear the current text.
-
-        :return: None
         """
         self._input_string = ''
         self._cursor_position = 0
@@ -428,7 +426,7 @@ class TextInput(Widget):
     def rotate(self, *args, **kwargs) -> 'TextInput':
         raise WidgetTransformationNotImplemented()
 
-    def flip(self, x: bool, y: bool) -> 'TextInput':  # Actually flip on x axis is disabled
+    def flip(self, x: bool, y: bool) -> 'TextInput':  # Actually flip on x-axis is disabled
         super(TextInput, self).flip(False, y)
         return self
 
@@ -450,7 +448,7 @@ class TextInput(Widget):
                 (self._cursor_visible or self._key_is_pressed) and \
                 not self.readonly:
             x = self._rect.x + self._cursor_surface_pos[0]
-            if self._flip[0]:  # Flip on x axis (bug)
+            if self._flip[0]:  # Flip on x-axis (bug)
                 x = self._surface.get_width() - x
             y = self._rect.y + self._cursor_surface_pos[1]
             surface.blit(self._cursor_surface, (x, y))
@@ -495,7 +493,6 @@ class TextInput(Widget):
         Render selected text.
 
         :param force: Force update
-        :return: None
         """
         if not self._selection_enabled:
             return
@@ -674,8 +671,6 @@ class TextInput(Widget):
     def _render_cursor(self) -> None:
         """
         Cursor is rendered and stored.
-
-        :return: None
         """
         # Cursor should not be rendered
         if not self._cursor_render:
@@ -805,7 +800,6 @@ class TextInput(Widget):
         :param end: Move cursor to end
         :param start: Move cursor to start
         :param update_maxwidth: Update maxwidth limit depending on the chars written
-        :return: None
         """
         self._cursor_render = True
         if self._maxwidth == 0:
@@ -914,8 +908,6 @@ class TextInput(Widget):
     def _update_maxlimit_renderbox(self) -> None:
         """
         Update renderbox based on how many characters have been written on input.
-
-        :return: None
         """
         if not self._maxwidth_update:
             return
@@ -970,7 +962,6 @@ class TextInput(Widget):
         Updates cursor position after mouse click or touch action in text.
 
         :param mouse_x: Mouse distance relative to surface
-        :return: None
         """
         string = self._get_input_string()
         if string == '':  # If string is empty cursor is not updated
@@ -1071,7 +1062,6 @@ class TextInput(Widget):
         Set the value of the text.
 
         :param text: New text of the widget
-        :return: None
         """
         if self._password and text != '':
             raise ValueError('value cannot be set in password type')
@@ -1143,8 +1133,6 @@ class TextInput(Widget):
     def _move_cursor_left(self) -> None:
         """
         Move cursor to left position.
-
-        :return: None
         """
         # Subtract one from cursor_pos, but do not go below zero:
         self._cursor_position = max(self._cursor_position - 1, 0)
@@ -1153,8 +1141,6 @@ class TextInput(Widget):
     def _move_cursor_right(self) -> None:
         """
         Move cursor to right position.
-
-        :return: None
         """
         # Add one to cursor_pos, but do not exceed len(input_string)
         self._cursor_position = min(self._cursor_position + 1,
@@ -1207,14 +1193,13 @@ class TextInput(Widget):
 
         :param new_string: New string of text input
         :param update_history: Updates history
-        :return: None
         """
         assert isinstance(new_string, str)
         assert isinstance(update_history, bool)
 
         l_history = len(self._history)
 
-        # If last edition is different than the new one -> updates the history
+        # If last edition is different from the new one -> updates the history
         if update_history and \
                 ((l_history > 0 and self._history[
                     l_history - 1] != new_string) or l_history == 0) and self._max_history > 0:
@@ -1331,12 +1316,12 @@ class TextInput(Widget):
             if text == '':
                 return False
 
-        # Cut string (if limit does exists)
+        # Cut string (if limit does exist)
         text_end = len(text)
         if self._maxchar != 0:
             char_limit = self._maxchar - len(self._input_string)
             text_end = min(char_limit, text_end)
-            if text_end <= 0:  # If there's not more space, returns
+            if text_end <= 0:  # If there's no more space, returns
                 self._sound.play_event_error()
                 return False
 
@@ -1370,8 +1355,6 @@ class TextInput(Widget):
     def _update_from_history(self) -> None:
         """
         Update all from history.
-
-        :return: None
         """
         self._input_string = self._history[self._history_index]
         self._renderbox[0] = self._history_renderbox[self._history_index][0]
@@ -1409,8 +1392,6 @@ class TextInput(Widget):
     def _remove_selection(self) -> None:
         """
         Remove text from selection.
-
-        :return: None
         """
         removed = self._selection_box[1] - self._selection_box[0]
         left = False
@@ -1431,7 +1412,6 @@ class TextInput(Widget):
         Backspace event.
 
         :param update_history: Updates history on deletion
-        :return: None
         """
         new_string = (
                 self._input_string[:max(self._cursor_position - 1, 0)]
@@ -1448,7 +1428,6 @@ class TextInput(Widget):
         Delete event.
 
         :param update_history: Updates history on deletion
-        :return: None
         """
         new_string = (
                 self._input_string[:self._cursor_position]
@@ -1460,8 +1439,6 @@ class TextInput(Widget):
     def _select_all(self) -> None:
         """
         Select all text.
-
-        :return: None
         """
         if not self._selection_enabled:
             return
@@ -1987,7 +1964,7 @@ class TextInputManager(AbstractWidgetManager, ABC):
             - ``border_position``               (str, tuple, list) – Widget border positioning. It can be a single position, or a tuple/list of positions. Only are accepted: north, south, east, and west. See :py:mod:`pygame_menu.locals`
             - ``border_width``                  (int) – Border width in px. If ``0`` disables the border
             - ``cursor``                        (int, :py:class:`pygame.cursors.Cursor`, None) – Cursor of the widget if the mouse is placed over
-            - ``float``                         (bool) - If ``True`` the widget don't contributes width/height to the Menu widget positioning computation, and don't add one unit to the rows
+            - ``float``                         (bool) - If ``True`` the widget don't contribute width/height to the Menu widget positioning computation, and don't add one unit to the rows
             - ``float_origin_position``         (bool) - If ``True`` the widget position is set to the top-left position of the Menu if the widget is floating
             - ``font_background_color``         (tuple, list, str, int, :py:class:`pygame.Color`, None) – Widget font background color
             - ``font_color``                    (tuple, list, str, int, :py:class:`pygame.Color`) – Widget font color

@@ -83,7 +83,6 @@ def assert_font(font: Any) -> None:
     Asserts if the given object is a font type.
 
     :param font: Font object
-    :return: None
     """
     assert isinstance(font, FontInstance), \
         'value must be a font type (str, Path, pygame.Font)'

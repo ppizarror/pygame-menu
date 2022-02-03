@@ -74,7 +74,7 @@ class DropSelect(Widget):
     :param placeholder: Text shown if no option is selected yet
     :param placeholder_add_to_selection_box: If ``True`` adds the placeholder button to the selection box
     :param scrollbar_color: Scrollbar color
-    :param scrollbar_cursor: Cursor of the scrollbars if mouse is placed over. By default is ``None``
+    :param scrollbar_cursor: Cursor of the scrollbars if mouse is placed over. By default, is ``None``
     :param scrollbar_shadow: Indicate if a shadow is drawn on each scrollbar
     :param scrollbar_shadow_color: Color of the shadow of each scrollbar
     :param scrollbar_shadow_offset: Offset of the scrollbar shadow in px
@@ -512,7 +512,7 @@ class DropSelect(Widget):
             )
 
         # Menu is formerly set in frame. That method adds the frame to update frames
-        # depending if frame is scrollable or not
+        # depending on if frame is scrollable or not
         self._drop_frame.set_menu(self._menu)
 
         self._drop_frame.set_scrollarea(self._scrollarea)
@@ -622,7 +622,6 @@ class DropSelect(Widget):
         Function triggered after option has been selected or clicked.
 
         :param index: Option index within list
-        :return: None
         """
         btn.set_attribute('ignore_scroll_to_widget')
         prev_index = self._index
@@ -892,8 +891,6 @@ class DropSelect(Widget):
     def _down(self) -> None:
         """
         Move current selection down.
-
-        :return: None
         """
         if self.readonly:
             return
@@ -918,8 +915,6 @@ class DropSelect(Widget):
     def _up(self) -> None:
         """
         Move current selection up.
-
-        :return: None
         """
         if self.readonly:
             return
@@ -957,7 +952,6 @@ class DropSelect(Widget):
             This method does not trigger any event (change).
 
         :param item: Item to select, can be a string or an integer
-        :return: None
         """
         assert isinstance(item, (str, int)), 'item must be a string or an integer'
 
@@ -999,12 +993,11 @@ class DropSelect(Widget):
 
         .. note::
 
-            If the length of the list is different than the previous one, the new
+            If the length of the list is different from the previous one, the new
             index of the select will be the ``-1``, that is, same as the unselected
             status.
 
         :param items: New drop select items; format ``[('Item1', a, b, c...), ('Item2', d, e, f...)]``
-        :return: None
         """
         assert isinstance(items, list)
         if len(items) > 0:
@@ -1023,8 +1016,6 @@ class DropSelect(Widget):
     def _check_drop_made(self) -> None:
         """
         Checks if drop selection has been made.
-
-        :return: None
         """
         if self._drop_frame is None:
             raise _SelectionDropNotMadeException(
@@ -1043,8 +1034,6 @@ class DropSelect(Widget):
     def _toggle_drop(self) -> None:
         """
         Open drop selection.
-
-        :return: None
         """
         self._check_drop_made()
         if not self._selected:
@@ -1311,7 +1300,7 @@ class DropSelectManager(AbstractWidgetManager, ABC):
             - ``border_position``               (str, tuple, list) – Widget border positioning. It can be a single position, or a tuple/list of positions. Only are accepted: north, south, east, and west. See :py:mod:`pygame_menu.locals`
             - ``border_width``                  (int) – Border width in px. If ``0`` disables the border
             - ``cursor``                        (int, :py:class:`pygame.cursors.Cursor`, None) – Cursor of the widget if the mouse is placed over
-            - ``float``                         (bool) - If ``True`` the widget don't contributes width/height to the Menu widget positioning computation, and don't add one unit to the rows
+            - ``float``                         (bool) - If ``True`` the widget don't contribute width/height to the Menu widget positioning computation, and don't add one unit to the rows
             - ``float_origin_position``         (bool) - If ``True`` the widget position is set to the top-left position of the Menu if the widget is floating
             - ``font_background_color``         (tuple, list, str, int, :py:class:`pygame.Color`, None) – Widget font background color
             - ``font_color``                    (tuple, list, str, int, :py:class:`pygame.Color`) – Widget font color

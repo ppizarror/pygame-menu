@@ -31,10 +31,8 @@ TEST_TIME_DRAW = False
 
 def dummy_function() -> None:
     """
-    Dummy function, this can be achieved with lambda but it's against
+    Dummy function, this can be achieved with lambda, but it's against
     PEP-8.
-
-    :return: None
     """
     return
 
@@ -387,10 +385,10 @@ class MenuTest(BaseRSTest):
         # Change onclose
         menu2.set_onclose(None)
         menu2.enable()
-        self.assertFalse(menu2.close())  # None status don't changes enabled
+        self.assertFalse(menu2.close())  # None status don't change enabled
         self.assertTrue(menu2.is_enabled())
         menu2.set_onclose(pygame_menu.events.NONE)
-        self.assertFalse(menu2.close())  # NONE event don't changes enabled
+        self.assertFalse(menu2.close())  # NONE event don't change enabled
         self.assertTrue(menu2.is_enabled())
 
         # Add button with submenu, and open it
@@ -411,7 +409,7 @@ class MenuTest(BaseRSTest):
         self.assertEqual(menu2.get_current().get_title(), '1')
 
         # Set new close callback, it receives the menu and fires reset,
-        # the output should be the same, except it don't closes
+        # the output should be the same, except it doesn't close
 
         def new_close(m: 'pygame_menu.Menu') -> None:
             """
@@ -862,7 +860,7 @@ class MenuTest(BaseRSTest):
         self.assertEqual(len(menu.get_widgets()), 5)
         self.assertEqual(len(menu.get_widgets(wid)), 5)
 
-        # Create a event in pygame
+        # Create an event in pygame
         menu.update(PygameEventUtils.key(ctrl.KEY_MOVE_UP, keydown=True))
         self.assertEqual(menu.get_index(), 1)
 
@@ -916,7 +914,7 @@ class MenuTest(BaseRSTest):
 
     def test_mouse_empty_submenu(self) -> None:
         """
-        Test mouse event where the following submenu has less elements.
+        Test mouse event where the following submenu has fewer elements.
         """
         menu = MenuUtils.generic_menu(title='mainmenu')
         menu.enable()
@@ -942,7 +940,7 @@ class MenuTest(BaseRSTest):
         """
         menu = MenuUtils.generic_menu(title='mainmenu')
 
-        menu.add.text_input('text1', textinput_id='id1', default=1)  # Force to string
+        menu.add.text_input('text1', textinput_id='id1', default=1)
         data = menu.get_input_data(True)
         self.assertEqual(data['id1'], '1')
 
@@ -1558,7 +1556,7 @@ class MenuTest(BaseRSTest):
         self.assertTrue(btn.is_selected())
         btn.hide()
 
-        # As theres no more visible widgets, index must be -1
+        # As there's no more visible widgets, index must be -1
         self.assertEqual(menu._index, -1)
         self.assertFalse(btn.is_selected())
         btn.show()
@@ -1581,7 +1579,7 @@ class MenuTest(BaseRSTest):
         # Set selectable again
         btn.is_selectable = True
         btn.select()
-        self.assertEqual(menu._index, -1)  # Menu still don't considers widget as selected
+        self.assertEqual(menu._index, -1)  # Menu still don't consider widget as selected
         self.assertIsNone(menu.get_selected_widget())
         btn.select(update_menu=True)
         self.assertEqual(menu.get_selected_widget(), btn)

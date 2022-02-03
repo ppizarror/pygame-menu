@@ -220,7 +220,7 @@ class BaseImage(Base):
         ``255`` is fully opaque. If None is passed for the alpha value, then alpha
         blending will be disabled, including per-pixel alpha.
 
-        This value is different than the per pixel Surface alpha. For a surface with
+        This value is different from the per pixel Surface alpha. For a surface with
         per pixel alpha, blanket alpha is ignored and None is returned.
 
         For pygame 2.0: per-surface alpha can be combined with per-pixel alpha.
@@ -573,7 +573,7 @@ class BaseImage(Base):
         """
         Pick certain channels of the image, channels are ``"r"`` (red), ``"g"``
         (green) and ``"b"`` (blue); ``channels param`` is a list/tuple of channels
-        (non empty).
+        (non-empty).
 
         For example, ``pick_channels(['r', 'g'])``: All channels not included on
         the list will be discarded.
@@ -603,7 +603,7 @@ class BaseImage(Base):
     def flip(self, x: bool, y: bool) -> 'BaseImage':
         """
         This method can flip the image either vertically, horizontally, or both.
-        Flipping a image is non-destructive and does not change the dimensions.
+        Flipping an image is non-destructive and does not change the dimensions.
 
         :param x: Flip on x-axis
         :param y: Flip on y-axis
@@ -718,7 +718,7 @@ class BaseImage(Base):
 
             Unless rotating by 90 degree increments, the image will be padded
             larger to hold the new size. If the image has pixel alphas, the padded
-            area will be transparent. Otherwise pygame will pick a color that matches
+            area will be transparent. Otherwise, pygame will pick a color that matches
             the image color-key or the topleft pixel value.
 
         .. warning::
@@ -761,7 +761,7 @@ class BaseImage(Base):
         """
         Return the delta from drawing position.
 
-        :return: Delta position on x-axis and y-axis (x, y) in px
+        :return: Delta positions on x-axis and y-axis (x, y) in px
         """
         rect = self.get_rect()
         if self._drawing_position == POSITION_NORTHWEST:

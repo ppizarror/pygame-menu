@@ -50,7 +50,6 @@ def check_selector_items(items: Union[Tuple, List]) -> None:
     Check the items list.
 
     :param items: Items list
-    :return: None
     """
     assert len(items) > 0, 'item list cannot be empty'
     for e in items:
@@ -360,8 +359,6 @@ class Selector(Widget):
     def _left(self) -> None:
         """
         Move selector to left.
-
-        :return: None
         """
         if self.readonly:
             return
@@ -372,8 +369,6 @@ class Selector(Widget):
     def _right(self) -> None:
         """
         Move selector to right.
-
-        :return: None
         """
         if self.readonly:
             return
@@ -397,7 +392,6 @@ class Selector(Widget):
             This method does not trigger any event (change).
 
         :param item: Item to select, can be a string or an integer
-        :return: None
         """
         assert isinstance(item, (str, int)), 'item must be a string or an integer'
         if isinstance(item, str):
@@ -422,11 +416,10 @@ class Selector(Widget):
 
         .. note::
 
-            If the length of the list is different than the previous one,
+            If the length of the list is different from the previous one,
             the new index of the selector will be the first item of the list.
 
         :param items: New selector items; format ``[('Item1', a, b, c...), ('Item2', d, e, f...)]``
-        :return: None
         """
         check_selector_items(items)
         selected_item = self._items[self._index]
@@ -564,7 +557,7 @@ class SelectorManager(AbstractWidgetManager, ABC):
             - ``border_position``               (str, tuple, list) – Widget border positioning. It can be a single position, or a tuple/list of positions. Only are accepted: north, south, east, and west. See :py:mod:`pygame_menu.locals`
             - ``border_width``                  (int) – Border width in px. If ``0`` disables the border
             - ``cursor``                        (int, :py:class:`pygame.cursors.Cursor`, None) – Cursor of the widget if the mouse is placed over
-            - ``float``                         (bool) - If ``True`` the widget don't contributes width/height to the Menu widget positioning computation, and don't add one unit to the rows
+            - ``float``                         (bool) - If ``True`` the widget don't contribute width/height to the Menu widget positioning computation, and don't add one unit to the rows
             - ``float_origin_position``         (bool) - If ``True`` the widget position is set to the top-left position of the Menu if the widget is floating
             - ``font_background_color``         (tuple, list, str, int, :py:class:`pygame.Color`, None) – Widget font background color
             - ``font_color``                    (tuple, list, str, int, :py:class:`pygame.Color`) – Widget font color

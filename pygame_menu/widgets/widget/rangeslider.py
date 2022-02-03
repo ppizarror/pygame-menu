@@ -795,7 +795,7 @@ class RangeSlider(Widget):
             d = float(value - self._range_values[0]) / (self._range_values[1] - self._range_values[0])
             return int(d * self._range_width - sw)
 
-        # Find nearest position
+        # Find the nearest position
         n, t = self._find_nearest_discrete_range(value), len(self._range_values)
         return int((float(n) / (t - 1)) * self._range_width - sw)
 
@@ -1153,7 +1153,7 @@ class RangeSliderManager(AbstractWidgetManager, ABC):
             - ``border_position``               (str, tuple, list) – Widget border positioning. It can be a single position, or a tuple/list of positions. Only are accepted: north, south, east, and west. See :py:mod:`pygame_menu.locals`
             - ``border_width``                  (int) – Border width in px. If ``0`` disables the border
             - ``cursor``                        (int, :py:class:`pygame.cursors.Cursor`, None) – Cursor of the widget if the mouse is placed over
-            - ``float``                         (bool) - If ``True`` the widget don't contributes width/height to the Menu widget positioning computation, and don't add one unit to the rows
+            - ``float``                         (bool) - If ``True`` the widget don't contribute width/height to the Menu widget positioning computation, and don't add one unit to the rows
             - ``float_origin_position``         (bool) - If ``True`` the widget position is set to the top-left position of the Menu if the widget is floating
             - ``font_background_color``         (tuple, list, str, int, :py:class:`pygame.Color`, None) – Widget font background color
             - ``font_color``                    (tuple, list, str, int, :py:class:`pygame.Color`) – Widget font color
