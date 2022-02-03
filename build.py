@@ -11,7 +11,7 @@ import sys
 
 assert len(sys.argv) == 2, 'Argument is required, usage: build.py pip/twine/gource'
 mode = sys.argv[1].strip()
-python = 'python3' if not sys.platform == 'win32' else 'py -3.7'
+python = 'python3' if not sys.platform == 'win32' else 'py -3.8'
 
 if mode == 'pip':
     if os.path.isdir('dist'):
