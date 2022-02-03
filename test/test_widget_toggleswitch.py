@@ -40,7 +40,7 @@ class ToggleSwitchWidgetTest(BaseTest):
         self.assertFalse(value[0])
 
         switch.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))  # not infinite
-        self.assertFalse(value[0])  # as this is false, dont change
+        self.assertFalse(value[0])  # as this is false, don't change
         switch.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
         self.assertTrue(value[0])
         switch.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))

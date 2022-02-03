@@ -268,7 +268,7 @@ class WidgetsTest(BaseTest):
         label.set_max_width(250, scale_height=True)
         self.assertEqual(label.get_height(), 113)
 
-        # Set max height, this will disabled max width
+        # Set max height, this will disable max width
         label.set_max_height(100)
         self.assertIsNone(label._max_width[0])
         self.assertEqual(label.get_height(), 99)
@@ -528,7 +528,7 @@ class WidgetsTest(BaseTest):
 
     def test_widget_floating_zero(self) -> None:
         """
-        Test widgets with zero position if float.
+        Test widgets with zero position if floated.
         """
         menu = MenuUtils.generic_menu(title='Example menu')
         img = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU)

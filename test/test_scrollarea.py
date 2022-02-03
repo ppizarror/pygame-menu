@@ -241,7 +241,6 @@ class ScrollAreaTest(BaseTest):
             :param widget: Widget
             :param x: X relative position
             :param y: Y relative position
-            :return: None
             """
             rx, ry = widget.get_scrollarea().get_widget_position_relative_to_view_rect(widget)
             self.assertAlmostEqual(x, rx)
