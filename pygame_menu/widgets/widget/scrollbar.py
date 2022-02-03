@@ -175,8 +175,6 @@ class ScrollBar(Widget):
     def _apply_size_changes(self) -> None:
         """
         Apply scrollbar changes.
-
-        :return: None
         """
         opp_orientation = 1 if self._orientation == 0 else 0  # Opposite of orientation
         dims = ('width', 'height')
@@ -366,7 +364,6 @@ class ScrollBar(Widget):
         Set the length of the page control area.
 
         :param value: Length of the area
-        :return: None
         """
         assert isinstance(value, NumberInstance)
         assert 0 < value
@@ -399,7 +396,6 @@ class ScrollBar(Widget):
         Set the greatest acceptable value.
 
         :param value: Maximum value
-        :return: None
         """
         assert isinstance(value, NumberInstance)
         assert value > self._values_range[0], \
@@ -411,7 +407,6 @@ class ScrollBar(Widget):
         Set the smallest acceptable value.
 
         :param value: Minimum value
-        :return: None
         """
         assert isinstance(value, NumberInstance)
         assert 0 <= value < self._values_range[1], \
@@ -427,7 +422,6 @@ class ScrollBar(Widget):
             See :py:mod:`pygame_menu.locals` for valid ``orientation`` values.
 
         :param orientation: Widget orientation
-        :return: None
         """
         assert_orientation(orientation)
         if orientation == ORIENTATION_HORIZONTAL:
@@ -447,7 +441,6 @@ class ScrollBar(Widget):
             represents the proportion of the document area shown in a scrolling view.
 
         :param value: Page step
-        :return: None
         """
         assert isinstance(value, NumberInstance)
         assert 0 < value, 'page step shall be > 0'
@@ -466,7 +459,6 @@ class ScrollBar(Widget):
         Set the position of the scrollbar.
 
         :param position_value: Position
-        :return: None
         """
         assert isinstance(position_value, NumberInstance)
         assert self._values_range[0] <= position_value <= self._values_range[1], \

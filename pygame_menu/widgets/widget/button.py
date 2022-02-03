@@ -87,7 +87,6 @@ class Button(Widget):
             callback(selected, widget, menu)
 
         :param callback: Callback when selecting the widget, executed in :py:meth:`pygame_menu.widgets.core.widget.Widget.set_selected`
-        :return: None
         """
         if callback is not None:
             assert is_callable(callback), \
@@ -107,7 +106,6 @@ class Button(Widget):
 
         :param callback: Function
         :param args: Arguments used by the function once triggered
-        :return: None
         """
         assert is_callable(callback), \
             'only callable (function-type) are allowed'
@@ -134,7 +132,7 @@ class Button(Widget):
             force_render: bool = False
     ) -> 'Button':
         """
-        Adds a underline to text. This is added if widget is rendered.
+        Adds an underline to text. This is added if widget is rendered.
 
         :param color: Underline color
         :param offset: Underline offset
@@ -283,7 +281,7 @@ class ButtonManager(AbstractWidgetManager, ABC):
             - ``border_width``                  (int) – Border width in px. If ``0`` disables the border
             - ``button_id``                     (str) – Widget ID
             - ``cursor``                        (int, :py:class:`pygame.cursors.Cursor`, None) – Cursor of the widget if the mouse is placed over
-            - ``float``                         (bool) - If ``True`` the widget don't contributes width/height to the Menu widget positioning computation, and don't add one unit to the rows
+            - ``float``                         (bool) - If ``True`` the widget don't contribute width/height to the Menu widget positioning computation, and don't add one unit to the rows
             - ``float_origin_position``         (bool) - If ``True`` the widget position is set to the top-left position of the Menu if the widget is floating
             - ``font_background_color``         (tuple, list, str, int, :py:class:`pygame.Color`, None) – Widget font background color
             - ``font_color``                    (tuple, list, str, int, :py:class:`pygame.Color`) – Widget font color
@@ -456,8 +454,8 @@ class ButtonManager(AbstractWidgetManager, ABC):
             - ``border_inflate``                (tuple, list) – Widget border inflate on x-axis and y-axis (x, y) in px
             - ``border_position``               (str, tuple, list) – Widget border positioning. It can be a single position, or a tuple/list of positions. Only are accepted: north, south, east, and west. See :py:mod:`pygame_menu.locals`
             - ``border_width``                  (int) – Border width in px. If ``0`` disables the border
-            - ``cursor``                        (int, :py:class:`pygame.cursors.Cursor`, None) – Cursor of the widget if the mouse is placed over. By default is ``HAND``
-            - ``float``                         (bool) - If ``True`` the widget don't contributes width/height to the Menu widget positioning computation, and don't add one unit to the rows
+            - ``cursor``                        (int, :py:class:`pygame.cursors.Cursor`, None) – Cursor of the widget if the mouse is placed over. By default, is ``HAND``
+            - ``float``                         (bool) - If ``True`` the widget don't contribute width/height to the Menu widget positioning computation, and don't add one unit to the rows
             - ``float_origin_position``         (bool) - If ``True`` the widget position is set to the top-left position of the Menu if the widget is floating
             - ``font_background_color``         (tuple, list, str, int, :py:class:`pygame.Color`, None) – Widget font background color
             - ``font_color``                    (tuple, list, str, int, :py:class:`pygame.Color`) – Widget font color. If not defined, uses ``theme.widget_url_color``

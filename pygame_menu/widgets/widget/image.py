@@ -95,7 +95,6 @@ class Image(Widget):
         Set the :py:class:`pygame_menu.baseimage.BaseImage` object from widget.
 
         :param image: Image object
-        :return: None
         """
         self._image = image
         self._surface = None
@@ -213,7 +212,7 @@ class ImageManager(AbstractWidgetManager, ABC):
             - ``border_position``               (str, tuple, list) – Widget border positioning. It can be a single position, or a tuple/list of positions. Only are accepted: north, south, east, and west. See :py:mod:`pygame_menu.locals`
             - ``border_width``                  (int) – Border width in px. If ``0`` disables the border
             - ``cursor``                        (int, :py:class:`pygame.cursors.Cursor`, None) – Cursor of the widget if the mouse is placed over
-            - ``float``                         (bool) - If ``True`` the widget don't contributes width/height to the Menu widget positioning computation, and don't add one unit to the rows
+            - ``float``                         (bool) - If ``True`` the widget don't contribute width/height to the Menu widget positioning computation, and don't add one unit to the rows
             - ``float_origin_position``         (bool) - If ``True`` the widget position is set to the top-left position of the Menu if the widget is floating
             - ``margin``                        (tuple, list) – Widget (left, bottom) margin in px
             - ``padding``                       (int, float, tuple, list) – Widget padding according to CSS rules. General shape: (top, right, bottom, left)

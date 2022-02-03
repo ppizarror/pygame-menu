@@ -319,7 +319,7 @@ class ProgressBarManager(AbstractWidgetManager, ABC):
             - ``box_progress_color``            (tuple, list, str, int, :py:class:`pygame.Color`) – Box progress color
             - ``box_progress_padding``          (int, float, tuple, list) – Box progress padding
             - ``cursor``                        (int, :py:class:`pygame.cursors.Cursor`, None) – Cursor of the widget if the mouse is placed over
-            - ``float``                         (bool) - If ``True`` the widget don't contributes width/height to the Menu widget positioning computation, and don't add one unit to the rows
+            - ``float``                         (bool) - If ``True`` the widget don't contribute width/height to the Menu widget positioning computation, and don't add one unit to the rows
             - ``float_origin_position``         (bool) - If ``True`` the widget position is set to the top-left position of the Menu if the widget is floating
             - ``font_background_color``         (tuple, list, str, int, :py:class:`pygame.Color`, None) – Widget font background color
             - ``font_color``                    (tuple, list, str, int, :py:class:`pygame.Color`) – Widget font color

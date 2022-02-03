@@ -89,7 +89,6 @@ class ArrowSelection(Selection):
         :param a: Arrow coord A
         :param b: Arrow coord B
         :param c: Arrow coord C
-        :return: None
         """
         SELECTOR_CLOCK.tick(60)  # As blink is in ms
         self._blink_time += SELECTOR_CLOCK.get_time()

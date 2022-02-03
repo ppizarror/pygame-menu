@@ -107,7 +107,6 @@ class Table(Frame):
         Removes row from the table.
 
         :param row: Row frame
-        :return: None
         """
         self.unpack(row)
 
@@ -162,7 +161,6 @@ class Table(Frame):
         :param border_width: Border width in px of each cell
         :param padding: Cell padding according to CSS rules. General shape: (top, right, bottom, left)
         :param vertical_position: Vertical position of each cell. Only valid: north, center, and south. See :py:mod:`pygame_menu.locals`
-        :return: None
         """
         # Alignment
         assert_alignment(align)
@@ -228,7 +226,7 @@ class Table(Frame):
             will not accept any event, also, these widgets cannot be selected.
             That's because the Table architecture relies on Frame widget.
 
-        :param cells: Cells to add. This can be a tuple or list of widgets, string, numbers, boolean values or images. Also a Frame row can be added
+        :param cells: Cells to add. This can be a tuple or list of widgets, string, numbers, boolean values or images. Also, a Frame row can be added
         :param cell_align: Horizontal align of each cell. See :py:mod:`pygame_menu.locals`
         :param cell_border_color: Border color of each cell
         :param cell_border_position: Border position of each cell. Valid only: north, south, east, and west. See :py:mod:`pygame_menu.locals`
@@ -419,7 +417,7 @@ class Table(Frame):
         for c in row_cells:
             row.pack(c)
 
-        # Pack row to self
+        # Pack rows to self
         super(Table, self).pack(row)
         self._rows.append(row)
 
@@ -432,8 +430,6 @@ class Table(Frame):
     def _update_event_widgets(self) -> None:
         """
         Update the list of widgets that accept events.
-
-        :return: None
         """
         self._update_widgets = []
         for r in self._rows:
@@ -479,8 +475,6 @@ class Table(Frame):
     def _update_row_sizing(self) -> None:
         """
         Update row sizing.
-
-        :return: None
         """
         column_widths, row_heights = self._get_column_width_row_height()
 
@@ -580,7 +574,6 @@ class Table(Frame):
         Draw cell border.
 
         :param surface: Surface to draw the cell border
-        :return: None
         """
         if len(self._rows) == 0:
             return
@@ -688,8 +681,8 @@ class Table(Frame):
         Update cell style. If a parameter is ``None`` the default cell property
         will be used.
 
-        :param column: Cell column position (counting from 1). If -1 update all column from the given row. Also a 2-item list/tuple is accepted (from, to), ``to=-1`` is also accepted (last)
-        :param row: Cell row position (counting from 1). If ``-1`` update all rows from the given column. Also a 2-item list/tuple is accepted (from, to), ``to=-1`` is also accepted (last)
+        :param column: Cell column position (counting from 1). If -1 update all column from the given row. Also, a 2-item list/tuple is accepted (from, to), ``to=-1`` is also accepted (last)
+        :param row: Cell row position (counting from 1). If ``-1`` update all rows from the given column. Also, a 2-item list/tuple is accepted (from, to), ``to=-1`` is also accepted (last)
         :param align: Horizontal align of each cell. See :py:mod:`pygame_menu.locals`
         :param background_color: Background color
         :param border_color: Border color of each cell
@@ -922,7 +915,7 @@ class TableManager(AbstractWidgetManager, ABC):
             - ``border_position``               (str, tuple, list) – Widget border positioning. It can be a single position, or a tuple/list of positions. Only are accepted: north, south, east, and west. See :py:mod:`pygame_menu.locals`
             - ``border_width``                  (int) – Border width in px. If ``0`` disables the border
             - ``cursor``                        (int, :py:class:`pygame.cursors.Cursor`, None) – Cursor of the frame if the mouse is placed over
-            - ``float``                         (bool) - If ``True`` the widget don't contributes width/height to the Menu widget positioning computation, and don't add one unit to the rows
+            - ``float``                         (bool) - If ``True`` the widget don't contribute width/height to the Menu widget positioning computation, and don't add one unit to the rows
             - ``float_origin_position``         (bool) - If ``True`` the widget position is set to the top-left position of the Menu if the widget is floating
             - ``font_background_color``         (tuple, list, str, int, :py:class:`pygame.Color`, None) – Widget font background color
             - ``font_color``                    (tuple, list, str, int, :py:class:`pygame.Color`) – Widget font color

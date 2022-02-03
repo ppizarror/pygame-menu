@@ -197,7 +197,7 @@ class NoneWidgetManager(AbstractWidgetManager, ABC):
         .. note::
 
             This widget is useful to fill column/rows layout without compromising
-            any visuals. Also it can be used to store information or even to add
+            any visuals. Also, it can be used to store information or even to add
             a ``draw_callback`` function to it for being called on each Menu draw.
 
         .. note::

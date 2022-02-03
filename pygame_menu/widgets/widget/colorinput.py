@@ -249,7 +249,6 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         Set the color value.
 
         :param color: A string if the type is HEX, or a (r, g, b) tuple if RGB
-        :return: None
         """
         if color is None:
             color = ''
@@ -360,7 +359,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
     def _render(self) -> Optional[bool]:
         render_text = super(ColorInput, self)._render()
 
-        # Maybe TextInput did not rendered, so this has to be changed
+        # Maybe TextInput did not render, so this has to be changed
         self._rect.width, self._rect.height = self._surface.get_size()
         if not self._dynamic_width or \
                 (self._dynamic_width and self._previsualization_surface is not None):
@@ -394,8 +393,6 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
     def _format_hex(self) -> None:
         """
         Apply hex format.
-
-        :return: None
         """
         if self._color_type != COLORINPUT_TYPE_HEX or \
                 self._hex_format == COLORINPUT_HEX_FORMAT_NONE:
@@ -624,7 +621,7 @@ class ColorInputManager(AbstractWidgetManager, ABC):
             - ``border_width``                  (int) – Border width in px. If ``0`` disables the border
             - ``cursor``                        (int, :py:class:`pygame.cursors.Cursor`, None) – Cursor of the widget if the mouse is placed over
             - ``dynamic_width``                 (bool) – If ``True`` the widget width changes if the pre-visualization color box is active or not
-            - ``float``                         (bool) - If ``True`` the widget don't contributes width/height to the Menu widget positioning computation, and don't add one unit to the rows
+            - ``float``                         (bool) - If ``True`` the widget don't contribute width/height to the Menu widget positioning computation, and don't add one unit to the rows
             - ``float_origin_position``         (bool) - If ``True`` the widget position is set to the top-left position of the Menu if the widget is floating
             - ``font_background_color``         (tuple, list, str, int, :py:class:`pygame.Color`, None) – Widget font background color
             - ``font_color``                    (tuple, list, str, int, :py:class:`pygame.Color`) – Widget font color
