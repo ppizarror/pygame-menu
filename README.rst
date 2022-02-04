@@ -30,6 +30,14 @@ pygame-menu
 .. image:: https://img.shields.io/github/workflow/status/ppizarror/pygame-menu/Run%20Tests
     :target: https://github.com/ppizarror/pygame-menu/actions/workflows/tests.yml
     :alt: Build status
+    
+.. image:: https://app.fossa.com/api/projects/git%2Bgithub.com%2Fppizarror%2Fpygame-menu.svg?type=shield
+    :target: https://app.fossa.com/projects/git%2Bgithub.com%2Fppizarror%2Fpygame-menu?ref=badge_shield
+    :alt: FOSSA Status
+    
+.. image:: https://readthedocs.org/projects/pygame-menu/badge/?version=4.2.3
+    :target: https://pygame-menu.readthedocs.io/en/4.2.3/?badge=4.2.3
+    :alt: Documentation Status
 
 .. image:: https://img.shields.io/lgtm/alerts/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18
     :target: https://lgtm.com/projects/g/ppizarror/pygame-menu/alerts
@@ -42,10 +50,6 @@ pygame-menu
 .. image:: https://codecov.io/gh/ppizarror/pygame-menu/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/ppizarror/pygame-menu
     :alt: Codecov
-    
-.. image:: https://app.fossa.com/api/projects/git%2Bgithub.com%2Fppizarror%2Fpygame-menu.svg?type=shield
-    :target: https://app.fossa.com/projects/git%2Bgithub.com%2Fppizarror%2Fpygame-menu?ref=badge_shield
-    :alt: FOSSA Status
 
 .. image:: https://img.shields.io/github/issues/ppizarror/pygame-menu
     :target: https://github.com/ppizarror/pygame-menu/issues
