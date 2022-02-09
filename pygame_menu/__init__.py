@@ -115,7 +115,7 @@ __contributors__ = [
     'zPaw'
 
 ]
-__copyright__ = 'Copyright 2017-2021 Pablo Pizarro R. @ppizarror'
+__copyright__ = 'Copyright 2017 Pablo Pizarro R. @ppizarror'
 __description__ = 'A menu for pygame. Simple, and easy to use'
 __email__ = 'pablo@ppizarror.com'
 __keywords__ = 'pygame menu menus gui widget input button pygame-menu image sound ui'
