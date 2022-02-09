@@ -177,7 +177,7 @@ class WidgetManager(
         # font_name
         font_name = kwargs.pop('font_name', self._theme.widget_font)
         assert_font(font_name)
-        attributes['font_name'] = str(font_name)
+        attributes['font_name'] = font_name
 
         # font_shadow
         font_shadow = kwargs.pop('font_shadow', self._theme.widget_font_shadow)

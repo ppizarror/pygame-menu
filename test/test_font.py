@@ -11,6 +11,7 @@ __all__ = ['FontTest']
 from pathlib import Path
 from test._utils import MenuUtils, BaseTest
 
+import pygame
 import pygame_menu
 
 
@@ -45,3 +46,18 @@ class FontTest(BaseTest):
 
         # Modify the system font and load, this will raise an exception
         self.assertRaises(ValueError, lambda: MenuUtils.get_font('invalid font', 5))
+
+    def test_font_argument(self) -> None:
+        """
+        Test font pass as argument.
+        """
+        menu = MenuUtils.generic_menu()
+        f0 = pygame.font.SysFont(pygame.font.get_fonts()[0], 20)
+
+        # Widget with custom font
+        text = menu.add.text_input('First name: ', default='John', font_name=f0)
+        self.assertEqual(text.get_font_info()['name'], f0)
+
+        # Test widgets with default font, check are equal
+        text2 = menu.add.text_input('First name: ', default='John')
+        self.assertEqual(text2.get_font_info()['name'], menu.get_theme().widget_font)
