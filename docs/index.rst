@@ -18,7 +18,7 @@ First steps
 
 Making games using :py:mod:`pygame` is really cool, but most games (or applications)
 require end-user configuration. Creating complex GUI objects to display a menu can
-be painful. That why :py:mod:`pygame-menu` was designed.
+be painful. That was why :py:mod:`pygame-menu` was designed.
 
 Here is a simple example of how to create a menu with :py:mod:`pygame-menu`
 (the code is available in `pygame_menu.examples.simple.py <https://github.com/ppizarror/pygame-menu/tree/master/pygame_menu/examples/simple.py>`_):
