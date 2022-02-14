@@ -35,8 +35,8 @@ pygame-menu
     :target: https://app.fossa.com/projects/git%2Bgithub.com%2Fppizarror%2Fpygame-menu?ref=badge_shield
     :alt: FOSSA Status
     
-.. image:: https://readthedocs.org/projects/pygame-menu/badge/?version=4.2.3
-    :target: https://pygame-menu.readthedocs.io/en/4.2.3/?badge=4.2.3
+.. image:: https://readthedocs.org/projects/pygame-menu/badge/?version=latest
+    :target: https://pygame-menu.readthedocs.io
     :alt: Documentation Status
 
 .. image:: https://img.shields.io/lgtm/alerts/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18
