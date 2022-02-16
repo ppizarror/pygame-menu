@@ -303,6 +303,7 @@ class DropSelect(Widget):
                                       int(selection_box_margin[1]))
         self._selection_box_text_margin = selection_box_text_margin
         self._selection_box_width = selection_box_width
+        self._selection_box_width_ = selection_box_width # for update_items
         self._selection_infinite = selection_infinite
         self._selection_option_border_color = selection_option_border_color
         self._selection_option_border_width = selection_option_border_width
@@ -318,7 +319,7 @@ class DropSelect(Widget):
         }
 
         self.active = False
-
+    
     def set_default_value(self, index: int) -> 'DropSelect':
         self._default_value = index
         return self
@@ -364,12 +365,14 @@ class DropSelect(Widget):
         # Create options buttons
         total_height = 0
         max_height = 0
-        frame_width = self._selection_box_width + self._selection_box_inflate[0]
         self._option_buttons = []
 
         # Add placeholder button
         if self._placeholder_add_to_selection_box:
             self._items.insert(0, (self._placeholder, -1))
+        
+        if self._selection_box_width_ == 0:
+            self._selection_box_width = 0
 
         for opt_id in range(len(self._items)):
             option = self._items[opt_id]
@@ -432,11 +435,16 @@ class DropSelect(Widget):
                                prev_pad[3] + dh + m[0] + m[1]
                 btn._padding_transform = prev_pad_t[0], prev_pad_t[1], \
                                          prev_pad_t[2], prev_pad_t[3] + dh + m[0] + m[1]
+            
+            if self._selection_box_width_ == 0:
+                self._selection_box_width = max(\
+                    self._selection_box_width,btn.get_width())
 
             total_height += bh
             if opt_id + 1 <= self._selection_box_height:
                 max_height += bh
 
+        frame_width = self._selection_box_width + self._selection_box_inflate[0]
         max_width = frame_width
         if total_height != max_height:
             max_width -= self._scrollbar_thick
