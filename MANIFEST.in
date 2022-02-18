@@ -10,6 +10,7 @@ exclude pygame_menu/examples/other/_test*
 exclude test/*.py
 
 include requirements.txt
+include pygame_menu/py.typed
 
 recursive-include pygame_menu/resources/fonts *.ttf
 recursive-include pygame_menu/resources/fonts *.txt
