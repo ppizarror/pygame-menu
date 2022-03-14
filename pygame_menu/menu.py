@@ -541,6 +541,8 @@ class Menu(Base):
             area_color=self._theme.background_color,
             area_height=self._height - extend_y,
             area_width=self._width,
+            border_color=self._theme.border_color,
+            border_width=self._theme.border_width,
             controls_joystick=self._joystick,
             controls_keyboard=self._keyboard,
             controls_mouse=self._mouse,

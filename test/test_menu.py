@@ -2395,3 +2395,21 @@ class MenuTest(BaseRSTest):
         menu.resize(400, 400, position=(50, 50, False))
         self.assertFalse(menu._position_relative)
         self.assertEqual(menu._position, (50, 50))
+
+    def test_border_color(self) -> None:
+        """
+        Test menu border color.
+        """
+        theme = pygame_menu.themes.THEME_DEFAULT.copy()
+        self.assertIsNone(theme.border_color)
+        theme.border_width = 10
+
+        # Test with border color
+        theme.border_color = 'red'
+        menu = MenuUtils.generic_menu(theme=theme, width=250, height=250)
+        menu.draw(surface)
+
+        # Test with image
+        theme.border_color = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_TILED_BORDER)
+        menu = MenuUtils.generic_menu(theme=theme, width=250, height=250)
+        menu.mainloop(surface)
