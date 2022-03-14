@@ -2403,13 +2403,14 @@ class MenuTest(BaseRSTest):
         theme = pygame_menu.themes.THEME_DEFAULT.copy()
         self.assertIsNone(theme.border_color)
         theme.border_width = 10
+        theme.title_font_size = 15
 
         # Test with border color
         theme.border_color = 'red'
-        menu = MenuUtils.generic_menu(theme=theme, width=250, height=250)
+        menu = pygame_menu.Menu('Menu with border color', 250, 250, theme=theme)
         menu.draw(surface)
 
         # Test with image
         theme.border_color = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_TILED_BORDER)
-        menu = MenuUtils.generic_menu(theme=theme, width=250, height=250)
-        menu.mainloop(surface)
+        menu = pygame_menu.Menu('Menu with border image', 250, 250, theme=theme)
+        menu.draw(surface)
