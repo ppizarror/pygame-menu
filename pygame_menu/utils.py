@@ -41,10 +41,8 @@ __all__ = [
 
 ]
 
-import functools
 import sys
 import traceback
-import types
 import uuid
 import warnings
 
