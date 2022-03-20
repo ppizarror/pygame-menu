@@ -19,6 +19,7 @@ __all__ = [
 import pygame
 import pygame_menu
 
+from itertools import product
 from pygame_menu._base import Base
 from pygame_menu._decorator import Decorator
 from pygame_menu.locals import POSITION_SOUTHEAST, POSITION_SOUTHWEST, POSITION_WEST, \
@@ -91,6 +92,8 @@ class ScrollArea(Base):
     :param area_width: Width of scrollable area in px
     :param area_height: Height of scrollable area in px
     :param area_color: Background color, it can be a color or an image
+    :param border_color: Border color
+    :param border_width: Border width in px
     :param controls_joystick: Use joystick events
     :param controls_keyboard: Use keyboard events
     :param controls_mouse: Use mouse events
@@ -114,6 +117,10 @@ class ScrollArea(Base):
     :param world: Surface to draw and scroll
     """
     _area_color: Optional[Union[ColorInputType, 'pygame_menu.BaseImage']]
+    _border_color: Optional[Union[ColorInputType, 'pygame_menu.BaseImage']]
+    _border_tiles: List['pygame.Surface']
+    _border_tiles_size: Tuple2IntType
+    _border_width: int
     _bg_surface: Optional['pygame.Surface']
     _decorator: 'Decorator'
     _extend_x: int
@@ -135,6 +142,8 @@ class ScrollArea(Base):
             area_width: int,
             area_height: int,
             area_color: Optional[Union[ColorInputType, 'pygame_menu.BaseImage']] = None,
+            border_color: Optional[Union[ColorInputType, 'pygame_menu.BaseImage']] = None,
+            border_width: int = 0,
             controls_joystick: bool = True,
             controls_keyboard: bool = True,
             controls_mouse: bool = True,
@@ -161,6 +170,7 @@ class ScrollArea(Base):
 
         assert isinstance(area_height, int)
         assert isinstance(area_width, int)
+        assert isinstance(border_width, int)
         assert isinstance(controls_joystick, bool)
         assert isinstance(controls_keyboard, bool)
         assert isinstance(controls_mouse, bool)
@@ -175,6 +185,18 @@ class ScrollArea(Base):
 
         if area_color is not None and not isinstance(area_color, pygame_menu.BaseImage):
             area_color = assert_color(area_color)
+        if border_color is not None and not isinstance(border_color, pygame_menu.BaseImage):
+            border_color = assert_color(border_color)
+
+        # Create tiles
+        if isinstance(border_color, pygame_menu.BaseImage):
+            iw, ih = border_color.get_size()
+            tw, th = iw // 3, ih // 3
+            self._border_tiles_size = tw, th
+            self._border_tiles = [
+                border_color.subsurface((x, y, tw, th))
+                for x, y in product(range(0, iw, tw), range(0, ih, th))
+            ]
 
         scrollbar_color = assert_color(scrollbar_color)
         scrollbar_slider_color = assert_color(scrollbar_slider_color)
@@ -195,7 +217,8 @@ class ScrollArea(Base):
                     unique_scrolls.append(s)
 
         self._area_color = area_color
-        self._bg_surface = None
+        self._border_color = border_color
+        self._border_width = border_width
         self._bg_surface = None
         self._decorator = Decorator(self)
         self._scrollbar_positions = tuple(unique_scrolls)  # Ensure unique
@@ -300,10 +323,11 @@ class ScrollArea(Base):
         # Make surface
         self._bg_surface = make_surface(width=self._rect.width + self._extend_x,
                                         height=self._rect.height + self._extend_y)
+        rect = self._bg_surface.get_rect()
         if self._area_color is not None:
             if isinstance(self._area_color, pygame_menu.BaseImage):
                 self._area_color.draw(surface=self._bg_surface,
-                                      area=self._bg_surface.get_rect())
+                                      area=rect)
             else:
                 self._bg_surface.fill(assert_color(self._area_color))
 
@@ -475,6 +499,74 @@ class ScrollArea(Base):
 
         # Draw post decorator
         self._decorator.draw_post(surface)
+
+        # Create border
+        if isinstance(self._border_color, pygame_menu.BaseImage):  # Image
+            tw, th = self._border_tiles_size
+            border_rect = pygame.Rect(
+                int(self._rect.x - tw),
+                int(self._rect.y - th),
+                int(self._rect.width + 2 * tw),
+                int(self._rect.height + 2 * th)
+            )
+
+            surface_blit = surface.blit
+            (
+                tile_nw,
+                tile_w,
+                tile_sw,
+                tile_n,
+                tile_c,
+                tile_s,
+                tile_ne,
+                tile_e,
+                tile_se,
+            ) = self._border_tiles
+            left, top = self._rect.topleft
+            left -= tw
+            top -= th
+
+            # draw top and bottom tiles
+            area: Optional[Tuple[int, int, int, int]]
+
+            for x in range(border_rect.left, border_rect.right, tw):
+                if x + tw >= border_rect.right:
+                    area = 0, 0, tw - (x + border_rect.right), th
+                else:
+                    area = None
+                surface_blit(tile_n, (x, top), area)
+                surface_blit(tile_s, (x, border_rect.bottom - th), area)
+
+            # draw left and right tiles
+            for y in range(border_rect.top, border_rect.bottom, th):
+                if y + th >= border_rect.bottom:
+                    area = 0, 0, tw, th - (y + border_rect.bottom)
+                else:
+                    area = None
+                surface_blit(tile_w, (left, y), area)
+                surface_blit(tile_e, (border_rect.right - tw, y), area)
+
+            # draw corners
+            surface_blit(tile_nw, (left, top))
+            surface_blit(tile_sw, (left, border_rect.bottom - th))
+            surface_blit(tile_ne, (border_rect.right - tw, top))
+            surface_blit(tile_se, (border_rect.right - tw, border_rect.bottom - th))
+
+        else:  # Color
+            if self._border_width == 0 or self._border_color is None:
+                return self
+            border_rect = pygame.Rect(
+                int(self._rect.x - self._border_width),
+                int(self._rect.y - self._border_width),
+                int(self._rect.width + 2 * self._border_width),
+                int(self._rect.height + 2 * self._border_width)
+            )
+            pygame.draw.rect(
+                surface,
+                self._border_color,
+                border_rect,
+                self._border_width
+            )
 
         return self
 

@@ -80,7 +80,11 @@ class Theme(object):
         width/height see Menu parameters.
 
     :param background_color: Menu background color
-    :type background_color: tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`
+    :type background_color: tuple, list, str, int, :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage`
+    :param border_color: Menu border color. If border is an image, it will be split in 9 tiles to use top, left, bottom, right, and the corners
+    :type border_color: tuple, list, str, int, :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage`, None
+    :param border_width: Border width in px. Used only if ``border_color`` is not an image
+    :type border_width: int
     :param cursor_color: Cursor color (used in some text-gathering widgets like ``TextInput``)
     :type cursor_color: tuple, list, str, int, :py:class:`pygame.Color`
     :param cursor_selection_color: Color of the text selection if the cursor is enabled on certain widgets
@@ -238,6 +242,7 @@ class Theme(object):
     """
     _disable_validation: bool
     background_color: Union[ColorType, 'BaseImage']
+    border_color: Union[ColorType, 'BaseImage']
     cursor_color: ColorType
     cursor_selection_color: ColorType
     cursor_switch_ms: NumberType
@@ -320,6 +325,8 @@ class Theme(object):
 
         # Menu general
         self.background_color = self._get(kwargs, 'background_color', 'color_image', (220, 220, 220))
+        self.border_color = self._get(kwargs, 'border_color', 'color_image_none')
+        self.border_width = self._get(kwargs, 'border_width', int, 0)
         self.focus_background_color = self._get(kwargs, 'focus_background_color', 'color', (0, 0, 0, 180))
         self.fps = self._get(kwargs, 'fps', NumberInstance, 30)
         self.readonly_color = self._get(kwargs, 'readonly_color', 'color', (120, 120, 120))
@@ -463,6 +470,7 @@ class Theme(object):
         if self.widget_selection_effect is None:
             self.widget_selection_effect = NoneSelection()
 
+        assert isinstance(self.border_width, int)
         assert isinstance(self.cursor_switch_ms, NumberInstance)
         assert isinstance(self.fps, NumberInstance)
         assert isinstance(self.scrollbar_shadow_offset, int)
@@ -489,6 +497,7 @@ class Theme(object):
         # Format colors, this converts all color lists to tuples automatically,
         # if it is an image, return the same object
         self.background_color = self._format_color_opacity(self.background_color)
+        self.border_color = self._format_color_opacity(self.border_color, none=True)
         self.cursor_color = self._format_color_opacity(self.cursor_color)
         self.cursor_selection_color = self._format_color_opacity(self.cursor_selection_color)
         self.focus_background_color = self._format_color_opacity(self.focus_background_color)
@@ -538,6 +547,7 @@ class Theme(object):
         self.widget_offset = self._vec_to_tuple(self.widget_offset, 2, NumberInstance)
 
         # Check sizes
+        assert self.border_width >= 0, 'border width must be equal or greater than zero'
         assert self.scrollarea_outer_margin[0] >= 0 and self.scrollarea_outer_margin[1] >= 0, \
             'scroll area outer margin must be equal or greater than zero on both axis'
         assert self.widget_offset[0] >= 0 and self.widget_offset[1] >= 0, \

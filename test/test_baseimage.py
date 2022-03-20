@@ -422,3 +422,11 @@ class BaseImageTest(BaseTest):
         image.draw(surface, r)
         self.assertNotEqual(image._last_transform[2], s)
         self.assertEqual(image._last_transform[0], 300)
+
+    def test_subsurface(self) -> None:
+        """
+        Test subsurface.
+        """
+        image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_TILED_BORDER)
+        self.assertEqual(image.get_size(), (18, 18))
+        self.assertEqual(image.subsurface((0, 0, 3, 3)).get_size(), (3, 3))

@@ -18,6 +18,7 @@ __all__ = [
     'IMAGE_EXAMPLE_METAL',
     'IMAGE_EXAMPLE_PYGAME_MENU',
     'IMAGE_EXAMPLE_PYTHON',
+    'IMAGE_EXAMPLE_TILED_BORDER',
     'IMAGE_EXAMPLE_WALLPAPER',
     'IMAGE_EXAMPLES',
 
@@ -58,11 +59,12 @@ IMAGE_EXAMPLE_GRAY_LINES = __images_path__.format('gray_lines.png')
 IMAGE_EXAMPLE_METAL = __images_path__.format('metal.png')
 IMAGE_EXAMPLE_PYGAME_MENU = __images_path__.format('pygame_menu.png')
 IMAGE_EXAMPLE_PYTHON = __images_path__.format('python.svg')
+IMAGE_EXAMPLE_TILED_BORDER = __images_path__.format('tiled_border.png')
 IMAGE_EXAMPLE_WALLPAPER = __images_path__.format('wallpaper.jpg')
 
 IMAGE_EXAMPLES = (IMAGE_EXAMPLE_CARBON_FIBER, IMAGE_EXAMPLE_GRAY_LINES,
                   IMAGE_EXAMPLE_METAL, IMAGE_EXAMPLE_PYGAME_MENU, IMAGE_EXAMPLE_PYTHON,
-                  IMAGE_EXAMPLE_WALLPAPER)
+                  IMAGE_EXAMPLE_TILED_BORDER, IMAGE_EXAMPLE_WALLPAPER)
 
 # Drawing modes
 IMAGE_MODE_CENTER = 100
@@ -403,6 +405,15 @@ class BaseImage(Base):
         :return: Image height
         """
         return int(self._surface.get_height())
+
+    def subsurface(self, rect: Union[Tuple4IntType, 'pygame.Rect']) -> 'pygame.Surface':
+        """
+        Return a subsurface from a rect.
+
+        :param rect: Rect
+        :return: Subsurface
+        """
+        return self._surface.subsurface(rect)
 
     def get_size(self) -> Tuple2IntType:
         """
