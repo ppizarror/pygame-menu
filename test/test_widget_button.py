@@ -35,8 +35,6 @@ class ButtonWidgetTest(BaseTest):
 
         # Invalid ones
         invalid = [
-            bool,  # type
-            object,  # object
             1,  # int
             'a',  # str
             True,  # bool
@@ -66,7 +64,7 @@ class ButtonWidgetTest(BaseTest):
             self.assertTrue(menu.add.button('b1', v) is not None)
 
         btn = menu.add.button('b1', menu2)
-        for v in [menu, 1, bool, object, [1, 2, 3], (1, 2, 3)]:
+        for v in [menu, 1, [1, 2, 3], (1, 2, 3)]:
             self.assertRaises(AssertionError, lambda: btn.update_callback(v))
         btn.update_callback(test)
 
