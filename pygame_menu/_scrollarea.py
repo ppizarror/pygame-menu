@@ -501,8 +501,6 @@ class ScrollArea(Base):
         self._decorator.draw_post(surface)
 
         # Create border
-        if self._border_width == 0 or self._border_color is None:
-            return self
         if isinstance(self._border_color, pygame_menu.BaseImage):  # Image
             tw, th = self._border_tiles_size
             border_rect = pygame.Rect(
@@ -511,6 +509,7 @@ class ScrollArea(Base):
                 int(self._rect.width + 2 * tw),
                 int(self._rect.height + 2 * th)
             )
+            print('sad')
 
             surface_blit = surface.blit
             (
@@ -555,6 +554,8 @@ class ScrollArea(Base):
             surface_blit(tile_se, (border_rect.right - tw, border_rect.bottom - th))
 
         else:  # Color
+            if self._border_width == 0 or self._border_color is None:
+                return self
             border_rect = pygame.Rect(
                 int(self._rect.x - self._border_width),
                 int(self._rect.y - self._border_width),
