@@ -349,6 +349,19 @@ def get_finger_pos(menu: 'pygame_menu.Menu', event: EventType) -> Tuple2IntType:
     return event.pos
 
 
+def is_callable(func: Any) -> bool:
+    """
+    Return ``True`` if ``func`` is callable.
+
+    :param func: Function object
+    :return: ``True`` if function
+    """
+    e = 'is_callable(func) method will be removed in v5, consider using built-in' \
+        ' callable(func) method instead'
+    warnings.warn(e, DeprecationWarning)
+    return callable(func)
+
+
 def load_pygame_image_file(image_path: str, **kwargs) -> 'pygame.Surface':
     """
     Loads an image and returns a surface.

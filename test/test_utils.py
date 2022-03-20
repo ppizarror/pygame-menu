@@ -18,6 +18,13 @@ import pygame_menu.utils as ut
 
 class UtilsTest(BaseTest):
 
+    def test_callable(self) -> None:
+        """
+        Test is callable.
+        """
+        self.assertTrue(ut.is_callable(bool))
+        self.assertFalse(ut.is_callable(1))
+
     def test_position_str(self) -> None:
         """
         Test position assert values as str.
