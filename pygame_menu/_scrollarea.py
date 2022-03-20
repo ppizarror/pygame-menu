@@ -509,7 +509,6 @@ class ScrollArea(Base):
                 int(self._rect.width + 2 * tw),
                 int(self._rect.height + 2 * th)
             )
-            print('sad')
 
             surface_blit = surface.blit
             (
