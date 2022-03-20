@@ -21,7 +21,7 @@ import pygame.gfxdraw as gfxdraw
 from pygame_menu._base import Base
 from pygame_menu.font import FontType
 from pygame_menu.utils import assert_list_vector, assert_color, make_surface, \
-    is_callable, assert_vector, uuid4, warn
+    assert_vector, uuid4, warn
 
 from pygame_menu._types import List, Tuple2NumberType, ColorInputType, Tuple, \
     Any, Dict, Union, NumberType, Tuple2IntType, Optional, Callable, NumberInstance, \
@@ -658,7 +658,7 @@ class Decorator(Base):
         :param pass_args: If ``False`` function is called without (surface, object) as args
         :return: ID of the decoration
         """
-        assert is_callable(fun), 'fun must be a callable type'
+        assert callable(fun), 'fun must be a callable type'
         assert isinstance(pass_args, bool)
         if pass_args:
             return self._add_decor(DECORATION_CALLABLE, prev, fun)

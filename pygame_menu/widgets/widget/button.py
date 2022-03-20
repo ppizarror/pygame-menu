@@ -20,7 +20,7 @@ import webbrowser
 
 from abc import ABC
 from pygame_menu.locals import FINGERUP, CURSOR_HAND
-from pygame_menu.utils import is_callable, assert_color, get_finger_pos, warn
+from pygame_menu.utils import assert_color, get_finger_pos, warn
 from pygame_menu.widgets.core.widget import AbstractWidgetManager, Widget
 
 from pygame_menu._types import Any, CallbackType, Callable, Union, List, Tuple, \
@@ -89,7 +89,7 @@ class Button(Widget):
         :param callback: Callback when selecting the widget, executed in :py:meth:`pygame_menu.widgets.core.widget.Widget.set_selected`
         """
         if callback is not None:
-            assert is_callable(callback), \
+            assert callable(callback), \
                 'callback must be callable (function-type) or None'
         self._onselect = callback
 
@@ -107,7 +107,7 @@ class Button(Widget):
         :param callback: Function
         :param args: Arguments used by the function once triggered
         """
-        assert is_callable(callback), \
+        assert callable(callback), \
             'only callable (function-type) are allowed'
 
         # If return is a Menu object, remove it from submenus list
@@ -395,7 +395,7 @@ class ButtonManager(AbstractWidgetManager, ABC):
             widget = Button(title, button_id, self._menu.full_reset)
 
         # If element is a function or callable
-        elif is_callable(action):
+        elif callable(action):
             if not accept_kwargs:
                 widget = Button(title, button_id, action, *args)
             else:

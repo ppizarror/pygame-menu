@@ -17,7 +17,7 @@ import textwrap
 import time
 
 from abc import ABC
-from pygame_menu.utils import assert_color, is_callable, warn, uuid4
+from pygame_menu.utils import assert_color, warn, uuid4
 from pygame_menu.widgets.core.widget import Widget, AbstractWidgetManager
 
 from pygame_menu._types import Any, CallbackType, List, Union, Tuple, Optional, \
@@ -112,7 +112,7 @@ class Label(Widget):
         :return: Self reference
         """
         if generator is not None:
-            assert is_callable(generator)
+            assert callable(generator)
         self._title_generator = generator
 
         # Update update widgets

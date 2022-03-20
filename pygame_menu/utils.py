@@ -22,7 +22,6 @@ __all__ = [
     'format_color',
     'get_cursor',
     'get_finger_pos',
-    'is_callable',
     'load_pygame_image_file',
     'make_surface',
     'mouse_motion_current_mouse_position',
@@ -350,18 +349,6 @@ def get_finger_pos(menu: 'pygame_menu.Menu', event: EventType) -> Tuple2IntType:
         finger_pos = (int(event.x * display_size[0]), int(event.y * display_size[1]))
         return finger_pos
     return event.pos
-
-
-def is_callable(func: Any) -> bool:
-    """
-    Return ``True`` if ``func`` is callable.
-
-    :param func: Function object
-    :return: ``True`` if function
-    """
-    # noinspection PyTypeChecker
-    return isinstance(func, (types.FunctionType, types.BuiltinFunctionType,
-                             types.MethodType, functools.partial))
 
 
 def load_pygame_image_file(image_path: str, **kwargs) -> 'pygame.Surface':

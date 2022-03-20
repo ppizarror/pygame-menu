@@ -32,7 +32,7 @@ from pygame_menu.locals import POSITION_NORTHWEST, POSITION_SOUTHEAST, ALIGN_CEN
     CURSOR_ARROW
 from pygame_menu._scrollarea import get_scrollbars_from_position
 from pygame_menu.utils import assert_alignment, assert_cursor, assert_vector, \
-    assert_position, assert_color, is_callable, format_color, assert_position_vector
+    assert_position, assert_color, format_color, assert_position_vector
 from pygame_menu.widgets import HighlightSelection, NoneSelection, MENUBAR_STYLE_ADAPTIVE, \
     MENUBAR_STYLE_SIMPLE, MENUBAR_STYLE_TITLE_ONLY, MENUBAR_STYLE_TITLE_ONLY_DIAGONAL, \
     MENUBAR_STYLE_NONE, MENUBAR_STYLE_UNDERLINE, MENUBAR_STYLE_UNDERLINE_TITLE
@@ -721,7 +721,7 @@ class Theme(object):
                     assert_alignment(value)
 
                 elif val_type == callable or val_type == 'function' or val_type == 'callable':
-                    assert is_callable(value), \
+                    assert callable(value), \
                         'value must be callable type'
 
                 elif val_type == 'color':

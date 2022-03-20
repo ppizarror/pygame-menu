@@ -17,7 +17,6 @@ import pygame_menu
 from abc import ABC
 from pygame_menu.widgets.core.widget import AbstractWidgetManager
 from pygame_menu.widgets.widget.none import NoneWidget
-from pygame_menu.utils import is_callable
 
 from pygame_menu._types import Callable
 
@@ -45,7 +44,7 @@ class MenuLink(NoneWidget):
             link_id: str = ''
     ) -> None:
         assert isinstance(menu, pygame_menu.Menu)
-        assert is_callable(menu_opener_handler), \
+        assert callable(menu_opener_handler), \
             'menu opener handler must be callable (a function)'
         super(MenuLink, self).__init__(
             widget_id=link_id

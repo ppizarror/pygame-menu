@@ -24,7 +24,7 @@ from abc import ABC
 from pygame_menu.font import FontType, assert_font
 from pygame_menu.locals import ALIGN_LEFT, ALIGN_CENTER
 from pygame_menu.utils import assert_color, assert_vector, make_surface, \
-    is_callable, assert_alignment, parse_padding
+    assert_alignment, parse_padding
 from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImplemented, \
     AbstractWidgetManager
 
@@ -150,7 +150,7 @@ class ProgressBar(Widget):
 
         # Check progress text
         assert isinstance(progress_text_enabled, bool)
-        assert is_callable(progress_text_format)
+        assert callable(progress_text_format)
         assert isinstance(progress_text_format(0), str)
         assert isinstance(progress_text_placeholder, str)
         assert_alignment(progress_text_align)
