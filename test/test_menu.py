@@ -2405,6 +2405,10 @@ class MenuTest(BaseRSTest):
         theme.border_width = 10
         theme.title_font_size = 15
 
+        # Test invalid
+        theme.border_color = 'invalid'
+        self.assertRaises(ValueError, lambda: pygame_menu.Menu('Menu with border color', 250, 250, theme=theme))
+
         # Test with border color
         theme.border_color = 'red'
         menu = pygame_menu.Menu('Menu with border color', 250, 250, theme=theme)
