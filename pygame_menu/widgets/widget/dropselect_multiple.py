@@ -28,7 +28,7 @@ import pygame_menu
 from abc import ABC
 from pygame_menu.font import FontType
 from pygame_menu.locals import POSITION_NORTHWEST, POSITION_SOUTHEAST
-from pygame_menu.utils import assert_color, assert_vector, is_callable
+from pygame_menu.utils import assert_color, assert_vector
 from pygame_menu.widgets.core.widget import AbstractWidgetManager, Widget
 from pygame_menu.widgets.widget.button import Button
 from pygame_menu.widgets.widget.dropselect import DropSelect
@@ -326,7 +326,7 @@ class DropSelectMultiple(DropSelect):
         elif isinstance(self._selection_placeholder_format, str):
             return self._placeholder_selected.format(self._selection_placeholder_format.join(list_items))
 
-        elif is_callable(self._selection_placeholder_format):
+        elif callable(self._selection_placeholder_format):
             try:
                 o = self._selection_placeholder_format(list_items)
             except TypeError:

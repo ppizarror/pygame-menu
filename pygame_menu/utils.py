@@ -22,7 +22,6 @@ __all__ = [
     'format_color',
     'get_cursor',
     'get_finger_pos',
-    'is_callable',
     'load_pygame_image_file',
     'make_surface',
     'mouse_motion_current_mouse_position',
@@ -42,10 +41,8 @@ __all__ = [
 
 ]
 
-import functools
 import sys
 import traceback
-import types
 import uuid
 import warnings
 
@@ -359,9 +356,10 @@ def is_callable(func: Any) -> bool:
     :param func: Function object
     :return: ``True`` if function
     """
-    # noinspection PyTypeChecker
-    return isinstance(func, (types.FunctionType, types.BuiltinFunctionType,
-                             types.MethodType, functools.partial))
+    e = 'is_callable(func) method will be removed in v5, consider using built-in' \
+        ' callable(func) method instead'
+    warnings.warn(e, DeprecationWarning)
+    return callable(func)
 
 
 def load_pygame_image_file(image_path: str, **kwargs) -> 'pygame.Surface':

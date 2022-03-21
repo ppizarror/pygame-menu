@@ -222,7 +222,6 @@ class ThemeTest(BaseTest):
             [pygame_menu.locals.POSITION_WEST, bool]
         ]
 
-        self.assertRaises(AssertionError, lambda: t._get({}, '', 'callable', bool))
         self.assertRaises(AssertionError, lambda: t._get({}, '', 'color', [1, 1, 1, 256]))
         self.assertRaises(AssertionError, lambda: t._get({}, '', 'color', [11, 1, -1]))
         self.assertRaises(AssertionError, lambda: t._get({}, '', 'color', [11, 1, -1]))

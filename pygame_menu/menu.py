@@ -27,7 +27,7 @@ from pygame_menu.locals import ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT, \
 from pygame_menu._scrollarea import ScrollArea, get_scrollbars_from_position
 from pygame_menu.sound import Sound
 from pygame_menu.themes import Theme, THEME_DEFAULT
-from pygame_menu.utils import is_callable, assert_vector, make_surface, warn, \
+from pygame_menu.utils import assert_vector, make_surface, warn, \
     check_key_pressed_valid, mouse_motion_current_mouse_position, get_finger_pos, \
     print_menu_widget_structure
 from pygame_menu.widgets import Frame, Widget, MenuBar
@@ -779,7 +779,7 @@ class Menu(Base):
         :param onbeforeopen: Onbeforeopen callback, it can be a function or None
         :return: Self reference
         """
-        assert is_callable(onbeforeopen) or onbeforeopen is None, \
+        assert callable(onbeforeopen) or onbeforeopen is None, \
             'onbeforeopen must be callable (function-type) or None'
         self._onbeforeopen = onbeforeopen
         return self
@@ -806,7 +806,7 @@ class Menu(Base):
         :param onupdate: Onupdate callback, it can be a function or None
         :return: Self reference
         """
-        assert is_callable(onupdate) or onupdate is None, \
+        assert callable(onupdate) or onupdate is None, \
             'onupdate must be a callable (function-type) or None'
         self._onupdate = onupdate
         return self
@@ -832,7 +832,7 @@ class Menu(Base):
         :param onclose: Onclose callback, it can be a function, a pygame-menu event, or None
         :return: Self reference
         """
-        assert is_callable(onclose) or _events.is_event(onclose) or onclose is None, \
+        assert callable(onclose) or _events.is_event(onclose) or onclose is None, \
             'onclose must be a MenuAction (event), callable (function-type), or None'
         if onclose == _events.NONE:
             onclose = None
@@ -860,7 +860,7 @@ class Menu(Base):
         :param onreset: Onreset callback, it can be a function or None
         :return: Self reference
         """
-        assert is_callable(onreset) or onreset is None, \
+        assert callable(onreset) or onreset is None, \
             'onreset must be a callable (function-type) or None'
         self._onreset = onreset
         return self
@@ -882,7 +882,7 @@ class Menu(Base):
         :return: Self reference
         """
         if onwindowmouseover is not None:
-            assert is_callable(onwindowmouseover), \
+            assert callable(onwindowmouseover), \
                 'onwindowmouseover must be callable (function-type) or None'
         self._onwindowmouseover = onwindowmouseover
         return self
@@ -904,7 +904,7 @@ class Menu(Base):
         :return: Self reference
         """
         if onwindowmouseleave is not None:
-            assert is_callable(onwindowmouseleave), \
+            assert callable(onwindowmouseleave), \
                 'onwindowmouseleave must be callable (function-type) or None'
         self._onwindowmouseleave = onwindowmouseleave
         return self
@@ -926,7 +926,7 @@ class Menu(Base):
         :return: Self reference
         """
         if onwidgetchange is not None:
-            assert is_callable(onwidgetchange), \
+            assert callable(onwidgetchange), \
                 'onwidgetchange must be callable (function-type) or None'
         self._onwidgetchange = onwidgetchange
         return self
@@ -948,7 +948,7 @@ class Menu(Base):
         :return: Self reference
         """
         if onmouseover is not None:
-            assert is_callable(onmouseover), \
+            assert callable(onmouseover), \
                 'onmouseover must be callable (function-type) or None'
         self._onmouseover = onmouseover
         return self
@@ -970,7 +970,7 @@ class Menu(Base):
         :return: Self reference
         """
         if onmouseleave is not None:
-            assert is_callable(onmouseleave), \
+            assert callable(onmouseleave), \
                 'onmouseleave must be callable (function-type) or None'
         self._onmouseleave = onmouseleave
         return self
@@ -1676,7 +1676,7 @@ class Menu(Base):
                     self.full_reset()
 
             # If action is callable (function)
-            elif is_callable(onclose):
+            elif callable(onclose):
                 try:
                     onclose(self)
                 except TypeError:
@@ -2867,7 +2867,7 @@ class Menu(Base):
         # Check background function
         bgfun_accept_menu = False
         if bgfun:
-            assert is_callable(bgfun), \
+            assert callable(bgfun), \
                 'background function must be callable (function-type) object'
             try:
                 bgfun(self._current)

@@ -45,7 +45,7 @@ from pygame_menu.locals import POSITION_NORTHWEST, POSITION_SOUTHWEST, POSITION_
     POSITION_SOUTHEAST, ALIGN_CENTER
 from pygame_menu.sound import Sound
 from pygame_menu.utils import make_surface, assert_alignment, assert_color, \
-    assert_position, assert_vector, is_callable, parse_padding, uuid4, \
+    assert_position, assert_vector, parse_padding, uuid4, \
     mouse_motion_current_mouse_position, PYGAME_V2, set_pygame_cursor, warn, \
     get_cursor, ShadowGenerator
 from pygame_menu.widgets.core.selection import Selection
@@ -484,7 +484,7 @@ class Widget(Base):
         :return: Self reference
         """
         if onchange:
-            assert is_callable(onchange), \
+            assert callable(onchange), \
                 'onchange must be callable (function-type) or None'
         self._onchange = onchange
         return self
@@ -503,7 +503,7 @@ class Widget(Base):
         :return: Self reference
         """
         if onreturn:
-            assert is_callable(onreturn), \
+            assert callable(onreturn), \
                 'onreturn must be callable (function-type) or None'
         self._onreturn = onreturn
         return self
@@ -522,7 +522,7 @@ class Widget(Base):
         :return: Self reference
         """
         if onselect:
-            assert is_callable(onselect), \
+            assert callable(onselect), \
                 'onselect must be callable (function-type) or None'
         self._onselect = onselect
         return self
@@ -541,7 +541,7 @@ class Widget(Base):
         :return: Self reference
         """
         if onmouseover:
-            assert is_callable(onmouseover), \
+            assert callable(onmouseover), \
                 'onmouseover must be callable (function-type) or None'
         self._onmouseover = onmouseover
         return self
@@ -560,7 +560,7 @@ class Widget(Base):
         :return: Self reference
         """
         if onmouseleave:
-            assert is_callable(onmouseleave), \
+            assert callable(onmouseleave), \
                 'onmouseleave must be callable (function-type) or None'
         self._onmouseleave = onmouseleave
         return self
@@ -2777,7 +2777,7 @@ class Widget(Base):
         :param draw_callback: Function
         :return: Callback ID
         """
-        assert is_callable(draw_callback), \
+        assert callable(draw_callback), \
             'draw callback must be callable (function-type)'
         callback_id = uuid4()
         self._draw_callbacks[callback_id] = draw_callback
@@ -2832,7 +2832,7 @@ class Widget(Base):
         :param update_callback: Function
         :return: Callback ID
         """
-        assert is_callable(update_callback), \
+        assert callable(update_callback), \
             'update callback must be callable (function-type)'
         callback_id = uuid4()
         self._update_callbacks[callback_id] = update_callback

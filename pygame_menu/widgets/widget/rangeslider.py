@@ -29,7 +29,7 @@ from pygame_menu.locals import POSITION_NORTH, POSITION_SOUTH
 from pygame_menu.font import FontType, assert_font
 from pygame_menu.locals import FINGERUP, FINGERDOWN, FINGERMOTION
 from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, \
-    make_surface, get_finger_pos, assert_position, parse_padding, is_callable
+    make_surface, get_finger_pos, assert_position, parse_padding
 from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImplemented, \
     AbstractWidgetManager
 
@@ -375,7 +375,7 @@ class RangeSlider(Widget):
         assert isinstance(slider_text_value_triangle, bool)
 
         # Check the value format function
-        assert is_callable(value_format)
+        assert callable(value_format)
         assert isinstance(value_format(0), str), \
             'value_format must be a function that accepts only 1 argument ' \
             '(value) and must return a string'
