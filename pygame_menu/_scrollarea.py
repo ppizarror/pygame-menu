@@ -130,7 +130,6 @@ class ScrollArea(Base):
     _parent_scrollarea: 'ScrollArea'
     _rect: 'pygame.Rect'
     _scrollbar_positions: Tuple[str, ...]
-    _scrollbar_thick: int
     _scrollbars: List['ScrollBar']
     _scrollbars_props: Tuple[Any, ...]
     _translate: Tuple2IntType
@@ -222,7 +221,6 @@ class ScrollArea(Base):
         self._bg_surface = None
         self._decorator = Decorator(self)
         self._scrollbar_positions = tuple(unique_scrolls)  # Ensure unique
-        self._scrollbar_thick = scrollbar_thick
         self._translate = (0, 0)
         self._world = world
 
@@ -430,14 +428,14 @@ class ScrollArea(Base):
                 d_size, (dx, dy) = self._menubar.get_scrollbar_style_change(pos)
 
             if pos == POSITION_WEST:
-                sbar.set_position(x=self._view_rect.left - self._scrollbar_thick + dx,
+                sbar.set_position(x=self._view_rect.left - sbar.get_thickness() + dx,
                                   y=self._view_rect.top + dy)
             elif pos == POSITION_EAST:
                 sbar.set_position(x=self._view_rect.right + dx,
                                   y=self._view_rect.top + dy)
             elif pos == POSITION_NORTH:
                 sbar.set_position(x=self._view_rect.left + dx,
-                                  y=self._view_rect.top - self._scrollbar_thick + dy)
+                                  y=self._view_rect.top - sbar.get_thickness() + dy)
             elif pos == POSITION_SOUTH:  # South
                 sbar.set_position(x=self._view_rect.left + dx,
                                   y=self._view_rect.bottom + dy)
@@ -677,55 +675,71 @@ class ScrollArea(Base):
         # All scrollbars: the world is too large
         if self._world.get_height() > self._rect.height \
                 and self._world.get_width() > self._rect.width:
-            if POSITION_WEST in self._scrollbar_positions:
-                rect.left += self._scrollbar_thick
-                rect.width -= self._scrollbar_thick
-            if POSITION_EAST in self._scrollbar_positions:
-                rect.width -= self._scrollbar_thick
-            if POSITION_NORTH in self._scrollbar_positions:
-                rect.top += self._scrollbar_thick
-                rect.height -= self._scrollbar_thick
-            if POSITION_SOUTH in self._scrollbar_positions:
-                rect.height -= self._scrollbar_thick
+            for sbar in self._scrollbars:
+                if not sbar.is_visible():
+                    continue
+                pos = self._scrollbar_positions[self._scrollbars.index(sbar)]
+                thk = sbar.get_thickness()
+                if pos == POSITION_WEST:
+                    rect.left += thk
+                    rect.width -= thk
+                elif pos == POSITION_EAST:
+                    rect.width -= thk
+                elif pos == POSITION_NORTH:
+                    rect.top += thk
+                    rect.height -= thk
+                elif pos == POSITION_SOUTH:
+                    rect.height -= thk
             return rect
 
-        # Calculate the maximum variations introduces by the scrollbars
+        # Calculate the maximum variations introduced by the scrollbars
         bars_total_width = 0
         bars_total_height = 0
-        if POSITION_NORTH in self._scrollbar_positions:
-            bars_total_height += self._scrollbar_thick
-        if POSITION_SOUTH in self._scrollbar_positions:
-            bars_total_height += self._scrollbar_thick
-        if POSITION_WEST in self._scrollbar_positions:
-            bars_total_width += self._scrollbar_thick
-        if POSITION_EAST in self._scrollbar_positions:
-            bars_total_width += self._scrollbar_thick
+        for sbar in self._scrollbars:
+            if not sbar.is_visible():
+                continue
+            pos = self._scrollbar_positions[self._scrollbars.index(sbar)]
+            thk = sbar.get_thickness()
+            if pos in (POSITION_NORTH, POSITION_SOUTH):
+                bars_total_height += thk
+            elif pos in (POSITION_WEST, POSITION_EAST):
+                bars_total_width += thk
 
         if self._world.get_height() > self._rect.height:
-            if POSITION_WEST in self._scrollbar_positions:
-                rect.left += self._scrollbar_thick
-                rect.width -= self._scrollbar_thick
-            if POSITION_EAST in self._scrollbar_positions:
-                rect.width -= self._scrollbar_thick
-            if self._world.get_width() > self._rect.width - bars_total_width:
-                if POSITION_NORTH in self._scrollbar_positions:
-                    rect.top += self._scrollbar_thick
-                    rect.height -= self._scrollbar_thick
-                if POSITION_SOUTH in self._scrollbar_positions:
-                    rect.height -= self._scrollbar_thick
+            for sbar in self._scrollbars:
+                if not sbar.is_visible():
+                    continue
+                pos = self._scrollbar_positions[self._scrollbars.index(sbar)]
+                thk = sbar.get_thickness()
+                if pos == POSITION_WEST:
+                    rect.left += thk
+                    rect.width -= thk
+                elif pos == POSITION_EAST:
+                    rect.width -= thk
+                if self._world.get_width() > self._rect.width - bars_total_width:
+                    if pos == POSITION_NORTH:
+                        rect.top += thk
+                        rect.height -= thk
+                    elif pos == POSITION_SOUTH:
+                        rect.height -= thk
 
         if self._world.get_width() > self._rect.width:
-            if POSITION_NORTH in self._scrollbar_positions:
-                rect.top += self._scrollbar_thick
-                rect.height -= self._scrollbar_thick
-            if POSITION_SOUTH in self._scrollbar_positions:
-                rect.height -= self._scrollbar_thick
-            if self._world.get_height() > self._rect.height - bars_total_height:
-                if POSITION_WEST in self._scrollbar_positions:
-                    rect.left += self._scrollbar_thick
-                    rect.width -= self._scrollbar_thick
-                if POSITION_EAST in self._scrollbar_positions:
-                    rect.width -= self._scrollbar_thick
+            for sbar in self._scrollbars:
+                if not sbar.is_visible():
+                    continue
+                pos = self._scrollbar_positions[self._scrollbars.index(sbar)]
+                thk = sbar.get_thickness()
+                if pos == POSITION_NORTH:
+                    rect.top += thk
+                    rect.height -= thk
+                elif pos == POSITION_SOUTH:
+                    rect.height -= thk
+                if self._world.get_height() > self._rect.height - bars_total_height:
+                    if pos == POSITION_WEST:
+                        rect.left += thk
+                        rect.width -= thk
+                    elif pos == POSITION_EAST:
+                        rect.width -= thk
 
         return rect
 
@@ -739,7 +753,8 @@ class ScrollArea(Base):
         assert_orientation(orientation)
         for sbar in self._scrollbars:
             if sbar.get_orientation() == orientation:
-                sbar.hide()
+                sbar.hide(True)
+        self._apply_size_changes()
         return self
 
     def show_scrollbars(self, orientation: str) -> 'ScrollArea':
@@ -752,7 +767,8 @@ class ScrollArea(Base):
         assert_orientation(orientation)
         for sbar in self._scrollbars:
             if sbar.get_orientation() == orientation:
-                sbar.show()
+                sbar.show(True)
+        self._apply_size_changes()
         return self
 
     def get_world_size(self) -> Tuple2IntType:
