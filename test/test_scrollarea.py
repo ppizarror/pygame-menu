@@ -19,7 +19,7 @@ from pygame_menu.locals import POSITION_SOUTHEAST, POSITION_CENTER, POSITION_NOR
     POSITION_SOUTH, POSITION_NORTHEAST, POSITION_SOUTHWEST, POSITION_EAST, \
     POSITION_WEST, POSITION_NORTH, SCROLLAREA_POSITION_FULL, \
     SCROLLAREA_POSITION_BOTH_VERTICAL, SCROLLAREA_POSITION_BOTH_HORIZONTAL, \
-    INPUT_TEXT, ORIENTATION_VERTICAL, ORIENTATION_HORIZONTAL
+    INPUT_TEXT, ORIENTATION_VERTICAL, ORIENTATION_HORIZONTAL, SCROLLAREA_POSITION_NONE
 
 # noinspection PyProtectedMember
 from pygame_menu._scrollarea import get_scrollbars_from_position
@@ -46,6 +46,7 @@ class ScrollAreaTest(BaseTest):
                          (POSITION_SOUTH, POSITION_NORTH))
         self.assertEqual(get_scrollbars_from_position(SCROLLAREA_POSITION_BOTH_VERTICAL),
                          (POSITION_EAST, POSITION_WEST))
+        self.assertEqual(get_scrollbars_from_position(SCROLLAREA_POSITION_NONE), '')
 
         # Invalid
         self.assertRaises(ValueError, lambda: get_scrollbars_from_position(INPUT_TEXT))
@@ -116,6 +117,9 @@ class ScrollAreaTest(BaseTest):
         else:
             s1 = sa._scrollbars[0]
             s2 = sa._scrollbars[1]
+        sa.show_scrollbars(ORIENTATION_VERTICAL)
+        sa.show_scrollbars(ORIENTATION_HORIZONTAL)
+        
         self.assertTrue(s1.is_visible())
         sa.hide_scrollbars(ORIENTATION_VERTICAL)
         self.assertFalse(s1.is_visible())
@@ -129,6 +133,7 @@ class ScrollAreaTest(BaseTest):
         self.assertTrue(s2.is_visible())
 
         # Test show hide but with force
+        s1.disable_visibility_force()
         s1.hide()
         self.assertFalse(s1.is_visible())
         s1.show()
@@ -328,3 +333,19 @@ class ScrollAreaTest(BaseTest):
         self.assertFalse(sb_frame._touchscreen_enabled)
         self.assertEqual(sb_frame.get_menu(), menu)
         self.assertEqual(d_frame_sa.get_menu(), menu)
+
+    def test_empty_scrollarea(self) -> None:
+        """
+        Test menu without scrollbars.
+        """
+        theme = pygame_menu.themes.THEME_DEFAULT.copy()
+        theme.scrollarea_position = SCROLLAREA_POSITION_NONE
+        menu = MenuUtils.generic_menu(theme=theme)
+        for i in range(10):
+            menu.add.button(i, bool)
+        sa = menu.get_scrollarea()
+        self.assertEqual(sa._scrollbars, [])
+        self.assertEqual(sa._scrollbar_positions, ())
+        self.assertEqual(sa.get_size(), (600, 400))
+        self.assertEqual(sa.get_scrollbar_thickness(ORIENTATION_VERTICAL), 0)
+        self.assertEqual(sa.get_scrollbar_thickness(ORIENTATION_HORIZONTAL), 0)

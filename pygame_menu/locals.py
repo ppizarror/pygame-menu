@@ -37,6 +37,7 @@ __all__ = [
     'SCROLLAREA_POSITION_BOTH_HORIZONTAL',
     'SCROLLAREA_POSITION_BOTH_VERTICAL',
     'SCROLLAREA_POSITION_FULL',
+    'SCROLLAREA_POSITION_NONE',
 
     # Cursors
     'CURSOR_ARROW',
@@ -86,6 +87,7 @@ POSITION_WEST = 'position-west'
 SCROLLAREA_POSITION_BOTH_HORIZONTAL = 'scrollarea-position-both-horizontal'
 SCROLLAREA_POSITION_BOTH_VERTICAL = 'scrollarea_position-both-vertical'
 SCROLLAREA_POSITION_FULL = 'scrollarea-position-full'
+SCROLLAREA_POSITION_NONE = 'scrollarea-position-none'
 
 # Orientation
 ORIENTATION_HORIZONTAL = 'orientation-horizontal'

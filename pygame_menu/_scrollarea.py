@@ -26,7 +26,7 @@ from pygame_menu.locals import POSITION_SOUTHEAST, POSITION_SOUTHWEST, POSITION_
     POSITION_NORTHEAST, POSITION_NORTHWEST, POSITION_CENTER, POSITION_EAST, \
     POSITION_NORTH, ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL, \
     SCROLLAREA_POSITION_BOTH_HORIZONTAL, POSITION_SOUTH, SCROLLAREA_POSITION_FULL, \
-    SCROLLAREA_POSITION_BOTH_VERTICAL
+    SCROLLAREA_POSITION_BOTH_VERTICAL, SCROLLAREA_POSITION_NONE
 from pygame_menu.utils import make_surface, assert_color, assert_position, \
     assert_orientation, get_finger_pos
 from pygame_menu.widgets import ScrollBar
@@ -63,6 +63,8 @@ def get_scrollbars_from_position(
         return POSITION_SOUTH, POSITION_NORTH
     elif position == SCROLLAREA_POSITION_BOTH_VERTICAL:
         return POSITION_EAST, POSITION_WEST
+    elif position == SCROLLAREA_POSITION_NONE:
+        return ''
     elif position == POSITION_CENTER:
         raise ValueError('cannot init scrollbars from center position')
     else:
@@ -214,6 +216,10 @@ class ScrollArea(Base):
             for s in scrollbars:
                 if s not in unique_scrolls:
                     unique_scrolls.append(s)
+
+        # Remove none position
+        if '' in unique_scrolls:
+            unique_scrolls.pop(unique_scrolls.index(''))
 
         self._area_color = area_color
         self._border_color = border_color
