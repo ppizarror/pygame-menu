@@ -128,6 +128,29 @@ class ScrollAreaTest(BaseTest):
         self.assertTrue(s1.is_visible())
         self.assertTrue(s2.is_visible())
 
+        # Test show hide but with force
+        s1.hide()
+        self.assertFalse(s1.is_visible())
+        s1.show()
+        self.assertTrue(s1.is_visible())
+        s1.hide(True)  # Hide with force
+        self.assertFalse(s1.is_visible())
+        s1.show()  # Without force it will not change the status
+        self.assertFalse(s1.is_visible())
+        s1.show(True)  # Without force it will not change the status
+        self.assertTrue(s1.is_visible())
+        s1.hide()  # Without force it will not change the status
+        self.assertTrue(s1.is_visible())
+
+        # Disable visibility force
+        s1.disable_visibility_force()
+        s1.hide()
+        self.assertFalse(s1.is_visible())
+        s1.show()
+        self.assertTrue(s1.is_visible())
+        s1.hide()
+        self.assertFalse(s1.is_visible())
+
     def test_size(self) -> None:
         """
         Test size.
