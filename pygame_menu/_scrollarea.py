@@ -743,31 +743,37 @@ class ScrollArea(Base):
 
         return rect
 
-    def hide_scrollbars(self, orientation: str) -> 'ScrollArea':
+    def hide_scrollbars(self, orientation: str, force: bool = True) -> 'ScrollArea':
         """
         Hide scrollbar from given orientation.
 
         :param orientation: Orientation. See :py:mod:`pygame_menu.locals`
+        :param force: Force hide
         :return: Self reference
         """
         assert_orientation(orientation)
         for sbar in self._scrollbars:
             if sbar.get_orientation() == orientation:
-                sbar.hide(True)
+                sbar.hide(force=force)
+                if not force:
+                    sbar.disable_visibility_force()
         self._apply_size_changes()
         return self
 
-    def show_scrollbars(self, orientation: str) -> 'ScrollArea':
+    def show_scrollbars(self, orientation: str, force: bool = True) -> 'ScrollArea':
         """
         Hide scrollbar from given orientation.
 
         :param orientation: Orientation. See :py:mod:`pygame_menu.locals`
+        :param force: Force show
         :return: Self reference
         """
         assert_orientation(orientation)
         for sbar in self._scrollbars:
             if sbar.get_orientation() == orientation:
-                sbar.show(True)
+                sbar.show(force=force)
+                if not force:
+                    sbar.disable_visibility_force()
         self._apply_size_changes()
         return self
 

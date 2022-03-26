@@ -2402,10 +2402,19 @@ class MenuTest(BaseRSTest):
         for i in range(8):
             menu.add.button(i, bool)
         sa = menu.get_scrollarea()
+
+        # Test with force
         self.assertEqual(sa.get_size(inner=True), (580, 400))
         sa.hide_scrollbars(pygame_menu.locals.ORIENTATION_VERTICAL)
         self.assertEqual(sa.get_size(inner=True), (600, 400))
         sa.show_scrollbars(pygame_menu.locals.ORIENTATION_VERTICAL)
+        self.assertEqual(sa.get_size(inner=True), (580, 400))
+
+        # Disable force, this will not affect menu as after resizing the scrollbars
+        # will re-show again
+        sa.hide_scrollbars(pygame_menu.locals.ORIENTATION_VERTICAL, force=False)
+        self.assertEqual(sa.get_size(inner=True), (580, 400))
+        sa.show_scrollbars(pygame_menu.locals.ORIENTATION_VERTICAL, force=False)
         self.assertEqual(sa.get_size(inner=True), (580, 400))
 
     def test_border_color(self) -> None:
