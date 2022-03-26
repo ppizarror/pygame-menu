@@ -119,7 +119,7 @@ class ScrollAreaTest(BaseTest):
             s2 = sa._scrollbars[1]
         sa.show_scrollbars(ORIENTATION_VERTICAL)
         sa.show_scrollbars(ORIENTATION_HORIZONTAL)
-        
+
         self.assertTrue(s1.is_visible())
         sa.hide_scrollbars(ORIENTATION_VERTICAL)
         self.assertFalse(s1.is_visible())
