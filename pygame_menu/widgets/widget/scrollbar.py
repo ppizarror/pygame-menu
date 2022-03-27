@@ -67,6 +67,7 @@ class ScrollBar(Widget):
     _slider_position: int
     _slider_rect: Optional['pygame.Rect']
     _values_range: List[NumberType]
+    _visible_force: int  # -1: not set, 0: hidden, 1: shown
     scrolling: bool
 
     def __init__(
@@ -108,6 +109,7 @@ class ScrollBar(Widget):
         self._mouseover_check_rect = lambda: self.get_slider_rect()
         self._orientation = 0  # 0: horizontal, 1: vertical
         self._values_range = list(values_range)
+        self._visible_force = -1  # Visibility changed with force
 
         # Page control
         self._page_ctrl_color = page_ctrl_color
@@ -380,15 +382,49 @@ class ScrollBar(Widget):
         """
         return self._page_ctrl_thick
 
-    def show(self) -> 'ScrollBar':
+    def show(self, force: bool = False) -> 'ScrollBar':
+        """
+        Show the scrollbars. If ``force`` param is provided the scrollbars will
+        be shown if them were hidden with ´´force´´ method.
+
+        :param force: Force show
+        :return: Self
+        """
+        if not force:
+            if self._visible_force == 0:
+                return self
+        else:
+            self._visible_force = 1
         self._visible = True
         return self
 
-    def hide(self) -> 'ScrollBar':
+    def hide(self, force: bool = False) -> 'ScrollBar':
+        """
+        Hide the scrollbars. If ``force`` param is provided the scrollbars will
+        be hidden if them were shown with ´´force´´ method.
+
+        :param force: Force hide
+        :return: Self
+        """
+        if not force:
+            if self._visible_force == 1:
+                return self
+        else:
+            self._visible_force = 0
         if self._mouseover:
             self._mouseover = False
             self.mouseleave(mouse_motion_current_mouse_position())
         self._visible = False
+        return self
+
+    def disable_visibility_force(self) -> 'ScrollBar':
+        """
+        Disables visibility force. That is, .show() and .hide() will
+        change the visibility status without the need for ´´force´´ param.
+
+        :return: Self
+        """
+        self._visible_force = -1
         return self
 
     def set_maximum(self, value: NumberType) -> None:
