@@ -247,6 +247,16 @@ class ScrollAreaTest(BaseTest):
         self.assertEqual(sa.get_scrollbar_thickness(ORIENTATION_VERTICAL, visible=False), 0)
         self.assertRaises(AssertionError, lambda: sa.get_scrollbar_thickness('fake', visible=False))
 
+        # Test size with all scrollbars
+        theme = pygame_menu.themes.THEME_DEFAULT.copy()
+        theme.scrollarea_position = SCROLLAREA_POSITION_FULL
+        menu = MenuUtils.generic_menu(theme=theme)
+        for i in range(20):
+            menu.add.button(i, bool)
+        menu.get_scrollarea().show_scrollbars(ORIENTATION_VERTICAL)
+        menu.get_scrollarea().show_scrollbars(ORIENTATION_HORIZONTAL)
+        self.assertEqual(menu.get_scrollarea().get_view_rect(), (20, 100, 560, 400))
+
     # noinspection PyTypeChecker
     def test_widget_relative_to_view_rect(self) -> None:
         """
