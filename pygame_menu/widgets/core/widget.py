@@ -2942,6 +2942,23 @@ class Widget(Base):
             self._menu.render()
         return self
 
+    def __update_menu_after_toggle(self, prev_visible: bool) -> 'Widget':
+        """
+        Updates menu position after widget toggle (show/hide).
+
+        :param prev_visible: Previous visible status
+        :return: Self reference
+        """
+        self._render()
+        if self._menu is not None:
+            self._menu._update_selection_if_hidden()
+            if prev_visible != self._visible:
+                try:
+                    self._menu._update_widget_position()
+                except AttributeError:
+                    pass
+        return self
+
     def show(self) -> 'Widget':
         """
         Set the Widget visible.
@@ -2950,15 +2967,7 @@ class Widget(Base):
         """
         prev_visible = self._visible
         self._visible = True
-        self._render()
-        if self._menu is not None:
-            self._menu._update_selection_if_hidden()
-            if not prev_visible:
-                try:
-                    self._menu._update_widget_position()
-                except AttributeError:
-                    pass
-        return self
+        return self.__update_menu_after_toggle(prev_visible)
 
     def hide(self) -> 'Widget':
         """
@@ -2972,15 +2981,7 @@ class Widget(Base):
             self.mouseleave(mouse_motion_current_mouse_position())
         self._visible = False
         self.active = False
-        self._render()
-        if self._menu is not None:
-            self._menu._update_selection_if_hidden()
-            if prev_visible:
-                try:
-                    self._menu._update_widget_position()
-                except AttributeError:
-                    pass
-        return self
+        return self.__update_menu_after_toggle(prev_visible)
 
     def set_col_row_index(self, col: int, row: int, index: int) -> 'Widget':
         """
