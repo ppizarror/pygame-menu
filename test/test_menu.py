@@ -2442,6 +2442,12 @@ class MenuTest(BaseRSTest):
         self.assertEqual(menu.get_size(border=True),
                          (600 + 2 * theme.border_width, 400 + 2 * theme.border_width))
 
+        # Menu menu with none border color
+        theme.border_width = 10
+        theme.border_color = None
+        menu = MenuUtils.generic_menu(theme=theme)
+        self.assertEqual(menu.get_size(border=True), (600, 400))
+
     def test_border_color(self) -> None:
         """
         Test menu border color.
