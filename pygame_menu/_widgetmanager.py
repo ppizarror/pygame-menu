@@ -35,6 +35,7 @@ from pygame_menu.widgets.widget.surface import SurfaceWidgetManager
 from pygame_menu.widgets.widget.table import TableManager
 from pygame_menu.widgets.widget.textinput import TextInputManager
 from pygame_menu.widgets.widget.toggleswitch import ToggleSwitchManager
+from pygame_menu.widgets.widget.vfill import VFillManager
 from pygame_menu.widgets.widget.vmargin import VMarginManager
 
 from pygame_menu._types import Any, Dict, PaddingInstance
@@ -60,6 +61,7 @@ class WidgetManager(
     TableManager,
     TextInputManager,
     ToggleSwitchManager,
+    VFillManager,
     VMarginManager
 ):
     """
