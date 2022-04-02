@@ -2948,10 +2948,16 @@ class Widget(Base):
 
         :return: Self reference
         """
+        prev_visible = self._visible
         self._visible = True
         self._render()
         if self._menu is not None:
             self._menu._update_selection_if_hidden()
+            if not prev_visible:
+                try:
+                    self._menu._update_widget_position()
+                except AttributeError:
+                    pass
         return self
 
     def hide(self) -> 'Widget':
@@ -2960,6 +2966,7 @@ class Widget(Base):
 
         :return: Self reference
         """
+        prev_visible = self._visible
         if self._mouseover:
             self._mouseover = False
             self.mouseleave(mouse_motion_current_mouse_position())
@@ -2968,6 +2975,11 @@ class Widget(Base):
         self._render()
         if self._menu is not None:
             self._menu._update_selection_if_hidden()
+            if prev_visible:
+                try:
+                    self._menu._update_widget_position()
+                except AttributeError:
+                    pass
         return self
 
     def set_col_row_index(self, col: int, row: int, index: int) -> 'Widget':
