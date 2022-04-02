@@ -145,6 +145,7 @@ class. The currently existing classes are:
     - :py:class:`~pygame_menu.widgets.Table`
     - :py:class:`~pygame_menu.widgets.TextInput`
     - :py:class:`~pygame_menu.widgets.ToggleSwitch`
+    - :py:class:`~pygame_menu.widgets.VFill`
     - :py:class:`~pygame_menu.widgets.VMargin`
 
 For advanced programmers, those classes can be used to design custom menus or windows.
@@ -177,6 +178,7 @@ to display large custom surfaces.
     _source/widgets_table
     _source/widgets_textinput
     _source/widgets_toggleswitch
+    _source/widgets_vfill
     _source/widgets_vmargin
 
 

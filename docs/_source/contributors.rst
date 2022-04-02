@@ -22,12 +22,15 @@ Other contributors:
 - `ironsmile <https://github.com/ironsmile>`_
 - `jwllee <https://github.com/jwllee>`_
 - `maditnerd <https://github.com/maditnerd>`_
+- `MayuSakurai <https://github.com/MayuSakurai>`_
 - `mrkprdo <https://github.com/mrkprdo>`_
 - `notrurs <https://github.com/notrurs>`_
 - `NullP01nt <https://github.com/NullP01nt>`_
 - `PandaRoux8 <https://github.com/PandaRoux8>`_
 - `Rifqi31 <https://github.com/rifqi31>`_
+- `ThePeeps191 <https://github.com/ThePeeps191>`_
 - `thisIsMikeKane <https://github.com/thisIsMikeKane>`_
+- `vnmabus <https://github.com/vnmabus>`_
 - `werdeil <https://github.com/werdeil>`_
 - `zPaw <https://github.com/zPaw>`_
 
