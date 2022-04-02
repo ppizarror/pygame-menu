@@ -269,6 +269,15 @@ class NoneWidgetTest(BaseTest):
         b1.show()
         self.assertEqual(vf1.get_height(), vf1_height_prev)
 
+        # Test min height
+        menu = MenuUtils.generic_menu()
+        b = menu.add.button(1)
+        v = menu.add.vertical_fill(10)
+        self.assertEqual(v.get_height(), menu.get_height(inner=True) - b.get_height() - 1)
+        for i in range(20):
+            menu.add.button(i)
+        self.assertEqual(v.get_height(), 10)
+
     def test_vmargin(self) -> None:
         """
         Test vertical margin widget.
