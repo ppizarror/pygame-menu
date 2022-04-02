@@ -105,12 +105,15 @@ __contributors__ = [
     'ironsmile',
     'jwllee',
     'maditnerd',
+    'MayuSakurai',
     'mrkprdo',
     'notrurs',
     'NullP01nt',
     'PandaRoux8',
     'Rifqi31',
+    'ThePeeps191',
     'thisIsMikeKane',
+    'vnmabus',
     'werdeil',
     'zPaw'
 
