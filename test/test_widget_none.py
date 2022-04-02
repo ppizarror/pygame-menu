@@ -10,6 +10,7 @@ __all__ = ['NoneWidgetTest']
 
 from test._utils import MenuUtils, surface, PygameEventUtils, BaseTest
 
+import math
 import pygame_menu
 import pygame_menu.controls as ctrl
 
@@ -210,7 +211,63 @@ class NoneWidgetTest(BaseTest):
         Test VFill widget.
         """
         menu = MenuUtils.generic_menu()
-        print(menu.get_size(inner=True))
+        b = menu.add.button('nice')  # Add button
+        bh = b.get_height()
+        self.assertEqual(menu.get_height(widget=True), bh)
+
+        # Now add 1 vfill, this should use all available height
+        vf1 = menu.add.vertical_fill()
+        self.assertEqual(vf1.get_height(), menu.get_height(inner=True) - bh - 1)
+        self.assertEqual(menu.get_height(inner=True) - 1, menu.get_height(widget=True))
+
+        # Add another vfill, now both vfills should have the same height
+        vf2 = menu.add.vertical_fill()
+        self.assertEqual(vf1.get_height(), vf2.get_height() + 1)  # Second vfill removes 1px
+        self.assertEqual(menu.get_height(inner=True) - 1, menu.get_height(widget=True))
+
+        # Test another menu, but with interlaced buttons and vfills
+        menu = MenuUtils.generic_menu()
+        b1 = menu.add.button(1)
+        vf1 = menu.add.vertical_fill()
+        menu.add.button(2)
+        vf2 = menu.add.vertical_fill()
+        menu.add.button(3)
+        vf3 = menu.add.vertical_fill()
+        menu.add.button(4)
+        self.assertEqual(vf1.get_height(), vf2.get_height())
+        self.assertEqual(vf2.get_height(), vf3.get_height() + 1)
+        prev_height = vf1.get_height()
+
+        # Now, if more buttons are added, the height of previous vills should be zero
+        added_last = []
+        for i in range(5, 10):
+            b = menu.add.button(i)
+            added_last.append(b)
+        self.assertEqual(vf1.get_height(), 0)
+        self.assertEqual(vf2.get_height(), 0)
+        self.assertEqual(vf3.get_height(), 0)
+
+        # Removing buttons should also update vfills
+        for b in added_last:
+            menu.remove_widget(b)
+        self.assertEqual(vf1.get_height(), prev_height)
+
+        # Hiding vfill should also update
+        vfill_total = vf1.get_height() + vf2.get_height() + vf3.get_height()
+        vf2.hide()
+        vfill_total_after = vf1.get_height() + vf3.get_height()
+        self.assertEqual(vf1.get_height(), vf3.get_height() + 1)
+        self.assertEqual(vfill_total, vfill_total_after - 1)
+        vf2.show()
+        self.assertEqual(vfill_total, vf1.get_height() + vf2.get_height() + vf3.get_height())
+
+        # Hiding a button should also affect vfills
+        vf1_height_prev = vf1.get_height()
+        b1_height = math.ceil(b1.get_height() / 3)
+        b1.hide()
+        self.assertEqual(vf1.get_height(), vf1_height_prev + b1_height)
+        b1.show()
+        self.assertEqual(vf1.get_height(), vf1_height_prev)
 
     def test_vmargin(self) -> None:
         """

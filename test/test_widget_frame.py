@@ -1199,14 +1199,14 @@ class FrameWidgetTest(unittest.TestCase):
         self.assertEqual(menu.get_selected_widget(), b3)
         self.assertAlmostEqual(f3.get_scroll_value_percentage(ORIENTATION_VERTICAL), 0 if PYGAME_V2 else 0.005)
         if PYGAME_V2:
-            self.assertAlmostEqual(menu.get_scrollarea().get_scroll_value_percentage(ORIENTATION_VERTICAL), 0.467)
+            self.assertAlmostEqual(menu.get_scrollarea().get_scroll_value_percentage(ORIENTATION_VERTICAL), 0.562)
 
         f2.scrollv(0)
         menu._down()
         self.assertEqual(menu.get_selected_widget(), b2)
         self.assertAlmostEqual(f2.get_scroll_value_percentage(ORIENTATION_VERTICAL), 0)
         if PYGAME_V2:
-            self.assertAlmostEqual(menu.get_scrollarea().get_scroll_value_percentage(ORIENTATION_VERTICAL), 0.467)
+            self.assertAlmostEqual(menu.get_scrollarea().get_scroll_value_percentage(ORIENTATION_VERTICAL), 0.562)
 
         menu._down()
         menu._down()
