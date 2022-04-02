@@ -1835,7 +1835,7 @@ class Menu(Base):
         return self._scrollarea.get_scrollbar_thickness(ORIENTATION_HORIZONTAL), \
                self._scrollarea.get_scrollbar_thickness(ORIENTATION_VERTICAL)
 
-    def get_width(self, inner: bool = False, widget: bool = False) -> int:
+    def get_width(self, inner: bool = False, widget: bool = False, border: bool = False) -> int:
         """
         Get the Menu width.
 
@@ -1847,15 +1847,17 @@ class Menu(Base):
 
         :param inner: If ``True`` returns the available width (menu width minus scroll if visible)
         :param widget: If ``True`` returns the total width used by the widgets
+        :param border: If ``True`` add the mmenu border width. Only applied if both ``inner`` and ``widget`` are ``False``
         :return: Width in px
         """
         if widget:
             return int(self._widget_max_position[0] - self._widget_min_position[0])
         if not inner:
-            return int(self._width)
+            bw = 0 if not border else 2 * self._scrollarea.get_border_size()[0]
+            return int(self._width) + bw
         return int(self._width - self._get_scrollbar_thickness()[1])
 
-    def get_height(self, inner: bool = False, widget: bool = False) -> int:
+    def get_height(self, inner: bool = False, widget: bool = False, border: bool = False) -> int:
         """
         Get the Menu height.
 
@@ -1867,15 +1869,17 @@ class Menu(Base):
 
         :param inner: If ``True`` returns the available height (menu height minus scroll and menubar)
         :param widget: If ``True`` returns the total height used by the widgets
+        :param border: If ``True`` add the menu border height. Only applied if both ``inner`` and ``widget`` are ``False``
         :return: Height in px
         """
         if widget:
             return int(self._widget_max_position[1] - self._widget_min_position[1])
         if not inner:
-            return int(self._height)
+            bh = 0 if not border else 2 * self._scrollarea.get_border_size()[1]
+            return int(self._height) + bh
         return int(self._height - self._menubar.get_height() - self._get_scrollbar_thickness()[0])
 
-    def get_size(self, inner: bool = False, widget: bool = False) -> Vector2IntType:
+    def get_size(self, inner: bool = False, widget: bool = False, border: bool = False) -> Vector2IntType:
         """
         Return the Menu size as a tuple of (width, height) in px.
 
@@ -1885,11 +1889,13 @@ class Menu(Base):
             stored in ``_current`` pointer); for such behaviour apply to
             :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
-        :param inner: If ``True`` returns the available (width, height) (menu height minus scroll and menubar)
+        :param inner: If ``True`` returns the available size (width, height) (menu height minus scroll and menubar)
         :param widget: If ``True`` returns the total (width, height) used by the widgets
+        :param border: If ``True`` add the border size to the dimensions (width, height). Only applied if both ``inner`` and ``widget`` are ``False``
         :return: Tuple of (width, height) in px
         """
-        return self.get_width(inner=inner, widget=widget), self.get_height(inner=inner, widget=widget)
+        return self.get_width(inner=inner, widget=widget, border=border), \
+               self.get_height(inner=inner, widget=widget, border=border)
 
     def render(self) -> 'Menu':
         """

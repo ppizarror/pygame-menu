@@ -2417,6 +2417,31 @@ class MenuTest(BaseRSTest):
         sa.show_scrollbars(pygame_menu.locals.ORIENTATION_VERTICAL, force=False)
         self.assertEqual(sa.get_size(inner=True), (580, 400))
 
+    def test_get_size(self) -> None:
+        """
+        Test get menu size.
+        """
+        theme = pygame_menu.themes.THEME_DEFAULT.copy()
+        menu = MenuUtils.generic_menu(theme=theme)
+        self.assertEqual(menu.get_size(), (600, 400))
+
+        # Create new menu with image border
+        for scale in [(1, 1), (2, 5), (5, 2)]:
+            theme.border_color = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_TILED_BORDER)
+            theme.border_color.scale(*scale)
+            border_size = theme.border_color.get_size()
+            menu = MenuUtils.generic_menu(theme=theme)
+            self.assertEqual(menu.get_size(), (600, 400))
+            self.assertEqual(menu.get_size(border=True),
+                             (600 + 2 * border_size[0] / 3, 400 + 2 * border_size[1] / 3))
+
+        # Create new menu with border color
+        theme.border_width = 10
+        theme.border_color = 'red'
+        menu = MenuUtils.generic_menu(theme=theme)
+        self.assertEqual(menu.get_size(border=True),
+                         (600 + 2 * theme.border_width, 400 + 2 * theme.border_width))
+
     def test_border_color(self) -> None:
         """
         Test menu border color.
