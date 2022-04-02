@@ -39,6 +39,8 @@ class VMargin(NoneWidget):
             margin: NumberType,
             widget_id: str = ''
     ) -> None:
+        assert isinstance(margin, NumberInstance)
+        assert margin > 0, 'negative or zero margin is not valid'
         super(VMargin, self).__init__(widget_id=widget_id)
         self._rect.width = 0
         self._rect.height = int(margin)
@@ -71,12 +73,8 @@ class VMarginManager(AbstractWidgetManager, ABC):
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.VMargin`
         """
-        assert isinstance(margin, NumberInstance)
-        assert margin > 0, 'negative or zero margin is not valid'
-
         attributes = self._filter_widget_attributes({})
         widget = VMargin(margin, widget_id=margin_id)
         self._configure_widget(widget=widget, **attributes)
         self._append_widget(widget)
-
         return widget

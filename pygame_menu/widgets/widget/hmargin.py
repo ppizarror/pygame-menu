@@ -39,6 +39,9 @@ class HMargin(NoneWidget):
             margin: NumberType,
             widget_id: str = ''
     ) -> None:
+        assert isinstance(margin, NumberInstance)
+        assert margin > 0, \
+            'zero margin is not valid, prefer adding a NoneWidget menu.add.none_widget()'
         super(HMargin, self).__init__(widget_id=widget_id)
         self._rect.width = int(margin)
         self._rect.height = 0
@@ -52,7 +55,7 @@ class HMarginManager(AbstractWidgetManager, ABC):
     HMargin manager.
     """
 
-    def _horizontal_margin(
+    def horizontal_margin(
             self,
             margin: NumberType,
             margin_id: str = ''
@@ -71,10 +74,6 @@ class HMarginManager(AbstractWidgetManager, ABC):
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.HMargin`
         """
-        assert isinstance(margin, NumberInstance)
-        assert margin > 0, \
-            'zero margin is not valid, prefer adding a NoneWidget menu.add.none_widget()'
-
         attributes = self._filter_widget_attributes({})
         widget = HMargin(margin, widget_id=margin_id)
         self._configure_widget(widget=widget, **attributes)
