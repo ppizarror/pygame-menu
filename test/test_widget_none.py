@@ -3,7 +3,7 @@ pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 TEST WIDGET - NONE
-Test NoneWidget, HMargin, VMargin and MenuLink widgets.
+Test NoneWidget, HMargin, VFill, VMargin and MenuLink widgets.
 """
 
 __all__ = ['NoneWidgetTest']
@@ -23,126 +23,129 @@ class NoneWidgetTest(BaseTest):
         """
         Test none widget.
         """
-        wid = NoneWidget()
+        menu = MenuUtils.generic_menu()
+        for wid in [
+            NoneWidget(),
+            menu.add.vertical_margin(10),
+            menu.add.horizontal_margin(10),
+            menu.add.vertical_fill(10)
+        ]:
+            wid.set_margin(9, 9)
+            self.assertEqual(wid.get_margin(), (0, 0))
 
-        wid.set_margin(9, 9)
-        self.assertEqual(wid.get_margin(), (0, 0))
+            wid.set_padding(9)
+            self.assertEqual(wid.get_padding(), (0, 0, 0, 0))
 
-        wid.set_padding(9)
-        self.assertEqual(wid.get_padding(), (0, 0, 0, 0))
+            wid.set_background_color((1, 1, 1))
+            wid._draw_background_color(surface)
+            self.assertIsNone(wid._background_color)
 
-        wid.set_background_color((1, 1, 1))
-        wid._draw_background_color(surface)
-        self.assertIsNone(wid._background_color)
+            no_sel = NoneSelection()
+            wid.set_selection_effect(no_sel)
+            self.assertNotEqual(no_sel, wid.get_selection_effect())
 
-        no_sel = NoneSelection()
-        wid.set_selection_effect(no_sel)
-        self.assertNotEqual(no_sel, wid.get_selection_effect())
+            wid.set_title('none')
+            self.assertEqual(wid.get_title(), '')
 
-        wid.set_title('none')
-        self.assertEqual(wid.get_title(), '')
+            r = wid.get_rect(inflate=(10, 10))
+            self.assertEqual(r.x, 0)
+            self.assertEqual(r.y, 0)
 
-        r = wid.get_rect(inflate=(10, 10))
-        self.assertEqual(r.x, 0)
-        self.assertEqual(r.y, 0)
-        self.assertEqual(r.width, 0)
-        self.assertEqual(r.height, 0)
+            self.assertFalse(wid.is_selectable)
+            self.assertTrue(wid.is_visible())
 
-        self.assertFalse(wid.is_selectable)
-        self.assertTrue(wid.is_visible())
+            wid.apply()
+            wid.change()
 
-        wid.apply()
-        wid.change()
+            # noinspection SpellCheckingInspection
+            wid.set_font('myfont', 0, (1, 1, 1), (1, 1, 1), (1, 1, 1), (0, 0, 0), (0, 0, 0))
+            wid.update_font({'name': ''})
+            wid._apply_font()
+            self.assertIsNone(wid._font)
 
-        # noinspection SpellCheckingInspection
-        wid.set_font('myfont', 0, (1, 1, 1), (1, 1, 1), (1, 1, 1), (0, 0, 0), (0, 0, 0))
-        wid.update_font({'name': ''})
-        wid._apply_font()
-        self.assertIsNone(wid._font)
+            # Test font rendering
+            surf = wid._render_string('nice', (1, 1, 1))
+            self.assertEqual(surf.get_width(), 0)
+            self.assertEqual(surf.get_height(), 0)
 
-        # Test font rendering
-        surf = wid._render_string('nice', (1, 1, 1))
-        self.assertEqual(surf.get_width(), 0)
-        self.assertEqual(surf.get_height(), 0)
+            wid._apply_transforms()
 
-        wid._apply_transforms()
+            wid.hide()
+            self.assertFalse(wid.is_visible())
+            wid.show()
+            self.assertTrue(wid.is_visible())
 
-        wid.hide()
-        self.assertFalse(wid.is_visible())
-        wid.show()
-        self.assertTrue(wid.is_visible())
+            self.assertRaises(ValueError, lambda: wid.get_value())
 
-        self.assertRaises(ValueError, lambda: wid.get_value())
+            surf = wid.get_surface()
+            self.assertEqual(surf.get_width(), 0)
+            self.assertEqual(surf.get_height(), 0)
 
-        surf = wid.get_surface()
-        self.assertEqual(surf.get_width(), 0)
-        self.assertEqual(surf.get_height(), 0)
+            # Apply transforms
+            wid.set_position(1, 1)
+            self.assertEqual(wid.get_position(), (0, 0))
 
-        # Apply transforms
-        wid.set_position(1, 1)
-        self.assertEqual(wid.get_position(), (0, 0))
+            self.assertRaises(WidgetTransformationNotImplemented, lambda: wid.translate(1, 1))
+            self.assertEqual(wid.get_translate(), (0, 0))
 
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: wid.translate(1, 1))
-        self.assertEqual(wid.get_translate(), (0, 0))
+            self.assertRaises(WidgetTransformationNotImplemented, lambda: wid.rotate(10))
+            self.assertEqual(wid._angle, 0)
 
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: wid.rotate(10))
-        self.assertEqual(wid._angle, 0)
+            self.assertRaises(WidgetTransformationNotImplemented, lambda: wid.resize(10, 10))
+            self.assertFalse(wid._scale[0])
+            self.assertEqual(wid._scale[1], 1)
+            self.assertEqual(wid._scale[2], 1)
 
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: wid.resize(10, 10))
-        self.assertFalse(wid._scale[0])
-        self.assertEqual(wid._scale[1], 1)
-        self.assertEqual(wid._scale[2], 1)
+            self.assertRaises(WidgetTransformationNotImplemented, lambda: wid.scale(100, 100))
+            self.assertFalse(wid._scale[0])
+            self.assertEqual(wid._scale[1], 1)
+            self.assertEqual(wid._scale[2], 1)
 
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: wid.scale(100, 100))
-        self.assertFalse(wid._scale[0])
-        self.assertEqual(wid._scale[1], 1)
-        self.assertEqual(wid._scale[2], 1)
+            self.assertRaises(WidgetTransformationNotImplemented, lambda: wid.flip(True, True))
+            self.assertFalse(wid._flip[0])
+            self.assertFalse(wid._flip[1])
 
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: wid.flip(True, True))
-        self.assertFalse(wid._flip[0])
-        self.assertFalse(wid._flip[1])
+            self.assertRaises(WidgetTransformationNotImplemented, lambda: wid.set_max_width(100))
+            self.assertIsNone(wid._max_width[0])
 
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: wid.set_max_width(100))
-        self.assertIsNone(wid._max_width[0])
+            self.assertRaises(WidgetTransformationNotImplemented, lambda: wid.set_max_height(100))
+            self.assertIsNone(wid._max_height[0])
 
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: wid.set_max_height(100))
-        self.assertIsNone(wid._max_height[0])
+            # Selection
+            wid.select()
+            self.assertFalse(wid.is_selected())
+            self.assertFalse(wid.is_selectable)
 
-        # Selection
-        wid.select()
-        self.assertFalse(wid.is_selected())
-        self.assertFalse(wid.is_selectable)
+            # noinspection PyTypeChecker
+            wid.set_sound(None)
+            self.assertIsNotNone(wid._sound)
 
-        # noinspection PyTypeChecker
-        wid.set_sound(None)
-        self.assertIsNotNone(wid._sound)
+            wid.set_border(1, (0, 0, 0), (0, 0))
+            self.assertEqual(wid._border_width, 0)
+            self.assertEqual(wid.get_selected_time(), 0)
 
-        wid.set_border(1, (0, 0, 0), (0, 0))
-        self.assertEqual(wid._border_width, 0)
-        self.assertEqual(wid.get_selected_time(), 0)
+            # Test events
+            def my_event() -> None:
+                """
+                Generic event object.
+                """
+                return
 
-        # Test events
-        def my_event() -> None:
-            """
-            Generic event object.
-            """
-            return
-
-        wid.set_onchange(my_event)
-        self.assertIsNone(wid._onchange)
-        wid.set_onmouseover(my_event)
-        self.assertIsNone(wid._onmouseover)
-        wid.set_onmouseleave(my_event)
-        self.assertIsNone(wid._onmouseleave)
-        wid.set_onselect(my_event)
-        self.assertIsNone(wid._onselect)
-        wid.set_onreturn(my_event)
-        self.assertIsNone(wid._onreturn)
-        wid.mouseleave()
-        wid.mouseover()
-        wid._mouseover = True
-        wid._check_mouseover()
-        self.assertFalse(wid._mouseover)
+            wid.set_onchange(my_event)
+            self.assertIsNone(wid._onchange)
+            wid.set_onmouseover(my_event)
+            self.assertIsNone(wid._onmouseover)
+            wid.set_onmouseleave(my_event)
+            self.assertIsNone(wid._onmouseleave)
+            wid.set_onselect(my_event)
+            self.assertIsNone(wid._onselect)
+            wid.set_onreturn(my_event)
+            self.assertIsNone(wid._onreturn)
+            wid.mouseleave()
+            wid.mouseover()
+            wid._mouseover = True
+            wid._check_mouseover()
+            self.assertFalse(wid._mouseover)
 
     def test_draw_update(self) -> None:
         """
@@ -198,9 +201,16 @@ class NoneWidgetTest(BaseTest):
         w.draw(surface)
 
         menu = MenuUtils.generic_menu()
-        w = menu.add._horizontal_margin(999)
+        w = menu.add.horizontal_margin(999)
         self.assertEqual(w.get_rect().width, 999)
         self.assertEqual(w.get_rect().height, 0)
+
+    def test_vfill(self) -> None:
+        """
+        Test VFill widget.
+        """
+        menu = MenuUtils.generic_menu()
+        print(menu.get_size(inner=True))
 
     def test_vmargin(self) -> None:
         """
@@ -286,7 +296,7 @@ class NoneWidgetTest(BaseTest):
         widgets = [
             menu.add.none_widget(),
             menu.add.vertical_margin(1),
-            menu.add._horizontal_margin(1),
+            menu.add.horizontal_margin(1),
             menu.add.menu_link(menu2)
         ]
         for w in widgets:

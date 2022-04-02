@@ -9,7 +9,6 @@ Test Surface widget.
 __all__ = ['SurfaceWidgetTest']
 
 from test._utils import MenuUtils, surface, PygameEventUtils, BaseTest
-
 import pygame
 
 from pygame_menu.widgets.core.widget import WidgetTransformationNotImplemented
