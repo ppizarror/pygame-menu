@@ -574,6 +574,19 @@ class ScrollArea(Base):
 
         return self
 
+    def get_border_size(self) -> Tuple2IntType:
+        """
+        Return the border size (width, height) in px.
+
+        :return: Border width, height
+        """
+        if isinstance(self._border_color, pygame_menu.BaseImage):  # Image
+            return self._border_tiles_size
+        else:  # Color
+            if self._border_color is None:
+                return 0, 0
+            return self._border_width, self._border_width
+
     def get_hidden_width(self) -> int:
         """
         Return the total width out of the bounds of the viewable area.
