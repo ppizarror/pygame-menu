@@ -69,14 +69,14 @@ class VFill(NoneWidget):
                 total_vfills += 1
 
         vfill_height = ((available_height - total_column_height) / total_vfills) if total_vfills > 0 else 0
-        
+
         # Discount 1px only to last
         if self == column_vfills[-1] and vfill_height > 0:
             vfill_height -= 1
-        
+
         vfill_height = max(0, vfill_height)
         self._rect.height = self._min_height + vfill_height
-        
+
         return self._rect
 
 
