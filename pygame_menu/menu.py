@@ -2454,25 +2454,25 @@ class Menu(Base):
                         continue
 
                     if event.key == ctrl.KEY_MOVE_DOWN:
-                        if self._current._down():
+                        if self._current._down(apply_sound=True):
                             self._current._last_update_mode.append(_events.MENU_LAST_MOVE_DOWN)
                             updated = True
                             break
 
                     elif event.key == ctrl.KEY_MOVE_UP:
-                        if self._current._up():
+                        if self._current._up(apply_sound=True):
                             self._current._last_update_mode.append(_events.MENU_LAST_MOVE_UP)
                             updated = True
                             break
 
                     elif event.key == ctrl.KEY_LEFT:
-                        if self._current._left():
+                        if self._current._left(apply_sound=True):
                             self._current._last_update_mode.append(_events.MENU_LAST_MOVE_LEFT)
                             updated = True
                             break
 
                     elif event.key == ctrl.KEY_RIGHT:
-                        if self._current._right():
+                        if self._current._right(apply_sound=True):
                             self._current._last_update_mode.append(_events.MENU_LAST_MOVE_RIGHT)
                             updated = True
                             break
