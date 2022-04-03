@@ -9,4 +9,4 @@ DropSelectMultiple
     :members:
     :show-inheritance:
     :inherited-members:
-    :exclude-members: rotate, scale, set_max_width, set_max_height, resize, flip
+    :exclude-members: flip, resize, rotate, scale, set_max_height, set_max_width
