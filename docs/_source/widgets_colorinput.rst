@@ -9,4 +9,4 @@ ColorInput
     :members:
     :show-inheritance:
     :inherited-members:
-    :exclude-members: draw_after_if_selected, rotate, scale, set_max_width, set_max_height, resize
+    :exclude-members: draw_after_if_selected, resize, rotate, scale, set_max_height, set_max_width

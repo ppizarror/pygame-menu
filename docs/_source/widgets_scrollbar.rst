@@ -9,4 +9,4 @@ ScrollBar
     :members:
     :show-inheritance:
     :inherited-members:
-    :exclude-members: set_selection_effect, background_inflate_to_selection_effect, get_selected_time, get_selection_effect, get_font_color_status, set_font, apply, set_onreturn, set_onselect, select, draw_after_if_selected, set_title, set_font_shadow, update_font, set_padding, scale, resize, set_max_width, set_max_height, rotate, flip
+    :exclude-members: apply, background_inflate_to_selection_effect, draw_after_if_selected, flip, get_font_color_status, get_selected_time, get_selection_effect, resize, rotate, scale, select, set_font, set_font_shadow, set_max_height, set_max_width, set_onreturn, set_onselect, set_padding, set_selection_effect, set_title, update_font

@@ -3418,6 +3418,15 @@ class Menu(Base):
                     return widget
         return None
 
+    def get_widgets_column(self, col: int) -> Tuple['Widget', ...]:
+        """
+        Return all the widgets within column which are visible.
+
+        :param col: Column number (start from zero)
+        :return: Widget list
+        """
+        return tuple(self._widget_columns[col])
+
     def get_widgets(self, ids: Optional[Union[List[str], Tuple[str, ...]]] = None) -> Tuple['Widget', ...]:
         """
         Return the Menu widgets as a tuple.

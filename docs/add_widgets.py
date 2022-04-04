@@ -24,7 +24,7 @@ icon = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU).ge
 pygame.display.set_icon(icon)
 
 # Set example, only this should change
-EXAMPLE = 'PROGRESSBAR'
+EXAMPLE = 'VERTICALFILL'
 
 # Create example
 menu: 'pygame_menu.Menu'
@@ -384,6 +384,15 @@ elif EXAMPLE == 'URL':
     menu.add.url('https://github.com/ppizarror/pygame-menu')
     menu.add.url('https://github.com/ppizarror/pygame-menu', 'The best menu ever')
     menu.add.url('https://pygame-menu.readthedocs.io/en/master/', 'pygame-menu documentation')
+
+elif EXAMPLE == 'VERTICALFILL':
+    menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'Vertical fill')
+
+    menu.add.vertical_fill()
+    menu.add.button('Button 1')
+    menu.add.vertical_fill()
+    menu.add.button('Button 2')
+    menu.add.vertical_fill()
 
 elif EXAMPLE == 'VERTICALMARGIN':
     menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'Vertical spacer')

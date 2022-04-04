@@ -120,9 +120,6 @@ class NoneWidget(Widget):
     def translate(self, *args, **kwargs) -> 'NoneWidget':
         raise WidgetTransformationNotImplemented()
 
-    def set_alignment(self, *args, **kwargs) -> 'NoneWidget':
-        return self
-
     def select(self, *args, **kwargs) -> 'NoneWidget':
         return self
 

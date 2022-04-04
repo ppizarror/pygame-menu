@@ -9,4 +9,4 @@ RangeSlider
     :members:
     :show-inheritance:
     :inherited-members:
-    :exclude-members: scale, resize, set_max_width, set_max_height, rotate, flip,
+    :exclude-members: flip, resize, rotate, scale, set_max_height, set_max_width

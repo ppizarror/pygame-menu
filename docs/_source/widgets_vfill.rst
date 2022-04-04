@@ -1,11 +1,11 @@
 
-.. module:: pygame_menu.widgets.widget.vmargin
+.. module:: pygame_menu.widgets.widget.vfill
 
-=======
-VMargin
-=======
+=====
+VFill
+=====
 
-.. autoclass:: pygame_menu.widgets.VMargin
+.. autoclass:: pygame_menu.widgets.VFill
     :members:
     :show-inheritance:
     :inherited-members:

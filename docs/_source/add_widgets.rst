@@ -633,6 +633,32 @@ more options, take a look at the ``ToggleSwitch`` widget class.
 .. automethod:: pygame_menu._widgetmanager.WidgetManager.toggle_switch
 
 
+Add a vertical fill
+-------------------
+
+A vertical fill adds a vertical margin to fill the menu height. It depends on other
+vertical fillers in the same column, i.e., if three vertical fillers are in the same
+column, them will take a third of the available vertical space.
+
+**Example:**
+
+.. image:: ../_static/widget_vfill.png
+    :scale: 75%
+    :align: center
+
+.. code-block:: python
+
+    menu = pygame_menu.Menu(...)
+
+    menu.add.vertical_fill()
+    menu.add.button('Button 1')
+    menu.add.vertical_fill()
+    menu.add.button('Button 2')
+    menu.add.vertical_fill()
+
+.. automethod:: pygame_menu._widgetmanager.WidgetManager.vertical_fill
+
+
 Add a vertical spacer
 ---------------------
 
