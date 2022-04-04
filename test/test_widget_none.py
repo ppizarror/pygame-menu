@@ -214,11 +214,14 @@ class NoneWidgetTest(BaseTest):
         b = menu.add.button('nice')  # Add button
         bh = b.get_height()
         self.assertEqual(menu.get_height(widget=True), bh)
+        self.assertEqual(menu.get_size(widget=True), b.get_size())
 
         # Now add 1 vfill, this should use all available height
         vf1 = menu.add.vertical_fill()
+        self.assertEqual(vf1.get_width(), 0)
         self.assertEqual(vf1.get_height(), menu.get_height(inner=True) - bh - 1)
         self.assertEqual(menu.get_height(inner=True) - 1, menu.get_height(widget=True))
+        self.assertEqual(menu.get_size(widget=True), (b.get_width(), bh + vf1.get_height()))
 
         # Add another vfill, now both vfills should have the same height
         vf2 = menu.add.vertical_fill()
@@ -234,6 +237,7 @@ class NoneWidgetTest(BaseTest):
         menu.add.button(3)
         vf3 = menu.add.vertical_fill()
         menu.add.button(4)
+        self.assertEqual(vf1.get_width(), 0)
         self.assertEqual(vf1.get_height(), vf2.get_height())
         self.assertEqual(vf2.get_height(), vf3.get_height() + 1)
         prev_height = vf1.get_height()
@@ -277,6 +281,25 @@ class NoneWidgetTest(BaseTest):
         for i in range(20):
             menu.add.button(i)
         self.assertEqual(v.get_height(), 10)
+
+        # Test widget alignment
+        menu = MenuUtils.generic_menu(theme=pygame_menu.Theme(
+            widget_alignment=pygame_menu.locals.ALIGN_LEFT
+        ))
+
+        # Now add 1 vfill, this should use all available height
+        vf1 = menu.add.vertical_fill()
+        self.assertEqual(menu.get_size(widget=True), (0, vf1.get_height()))
+        self.assertEqual(vf1.get_height(), menu.get_height(inner=True) - 1)
+
+        # Add button, this should change widget size width
+        b = menu.add.button('nice')  # Add button
+        self.assertEqual(menu.get_size(widget=True), (b.get_width(), b.get_height() + vf1.get_height()))
+
+        # Now add 1 vfill, this should use all available height
+        vf2 = menu.add.vertical_fill()
+        self.assertEqual(menu.get_size(widget=True),
+                         (b.get_width(), b.get_height() + vf1.get_height() + vf2.get_height()))
 
     def test_vmargin(self) -> None:
         """
