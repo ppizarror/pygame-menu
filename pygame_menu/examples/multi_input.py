@@ -194,7 +194,7 @@ def main(test: bool = False) -> None:
                                              value_format=lambda x: str(int(x)))
 
     # Range
-    settings_menu.add.range_slider('How do you rate pygame-menu?', (7, 10), (1, 10), 1,
+    settings_menu.add.range_slider('How would you rate pygame-menu?', (7, 10), (1, 10), 1,
                                    rangeslider_id='range_slider_double')
 
     # Create discrete range
