@@ -186,7 +186,7 @@ def main(test: bool = False) -> None:
                                     toggleswitch_id='first_switch')
     settings_menu.add.toggle_switch('Other Switch', True,
                                     toggleswitch_id='second_switch',
-                                    state_text=('Apagado', 'Encencido'))
+                                    state_text=('Apagado', 'Encendido'))
 
     # Single value from range
     rslider = settings_menu.add.range_slider('Choose a number', 50, (0, 100), 1,

@@ -376,7 +376,7 @@ elif EXAMPLE == 'TOGGLESWITCH':
 
     menu.add.toggle_switch('First Switch', False, toggleswitch_id='first_switch')
     menu.add.toggle_switch('Other Switch', True, toggleswitch_id='second_switch',
-                           state_text=('Apagado', 'Encencido'), state_text_font_size=18)
+                           state_text=('Apagado', 'Encendido'), state_text_font_size=18)
 
 elif EXAMPLE == 'URL':
     menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'Url', widget_font_size=18)
