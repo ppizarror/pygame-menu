@@ -628,7 +628,7 @@ more options, take a look at the ``ToggleSwitch`` widget class.
 
     menu.add.toggle_switch('First Switch', False, toggleswitch_id='first_switch')
     menu.add.toggle_switch('Other Switch', True, toggleswitch_id='second_switch',
-                           state_text=('Apagado', 'Encencido'), state_text_font_size=18)
+                           state_text=('Apagado', 'Encendido'), state_text_font_size=18)
 
 .. automethod:: pygame_menu._widgetmanager.WidgetManager.toggle_switch
 

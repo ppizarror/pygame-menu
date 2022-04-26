@@ -186,7 +186,7 @@ def main(test: bool = False) -> None:
                                     toggleswitch_id='first_switch')
     settings_menu.add.toggle_switch('Other Switch', True,
                                     toggleswitch_id='second_switch',
-                                    state_text=('Apagado', 'Encencido'))
+                                    state_text=('Apagado', 'Encendido'))
 
     # Single value from range
     rslider = settings_menu.add.range_slider('Choose a number', 50, (0, 100), 1,
@@ -194,7 +194,7 @@ def main(test: bool = False) -> None:
                                              value_format=lambda x: str(int(x)))
 
     # Range
-    settings_menu.add.range_slider('How do you rate pygame-menu?', (7, 10), (1, 10), 1,
+    settings_menu.add.range_slider('How would you rate pygame-menu?', (7, 10), (1, 10), 1,
                                    rangeslider_id='range_slider_double')
 
     # Create discrete range
