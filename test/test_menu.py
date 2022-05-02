@@ -2462,7 +2462,6 @@ class MenuTest(BaseRSTest):
         size = menu.get_size(widget=True)
         self.assertEqual(size, (136, 98))
         self.assertEqual(menu.resize(*size).get_size(), size)
-        # menu.mainloop(surface)
 
     def test_border_color(self) -> None:
         """
