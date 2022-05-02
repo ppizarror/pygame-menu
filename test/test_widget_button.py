@@ -257,3 +257,17 @@ class ButtonWidgetTest(BaseTest):
         self.assertRaises(ValueError, lambda: btn.set_value('value'))
         self.assertFalse(btn.value_changed())
         btn.reset_value()
+
+    # noinspection HttpUrlsUsage
+    def test_add_url(self) -> None:
+        """
+        Test add url.
+        """
+        menu = MenuUtils.generic_menu()
+        self.assertRaises(AssertionError, lambda: menu.add.url('invalid'))
+        self.assertRaises(AssertionError, lambda: menu.add.url('127.0.0.1'))
+        btn = menu.add.url('http://127.0.0.1')
+        self.assertEqual(btn.get_title(), 'http://127.0.0.1')
+        btn2 = menu.add.url('https://github.com/ppizarror/pygame-menu', 'github')
+        self.assertEqual(btn2.get_title(), 'github')
+
