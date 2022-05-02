@@ -466,6 +466,7 @@ class TextInputWidgetTest(BaseTest):
         """
         # Test underline edge cases
         theme = TEST_THEME.copy()
+        theme.widget_selection_effect = None
         theme.title_font_size = 35
         theme.widget_font_size = 25
 
@@ -479,38 +480,38 @@ class TextInputWidgetTest(BaseTest):
         )
         textinput = menu.add.text_input('title', input_underline='_')
         self.assertEqual(menu._widget_offset[1], 107 if PYGAME_V2 else 106)
-        self.assertEqual(textinput.get_width(), 376)
-        self.assertEqual(textinput._current_underline_string, '______________________________')
+        self.assertEqual(textinput.get_width(), 398)
+        self.assertEqual(textinput._current_underline_string, '________________________________')
         menu.render()
-        self.assertEqual((menu.get_width(widget=True), menu.get_width(inner=True)), (376, 400))
-        self.assertEqual(textinput.get_width(), 376)
-        self.assertEqual(textinput._current_underline_string, '______________________________')
+        self.assertEqual((menu.get_width(widget=True), menu.get_width(inner=True)), (398, 400))
+        self.assertEqual(textinput.get_width(), 398)
+        self.assertEqual(textinput._current_underline_string, '________________________________')
         menu.render()
-        self.assertEqual((menu.get_width(widget=True), menu.get_width(inner=True)), (376, 400))
+        self.assertEqual((menu.get_width(widget=True), menu.get_width(inner=True)), (398, 400))
         textinput.set_title('nice')
-        self.assertEqual(textinput.get_width(), 379)
-        self.assertEqual(textinput._current_underline_string, '______________________________')
+        self.assertEqual(textinput.get_width(), 401)
+        self.assertEqual(textinput._current_underline_string, '________________________________')
         menu.render()
-        self.assertEqual((menu.get_width(widget=True), menu.get_width(inner=True)), (379, 400))
+        self.assertEqual((menu.get_width(widget=True), menu.get_width(inner=True)), (401, 400))
         # noinspection SpellCheckingInspection
         textinput.set_value('QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ')
-        self.assertEqual(textinput.get_width(), 712)
+        self.assertEqual(textinput.get_width(), 731)
         self.assertEqual(textinput._current_underline_string,
-                         '____________________________________________________________')
+                         '______________________________________________________________')
         menu.render()
-        self.assertEqual((menu.get_width(widget=True), menu.get_width(inner=True)), (712, 400))
+        self.assertEqual((menu.get_width(widget=True), menu.get_width(inner=True)), (731, 400))
         textinput.set_padding(100)
-        self.assertEqual(textinput.get_width(), 912)
+        self.assertEqual(textinput.get_width(), 931)
         self.assertEqual(textinput._current_underline_string,
-                         '____________________________________________________________')
+                         '______________________________________________________________')
         menu.render()
-        self.assertEqual((menu.get_width(widget=True), menu.get_width(inner=True)), (912, 380))
+        self.assertEqual((menu.get_width(widget=True), menu.get_width(inner=True)), (931, 380))
         textinput.set_padding(200)
-        self.assertEqual(textinput.get_width(), 1112)
+        self.assertEqual(textinput.get_width(), 1131)
         self.assertEqual(textinput._current_underline_string,
-                         '____________________________________________________________')
+                         '______________________________________________________________')
         menu.render()
-        self.assertEqual((menu.get_width(widget=True), menu.get_width(inner=True)), (1112, 380))
+        self.assertEqual((menu.get_width(widget=True), menu.get_width(inner=True)), (1131, 380))
 
         # Test underline
         textinput = menu.add.text_input('title: ')
@@ -521,8 +522,9 @@ class TextInputWidgetTest(BaseTest):
         textinput = menu.add.text_input('title: ', input_underline='.-')
         # noinspection SpellCheckingInspection
         textinput.set_value('QQQQQQQQQQQQQQQ')
-        self.assertEqual(textinput.get_width(), 373)
-        self.assertEqual(textinput._current_underline_string, '.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-')
+        self.assertEqual(textinput.get_width(), 403)
+        self.assertEqual(textinput._current_underline_string,
+                         '.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-')
 
         textinput = menu.add.text_input('title: ', input_underline='_', input_underline_len=10)
         self.assertEqual(textinput._current_underline_string, '_' * 10)
@@ -541,13 +543,13 @@ class TextInputWidgetTest(BaseTest):
         self.assertEqual(len(menu._widgets), 0)
         textinput = menu.add.text_input('title', input_underline='_')
         self.assertEqual(menu._widget_offset[1], 107 if PYGAME_V2 else 106)
-        self.assertEqual(textinput.get_width(), 178)
-        self.assertEqual(textinput._current_underline_string, '____________')
+        self.assertEqual(textinput.get_width(), 200)
+        self.assertEqual(textinput._current_underline_string, '______________')
         v_frame = menu.add.frame_v(150, 100, background_color=(20, 20, 20))
         v_frame.pack(textinput)
         self.assertEqual(menu._widget_offset[1], 76 if PYGAME_V2 else 75)
-        self.assertEqual(textinput.get_width(), 134)
-        self.assertEqual(textinput._current_underline_string, '________')
+        self.assertEqual(textinput.get_width(), 145)
+        self.assertEqual(textinput._current_underline_string, '_________')
 
         # Test cursor size
         self.assertRaises(AssertionError, lambda: menu.add.text_input('title', cursor_size=(1, 0)))
