@@ -270,4 +270,3 @@ class ButtonWidgetTest(BaseTest):
         self.assertEqual(btn.get_title(), 'http://127.0.0.1')
         btn2 = menu.add.url('https://github.com/ppizarror/pygame-menu', 'github')
         self.assertEqual(btn2.get_title(), 'github')
-
