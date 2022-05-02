@@ -194,7 +194,9 @@ class DecoratorTest(BaseTest):
         """
         Test all decorators.
         """
-        menu = MenuUtils.generic_menu(theme=TEST_THEME.copy())
+        theme = TEST_THEME.copy()
+        theme.widget_selection_effect = None
+        menu = MenuUtils.generic_menu(theme=theme)
         btn = menu.add.button('Button')
 
         deco = btn.get_decorator()

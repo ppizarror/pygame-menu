@@ -584,7 +584,7 @@ class Menu(Base):
             height: NumberType,
             screen_dimension: Optional[Vector2IntType] = None,
             position: Optional[Union[Vector2NumberType, Tuple[NumberType, NumberType, bool]]] = None
-    ) -> None:
+    ) -> 'Menu':
         """
         Resize the menu to another width/height
 
@@ -592,6 +592,7 @@ class Menu(Base):
         :param height: Menu height (px)
         :param screen_dimension: List/Tuple representing the dimensions the Menu should reference for sizing/positioning (width, height), if ``None`` pygame is queried for the display mode. This value defines the ``window_size`` of the Menu
         :param position: Position on x-axis and y-axis. If the value is only 2 elements, the position is relative to the window width (thus, values must be 0-100%); else, the third element defines if the position is relative or not. If ``(x, y, False)`` the values of ``(x, y)`` are in px. If ``None`` use the default from the menu constructor
+        :return: Self reference
         """
         assert isinstance(width, NumberInstance)
         assert isinstance(height, NumberInstance)
@@ -701,6 +702,7 @@ class Menu(Base):
             self.set_relative_position(position[0], position[1])
         else:
             self.set_absolute_position(position[0], position[1])
+        return self
 
     def __copy__(self) -> 'Menu':
         """
@@ -1371,7 +1373,7 @@ class Menu(Base):
             if sum_width_columns < max_width and self._used_columns >= 1:
 
                 # The width it would be added for each column
-                mod_width = max_width  # Available left width for non max columns
+                mod_width = max_width  # Available left width for non-max columns
                 non_max = self._used_columns
 
                 # First fill all maximum width columns
@@ -1447,7 +1449,7 @@ class Menu(Base):
             align = widget.get_alignment()
             margin = widget.get_margin()
             padding = widget.get_padding()
-            selection_effect = widget.get_selection_effect()
+            selection_effect_margin = widget.get_selection_effect().get_margin()
             width = get_rect(widget).width
 
             if not widget.is_visible():
@@ -1467,15 +1469,18 @@ class Menu(Base):
             column_width = self._column_widths[col]
             selection_margin = 0
             dx = 0
+            sm_left, sm_right = selection_effect_margin[1], selection_effect_margin[3]
             if align == ALIGN_CENTER:
-                dx = -width / 2
+                dx = -(width + sm_right - sm_left) / 2
             elif align == ALIGN_LEFT:
-                selection_margin = selection_effect.get_margin()[1]  # left
+                selection_margin = sm_left
                 dx = -column_width / 2 + selection_margin
             elif align == ALIGN_RIGHT:
-                selection_margin = selection_effect.get_margin()[3]  # right
+                selection_margin = sm_right
                 dx = column_width / 2 - width - selection_margin
             d_border = int(math.ceil(widget.get_border()[1] / 2))
+
+            # self._column_pos_x points at the middle of each column
             x_coord = self._column_pos_x[col] + dx + margin[0] + padding[3]
             x_coord = max(selection_margin, x_coord)
             x_coord += max(0, self._widget_offset[0]) + d_border
@@ -1533,9 +1538,9 @@ class Menu(Base):
 
             # Update max/min position, minus padding
             min_max_updated = True
-            max_x = max(max_x, x_coord + width - padding[1] + tx)  # minus right padding
+            max_x = max(max_x, x_coord + width - padding[1] + tx + sm_right)  # minus right padding
             max_y = max(max_y, y_coord + get_rect(widget).height - padding[2] + ty)  # minus bottom padding
-            min_x = min(min_x, x_coord - padding[3])
+            min_x = min(min_x, x_coord - padding[3] - sm_left)
             min_y = min(min_y, y_coord - padding[0])
 
         # Update position

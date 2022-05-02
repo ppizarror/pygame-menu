@@ -2442,11 +2442,26 @@ class MenuTest(BaseRSTest):
         self.assertEqual(menu.get_size(border=True),
                          (600 + 2 * theme.border_width, 400 + 2 * theme.border_width))
 
-        # Menu menu with none border color
+        # Menu with none border color
         theme.border_width = 10
         theme.border_color = None
         menu = MenuUtils.generic_menu(theme=theme)
         self.assertEqual(menu.get_size(border=True), (600, 400))
+
+        # Menu with selection effect
+        theme = pygame_menu.themes.THEME_BLUE.copy()
+        theme.title = False
+        theme.scrollarea_position = pygame_menu.locals.SCROLLAREA_POSITION_NONE
+        theme.widget_selection_effect = pygame_menu.widgets.LeftArrowSelection(
+            arrow_right_margin=50,
+        )
+
+        menu = pygame_menu.Menu('Welcome', 200, 200, theme=theme)
+        menu.add.button('Play')
+        menu.add.button('Quit', pygame_menu.events.EXIT)
+        size = menu.get_size(widget=True)
+        self.assertEqual(size, (136, 98))
+        self.assertEqual(menu.resize(*size).get_size(), size)
 
     def test_border_color(self) -> None:
         """
