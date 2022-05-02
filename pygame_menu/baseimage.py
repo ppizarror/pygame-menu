@@ -677,7 +677,7 @@ class BaseImage(Base):
 
     def scale4x(self) -> 'BaseImage':
         """
-        Applies a x4 scale factor using scale2x algorithm.
+        Applies a x4 scale factor using scale 2x algorithm.
 
         :return: Self reference
         """

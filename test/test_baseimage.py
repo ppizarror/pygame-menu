@@ -240,7 +240,7 @@ class BaseImageTest(BaseTest):
         image4 = image.copy().scale(4, 4)
         self.assertEqual(image4.get_size(), (1024, 1024))
 
-        # Apply scale2x algorithm
+        # Apply scale 2x algorithm
         image4a = image.copy().scale2x().scale2x()
         self.assertEqual(image4a.get_size(), (1024, 1024))
 

@@ -140,11 +140,11 @@ class ScrollAreaTest(BaseTest):
         self.assertTrue(s1.is_visible())
         s1.hide(True)  # Hide with force
         self.assertFalse(s1.is_visible())
-        s1.show()  # Without force it will not change the status
+        s1.show()  # Without force, it will not change the status
         self.assertFalse(s1.is_visible())
-        s1.show(True)  # Without force it will not change the status
+        s1.show(True)  # Without force, it will not change the status
         self.assertTrue(s1.is_visible())
-        s1.hide()  # Without force it will not change the status
+        s1.hide()  # Without force, it will not change the status
         self.assertTrue(s1.is_visible())
 
         # Disable visibility force

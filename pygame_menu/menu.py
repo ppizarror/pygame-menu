@@ -1373,7 +1373,7 @@ class Menu(Base):
             if sum_width_columns < max_width and self._used_columns >= 1:
 
                 # The width it would be added for each column
-                mod_width = max_width  # Available left width for non max columns
+                mod_width = max_width  # Available left width for non-max columns
                 non_max = self._used_columns
 
                 # First fill all maximum width columns
