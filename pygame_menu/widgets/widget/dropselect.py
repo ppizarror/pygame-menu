@@ -658,12 +658,6 @@ class DropSelect(Widget):
             self._drop_frame.update_position()
         return self
 
-    def translate(self, x: NumberType, y: NumberType) -> 'DropSelect':
-        super(DropSelect, self).translate(x, y)
-        if self._drop_frame is not None:
-            self._drop_frame.translate(x, y)
-        return self
-
     def scale(self, *args, **kwargs) -> 'DropSelect':
         raise WidgetTransformationNotImplemented()
 
