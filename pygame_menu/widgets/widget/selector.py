@@ -468,7 +468,7 @@ class Selector(Widget):
                 return True
 
             # Press enter
-            elif keydown and event.key == ctrl.KEY_APPLY or \
+            elif keydown and self._ctrl.apply(event, self) or \
                     joy_button_down and event.button == ctrl.JOY_BUTTON_SELECT:
                 self._sound.play_key_add()
                 self.apply(*self._items[self._index][1:])

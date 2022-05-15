@@ -204,7 +204,7 @@ class Button(Widget):
 
             # User applies with key
             if event.type == pygame.KEYDOWN and self._keyboard_enabled and \
-                    event.key == ctrl.KEY_APPLY or \
+                    self._ctrl.apply(event, self) or \
                     event.type == pygame.JOYBUTTONDOWN and self._joystick_enabled and \
                     event.button == ctrl.JOY_BUTTON_SELECT:
                 if self.to_menu:

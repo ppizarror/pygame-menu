@@ -78,12 +78,32 @@ class Controller(object):
     def __init__(self) -> None:
         return
 
+    def apply(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
+        """
+        Accepts apply. Requires keydown.
+
+        :param event: Event
+        :param widget: Widget that accepts the event
+        :return: True if event matches
+        """
+        return event.key == KEY_APPLY
+
+    def back(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
+        """
+        Accepts back. Requires keydown.
+
+        :param event: Event
+        :param widget: Widget that accepts the event
+        :return: True if event matches
+        """
+        return event.key == KEY_BACK
+
     def joy_axis_x(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
         """
         Accepts joy movement on x-axis.
 
         :param event: Event
-        :param widget: Widget that accepts the event.
+        :param widget: Widget that accepts the event
         :return: True if event matches
         """
         return event.axis == JOY_AXIS_X
@@ -93,7 +113,7 @@ class Controller(object):
         Accepts joy movement on y-axis.
 
         :param event: Event
-        :param widget: Widget that accepts the event.
+        :param widget: Widget that accepts the event
         :return: True if event matches
         """
         return event.axis == JOY_AXIS_Y

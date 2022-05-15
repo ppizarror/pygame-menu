@@ -431,7 +431,7 @@ class ToggleSwitch(Widget):
                 return True
 
             # Press enter
-            elif keydown and event.key == ctrl.KEY_APPLY and self._total_states == 2 or \
+            elif keydown and self._ctrl.apply(event, self) and self._total_states == 2 or \
                     event.type == pygame.JOYBUTTONDOWN and self._joystick_enabled and \
                     event.button == ctrl.JOY_BUTTON_SELECT and self._total_states == 2:
                 self._sound.play_key_add()

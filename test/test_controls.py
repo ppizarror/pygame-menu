@@ -74,10 +74,34 @@ class ControlsTest(BaseTest):
         # Rollback change
         ctrl.KEY_APPLY = pygame.K_RETURN
 
+        # Create new controller object
+        new_ctrl = ctrl.Controller()
+        test_apply = [0]
+
+        def new_apply(event, _) -> bool:
+            """
+            Updates apply.
+            """
+            test_apply[0] += 1
+            return event.key == pygame.K_a
+
+        new_ctrl.apply = new_apply
+        button.set_controller(new_ctrl)
+
+        # Now test new apply button
+        button.update(PygameEventUtils.key(pygame.K_a, keydown=True))
+        self.assertTrue(test[0])
+        button.update(PygameEventUtils.key(pygame.K_a, keydown=True))
+        self.assertFalse(test[0])
+        self.assertEqual(test_apply[0], 2)
+
         button.update(PygameEventUtils.key(pygame.K_END, keydown=True))
         self.assertFalse(test[0])
         button.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
-        self.assertTrue(test[0])
+        self.assertFalse(test[0])  # It should do nothing as object has new controller
+
+        # The same can be done with menu
+        menu.set_controller(new_ctrl)
 
     def test_pyautogui(self) -> None:
         """

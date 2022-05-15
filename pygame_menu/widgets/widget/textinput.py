@@ -1798,7 +1798,7 @@ class TextInput(Widget):
                     self.active = True
 
                 # Enter
-                elif event.key == ctrl.KEY_APPLY:
+                elif self._ctrl.apply(event, self):
                     self._sound.play_open_menu()
                     self.apply()
                     self._unselect_text()

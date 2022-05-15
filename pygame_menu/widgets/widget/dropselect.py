@@ -1149,7 +1149,7 @@ class DropSelect(Widget):
                 return True
 
             # Press enter
-            elif keydown and event.key == ctrl.KEY_APPLY or \
+            elif keydown and self._ctrl.apply(event, self) or \
                     joy_button_down and event.button == ctrl.JOY_BUTTON_SELECT:
                 if self.active and self._index >= 0:
                     self._sound.play_key_add()
