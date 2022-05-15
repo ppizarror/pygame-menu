@@ -2508,7 +2508,7 @@ class Menu(Base):
                             updated = True
                             break
 
-                    elif event.key == ctrl.KEY_BACK and self._top._prev is not None:
+                    elif self._ctrl.back(event, self) and self._top._prev is not None:
                         self._current._sound.play_close_menu()
                         self.reset(1)  # public, do not use _current
                         self._current._last_update_mode.append(_events.MENU_LAST_MENU_BACK)
