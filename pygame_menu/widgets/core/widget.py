@@ -444,6 +444,7 @@ class Widget(Base):
         self._selection_effect_draw_post = True
 
         # Inputs
+        self._ctrl = ctrl.Controller()
         self._keyboard_enabled = True
         self._keyboard_ignore_nonphysical = True  # Ignores non-physical keyboard buttons pressed
         self._joystick_enabled = True
