@@ -109,10 +109,11 @@ class Menu(Base):
     _column_pos_x: List[NumberType]
     _column_widths: List[NumberType]
     _columns: int
+    _ctrl: 'ctrl.Controller'
     _current: 'Menu'
     _decorator: 'Decorator'
-    _disable_exit: bool
     _disable_draw: bool
+    _disable_exit: bool
     _disable_update: bool
     _enabled: bool
     _height: int
@@ -448,6 +449,9 @@ class Menu(Base):
             height=height,
             screen_dimension=screen_dimension
         )
+
+        # Setups controller
+        self._ctrl = ctrl.Controller()
 
         # Init joystick
         self._joystick = joystick_enabled
@@ -2113,6 +2117,22 @@ class Menu(Base):
             gfxdraw.filled_polygon(surface, coords[area], self._theme.focus_background_color)
         return coords
 
+    def set_controller(self, controller: 'ctrl.Controller') -> 'Menu':
+        """
+        Set a new controller object.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply to
+            :py:meth:`pygame_menu.menu.Menu.get_current` object.
+
+        :param controller: Controller
+        :return: Self reference
+        """
+        self._ctrl = controller
+        return self
+
     def enable(self) -> 'Menu':
         """
         Enables Menu (can check events and draw).
@@ -2538,11 +2558,11 @@ class Menu(Base):
                     elif event.axis == ctrl.JOY_AXIS_Y and event.value > ctrl.JOY_DEADZONE:
                         self._current._joy_event |= JOY_EVENT_DOWN
 
-                    elif event.axis == ctrl.JOY_AXIS_X and event.value < -ctrl.JOY_DEADZONE and \
+                    elif self._ctrl.joy_axis_x(event, self) and event.value < -ctrl.JOY_DEADZONE and \
                             self._current._used_columns > 1:
                         self._current._joy_event |= JOY_EVENT_LEFT
 
-                    elif event.axis == ctrl.JOY_AXIS_X and event.value > ctrl.JOY_DEADZONE and \
+                    elif self._ctrl.joy_axis_x(event, self) and event.value > ctrl.JOY_DEADZONE and \
                             self._current._used_columns > 1:
                         self._current._joy_event |= JOY_EVENT_RIGHT
 

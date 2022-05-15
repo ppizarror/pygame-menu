@@ -36,6 +36,7 @@ import time
 
 import pygame
 import pygame_menu
+import pygame_menu.controls as ctrl
 
 from pygame_menu._base import Base
 from pygame_menu._decorator import Decorator
@@ -232,6 +233,7 @@ class Widget(Base):
     _border_width: int
     _check_mouseleave_call_render: bool
     _col_row_index: Tuple3IntType
+    _ctrl: 'ctrl.Controller'
     _cursor: CursorType
     _decorator: 'Decorator'
     _default_value: Any
@@ -3120,6 +3122,16 @@ class Widget(Base):
         """
         assert isinstance(tab_size, int) and tab_size >= 0
         self._tab_size = tab_size
+        return self
+
+    def set_controller(self, controller: 'ctrl.Controller') -> 'Widget':
+        """
+        Set a new controller object.
+
+        :param controller: Controller
+        :return: Self reference
+        """
+        self._ctrl = controller
         return self
 
 
