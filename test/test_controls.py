@@ -68,14 +68,16 @@ class ControlsTest(BaseTest):
         # Now test new apply button
         button.update(PygameEventUtils.key(pygame.K_END, keydown=True))
         self.assertTrue(test[0])
+        button.update(PygameEventUtils.key(pygame.K_END, keydown=True))
+        self.assertFalse(test[0])
 
         # Rollback change
         ctrl.KEY_APPLY = pygame.K_RETURN
 
         button.update(PygameEventUtils.key(pygame.K_END, keydown=True))
-        self.assertTrue(test[0])
-        button.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
         self.assertFalse(test[0])
+        button.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
+        self.assertTrue(test[0])
 
     def test_pyautogui(self) -> None:
         """
