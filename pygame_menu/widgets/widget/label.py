@@ -228,7 +228,7 @@ class Label(Widget):
             max_width = menu._column_widths[self.get_col_row_index()[0]]
         except IndexError:
             max_width = menu.get_width(inner=True)
-        return max_width - self._padding[1] - self._padding[3]
+        return max_width - self._padding[1] - self._padding[3] - self._selection_effect.get_width()
 
     def get_overflow_lines(self) -> List[str]:
         """
@@ -243,7 +243,7 @@ class Label(Widget):
     def _render(self) -> Optional[bool]:
         if not self._render_hash_changed(
                 self._title, self._font_color, self._visible, self._menu, self._font,
-                self._last_underline[1]):
+                self._last_underline[1], self._padding):
             return True
         self._lines = []
 

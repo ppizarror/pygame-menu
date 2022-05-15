@@ -463,10 +463,11 @@ class TextInput(Widget):
         if not self._render_hash_changed(
                 string, self._selected, self._cursor_render, self._cursor_position,
                 self._selection_enabled, self.active, self._visible, self.readonly,
-                self._last_container_width, self._selection_box[0],
-                self._selection_box[1], self._last_selection_render[0],
+                self._last_container_width, self._selection_box[0], self._menu,
+                self._selection_box[1], self._last_selection_render[0], self._padding,
                 self._last_selection_render[1], self._renderbox[0], self._renderbox[1],
-                self._renderbox[2], self._cursor_visible):
+                self._renderbox[2], self._cursor_visible, self._title_size,
+                self._selection_effect.get_width()):
             return True
 
         # Apply underline if exists
