@@ -1159,13 +1159,13 @@ class DropSelect(Widget):
                 return True
 
             # Press keys which active the drop but not apply
-            elif keydown and (event.key == ctrl.KEY_TAB):
+            elif keydown and self._ctrl.tab(event, self):
                 self._toggle_drop()
                 return True
 
             # Close the selection
-            elif keydown and (event.key == pygame.K_ESCAPE or
-                              event.key == pygame.K_BACKSPACE):
+            elif keydown and (self._ctrl.escape(event, self) or
+                              self._ctrl.back(event, self)):
                 if self.active:
                     self._toggle_drop()
                 return True

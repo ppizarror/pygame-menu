@@ -431,7 +431,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                             len(input_str) == cursor_pos + 1
                     ):
                         # Backspace button, delete text from right
-                        if event.key == pygame.K_BACKSPACE:
+                        if self._ctrl.back(event, self):
                             if len(input_str) >= 1 and \
                                     input_str[cursor_pos - 1] == self._separator:
                                 return True
@@ -505,7 +505,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                         continue
 
                     # Backspace button, delete text from right
-                    if event.key == pygame.K_BACKSPACE:
+                    if self._ctrl.back(event, self):
                         if cursor_pos == 1:
                             return True
 

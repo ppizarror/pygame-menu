@@ -975,7 +975,7 @@ class RangeSlider(Widget):
                 return True
 
             # Tab, switch active slider
-            elif keydown and event.key == ctrl.KEY_TAB:
+            elif keydown and self._ctrl.tab(event, self):
                 if self._single:
                     continue
                 self._slider_selected = (False, True) if self._slider_selected[0] else (True, False)

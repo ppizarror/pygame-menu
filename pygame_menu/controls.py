@@ -36,7 +36,7 @@ __all__ = [
 ]
 
 # Imports
-import pygame.locals as __locals
+import pygame.locals as _locals
 from pygame.event import Event as EventType
 from typing import TYPE_CHECKING, Union
 
@@ -58,14 +58,14 @@ JOY_RIGHT = (1, 0)
 JOY_UP = (0, 1)
 
 # Keyboard events
-KEY_APPLY = __locals.K_RETURN
-KEY_BACK = __locals.K_BACKSPACE
-KEY_CLOSE_MENU = __locals.K_ESCAPE
-KEY_LEFT = __locals.K_LEFT
-KEY_MOVE_DOWN = __locals.K_UP
-KEY_MOVE_UP = __locals.K_DOWN  # Consider keys are "inverted"
-KEY_RIGHT = __locals.K_RIGHT
-KEY_TAB = __locals.K_TAB
+KEY_APPLY = _locals.K_RETURN
+KEY_BACK = _locals.K_BACKSPACE
+KEY_CLOSE_MENU = _locals.K_ESCAPE
+KEY_LEFT = _locals.K_LEFT
+KEY_MOVE_DOWN = _locals.K_UP
+KEY_MOVE_UP = _locals.K_DOWN  # Consider keys are "inverted"
+KEY_RIGHT = _locals.K_RIGHT
+KEY_TAB = _locals.K_TAB
 
 
 # noinspection PyMethodMayBeStatic,PyUnusedLocal
@@ -108,6 +108,16 @@ class Controller(object):
         """
         return event.key == KEY_CLOSE_MENU
 
+    def escape(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
+        """
+        Accepts escape. Requires ``pygame.KEYDOWN``.
+
+        :param event: Event
+        :param widget: Widget that accepts the event
+        :return: True if event matches
+        """
+        return event.key == _locals.K_ESCAPE
+
     def joy_axis_x(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
         """
         Accepts joy movement on x-axis. Requires ``pygame.JOYAXISMOTION``.
@@ -127,6 +137,16 @@ class Controller(object):
         :return: True if event matches
         """
         return event.axis == JOY_AXIS_Y
+
+    def joy_back(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
+        """
+        Accepts joy back button. Requires ``pygame.JOYBUTTONDOWN``.
+
+        :param event: Event
+        :param widget: Widget that accepts the event
+        :return: True if event matches
+        """
+        return event.axis == JOY_AXIS_X
 
     def left(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
         """
@@ -167,3 +187,13 @@ class Controller(object):
         :return: True if event matches
         """
         return event.key == KEY_RIGHT
+
+    def tab(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
+        """
+        Accepts tab. Requires ``pygame.KEYDOWN``.
+
+        :param event: Event
+        :param widget: Widget that accepts the event
+        :return: True if event matches
+        """
+        return event.key == KEY_TAB
