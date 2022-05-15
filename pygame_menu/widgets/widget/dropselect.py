@@ -1129,7 +1129,7 @@ class DropSelect(Widget):
             joy_button_down = self._joystick_enabled and event.type == pygame.JOYBUTTONDOWN
 
             # Left button
-            if keydown and event.key == ctrl.KEY_MOVE_DOWN or \
+            if keydown and self._ctrl.move_down(event, self) or \
                     joy_hatmotion and event.value == ctrl.JOY_LEFT or \
                     joy_axismotion and self._ctrl.joy_axis_x(event, self) and \
                     event.value < ctrl.JOY_DEADZONE:

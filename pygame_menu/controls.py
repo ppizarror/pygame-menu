@@ -137,3 +137,13 @@ class Controller(object):
         :return: True if event matches
         """
         return event.key == KEY_LEFT
+
+    def move_down(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
+        """
+        Accepts move down. Requires ``pygame.KEYDOWN``.
+
+        :param event: Event
+        :param widget: Widget that accepts the event
+        :return: True if event matches
+        """
+        return event.key == KEY_MOVE_DOWN

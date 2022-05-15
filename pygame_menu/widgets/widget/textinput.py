@@ -1769,7 +1769,7 @@ class TextInput(Widget):
                     self.active = False
 
                 # Down arrow
-                elif event.key == ctrl.KEY_MOVE_DOWN:
+                elif self._ctrl.move_down(event, self):
                     self.active = False
 
                 # End

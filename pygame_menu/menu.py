@@ -2484,7 +2484,7 @@ class Menu(Base):
                     if self._keyboard_ignore_nonphysical and not check_key_pressed_valid(event):
                         continue
 
-                    if event.key == ctrl.KEY_MOVE_DOWN:
+                    if self._ctrl.move_down(event, self):
                         if self._current._down(apply_sound=True):
                             self._current._last_update_mode.append(_events.MENU_LAST_MOVE_DOWN)
                             updated = True
