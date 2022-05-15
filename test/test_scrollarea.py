@@ -359,3 +359,13 @@ class ScrollAreaTest(BaseTest):
         self.assertEqual(sa.get_size(), (600, 400))
         self.assertEqual(sa.get_scrollbar_thickness(ORIENTATION_VERTICAL), 0)
         self.assertEqual(sa.get_scrollbar_thickness(ORIENTATION_HORIZONTAL), 0)
+
+    def test_change_area_color(self) -> None:
+        """
+        Test area color.
+        """
+        menu = MenuUtils.generic_menu()
+        sa = menu.get_scrollarea()
+        sf = sa._bg_surface
+        self.assertEqual(sa.update_area_color('red'), sa)
+        self.assertNotEqual(sf, sa._bg_surface)

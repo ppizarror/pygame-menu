@@ -335,7 +335,22 @@ class ScrollArea(Base):
             else:
                 self._bg_surface.fill(assert_color(self._area_color))
 
-    def set_parent_scrollarea(self, parent: Optional['ScrollArea']) -> None:
+    def update_area_color(
+            self,
+            color: Optional[Union[ColorInputType, 'pygame_menu.BaseImage']]
+    ) -> 'ScrollArea':
+        """
+        Updates area color.
+
+        :param color: Color
+        :return: Self reference
+        """
+        self._area_color = color
+        self._bg_surface = None
+        self._make_background_surface()
+        return self
+
+    def set_parent_scrollarea(self, parent: Optional['ScrollArea']) -> 'ScrollArea':
         """
         Set parent ScrollArea.
 
@@ -344,6 +359,7 @@ class ScrollArea(Base):
         assert isinstance(parent, (ScrollArea, type(None)))
         assert parent != self, 'parent scrollarea cannot be set as itself'
         self._parent_scrollarea = parent
+        return self
 
     def get_parent(self) -> Optional['ScrollArea']:
         """
@@ -1119,8 +1135,11 @@ class ScrollArea(Base):
                     parent = parent._parent_scrollarea
         return view_rect_absolute
 
-    def to_real_position(self, virtual: Union['pygame.Rect', Tuple2NumberType], visible: bool = False
-                         ) -> Union['pygame.Rect', Tuple2IntType]:
+    def to_real_position(
+            self,
+            virtual: Union['pygame.Rect', Tuple2NumberType],
+            visible: bool = False
+    ) -> Union['pygame.Rect', Tuple2IntType]:
         """
         Return the real position/Rect according to the ScrollArea origin of a
         position/Rect in the world surface reference.
