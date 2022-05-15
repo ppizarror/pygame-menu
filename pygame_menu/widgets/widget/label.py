@@ -240,13 +240,52 @@ class Label(Widget):
                 self._last_underline[1]):
             return True
 
-        # Render surface
+        # Generate surface
         if not self._wordwrap:
             self._surface = self._render_string(self._title, self._font_color)
-            self._apply_transforms()
-            self._rect.width, self._rect.height = self._surface.get_size()
+        else:
+            if self._font is None or self._menu is None:
+                self._surface = make_surface(0, 0, alpha=True)
+            else:
+                lines = self._title.split('\n')
+                if self._wordwrap:
+                    lines = sum(
+                        (
+                            self._wordwrap_line(
+                                line=line,
+                                font=self._font,
+                                max_width=self._get_max_container_width(),
+                                tab_size=self._tab_size
+                            )
+                            for line in lines
+                        ),
+                        []
+                    )
 
-            # Add underline if enabled
+                self._surface = make_surface(
+                    max(self._font.size(line)[0] for line in lines),
+                    len(lines) * self._get_leading(),
+                    alpha=True
+                )
+
+                for n_line, line in enumerate(lines):
+                    line_surface = self._render_string(line, self._font_color)
+                    self._surface.blit(
+                        line_surface,
+                        pygame.Rect(
+                            0,
+                            n_line * self._get_leading(),
+                            self._rect.width,
+                            self._rect.height
+                        )
+                    )
+
+        # Update rect object
+        self._apply_transforms()
+        self._rect.width, self._rect.height = self._surface.get_size()
+
+        # Apply underline
+        if not self._wordwrap:
             self.remove_underline()
             if self._last_underline[1] is not None:
                 w = self._surface.get_width()
@@ -259,46 +298,6 @@ class Label(Widget):
                         color=color,
                         width=width
                     )
-        else:
-            if self._font is None or self._menu is None:
-                self._surface = make_surface(0, 0, alpha=True)
-                return None
-
-            lines = self._title.split('\n')
-            if self._wordwrap:
-                lines = sum(
-                    (
-                        self._wordwrap_line(
-                            line=line,
-                            font=self._font,
-                            max_width=self._get_max_container_width(),
-                            tab_size=self._tab_size
-                        )
-                        for line in lines
-                    ),
-                    [],
-                )
-
-            self._surface = make_surface(
-                max(self._font.size(line)[0] for line in lines),
-                len(lines) * self._get_leading(),
-                alpha=True
-            )
-
-            for n_line, line in enumerate(lines):
-                line_surface = self._render_string(line, self._font_color)
-                self._surface.blit(
-                    line_surface,
-                    pygame.Rect(
-                        0,
-                        n_line * self._get_leading(),
-                        self._rect.width,
-                        self._rect.height
-                    )
-                )
-
-            self._apply_transforms()
-            self._rect.width, self._rect.height = self._surface.get_size()
 
         self.force_menu_surface_update()
 

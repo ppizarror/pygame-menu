@@ -192,3 +192,8 @@ class LabelWidgetTest(BaseTest):
                                wordwrap=True, nlines=3)
         self.assertEqual(label._get_nlines(), 3)
         self.assertEqual(label.get_height(), 90)
+
+        # Test none menu
+        label.set_menu(None)
+        self.assertEqual(label._get_max_container_width(), 0)
+        label._force_render()
