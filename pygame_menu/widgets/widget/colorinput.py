@@ -437,7 +437,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                                 return True
 
                         # Delete button, delete text from left
-                        elif event.key == pygame.K_DELETE:
+                        elif self._ctrl.delete(event, self):
                             if input_str[cursor_pos] == self._separator:
                                 return True
 
@@ -510,7 +510,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                             return True
 
                     # Delete button, delete text from left
-                    elif event.key == pygame.K_DELETE:
+                    elif self._ctrl.delete(event, self):
                         if cursor_pos == 0:
                             return True
 

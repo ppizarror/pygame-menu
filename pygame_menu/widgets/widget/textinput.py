@@ -1691,7 +1691,7 @@ class TextInput(Widget):
                     updated = True
 
                 # Delete button, delete text from left
-                elif event.key == pygame.K_DELETE:
+                elif self._ctrl.delete(event, self):
                     # Play sound
                     if self._cursor_position == len(self._input_string):
                         self._sound.play_event_error()
@@ -1773,7 +1773,7 @@ class TextInput(Widget):
                     self.active = False
 
                 # End
-                elif event.key == pygame.K_END:
+                elif self._ctrl.end(event, self):
                     self._sound.play_key_add()
                     self._cursor_position = len(self._input_string)
                     self._update_renderbox(end=True)
@@ -1782,7 +1782,7 @@ class TextInput(Widget):
                     updated = True
 
                 # Home
-                elif event.key == pygame.K_HOME:
+                elif self._ctrl.home(event, self):
                     self._sound.play_key_add()
                     self._cursor_position = 0
                     self._update_renderbox(start=True)
