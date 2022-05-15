@@ -1139,7 +1139,7 @@ class DropSelect(Widget):
                 return True
 
             # Right button
-            elif keydown and event.key == ctrl.KEY_MOVE_UP or \
+            elif keydown and self._ctrl.move_up(event, self) or \
                     joy_hatmotion and event.value == ctrl.JOY_RIGHT or \
                     joy_axismotion and self._ctrl.joy_axis_x(event, self) and \
                     event.value > -ctrl.JOY_DEADZONE:

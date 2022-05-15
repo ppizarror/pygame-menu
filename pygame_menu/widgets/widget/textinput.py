@@ -1765,7 +1765,7 @@ class TextInput(Widget):
                     updated = True
 
                 # Up arrow
-                elif event.key == ctrl.KEY_MOVE_UP:
+                elif self._ctrl.move_up(event, self):
                     self.active = False
 
                 # Down arrow
