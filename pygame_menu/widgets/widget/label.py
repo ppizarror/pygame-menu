@@ -40,11 +40,13 @@ class Label(Widget):
     :param onselect: Function when selecting the label widget
     :param wordwrap: Wraps label if newline is found on widget
     :param leading: Font leading for ``wordwrap``. If ``None`` retrieves from widget font
-    :param nlines: Number of lines for ``wordwrap``. If ``None`` the number is dynamically computed
+    :param max_nlines: Number of maximum lines for ``wordwrap``. If ``None`` the number is dynamically computed. If exceded, ``label.get_overflow_lines()`` will return the lines not displayed
     """
     _last_underline: List[Union[str, Optional[Tuple[ColorType, int, int]]]]
     _leading: Optional[int]
-    _nlines: Optional[int]
+    _lines: List[str]
+    _max_nlines: Optional[int]
+    _overflow_lines: List[str]  # Store how many lines are overflowed starting end
     _title_generator: LabelTitleGeneratorType
     _wordwrap: bool
 
@@ -55,10 +57,10 @@ class Label(Widget):
             onselect: CallbackType = None,
             wordwrap: bool = False,
             leading: Optional[int] = None,
-            nlines: Optional[int] = None
+            max_nlines: Optional[int] = None
     ) -> None:
         assert isinstance(leading, (type(None), int))
-        assert isinstance(nlines, (type(None), int))
+        assert isinstance(max_nlines, (type(None), int))
         super(Label, self).__init__(
             title=title,
             onselect=onselect,
@@ -66,7 +68,9 @@ class Label(Widget):
         )
         self._last_underline = ['', None]  # deco id, (color, offset, width)
         self._leading = leading
-        self._nlines = nlines
+        self._lines = []  # Lines of text displayed
+        self._max_nlines = max_nlines
+        self._overflow_lines = []
         self._title_generator = None
         self._wordwrap = wordwrap
 
@@ -161,21 +165,13 @@ class Label(Widget):
             else self._leading
         )
 
-    def _get_nlines(self) -> int:
+    def get_lines(self) -> List[str]:
         """
-        Return the number of lines.
+        Return the lines of text displayed. Each new line belongs to an item on list.
 
-        :return: Number of lines
+        :return: List of displayed lines
         """
-        assert self._font
-        if self._nlines is None:
-            text_size = self._font.get_ascent() + self._font.get_descent()
-            leading = self._get_leading()
-            offset = leading - text_size
-            available_height = self._rect.height
-            return (available_height + offset) // (text_size + offset)
-        else:
-            return self._nlines
+        return self._lines
 
     @staticmethod
     def _wordwrap_line(
@@ -234,37 +230,56 @@ class Label(Widget):
             max_width = menu.get_width(inner=True)
         return max_width - self._padding[1] - self._padding[3]
 
+    def get_overflow_lines(self) -> List[str]:
+        """
+        Return the overflow lines ir ``wordwrap`` is active and ``max_nlines`` is set.
+
+        :return: Lines not displayed
+        """
+        assert self._wordwrap, 'wordwrap must be enabled'
+        assert isinstance(self._max_nlines, int), 'max_nlines must be defined'
+        return self._overflow_lines
+
     def _render(self) -> Optional[bool]:
         if not self._render_hash_changed(
                 self._title, self._font_color, self._visible, self._menu, self._font,
                 self._last_underline[1]):
             return True
+        self._lines = []
 
         # Generate surface
         if not self._wordwrap:
             self._surface = self._render_string(self._title, self._font_color)
+            self._lines.append(self._title)
+
         else:
+            self._overflow_lines = []
             if self._font is None or self._menu is None:
                 self._surface = make_surface(0, 0, alpha=True)
             else:
                 lines = self._title.split('\n')
-                if self._wordwrap:
-                    lines = sum(
-                        (
-                            self._wordwrap_line(
-                                line=line,
-                                font=self._font,
-                                max_width=self._get_max_container_width(),
-                                tab_size=self._tab_size
-                            )
-                            for line in lines
-                        ),
-                        []
-                    )
+                lines = sum(
+                    (
+                        self._wordwrap_line(
+                            line=line,
+                            font=self._font,
+                            max_width=self._get_max_container_width(),
+                            tab_size=self._tab_size
+                        )
+                        for line in lines
+                    ),
+                    []
+                )
+                num_lines = len(lines)
+                if isinstance(self._max_nlines, int):
+                    if num_lines > self._max_nlines:
+                        for j in range(num_lines - self._max_nlines):
+                            self._overflow_lines.append(lines[num_lines - j - 1])
+                    num_lines = min(num_lines, self._max_nlines)
 
                 self._surface = make_surface(
                     max(self._font.size(line)[0] for line in lines),
-                    len(lines) * self._get_leading(),
+                    num_lines * self._get_leading(),
                     alpha=True
                 )
 
@@ -279,6 +294,9 @@ class Label(Widget):
                             self._rect.height
                         )
                     )
+                    self._lines.append(line)
+                    if n_line + 1 == num_lines:
+                        break
 
         # Update rect object
         self._apply_transforms()
@@ -363,7 +381,7 @@ class LabelManager(AbstractWidgetManager, ABC):
             - ``font_size``                     (int) – Font size of the widget
             - ``leading``                       (int) - Font leading for ``wordwrap``. If ``None`` retrieves from widget font
             - ``margin``                        (tuple, list) – Widget (left, bottom) margin in px
-            - ``nlines``                        (int) - Number of lines for ``wordwrap``. If ``None`` the number is dynamically computed
+            - ``max_nlines``                    (int) - Number of maximum lines for ``wordwrap``. If ``None`` the number is dynamically computed. If exceded, ``label.get_overflow_lines()`` will return the lines not displayed
             - ``padding``                       (int, float, tuple, list) – Widget padding according to CSS rules. General shape: (top, right, bottom, left)
             - ``selection_color``               (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the selected widget; only affects the font color
             - ``selection_effect``              (:py:class:`pygame_menu.widgets.core.Selection`) – Widget selection effect. Applied only if ``selectable`` is ``True``
@@ -437,7 +455,7 @@ class LabelManager(AbstractWidgetManager, ABC):
                 max_char = 0
 
         leading = kwargs.pop('leading', None)
-        nlines = kwargs.pop('nlines', None)
+        max_nlines = kwargs.pop('max_nlines', None)
 
         # If no overflow
         if len(title) <= max_char or max_char == 0 or wordwrap:
@@ -455,7 +473,7 @@ class LabelManager(AbstractWidgetManager, ABC):
                 title=title,
                 wordwrap=wordwrap and not underline,
                 leading=leading,
-                nlines=nlines
+                max_nlines=max_nlines
             )
             widget.is_selectable = selectable
             self._check_kwargs(kwargs)
@@ -479,7 +497,7 @@ class LabelManager(AbstractWidgetManager, ABC):
                         selectable=selectable,
                         wordwrap=wordwrap,
                         leading=leading,
-                        nlines=nlines,
+                        max_nlines=max_nlines,
                         **kwargs
                     )
                 )
@@ -493,6 +511,7 @@ class LabelManager(AbstractWidgetManager, ABC):
             onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
             selectable: bool = False,
             title_format: str = '{0}',
+            wordwrap: bool = False,
             **kwargs
     ) -> 'pygame_menu.widgets.Label':
         """
@@ -541,7 +560,9 @@ class LabelManager(AbstractWidgetManager, ABC):
             - ``font_shadow_position``          (str) – Font shadow position, see locals for position
             - ``font_shadow``                   (bool) – Font shadow is enabled or disabled
             - ``font_size``                     (int) – Font size of the widget
+            - ``leading``                       (int) - Font leading for ``wordwrap``. If ``None`` retrieves from widget font
             - ``margin``                        (tuple, list) – Widget (left, bottom) margin in px
+            - ``max_nlines``                    (int) - Number of maximum lines for ``wordwrap``. If ``None`` the number is dynamically computed. If exceded, ``label.get_overflow_lines()`` will return the lines not displayed
             - ``padding``                       (int, float, tuple, list) – Widget padding according to CSS rules. General shape: (top, right, bottom, left)
             - ``selection_color``               (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the selected widget; only affects the font color
             - ``selection_effect``              (:py:class:`pygame_menu.widgets.core.Selection`) – Widget selection effect. Applied only if ``selectable`` is ``True``
@@ -571,6 +592,7 @@ class LabelManager(AbstractWidgetManager, ABC):
         :param onselect: Callback executed when selecting the widget; only executed if ``selectable`` is ``True``
         :param selectable: Label accepts user selection; useful to move along the Menu using label selection
         :param title_format: Title format which accepts ``{0}`` as the string from ``time.strftime``, for example, ``'My Clock {0}'`` can be a title format
+        :param wordwrap: Wraps label if newline is found on widget. If ``False`` the manager splits the string and creates a list of widgets, else, the widget itself splits and updates the height
         :param kwargs: Optional keyword arguments
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.Label`
@@ -580,6 +602,7 @@ class LabelManager(AbstractWidgetManager, ABC):
             label_id=clock_id,
             onselect=onselect,
             selectable=selectable,
+            wordwrap=wordwrap,
             **kwargs
         )
 

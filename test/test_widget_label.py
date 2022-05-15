@@ -183,17 +183,24 @@ class LabelWidgetTest(BaseTest):
                                wordwrap=True)
         self.assertEqual(label.get_width(), 586)
         self.assertEqual(label._get_max_container_width(), 584)
-        self.assertEqual(label._get_nlines(), 2)
+        self.assertEqual(len(label.get_lines()), 2)
         self.assertEqual(label._get_leading(), 41)
-        self.assertEqual(label.get_height(), 90)
-
-        # Test multilines
-        label = menu.add.label('lorem ipsum dolor sit amet this was very important nice a test is required',
-                               wordwrap=True, nlines=3)
-        self.assertEqual(label._get_nlines(), 3)
         self.assertEqual(label.get_height(), 90)
 
         # Test none menu
         label.set_menu(None)
+        self.assertEqual(label.get_width(apply_padding=False), 0)
         self.assertEqual(label._get_max_container_width(), 0)
         label._force_render()
+
+        # Test multilines
+        s = 'lorem ipsum dolor sit amet this was very important nice a test is required ' \
+            'lorem ipsum dolor sit amet this was very important nice a test is required'
+        label = menu.add.label(s, wordwrap=True, max_nlines=3)  # Maximum number of lines
+        self.assertEqual(len(label.get_lines()), 3)
+        self.assertEqual(label.get_height(), 131)
+        self.assertEqual(label.get_overflow_lines(), ['important nice a test is required'])
+        self.assertEqual(' '.join(label.get_lines() + label.get_overflow_lines()), s)
+
+        label.set_menu(None)
+        self.assertEqual(label.get_overflow_lines(), [])

@@ -47,8 +47,7 @@ class MenuBarWidgetTest(BaseTest):
 
         # Test unknown mode
         mb = MenuBar('Menu', 500, (0, 0, 0), back_box=True, mode='unknown')
-        mb.set_menu(menu)
-        self.assertRaises(ValueError, lambda: mb._render())
+        self.assertRaises(ValueError, lambda: mb.set_menu(menu))
 
         # Check margins
         mb = MenuBar('Menu', 500, (0, 0, 0), back_box=True, mode=MENUBAR_STYLE_ADAPTIVE)
