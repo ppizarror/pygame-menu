@@ -28,7 +28,6 @@ __all__ = [
 
 import pygame
 import pygame.gfxdraw as gfxdraw
-import pygame_menu.controls as ctrl
 
 from pygame_menu.locals import FINGERUP, POSITION_EAST, POSITION_WEST, POSITION_NORTH, \
     POSITION_SOUTH

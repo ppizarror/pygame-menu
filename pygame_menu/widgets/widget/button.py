@@ -13,7 +13,6 @@ __all__ = [
 
 import pygame
 import pygame_menu
-import pygame_menu.controls as ctrl
 import pygame_menu.events as _events
 import re
 import webbrowser

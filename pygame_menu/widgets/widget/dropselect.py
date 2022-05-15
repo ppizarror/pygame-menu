@@ -15,7 +15,6 @@ __all__ = [
 import math
 import pygame
 import pygame_menu
-import pygame_menu.controls as ctrl
 
 from abc import ABC
 from pygame_menu.font import FontType, get_font, assert_font

@@ -83,7 +83,7 @@ class Controller(object):
 
     def apply(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
         """
-        Accepts apply. Requires ``pygame.KEYDOWN``.
+        Accepts apply key. Requires ``pygame.KEYDOWN``.
 
         :param event: Event
         :param widget: Widget that accepts the event
@@ -93,7 +93,7 @@ class Controller(object):
 
     def back(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
         """
-        Accepts back. Requires ``pygame.KEYDOWN``.
+        Accepts back key. Requires ``pygame.KEYDOWN``.
 
         :param event: Event
         :param widget: Widget that accepts the event
@@ -103,7 +103,7 @@ class Controller(object):
 
     def close_menu(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
         """
-        Accepts close menu. Requires ``pygame.KEYDOWN``.
+        Accepts close menu key. Requires ``pygame.KEYDOWN``.
 
         :param event: Event
         :param widget: Widget that accepts the event
@@ -111,15 +111,45 @@ class Controller(object):
         """
         return event.key == KEY_CLOSE_MENU
 
+    def delete(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
+        """
+        Accepts delete key. Requires ``pygame.KEYDOWN``.
+
+        :param event: Event
+        :param widget: Widget that accepts the event
+        :return: True if event matches
+        """
+        return event.key == _locals.K_DELETE
+
+    def end(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
+        """
+        Accepts end key. Requires ``pygame.KEYDOWN``.
+
+        :param event: Event
+        :param widget: Widget that accepts the event
+        :return: True if event matches
+        """
+        return event.key == _locals.K_END
+
     def escape(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
         """
-        Accepts escape. Requires ``pygame.KEYDOWN``.
+        Accepts escape key. Requires ``pygame.KEYDOWN``.
 
         :param event: Event
         :param widget: Widget that accepts the event
         :return: True if event matches
         """
         return event.key == _locals.K_ESCAPE
+
+    def home(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
+        """
+        Accepts home key. Requires ``pygame.KEYDOWN``.
+
+        :param event: Event
+        :param widget: Widget that accepts the event
+        :return: True if event matches
+        """
+        return event.key == _locals.K_HOME
 
     def joy_axis_x_left(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
         """
@@ -223,7 +253,7 @@ class Controller(object):
 
     def left(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
         """
-        Accepts left. Requires ``pygame.KEYDOWN``.
+        Accepts left key. Requires ``pygame.KEYDOWN``.
 
         :param event: Event
         :param widget: Widget that accepts the event
@@ -233,7 +263,7 @@ class Controller(object):
 
     def move_down(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
         """
-        Accepts move down. Requires ``pygame.KEYDOWN``.
+        Accepts move down key. Requires ``pygame.KEYDOWN``.
 
         :param event: Event
         :param widget: Widget that accepts the event
@@ -243,7 +273,7 @@ class Controller(object):
 
     def move_up(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
         """
-        Accepts move up. Requires ``pygame.KEYDOWN``.
+        Accepts move up key. Requires ``pygame.KEYDOWN``.
 
         :param event: Event
         :param widget: Widget that accepts the event
@@ -253,7 +283,7 @@ class Controller(object):
 
     def right(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
         """
-        Accepts right. Requires ``pygame.KEYDOWN``.
+        Accepts right key. Requires ``pygame.KEYDOWN``.
 
         :param event: Event
         :param widget: Widget that accepts the event
@@ -263,7 +293,7 @@ class Controller(object):
 
     def tab(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
         """
-        Accepts tab. Requires ``pygame.KEYDOWN``.
+        Accepts tab key. Requires ``pygame.KEYDOWN``.
 
         :param event: Event
         :param widget: Widget that accepts the event
