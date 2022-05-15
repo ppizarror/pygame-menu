@@ -28,12 +28,21 @@ __all__ = [
     'KEY_LEFT',
     'KEY_MOVE_DOWN',
     'KEY_MOVE_UP',
-    'KEY_RIGHT'
+    'KEY_RIGHT',
+
+    # Controller object
+    'Controller'
 
 ]
 
 # Imports
 import pygame.locals as __locals
+from pygame.event import Event as EventType
+from typing import TYPE_CHECKING, Union
+
+if TYPE_CHECKING:
+    from pygame_menu.menu import Menu
+    from pygame_menu.widgets import Widget
 
 # Joy pad
 JOY_AXIS_X = 0
@@ -57,3 +66,34 @@ KEY_MOVE_DOWN = __locals.K_UP
 KEY_MOVE_UP = __locals.K_DOWN  # Consider keys are "inverted"
 KEY_RIGHT = __locals.K_RIGHT
 KEY_TAB = __locals.K_TAB
+
+
+# noinspection PyMethodMayBeStatic,PyUnusedLocal
+class Controller(object):
+    """
+    Controller class. Accepts any object and provides functions to handle each
+    event.
+    """
+
+    def __init__(self) -> None:
+        return
+
+    def joy_axis_x(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
+        """
+        Accepts joy movement on x-axis.
+
+        :param event: Event
+        :param widget: Widget that accepts the event.
+        :return: True if event matches
+        """
+        return event.axis == JOY_AXIS_X
+
+    def joy_axis_y(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
+        """
+        Accepts joy movement on y-axis.
+
+        :param event: Event
+        :param widget: Widget that accepts the event.
+        :return: True if event matches
+        """
+        return event.axis == JOY_AXIS_Y
