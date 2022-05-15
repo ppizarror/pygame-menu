@@ -173,3 +173,15 @@ class LabelWidgetTest(BaseTest):
         self.assertRaises(ValueError, lambda: label.set_value('value'))
         self.assertFalse(label.value_changed())
         label.reset_value()
+
+    def test_wordwrap(self) -> None:
+        """
+        Tests wordwrap.
+        """
+        menu = MenuUtils.generic_menu()
+        label = menu.add.label('lorem ipsum dolor sit amet this was very important nice a test is required',
+                               wordwrap=True)
+        self.assertEqual(label.get_width(), 586)
+        self.assertEqual(label._get_max_container_width(), 584)
+        self.assertEqual(label._get_nlines(), 2)
+        self.assertEqual(label._get_leading(), 41)
