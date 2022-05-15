@@ -243,7 +243,7 @@ class Label(Widget):
     def _render(self) -> Optional[bool]:
         if not self._render_hash_changed(
                 self._title, self._font_color, self._visible, self._menu, self._font,
-                self._last_underline[1], self._padding):
+                self._last_underline[1], self._padding, self._selection_effect.get_width()):
             return True
         self._lines = []
 
