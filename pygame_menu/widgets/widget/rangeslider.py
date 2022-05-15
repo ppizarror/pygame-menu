@@ -955,7 +955,7 @@ class RangeSlider(Widget):
             joy_button_down = self._joystick_enabled and event.type == pygame.JOYBUTTONDOWN
 
             # Left button
-            if keydown and event.key == ctrl.KEY_LEFT or \
+            if keydown and self._ctrl.left(event, self) or \
                     joy_hatmotion and event.value == ctrl.JOY_LEFT or \
                     joy_axismotion and self._ctrl.joy_axis_x(event, self) and event.value < ctrl.JOY_DEADZONE:
                 if self._left_right(event, True):

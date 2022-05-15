@@ -2496,7 +2496,7 @@ class Menu(Base):
                             updated = True
                             break
 
-                    elif event.key == ctrl.KEY_LEFT:
+                    elif self._ctrl.left(event, self):
                         if self._current._left(apply_sound=True):
                             self._current._last_update_mode.append(_events.MENU_LAST_MOVE_LEFT)
                             updated = True

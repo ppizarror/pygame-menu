@@ -80,7 +80,7 @@ class Controller(object):
 
     def apply(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
         """
-        Accepts apply. Requires keydown.
+        Accepts apply. Requires ``pygame.KEYDOWN``.
 
         :param event: Event
         :param widget: Widget that accepts the event
@@ -90,7 +90,7 @@ class Controller(object):
 
     def back(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
         """
-        Accepts back. Requires keydown.
+        Accepts back. Requires ``pygame.KEYDOWN``.
 
         :param event: Event
         :param widget: Widget that accepts the event
@@ -100,7 +100,7 @@ class Controller(object):
 
     def close_menu(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
         """
-        Accepts close menu. Requires keydown.
+        Accepts close menu. Requires ``pygame.KEYDOWN``.
 
         :param event: Event
         :param widget: Widget that accepts the event
@@ -110,7 +110,7 @@ class Controller(object):
 
     def joy_axis_x(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
         """
-        Accepts joy movement on x-axis.
+        Accepts joy movement on x-axis. Requires ``pygame.JOYAXISMOTION``.
 
         :param event: Event
         :param widget: Widget that accepts the event
@@ -120,10 +120,20 @@ class Controller(object):
 
     def joy_axis_y(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
         """
-        Accepts joy movement on y-axis.
+        Accepts joy movement on y-axis. Requires ``pygame.JOYAXISMOTION``.
 
         :param event: Event
         :param widget: Widget that accepts the event
         :return: True if event matches
         """
         return event.axis == JOY_AXIS_Y
+
+    def left(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
+        """
+        Accepts left. Requires ``pygame.KEYDOWN``.
+
+        :param event: Event
+        :param widget: Widget that accepts the event
+        :return: True if event matches
+        """
+        return event.key == KEY_LEFT

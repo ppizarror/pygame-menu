@@ -417,7 +417,7 @@ class ToggleSwitch(Widget):
             joy_axismotion = self._joystick_enabled and event.type == pygame.JOYAXISMOTION
 
             # Left button
-            if keydown and event.key == ctrl.KEY_LEFT or \
+            if keydown and self._ctrl.left(event, self) or \
                     joy_hatmotion and event.value == ctrl.JOY_LEFT or \
                     joy_axismotion and self._ctrl.joy_axis_x(event, self) and event.value < ctrl.JOY_DEADZONE:
                 self._left()
