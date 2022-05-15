@@ -605,7 +605,7 @@ class SelectorManager(AbstractWidgetManager, ABC):
         :param title: Title of the selector
         :param items: Item list of the selector; format ``[('Item1', a, b, c...), ('Item2', d, e, f...)]``
         :param default: Index of default item to display
-        :param onchange: Callback executed when when changing the selector
+        :param onchange: Callback executed when changing the selector
         :param onreturn: Callback executed when pressing return button
         :param onselect: Callback executed when selecting the widget
         :param selector_id: ID of the selector
