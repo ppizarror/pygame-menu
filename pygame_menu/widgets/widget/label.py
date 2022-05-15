@@ -208,8 +208,7 @@ class Label(Widget):
                     break
 
             if split_line:
-                if i == 0:
-                    i += 1
+                i = i if i > 0 else 1
                 final_lines.append(' '.join(words[:i]))
                 words = words[i:]
             else:

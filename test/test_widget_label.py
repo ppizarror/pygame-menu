@@ -185,3 +185,10 @@ class LabelWidgetTest(BaseTest):
         self.assertEqual(label._get_max_container_width(), 584)
         self.assertEqual(label._get_nlines(), 2)
         self.assertEqual(label._get_leading(), 41)
+        self.assertEqual(label.get_height(), 90)
+
+        # Test multilines
+        label = menu.add.label('lorem ipsum dolor sit amet this was very important nice a test is required',
+                               wordwrap=True, nlines=3)
+        self.assertEqual(label._get_nlines(), 3)
+        self.assertEqual(label.get_height(), 90)
