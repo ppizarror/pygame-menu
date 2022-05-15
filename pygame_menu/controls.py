@@ -74,9 +74,12 @@ class Controller(object):
     Controller class. Accepts any object and provides functions to handle each
     event.
     """
+    joy_delay: int
+    joy_repeat: int
 
     def __init__(self) -> None:
-        return
+        self.joy_delay = JOY_DELAY
+        self.joy_repeat = JOY_REPEAT
 
     def apply(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
         """
@@ -118,25 +121,45 @@ class Controller(object):
         """
         return event.key == _locals.K_ESCAPE
 
-    def joy_axis_x(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
+    def joy_axis_x_left(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
         """
-        Accepts joy movement on x-axis. Requires ``pygame.JOYAXISMOTION``.
+        Accepts joy movement on x-axis (left direction). Requires ``pygame.JOYAXISMOTION``.
 
         :param event: Event
         :param widget: Widget that accepts the event
         :return: True if event matches
         """
-        return event.axis == JOY_AXIS_X
+        return event.axis == JOY_AXIS_X and event.value < -JOY_DEADZONE
 
-    def joy_axis_y(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
+    def joy_axis_x_right(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
         """
-        Accepts joy movement on y-axis. Requires ``pygame.JOYAXISMOTION``.
+        Accepts joy movement on x-axis (right direction). Requires ``pygame.JOYAXISMOTION``.
 
         :param event: Event
         :param widget: Widget that accepts the event
         :return: True if event matches
         """
-        return event.axis == JOY_AXIS_Y
+        return event.axis == JOY_AXIS_X and event.value > JOY_DEADZONE
+
+    def joy_axis_y_down(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
+        """
+        Accepts joy movement on y-axis (down direction). Requires ``pygame.JOYAXISMOTION``.
+
+        :param event: Event
+        :param widget: Widget that accepts the event
+        :return: True if event matches
+        """
+        return event.axis == JOY_AXIS_Y and event.value > JOY_DEADZONE
+
+    def joy_axis_y_up(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
+        """
+        Accepts joy movement on y-axis (up direction). Requires ``pygame.JOYAXISMOTION``.
+
+        :param event: Event
+        :param widget: Widget that accepts the event
+        :return: True if event matches
+        """
+        return event.axis == JOY_AXIS_Y and event.value < -JOY_DEADZONE
 
     def joy_back(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
         """
@@ -146,7 +169,27 @@ class Controller(object):
         :param widget: Widget that accepts the event
         :return: True if event matches
         """
-        return event.axis == JOY_AXIS_X
+        return event.button == JOY_BUTTON_BACK
+
+    def joy_down(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
+        """
+        Accepts joy movement to down direction. Requires ``pygame.JOYHATMOTION``.
+
+        :param event: Event
+        :param widget: Widget that accepts the event
+        :return: True if event matches
+        """
+        return event.value == JOY_DOWN
+
+    def joy_select(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
+        """
+        Accepts joy select button. Requires ``pygame.JOYBUTTONDOWN``.
+
+        :param event: Event
+        :param widget: Widget that accepts the event
+        :return: True if event matches
+        """
+        return event.button == JOY_BUTTON_SELECT
 
     def left(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
         """

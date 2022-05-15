@@ -2552,26 +2552,24 @@ class Menu(Base):
                     prev = self._current._joy_event
                     self._current._joy_event = 0
 
-                    if event.axis == ctrl.JOY_AXIS_Y and event.value < -ctrl.JOY_DEADZONE:
+                    if self._ctrl.joy_axis_y_up(event, self):
                         self._current._joy_event |= JOY_EVENT_UP
 
-                    elif event.axis == ctrl.JOY_AXIS_Y and event.value > ctrl.JOY_DEADZONE:
+                    elif self._ctrl.joy_axis_y_down(event, self):
                         self._current._joy_event |= JOY_EVENT_DOWN
 
-                    elif self._ctrl.joy_axis_x(event, self) and event.value < -ctrl.JOY_DEADZONE and \
-                            self._current._used_columns > 1:
+                    elif self._ctrl.joy_axis_x_left(event, self) and self._current._used_columns > 1:
                         self._current._joy_event |= JOY_EVENT_LEFT
 
-                    elif self._ctrl.joy_axis_x(event, self) and event.value > ctrl.JOY_DEADZONE and \
-                            self._current._used_columns > 1:
+                    elif self._ctrl.joy_axis_x_right(event, self) and self._current._used_columns > 1:
                         self._current._joy_event |= JOY_EVENT_RIGHT
 
                     if self._current._joy_event:
                         sel = self._current._handle_joy_event(True)
                         if self._current._joy_event == prev:
-                            pygame.time.set_timer(self._current._joy_event_repeat, ctrl.JOY_REPEAT)
+                            pygame.time.set_timer(self._current._joy_event_repeat, self._ctrl.joy_repeat)
                         else:
-                            pygame.time.set_timer(self._current._joy_event_repeat, ctrl.JOY_DELAY)
+                            pygame.time.set_timer(self._current._joy_event_repeat, self._ctrl.joy_delay)
                         if sel:
                             self._current._last_update_mode.append(_events.MENU_LAST_JOY_REPEAT)
                             updated = True
@@ -2583,7 +2581,7 @@ class Menu(Base):
                 elif event.type == self._current._joy_event_repeat:
                     if self._current._joy_event:
                         sel = self._current._handle_joy_event(True)
-                        pygame.time.set_timer(self._current._joy_event_repeat, ctrl.JOY_REPEAT)
+                        pygame.time.set_timer(self._current._joy_event_repeat, self._ctrl.joy_repeat)
                         if sel:
                             self._current._last_update_mode.append(_events.MENU_LAST_JOY_REPEAT)
                             updated = True

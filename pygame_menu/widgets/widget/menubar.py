@@ -550,7 +550,7 @@ class MenuBar(Widget):
 
             # User applies joy back button
             elif event.type == pygame.JOYBUTTONDOWN and self._joystick_enabled:
-                if event.button == ctrl.JOY_BUTTON_BACK:
+                if self._ctrl.joy_back(event, self):
                     self._sound.play_key_del()
                     self.apply()
                     return True

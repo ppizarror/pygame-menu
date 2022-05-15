@@ -206,7 +206,7 @@ class Button(Widget):
             if event.type == pygame.KEYDOWN and self._keyboard_enabled and \
                     self._ctrl.apply(event, self) or \
                     event.type == pygame.JOYBUTTONDOWN and self._joystick_enabled and \
-                    event.button == ctrl.JOY_BUTTON_SELECT:
+                    self._ctrl.joy_select(event, self):
                 if self.to_menu:
                     self._sound.play_open_menu()
                 else:

@@ -419,21 +419,21 @@ class ToggleSwitch(Widget):
             # Left button
             if keydown and self._ctrl.left(event, self) or \
                     joy_hatmotion and event.value == ctrl.JOY_LEFT or \
-                    joy_axismotion and self._ctrl.joy_axis_x(event, self) and event.value < ctrl.JOY_DEADZONE:
+                    joy_axismotion and self._ctrl.joy_axis_x_left(event, self):
                 self._left()
                 return True
 
             # Right button
             elif keydown and self._ctrl.right(event, self) or \
                     joy_hatmotion and event.value == ctrl.JOY_RIGHT or \
-                    joy_axismotion and self._ctrl.joy_axis_x(event, self) and event.value > -ctrl.JOY_DEADZONE:
+                    joy_axismotion and self._ctrl.joy_axis_x_right(event, self):
                 self._right()
                 return True
 
             # Press enter
             elif keydown and self._ctrl.apply(event, self) and self._total_states == 2 or \
                     event.type == pygame.JOYBUTTONDOWN and self._joystick_enabled and \
-                    event.button == ctrl.JOY_BUTTON_SELECT and self._total_states == 2:
+                    self._ctrl.joy_select(event, self) and self._total_states == 2:
                 self._sound.play_key_add()
                 self._state = int(not self._state)
                 self.change()

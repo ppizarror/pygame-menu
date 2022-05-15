@@ -957,20 +957,20 @@ class RangeSlider(Widget):
             # Left button
             if keydown and self._ctrl.left(event, self) or \
                     joy_hatmotion and event.value == ctrl.JOY_LEFT or \
-                    joy_axismotion and self._ctrl.joy_axis_x(event, self) and event.value < ctrl.JOY_DEADZONE:
+                    joy_axismotion and self._ctrl.joy_axis_x_left(event, self):
                 if self._left_right(event, True):
                     return True
 
             # Right button
             elif keydown and self._ctrl.right(event, self) or \
                     joy_hatmotion and event.value == ctrl.JOY_RIGHT or \
-                    joy_axismotion and self._ctrl.joy_axis_x(event, self) and event.value > -ctrl.JOY_DEADZONE:
+                    joy_axismotion and self._ctrl.joy_axis_x_right(event, self):
                 if self._left_right(event, False):
                     return True
 
             # Press enter
             elif keydown and self._ctrl.apply(event, self) or \
-                    joy_button_down and event.button == ctrl.JOY_BUTTON_SELECT:
+                    joy_button_down and self._ctrl.joy_select(event, self):
                 self.apply()
                 return True
 

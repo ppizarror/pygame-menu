@@ -456,20 +456,20 @@ class Selector(Widget):
             # Left button
             if keydown and self._ctrl.left(event, self) or \
                     joy_hatmotion and event.value == ctrl.JOY_LEFT or \
-                    joy_axismotion and self._ctrl.joy_axis_x(event, self) and event.value < ctrl.JOY_DEADZONE:
+                    joy_axismotion and self._ctrl.joy_axis_x_left(event, self):
                 self._left()
                 return True
 
             # Right button
             elif keydown and self._ctrl.right(event, self) or \
                     joy_hatmotion and event.value == ctrl.JOY_RIGHT or \
-                    joy_axismotion and self._ctrl.joy_axis_x(event, self) and event.value > -ctrl.JOY_DEADZONE:
+                    joy_axismotion and self._ctrl.joy_axis_x_right(event, self):
                 self._right()
                 return True
 
             # Press enter
             elif keydown and self._ctrl.apply(event, self) or \
-                    joy_button_down and event.button == ctrl.JOY_BUTTON_SELECT:
+                    joy_button_down and self._ctrl.joy_select(event, self):
                 self._sound.play_key_add()
                 self.apply(*self._items[self._index][1:])
                 return True
