@@ -182,6 +182,7 @@ class LabelWidgetTest(BaseTest):
         label = menu.add.label('lorem ipsum dolor sit amet this was very important nice a test is required',
                                wordwrap=True)
         self.assertEqual(label.get_width(), 586)
+        self.assertRaises(AssertionError, lambda: label.get_overflow_lines())
         self.assertEqual(label._get_max_container_width(), 584)
         self.assertEqual(len(label.get_lines()), 2)
         self.assertEqual(label._get_leading(), 41)
@@ -197,9 +198,11 @@ class LabelWidgetTest(BaseTest):
         s = 'lorem ipsum dolor sit amet this was very important nice a test is required ' \
             'lorem ipsum dolor sit amet this was very important nice a test is required'
         label = menu.add.label(s, wordwrap=True, max_nlines=3)  # Maximum number of lines
-        self.assertEqual(len(label.get_lines()), 3)
+        self.assertEqual(len(label.get_lines()), 3)  # The widget needs 4 lines, but maximum is 3
         self.assertEqual(label.get_height(), 131)
         self.assertEqual(label.get_overflow_lines(), ['important nice a test is required'])
+
+        # The sum of lines and overflow should be the same as s
         self.assertEqual(' '.join(label.get_lines() + label.get_overflow_lines()), s)
 
         label.set_menu(None)
