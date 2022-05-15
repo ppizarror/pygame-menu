@@ -86,6 +86,7 @@ class Menu(Base):
     :param enabled: Menu is enabled. If ``False`` the Menu cannot be drawn or updated
     :param joystick_enabled: Enable/disable joystick events on the Menu
     :param keyboard_enabled: Enable/disable keyboard events on the Menu
+    :param keyboard_ignore_nonphysical: Ignores non-physical keyboard buttons pressed
     :param menu_id: ID of the Menu
     :param mouse_enabled: Enable/disable mouse click inside the Menu
     :param mouse_motion_selection: Select widgets using mouse motion. If ``True`` menu draws a ``focus`` on the selected widget
@@ -189,6 +190,7 @@ class Menu(Base):
             enabled: bool = True,
             joystick_enabled: bool = True,
             keyboard_enabled: bool = True,
+            keyboard_ignore_nonphysical: bool = True,
             menu_id: str = '',
             mouse_enabled: bool = True,
             mouse_motion_selection: bool = False,
@@ -461,7 +463,7 @@ class Menu(Base):
 
         # Init keyboard
         self._keyboard = keyboard_enabled
-        self._keyboard_ignore_nonphysical = True  # Ignores non-physical keyboard buttons pressed
+        self._keyboard_ignore_nonphysical = keyboard_ignore_nonphysical
 
         # Init mouse
         if mouse_motion_selection:
@@ -2781,8 +2783,7 @@ class Menu(Base):
         if mouse_motion_event is not None:
             check_widget_mouseleave(event=mouse_motion_event)
 
-        # If cache is enabled, always force a rendering (user may have have
-        # changed any status)
+        # If cache is enabled, always force a rendering (user may have changed any status)
         if self._current._widget_surface_cache_enabled and updated:
             self._current._widget_surface_cache_need_update = True
 

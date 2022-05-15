@@ -589,7 +589,7 @@ class ToggleSwitchManager(AbstractWidgetManager, ABC):
 
         :param title: Title of the toggle switch
         :param default: Default state index of the switch; it can be ``0 (False)`` or ``1 (True)``
-        :param onchange: Callback executed when when changing the state of the toggle switch
+        :param onchange: Callback executed when changing the state of the toggle switch
         :param onselect: Callback executed when selecting the widget
         :param toggleswitch_id: Widget ID
         :param single_click: Changes the state of the switch with 1 click instead of finding the closest position

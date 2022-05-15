@@ -1233,7 +1233,7 @@ class RangeSliderManager(AbstractWidgetManager, ABC):
         :param default: Default range value, can accept a number or a tuple/list of 2 elements (min, max). If a single number is provided the rangeslider only accepts 1 value, if 2 are provided, the range is enabled (2 values)
         :param range_values: Tuple/list of 2 elements of min/max values of the range slider. Also range can accept a list of numbers, in which case the values of the range slider will be discrete. List must be sorted
         :param increment: Increment of the value if using left/right keys; used only if the range values are not discrete
-        :param onchange: Callback executed when when changing the value of the range slider
+        :param onchange: Callback executed when changing the value of the range slider
         :param onreturn: Callback executed when pressing return on the range slider
         :param onselect: Callback executed when selecting the widget
         :param rangeslider_id: ID of the range slider

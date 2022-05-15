@@ -2746,8 +2746,8 @@ class Widget(Base):
         """
         Adds a function to the Widget to be executed each time the widget is drawn.
 
-        The function that this method receives receives two objects: the Widget
-        itself and the Menu reference.
+        The function that this method receives two objects: the Widget itself and
+        the Menu reference.
 
         .. code-block:: python
 
@@ -2816,7 +2816,7 @@ class Widget(Base):
         Adds a function to the Widget to be executed each time the Widget is
         updated.
 
-        The function that this method receives receives three objects: the events
+        The function that this method receives three objects: the events
         list, the Widget itself and the Menu reference. It is similar to
         :py:meth:`pygame_menu.widgets.core.widget.Widget.add_draw_callback`.
 

@@ -241,7 +241,7 @@ class MazeApp(object):
         self._fps = 60
         self._surface = create_example_window('Example - Maze', (900, 650))
 
-        # Setup the menu
+        # Setups the menu
         self._setup_menu()
 
     def _setup_menu(self) -> None:
