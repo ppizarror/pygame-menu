@@ -2514,7 +2514,7 @@ class Menu(Base):
                         self._current._last_update_mode.append(_events.MENU_LAST_MENU_BACK)
                         updated = True
 
-                    elif event.key == ctrl.KEY_CLOSE_MENU:
+                    elif self._ctrl.close_menu(event, self):
                         self._current._sound.play_close_menu()
                         if self._current._close():
                             self._current._last_update_mode.append(_events.MENU_LAST_MENU_CLOSE)

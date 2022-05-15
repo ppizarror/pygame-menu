@@ -98,6 +98,16 @@ class Controller(object):
         """
         return event.key == KEY_BACK
 
+    def close_menu(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
+        """
+        Accepts close menu. Requires keydown.
+
+        :param event: Event
+        :param widget: Widget that accepts the event
+        :return: True if event matches
+        """
+        return event.key == KEY_CLOSE_MENU
+
     def joy_axis_x(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
         """
         Accepts joy movement on x-axis.
