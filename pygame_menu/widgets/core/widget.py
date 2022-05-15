@@ -1948,12 +1948,11 @@ class Widget(Base):
         :return: Self reference
         """
         self._menu = menu
-
         if menu is None:
             self._col_row_index = (-1, -1, -1)
             self._selected = False
             self.active = False
-
+        self._force_render()
         return self
 
     def get_menu(self) -> Optional['pygame_menu.Menu']:
