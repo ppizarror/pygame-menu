@@ -181,6 +181,26 @@ class Controller(object):
         """
         return event.value == JOY_DOWN
 
+    def joy_left(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
+        """
+        Accepts joy movement to left direction. Requires ``pygame.JOYHATMOTION``.
+
+        :param event: Event
+        :param widget: Widget that accepts the event
+        :return: True if event matches
+        """
+        return event.value == JOY_LEFT
+
+    def joy_right(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
+        """
+        Accepts joy movement to right direction. Requires ``pygame.JOYHATMOTION``.
+
+        :param event: Event
+        :param widget: Widget that accepts the event
+        :return: True if event matches
+        """
+        return event.value == JOY_RIGHT
+
     def joy_select(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
         """
         Accepts joy select button. Requires ``pygame.JOYBUTTONDOWN``.
@@ -190,6 +210,16 @@ class Controller(object):
         :return: True if event matches
         """
         return event.button == JOY_BUTTON_SELECT
+
+    def joy_up(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
+        """
+        Accepts joy movement to up direction. Requires ``pygame.JOYHATMOTION``.
+
+        :param event: Event
+        :param widget: Widget that accepts the event
+        :return: True if event matches
+        """
+        return event.value == JOY_UP
 
     def left(self, event: EventType, widget: Union['Menu', 'Widget']) -> bool:
         """

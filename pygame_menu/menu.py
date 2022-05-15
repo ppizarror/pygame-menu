@@ -16,12 +16,12 @@ import time
 
 import pygame
 import pygame.gfxdraw as gfxdraw
-import pygame_menu.controls as ctrl
 import pygame_menu.events as _events
 
 from pygame_menu._base import Base
 from pygame_menu._decorator import Decorator
 from pygame_menu._widgetmanager import WidgetManager
+from pygame_menu.controls import Controller
 from pygame_menu.locals import ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT, \
     ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL, FINGERDOWN, FINGERUP, FINGERMOTION
 from pygame_menu._scrollarea import ScrollArea, get_scrollbars_from_position
@@ -109,7 +109,7 @@ class Menu(Base):
     _column_pos_x: List[NumberType]
     _column_widths: List[NumberType]
     _columns: int
-    _ctrl: 'ctrl.Controller'
+    _ctrl: 'Controller'
     _current: 'Menu'
     _decorator: 'Decorator'
     _disable_draw: bool
@@ -451,7 +451,7 @@ class Menu(Base):
         )
 
         # Setups controller
-        self._ctrl = ctrl.Controller()
+        self._ctrl = Controller()
 
         # Init joystick
         self._joystick = joystick_enabled
@@ -2117,7 +2117,7 @@ class Menu(Base):
             gfxdraw.filled_polygon(surface, coords[area], self._theme.focus_background_color)
         return coords
 
-    def set_controller(self, controller: 'ctrl.Controller') -> 'Menu':
+    def set_controller(self, controller: 'Controller') -> 'Menu':
         """
         Set a new controller object.
 
@@ -2522,25 +2522,25 @@ class Menu(Base):
 
                 # User moves hat joystick
                 elif event.type == pygame.JOYHATMOTION and self._current._joystick:
-                    if event.value == ctrl.JOY_UP:
+                    if self._ctrl.joy_up(event, self):
                         if self._current._down(apply_sound=True):
                             self._current._last_update_mode.append(_events.MENU_LAST_MOVE_DOWN)
                             updated = True
                             break
 
-                    elif event.value == ctrl.JOY_DOWN:
+                    elif self._ctrl.joy_down(event, self):
                         if self._current._up(apply_sound=True):
                             self._current._last_update_mode = _events.MENU_LAST_MOVE_UP
                             updated = True
                             break
 
-                    elif event.value == ctrl.JOY_LEFT:
+                    elif self._ctrl.joy_left(event, self):
                         if self._current._left(apply_sound=True):
                             self._current._last_update_mode = _events.MENU_LAST_MOVE_LEFT
                             updated = True
                             break
 
-                    elif event.value == ctrl.JOY_RIGHT:
+                    elif self._ctrl.joy_right(event, self):
                         if self._current._right(apply_sound=True):
                             self._current._last_update_mode = _events.MENU_LAST_MOVE_RIGHT
                             updated = True

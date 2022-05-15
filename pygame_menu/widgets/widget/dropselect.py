@@ -1130,7 +1130,7 @@ class DropSelect(Widget):
 
             # Left button
             if keydown and self._ctrl.move_down(event, self) or \
-                    joy_hatmotion and event.value == ctrl.JOY_LEFT or \
+                    joy_hatmotion and self._ctrl.joy_left(event, self) or \
                     joy_axismotion and self._ctrl.joy_axis_x_left(event, self):
                 if not self.active:
                     continue
@@ -1139,7 +1139,7 @@ class DropSelect(Widget):
 
             # Right button
             elif keydown and self._ctrl.move_up(event, self) or \
-                    joy_hatmotion and event.value == ctrl.JOY_RIGHT or \
+                    joy_hatmotion and self._ctrl.joy_right(event, self) or \
                     joy_axismotion and self._ctrl.joy_axis_x_right(event, self):
                 if not self.active:
                     continue
