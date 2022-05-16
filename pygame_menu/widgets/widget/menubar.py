@@ -28,7 +28,6 @@ __all__ = [
 
 import pygame
 import pygame.gfxdraw as gfxdraw
-import pygame_menu.controls as ctrl
 
 from pygame_menu.locals import FINGERUP, POSITION_EAST, POSITION_WEST, POSITION_NORTH, \
     POSITION_SOUTH
@@ -550,7 +549,7 @@ class MenuBar(Widget):
 
             # User applies joy back button
             elif event.type == pygame.JOYBUTTONDOWN and self._joystick_enabled:
-                if event.button == ctrl.JOY_BUTTON_BACK:
+                if self._ctrl.joy_back(event, self):
                     self._sound.play_key_del()
                     self.apply()
                     return True

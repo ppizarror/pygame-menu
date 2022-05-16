@@ -15,7 +15,6 @@ __all__ = [
 import math
 import pygame
 import pygame_menu
-import pygame_menu.controls as ctrl
 
 from abc import ABC
 from pygame_menu.font import FontType, get_font, assert_font
@@ -1129,28 +1128,26 @@ class DropSelect(Widget):
             joy_button_down = self._joystick_enabled and event.type == pygame.JOYBUTTONDOWN
 
             # Left button
-            if keydown and event.key == ctrl.KEY_MOVE_DOWN or \
-                    joy_hatmotion and event.value == ctrl.JOY_LEFT or \
-                    joy_axismotion and event.axis == ctrl.JOY_AXIS_X and \
-                    event.value < ctrl.JOY_DEADZONE:
+            if keydown and self._ctrl.move_down(event, self) or \
+                    joy_hatmotion and self._ctrl.joy_left(event, self) or \
+                    joy_axismotion and self._ctrl.joy_axis_x_left(event, self):
                 if not self.active:
                     continue
                 self._down()
                 return True
 
             # Right button
-            elif keydown and event.key == ctrl.KEY_MOVE_UP or \
-                    joy_hatmotion and event.value == ctrl.JOY_RIGHT or \
-                    joy_axismotion and event.axis == ctrl.JOY_AXIS_X and \
-                    event.value > -ctrl.JOY_DEADZONE:
+            elif keydown and self._ctrl.move_up(event, self) or \
+                    joy_hatmotion and self._ctrl.joy_right(event, self) or \
+                    joy_axismotion and self._ctrl.joy_axis_x_right(event, self):
                 if not self.active:
                     continue
                 self._up()
                 return True
 
             # Press enter
-            elif keydown and event.key == ctrl.KEY_APPLY or \
-                    joy_button_down and event.button == ctrl.JOY_BUTTON_SELECT:
+            elif keydown and self._ctrl.apply(event, self) or \
+                    joy_button_down and self._ctrl.joy_select(event, self):
                 if self.active and self._index >= 0:
                     self._sound.play_key_add()
                     self.apply(*self._items[self._index][1:])
@@ -1159,13 +1156,13 @@ class DropSelect(Widget):
                 return True
 
             # Press keys which active the drop but not apply
-            elif keydown and (event.key == ctrl.KEY_TAB):
+            elif keydown and self._ctrl.tab(event, self):
                 self._toggle_drop()
                 return True
 
             # Close the selection
-            elif keydown and (event.key == pygame.K_ESCAPE or
-                              event.key == pygame.K_BACKSPACE):
+            elif keydown and (self._ctrl.escape(event, self) or
+                              self._ctrl.back(event, self)):
                 if self.active:
                     self._toggle_drop()
                 return True

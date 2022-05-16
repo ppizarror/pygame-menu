@@ -1672,7 +1672,7 @@ class TextInput(Widget):
                             pass
 
                 # Backspace button, delete text from right
-                if event.key == pygame.K_BACKSPACE:
+                if self._ctrl.back(event, self):
                     # Play sound
                     if self._cursor_position == 0:
                         self._sound.play_event_error()
@@ -1691,7 +1691,7 @@ class TextInput(Widget):
                     updated = True
 
                 # Delete button, delete text from left
-                elif event.key == pygame.K_DELETE:
+                elif self._ctrl.delete(event, self):
                     # Play sound
                     if self._cursor_position == len(self._input_string):
                         self._sound.play_event_error()
@@ -1710,7 +1710,7 @@ class TextInput(Widget):
                     self.active = True
 
                 # Right arrow
-                elif event.key == pygame.K_RIGHT:
+                elif self._ctrl.right(event, self):
                     # Play sound
                     if self._cursor_position == len(self._input_string):
                         self._sound.play_event_error()
@@ -1738,7 +1738,7 @@ class TextInput(Widget):
                     updated = True
 
                 # Left arrow
-                elif event.key == pygame.K_LEFT:
+                elif self._ctrl.left(event, self):
                     # Play sound
                     if self._cursor_position == 0:
                         self._sound.play_event_error()
@@ -1765,15 +1765,15 @@ class TextInput(Widget):
                     updated = True
 
                 # Up arrow
-                elif event.key == ctrl.KEY_MOVE_UP:
+                elif self._ctrl.move_up(event, self):
                     self.active = False
 
                 # Down arrow
-                elif event.key == ctrl.KEY_MOVE_DOWN:
+                elif self._ctrl.move_down(event, self):
                     self.active = False
 
                 # End
-                elif event.key == pygame.K_END:
+                elif self._ctrl.end(event, self):
                     self._sound.play_key_add()
                     self._cursor_position = len(self._input_string)
                     self._update_renderbox(end=True)
@@ -1782,7 +1782,7 @@ class TextInput(Widget):
                     updated = True
 
                 # Home
-                elif event.key == pygame.K_HOME:
+                elif self._ctrl.home(event, self):
                     self._sound.play_key_add()
                     self._cursor_position = 0
                     self._update_renderbox(start=True)
@@ -1791,14 +1791,14 @@ class TextInput(Widget):
                     updated = True
 
                 # Tab
-                elif event.key == ctrl.KEY_TAB:
+                elif self._ctrl.tab(event, self):
                     for _ in range(self._tab_size):
                         self._push_key_input(' ')
                         updated = True
                     self.active = True
 
                 # Enter
-                elif event.key == ctrl.KEY_APPLY:
+                elif self._ctrl.apply(event, self):
                     self._sound.play_open_menu()
                     self.apply()
                     self._unselect_text()
@@ -1806,7 +1806,7 @@ class TextInput(Widget):
                     self.active = not self.active
 
                 # Escape
-                elif event.key == pygame.K_ESCAPE:
+                elif self._ctrl.escape(event, self):
                     if self._get_selected_text():
                         self._unselect_text()
                         updated = True
@@ -1898,14 +1898,15 @@ class TextInput(Widget):
 
             # Generate new key events if enough time has passed:
             if self._keyrepeat_counters[key][0] >= self._keyrepeat_initial_interval_ms:
-                self._keyrepeat_counters[key][
-                    0] = self._keyrepeat_initial_interval_ms - self._keyrepeat_interval_ms
+                self._keyrepeat_counters[key][0] = \
+                    self._keyrepeat_initial_interval_ms - self._keyrepeat_interval_ms
 
                 event_key, event_unicode = key, self._keyrepeat_counters[key][1]
                 self._add_event(
-                    pygame.event.Event(pygame.KEYDOWN,
-                                       key=event_key,
-                                       unicode=event_unicode)
+                    pygame.event.Event(
+                        pygame.KEYDOWN,
+                        key=event_key,
+                        unicode=event_unicode)
                 )
 
         return updated

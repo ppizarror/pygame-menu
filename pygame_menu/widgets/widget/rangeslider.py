@@ -22,7 +22,6 @@ __all__ = [
 import math
 import pygame
 import pygame_menu
-import pygame_menu.controls as ctrl
 
 from abc import ABC
 from pygame_menu.locals import POSITION_NORTH, POSITION_SOUTH
@@ -955,27 +954,27 @@ class RangeSlider(Widget):
             joy_button_down = self._joystick_enabled and event.type == pygame.JOYBUTTONDOWN
 
             # Left button
-            if keydown and event.key == ctrl.KEY_LEFT or \
-                    joy_hatmotion and event.value == ctrl.JOY_LEFT or \
-                    joy_axismotion and event.axis == ctrl.JOY_AXIS_X and event.value < ctrl.JOY_DEADZONE:
+            if keydown and self._ctrl.left(event, self) or \
+                    joy_hatmotion and self._ctrl.joy_left(event, self) or \
+                    joy_axismotion and self._ctrl.joy_axis_x_left(event, self):
                 if self._left_right(event, True):
                     return True
 
             # Right button
-            elif keydown and event.key == ctrl.KEY_RIGHT or \
-                    joy_hatmotion and event.value == ctrl.JOY_RIGHT or \
-                    joy_axismotion and event.axis == ctrl.JOY_AXIS_X and event.value > -ctrl.JOY_DEADZONE:
+            elif keydown and self._ctrl.right(event, self) or \
+                    joy_hatmotion and self._ctrl.joy_right(event, self) or \
+                    joy_axismotion and self._ctrl.joy_axis_x_right(event, self):
                 if self._left_right(event, False):
                     return True
 
             # Press enter
-            elif keydown and event.key == ctrl.KEY_APPLY or \
-                    joy_button_down and event.button == ctrl.JOY_BUTTON_SELECT:
+            elif keydown and self._ctrl.apply(event, self) or \
+                    joy_button_down and self._ctrl.joy_select(event, self):
                 self.apply()
                 return True
 
             # Tab, switch active slider
-            elif keydown and event.key == ctrl.KEY_TAB:
+            elif keydown and self._ctrl.tab(event, self):
                 if self._single:
                     continue
                 self._slider_selected = (False, True) if self._slider_selected[0] else (True, False)

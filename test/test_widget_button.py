@@ -12,7 +12,9 @@ from test._utils import MenuUtils, surface, PygameEventUtils, BaseTest, PYGAME_V
 
 import pygame
 import pygame_menu
+import pygame_menu.controls as ctrl
 
+from pygame_menu.themes import THEME_DEFAULT
 from pygame_menu.widgets import Button
 from pygame_menu.widgets.core.widget import WIDGET_SHADOW_TYPE_ELLIPSE
 
@@ -258,7 +260,6 @@ class ButtonWidgetTest(BaseTest):
         self.assertFalse(btn.value_changed())
         btn.reset_value()
 
-    # noinspection HttpUrlsUsage
     def test_add_url(self) -> None:
         """
         Test add url.
@@ -266,7 +267,41 @@ class ButtonWidgetTest(BaseTest):
         menu = MenuUtils.generic_menu()
         self.assertRaises(AssertionError, lambda: menu.add.url('invalid'))
         self.assertRaises(AssertionError, lambda: menu.add.url('127.0.0.1'))
-        btn = menu.add.url('http://127.0.0.1')
-        self.assertEqual(btn.get_title(), 'http://127.0.0.1')
+        btn = menu.add.url('https://127.0.0.1')
+        self.assertEqual(btn.get_title(), 'https://127.0.0.1')
         btn2 = menu.add.url('https://github.com/ppizarror/pygame-menu', 'github')
         self.assertEqual(btn2.get_title(), 'github')
+
+    def test_controller(self) -> None:
+        """
+        Test controller.
+        """
+        theme = THEME_DEFAULT.copy()
+        menu = MenuUtils.generic_menu(theme=theme)
+        from pygame_menu.controls import Controller
+        from random import randrange
+        custom_controller = Controller()
+        test = [0]
+
+        # noinspection PyMissingOrEmptyDocstring
+        def btn_apply(event, _) -> bool:
+            applied = event.key in (pygame.K_a, pygame.K_b, pygame.K_c)
+            if applied:
+                menu.get_scrollarea().update_area_color((randrange(0, 255), randrange(0, 255), randrange(0, 255)))
+                test[0] += 1
+            return applied
+
+        custom_controller.apply = btn_apply
+        btn = menu.add.button('My button', lambda: print('Clicked!'))
+        btn.set_controller(custom_controller)
+        menu.update(PygameEventUtils.keydown(pygame.K_d))
+        self.assertEqual(test[0], 0)
+        menu.update(PygameEventUtils.keydown(pygame.K_a))
+        self.assertEqual(test[0], 1)
+        menu.update(PygameEventUtils.keydown(pygame.K_b))
+        self.assertEqual(test[0], 2)
+        menu.update(PygameEventUtils.keydown(pygame.K_c))
+        self.assertEqual(test[0], 3)
+
+        # Test select
+        self.assertTrue(btn.update(PygameEventUtils.joy_button(ctrl.JOY_BUTTON_SELECT)))

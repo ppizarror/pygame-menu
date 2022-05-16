@@ -39,6 +39,7 @@ import pygame_menu
 
 from pygame_menu._base import Base
 from pygame_menu._decorator import Decorator
+from pygame_menu.controls import Controller
 from pygame_menu.font import FontType
 from pygame_menu.locals import POSITION_NORTHWEST, POSITION_SOUTHWEST, POSITION_WEST, \
     POSITION_EAST, POSITION_NORTHEAST, POSITION_CENTER, POSITION_NORTH, POSITION_SOUTH, \
@@ -232,6 +233,7 @@ class Widget(Base):
     _border_width: int
     _check_mouseleave_call_render: bool
     _col_row_index: Tuple3IntType
+    _ctrl: 'Controller'
     _cursor: CursorType
     _decorator: 'Decorator'
     _default_value: Any
@@ -442,6 +444,7 @@ class Widget(Base):
         self._selection_effect_draw_post = True
 
         # Inputs
+        self._ctrl = Controller()
         self._keyboard_enabled = True
         self._keyboard_ignore_nonphysical = True  # Ignores non-physical keyboard buttons pressed
         self._joystick_enabled = True
@@ -3120,6 +3123,16 @@ class Widget(Base):
         """
         assert isinstance(tab_size, int) and tab_size >= 0
         self._tab_size = tab_size
+        return self
+
+    def set_controller(self, controller: 'Controller') -> 'Widget':
+        """
+        Set a new controller object.
+
+        :param controller: Controller
+        :return: Self reference
+        """
+        self._ctrl = controller
         return self
 
 

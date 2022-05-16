@@ -99,6 +99,7 @@ This chapter define rules and advanced tips and tricks to develop extensions for
     :caption: Advanced usage
 
     _source/advanced
+    _source/advanced_controller
     _source/advanced_selection
 
 .. toctree::
