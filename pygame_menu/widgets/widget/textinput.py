@@ -463,10 +463,11 @@ class TextInput(Widget):
         if not self._render_hash_changed(
                 string, self._selected, self._cursor_render, self._cursor_position,
                 self._selection_enabled, self.active, self._visible, self.readonly,
-                self._last_container_width, self._selection_box[0],
-                self._selection_box[1], self._last_selection_render[0],
+                self._last_container_width, self._selection_box[0], self._menu,
+                self._selection_box[1], self._last_selection_render[0], self._padding,
                 self._last_selection_render[1], self._renderbox[0], self._renderbox[1],
-                self._renderbox[2], self._cursor_visible):
+                self._renderbox[2], self._cursor_visible, self._title_size,
+                self._selection_effect.get_width()):
             return True
 
         # Apply underline if exists
@@ -557,7 +558,7 @@ class TextInput(Widget):
     def _get_max_container_width(self) -> int:
         """
         Return the maximum textarea container width. It can be the column width,
-        menu width or frame width if horizontal
+        menu width or frame width if horizontal.
 
         :return: Container width
         """
@@ -580,7 +581,7 @@ class TextInput(Widget):
                     'to avoid this Exception'
                 )
             max_width = frame.get_width()
-        return max_width
+        return max_width - self._padding[1] - self._padding[3]
 
     def _render_string_underline(self, string: str, color: ColorInputType) -> 'pygame.Surface':
         """
@@ -616,8 +617,7 @@ class TextInput(Widget):
             #  |                                                   |
             #  |---------------------------------------------------|
 
-            posx2 = max(self._get_max_container_width() - self._input_underline_size * 1.75 -
-                        self._padding[1] - self._padding[3],
+            posx2 = max(self._get_max_container_width() - self._input_underline_size * 1.75,
                         current_rect.width)
             delta_ch = posx2 - self._title_size - self._selection_effect.get_width()
             char = math.ceil(delta_ch / self._input_underline_size)
