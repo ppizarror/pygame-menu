@@ -30,7 +30,7 @@ jobs:
         env:
           SDL_VIDEODRIVER: "dummy"
           SDL_AUDIODRIVER: "disk"
-        run: nosetests test/ -v --with-coverage
+        run: nose2 --verbose --with-coverage
 
       - name: Coverage report
         run: bash <(curl -s https://codecov.io/bash)
