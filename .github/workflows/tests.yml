@@ -32,6 +32,7 @@ jobs:
           SDL_AUDIODRIVER: "disk"
         run: |
           echo $PWD
+          ls -a
           nose2 --verbose --with-coverage
 
       - name: Coverage report
