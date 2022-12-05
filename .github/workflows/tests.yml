@@ -31,8 +31,7 @@ jobs:
           SDL_VIDEODRIVER: "dummy"
           SDL_AUDIODRIVER: "disk"
         run: |
-          echo $PWD
-          ls -a
+          export PYTHONPATH=$PWD
           nose2 --verbose --with-coverage
 
       - name: Coverage report
