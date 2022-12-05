@@ -1844,7 +1844,7 @@ class Menu(Base):
         :return: Scrollbar thickness in px
         """
         return self._scrollarea.get_scrollbar_thickness(ORIENTATION_HORIZONTAL), \
-               self._scrollarea.get_scrollbar_thickness(ORIENTATION_VERTICAL)
+            self._scrollarea.get_scrollbar_thickness(ORIENTATION_VERTICAL)
 
     def get_width(self, inner: bool = False, widget: bool = False, border: bool = False) -> int:
         """
@@ -1906,7 +1906,7 @@ class Menu(Base):
         :return: Tuple of (width, height) in px
         """
         return self.get_width(inner=inner, widget=widget, border=border), \
-               self.get_height(inner=inner, widget=widget, border=border)
+            self.get_height(inner=inner, widget=widget, border=border)
 
     def render(self) -> 'Menu':
         """
@@ -2134,6 +2134,14 @@ class Menu(Base):
         """
         self._ctrl = controller
         return self
+
+    def get_controller(self) -> 'Controller':
+        """
+        Return the menu controller object.
+
+        :return: Controller
+        """
+        return self._ctrl
 
     def enable(self) -> 'Menu':
         """

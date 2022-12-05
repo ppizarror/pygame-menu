@@ -102,6 +102,7 @@ class ControlsTest(BaseTest):
 
         # The same can be done with menu
         menu.set_controller(new_ctrl)
+        self.assertEqual(menu.get_controller(), new_ctrl)
 
     def test_pyautogui(self) -> None:
         """
