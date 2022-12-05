@@ -663,6 +663,7 @@ class MenuUtils(object):
             columns: int = 1,
             enabled: bool = True,
             height: NumberType = 400,
+            mouse_visible: bool = True,
             mouse_motion_selection: bool = False,
             onclose: Any = None,
             onreset: Any = None,
@@ -684,6 +685,7 @@ class MenuUtils(object):
         :param columns: Number of columns
         :param enabled: Menu is enabled. If ``False`` Menu cannot be drawn
         :param height: Menu height in px
+        :param mouse_visible: Set mouse visible on Menu
         :param mouse_motion_selection: Select widgets using mouse motion. If ``True`` menu draws a ``focus`` on the selected widget
         :param onclose: Event or function applied when closing the Menu
         :param onreset: Function executed when resetting the Menu
@@ -704,6 +706,7 @@ class MenuUtils(object):
             columns=columns,
             enabled=enabled,
             height=height,
+            mouse_visible=mouse_visible,
             mouse_motion_selection=mouse_motion_selection,
             onclose=onclose,
             onreset=onreset,

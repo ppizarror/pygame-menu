@@ -1255,8 +1255,8 @@ class MenuTest(BaseRSTest):
         Test menu touchscreen behaviour.
         """
         self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(title='mainmenu', touchscreen=False,
-                                                                         touchscreen_motion_selection=True))
-        menu = MenuUtils.generic_menu(title='mainmenu', touchscreen=True, enabled=False)
+                                                                         touchscreen_motion_selection=True, ))
+        menu = MenuUtils.generic_menu(title='mainmenu', touchscreen=True, enabled=False, mouse_visible=False)
         self.assertRaises(RuntimeError, lambda: menu.mainloop(surface, bgfun=dummy_function))
 
         # Add a menu and a method that set a function
@@ -1273,8 +1273,7 @@ class MenuTest(BaseRSTest):
             click_pos = button.get_rect(to_real_position=True).center
             menu.enable()
             # Event must be normalized
-            menu.update(
-                PygameEventUtils.touch_click(click_pos[0], click_pos[1], normalize=False))
+            menu.update(PygameEventUtils.touch_click(click_pos[0], click_pos[1], normalize=False))
             self.assertFalse(event_val[0])
 
             menu.update(PygameEventUtils.touch_click(click_pos[0], click_pos[1], menu=menu))
@@ -1282,7 +1281,7 @@ class MenuTest(BaseRSTest):
             event_val[0] = False
             self.assertEqual(menu.get_selected_widget().get_id(), button.get_id())
             btn = menu.get_selected_widget()
-            self.assertTrue(btn.get_selected_time() >= 0)
+            self.assertGreaterEqual(btn.get_selected_time(), 0)
 
     def test_remove_widget(self) -> None:
         """

@@ -478,7 +478,7 @@ class Menu(Base):
             assert hasattr(pygame, 'MOUSEMOTION'), \
                 'pygame MOUSEMOTION does not exist, thus, mouse motion selection' \
                 ' cannot be enabled'
-        self._mouse = mouse_enabled and mouse_visible
+        self._mouse = mouse_enabled
         self._mouseover = False
         self._mouse_motion_selection = mouse_motion_selection
         self._mouse_visible = mouse_visible

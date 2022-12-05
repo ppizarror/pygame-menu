@@ -648,8 +648,7 @@ class DropSelectWidgetTest(BaseTest):
         self.assertFalse(sel.active)
         sel.update(PygameEventUtils.touch_click(touch_sel[0], touch_sel[1], menu=menu))
         self.assertTrue(sel.active)
-        sel.update(PygameEventUtils.touch_click(touch_sel[0], touch_sel[1] + 80, menu=menu,
-                                                evtype=pygame.FINGERDOWN))
+        sel.update(PygameEventUtils.touch_click(touch_sel[0], touch_sel[1] + 80, menu=menu, evtype=pygame.FINGERDOWN))
         sel.update(PygameEventUtils.touch_click(touch_sel[0], touch_sel[1], menu=menu))
         self.assertFalse(sel.active)
 
