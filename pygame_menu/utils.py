@@ -538,19 +538,25 @@ def print_menu_widget_structure(
             if nmi == w_indx:
                 v = non_menu_frame_widgets[nmi]
                 for v_wid in v:
-                    print(c.BRIGHT_WHITE + '·   ' + '│   ' * v_wid.get_frame_depth()
-                          + c.ENDC + widget_terminal_title(v_wid))
+                    try:
+                        print(c.BRIGHT_WHITE + '·   ' + '│   ' * v_wid.get_frame_depth()
+                              + c.ENDC + widget_terminal_title(v_wid))
+                    except UnicodeEncodeError:
+                        pass
                 del non_menu_frame_widgets[nmi]
 
     for w in widgets:
         w_depth = w.get_frame_depth()
         close_frames(w.get_frame_depth())
         title = widget_terminal_title(w, indx, index)
-        print('{0}{1}{2}'.format(
-            str(indx).ljust(3),
-            ' ' + c.BRIGHT_WHITE + '│   ' * w_depth + c.ENDC,
-            title
-        ))
+        try:
+            print('{0}{1}{2}'.format(
+                str(indx).ljust(3),
+                ' ' + c.BRIGHT_WHITE + '│   ' * w_depth + c.ENDC,
+                title
+            ))
+        except UnicodeEncodeError:
+            pass
         if w_depth not in depth_widths.keys():
             depth_widths[w_depth] = 0
         # depth_widths[w_depth] = max(int(len(title) * 1.2) + 3, depth_widths[w_depth])

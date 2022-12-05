@@ -66,7 +66,7 @@ class WidgetsTest(BaseTest):
         self.assertEqual(w._get_menu_update_widgets(), [])
 
         w._selected = True
-        self.assertTrue(w.get_selected_time() > 0)
+        self.assertGreater(w.get_selected_time(), 0)
 
     def test_kwargs(self) -> None:
         """

@@ -494,7 +494,7 @@ class MenuTest(BaseRSTest):
         menu.draw(surface)
 
         self.assertNotEqual(menu.get_current().get_id(), menu.get_id())
-        self.assertTrue(menu != menu_)
+        self.assertNotEqual(menu, menu_)
         self.assertEqual(menu_._get_depth(), 10)
         self.assertEqual(menu._get_depth(), 10)
 
@@ -827,8 +827,8 @@ class MenuTest(BaseRSTest):
         Test other getters.
         """
         menu = MenuUtils.generic_menu(title='mainmenu')
-        self.assertTrue(menu.get_menubar() is not None)
-        self.assertTrue(menu.get_scrollarea() is not None)
+        self.assertIsNotNone(menu.get_menubar())
+        self.assertIsNotNone(menu.get_scrollarea())
 
         w, h = menu.get_size()
         self.assertEqual(int(w), 600)

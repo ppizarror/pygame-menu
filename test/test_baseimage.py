@@ -138,7 +138,7 @@ class BaseImageTest(BaseTest):
         image_cr = image.get_crop_rect(pygame.Rect(0, 0, 10, 10))
         im1 = pygame.image.tostring(image_c, 'RGBA')
         im2 = pygame.image.tostring(image_cr, 'RGBA')
-        self.assertTrue(im1 == im2)
+        self.assertEqual(im1, im2)
 
         # Save the whole image crop
         w, h = image.get_size()
