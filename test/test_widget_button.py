@@ -63,7 +63,7 @@ class ButtonWidgetTest(BaseTest):
             None
         ]
         for v in valid:
-            self.assertTrue(menu.add.button('b1', v) is not None)
+            self.assertIsNotNone(menu.add.button('b1', v))
 
         btn = menu.add.button('b1', menu2)
         for v in [menu, 1, [1, 2, 3], (1, 2, 3)]:

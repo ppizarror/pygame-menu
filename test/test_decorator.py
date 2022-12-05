@@ -184,7 +184,7 @@ class DecoratorTest(BaseTest):
         btn.draw(surface)
         self.assertTrue(test[0])
         deco.remove(call_id)
-        self.assertFalse(call_id in deco._decor_enabled.keys())
+        self.assertNotIn(call_id, deco._decor_enabled.keys())
 
         # Disable unknown deco
         self.assertRaises(IndexError, lambda: deco.disable('unknown'))

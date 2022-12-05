@@ -122,7 +122,7 @@ class SelectionTest(BaseTest):
 
         rect = w.get_rect()
         new_rect = w.get_selection_effect().inflate(rect)
-        self.assertTrue(rect == new_rect)
+        self.assertEqual(rect, new_rect)
         self.assertFalse(w.get_selection_effect().widget_apply_font_color)
 
         # Widgets default selection effect is None
@@ -142,5 +142,5 @@ class SelectionTest(BaseTest):
 
         rect = w.get_rect()
         new_rect = w.get_selection_effect().inflate(rect)
-        self.assertTrue(rect == new_rect)
+        self.assertEqual(rect, new_rect)
         self.assertTrue(w.get_selection_effect().widget_apply_font_color)
