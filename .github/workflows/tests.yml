@@ -35,4 +35,5 @@ jobs:
           nose2 --verbose --with-coverage
 
       - name: Coverage report
-        run: bash <(curl -s https://codecov.io/bash)
+        run: |
+          bash <(curl -s https://codecov.io/bash)
