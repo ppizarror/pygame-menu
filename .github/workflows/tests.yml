@@ -28,12 +28,11 @@ jobs:
 
       - name: Run nose
         env:
-          SDL_VIDEODRIVER: "dummy"
-          SDL_AUDIODRIVER: "disk"
+          SDL_VIDEODRIVER: dummy
+          SDL_AUDIODRIVER: disk
         run: |
           export PYTHONPATH=$PWD
           nose2 --verbose --with-coverage
 
       - name: Coverage report
-        run: |
-          bash <(curl -s https://codecov.io/bash)
+        run: bash <(curl -s https://codecov.io/bash)
