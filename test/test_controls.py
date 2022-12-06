@@ -87,6 +87,7 @@ class ControlsTest(BaseTest):
 
         new_ctrl.apply = new_apply
         button.set_controller(new_ctrl)
+        self.assertEqual(button.get_controller(), new_ctrl)
 
         # Now test new apply button
         button.update(PygameEventUtils.key(pygame.K_a, keydown=True))
@@ -101,8 +102,14 @@ class ControlsTest(BaseTest):
         self.assertFalse(test[0])  # It should do nothing as object has new controller
 
         # The same can be done with menu
+        original_controller = menu.get_controller()
         menu.set_controller(new_ctrl)
         self.assertEqual(menu.get_controller(), new_ctrl)
+
+        # Check set controller but to widgets
+        self.assertEqual(button.get_controller(), new_ctrl)
+        menu.set_controller(original_controller, True)
+        self.assertEqual(button.get_controller(), original_controller)
 
     def test_pyautogui(self) -> None:
         """

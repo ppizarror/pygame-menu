@@ -3130,6 +3130,14 @@ class Widget(Base):
         self._ctrl = controller
         return self
 
+    def get_controller(self) -> 'Controller':
+        """
+        Return the widget controller. Each widget has their own controller object.
+
+        :return: Controller object
+        """
+        return self._ctrl
+
 
 class _WidgetCopyException(Exception):
     """

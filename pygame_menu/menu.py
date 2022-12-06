@@ -2113,7 +2113,7 @@ class Menu(Base):
             gfxdraw.filled_polygon(surface, coords[area], self._theme.focus_background_color)
         return coords
 
-    def set_controller(self, controller: 'Controller') -> 'Menu':
+    def set_controller(self, controller: 'Controller', apply_to_widgets: bool = False) -> 'Menu':
         """
         Set a new controller object.
 
@@ -2124,9 +2124,13 @@ class Menu(Base):
             :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param controller: Controller
+        :param apply_to_widgets: If ``True``, apply this controller to all menu widgets
         :return: Self reference
         """
         self._ctrl = controller
+        if apply_to_widgets:
+            for w in self._widgets:
+                w.set_controller(controller)
         return self
 
     def get_controller(self) -> 'Controller':
