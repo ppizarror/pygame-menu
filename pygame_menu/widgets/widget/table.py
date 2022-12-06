@@ -297,8 +297,7 @@ class Table(Frame):
             row_background_color = assert_color(row_background_color)
 
         # Create frame row
-        row = Frame(1, 1, ORIENTATION_HORIZONTAL,
-                    frame_id=self._id + '+cell-row-' + uuid4(short=True))
+        row = Frame(1, 1, ORIENTATION_HORIZONTAL, frame_id=self._id + '+cell-row-' + uuid4(short=True))
         row._accepts_scrollarea = False
         row._accepts_title = False
         row._menu_can_be_none_pack = True
@@ -356,7 +355,6 @@ class Table(Frame):
 
                 # Check if Frame not recursive
                 if isinstance(c, Frame):
-                    print(self, c.get_widgets())
                     assert self not in c.get_widgets(unpack_subframes_include_frame=True), \
                         f'{self.get_class_id()} cannot be packed within {c.get_class_id()},' \
                         f' recursive packing is not allowed (Table is within Frame' \

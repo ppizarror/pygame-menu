@@ -191,8 +191,7 @@ class TableWidgetTest(BaseTest):
         menu.remove_widget(surf_widget)
 
         self.assertEqual(table._translate_virtual, (0, 0))
-        frame.pack(table, align=pygame_menu.locals.ALIGN_CENTER,
-                   vertical_position=pygame_menu.locals.POSITION_CENTER)
+        frame.pack(table, align=pygame_menu.locals.ALIGN_CENTER, vertical_position=pygame_menu.locals.POSITION_CENTER)
         self.assertEqual(table._translate_virtual, (25, 33))
 
         # Add to scrollable frame

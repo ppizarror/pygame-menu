@@ -84,10 +84,7 @@ _VALID_IMAGE_FORMATS = ['.jpg', '.png', '.gif', '.bmp', '.pcx', '.tga', '.tif',
 
 # Custom types
 ColorChannelType = Literal['r', 'g', 'b']
-ChannelType = Union[ColorChannelType,
-                    Tuple[ColorChannelType, ColorChannelType],
-                    Tuple[ColorChannelType, ColorChannelType, ColorChannelType],
-                    List[ColorChannelType]]
+ChannelType = Union[ColorChannelType, Tuple[ColorChannelType, ColorChannelType], Tuple[ColorChannelType, ColorChannelType, ColorChannelType], List[ColorChannelType]]
 
 
 class BaseImage(Base):

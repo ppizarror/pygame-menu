@@ -288,14 +288,11 @@ class ToggleSwitch(Widget):
         # Compute the height
         height = self._font_render_string('TEST').get_height()
         self._switch_height = int(height * self._switch_height_factor)
-        self._slider_height = int(self._switch_height * self._slider_height_factor) \
-                              - 2 * self._switch_border_width
+        self._slider_height = int(self._switch_height * self._slider_height_factor) - 2 * self._switch_border_width
 
         # Render the state texts
         for t in range(self._total_states):
-            f_render = self._state_font.render(
-                self._state_text[t], True, self._state_text_font_color[t]
-            )
+            f_render = self._state_font.render(self._state_text[t], True, self._state_text_font_color[t])
             self._switch_font_rendered.append(f_render)
 
     def _draw(self, surface: 'pygame.Surface') -> None:
@@ -323,10 +320,8 @@ class ToggleSwitch(Widget):
         if self._state_text[self._state] != '':
             text = self._switch_font_rendered[self._state]
             surface.blit(text, (
-                int(switch_x
-                    + (self._switch_width - text.get_width()) * self._state_text_position[0]),
-                int(switch_y
-                    + (self._switch_height - text.get_height()) * self._state_text_position[1])
+                int(switch_x + (self._switch_width - text.get_width()) * self._state_text_position[0]),
+                int(switch_y + (self._switch_height - text.get_height()) * self._state_text_position[1])
             ))
 
         # Draw slider
@@ -345,20 +340,16 @@ class ToggleSwitch(Widget):
         self._rect.width, self._rect.height = self._surface.get_size()
 
         # Create slider
-        self._slider = make_surface(self._slider_thickness, self._slider_height,
-                                    fill_color=self._slider_color)
+        self._slider = make_surface(self._slider_thickness, self._slider_height, fill_color=self._slider_color)
         self._slider_pos = (self._state_width_accum[self._state],
                             self._slider_vmargin * self._switch_height)
 
         # Create the switch surface
-        self._switch = make_surface(self._switch_width, self._switch_height,
-                                    fill_color=self._state_color[self._state])
-        self._switch_pos = (self._rect.width,
-                            int((self._switch_height - self._rect.height) / 2))
+        self._switch = make_surface(self._switch_width, self._switch_height, fill_color=self._state_color[self._state])
+        self._switch_pos = (self._rect.width, int((self._switch_height - self._rect.height) / 2))
 
         # Update maximum rect height
-        self._rect.height = max(self._rect.height, self._switch_height,
-                                self._slider_height)
+        self._rect.height = max(self._rect.height, self._switch_height, self._slider_height)
         self._rect.width += self._switch_margin[0] + self._switch_width
 
         # Finals
@@ -614,9 +605,7 @@ class ToggleSwitchManager(AbstractWidgetManager, ABC):
         slider_color = kwargs.pop('slider_color', self._theme.widget_box_background_color)
         slider_thickness = kwargs.pop('slider_thickness', self._theme.scrollbar_thick)
         state_color = kwargs.pop('state_color', ((178, 178, 178), (117, 185, 54)))
-        state_text_font_color = kwargs.pop('state_text_font_color',
-                                           (self._theme.widget_box_background_color,
-                                            self._theme.widget_box_background_color))
+        state_text_font_color = kwargs.pop('state_text_font_color', (self._theme.widget_box_background_color, self._theme.widget_box_background_color))
         state_text_font_size = kwargs.pop('state_text_font_size', None)
         switch_border_color = kwargs.pop('switch_border_color', self._theme.widget_box_border_color)
         switch_border_width = kwargs.pop('switch_border_width', self._theme.widget_box_border_width)

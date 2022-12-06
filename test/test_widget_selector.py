@@ -65,14 +65,11 @@ class SelectorWidgetTest(BaseTest):
         # Test left/right touch
         click_pos = selector.get_rect(to_real_position=True, apply_padding=False).midleft
         selector._touchscreen_enabled = True
-        selector.update(PygameEventUtils.touch_click(click_pos[0] + 150, click_pos[1],
-                                                     menu=selector.get_menu()))
+        selector.update(PygameEventUtils.touch_click(click_pos[0] + 150, click_pos[1], menu=selector.get_menu()))
         self.assertEqual(selector.get_index(), 2)
-        selector.update(PygameEventUtils.touch_click(click_pos[0] + 250, click_pos[1],
-                                                     menu=selector.get_menu()))
+        selector.update(PygameEventUtils.touch_click(click_pos[0] + 250, click_pos[1], menu=selector.get_menu()))
         self.assertEqual(selector.get_index(), 0)
-        selector.update(PygameEventUtils.touch_click(click_pos[0] + 250, click_pos[1],
-                                                     menu=selector.get_menu()))
+        selector.update(PygameEventUtils.touch_click(click_pos[0] + 250, click_pos[1], menu=selector.get_menu()))
         self.assertEqual(selector.get_index(), 1)
 
         # Update elements

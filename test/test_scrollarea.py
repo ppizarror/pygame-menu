@@ -34,18 +34,12 @@ class ScrollAreaTest(BaseTest):
         self.assertEqual(len(get_scrollbars_from_position(SCROLLAREA_POSITION_FULL)), 4)
         for i in (POSITION_EAST, POSITION_EAST, POSITION_WEST, POSITION_NORTH):
             self.assertIsInstance(get_scrollbars_from_position(i), str)
-        self.assertEqual(get_scrollbars_from_position(POSITION_NORTHWEST),
-                         (POSITION_NORTH, POSITION_WEST))
-        self.assertEqual(get_scrollbars_from_position(POSITION_NORTHEAST),
-                         (POSITION_NORTH, POSITION_EAST))
-        self.assertEqual(get_scrollbars_from_position(POSITION_SOUTHEAST),
-                         (POSITION_SOUTH, POSITION_EAST))
-        self.assertEqual(get_scrollbars_from_position(POSITION_SOUTHWEST),
-                         (POSITION_SOUTH, POSITION_WEST))
-        self.assertEqual(get_scrollbars_from_position(SCROLLAREA_POSITION_BOTH_HORIZONTAL),
-                         (POSITION_SOUTH, POSITION_NORTH))
-        self.assertEqual(get_scrollbars_from_position(SCROLLAREA_POSITION_BOTH_VERTICAL),
-                         (POSITION_EAST, POSITION_WEST))
+        self.assertEqual(get_scrollbars_from_position(POSITION_NORTHWEST), (POSITION_NORTH, POSITION_WEST))
+        self.assertEqual(get_scrollbars_from_position(POSITION_NORTHEAST), (POSITION_NORTH, POSITION_EAST))
+        self.assertEqual(get_scrollbars_from_position(POSITION_SOUTHEAST), (POSITION_SOUTH, POSITION_EAST))
+        self.assertEqual(get_scrollbars_from_position(POSITION_SOUTHWEST), (POSITION_SOUTH, POSITION_WEST))
+        self.assertEqual(get_scrollbars_from_position(SCROLLAREA_POSITION_BOTH_HORIZONTAL), (POSITION_SOUTH, POSITION_NORTH))
+        self.assertEqual(get_scrollbars_from_position(SCROLLAREA_POSITION_BOTH_VERTICAL), (POSITION_EAST, POSITION_WEST))
         self.assertEqual(get_scrollbars_from_position(SCROLLAREA_POSITION_NONE), '')
 
         # Invalid
@@ -214,8 +208,7 @@ class ScrollAreaTest(BaseTest):
         rect_virtual = sa.to_real_position(btn.get_rect())
         event_click_widget = PygameEventUtils.middle_rect_click(rect_virtual, inlist=False)
         self.assertTrue(sa.collide(btn, event_click_widget))
-        self.assertEqual(sa.get_world_rect(absolute=True),
-                         pygame.Rect(0, 0, 600, 345))
+        self.assertEqual(sa.get_world_rect(absolute=True), pygame.Rect(0, 0, 600, 345))
         self.assertEqual(sa.get_size(), (600, 345))
         self.assertIsInstance(sa.mouse_is_over(), bool)
 
@@ -240,8 +233,7 @@ class ScrollAreaTest(BaseTest):
 
         # Test rect
         sa = pygame_menu._scrollarea.ScrollArea(100, 100)
-        self.assertEqual(sa.get_rect(to_real_position=True),
-                         pygame.Rect(0, 0, 100, 100))
+        self.assertEqual(sa.get_rect(to_real_position=True), pygame.Rect(0, 0, 100, 100))
         self.assertEqual(sa.get_scrollbar_thickness(ORIENTATION_VERTICAL, visible=False), 0)
         self.assertEqual(sa.get_scrollbar_thickness(ORIENTATION_HORIZONTAL, visible=False), 0)
         self.assertEqual(sa.get_scrollbar_thickness(ORIENTATION_VERTICAL, visible=False), 0)
@@ -302,8 +294,7 @@ class ScrollAreaTest(BaseTest):
         Test background image.
         """
         img = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU)
-        sa = pygame_menu._scrollarea.ScrollArea(100, 100, scrollbars=POSITION_EAST,
-                                                area_color=img)
+        sa = pygame_menu._scrollarea.ScrollArea(100, 100, scrollbars=POSITION_EAST, area_color=img)
         sa._make_background_surface()
         self.assertIsInstance(sa._area_color, pygame_menu.BaseImage)
 
@@ -333,8 +324,7 @@ class ScrollAreaTest(BaseTest):
         self.assertFalse(sb._touchscreen_enabled)
 
         # Test scrollarea within frame
-        drop = menu.add.dropselect('Subject Id', items=[('a',), ('b',), ('c',)],
-                                   dropselect_id='s0')
+        drop = menu.add.dropselect('Subject Id', items=[('a',), ('b',), ('c',)], dropselect_id='s0')
         d_frame_sa = drop._drop_frame.get_scrollarea(inner=True)
         sb_frame = d_frame_sa._scrollbars[0]
         self.assertFalse(sb_frame._joystick_enabled)

@@ -68,46 +68,35 @@ class CalculatorApp(object):
         # Add horizontal frames
         f1 = self.menu.add.frame_h(299, 54, margin=(10, 0))
         b1 = f1.pack(self.menu.add.button('1', lambda: self._press(1), cursor=cursor))
-        b2 = f1.pack(self.menu.add.button('2', lambda: self._press(2), cursor=cursor),
-                     align=pygame_menu.locals.ALIGN_CENTER)
-        b3 = f1.pack(self.menu.add.button('3', lambda: self._press(3), cursor=cursor),
-                     align=pygame_menu.locals.ALIGN_RIGHT)
+        b2 = f1.pack(self.menu.add.button('2', lambda: self._press(2), cursor=cursor), align=pygame_menu.locals.ALIGN_CENTER)
+        b3 = f1.pack(self.menu.add.button('3', lambda: self._press(3), cursor=cursor), align=pygame_menu.locals.ALIGN_RIGHT)
         self.menu.add.vertical_margin(10)
 
         f2 = self.menu.add.frame_h(299, 54, margin=(10, 0))
         b4 = f2.pack(self.menu.add.button('4', lambda: self._press(4), cursor=cursor))
-        b5 = f2.pack(self.menu.add.button('5', lambda: self._press(5), cursor=cursor),
-                     align=pygame_menu.locals.ALIGN_CENTER)
-        b6 = f2.pack(self.menu.add.button('6', lambda: self._press(6), cursor=cursor),
-                     align=pygame_menu.locals.ALIGN_RIGHT)
+        b5 = f2.pack(self.menu.add.button('5', lambda: self._press(5), cursor=cursor), align=pygame_menu.locals.ALIGN_CENTER)
+        b6 = f2.pack(self.menu.add.button('6', lambda: self._press(6), cursor=cursor), align=pygame_menu.locals.ALIGN_RIGHT)
         self.menu.add.vertical_margin(10)
 
         f3 = self.menu.add.frame_h(299, 54, margin=(10, 0))
         b7 = f3.pack(self.menu.add.button('7', lambda: self._press(7), cursor=cursor))
-        b8 = f3.pack(self.menu.add.button('8', lambda: self._press(8), cursor=cursor),
-                     align=pygame_menu.locals.ALIGN_CENTER)
-        b9 = f3.pack(self.menu.add.button('9', lambda: self._press(9), cursor=cursor),
-                     align=pygame_menu.locals.ALIGN_RIGHT)
+        b8 = f3.pack(self.menu.add.button('8', lambda: self._press(8), cursor=cursor), align=pygame_menu.locals.ALIGN_CENTER)
+        b9 = f3.pack(self.menu.add.button('9', lambda: self._press(9), cursor=cursor), align=pygame_menu.locals.ALIGN_RIGHT)
         self.menu.add.vertical_margin(10)
 
         f4 = self.menu.add.frame_h(299, 54, margin=(10, 0))
         b0 = f4.pack(self.menu.add.button('0', lambda: self._press(0), cursor=cursor))
-        b_plus = f4.pack(self.menu.add.button('+', lambda: self._press('+'), cursor=cursor),
-                         align=pygame_menu.locals.ALIGN_CENTER)
-        b_minus = f4.pack(self.menu.add.button('-', lambda: self._press('-'), cursor=cursor),
-                          align=pygame_menu.locals.ALIGN_RIGHT)
+        b_plus = f4.pack(self.menu.add.button('+', lambda: self._press('+'), cursor=cursor), align=pygame_menu.locals.ALIGN_CENTER)
+        b_minus = f4.pack(self.menu.add.button('-', lambda: self._press('-'), cursor=cursor), align=pygame_menu.locals.ALIGN_RIGHT)
         self.menu.add.vertical_margin(10)
 
         f5 = self.menu.add.frame_h(299, 54, margin=(10, 0))
         b_times = f5.pack(self.menu.add.button('x', lambda: self._press('x'), cursor=cursor))
-        b_div = f5.pack(self.menu.add.button('/', lambda: self._press('/'), cursor=cursor),
-                        align=pygame_menu.locals.ALIGN_CENTER)
-        beq = f5.pack(self.menu.add.button('=', lambda: self._press('='), cursor=cursor),
-                      align=pygame_menu.locals.ALIGN_RIGHT)
+        b_div = f5.pack(self.menu.add.button('/', lambda: self._press('/'), cursor=cursor), align=pygame_menu.locals.ALIGN_CENTER)
+        beq = f5.pack(self.menu.add.button('=', lambda: self._press('='), cursor=cursor), align=pygame_menu.locals.ALIGN_RIGHT)
 
         # Add decorator for each object
-        for widget in (b1, b2, b3, b4, b5, b6, b7, b8, b9, b0, beq, b_plus,
-                       b_minus, b_times, b_div):
+        for widget in (b1, b2, b3, b4, b5, b6, b7, b8, b9, b0, beq, b_plus, b_minus, b_times, b_div):
             w_deco = widget.get_decorator()
             if widget != beq:
                 w_deco.add_rectangle(-37, -27, 74, 54, (15, 15, 15))
@@ -170,8 +159,7 @@ class CalculatorApp(object):
                     self._press('+')
                 elif event.key == pygame.K_MINUS:
                     self._press('-')
-                elif event.key == pygame.K_SLASH or \
-                        (hasattr(pygame, 'K_PERCENT') and event.key == pygame.K_PERCENT):
+                elif event.key == pygame.K_SLASH or (hasattr(pygame, 'K_PERCENT') and event.key == pygame.K_PERCENT):
                     self._press('/')
                 elif event.key == pygame.K_ASTERISK or event.key == pygame.K_x:
                     self._press('x')

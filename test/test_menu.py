@@ -998,14 +998,12 @@ class MenuTest(BaseRSTest):
         column_menu.disable()
         self.assertEqual(len(column_menu._widgets), 8)
         self.assertRaises(RuntimeError, lambda: column_menu.draw(surface))
-        self.assertRaises(pygame_menu.menu._MenuWidgetOverflow,
-                          lambda: column_menu.add.button('test', pygame_menu.events.BACK))
+        self.assertRaises(pygame_menu.menu._MenuWidgetOverflow, lambda: column_menu.add.button('test', pygame_menu.events.BACK))
         column_menu._update_widget_position()
         self.assertEqual(len(column_menu._widgets), 8)  # Widget not added
 
         # Test max width
-        self.assertRaises(AssertionError,
-                          lambda: MenuUtils.generic_menu(columns=3, rows=4, column_max_width=[500, 500, 500, 500]))
+        self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(columns=3, rows=4, column_max_width=[500, 500, 500, 500]))
         column_menu = MenuUtils.generic_menu(columns=3, rows=4, column_max_width=0)  # max menu width
         self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(columns=3, rows=4, column_max_width=-1))
         column_menu = MenuUtils.generic_menu(columns=3, rows=4, column_max_width=500)  # max menu width
@@ -1014,16 +1012,14 @@ class MenuTest(BaseRSTest):
             self.assertEqual(column_menu._column_max_width[i], 500)
 
         # Test min width
-        self.assertRaises(AssertionError,
-                          lambda: MenuUtils.generic_menu(columns=3, rows=4, column_min_width=[500, 500, 500, 500]))
+        self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(columns=3, rows=4, column_min_width=[500, 500, 500, 500]))
         column_menu = MenuUtils.generic_menu(columns=3, rows=4, column_min_width=100)  # max menu width
         self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(columns=3, rows=4, column_min_width=-100))
         column_menu = MenuUtils.generic_menu(columns=3, rows=4, column_min_width=500)  # max menu width
         self.assertEqual(len(column_menu._column_min_width), 3)
         for i in range(3):
             self.assertEqual(column_menu._column_min_width[i], 500)
-        self.assertRaises(AssertionError,
-                          lambda: MenuUtils.generic_menu(columns=3, rows=4, column_min_width=None))
+        self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(columns=3, rows=4, column_min_width=None))
 
         # Test max width should be greater than min width
         self.assertRaises(AssertionError,
@@ -1032,8 +1028,7 @@ class MenuTest(BaseRSTest):
         self.assertRaises(AssertionError,
                           lambda: MenuUtils.generic_menu(columns=2, rows=4, column_min_width=[500, 500],
                                                          column_max_width=[500, 100]))
-        self.assertRaises(AssertionError,
-                          lambda: MenuUtils.generic_menu(rows=4, column_min_width=10, column_max_width=1))
+        self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(rows=4, column_min_width=10, column_max_width=1))
 
         self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(columns=-1, rows=4, column_max_width=500))
         self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(rows=0, column_max_width=500))
@@ -1254,8 +1249,7 @@ class MenuTest(BaseRSTest):
         """
         Test menu touchscreen behaviour.
         """
-        self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(title='mainmenu', touchscreen=False,
-                                                                         touchscreen_motion_selection=True, ))
+        self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(title='mainmenu', touchscreen=False, touchscreen_motion_selection=True, ))
         menu = MenuUtils.generic_menu(title='mainmenu', touchscreen=True, enabled=False, mouse_visible=False)
         self.assertRaises(RuntimeError, lambda: menu.mainloop(surface, bgfun=dummy_function))
 
@@ -1663,13 +1657,11 @@ class MenuTest(BaseRSTest):
         self.assertEqual(menu.get_selected_widget(), wid_g[1])
 
         # It should not change the menu selection (button up)
-        self.assertTrue(
-            menu_top.update(PygameEventUtils.middle_rect_click(wid_g[1], evtype=pygame.MOUSEBUTTONUP)))
+        self.assertTrue(menu_top.update(PygameEventUtils.middle_rect_click(wid_g[1], evtype=pygame.MOUSEBUTTONUP)))
         self.assertEqual(menu.get_selected_widget(), wid_g[1])
 
         # Applying button up in a non-selected widget must return false
-        self.assertFalse(
-            menu.update(PygameEventUtils.middle_rect_click(wid_g[0], evtype=pygame.MOUSEBUTTONUP)))
+        self.assertFalse(menu.update(PygameEventUtils.middle_rect_click(wid_g[0], evtype=pygame.MOUSEBUTTONUP)))
 
         # Fingerdown don't change selected widget if _touchscreen_motion_selection is enabled
         self.assertTrue(menu._touchscreen_motion_selection)
@@ -1874,8 +1866,7 @@ class MenuTest(BaseRSTest):
         btn2 = menu.add.button('2')
         btn3 = menu.add.button('3')
 
-        def test_order(button: Tuple['pygame_menu.widgets.Button', ...],
-                       selected: 'pygame_menu.widgets.Button') -> None:
+        def test_order(button: Tuple['pygame_menu.widgets.Button', ...], selected: 'pygame_menu.widgets.Button') -> None:
             """
             Test button order.
             """
@@ -2431,15 +2422,13 @@ class MenuTest(BaseRSTest):
             border_size = theme.border_color.get_size()
             menu = MenuUtils.generic_menu(theme=theme)
             self.assertEqual(menu.get_size(), (600, 400))
-            self.assertEqual(menu.get_size(border=True),
-                             (600 + 2 * border_size[0] / 3, 400 + 2 * border_size[1] / 3))
+            self.assertEqual(menu.get_size(border=True), (600 + 2 * border_size[0] / 3, 400 + 2 * border_size[1] / 3))
 
         # Create new menu with border color
         theme.border_width = 10
         theme.border_color = 'red'
         menu = MenuUtils.generic_menu(theme=theme)
-        self.assertEqual(menu.get_size(border=True),
-                         (600 + 2 * theme.border_width, 400 + 2 * theme.border_width))
+        self.assertEqual(menu.get_size(border=True), (600 + 2 * theme.border_width, 400 + 2 * theme.border_width))
 
         # Menu with none border color
         theme.border_width = 10
@@ -2451,9 +2440,7 @@ class MenuTest(BaseRSTest):
         theme = pygame_menu.themes.THEME_BLUE.copy()
         theme.title = False
         theme.scrollarea_position = pygame_menu.locals.SCROLLAREA_POSITION_NONE
-        theme.widget_selection_effect = pygame_menu.widgets.LeftArrowSelection(
-            arrow_right_margin=50,
-        )
+        theme.widget_selection_effect = pygame_menu.widgets.LeftArrowSelection(arrow_right_margin=50)
 
         menu = pygame_menu.Menu('Welcome', 200, 200, theme=theme)
         menu.add.button('Play')

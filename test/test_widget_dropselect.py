@@ -106,8 +106,7 @@ class DropSelectWidgetTest(BaseTest):
         self.assertEqual(drop.get_index(), 0)
         self.assertTrue(drop.active)
         drop.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
-        self.assertFalse(drop.update(
-            PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True, testmode=False)))
+        self.assertFalse(drop.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True, testmode=False)))
         self.assertFalse(drop.active)
         self.assertFalse(drop._drop_frame.is_visible())
         drop.update(PygameEventUtils.key(ctrl.KEY_MOVE_DOWN, keydown=True))
@@ -126,8 +125,7 @@ class DropSelectWidgetTest(BaseTest):
             drop.update(PygameEventUtils.key(ctrl.KEY_MOVE_UP, keydown=True))
             self.assertEqual(drop.get_index(), i)
             if PYGAME_V2:
-                self.assertEqual(drop.get_scroll_value_percentage(ORIENTATION_VERTICAL),
-                                 scroll_values[i])
+                self.assertEqual(drop.get_scroll_value_percentage(ORIENTATION_VERTICAL), scroll_values[i])
 
         drop.update(PygameEventUtils.key(ctrl.KEY_MOVE_UP, keydown=True))  # Not infinite
         self.assertEqual(drop.get_index(), 11)  # Not infinite
@@ -136,15 +134,13 @@ class DropSelectWidgetTest(BaseTest):
 
         # Mouseup over rect returns True updated status
         self.assertTrue(drop.active)
-        self.assertTrue(drop.update(PygameEventUtils.middle_rect_click(drop.get_focus_rect(),
-                                                                       evtype=pygame.MOUSEBUTTONDOWN)))
+        self.assertTrue(drop.update(PygameEventUtils.middle_rect_click(drop.get_focus_rect(), evtype=pygame.MOUSEBUTTONDOWN)))
         self.assertTrue(drop.active)
 
         # Touch also does the same trick
         if PYGAME_V2:
             drop._touchscreen_enabled = True
-            self.assertTrue(drop.update(PygameEventUtils.middle_rect_click(drop.get_focus_rect(), menu=menu,
-                                                                           evtype=FINGERDOWN)))
+            self.assertTrue(drop.update(PygameEventUtils.middle_rect_click(drop.get_focus_rect(), menu=menu, evtype=FINGERDOWN)))
             self.assertTrue(drop.active)
 
         # Scroll to bottom and close, then open again, this should scroll to current selected
@@ -170,8 +166,7 @@ class DropSelectWidgetTest(BaseTest):
 
         # Touch middle
         self.assertTrue(drop._touchscreen_enabled)
-        drop.update(PygameEventUtils.middle_rect_click(
-            drop.get_focus_rect(), evtype=pygame.FINGERUP, menu=drop.get_menu()))
+        drop.update(PygameEventUtils.middle_rect_click(drop.get_focus_rect(), evtype=pygame.FINGERUP, menu=drop.get_menu()))
         self.assertTrue(drop.active)
 
         # Test focus
@@ -196,8 +191,7 @@ class DropSelectWidgetTest(BaseTest):
         drop_frame = drop._drop_frame
         drop._drop_frame = None
         self.assertEqual(drop.get_scroll_value_percentage('any'), -1)
-        self.assertRaises(pygame_menu.widgets.widget.dropselect._SelectionDropNotMadeException,
-                          lambda: drop._check_drop_made())
+        self.assertRaises(pygame_menu.widgets.widget.dropselect._SelectionDropNotMadeException, lambda: drop._check_drop_made())
         drop._drop_frame = drop_frame
         drop.update_items([])
         drop._make_selection_drop()
@@ -280,8 +274,7 @@ class DropSelectWidgetTest(BaseTest):
         menu.select_widget(drop2)
         drop2._toggle_drop()
 
-        self.assertEqual(drop2.get_position(),
-                         ((132, 554) if PYGAME_V2 else (131, 555)))
+        self.assertEqual(drop2.get_position(), ((132, 554) if PYGAME_V2 else (131, 555)))
         self.assertEqual(drop2._drop_frame.get_attribute('height'), 117 if PYGAME_V2 else 120)
         self.assertEqual(drop2._drop_frame.get_attribute('width'), 187 if PYGAME_V2 else 188)
 
@@ -312,8 +305,7 @@ class DropSelectWidgetTest(BaseTest):
         self.assertEqual(drop2.get_index(), 7)
         drop2.readonly = False
         menu.render()
-        self.assertEqual(drop2.get_scroll_value_percentage(ORIENTATION_VERTICAL),
-                         0.606 if PYGAME_V2 else 0.603)
+        self.assertEqual(drop2.get_scroll_value_percentage(ORIENTATION_VERTICAL), 0.606 if PYGAME_V2 else 0.603)
         drop2.reset_value()
         self.assertTrue(drop2.active)
         self.assertEqual(drop2.get_index(), -1)
@@ -582,8 +574,7 @@ class DropSelectWidgetTest(BaseTest):
             return
 
         menu = MenuUtils.generic_menu(touchscreen=True)
-        sel = menu.add.dropselect(
-            'Subject Id', items=[('a',), ('b',), ('c',), ('d',), ('e',), ('f',)], dropselect_id='s0')
+        sel = menu.add.dropselect('Subject Id', items=[('a',), ('b',), ('c',), ('d',), ('e',), ('f',)], dropselect_id='s0')
         menu.add.button('One', remove_selection_item, sel)
 
         # Select by touch
@@ -608,10 +599,8 @@ class DropSelectWidgetTest(BaseTest):
         self.assertFalse(sel.active)
 
         # Touch button
-        menu.update(PygameEventUtils.touch_click(touch_sel[0], touch_sel[1] + 40,
-                                                 menu=menu, evtype=FINGERDOWN))
-        menu.update(PygameEventUtils.touch_click(touch_sel[0], touch_sel[1] + 40,
-                                                 menu=menu))
+        menu.update(PygameEventUtils.touch_click(touch_sel[0], touch_sel[1] + 40, menu=menu, evtype=FINGERDOWN))
+        menu.update(PygameEventUtils.touch_click(touch_sel[0], touch_sel[1] + 40, menu=menu))
 
         # Touch again outside
         sel.update(PygameEventUtils.touch_click(touch_sel[0], touch_sel[1] + 400, menu=menu))
@@ -653,8 +642,7 @@ class DropSelectWidgetTest(BaseTest):
         self.assertFalse(sel.active)
 
         # Ignore buttons if not active
-        self.assertFalse(sel.update(PygameEventUtils.key(pygame_menu.controls.KEY_MOVE_UP,
-                                                         keydown=True)))
+        self.assertFalse(sel.update(PygameEventUtils.key(pygame_menu.controls.KEY_MOVE_UP, keydown=True)))
 
     def test_dropselect_multiple(self) -> None:
         """
@@ -942,8 +930,7 @@ class DropSelectWidgetTest(BaseTest):
         menu.add.dropselect('Subject Id', items=[('a', 'a'), ('b', 'b'), ('c', 'c')], dropselect_id='s0')
         frame_s = menu.add.frame_h(600, 58)
         frame_s.pack(
-            menu.add.dropselect('Subject Id', items=[('a', 'a'), ('b', 'b'), ('c', 'c')], dropselect_id='s1',
-                                open_middle=True)
+            menu.add.dropselect('Subject Id', items=[('a', 'a'), ('b', 'b'), ('c', 'c')], dropselect_id='s1', open_middle=True)
         )
         frame_s.pack(menu.add.button('One', lambda: print('1')))
         frame_t = menu.add.frame_h(600, 58)
@@ -952,8 +939,7 @@ class DropSelectWidgetTest(BaseTest):
         )
         frame_t.pack(menu.add.button('Two', lambda: print('2')))
         menu.add.dropselect('Subject Id', items=[('a', 'a'), ('b', 'b'), ('c', 'c')], dropselect_id='s3')
-        menu.add.dropselect('Subject Id', items=[('a', 'a'), ('b', 'b'), ('c', 'c')], dropselect_id='s4',
-                            open_middle=True)
+        menu.add.dropselect('Subject Id', items=[('a', 'a'), ('b', 'b'), ('c', 'c')], dropselect_id='s4', open_middle=True)
 
         # Test draw surfaces
         menu.draw(surface)

@@ -30,8 +30,7 @@ class App(object):
     surface: 'pygame.Surface'
 
     def __init__(self) -> None:
-        self.surface = create_example_window('Example - Dynamic Widget Update',
-                                             (640, 480), flags=pygame.NOFRAME)
+        self.surface = create_example_window('Example - Dynamic Widget Update', (640, 480), flags=pygame.NOFRAME)
 
         # Load image
         default_image = pygame_menu.BaseImage(
@@ -98,8 +97,7 @@ class App(object):
 
         self.quit_button = self.menu.add.button('Quit', pygame_menu.events.EXIT)
 
-        self.quit_button_fake = self.menu.add.button('You cannot quit', self.fake_quit,
-                                                     font_color=(255, 255, 255))
+        self.quit_button_fake = self.menu.add.button('You cannot quit', self.fake_quit, font_color=(255, 255, 255))
         self.quit_button_fake.add_draw_callback(self.animate_quit_button)
 
         # Update the widgets based on selected value from selector get_value

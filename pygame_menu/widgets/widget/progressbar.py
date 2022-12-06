@@ -238,8 +238,7 @@ class ProgressBar(Widget):
         self._rect.width, self._rect.height = self._surface.get_size()
 
         # Create box
-        self._box = make_surface(self._width, self._box_height,
-                                 fill_color=self._box_background_color)
+        self._box = make_surface(self._width, self._box_height, fill_color=self._box_background_color)
         box_progress = make_surface(int(self._width * self._progress / 100),
                                     self._box_height - self._box_progress_padding[0] - self._box_progress_padding[2],
                                     fill_color=self._box_progress_color)
@@ -380,16 +379,12 @@ class ProgressBarManager(AbstractWidgetManager, ABC):
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
 
-        box_background_color = kwargs.pop('box_background_color',
-                                          self._theme.widget_box_background_color)
-        box_border_color = kwargs.pop('box_border_color',
-                                      self._theme.widget_box_border_color)
-        box_border_width = kwargs.pop('box_border_width',
-                                      self._theme.widget_box_border_width)
+        box_background_color = kwargs.pop('box_background_color', self._theme.widget_box_background_color)
+        box_border_color = kwargs.pop('box_border_color', self._theme.widget_box_border_color)
+        box_border_width = kwargs.pop('box_border_width', self._theme.widget_box_border_width)
         box_margin = kwargs.pop('box_margin', self._theme.widget_box_margin)
         box_progress_color = kwargs.pop('box_progress_color', (53, 172, 78))
-        progress_text_font_color = kwargs.pop('progress_text_font_color',
-                                              self._theme.widget_font_color)
+        progress_text_font_color = kwargs.pop('progress_text_font_color', self._theme.widget_font_color)
 
         widget = pygame_menu.widgets.ProgressBar(
             title=title,

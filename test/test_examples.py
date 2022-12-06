@@ -8,8 +8,7 @@ Test example files.
 
 __all__ = ['ExamplesTest']
 
-from test._utils import BaseRSTest, MenuUtils, PygameEventUtils, \
-    test_reset_surface
+from test._utils import BaseRSTest, MenuUtils, PygameEventUtils, test_reset_surface
 
 import pygame
 import pygame_menu
@@ -48,8 +47,7 @@ class ExamplesTest(BaseRSTest):
         game_selector.play_function(['MEDIUM'], font, test=True)
         pygame.event.post(PygameEventUtils.keydown(pygame.K_ESCAPE, inlist=False))
         game_selector.play_function(['HARD'], font, test=True)
-        self.assertRaises(ValueError,
-                          lambda: game_selector.play_function(['U'], font, test=True))
+        self.assertRaises(ValueError, lambda: game_selector.play_function(['U'], font, test=True))
         game_selector.change_difficulty(('HARD', 1), 'HARD')
 
     def test_example_multi_input(self) -> None:
@@ -125,12 +123,10 @@ class ExamplesTest(BaseRSTest):
         app = calculator.main(test=True)
 
         # Process events
-        app.process_events(PygameEventUtils.keydown([pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4,
-                                                     pygame.K_5, pygame.K_PLUS]))
+        app.process_events(PygameEventUtils.keydown([pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5, pygame.K_PLUS]))
         self.assertEqual(app.prev, '12345')
         self.assertEqual(app.op, '+')
-        app.process_events(PygameEventUtils.keydown([pygame.K_6, pygame.K_7, pygame.K_8, pygame.K_9,
-                                                     pygame.K_0]))
+        app.process_events(PygameEventUtils.keydown([pygame.K_6, pygame.K_7, pygame.K_8, pygame.K_9, pygame.K_0]))
         self.assertEqual(app.curr, '67890')
         app.process_events(PygameEventUtils.keydown(pygame.K_EQUALS))
         self.assertEqual(app.op, '')
@@ -257,8 +253,7 @@ class ExamplesTest(BaseRSTest):
         self.assertFalse(app.menu._disable_draw)
         app.process_events(PygameEventUtils.keydown([pygame.K_p]), app.menu)
         self.assertTrue(app.menu._disable_draw)
-        app.process_events(PygameEventUtils.keydown([pygame.K_p, pygame.K_q, pygame.K_e, pygame.K_s, pygame.K_c]),
-                           app.menu)
+        app.process_events(PygameEventUtils.keydown([pygame.K_p, pygame.K_q, pygame.K_e, pygame.K_s, pygame.K_c]), app.menu)
         self.assertFalse(app.menu._disable_draw)
 
     def test_example_other_widget_positioning(self) -> None:

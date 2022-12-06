@@ -50,9 +50,7 @@ COLORINPUT_HEX_FORMAT_UPPER = 'upper'
 
 # Custom typing
 ColorInputColorType = Literal[COLORINPUT_TYPE_RGB, COLORINPUT_TYPE_HEX]
-ColorInputHexFormatType = Literal[COLORINPUT_HEX_FORMAT_LOWER,
-                                  COLORINPUT_HEX_FORMAT_UPPER,
-                                  COLORINPUT_HEX_FORMAT_NONE]
+ColorInputHexFormatType = Literal[COLORINPUT_HEX_FORMAT_LOWER, COLORINPUT_HEX_FORMAT_UPPER, COLORINPUT_HEX_FORMAT_NONE]
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -363,8 +361,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         self._rect.width, self._rect.height = self._surface.get_size()
         if not self._dynamic_width or \
                 (self._dynamic_width and self._previsualization_surface is not None):
-            self._rect.width += self._prev_width_factor * self._rect.height \
-                                + self._prev_margin
+            self._rect.width += self._prev_width_factor * self._rect.height + self._prev_margin
 
         # Render the previsualization box
         r, g, b = self.get_value()
@@ -385,8 +382,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                 self._last_g = g
                 self._last_b = b
                 if self._dynamic_width:
-                    self._rect.width += self._prev_width_factor * self._rect.height \
-                                        + self._prev_margin
+                    self._rect.width += self._prev_width_factor * self._rect.height + self._prev_margin
 
         return render_text
 

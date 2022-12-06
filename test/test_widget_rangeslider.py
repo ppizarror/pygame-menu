@@ -145,14 +145,10 @@ class RangeSliderWidgetTest(BaseTest):
         self.assertFalse(slider._scrolling)
 
         # Check invalid constructor for single slider
-        self.assertRaises(AssertionError, lambda: pygame_menu.widgets.RangeSlider(
-            'Range S', default_value=2))
-        self.assertRaises(AssertionError, lambda: pygame_menu.widgets.RangeSlider(
-            'Range S', default_value=1, range_values=[1, 0]))
-        self.assertRaises(AssertionError, lambda: pygame_menu.widgets.RangeSlider(
-            'Range S', default_value=1, range_values=[1, 1]))
-        self.assertRaises(AssertionError, lambda: pygame_menu.widgets.RangeSlider(
-            'Range S', default_value='a'))
+        self.assertRaises(AssertionError, lambda: pygame_menu.widgets.RangeSlider('Range S', default_value=2))
+        self.assertRaises(AssertionError, lambda: pygame_menu.widgets.RangeSlider('Range S', default_value=1, range_values=[1, 0]))
+        self.assertRaises(AssertionError, lambda: pygame_menu.widgets.RangeSlider('Range S', default_value=1, range_values=[1, 1]))
+        self.assertRaises(AssertionError, lambda: pygame_menu.widgets.RangeSlider('Range S', default_value='a'))
 
         # Ignore tabs
         self.assertFalse(slider.update(PygameEventUtils.key(ctrl.KEY_TAB, keydown=True)))
@@ -194,10 +190,8 @@ class RangeSliderWidgetTest(BaseTest):
         slider = pygame_menu.widgets.RangeSlider('Range', range_values=rv)
         menu.add.generic_widget(slider, True)
 
-        self.assertRaises(AssertionError, lambda: pygame_menu.widgets.RangeSlider(
-            'Range', default_value=0.5, range_values=rv))
-        self.assertRaises(AssertionError, lambda: pygame_menu.widgets.RangeSlider(
-            'Range', default_value=-1, range_values=rv))
+        self.assertRaises(AssertionError, lambda: pygame_menu.widgets.RangeSlider('Range', default_value=0.5, range_values=rv))
+        self.assertRaises(AssertionError, lambda: pygame_menu.widgets.RangeSlider('Range', default_value=-1, range_values=rv))
 
         self.assertRaises(AssertionError, lambda: slider.set_value(-1))
         self.assertRaises(AssertionError, lambda: slider.set_value([0, 1]))
@@ -254,8 +248,7 @@ class RangeSliderWidgetTest(BaseTest):
         slider.set_value(2)
 
         # Invalid scrolling if clicked outside the slider
-        slider.update(PygameEventUtils.middle_rect_click(
-            slider._test_get_pos_value(0), evtype=pygame.MOUSEBUTTONDOWN))
+        slider.update(PygameEventUtils.middle_rect_click(slider._test_get_pos_value(0), evtype=pygame.MOUSEBUTTONDOWN))
         self.assertFalse(slider._scrolling)
 
     # noinspection PyTypeChecker
@@ -294,22 +287,18 @@ class RangeSliderWidgetTest(BaseTest):
 
         # Test click sliders
         slider_rect = slider._get_slider_inflate_rect(0, to_real_position=True)
-        self.assertTrue(slider.update(
-            PygameEventUtils.middle_rect_click(slider_rect, evtype=pygame.MOUSEBUTTONDOWN)))
+        self.assertTrue(slider.update(PygameEventUtils.middle_rect_click(slider_rect, evtype=pygame.MOUSEBUTTONDOWN)))
         self.assertTrue(slider._slider_selected[0])
-        self.assertFalse(slider.update(  # Slider already selected
-            PygameEventUtils.middle_rect_click(slider_rect, evtype=pygame.MOUSEBUTTONDOWN)))
+        self.assertFalse(slider.update(PygameEventUtils.middle_rect_click(slider_rect, evtype=pygame.MOUSEBUTTONDOWN)))  # Slider already selected
 
         # Click if sliders are colliding
         slider.set_value((0.5, 0.50000001))
         slider_rect = slider._get_slider_inflate_rect(1, to_real_position=True)
-        self.assertFalse(slider.update(
-            PygameEventUtils.middle_rect_click(slider_rect, evtype=pygame.MOUSEBUTTONDOWN)))
+        self.assertFalse(slider.update(PygameEventUtils.middle_rect_click(slider_rect, evtype=pygame.MOUSEBUTTONDOWN)))
         self.assertTrue(slider._slider_selected[0])
         slider.set_value((0.5, 0.7))
         slider_rect = slider._get_slider_inflate_rect(1, to_real_position=True)
-        self.assertTrue(slider.update(
-            PygameEventUtils.middle_rect_click(slider_rect, evtype=pygame.MOUSEBUTTONDOWN)))
+        self.assertTrue(slider.update(PygameEventUtils.middle_rect_click(slider_rect, evtype=pygame.MOUSEBUTTONDOWN)))
         self.assertTrue(slider._slider_selected[1])
 
         # Test left slider
@@ -356,8 +345,7 @@ class RangeSliderWidgetTest(BaseTest):
         self.assertAlmostEqual(slider.get_value()[0], 0.7 - 1e-7, places=1)
 
         # Ignore if move 0.7 + eps
-        self.assertFalse(slider.update(
-            PygameEventUtils.mouse_motion(slider_rect, rel=(1, pos[1]), update_mouse=True)))
+        self.assertFalse(slider.update(PygameEventUtils.mouse_motion(slider_rect, rel=(1, pos[1]), update_mouse=True)))
 
         # Change to right
         slider_rect = slider._get_slider_inflate_rect(1, to_real_position=True)
@@ -365,10 +353,8 @@ class RangeSliderWidgetTest(BaseTest):
         pos = slider._test_get_pos_value(0.7)
         pos2 = slider._test_get_pos_value(0.8)
         dx = pos[0] - pos2[0]
-        self.assertFalse(slider.update(
-            PygameEventUtils.mouse_motion(slider_rect, rel=(-1, pos[1]), update_mouse=True)))
-        self.assertTrue(slider.update(
-            PygameEventUtils.mouse_motion(slider_rect, rel=(-dx, pos[1]), update_mouse=True)))
+        self.assertFalse(slider.update(PygameEventUtils.mouse_motion(slider_rect, rel=(-1, pos[1]), update_mouse=True)))
+        self.assertTrue(slider.update(PygameEventUtils.mouse_motion(slider_rect, rel=(-dx, pos[1]), update_mouse=True)))
         self.assertAlmostEqual(slider.get_value()[1], 0.8)
 
         # Test left/right
@@ -400,8 +386,7 @@ class RangeSliderWidgetTest(BaseTest):
         rv = [0, 1, 2, 3, 4, 5]
 
         # Double slider discrete
-        slider = pygame_menu.widgets.RangeSlider('Range', range_text_value_tick_number=3,
-                                                 range_values=rv, default_value=(1, 4))
+        slider = pygame_menu.widgets.RangeSlider('Range', range_text_value_tick_number=3, range_values=rv, default_value=(1, 4))
         menu.add.generic_widget(slider, True)
         slider.draw(surface)
 
@@ -428,8 +413,7 @@ class RangeSliderWidgetTest(BaseTest):
         slider._update_value(0.99)
         self.assertEqual(slider.get_value(), (1, 2))
 
-        self.assertEqual(slider._get_slider_inflate_rect(0, to_absolute_position=True),
-                         pygame.Rect(301, 209, 15, 28))
+        self.assertEqual(slider._get_slider_inflate_rect(0, to_absolute_position=True), pygame.Rect(301, 209, 15, 28))
 
     def test_kwargs(self) -> None:
         """

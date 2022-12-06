@@ -298,8 +298,7 @@ class NoneWidgetTest(BaseTest):
 
         # Now add 1 vfill, this should use all available height
         vf2 = menu.add.vertical_fill()
-        self.assertEqual(menu.get_size(widget=True),
-                         (b.get_width(), b.get_height() + vf1.get_height() + vf2.get_height()))
+        self.assertEqual(menu.get_size(widget=True), (b.get_width(), b.get_height() + vf1.get_height() + vf2.get_height()))
 
     def test_vmargin(self) -> None:
         """

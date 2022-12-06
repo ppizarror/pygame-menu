@@ -654,8 +654,7 @@ class Menu(Base):
             self._auto_centering = False
 
         # Scroll area outer margin
-        self._scrollarea_margin = [self._theme.scrollarea_outer_margin[0],
-                                   self._theme.scrollarea_outer_margin[1]]
+        self._scrollarea_margin = [self._theme.scrollarea_outer_margin[0], self._theme.scrollarea_outer_margin[1]]
         if abs(self._scrollarea_margin[0]) < 1:
             self._scrollarea_margin[0] *= self._width
         if abs(self._scrollarea_margin[1]) < 1:
@@ -1385,8 +1384,7 @@ class Menu(Base):
                 # First fill all maximum width columns
                 for col in range(self._used_columns):
                     if self._column_max_width[col] is not None:
-                        column_widths[col] = min(self._column_max_width[col],
-                                                 max_width / self._used_columns)
+                        column_widths[col] = min(self._column_max_width[col], max_width / self._used_columns)
                         mod_width -= column_widths[col]
                         non_max -= 1
 
@@ -2025,10 +2023,6 @@ class Menu(Base):
                 if widget.is_selected():
                     selected_widget_draw = widget, self._current._widgets_surface
                 widget.draw(self._current._widgets_surface)
-                if isinstance(widget, Frame):
-                    f_selected_widget = widget.selected_widget_draw
-                    if f_selected_widget[0] is not None:
-                        selected_widget_draw = f_selected_widget
 
             if selected_widget_draw[0] is not None:
                 selected_widget_draw[0].draw_after_if_selected(selected_widget_draw[1])

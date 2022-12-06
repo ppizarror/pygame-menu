@@ -187,8 +187,7 @@ class Selector(Widget):
         self._style_fancy_bordercolor = style_fancy_bordercolor
         self._style_fancy_borderwidth = style_fancy_borderwidth
         self._style_fancy_box_inflate = style_fancy_box_inflate
-        self._style_fancy_box_margin = (int(style_fancy_box_margin[0]),
-                                        int(style_fancy_box_margin[1]))
+        self._style_fancy_box_margin = (int(style_fancy_box_margin[0]), int(style_fancy_box_margin[1]))
 
         # Apply default item
         default %= len(self._items)
@@ -250,10 +249,8 @@ class Selector(Widget):
 
             # Create arrows
             arrow_left = pygame.Rect(
-                int(title.get_width() + self._style_fancy_arrow_margin[0]
-                    + self._style_fancy_box_margin[0]),
-                int(self._style_fancy_arrow_margin[2]
-                    + self._style_fancy_box_inflate[1] / 2),
+                int(title.get_width() + self._style_fancy_arrow_margin[0] + self._style_fancy_box_margin[0]),
+                int(self._style_fancy_arrow_margin[2] + self._style_fancy_box_inflate[1] / 2),
                 title.get_height(),
                 title.get_height()
             )
@@ -304,8 +301,7 @@ class Selector(Widget):
             self._surface.blit(title, (0, int(self._style_fancy_box_inflate[1] / 2)))
             current_rect_bg = current.get_rect()
             current_rect_bg.x += title.get_width() + self._style_fancy_box_margin[0]
-            current_rect_bg.y += int(self._style_fancy_box_inflate[1] / 2
-                                     + self._style_fancy_box_margin[1])
+            current_rect_bg.y += int(self._style_fancy_box_inflate[1] / 2 + self._style_fancy_box_margin[1])
             current_rect_bg.width += 2 * (self._style_fancy_arrow_margin[0]
                                           + self._style_fancy_arrow_margin[1]
                                           + arrow_left.width)
@@ -617,20 +613,13 @@ class SelectorManager(AbstractWidgetManager, ABC):
         attributes = self._filter_widget_attributes(kwargs)
 
         # Get fancy style attributes
-        style_fancy_arrow_color = kwargs.pop('style_fancy_arrow_color',
-                                             self._theme.widget_box_arrow_color)
-        style_fancy_arrow_margin = kwargs.pop('style_fancy_arrow_margin',
-                                              self._theme.widget_box_arrow_margin)
-        style_fancy_bgcolor = kwargs.pop('style_fancy_bgcolor',
-                                         self._theme.widget_box_background_color)
-        style_fancy_bordercolor = kwargs.pop('style_fancy_bordercolor',
-                                             self._theme.widget_box_border_color)
-        style_fancy_borderwidth = kwargs.pop('style_fancy_borderwidth',
-                                             self._theme.widget_box_border_width)
-        style_fancy_box_inflate = kwargs.pop('style_fancy_box_inflate',
-                                             self._theme.widget_box_inflate)
-        style_fancy_box_margin = kwargs.pop('style_fancy_box_margin',
-                                            self._theme.widget_box_margin)
+        style_fancy_arrow_color = kwargs.pop('style_fancy_arrow_color', self._theme.widget_box_arrow_color)
+        style_fancy_arrow_margin = kwargs.pop('style_fancy_arrow_margin', self._theme.widget_box_arrow_margin)
+        style_fancy_bgcolor = kwargs.pop('style_fancy_bgcolor', self._theme.widget_box_background_color)
+        style_fancy_bordercolor = kwargs.pop('style_fancy_bordercolor', self._theme.widget_box_border_color)
+        style_fancy_borderwidth = kwargs.pop('style_fancy_borderwidth', self._theme.widget_box_border_width)
+        style_fancy_box_inflate = kwargs.pop('style_fancy_box_inflate', self._theme.widget_box_inflate)
+        style_fancy_box_margin = kwargs.pop('style_fancy_box_margin', self._theme.widget_box_margin)
 
         widget = Selector(
             default=default,

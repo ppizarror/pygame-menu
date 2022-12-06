@@ -144,8 +144,7 @@ class Selection(object):
 
         :return: Tuple of (top, left, bottom, right) margins in px
         """
-        return int(self.margin_top), int(self.margin_left), \
-               int(self.margin_bottom), int(self.margin_right)
+        return int(self.margin_top), int(self.margin_left), int(self.margin_bottom), int(self.margin_right)
 
     def get_xy_margin(self) -> Tuple2IntType:
         """
@@ -153,8 +152,7 @@ class Selection(object):
 
         :return: Margin tuple on x-axis and y-axis (x, y) in px
         """
-        return int(self.margin_left + self.margin_right), \
-               int(self.margin_top + self.margin_bottom)
+        return int(self.margin_left + self.margin_right), int(self.margin_top + self.margin_bottom)
 
     def get_width(self) -> int:
         """

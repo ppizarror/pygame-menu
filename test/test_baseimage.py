@@ -287,9 +287,7 @@ class BaseImageTest(BaseTest):
         self.assertRaises(ValueError, lambda: image._get_position_delta())
 
         # Test invalid image
-        self.assertRaises(Exception,
-                          lambda: load_pygame_image_file(pygame_menu.baseimage.IMAGE_EXAMPLE_PYTHON,
-                                                         test=True))
+        self.assertRaises(Exception, lambda: load_pygame_image_file(pygame_menu.baseimage.IMAGE_EXAMPLE_PYTHON, test=True))
 
     def test_copy(self) -> None:
         """

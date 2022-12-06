@@ -325,13 +325,11 @@ class ScrollArea(Base):
             return
 
         # Make surface
-        self._bg_surface = make_surface(width=self._rect.width + self._extend_x,
-                                        height=self._rect.height + self._extend_y)
+        self._bg_surface = make_surface(width=self._rect.width + self._extend_x, height=self._rect.height + self._extend_y)
         rect = self._bg_surface.get_rect()
         if self._area_color is not None:
             if isinstance(self._area_color, pygame_menu.BaseImage):
-                self._area_color.draw(surface=self._bg_surface,
-                                      area=rect)
+                self._area_color.draw(surface=self._bg_surface, area=rect)
             else:
                 self._bg_surface.fill(assert_color(self._area_color))
 
@@ -450,17 +448,13 @@ class ScrollArea(Base):
                 d_size, (dx, dy) = self._menubar.get_scrollbar_style_change(pos)
 
             if pos == POSITION_WEST:
-                sbar.set_position(x=self._view_rect.left - sbar.get_thickness() + dx,
-                                  y=self._view_rect.top + dy)
+                sbar.set_position(x=self._view_rect.left - sbar.get_thickness() + dx, y=self._view_rect.top + dy)
             elif pos == POSITION_EAST:
-                sbar.set_position(x=self._view_rect.right + dx,
-                                  y=self._view_rect.top + dy)
+                sbar.set_position(x=self._view_rect.right + dx, y=self._view_rect.top + dy)
             elif pos == POSITION_NORTH:
-                sbar.set_position(x=self._view_rect.left + dx,
-                                  y=self._view_rect.top - sbar.get_thickness() + dy)
+                sbar.set_position(x=self._view_rect.left + dx, y=self._view_rect.top - sbar.get_thickness() + dy)
             elif pos == POSITION_SOUTH:  # South
-                sbar.set_position(x=self._view_rect.left + dx,
-                                  y=self._view_rect.bottom + dy)
+                sbar.set_position(x=self._view_rect.left + dx, y=self._view_rect.bottom + dy)
             else:
                 raise ValueError('unknown position, only west, east, north, and'
                                  'south are allowed')
@@ -498,13 +492,11 @@ class ScrollArea(Base):
         # Background surface already has previous decorators
         if self._area_color is not None:
             self._make_background_surface()
-            surface.blit(self._bg_surface,
-                         (self._rect.x - self._extend_x, self._rect.y - self._extend_y))
+            surface.blit(self._bg_surface, (self._rect.x - self._extend_x, self._rect.y - self._extend_y))
 
         # Draw world surface
         # noinspection PyTypeChecker
-        surface.blit(self._world, self._view_rect.topleft,
-                     (self.get_offsets(), self._view_rect.size))
+        surface.blit(self._world, self._view_rect.topleft, (self.get_offsets(), self._view_rect.size))
 
         # Then draw scrollbars
         for sbar in self._scrollbars:
@@ -969,14 +961,12 @@ class ScrollArea(Base):
             if not sbar.is_visible():
                 continue
             if sbar.get_orientation() == ORIENTATION_HORIZONTAL and self.get_hidden_width():
-                shortest_move = min(real_rect.left - view_rect.left,
-                                    real_rect.right - view_rect.right, key=abs)
+                shortest_move = min(real_rect.left - view_rect.left, real_rect.right - view_rect.right, key=abs)
                 value = min(sbar.get_maximum(), sbar.get_value() + shortest_move)
                 value = max(sbar.get_minimum(), value)
                 sbar.set_value(value)
             if sbar.get_orientation() == ORIENTATION_VERTICAL and self.get_hidden_height():
-                shortest_move = min(real_rect.bottom - view_rect.bottom,
-                                    real_rect.top - view_rect.top, key=abs)
+                shortest_move = min(real_rect.bottom - view_rect.bottom, real_rect.top - view_rect.top, key=abs)
                 value = min(sbar.get_maximum(), sbar.get_value() + shortest_move)
                 value = max(sbar.get_minimum(), value)
                 sbar.set_value(value)

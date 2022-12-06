@@ -189,8 +189,7 @@ class ScrollBar(Widget):
         # Update slider position according to the current one
         pos = ('x', 'y')
         setattr(self._slider_rect, pos[self._orientation], int(self._slider_position))
-        self._slider_rect = self._slider_rect.inflate(-2 * self._slider_pad,
-                                                      -2 * self._slider_pad)
+        self._slider_rect = self._slider_rect.inflate(-2 * self._slider_pad, -2 * self._slider_pad)
 
     def set_shadow(
             self,
@@ -270,8 +269,7 @@ class ScrollBar(Widget):
 
         :return: Page step
         """
-        p_step = self._page_step * (self._values_range[1] -
-                                    self._values_range[0]) / self._page_ctrl_length
+        p_step = self._page_step * (self._values_range[1] - self._values_range[0]) / self._page_ctrl_length
         return int(p_step)
 
     def get_value_percentage(self) -> float:
@@ -291,8 +289,7 @@ class ScrollBar(Widget):
         :return: Position in px
         """
         value = self._values_range[0] + self._slider_position * \
-                (self._values_range[1] -
-                 self._values_range[0]) / (self._page_ctrl_length - self._page_step)
+                (self._values_range[1] - self._values_range[0]) / (self._page_ctrl_length - self._page_step)
 
         # Correction due to value scaling
         value = max(self._values_range[0], value)
@@ -300,8 +297,7 @@ class ScrollBar(Widget):
         return int(value)
 
     def _render(self) -> Optional[bool]:
-        width, height = self._rect.width + self._rect_size_delta[0], \
-                        self._rect.height + self._rect_size_delta[1]
+        width, height = self._rect.width + self._rect_size_delta[0], self._rect.height + self._rect_size_delta[1]
 
         if not self._render_hash_changed(
                 width, height, self._slider_rect.x, self._slider_rect.y,
@@ -320,8 +316,7 @@ class ScrollBar(Widget):
             lit_rect = pygame.Rect(self._slider_rect)
             slider_rect = lit_rect.inflate(-self._shadow_offset * 2, -self._shadow_offset * 2)
             shadow_rect = lit_rect.inflate(-self._shadow_offset, -self._shadow_offset)
-            shadow_rect = shadow_rect.move(int(self._shadow_tuple[0] / 2),
-                                           int(self._shadow_tuple[1] / 2))
+            shadow_rect = shadow_rect.move(int(self._shadow_tuple[0] / 2), int(self._shadow_tuple[1] / 2))
 
             pygame.draw.rect(self._surface, self._font_selected_color, lit_rect)
             pygame.draw.rect(self._surface, self._shadow_color, shadow_rect)
@@ -370,8 +365,7 @@ class ScrollBar(Widget):
         assert isinstance(value, NumberInstance)
         assert 0 < value
         self._page_ctrl_length = value
-        self._slider_position = min(self._slider_position,
-                                    self._page_ctrl_length - self._page_step)
+        self._slider_position = min(self._slider_position, self._page_ctrl_length - self._page_step)
         self._apply_size_changes()
 
     def get_thickness(self) -> int:
