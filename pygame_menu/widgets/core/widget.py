@@ -1169,8 +1169,7 @@ class Widget(Base):
 
         else:
             for pos in position:
-                assert pos in (POSITION_NORTH, POSITION_SOUTH, POSITION_EAST,
-                               POSITION_WEST), \
+                assert pos in (POSITION_NORTH, POSITION_SOUTH, POSITION_EAST, POSITION_WEST), \
                     f'only north, south, east, and west positions are valid, ' \
                     f'but received "{pos}"'
 
