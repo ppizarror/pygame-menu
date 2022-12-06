@@ -847,8 +847,7 @@ class Frame(Widget):
                 w._set_position_relative_to_frame()
         super(Frame, self).set_position(x, y)
         if self.is_scrollable:
-            self._frame_scrollarea.set_position(self._rect.x,
-                                                self._rect.y + self._title_height())
+            self._frame_scrollarea.set_position(self._rect.x, self._rect.y + self._title_height())
         return self
 
     def draw(self, surface: 'pygame.Surface') -> 'Frame':
@@ -867,6 +866,8 @@ class Frame(Widget):
                 if widget.is_selected():
                     selected_widget = widget
                 widget.draw(surface)
+            if selected_widget is not None:
+                selected_widget.draw_after_if_selected(surface)
             self._draw_border(surface)
             self._decorator.draw_post(surface)
 
@@ -958,13 +959,11 @@ class Frame(Widget):
                 continue
             elif align == ALIGN_LEFT:
                 x_left += w.get_margin()[0]
-                self._pos[w.get_id()] = (x_left,
-                                         self._get_vt(w, v_pos) + w.get_margin()[1])
+                self._pos[w.get_id()] = (x_left, self._get_vt(w, v_pos) + w.get_margin()[1])
                 x_left += w.get_width()
             elif align == ALIGN_RIGHT:
                 x_right -= (w.get_width() + w.get_margin()[0])
-                self._pos[w.get_id()] = (self._width + x_right,
-                                         self._get_vt(w, v_pos) + w.get_margin()[1])
+                self._pos[w.get_id()] = (self._width + x_right, self._get_vt(w, v_pos) + w.get_margin()[1])
             dw = x_left - x_right
             if dw > self._width and not self._relax:
                 raise _FrameSizeException(
@@ -987,8 +986,7 @@ class Frame(Widget):
                 continue
             if align == ALIGN_CENTER:
                 x_center += w.get_margin()[0]
-                self._pos[w.get_id()] = (x_center,
-                                         self._get_vt(w, v_pos) + w.get_margin()[1])
+                self._pos[w.get_id()] = (x_center, self._get_vt(w, v_pos) + w.get_margin()[1])
                 x_center += w.get_width()
 
     def _update_position_vertical(self) -> None:
@@ -1011,8 +1009,7 @@ class Frame(Widget):
                 y_top += w.get_height()
             elif v_pos == POSITION_SOUTH:
                 y_bottom -= (w.get_height() + w.get_margin()[1])
-                self._pos[w.get_id()] = (self._get_ht(w, align) + w.get_margin()[0],
-                                         self._height + y_bottom)
+                self._pos[w.get_id()] = (self._get_ht(w, align) + w.get_margin()[0], self._height + y_bottom)
             dh = y_top - y_bottom
             if dh > self._height and not self._relax:
                 raise _FrameSizeException(
@@ -1036,8 +1033,7 @@ class Frame(Widget):
                 continue
             if v_pos == POSITION_CENTER:
                 y_center += w.get_margin()[1]
-                self._pos[w.get_id()] = (self._get_ht(w, align) + w.get_margin()[0],
-                                         y_center)
+                self._pos[w.get_id()] = (self._get_ht(w, align) + w.get_margin()[0], y_center)
                 y_center += w.get_height()
 
     def update_position(self) -> 'Frame':
