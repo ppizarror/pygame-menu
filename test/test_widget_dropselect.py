@@ -963,23 +963,3 @@ class DropSelectWidgetTest(BaseTest):
         s1.active = True
         menu.draw(surface)
         self.assertEqual(s1.last_surface, surf)
-
-    def test_frame_scrollable(self) -> None:
-        """
-        Test dropselect within scrollable frame.
-        """
-        screen = pygame.display.set_mode((1000, 800))
-        menu = pygame_menu.Menu('frame', 400, 800)
-        frame = menu.add.frame_v(400, 2000, background_color=(50, 50, 50), padding=0, max_width=300, max_height=200)
-        frame.set_title('My Frame App', title_font_color='white', padding_inner=(2, 5))
-        frame.pack(menu.add.dropselect(
-            title='Is pygame-menu epic?',
-            items=[('Yes', 0),
-                   ('Absolutely Yes', 1)],
-            font_color='white',
-            font_size=16,
-            selection_option_font_size=20
-        ))
-        for i in range(20):
-            frame.pack(menu.add.button(i, font_color='white', button_id=f'b{i}'))
-        menu.mainloop(screen)

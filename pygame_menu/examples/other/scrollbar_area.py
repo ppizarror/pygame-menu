@@ -95,11 +95,8 @@ def iter_world(area: 'ScrollArea') -> Generator:
         params = WORLDS[name]
         area._rect.width = params['win'][0]
         area._rect.height = params['win'][1]
-        text = LEGEND.format(params['win'][0], params['win'][1],
-                             params['size'][0], params['size'][1])
-        area.set_world(make_world(params['size'][0],
-                                  params['size'][1],
-                                  text))
+        text = LEGEND.format(params['win'][0], params['win'][1], params['size'][0], params['size'][1])
+        area.set_world(make_world(params['size'][0], params['size'][1], text))
         area.set_position(*params['pos'])
         yield params
 

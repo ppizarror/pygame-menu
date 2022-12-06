@@ -224,8 +224,7 @@ def main(test: bool = False) -> None:
             time_string = str(datetime.timedelta(seconds=int(timer[0])))
             time_blit = timer_font.render(time_string, True, (255, 255, 255))
             time_blit_size = time_blit.get_size()
-            surface.blit(time_blit, (int(W_SIZE / 2 - time_blit_size[0] / 2),
-                                     int(H_SIZE / 2 - time_blit_size[1] / 2)))
+            surface.blit(time_blit, (int(W_SIZE / 2 - time_blit_size[0] / 2), int(H_SIZE / 2 - time_blit_size[1] / 2)))
         else:
             # Background color if the menu is enabled and timer is hidden
             surface.fill((40, 0, 40))
@@ -236,8 +235,7 @@ def main(test: bool = False) -> None:
             if event.type == pygame.QUIT:
                 exit()
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE and \
-                        current_menu.get_title() == 'Main Menu':
+                if event.key == pygame.K_ESCAPE and current_menu.get_title() == 'Main Menu':
                     main_menu.toggle()
 
         if main_menu.is_enabled():

@@ -205,8 +205,7 @@ def main(test: bool = False) -> None:
                                    value_format=lambda x: range_values_discrete[x])
 
     # Add a progress bar
-    progress = settings_menu.add.progress_bar('Progress', default=rslider.get_value(),
-                                              progressbar_id='progress')
+    progress = settings_menu.add.progress_bar('Progress', default=rslider.get_value(), progressbar_id='progress')
 
     def on_change_slider(val: int) -> None:
         """

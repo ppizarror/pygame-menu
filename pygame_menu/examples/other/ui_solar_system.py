@@ -257,8 +257,7 @@ class SolarSystemApp(object):
 
             # Add go back button with a background image
             submenu.add.vertical_margin(150)
-            go_back = submenu.add.button('Back to Menu', pygame_menu.events.BACK,
-                                         cursor=pygame_menu.locals.CURSOR_HAND)
+            go_back = submenu.add.button('Back to Menu', pygame_menu.events.BACK, cursor=pygame_menu.locals.CURSOR_HAND)
             go_back_img = planet.image.copy().resize(150, 150)
             # Get color from figure's center pixel
             go_back_color = go_back_img.get_at((100, 100), ignore_alpha=True)
@@ -292,8 +291,7 @@ class SolarSystemApp(object):
             button.get_decorator().add_baseimage(0, 2, planet.image, centered=True)
             button.set_attribute('planet', planet)
             button.add_draw_callback(self.rotate_planet)
-            button_selection = pygame_menu.widgets.LeftArrowSelection(arrow_size=(20, 30),
-                                                                      blink_ms=1000)
+            button_selection = pygame_menu.widgets.LeftArrowSelection(arrow_size=(20, 30), blink_ms=1000)
             button.set_selection_effect(button_selection.set_color(go_back_color))
 
             # Set random times

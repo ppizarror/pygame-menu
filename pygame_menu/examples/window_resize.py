@@ -48,8 +48,7 @@ if __name__ == '__main__':
                 break
             if event.type == pygame.VIDEORESIZE:
                 # Update the surface
-                surface = pygame.display.set_mode((event.w, event.h),
-                                                  pygame.RESIZABLE)
+                surface = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
                 # Call the menu event
                 on_resize()
 
