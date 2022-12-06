@@ -2025,10 +2025,6 @@ class Menu(Base):
                 if widget.is_selected():
                     selected_widget_draw = widget, self._current._widgets_surface
                 widget.draw(self._current._widgets_surface)
-                if isinstance(widget, Frame):
-                    f_selected_widget = widget.selected_widget_draw
-                    if f_selected_widget[0] is not None:
-                        selected_widget_draw = f_selected_widget
 
             if selected_widget_draw[0] is not None:
                 selected_widget_draw[0].draw_after_if_selected(selected_widget_draw[1])

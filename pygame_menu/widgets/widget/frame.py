@@ -885,6 +885,8 @@ class Frame(Widget):
                 if widget.is_selected():
                     selected_widget = widget
                 widget.draw(self._surface)
+            if selected_widget is not None:
+                selected_widget.draw_after_if_selected(self._surface)
             self._frame_scrollarea.draw(surface)
             self._draw_border(surface)
 
