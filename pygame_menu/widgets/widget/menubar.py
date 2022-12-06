@@ -53,10 +53,10 @@ _MODE_BACK = 1021
 
 # Custom types
 MenuBarStyleModeType = Literal[MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_SIMPLE,
-                               MENUBAR_STYLE_TITLE_ONLY,
-                               MENUBAR_STYLE_TITLE_ONLY_DIAGONAL,
-                               MENUBAR_STYLE_NONE, MENUBAR_STYLE_UNDERLINE,
-                               MENUBAR_STYLE_UNDERLINE_TITLE]
+MENUBAR_STYLE_TITLE_ONLY,
+MENUBAR_STYLE_TITLE_ONLY_DIAGONAL,
+MENUBAR_STYLE_NONE, MENUBAR_STYLE_UNDERLINE,
+MENUBAR_STYLE_UNDERLINE_TITLE]
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -245,9 +245,9 @@ class MenuBar(Widget):
         # then the button will not be displayed
         # noinspection PyProtectedMember
         return (self._mouse_enabled or self._touchscreen_enabled) and self._backbox and \
-               not (self._box_mode == _MODE_CLOSE and
-                    self._menu is not None and
-                    self._menu._onclose is None)
+            not (self._box_mode == _MODE_CLOSE and
+                 self._menu is not None and
+                 self._menu._onclose is None)
 
     def _draw(self, surface: 'pygame.Surface') -> None:
         if len(self._polygon_pos) > 2:
@@ -256,10 +256,8 @@ class MenuBar(Widget):
         # Draw backbox if enabled
         if self._backbox_visible():
             # noinspection PyArgumentList
-            pygame.draw.rect(surface, self._backbox_background_color,
-                             self._backbox_rect, self._backbox_border_width)
-            pygame.draw.polygon(surface, self._backbox_background_color,
-                                self._backbox_pos)
+            pygame.draw.rect(surface, self._backbox_background_color, self._backbox_rect, self._backbox_border_width)
+            pygame.draw.polygon(surface, self._backbox_background_color, self._backbox_pos)
 
         surface.blit(self._surface,
                      (self._rect.topleft[0] + self._offsetx,
@@ -326,10 +324,8 @@ class MenuBar(Widget):
             a = self._rect.x, self._rect.y
             b = self._rect.x + self._width - 1, self._rect.y
             c = self._rect.x + self._width - 1, self._rect.y + self._rect.height * 0.6
-            d = self._rect.x + self._rect.width + 25 + self._offsetx, \
-                self._rect.y + self._rect.height * 0.6
-            e = self._rect.x + self._rect.width + 5 + self._offsetx, \
-                self._rect.y + self._rect.height
+            d = self._rect.x + self._rect.width + 25 + self._offsetx, self._rect.y + self._rect.height * 0.6
+            e = self._rect.x + self._rect.width + 5 + self._offsetx, self._rect.y + self._rect.height
             f = self._rect.x, self._rect.y + self._rect.height
             self._polygon_pos = a, b, c, d, e, f
             cross_size = int(self._rect.height * 0.6)
@@ -365,8 +361,7 @@ class MenuBar(Widget):
             """
             a = self._rect.x, self._rect.y
             b = self._rect.x + self._rect.width + 5 + self._offsetx, self._rect.y
-            c = self._rect.x + self._rect.width + 5 + self._offsetx, \
-                self._rect.y + self._rect.height
+            c = self._rect.x + self._rect.width + 5 + self._offsetx, self._rect.y + self._rect.height
             d = self._rect.x, self._rect.y + self._rect.height
             self._polygon_pos = a, b, c, d
             cross_size = int(self._rect.height * 0.6 * self._backbox_visible())
@@ -384,8 +379,7 @@ class MenuBar(Widget):
             """
             a = self._rect.x, self._rect.y
             b = self._rect.x + self._rect.width + 25 + self._offsetx, self._rect.y
-            c = self._rect.x + self._rect.width + 5 + self._offsetx, \
-                self._rect.y + self._rect.height
+            c = self._rect.x + self._rect.width + 5 + self._offsetx, self._rect.y + self._rect.height
             d = self._rect.x, self._rect.y + self._rect.height
             self._polygon_pos = a, b, c, d
             cross_size = int(self._rect.height * 0.6 * self._backbox_visible())
@@ -437,10 +431,8 @@ class MenuBar(Widget):
             """
             # dy = 3
             a = self._rect.x, self._rect.y + 0.91 * self._rect.height + dy
-            b = self._rect.x + self._rect.width + 5 + self._offsetx, \
-                self._rect.y + 0.91 * self._rect.height + dy
-            c = self._rect.x + self._rect.width + 5 + self._offsetx, \
-                self._rect.y + self._rect.height + dy
+            b = self._rect.x + self._rect.width + 5 + self._offsetx, self._rect.y + 0.91 * self._rect.height + dy
+            c = self._rect.x + self._rect.width + 5 + self._offsetx, self._rect.y + self._rect.height + dy
             d = self._rect.x, self._rect.y + self._rect.height + dy
             self._polygon_pos = a, b, c, d
             cross_size = int(0.6 * self._rect.height * self._backbox_visible())

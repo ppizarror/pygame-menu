@@ -48,8 +48,7 @@ class Base(object):
         if self._class_id__repr__:
             return self.get_class_id()
         if self._id__repr__:
-            return sup_repr.replace(' object at ',
-                                    f'["{self.get_id()}"] object at ')
+            return sup_repr.replace(' object at ', f'["{self.get_id()}"] object at ')
         return sup_repr
 
     def _update__repr___(self, obj: 'Base') -> None:

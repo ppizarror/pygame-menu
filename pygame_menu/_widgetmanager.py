@@ -109,8 +109,7 @@ class WidgetManager(
         attributes['background_color'] = background_color
 
         # background_inflate
-        background_inflate = kwargs.pop('background_inflate',
-                                        self._theme.widget_background_inflate)
+        background_inflate = kwargs.pop('background_inflate', self._theme.widget_background_inflate)
         if background_inflate == 0:
             background_inflate = (0, 0)
         assert_vector(background_inflate, 2, int)
@@ -119,15 +118,13 @@ class WidgetManager(
         attributes['background_inflate'] = background_inflate
 
         # border_color
-        border_color = kwargs.pop('border_color',
-                                  self._theme.widget_border_color)
+        border_color = kwargs.pop('border_color', self._theme.widget_border_color)
         if border_color is not None:
             border_color = assert_color(border_color)
         attributes['border_color'] = border_color
 
         # border_inflate
-        border_inflate = kwargs.pop('border_inflate',
-                                    self._theme.widget_border_inflate)
+        border_inflate = kwargs.pop('border_inflate', self._theme.widget_border_inflate)
         if border_inflate == 0:
             border_inflate = (0, 0)
         assert_vector(border_inflate, 2, int)
@@ -136,8 +133,7 @@ class WidgetManager(
         attributes['border_inflate'] = border_inflate
 
         # border_position
-        border_position = kwargs.pop('border_position',
-                                     self._theme.widget_border_position)
+        border_position = kwargs.pop('border_position', self._theme.widget_border_position)
         assert_position_vector(border_position)
         attributes['border_position'] = border_position
 
@@ -187,19 +183,16 @@ class WidgetManager(
         attributes['font_shadow'] = font_shadow
 
         # font_shadow_color
-        font_shadow_color = kwargs.pop('font_shadow_color',
-                                       self._theme.widget_font_shadow_color)
+        font_shadow_color = kwargs.pop('font_shadow_color', self._theme.widget_font_shadow_color)
         attributes['font_shadow_color'] = assert_color(font_shadow_color)
 
         # font_shadow_offset
-        font_shadow_offset = kwargs.pop('font_shadow_offset',
-                                        self._theme.widget_font_shadow_offset)
+        font_shadow_offset = kwargs.pop('font_shadow_offset', self._theme.widget_font_shadow_offset)
         assert isinstance(font_shadow_offset, int)
         attributes['font_shadow_offset'] = font_shadow_offset
 
         # font_shadow_position
-        font_shadow_position = kwargs.pop('font_shadow_position',
-                                          self._theme.widget_font_shadow_position)
+        font_shadow_position = kwargs.pop('font_shadow_position', self._theme.widget_font_shadow_position)
         assert isinstance(font_shadow_position, str)
         attributes['font_shadow_position'] = font_shadow_position
 
@@ -226,8 +219,7 @@ class WidgetManager(
         attributes['readonly_color'] = assert_color(readonly_color)
 
         # readonly_selected_color
-        readonly_selected_color = kwargs.pop('readonly_selected_color',
-                                             self._theme.readonly_selected_color)
+        readonly_selected_color = kwargs.pop('readonly_selected_color', self._theme.readonly_selected_color)
         attributes['readonly_selected_color'] = assert_color(readonly_selected_color)
 
         # selection_color
@@ -253,8 +245,7 @@ class WidgetManager(
         attributes['shadow_width'] = kwargs.pop('shadow_width', self._theme.widget_shadow_width)
 
         # tab_size
-        attributes['tab_size'] = kwargs.pop('tab_size',
-                                            self._theme.widget_tab_size)
+        attributes['tab_size'] = kwargs.pop('tab_size', self._theme.widget_tab_size)
 
         return attributes
 

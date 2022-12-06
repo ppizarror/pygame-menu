@@ -41,10 +41,9 @@ DROPSELECT_MULTIPLE_SFORMAT_LIST_COMMA = 'comma-list'
 DROPSELECT_MULTIPLE_SFORMAT_LIST_HYPHEN = 'hyphen-list'
 DROPSELECT_MULTIPLE_SFORMAT_TOTAL = 'total'
 
-DropSelectMultipleSFormatType = Union[Literal[DROPSELECT_MULTIPLE_SFORMAT_TOTAL,
-                                              DROPSELECT_MULTIPLE_SFORMAT_LIST_COMMA,
-                                              DROPSELECT_MULTIPLE_SFORMAT_LIST_HYPHEN],
-                                      Callable[[List[str]], str]]
+DropSelectMultipleSFormatType = Union[
+    Literal[DROPSELECT_MULTIPLE_SFORMAT_TOTAL, DROPSELECT_MULTIPLE_SFORMAT_LIST_COMMA, DROPSELECT_MULTIPLE_SFORMAT_LIST_HYPHEN],
+    Callable[[List[str]], str]]
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -689,69 +688,46 @@ class DropSelectMultipleManager(AbstractWidgetManager, ABC):
         attributes = self._filter_widget_attributes(kwargs)
 
         # Get selection box properties
-        selection_box_arrow_color = kwargs.pop('selection_box_arrow_color',
-                                               self._theme.widget_box_arrow_color)
-        selection_box_arrow_margin = kwargs.pop('selection_box_arrow_margin',
-                                                self._theme.widget_box_arrow_margin)
-        selection_box_bgcolor = kwargs.pop('selection_box_bgcolor',
-                                           self._theme.widget_box_background_color)
-        selection_box_border_color = kwargs.pop('selection_box_border_color',
-                                                self._theme.widget_box_border_color)
-        selection_box_border_width = kwargs.pop('selection_box_border_width',
-                                                self._theme.widget_box_border_width)
+        selection_box_arrow_color = kwargs.pop('selection_box_arrow_color', self._theme.widget_box_arrow_color)
+        selection_box_arrow_margin = kwargs.pop('selection_box_arrow_margin', self._theme.widget_box_arrow_margin)
+        selection_box_bgcolor = kwargs.pop('selection_box_bgcolor', self._theme.widget_box_background_color)
+        selection_box_border_color = kwargs.pop('selection_box_border_color', self._theme.widget_box_border_color)
+        selection_box_border_width = kwargs.pop('selection_box_border_width', self._theme.widget_box_border_width)
         selection_box_height = kwargs.pop('selection_box_height', 3)
-        selection_box_inflate = kwargs.pop('selection_box_inflate',
-                                           self._theme.widget_border_inflate)
-        selection_box_margin = kwargs.pop('selection_box_margin',
-                                          self._theme.widget_box_margin)
-        selection_box_text_margin = kwargs.pop('selection_box_text_margin',
-                                               self._theme.widget_box_arrow_margin[0])
+        selection_box_inflate = kwargs.pop('selection_box_inflate', self._theme.widget_border_inflate)
+        selection_box_margin = kwargs.pop('selection_box_margin', self._theme.widget_box_margin)
+        selection_box_text_margin = kwargs.pop('selection_box_text_margin', self._theme.widget_box_arrow_margin[0])
         selection_box_width = kwargs.pop('selection_box_width', 0)
         selection_infinite = kwargs.pop('selection_infinite', False)
-        selection_option_active_bgcolor = kwargs.pop('selection_option_active_bgcolor',
-                                                     (188, 227, 244))
-        selection_option_active_font_color = kwargs.pop('selection_option_active_font_color',
-                                                        (0, 0, 0))
-        selection_option_border_color = kwargs.pop('selection_option_border_color',
-                                                   self._theme.scrollbar_color)
-        selection_option_border_width = kwargs.pop('selection_option_border_width',
-                                                   self._theme.widget_box_border_width)
+        selection_option_active_bgcolor = kwargs.pop('selection_option_active_bgcolor', (188, 227, 244))
+        selection_option_active_font_color = kwargs.pop('selection_option_active_font_color', (0, 0, 0))
+        selection_option_border_color = kwargs.pop('selection_option_border_color', self._theme.scrollbar_color)
+        selection_option_border_width = kwargs.pop('selection_option_border_width', self._theme.widget_box_border_width)
         # selection_option_cursor = kwargs.pop('selection_option_cursor', None)
         selection_option_font = kwargs.pop('selection_option_font', None)
         selection_option_font_color = kwargs.pop('selection_option_font_color', (0, 0, 0))
         selection_option_font_size = kwargs.pop('selection_option_font_size', None)
         selection_option_padding = kwargs.pop('selection_option_padding', (2, 5))
-        selection_option_selected_bgcolor = kwargs.pop('selection_option_selected_bgcolor',
-                                                       (142, 247, 141))
+        selection_option_selected_bgcolor = kwargs.pop('selection_option_selected_bgcolor', (142, 247, 141))
         selection_option_selected_box = kwargs.pop('selection_option_selected_box', True)
-        selection_option_selected_box_border = kwargs.pop('selection_option_selected_box_border',
-                                                          self._theme.widget_box_border_width)
-        selection_option_selected_box_color = kwargs.pop('selection_option_selected_box_color',
-                                                         self._theme.widget_box_arrow_color)
-        selection_option_selected_box_height = kwargs.pop('selection_option_selected_box_height',
-                                                          0.5)
+        selection_option_selected_box_border = kwargs.pop('selection_option_selected_box_border', self._theme.widget_box_border_width)
+        selection_option_selected_box_color = kwargs.pop('selection_option_selected_box_color', self._theme.widget_box_arrow_color)
+        selection_option_selected_box_height = kwargs.pop('selection_option_selected_box_height', 0.5)
         selection_option_selected_box_margin = kwargs.pop('selection_option_selected_box_margin',
                                                           (0, self._theme.widget_box_arrow_margin[1],
                                                            self._theme.widget_box_arrow_margin[2]))
-        selection_option_selected_font_color = kwargs.pop('selection_option_selected_font_color',
-                                                          (0, 0, 0))
+        selection_option_selected_font_color = kwargs.pop('selection_option_selected_font_color', (0, 0, 0))
 
         # Get selection box scrollbar properties
         scrollbar_color = kwargs.pop('scrollbar_color', self._theme.scrollbar_color)
         scrollbar_cursor = kwargs.pop('scrollbar_cursor', self._theme.scrollbar_cursor)
-        scrollbar_shadow_color = kwargs.pop('scrollbar_shadow_color',
-                                            self._theme.scrollbar_shadow_color)
-        scrollbar_shadow_offset = kwargs.pop('scrollbar_shadow_offset',
-                                             self._theme.scrollbar_shadow_offset)
-        scrollbar_shadow_position = kwargs.pop('scrollbar_shadow_position',
-                                               self._theme.scrollbar_shadow_position)
+        scrollbar_shadow_color = kwargs.pop('scrollbar_shadow_color', self._theme.scrollbar_shadow_color)
+        scrollbar_shadow_offset = kwargs.pop('scrollbar_shadow_offset', self._theme.scrollbar_shadow_offset)
+        scrollbar_shadow_position = kwargs.pop('scrollbar_shadow_position', self._theme.scrollbar_shadow_position)
         scrollbar_shadow = kwargs.pop('scrollbar_shadow', self._theme.scrollbar_shadow)
-        scrollbar_slider_color = kwargs.pop('scrollbar_slider_color',
-                                            self._theme.scrollbar_slider_color)
-        scrollbar_slider_hover_color = kwargs.pop('scrollbar_slider_hover_color',
-                                                  self._theme.scrollbar_slider_hover_color)
-        scrollbar_slider_pad = kwargs.pop('scrollbar_slider_pad',
-                                          self._theme.scrollbar_slider_pad)
+        scrollbar_slider_color = kwargs.pop('scrollbar_slider_color', self._theme.scrollbar_slider_color)
+        scrollbar_slider_hover_color = kwargs.pop('scrollbar_slider_hover_color', self._theme.scrollbar_slider_hover_color)
+        scrollbar_slider_pad = kwargs.pop('scrollbar_slider_pad', self._theme.scrollbar_slider_pad)
         scrollbar_thick = kwargs.pop('scrollbar_thick', self._theme.scrollbar_thick)
         scrollbars = kwargs.pop('scrollbars', self._theme.scrollarea_position)
 

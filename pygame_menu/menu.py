@@ -654,8 +654,7 @@ class Menu(Base):
             self._auto_centering = False
 
         # Scroll area outer margin
-        self._scrollarea_margin = [self._theme.scrollarea_outer_margin[0],
-                                   self._theme.scrollarea_outer_margin[1]]
+        self._scrollarea_margin = [self._theme.scrollarea_outer_margin[0], self._theme.scrollarea_outer_margin[1]]
         if abs(self._scrollarea_margin[0]) < 1:
             self._scrollarea_margin[0] *= self._width
         if abs(self._scrollarea_margin[1]) < 1:
@@ -1385,8 +1384,7 @@ class Menu(Base):
                 # First fill all maximum width columns
                 for col in range(self._used_columns):
                     if self._column_max_width[col] is not None:
-                        column_widths[col] = min(self._column_max_width[col],
-                                                 max_width / self._used_columns)
+                        column_widths[col] = min(self._column_max_width[col], max_width / self._used_columns)
                         mod_width -= column_widths[col]
                         non_max -= 1
 

@@ -538,8 +538,7 @@ class RangeSlider(Widget):
         surface.blit(self._surface, self._rect.topleft)
 
         # Draw range line
-        surface.blit(self._range_line, (self._range_line_pos[0] + self._rect.x,
-                                        self._range_line_pos[1] + self._rect.y))
+        surface.blit(self._range_line, (self._range_line_pos[0] + self._rect.x, self._range_line_pos[1] + self._rect.y))
 
         # Draw range values and ticks
         for i in range(len(self._range_text_value_surfaces)):
@@ -555,15 +554,12 @@ class RangeSlider(Widget):
 
         # Draw range box
         if self._range_box_enabled and (not self._single or self._range_box_single_slider):
-            surface.blit(self._range_box, (self._range_box_pos[0] + self._rect.x,
-                                           self._range_box_pos[1] + self._rect.y))
+            surface.blit(self._range_box, (self._range_box_pos[0] + self._rect.x, self._range_box_pos[1] + self._rect.y))
 
         # Draw sliders
-        surface.blit(self._slider[0], (self._slider_pos[0][0] + self._rect.x,
-                                       self._slider_pos[0][1] + self._rect.y))
+        surface.blit(self._slider[0], (self._slider_pos[0][0] + self._rect.x, self._slider_pos[0][1] + self._rect.y))
         if not self._single:
-            surface.blit(self._slider[1], (self._slider_pos[1][0] + self._rect.x,
-                                           self._slider_pos[1][1] + self._rect.y))
+            surface.blit(self._slider[1], (self._slider_pos[1][0] + self._rect.x, self._slider_pos[1][1] + self._rect.y))
 
         # Draw slider highlighted
         if self._slider_selected[0] and not self.readonly and self.is_selected():
@@ -652,8 +648,7 @@ class RangeSlider(Widget):
         # Create basic title
         self._surface = self._render_string(self._title, self.get_font_color_status())
         self._rect.width, self._rect.height = self._surface.get_size()
-        self._range_pos = (self._rect.width + self._range_margin[0],
-                           int(self._rect.height / 2) + self._range_margin[1])
+        self._range_pos = (self._rect.width + self._range_margin[0], int(self._rect.height / 2) + self._range_margin[1])
 
         # Create slider
         sel_s = self._slider_selected[0] and self._selected and not self.readonly, \
@@ -682,10 +677,8 @@ class RangeSlider(Widget):
             )
 
         # Create the range line
-        self._range_line = make_surface(self._range_width, self._range_line_height,
-                                        fill_color=self._range_line_color)
-        self._range_line_pos = (self._range_pos[0],
-                                int(self._range_pos[1] - self._range_line_height / 2))
+        self._range_line = make_surface(self._range_width, self._range_line_height, fill_color=self._range_line_color)
+        self._range_line_pos = (self._range_pos[0], int(self._range_pos[1] - self._range_line_height / 2))
 
         # Create the range font surfaces
         range_values: List[NumberType] = []
@@ -728,8 +721,7 @@ class RangeSlider(Widget):
         range_values_size = 0, 0  # Stores sizing
         if self._range_text_value_enabled:
             s = self._range_text_value_surfaces[0]
-            range_values_size = (int(s.get_width() * 0.7),
-                                 int(self._range_text_value_surfaces_pos[0][1] + s.get_height() * 0.9))
+            range_values_size = (int(s.get_width() * 0.7), int(self._range_text_value_surfaces_pos[0][1] + s.get_height() * 0.9))
 
         # Create the range box surface
         if not self._single or self._range_box_single_slider:
@@ -738,21 +730,18 @@ class RangeSlider(Widget):
             self._range_box = make_surface(
                 max(0, r_width), self._range_box_height,
                 fill_color=self._range_box_color if not self.readonly else self._range_box_color_readonly)
-            self._range_box_pos = (self._range_pos[0] + r_pos,
-                                   self._range_pos[1] - int(self._range_box.get_height() / 2))
+            self._range_box_pos = (self._range_pos[0] + r_pos, self._range_pos[1] - int(self._range_box.get_height() / 2))
 
         # Create the slider values
         self._slider_text_value_surfaces = []
         self._slider_text_value_surfaces_pos = []
         for v in self._value:
-            t = self._font_slider_value.render(self._value_format(v), self._font_antialias,
-                                               self._slider_text_value_color)  # Value text
+            t = self._font_slider_value.render(self._value_format(v), self._font_antialias, self._slider_text_value_color)  # Value text
             st = make_surface(
                 t.get_width() + self._slider_text_value_padding[1] + self._slider_text_value_padding[3],
                 t.get_height() + self._slider_text_value_padding[0] + self._slider_text_value_padding[2],
                 fill_color=self._slider_text_value_bgcolor)
-            st.blit(t, (self._slider_text_value_padding[1],
-                        self._slider_text_value_padding[0] + self._slider_text_value_vmargin))
+            st.blit(t, (self._slider_text_value_padding[1], self._slider_text_value_padding[0] + self._slider_text_value_vmargin))
 
             # Create surface that considers st and the triangle
             tri_height = int(self._slider_text_value_margin / 2) - int(self._slider_height / 2)
@@ -773,8 +762,7 @@ class RangeSlider(Widget):
             self._slider_text_value_surfaces_pos.append((st_x, st_y))
 
         # Update maximum rect height
-        self._rect.height = max(self._rect.height, self._slider_height,
-                                self._range_line_height, range_values_size[1])
+        self._rect.height = max(self._rect.height, self._slider_height, self._range_line_height, range_values_size[1])
         self._rect.height += self._range_margin[1]
         self._rect.width += self._range_width + self._range_margin[0] + range_values_size[0]
 
@@ -1255,8 +1243,7 @@ class RangeSliderManager(AbstractWidgetManager, ABC):
 
         range_margin = kwargs.pop('range_margin', self._theme.widget_box_margin)
         range_line_color = kwargs.pop('range_line_color', self._theme.widget_font_color)
-        range_text_value_color = kwargs.pop('range_text_value_color',
-                                            self._theme.widget_font_color)
+        range_text_value_color = kwargs.pop('range_text_value_color', self._theme.widget_font_color)
         range_text_value_font_height = kwargs.pop('range_text_value_font_height', 0.6)
         range_text_value_tick_hfactor = kwargs.pop('range_text_value_tick_hfactor', 0.5)
         slider_text_value_font_height = kwargs.pop('slider_text_value_font_height', 0.6)

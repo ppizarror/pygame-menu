@@ -345,8 +345,7 @@ class Theme(object):
         self.title_bar_modify_scrollarea = self._get(kwargs, 'title_bar_modify_scrollarea', bool, True)
         self.title_bar_style = self._get(kwargs, 'title_bar_style', int, MENUBAR_STYLE_ADAPTIVE)
         self.title_close_button = self._get(kwargs, 'title_close_button', bool, True)
-        self.title_close_button_background_color = self._get(kwargs, 'title_close_button_background_color', 'color',
-                                                             (255, 255, 255))
+        self.title_close_button_background_color = self._get(kwargs, 'title_close_button_background_color', 'color', (255, 255, 255))
         self.title_close_button_cursor = self._get(kwargs, 'title_close_button_cursor', 'cursor')
         self.title_fixed = self._get(kwargs, 'title_fixed', bool, True)
         self.title_floating = self._get(kwargs, 'title_floating', bool, False)
@@ -356,8 +355,7 @@ class Theme(object):
         self.title_font_shadow = self._get(kwargs, 'title_font_shadow', bool, False)
         self.title_font_shadow_color = self._get(kwargs, 'title_font_shadow_color', 'color', (0, 0, 0))
         self.title_font_shadow_offset = self._get(kwargs, 'title_font_shadow_offset', int, 2)
-        self.title_font_shadow_position = self._get(kwargs, 'title_font_shadow_position', 'position',
-                                                    POSITION_NORTHWEST)
+        self.title_font_shadow_position = self._get(kwargs, 'title_font_shadow_position', 'position', POSITION_NORTHWEST)
         self.title_font_size = self._get(kwargs, 'title_font_size', int, 40)
         self.title_offset = self._get(kwargs, 'title_offset', 'tuple2', (5, -1))
         self.title_updates_pygame_display = self._get(kwargs, 'title_updates_pygame_display', bool, False)
@@ -399,20 +397,17 @@ class Theme(object):
         self.widget_font = self._get(kwargs, 'widget_font', 'font', FONT_OPEN_SANS)
         self.widget_font_antialias = self._get(kwargs, 'widget_font_antialias', bool, True)
         self.widget_font_background_color = self._get(kwargs, 'widget_font_background_color', 'color_none', )
-        self.widget_font_background_color_from_menu = self._get(kwargs, 'widget_font_background_color_from_menu', bool,
-                                                                False)
+        self.widget_font_background_color_from_menu = self._get(kwargs, 'widget_font_background_color_from_menu', bool, False)
         self.widget_font_color = self._get(kwargs, 'widget_font_color', 'color', (70, 70, 70))
         self.widget_font_shadow = self._get(kwargs, 'widget_font_shadow', bool, False)
         self.widget_font_shadow_color = self._get(kwargs, 'widget_font_shadow_color', 'color', (0, 0, 0))
         self.widget_font_shadow_offset = self._get(kwargs, 'widget_font_shadow_offset', int, 2)
-        self.widget_font_shadow_position = self._get(kwargs, 'widget_font_shadow_position', 'position',
-                                                     POSITION_NORTHWEST)
+        self.widget_font_shadow_position = self._get(kwargs, 'widget_font_shadow_position', 'position', POSITION_NORTHWEST)
         self.widget_font_size = self._get(kwargs, 'widget_font_size', int, 30)
         self.widget_margin = self._get(kwargs, 'widget_margin', 'tuple2', (0, 0))
         self.widget_offset = self._get(kwargs, 'widget_offset', 'tuple2', (0, 0))
         self.widget_padding = self._get(kwargs, 'widget_padding', PaddingInstance, (4, 8))
-        self.widget_selection_effect = self._get(kwargs, 'widget_selection_effect', Selection,
-                                                 HighlightSelection(margin_x=0, margin_y=0))
+        self.widget_selection_effect = self._get(kwargs, 'widget_selection_effect', Selection, HighlightSelection(margin_x=0, margin_y=0))
         self.widget_shadow_aa = self._get(kwargs, 'widget_shadow_aa', int, 4)
         self.widget_shadow_color = self._get(kwargs, 'widget_shadow_color', 'color', (0, 0, 0))
         self.widget_shadow_radius = self._get(kwargs, 'widget_shadow_radius', int, 0)

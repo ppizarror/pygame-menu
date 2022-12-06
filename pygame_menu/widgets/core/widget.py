@@ -193,14 +193,12 @@ def _check_widget_mouseleave(
 
 
 # Types
-BackgroundSurfaceType = Optional[List[Union['pygame.Rect', 'pygame.Surface',
-                                            Optional[Union[ColorType, 'pygame_menu.BaseImage']]]]]
+BackgroundSurfaceType = Optional[List[Union['pygame.Rect', 'pygame.Surface', Optional[Union[ColorType, 'pygame_menu.BaseImage']]]]]
 CallbackMouseType = Optional[Union[Callable[['Widget', EventType], Any], CallableNoArgsType]]
 CallbackSelectType = Optional[Union[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any], CallableNoArgsType]]
 WidgetBorderPositionType = Union[str, List[str], Tuple[str, ...]]
 WidgetBorderType = Tuple[ColorType, int, WidgetBorderPositionType, Tuple2IntType]
-WidgetShadowType = Dict[str, Union[Optional['pygame.Surface'], Optional['pygame.Rect'],
-                                   bool, Tuple[str, int, int, int, Tuple3IntType]]]
+WidgetShadowType = Dict[str, Union[Optional['pygame.Surface'], Optional['pygame.Rect'], bool, Tuple[str, int, int, int, Tuple3IntType]]]
 
 
 # noinspection PyProtectedMember
@@ -1088,7 +1086,7 @@ class Widget(Base):
         :return: Color, width, position, and inflate
         """
         return self._border_color, self._border_width, \
-               self._border_position, self._border_inflate
+            self._border_position, self._border_inflate
 
     def _draw_border(self, surface: 'pygame.Surface') -> None:
         """
@@ -1503,8 +1501,7 @@ class Widget(Base):
             return self
         if self._frame is not None and self._frame.is_scrollable and \
                 self._frame.get_scrollarea() is not None:
-            self._frame.get_scrollarea().scroll_to_rect(self.get_frame().get_rect(),
-                                                        margin, scroll_parent)
+            self._frame.get_scrollarea().scroll_to_rect(self.get_frame().get_rect(), margin, scroll_parent)
         if self._scrollarea is not None:
             rect = self.get_rect()
             # rect.y += self._border_width
@@ -2612,7 +2609,7 @@ class Widget(Base):
         :return: Widget width and height in px
         """
         return self.get_width(apply_padding=apply_padding, apply_selection=apply_selection), \
-               self.get_height(apply_padding=apply_padding, apply_selection=apply_selection)
+            self.get_height(apply_padding=apply_padding, apply_selection=apply_selection)
 
     def _focus(self) -> None:
         """

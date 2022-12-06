@@ -435,12 +435,10 @@ class TextInput(Widget):
         if pygame.vernum[0] >= 2:  # pygame 1.9.3 don't have vernum.major
             surface.blit(self._surface, (self._rect.x, self._rect.y))  # Draw string
             if self._selection_surface is not None:  # Draw selection
-                surface.blit(self._selection_surface, (self._selection_position[0],
-                                                       self._selection_position[1]))
+                surface.blit(self._selection_surface, (self._selection_position[0], self._selection_position[1]))
         else:
             if self._selection_surface is not None:  # Draw selection
-                surface.blit(self._selection_surface, (self._selection_position[0],
-                                                       self._selection_position[1]))
+                surface.blit(self._selection_surface, (self._selection_position[0], self._selection_position[1]))
             surface.blit(self._surface, (self._rect.x, self._rect.y))  # Draw string
 
         # Draw cursor
@@ -617,13 +615,11 @@ class TextInput(Widget):
             #  |                                                   |
             #  |---------------------------------------------------|
 
-            posx2 = max(self._get_max_container_width() - self._input_underline_size * 1.75,
-                        current_rect.width)
+            posx2 = max(self._get_max_container_width() - self._input_underline_size * 1.75, current_rect.width)
             delta_ch = posx2 - self._title_size - self._selection_effect.get_width()
             char = math.ceil(delta_ch / self._input_underline_size)
             for i in range(10):  # Find the best guess for
-                fw = self._font_render_string(
-                    self._input_underline * int(char), color).get_width()
+                fw = self._font_render_string(self._input_underline * int(char), color).get_width()
                 char += 1
                 if fw >= delta_ch:
                     break
@@ -643,8 +639,7 @@ class TextInput(Widget):
 
         # Render char
         self._current_underline_string = underline_string
-        underline = self._font_render_string(underline_string, color,
-                                             use_background_color=False)
+        underline = self._font_render_string(underline_string, color, use_background_color=False)
 
         # Create a new surface
         new_width = max(self._title_size + underline.get_size()[0], current_rect.width)
@@ -662,8 +657,7 @@ class TextInput(Widget):
 
         # Blit current surface
         new_surface.blit(surface, (0, 0))
-        new_surface.blit(underline, (self._title_size,
-                                     uvm + self._input_underline_vmargin))
+        new_surface.blit(underline, (self._title_size, uvm + self._input_underline_vmargin))
 
         # Return new surface
         return new_surface
@@ -683,8 +677,7 @@ class TextInput(Widget):
             if self._cursor_size is not None:
                 self._cursor_surface = make_surface(*self._cursor_size)
             else:
-                self._cursor_surface = make_surface(self._font_size / 20 + 1,
-                                                    self._rect.height - 2)
+                self._cursor_surface = make_surface(self._font_size / 20 + 1, self._rect.height - 2)
             self._cursor_surface.fill(self._cursor_color)
 
         # Get string
@@ -692,8 +685,7 @@ class TextInput(Widget):
 
         # Calculate x position
         if self._maxwidth == 0:  # If no limit is provided
-            cursor_x_pos = self._cursor_offset \
-                           + self._font.size(self._title + string[:self._cursor_position])[0]
+            cursor_x_pos = self._cursor_offset + self._font.size(self._title + string[:self._cursor_position])[0]
         else:  # Calculate position depending on renderbox
             string = string[self._renderbox[0]:(self._renderbox[0] + self._renderbox[2])]
             cursor_x_pos = self._cursor_offset + self._font.size(self._title + string)[0]
@@ -1143,8 +1135,7 @@ class TextInput(Widget):
         Move cursor to right position.
         """
         # Add one to cursor_pos, but do not exceed len(input_string)
-        self._cursor_position = min(self._cursor_position + 1,
-                                    len(self._input_string))
+        self._cursor_position = min(self._cursor_position + 1, len(self._input_string))
         self._update_renderbox(right=1)
 
     def _blur(self) -> None:
@@ -1213,9 +1204,7 @@ class TextInput(Widget):
             # Add new status to history
             self._history.insert(self._history_index, new_string)
             self._history_cursor.insert(self._history_index, self._cursor_position)
-            self._history_renderbox.insert(self._history_index,
-                                           [self._renderbox[0], self._renderbox[1],
-                                            self._renderbox[2]])
+            self._history_renderbox.insert(self._history_index, [self._renderbox[0], self._renderbox[1], self._renderbox[2]])
 
             if len(self._history) > self._max_history:
                 self._history.pop(0)
@@ -1519,8 +1508,7 @@ class TextInput(Widget):
         # Check mouse pressed
         # noinspection PyArgumentList
         mouse_left, mouse_middle, mouse_right = pygame.mouse.get_pressed()
-        self._mouse_is_pressed = (mouse_left or mouse_right or mouse_middle) and \
-                                 self._mouse_enabled
+        self._mouse_is_pressed = (mouse_left or mouse_right or mouse_middle) and self._mouse_enabled
 
         rect = self.get_rect(to_real_position=True)
 
@@ -1723,11 +1711,9 @@ class TextInput(Widget):
                             if self._selection_box[0] == self._selection_box[1]:
                                 self._selection_box[1] = self._selection_box[0] + 1
                             else:
-                                self._selection_box[1] = min(len(self._input_string),
-                                                             self._selection_box[1] + 1)
+                                self._selection_box[1] = min(len(self._input_string), self._selection_box[1] + 1)
                         else:
-                            self._selection_box[0] = min(self._selection_box[1],
-                                                         self._selection_box[0] + 1)
+                            self._selection_box[0] = min(self._selection_box[1], self._selection_box[0] + 1)
                     else:
                         if self._unselect_text():
                             break
@@ -1753,8 +1739,7 @@ class TextInput(Widget):
                             if self._selection_box[1] - self._selection_box[0] == 1:
                                 self._selection_box[1] = self._selection_box[0]
                             else:
-                                self._selection_box[1] = max(self._selection_box[0],
-                                                             self._selection_box[1] - 1)
+                                self._selection_box[1] = max(self._selection_box[0], self._selection_box[1] - 1)
                     else:
                         if self._unselect_text():
                             break
@@ -1873,8 +1858,7 @@ class TextInput(Widget):
             elif event.type == pygame.MOUSEBUTTONDOWN and self._mouse_enabled and \
                     event.button in (1, 2, 3) or \
                     event.type == FINGERDOWN and self._touchscreen_enabled:
-                if self.get_selected_time() > self._keyrepeat_mouse_interval_ms or \
-                        hasattr(event, 'test'):
+                if self.get_selected_time() > self._keyrepeat_mouse_interval_ms or hasattr(event, 'test'):
                     if self._selection_active:
                         self._unselect_text()
                     self._cursor_ms_counter = 0

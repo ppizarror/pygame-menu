@@ -333,8 +333,7 @@ class DropSelect(Widget):
             self._selection_option_font_style['name'] = self._font_name
         if self._selection_option_font_style['size'] is None:
             self._selection_option_font_style['size'] = int(self._font_size)
-        self._option_font = get_font(self._selection_option_font_style['name'],
-                                     self._selection_option_font_style['size'])
+        self._option_font = get_font(self._selection_option_font_style['name'], self._selection_option_font_style['size'])
         if self._selection_box_width == 0:
             f = self._render_option_string(self._placeholder)
             h = self._render_string(self._title, self.get_font_color_status()).get_height()
@@ -457,8 +456,7 @@ class DropSelect(Widget):
             self._drop_frame.set_menu(None)
 
         # Create frame
-        self._drop_frame = Frame(max_width, max(total_height, 1), ORIENTATION_VERTICAL,
-                                 frame_id=self._id + '+frame-' + uuid4(short=True))
+        self._drop_frame = Frame(max_width, max(total_height, 1), ORIENTATION_VERTICAL, frame_id=self._id + '+frame-' + uuid4(short=True))
         self._drop_frame._accepts_title = False
         self._drop_frame._menu_can_be_none_pack = True
         self._drop_frame.hide()
