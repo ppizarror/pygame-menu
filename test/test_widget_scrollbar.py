@@ -84,35 +84,28 @@ class ScrollBarWidgetTest(BaseTest):
         sb.update(PygameEventUtils.mouse_click(1, 1))
         self.assertFalse(sb.scrolling)
         self.assertEqual(sb.get_value(), 50)
-        sb.update(PygameEventUtils.middle_rect_click(sb.get_rect(to_absolute_position=True),
-                                                     evtype=pygame.MOUSEBUTTONDOWN))
+        sb.update(PygameEventUtils.middle_rect_click(sb.get_rect(to_absolute_position=True), evtype=pygame.MOUSEBUTTONDOWN))
         self.assertEqual(sb.get_value(), 964)
         sb.update(PygameEventUtils.middle_rect_click(sb.get_slider_rect(), evtype=pygame.MOUSEBUTTONDOWN))
         self.assertTrue(sb.scrolling)
-        sb.update(PygameEventUtils.middle_rect_click(sb.get_slider_rect(), button=4,
-                                                     evtype=pygame.MOUSEBUTTONDOWN))
+        sb.update(PygameEventUtils.middle_rect_click(sb.get_slider_rect(), button=4, evtype=pygame.MOUSEBUTTONDOWN))
         self.assertEqual(sb.get_value(), 875)
-        sb.update(PygameEventUtils.middle_rect_click(sb.get_slider_rect(), button=5,
-                                                     evtype=pygame.MOUSEBUTTONDOWN))
+        sb.update(PygameEventUtils.middle_rect_click(sb.get_slider_rect(), button=5, evtype=pygame.MOUSEBUTTONDOWN))
         self.assertEqual(sb.get_value(), 964)
         self.assertEqual(sb.get_value_percentage(), 0.522)
 
         # Test mouse motion while scrolling
-        sb.update(PygameEventUtils.middle_rect_click(sb.get_slider_rect(), button=5, delta=(0, 50), rel=(0, 10),
-                                                     evtype=pygame.MOUSEMOTION))
+        sb.update(PygameEventUtils.middle_rect_click(sb.get_slider_rect(), button=5, delta=(0, 50), rel=(0, 10), evtype=pygame.MOUSEMOTION))
         self.assertEqual(sb.get_value_percentage(), 0.547)
-        sb.update(PygameEventUtils.middle_rect_click(sb.get_slider_rect(), button=5, delta=(0, 50), rel=(0, -10),
-                                                     evtype=pygame.MOUSEMOTION))
+        sb.update(PygameEventUtils.middle_rect_click(sb.get_slider_rect(), button=5, delta=(0, 50), rel=(0, -10), evtype=pygame.MOUSEMOTION))
         self.assertEqual(sb.get_value_percentage(), 0.522)
-        sb.update(PygameEventUtils.middle_rect_click(sb.get_slider_rect(), button=5, delta=(0, 50), rel=(0, 999),
-                                                     evtype=pygame.MOUSEMOTION))
+        sb.update(PygameEventUtils.middle_rect_click(sb.get_slider_rect(), button=5, delta=(0, 50), rel=(0, 999), evtype=pygame.MOUSEMOTION))
         self.assertEqual(sb.get_value_percentage(), 1)
         sb.readonly = True
         self.assertFalse(sb.update([]))
 
         # Ignore events if mouse outside the region
-        sb.update(PygameEventUtils.middle_rect_click(sb.get_slider_rect(), button=5, delta=(0, 999), rel=(0, -10),
-                                                     evtype=pygame.MOUSEMOTION))
+        sb.update(PygameEventUtils.middle_rect_click(sb.get_slider_rect(), button=5, delta=(0, 999), rel=(0, -10), evtype=pygame.MOUSEMOTION))
         self.assertIn(sb.get_value_percentage(), (0.976, 1))
 
         # Test remove onreturn

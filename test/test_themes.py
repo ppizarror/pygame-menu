@@ -131,8 +131,7 @@ class ThemeTest(BaseTest):
         self.assertRaises(ValueError, lambda: self.assertIsNone(t._format_color_opacity(None)))
         self.assertRaises(ValueError, lambda: t._format_color_opacity('1,2,3'))
         self.assertRaises(AssertionError, lambda: t._format_color_opacity((1, 1, -1)))
-        self.assertRaises(AssertionError,
-                          lambda: self.assertEqual(t._format_color_opacity((1, 1, 1.1)), (1, 1, 1, 255)))
+        self.assertRaises(AssertionError, lambda: self.assertEqual(t._format_color_opacity((1, 1, 1.1)), (1, 1, 1, 255)))
 
     def test_str_int_color(self) -> None:
         """

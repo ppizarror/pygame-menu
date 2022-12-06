@@ -84,8 +84,7 @@ class WidgetsTest(BaseTest):
 
         menu = MenuUtils.generic_menu()
         self.assertRaises(ValueError, lambda: menu.add.button('btn', function_kwargs, test=True))
-        btn = menu.add.button('btn', function_kwargs, test=True, accept_kwargs=True,
-                              padding=10)
+        btn = menu.add.button('btn', function_kwargs, test=True, accept_kwargs=True, padding=10)
         self.assertEqual(len(btn._kwargs), 1)
         self.assertRaises(KeyError, lambda: btn.add_self_to_kwargs('test'))
         self.assertEqual(len(btn._kwargs), 1)
@@ -99,10 +98,8 @@ class WidgetsTest(BaseTest):
         Test widget copy.
         """
         widget = pygame_menu.widgets.Widget()
-        self.assertRaises(pygame_menu.widgets.core.widget._WidgetCopyException,
-                          lambda: copy.copy(widget))
-        self.assertRaises(pygame_menu.widgets.core.widget._WidgetCopyException,
-                          lambda: copy.deepcopy(widget))
+        self.assertRaises(pygame_menu.widgets.core.widget._WidgetCopyException, lambda: copy.copy(widget))
+        self.assertRaises(pygame_menu.widgets.core.widget._WidgetCopyException, lambda: copy.deepcopy(widget))
 
     def test_onselect(self) -> None:
         """
@@ -139,8 +136,7 @@ class WidgetsTest(BaseTest):
         self.assertEqual(test[0], color)
 
         # Image
-        image = menu.add.image(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES,
-                               onselect=on_select, font_color=(2, 9))
+        image = menu.add.image(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES, onselect=on_select, font_color=(2, 9))
         image.select(update_menu=True)
         self.assertEqual(test[0], color)
         image.is_selectable = True
@@ -347,16 +343,11 @@ class WidgetsTest(BaseTest):
         Test widget padding.
         """
         menu = MenuUtils.generic_menu()
-        self.assertRaises(Exception,
-                          lambda: menu.add.button(0, pygame_menu.events.NONE, padding=-1))
-        self.assertRaises(Exception,
-                          lambda: menu.add.button(0, pygame_menu.events.NONE, padding='a'))
-        self.assertRaises(Exception,
-                          lambda: menu.add.button(0, pygame_menu.events.NONE, padding=(0, 0, 0, 0, 0)))
-        self.assertRaises(Exception,
-                          lambda: menu.add.button(0, pygame_menu.events.NONE, padding=(0, 0, -1, 0)))
-        self.assertRaises(Exception,
-                          lambda: menu.add.button(0, pygame_menu.events.NONE, padding=(0, 0, 'a', 0)))
+        self.assertRaises(Exception, lambda: menu.add.button(0, pygame_menu.events.NONE, padding=-1))
+        self.assertRaises(Exception, lambda: menu.add.button(0, pygame_menu.events.NONE, padding='a'))
+        self.assertRaises(Exception, lambda: menu.add.button(0, pygame_menu.events.NONE, padding=(0, 0, 0, 0, 0)))
+        self.assertRaises(Exception, lambda: menu.add.button(0, pygame_menu.events.NONE, padding=(0, 0, -1, 0)))
+        self.assertRaises(Exception, lambda: menu.add.button(0, pygame_menu.events.NONE, padding=(0, 0, 'a', 0)))
 
         w = menu.add.button(0, pygame_menu.events.NONE, padding=25)
         self.assertEqual(w.get_padding(), (25, 25, 25, 25))
@@ -467,8 +458,7 @@ class WidgetsTest(BaseTest):
         menu = MenuUtils.generic_menu()
         self.assertRaises(AssertionError, lambda: menu.add.button('', border_width=-1))
         self.assertRaises(AssertionError, lambda: menu.add.button('', border_width=1.5))
-        self.assertRaises(AssertionError, lambda: menu.add.button('', border_width=1, border_color=(0, 0, 0),
-                                                                  border_inflate=(-1, - 1)))
+        self.assertRaises(AssertionError, lambda: menu.add.button('', border_width=1, border_color=(0, 0, 0), border_inflate=(-1, - 1)))
         btn = menu.add.button('', border_width=1, border_color=(0, 0, 0), border_inflate=(1, 1))
         self.assertEqual(btn._border_width, 1)
         self.assertEqual(btn._border_color, (0, 0, 0, 255))

@@ -49,8 +49,7 @@ class ProgressBarWidgetTest(BaseTest):
         Test progressbar value.
         """
         menu = MenuUtils.generic_menu()
-        pb = menu.add.progress_bar('progress', default=50,
-                                   progress_text_align=pygame_menu.locals.ALIGN_LEFT)
+        pb = menu.add.progress_bar('progress', default=50, progress_text_align=pygame_menu.locals.ALIGN_LEFT)
         self.assertRaises(AssertionError, lambda: pb.set_value(-1))
         self.assertRaises(AssertionError, lambda: pb.set_value('a'))
         self.assertEqual(pb.get_value(), 50)
@@ -67,7 +66,6 @@ class ProgressBarWidgetTest(BaseTest):
         Test empty title.
         """
         menu = MenuUtils.generic_menu()
-        pb = menu.add.progress_bar('', box_margin=(0, 0), padding=0,
-                                   progress_text_align=pygame_menu.locals.ALIGN_RIGHT)
+        pb = menu.add.progress_bar('', box_margin=(0, 0), padding=0, progress_text_align=pygame_menu.locals.ALIGN_RIGHT)
         self.assertEqual(pb.get_size(), (150, 41 if PYGAME_V2 else 42))
         self.assertFalse(pb.is_selected())

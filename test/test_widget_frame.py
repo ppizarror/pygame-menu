@@ -1749,12 +1749,9 @@ class FrameWidgetTest(unittest.TestCase):
         # self.assertRaises(ValueError, lambda: frame.get_title())
         frame._accepts_title = False
         self.assertRaises(pygame_menu.widgets.widget.frame._FrameDoNotAcceptTitle, lambda: frame.set_title('title'))
-        self.assertRaises(pygame_menu.widgets.widget.frame._FrameDoNotAcceptTitle,
-                          lambda: frame.add_title_button('none', None))
-        self.assertRaises(pygame_menu.widgets.widget.frame._FrameDoNotAcceptTitle,
-                          lambda: frame.add_title_generic_button(None))
-        self.assertRaises(pygame_menu.widgets.widget.frame._FrameDoNotAcceptTitle,
-                          lambda: frame.remove_title())
+        self.assertRaises(pygame_menu.widgets.widget.frame._FrameDoNotAcceptTitle, lambda: frame.add_title_button('none', None))
+        self.assertRaises(pygame_menu.widgets.widget.frame._FrameDoNotAcceptTitle, lambda: frame.add_title_generic_button(None))
+        self.assertRaises(pygame_menu.widgets.widget.frame._FrameDoNotAcceptTitle, lambda: frame.remove_title())
         frame._accepts_title = True
         self.assertEqual(frame.get_size(), (300, 200))
         self.assertEqual(frame.get_title(), '')
@@ -1910,12 +1907,9 @@ class FrameWidgetTest(unittest.TestCase):
         self.assertEqual(frame2.get_translate(), (10, 115))
 
         # Test more title gradients
-        frame2.set_title('title',
-                         background_color=((10, 36, 106), (166, 202, 240), True, True))
-        frame2.set_title('title',
-                         background_color=((10, 36, 106), (166, 202, 240), True, False))
-        frame2.set_title('title',
-                         background_color=((10, 36, 106), (166, 202, 240), False, False))
+        frame2.set_title('title', background_color=((10, 36, 106), (166, 202, 240), True, True))
+        frame2.set_title('title', background_color=((10, 36, 106), (166, 202, 240), True, False))
+        frame2.set_title('title', background_color=((10, 36, 106), (166, 202, 240), False, False))
 
         frame2.set_frame(frame_title)
         frame2.set_scrollarea(frame2.get_scrollarea())
@@ -1935,8 +1929,7 @@ class FrameWidgetTest(unittest.TestCase):
         self.assertEqual(frame.get_size(), (400, 400))
 
         # No title, scrollable to non-scrollable
-        frame2 = menu.add.frame_v(300, 200, background_color=(170, 170, 170),
-                                  frame_id='f2', max_width=200, max_height=100)
+        frame2 = menu.add.frame_v(300, 200, background_color=(170, 170, 170), frame_id='f2', max_width=200, max_height=100)
         self.assertEqual(frame2.get_size(), (204, 112))
         frame2.resize(400, 400)  # Now it's not scrollable
         self.assertFalse(frame2.is_scrollable)
@@ -1944,8 +1937,7 @@ class FrameWidgetTest(unittest.TestCase):
         self.assertRaises(AssertionError, lambda: frame2.resize(400, 400, max_width=300, max_height=200))
 
         # No title, scrollable to scrollable
-        frame3 = menu.add.frame_v(300, 200, background_color=(170, 170, 170),
-                                  frame_id='f3', max_width=200, max_height=100)
+        frame3 = menu.add.frame_v(300, 200, background_color=(170, 170, 170), frame_id='f3', max_width=200, max_height=100)
         self.assertTrue(frame3.is_scrollable)
         frame3.resize(400, 400, max_width=300, max_height=300)
         self.assertEqual(frame3.get_size(), (320, 320))

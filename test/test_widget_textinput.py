@@ -250,8 +250,7 @@ class TextInputWidgetTest(BaseTest):
         menu = MenuUtils.generic_menu()
 
         password_input = menu.add.text_input('title', password=True, input_underline='_')
-        self.assertRaises(ValueError,  # Password cannot be set
-                          lambda: password_input.set_value('new_value'))
+        self.assertRaises(ValueError, lambda: password_input.set_value('new_value'))  # Password cannot be set
         password_input.set_value('')  # No error
         password_input._selected = False
         password_input.draw(surface)
@@ -330,8 +329,7 @@ class TextInputWidgetTest(BaseTest):
 
         # Test keyup
         self.assertIn(pygame.K_1, textinput._keyrepeat_counters.keys())
-        self.assertFalse(textinput.update(
-            PygameEventUtils.key(pygame.K_1, keyup=True, char='1')))
+        self.assertFalse(textinput.update(PygameEventUtils.key(pygame.K_1, keyup=True, char='1')))
         self.assertNotIn(pygame.K_1, textinput._keyrepeat_counters.keys())
 
         # Test tab
@@ -356,9 +354,7 @@ class TextInputWidgetTest(BaseTest):
         menu = MenuUtils.generic_menu()
 
         # Test maxchar and undo/redo
-        textinput = menu.add.text_input('title',
-                                        input_underline='_',
-                                        maxchar=20)
+        textinput = menu.add.text_input('title', input_underline='_', maxchar=20)
         textinput.set_value('the size of this textinput is way greater than the limit')
         self.assertEqual(textinput.get_value(), 'eater than the limit')  # same as maxchar
         self.assertEqual(textinput._cursor_position, 20)
@@ -595,27 +591,20 @@ class TextInputWidgetTest(BaseTest):
         # Base rgb
         widget = menu.add.color_input('title', color_type='rgb', input_separator=',')
         widget.set_value((123, 234, 55))
-        self.assertRaises(AssertionError,
-                          lambda: widget.set_value('0,0,0'))
-        self.assertRaises(AssertionError,
-                          lambda: widget.set_value((255, 0,)))
-        self.assertRaises(AssertionError,
-                          lambda: widget.set_value((255, 255, -255)))
+        self.assertRaises(AssertionError, lambda: widget.set_value('0,0,0'))
+        self.assertRaises(AssertionError, lambda: widget.set_value((255, 0,)))
+        self.assertRaises(AssertionError, lambda: widget.set_value((255, 255, -255)))
         _assert_color(widget, 123, 234, 55)
 
         # Test separator
         widget = menu.add.color_input('color', color_type='rgb', input_separator='+')
         widget.set_value((34, 12, 12))
         self.assertEqual(widget._input_string, '34+12+12')
-        self.assertRaises(AssertionError,
-                          lambda: menu.add.color_input('title', color_type='rgb', input_separator=''))
-        self.assertRaises(AssertionError,
-                          lambda: menu.add.color_input('title', color_type='rgb', input_separator='  '))
-        self.assertRaises(AssertionError,
-                          lambda: menu.add.color_input('title', color_type='unknown'))
+        self.assertRaises(AssertionError, lambda: menu.add.color_input('title', color_type='rgb', input_separator=''))
+        self.assertRaises(AssertionError, lambda: menu.add.color_input('title', color_type='rgb', input_separator='  '))
+        self.assertRaises(AssertionError, lambda: menu.add.color_input('title', color_type='unknown'))
         for i in range(10):
-            self.assertRaises(AssertionError,
-                              lambda: menu.add.color_input('title', color_type='rgb', input_separator=str(i)))
+            self.assertRaises(AssertionError, lambda: menu.add.color_input('title', color_type='rgb', input_separator=str(i)))
 
         # Empty rgb
         widget = menu.add.color_input('color', color_type='rgb', input_separator=',')
@@ -690,31 +679,22 @@ class TextInputWidgetTest(BaseTest):
         self.assertEqual(widget._input_string, '')
 
         # Assert invalid defaults rgb
-        self.assertRaises(AssertionError,
-                          lambda: menu.add.color_input('title', color_type='rgb', default=(255, 255,)))
-        self.assertRaises(AssertionError,
-                          lambda: menu.add.color_input('title', color_type='rgb', default=(255, 255)))
-        self.assertRaises(AssertionError,
-                          lambda: menu.add.color_input('title', color_type='rgb', default=(255, 255, 255, 255)))
+        self.assertRaises(AssertionError, lambda: menu.add.color_input('title', color_type='rgb', default=(255, 255,)))
+        self.assertRaises(AssertionError, lambda: menu.add.color_input('title', color_type='rgb', default=(255, 255)))
+        self.assertRaises(AssertionError, lambda: menu.add.color_input('title', color_type='rgb', default=(255, 255, 255, 255)))
 
         # Assert hex widget
         widget = menu.add.color_input('title', color_type='hex')
         self.assertEqual(widget._input_string, '#')
         self.assertEqual(widget._cursor_position, 1)
         _assert_invalid_color(widget)
-        self.assertRaises(AssertionError,
-                          lambda: widget.set_value('#FF'))
-        self.assertRaises(AssertionError,
-                          lambda: widget.set_value('#FFFFF<'))
-        self.assertRaises(AssertionError,
-                          lambda: widget.set_value('#FFFFF'))
-        self.assertRaises(AssertionError,
-                          lambda: widget.set_value('#F'))
+        self.assertRaises(AssertionError, lambda: widget.set_value('#FF'))
+        self.assertRaises(AssertionError, lambda: widget.set_value('#FFFFF<'))
+        self.assertRaises(AssertionError, lambda: widget.set_value('#FFFFF'))
+        self.assertRaises(AssertionError, lambda: widget.set_value('#F'))
         # noinspection SpellCheckingInspection
-        self.assertRaises(AssertionError,
-                          lambda: widget.set_value('FFFFF'))
-        self.assertRaises(AssertionError,
-                          lambda: widget.set_value('F'))
+        self.assertRaises(AssertionError, lambda: widget.set_value('FFFFF'))
+        self.assertRaises(AssertionError, lambda: widget.set_value('F'))
         widget.set_value('FF00FF')
         _assert_color(widget, 255, 0, 255)
         widget.set_value('#12FfAa')
@@ -772,9 +752,7 @@ class TextInputWidgetTest(BaseTest):
         self.assertEqual(widget.get_value(as_string=True), '#')
         widget.set_value('#ffffff')
         self.assertEqual(widget.get_width(), width)
-        widget.update(
-            PygameEventUtils.key(pygame.K_BACKSPACE,
-                                 keydown=True))  # remove the last character, now color is invalid
+        widget.update(PygameEventUtils.key(pygame.K_BACKSPACE, keydown=True))  # remove the last character, now color is invalid
         self.assertEqual(widget.get_value(as_string=True), '#FFFFF')  # is upper
         widget.render()
         self.assertEqual(widget.get_width(), 200)
