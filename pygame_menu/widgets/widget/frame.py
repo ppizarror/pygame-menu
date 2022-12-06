@@ -56,8 +56,11 @@ S_FINGER_FACTOR = 0.25, 0.25
 
 # Types
 FrameTitleBackgroundColorType = Optional[Union[ColorInputType, ColorInputGradientType, BaseImage]]
-FrameTitleButtonType = Literal[FRAME_TITLE_BUTTON_CLOSE, FRAME_TITLE_BUTTON_MAXIMIZE,
-                               FRAME_TITLE_BUTTON_MINIMIZE]
+FrameTitleButtonType = Literal[
+    FRAME_TITLE_BUTTON_CLOSE,
+    FRAME_TITLE_BUTTON_MAXIMIZE,
+    FRAME_TITLE_BUTTON_MINIMIZE
+]
 
 
 # noinspection PyMissingOrEmptyDocstring,PyProtectedMember
@@ -308,9 +311,7 @@ class Frame(Widget):
                 area_color.draw(title_bg, area=title_bg.get_rect())
             elif area_color is not None:
                 title_bg.fill(area_color, rect=title_bg.get_rect())
-        self._frame_title.get_decorator().add_surface(-title_bg.get_width() / 2,
-                                                      -title_bg.get_height() / 2 + 1,
-                                                      title_bg)
+        self._frame_title.get_decorator().add_surface(-title_bg.get_width() / 2, -title_bg.get_height() / 2 + 1, title_bg)
 
         # Set background
         is_color = True
@@ -1579,8 +1580,7 @@ class Frame(Widget):
             self._menu.move_widget_index(widget, self, render=False)
             if isinstance(widget, Frame):
                 reverse = menu_widgets.index(widget) == len(menu_widgets) - 1
-                widgs = widget.get_widgets(unpack_subframes_include_frame=True,
-                                           reverse=reverse)
+                widgs = widget.get_widgets(unpack_subframes_include_frame=True, reverse=reverse)
 
                 first_moved_widget = None
                 last_moved_widget = None
@@ -1875,27 +1875,17 @@ class FrameManager(AbstractWidgetManager, ABC):
             max_height=kwargs.pop('max_height', height) - pad_v,
             max_width=kwargs.pop('max_width', width) - pad_h,
             scrollarea_color=kwargs.pop('scrollarea_color', None),
-            scrollbar_color=kwargs.pop('scrollbar_color',
-                                       self._theme.scrollbar_color),
-            scrollbar_cursor=kwargs.pop('scrollbar_cursor',
-                                        self._theme.scrollbar_cursor),
-            scrollbar_shadow=kwargs.pop('scrollbar_shadow',
-                                        self._theme.scrollbar_shadow),
-            scrollbar_shadow_color=kwargs.pop('scrollbar_shadow_color',
-                                              self._theme.scrollbar_shadow_color),
-            scrollbar_shadow_offset=kwargs.pop('scrollbar_shadow_offset',
-                                               self._theme.scrollbar_shadow_offset),
-            scrollbar_shadow_position=kwargs.pop('scrollbar_shadow_position',
-                                                 self._theme.scrollbar_shadow_position),
-            scrollbar_slider_color=kwargs.pop('scrollbar_slider_color',
-                                              self._theme.scrollbar_slider_color),
-            scrollbar_slider_hover_color=kwargs.pop('scrollbar_slider_hover_color',
-                                                    self._theme.scrollbar_slider_hover_color),
-            scrollbar_slider_pad=kwargs.pop('scrollbar_slider_pad',
-                                            self._theme.scrollbar_slider_pad),
+            scrollbar_color=kwargs.pop('scrollbar_color', self._theme.scrollbar_color),
+            scrollbar_cursor=kwargs.pop('scrollbar_cursor', self._theme.scrollbar_cursor),
+            scrollbar_shadow=kwargs.pop('scrollbar_shadow', self._theme.scrollbar_shadow),
+            scrollbar_shadow_color=kwargs.pop('scrollbar_shadow_color', self._theme.scrollbar_shadow_color),
+            scrollbar_shadow_offset=kwargs.pop('scrollbar_shadow_offset', self._theme.scrollbar_shadow_offset),
+            scrollbar_shadow_position=kwargs.pop('scrollbar_shadow_position', self._theme.scrollbar_shadow_position),
+            scrollbar_slider_color=kwargs.pop('scrollbar_slider_color', self._theme.scrollbar_slider_color),
+            scrollbar_slider_hover_color=kwargs.pop('scrollbar_slider_hover_color', self._theme.scrollbar_slider_hover_color),
+            scrollbar_slider_pad=kwargs.pop('scrollbar_slider_pad', self._theme.scrollbar_slider_pad),
             scrollbar_thick=kwargs.pop('scrollbar_thick', self._theme.scrollbar_thick),
-            scrollbars=get_scrollbars_from_position(
-                kwargs.pop('scrollbars', self._theme.scrollarea_position))
+            scrollbars=get_scrollbars_from_position(kwargs.pop('scrollbars', self._theme.scrollarea_position))
         )
 
         self._append_widget(widget)

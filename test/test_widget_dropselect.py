@@ -970,7 +970,7 @@ class DropSelectWidgetTest(BaseTest):
         """
         screen = pygame.display.set_mode((1000, 800))
         menu = pygame_menu.Menu('frame', 400, 800)
-        frame = menu.add.frame_v(400, 2000, background_color=(50, 50, 50), padding=0, max_width=300, max_height=100)
+        frame = menu.add.frame_v(400, 2000, background_color=(50, 50, 50), padding=0, max_width=300, max_height=200)
         frame.set_title('My Frame App', title_font_color='white', padding_inner=(2, 5))
         frame.pack(menu.add.dropselect(
             title='Is pygame-menu epic?',

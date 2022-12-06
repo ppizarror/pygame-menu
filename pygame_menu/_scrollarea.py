@@ -498,13 +498,11 @@ class ScrollArea(Base):
         # Background surface already has previous decorators
         if self._area_color is not None:
             self._make_background_surface()
-            surface.blit(self._bg_surface,
-                         (self._rect.x - self._extend_x, self._rect.y - self._extend_y))
+            surface.blit(self._bg_surface, (self._rect.x - self._extend_x, self._rect.y - self._extend_y))
 
         # Draw world surface
         # noinspection PyTypeChecker
-        surface.blit(self._world, self._view_rect.topleft,
-                     (self.get_offsets(), self._view_rect.size))
+        surface.blit(self._world, self._view_rect.topleft, (self.get_offsets(), self._view_rect.size))
 
         # Then draw scrollbars
         for sbar in self._scrollbars:
