@@ -122,7 +122,6 @@ class Frame(Widget):
     first_index: int  # First selectable widget index
     horizontal: bool
     last_index: int  # Last selectable widget index
-    selected_widget_draw: Tuple[Optional['Widget'], Optional['pygame.Surface']]  # Stores selected widget
 
     def __init__(
             self,
@@ -171,7 +170,6 @@ class Frame(Widget):
         self.is_scrollable = False
         self.is_selectable = False
         self.last_index = -1
-        self.selected_widget_draw = (None, None)
 
     def set_title(
             self,
@@ -895,9 +893,6 @@ class Frame(Widget):
             self._frame_title.draw(surface)
 
         self.apply_draw_callbacks()
-
-        # Stores selected widget
-        self.selected_widget_draw = selected_widget, self.last_surface
 
         return self
 
