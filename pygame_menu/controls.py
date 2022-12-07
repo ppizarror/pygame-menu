@@ -68,7 +68,7 @@ KEY_RIGHT = _locals.K_RIGHT
 KEY_TAB = _locals.K_TAB
 
 
-# noinspection PyMethodMayBeStatic,PyUnusedLocal
+# noinspection PyUnusedLocal
 class Controller(object):
     """
     Controller class. Accepts any object and provides functions to handle each
@@ -81,7 +81,8 @@ class Controller(object):
         self.joy_delay = JOY_DELAY
         self.joy_repeat = JOY_REPEAT
 
-    def apply(self, event: EventType, widget: WidgetType) -> bool:
+    @staticmethod
+    def apply(event: EventType, widget: WidgetType) -> bool:
         """
         Accepts apply key. Requires ``pygame.KEYDOWN``.
 
@@ -91,7 +92,8 @@ class Controller(object):
         """
         return event.key == KEY_APPLY
 
-    def back(self, event: EventType, widget: WidgetType) -> bool:
+    @staticmethod
+    def back(event: EventType, widget: WidgetType) -> bool:
         """
         Accepts back key. Requires ``pygame.KEYDOWN``.
 
@@ -101,7 +103,8 @@ class Controller(object):
         """
         return event.key == KEY_BACK
 
-    def close_menu(self, event: EventType, widget: WidgetType) -> bool:
+    @staticmethod
+    def close_menu(event: EventType, widget: WidgetType) -> bool:
         """
         Accepts close menu key. Requires ``pygame.KEYDOWN``.
 
@@ -111,7 +114,8 @@ class Controller(object):
         """
         return event.key == KEY_CLOSE_MENU
 
-    def delete(self, event: EventType, widget: WidgetType) -> bool:
+    @staticmethod
+    def delete(event: EventType, widget: WidgetType) -> bool:
         """
         Accepts delete key. Requires ``pygame.KEYDOWN``.
 
@@ -121,7 +125,8 @@ class Controller(object):
         """
         return event.key == _locals.K_DELETE
 
-    def end(self, event: EventType, widget: WidgetType) -> bool:
+    @staticmethod
+    def end(event: EventType, widget: WidgetType) -> bool:
         """
         Accepts end key. Requires ``pygame.KEYDOWN``.
 
@@ -131,7 +136,8 @@ class Controller(object):
         """
         return event.key == _locals.K_END
 
-    def escape(self, event: EventType, widget: WidgetType) -> bool:
+    @staticmethod
+    def escape(event: EventType, widget: WidgetType) -> bool:
         """
         Accepts escape key. Requires ``pygame.KEYDOWN``.
 
@@ -141,7 +147,8 @@ class Controller(object):
         """
         return event.key == _locals.K_ESCAPE
 
-    def home(self, event: EventType, widget: WidgetType) -> bool:
+    @staticmethod
+    def home(event: EventType, widget: WidgetType) -> bool:
         """
         Accepts home key. Requires ``pygame.KEYDOWN``.
 
@@ -151,7 +158,8 @@ class Controller(object):
         """
         return event.key == _locals.K_HOME
 
-    def joy_axis_x_left(self, event: EventType, widget: WidgetType) -> bool:
+    @staticmethod
+    def joy_axis_x_left(event: EventType, widget: WidgetType) -> bool:
         """
         Accepts joy movement on x-axis (left direction). Requires ``pygame.JOYAXISMOTION``.
 
@@ -161,7 +169,8 @@ class Controller(object):
         """
         return event.axis == JOY_AXIS_X and event.value < -JOY_DEADZONE
 
-    def joy_axis_x_right(self, event: EventType, widget: WidgetType) -> bool:
+    @staticmethod
+    def joy_axis_x_right(event: EventType, widget: WidgetType) -> bool:
         """
         Accepts joy movement on x-axis (right direction). Requires ``pygame.JOYAXISMOTION``.
 
@@ -171,7 +180,8 @@ class Controller(object):
         """
         return event.axis == JOY_AXIS_X and event.value > JOY_DEADZONE
 
-    def joy_axis_y_down(self, event: EventType, widget: WidgetType) -> bool:
+    @staticmethod
+    def joy_axis_y_down(event: EventType, widget: WidgetType) -> bool:
         """
         Accepts joy movement on y-axis (down direction). Requires ``pygame.JOYAXISMOTION``.
 
@@ -181,7 +191,8 @@ class Controller(object):
         """
         return event.axis == JOY_AXIS_Y and event.value > JOY_DEADZONE
 
-    def joy_axis_y_up(self, event: EventType, widget: WidgetType) -> bool:
+    @staticmethod
+    def joy_axis_y_up(event: EventType, widget: WidgetType) -> bool:
         """
         Accepts joy movement on y-axis (up direction). Requires ``pygame.JOYAXISMOTION``.
 
@@ -191,7 +202,8 @@ class Controller(object):
         """
         return event.axis == JOY_AXIS_Y and event.value < -JOY_DEADZONE
 
-    def joy_back(self, event: EventType, widget: WidgetType) -> bool:
+    @staticmethod
+    def joy_back(event: EventType, widget: WidgetType) -> bool:
         """
         Accepts joy back button. Requires ``pygame.JOYBUTTONDOWN``.
 
@@ -201,7 +213,8 @@ class Controller(object):
         """
         return event.button == JOY_BUTTON_BACK
 
-    def joy_down(self, event: EventType, widget: WidgetType) -> bool:
+    @staticmethod
+    def joy_down(event: EventType, widget: WidgetType) -> bool:
         """
         Accepts joy movement to down direction. Requires ``pygame.JOYHATMOTION``.
 
@@ -211,7 +224,8 @@ class Controller(object):
         """
         return event.value == JOY_DOWN
 
-    def joy_left(self, event: EventType, widget: WidgetType) -> bool:
+    @staticmethod
+    def joy_left(event: EventType, widget: WidgetType) -> bool:
         """
         Accepts joy movement to left direction. Requires ``pygame.JOYHATMOTION``.
 
@@ -221,7 +235,8 @@ class Controller(object):
         """
         return event.value == JOY_LEFT
 
-    def joy_right(self, event: EventType, widget: WidgetType) -> bool:
+    @staticmethod
+    def joy_right(event: EventType, widget: WidgetType) -> bool:
         """
         Accepts joy movement to right direction. Requires ``pygame.JOYHATMOTION``.
 
@@ -231,9 +246,10 @@ class Controller(object):
         """
         return event.value == JOY_RIGHT
 
-    def joy_select(self, event: EventType, widget: WidgetType) -> bool:
+    @staticmethod
+    def joy_select(event: EventType, widget: WidgetType) -> bool:
         """
-        Accepts joy select button. Requires ``pygame.JOYBUTTONDOWN``.
+        Accepts joy select button. Also used for apply(). Requires ``pygame.JOYBUTTONDOWN``.
 
         :param event: Event
         :param widget: Widget that accepts the event
@@ -241,7 +257,8 @@ class Controller(object):
         """
         return event.button == JOY_BUTTON_SELECT
 
-    def joy_up(self, event: EventType, widget: WidgetType) -> bool:
+    @staticmethod
+    def joy_up(event: EventType, widget: WidgetType) -> bool:
         """
         Accepts joy movement to up direction. Requires ``pygame.JOYHATMOTION``.
 
@@ -251,7 +268,8 @@ class Controller(object):
         """
         return event.value == JOY_UP
 
-    def left(self, event: EventType, widget: WidgetType) -> bool:
+    @staticmethod
+    def left(event: EventType, widget: WidgetType) -> bool:
         """
         Accepts left key. Requires ``pygame.KEYDOWN``.
 
@@ -261,7 +279,8 @@ class Controller(object):
         """
         return event.key == KEY_LEFT
 
-    def move_down(self, event: EventType, widget: WidgetType) -> bool:
+    @staticmethod
+    def move_down(event: EventType, widget: WidgetType) -> bool:
         """
         Accepts move down key. Requires ``pygame.KEYDOWN``.
 
@@ -271,7 +290,8 @@ class Controller(object):
         """
         return event.key == KEY_MOVE_DOWN
 
-    def move_up(self, event: EventType, widget: WidgetType) -> bool:
+    @staticmethod
+    def move_up(event: EventType, widget: WidgetType) -> bool:
         """
         Accepts move up key. Requires ``pygame.KEYDOWN``.
 
@@ -281,7 +301,8 @@ class Controller(object):
         """
         return event.key == KEY_MOVE_UP
 
-    def right(self, event: EventType, widget: WidgetType) -> bool:
+    @staticmethod
+    def right(event: EventType, widget: WidgetType) -> bool:
         """
         Accepts right key. Requires ``pygame.KEYDOWN``.
 
@@ -291,7 +312,8 @@ class Controller(object):
         """
         return event.key == KEY_RIGHT
 
-    def tab(self, event: EventType, widget: WidgetType) -> bool:
+    @staticmethod
+    def tab(event: EventType, widget: WidgetType) -> bool:
         """
         Accepts tab key. Requires ``pygame.KEYDOWN``.
 
