@@ -117,7 +117,7 @@ class ControlsTest(BaseTest):
             """
             Custom widget apply event.
             """
-            condition = hasattr(event, 'button') and event.button == 8
+            condition = event.button == 8
             joy_apply[0] = condition
             return condition
 
