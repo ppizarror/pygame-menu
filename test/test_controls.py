@@ -101,6 +101,44 @@ class ControlsTest(BaseTest):
         button.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
         self.assertFalse(test[0])  # It should do nothing as object has new controller
 
+        # Test selector apply
+        sel_apply = [False]
+        joy_apply = [False]
+
+        def custom_widget_apply(event, _) -> bool:
+            """
+            Custom widget apply event.
+            """
+            condition = event.key == pygame.K_SPACE
+            sel_apply[0] = condition
+            return condition
+
+        def custom_joy_apply(event, _) -> bool:
+            """
+            Custom widget apply event.
+            """
+            condition = hasattr(event, 'button') and event.button == 8
+            joy_apply[0] = condition
+            return condition
+
+        new_ctrl_sel = ctrl.Controller()
+        new_ctrl_sel.apply = custom_widget_apply
+        new_ctrl_sel.joy_select = custom_joy_apply
+
+        selector = menu.add.selector('select', ['a', 'b', 'c'])
+        selector.set_controller(new_ctrl_sel)
+        selector.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
+        self.assertFalse(sel_apply[0])
+        selector.update(PygameEventUtils.key(pygame.K_SPACE, keydown=True))
+        self.assertTrue(sel_apply[0])
+        selector.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))  # Rollback
+        self.assertFalse(sel_apply[0])
+
+        # Now tests joy buttons
+        self.assertFalse(joy_apply[0])
+        selector.update(PygameEventUtils.joy_button(8))
+        self.assertTrue(joy_apply[0])
+
         # The same can be done with menu
         original_controller = menu.get_controller()
         menu.set_controller(new_ctrl)
