@@ -67,7 +67,7 @@ class DropSelect(Widget):
     :param dropselect_id: ID of the drop select
     :param default: Index of default item to display. If ``None`` no item is selected
     :param onchange: Callback when changing the drop select item
-    :param onreturn: Callback when pressing return on the selected item
+    :param onreturn: Callback when pressing return (apply) on the selected item
     :param onselect: Function when selecting the widget
     :param open_middle: If ``True`` the selection box is opened in the middle of the menu
     :param placeholder: Text shown if no option is selected yet
@@ -1346,7 +1346,7 @@ class DropSelectManager(AbstractWidgetManager, ABC):
         :param default: Index of default item to display. If ``None`` no item is selected
         :param dropselect_id: ID of the dropselect
         :param onchange: Callback when changing the drop select item
-        :param onreturn: Callback when pressing return on the selected item
+        :param onreturn: Callback when pressing return (apply) on the selected item
         :param onselect: Function when selecting the widget
         :param open_middle: If ``True`` the selection box is opened in the middle of the menu
         :param placeholder: Text shown if no option is selected yet

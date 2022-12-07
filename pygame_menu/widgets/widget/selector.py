@@ -64,7 +64,7 @@ def check_selector_items(items: Union[Tuple, List]) -> None:
 class Selector(Widget):
     """
     Selector widget: several items and two functions that are executed when changing
-    the selector (left/right) and pressing return key on the selected item.
+    the selector (left/right) and pressing return (apply) on the selected item.
 
     The items of the selector are like:
 
@@ -92,7 +92,7 @@ class Selector(Widget):
     :param selector_id: ID of the selector
     :param default: Index of default item to display
     :param onchange: Callback when changing the selector
-    :param onreturn: Callback when pressing return on the selector
+    :param onreturn: Callback when pressing return (apply) on the selector
     :param onselect: Function when selecting the widget
     :param style: Selector style (visual)
     :param style_fancy_arrow_color: Arrow color of fancy style
@@ -517,7 +517,7 @@ class SelectorManager(AbstractWidgetManager, ABC):
         """
         Add a selector to the Menu: several items and two functions that are
         executed when changing the selector (left/right) and pressing return
-        button on the selected item.
+        (apply) on the selected item.
 
         The items of the selector are like:
 
@@ -601,7 +601,7 @@ class SelectorManager(AbstractWidgetManager, ABC):
         :param items: Item list of the selector; format ``[('Item1', a, b, c...), ('Item2', d, e, f...)]``
         :param default: Index of default item to display
         :param onchange: Callback executed when changing the selector
-        :param onreturn: Callback executed when pressing return button
+        :param onreturn: Callback executed when pressing return (apply)
         :param onselect: Callback executed when selecting the widget
         :param selector_id: ID of the selector
         :param style: Selector style (visual)

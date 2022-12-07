@@ -87,7 +87,7 @@ class TextInput(Widget):
     :param maxwidth: Maximum size of the text to be displayed (overflow). If ``0`` this feature is disabled
     :param maxwidth_dynamically_update: Dynamically update maxwidth depending on char size
     :param onchange: Callback when changing the text input
-    :param onreturn: Callback when pressing return on the text input
+    :param onreturn: Callback when pressing return (apply) on the text input
     :param onselect: Function when selecting the widget
     :param password: Input string is displayed as a password
     :param password_char: Character used by password type
@@ -1923,7 +1923,7 @@ class TextInputManager(AbstractWidgetManager, ABC):
     ) -> 'pygame_menu.widgets.TextInput':
         """
         Add a text input to the Menu: free text area and two functions that
-        execute when changing the text and pressing return button on the element.
+        execute when changing the text and pressing return (apply) on the element.
 
         The callbacks receive the current value and all unknown keyword arguments,
         where ``current_text=widget.get_value``:
@@ -2006,7 +2006,7 @@ class TextInputManager(AbstractWidgetManager, ABC):
         :param maxchar: Maximum length of string, if 0 there's no limit
         :param maxwidth: Maximum size of the text widget (in number of chars), if ``0`` there's no limit
         :param onchange: Callback executed when changing the text input
-        :param onreturn: Callback executed when pressing return on the text input
+        :param onreturn: Callback executed when pressing return (apply) on the text input
         :param onselect: Callback executed when selecting the widget
         :param password: Text input is a password
         :param textinput_id: ID of the text input

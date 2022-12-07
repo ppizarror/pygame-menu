@@ -55,7 +55,7 @@ class RangeSlider(Widget):
 
         onchange(range_value, **kwargs)
 
-    If pressing return key on the widget:
+    If pressing return (apply) on the widget:
 
     .. code-block:: python
 
@@ -72,7 +72,7 @@ class RangeSlider(Widget):
     :param range_width: Width of the range in px
     :param increment: Increment of the value if using left/right keys; used only if the range values are not discrete
     :param onchange: Callback when changing the value of the range slider
-    :param onreturn: Callback when pressing return on the range slider
+    :param onreturn: Callback when pressing return (apply) on the range slider
     :param onselect: Function when selecting the widget
     :param range_box_color: Color of the range box between the sliders
     :param range_box_color_readonly: Color of the range box if widget in readonly state
@@ -1118,7 +1118,7 @@ class RangeSliderManager(AbstractWidgetManager, ABC):
 
             onchange(range_value, **kwargs)
 
-        If pressing return key on the widget:
+        If pressing return (apply) on the widget:
 
         .. code-block:: python
 
@@ -1221,7 +1221,7 @@ class RangeSliderManager(AbstractWidgetManager, ABC):
         :param range_values: Tuple/list of 2 elements of min/max values of the range slider. Also range can accept a list of numbers, in which case the values of the range slider will be discrete. List must be sorted
         :param increment: Increment of the value if using left/right keys; used only if the range values are not discrete
         :param onchange: Callback executed when changing the value of the range slider
-        :param onreturn: Callback executed when pressing return on the range slider
+        :param onreturn: Callback executed when pressing return (apply) on the range slider
         :param onselect: Callback executed when selecting the widget
         :param rangeslider_id: ID of the range slider
         :param value_format: Function that format the value and returns a string that is used in the range and slider text

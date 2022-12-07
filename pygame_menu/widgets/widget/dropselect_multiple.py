@@ -78,7 +78,7 @@ class DropSelectMultiple(DropSelect):
     :param default: Index(es) of default item(s) to display. If ``None`` no item is selected
     :param max_selected: Max items to be selected. If ``0`` there's no limit
     :param onchange: Callback when changing the drop select item
-    :param onreturn: Callback when pressing return on the selected item
+    :param onreturn: Callback when pressing return (apply) on the selected item
     :param onselect: Function when selecting the widget
     :param open_middle: If ``True`` the selection box is opened in the middle of the menu
     :param placeholder: Text shown if no option is selected yet
@@ -673,7 +673,7 @@ class DropSelectMultipleManager(AbstractWidgetManager, ABC):
         :param dropselect_multiple_id: ID of the dropselect multiple
         :param max_selected: Max items to be selected. If ``0`` there's no limit
         :param onchange: Callback when changing the drop select item
-        :param onreturn: Callback when pressing return on the selected item
+        :param onreturn: Callback when pressing return (apply) on the selected item
         :param onselect: Function when selecting the widget
         :param open_middle: If ``True`` the selection box is opened in the middle of the menu
         :param placeholder: Text shown if no option is selected yet

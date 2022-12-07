@@ -86,7 +86,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
     :param input_underline_vmargin: Vertical margin of underline in px
     :param cursor_color: Color of cursor
     :param onchange: Function when changing the values of the color text
-    :param onreturn: Function when pressing return on the color text input
+    :param onreturn: Function when pressing return (apply) on the color text input
     :param onselect: Function when selecting the widget
     :param prev_margin: Horizontal margin between the previsualization and the input text in px
     :param prev_width_factor: Width of the previsualization box in terms of the height of the widget
@@ -670,7 +670,7 @@ class ColorInputManager(AbstractWidgetManager, ABC):
         :param input_separator: Divisor between RGB channels, not valid in HEX format
         :param input_underline: Underline character
         :param onchange: Callback executed when changing the values of the color text
-        :param onreturn: Callback executed when pressing return on the color input
+        :param onreturn: Callback executed when pressing return (apply) on the color input
         :param onselect: Callback executed when selecting the widget
         :param kwargs: Optional keyword arguments
         :return: Widget object
