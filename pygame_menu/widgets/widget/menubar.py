@@ -79,6 +79,7 @@ class MenuBar(Widget):
     :param offsetx: Offset x-position of title in px
     :param offsety: Offset y-position of title in px
     :param onreturn: Callback when pressing the back-box button
+    :param verbose: Enable verbose mode (errors/warnings)
     :param args: Optional arguments for callbacks
     :param kwargs: Optional keyword arguments for callbacks
     """
@@ -96,6 +97,7 @@ class MenuBar(Widget):
     _style: int
     _width: int
     fixed: bool
+    verbose: bool
 
     def __init__(
             self,
@@ -110,6 +112,7 @@ class MenuBar(Widget):
             offsetx: NumberType = 0,
             offsety: NumberType = 0,
             onreturn: CallbackType = None,
+            verbose: bool = False,
             *args,
             **kwargs
     ) -> None:
@@ -147,6 +150,7 @@ class MenuBar(Widget):
         self._style = mode
         self._title = ''
         self._width = int(width)
+        self._verbose = verbose
 
         self.set_title(title, offsetx, offsety)
 
@@ -199,7 +203,7 @@ class MenuBar(Widget):
         c_dif_1 = abs(c_back[0] - self._font_color[0])
         c_dif_2 = abs(c_back[1] - self._font_color[1])
         c_dif_3 = abs(c_back[2] - self._font_color[2])
-        if c_dif_1 < tol and c_dif_2 < tol and c_dif_3 < tol:
+        if self._verbose and c_dif_1 < tol and c_dif_2 < tol and c_dif_3 < tol:
             warn(
                 'title font color {0} is {3} to the {1} background color {2}, '
                 'consider editing your Theme'.format(
