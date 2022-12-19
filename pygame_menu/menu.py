@@ -100,6 +100,7 @@ class Menu(Base):
     :param theme: Menu theme
     :param touchscreen: Enable/disable touch action inside the Menu. Only available on pygame 2
     :param touchscreen_motion_selection: Select widgets using touchscreen motion. If ``True`` menu draws a ``focus`` on the selected widget
+    :param verbose: Enable/disable verbose mode (warnings/errors)
     """
     _auto_centering: bool
     _background_function: Tuple[bool, Optional[Union[Callable[['Menu'], Any], CallableNoArgsType]]]
@@ -204,7 +205,8 @@ class Menu(Base):
             screen_dimension: Optional[Vector2IntType] = None,
             theme: 'Theme' = THEME_DEFAULT.copy(),
             touchscreen: bool = False,
-            touchscreen_motion_selection: bool = False
+            touchscreen_motion_selection: bool = False,
+            verbose: bool = True
     ) -> None:
         super(Menu, self).__init__(object_id=menu_id)
 
@@ -502,7 +504,8 @@ class Menu(Base):
             offsety=theme.title_offset[1],
             onreturn=self._back,
             title=title,
-            width=self._width
+            verbose=verbose,
+            width=self._width,
         )
         self._menubar.set_menu(self)
         self._menubar.set_font(
