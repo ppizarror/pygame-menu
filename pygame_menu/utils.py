@@ -428,7 +428,7 @@ def make_surface(
     assert isinstance(alpha, bool)
     assert width >= 0 and height >= 0, \
         'surface width and height must be equal or greater than zero'
-    surface = pygame.Surface((int(width), int(height)), pygame.SRCALPHA, 32)  # lgtm [py/call/wrong-arguments]
+    surface = pygame.Surface((int(width), int(height)), pygame.SRCALPHA, 32)
     if alpha:
         # noinspection PyArgumentList
         surface = pygame.Surface.convert_alpha(surface)

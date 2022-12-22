@@ -7,7 +7,7 @@ Widgets elements that can be added to the Menu.
 """
 
 # Widgets core
-import pygame_menu.widgets.core  # lgtm [py/import-and-import-from]
+import pygame_menu.widgets.core
 from pygame_menu.widgets.core import Widget
 
 # Selection

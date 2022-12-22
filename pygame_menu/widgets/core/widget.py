@@ -381,11 +381,11 @@ class Widget(Base):
         self._draw_callbacks = {}
         self._update_callbacks = {}
 
-        self.set_onchange(onchange)  # lgtm [py/init-calls-subclass]
-        self.set_onmouseleave(onmouseleave)  # lgtm [py/init-calls-subclass]
-        self.set_onmouseover(onmouseover)  # lgtm [py/init-calls-subclass]
-        self.set_onreturn(onreturn)  # lgtm [py/init-calls-subclass]
-        self.set_onselect(onselect)  # lgtm [py/init-calls-subclass]
+        self.set_onchange(onchange)
+        self.set_onmouseleave(onmouseleave)
+        self.set_onmouseover(onmouseover)
+        self.set_onreturn(onreturn)
+        self.set_onselect(onselect)
 
         self._args = args or []
         self._kwargs = kwargs or {}
@@ -933,7 +933,7 @@ class Widget(Base):
             return True
         return False
 
-    def set_title(self, title: str) -> 'Widget':  # lgtm [py/inheritance/incorrect-overridden-signature]
+    def set_title(self, title: str) -> 'Widget':
         """
         Update the Widget title.
 

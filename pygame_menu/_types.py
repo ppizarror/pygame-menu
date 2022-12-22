@@ -12,10 +12,10 @@ from pygame.event import Event as EventType
 from typing import Union, List, Tuple, Any, Callable, Sequence, Mapping, Optional
 
 # noinspection PyUnresolvedReferences
-from typing import Dict, Type  # lgtm [py/unused-import]
+from typing import Dict, Type
 
 # noinspection PyUnresolvedReferences
-from typing_extensions import Literal  # lgtm [py/unused-import]
+from typing_extensions import Literal
 
 # Common types
 ArgsType = Optional[Sequence[Any]]

@@ -37,7 +37,7 @@ __all__ = [
 
 # Imports
 # noinspection PyUnresolvedReferences
-import pygame_menu  # lgtm [py/unused-import]
+import pygame_menu
 import pygame.locals as _locals
 from pygame.event import Event as EventType
 from typing import Union

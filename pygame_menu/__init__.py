@@ -30,7 +30,7 @@ if __pygame_version__ is not None:
     """
     BaseImage: Provides basic image loading and manipulation with pygame
     """
-    import pygame_menu.baseimage  # lgtm [py/import-and-import-from]
+    import pygame_menu.baseimage
     from pygame_menu.baseimage import BaseImage
 
     """
@@ -66,13 +66,13 @@ if __pygame_version__ is not None:
     """
     Sound: Sound class
     """
-    import pygame_menu.sound  # lgtm [py/import-and-import-from]
+    import pygame_menu.sound
     from pygame_menu.sound import Sound
 
     """
     Themes: Menu themes
     """
-    import pygame_menu.themes  # lgtm [py/import-and-import-from]
+    import pygame_menu.themes
     from pygame_menu.themes import Theme
 
     """
