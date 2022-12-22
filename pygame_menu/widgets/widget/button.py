@@ -409,8 +409,9 @@ class ButtonManager(AbstractWidgetManager, ABC):
             try:
                 self._check_kwargs(kwargs)
             except ValueError:
-                warn('button cannot accept kwargs. If you want to use kwargs '
-                     'options set accept_kwargs=True')
+                if self._verbose:
+                    warn('button cannot accept kwargs. If you want to use kwargs '
+                         'options set accept_kwargs=True')
                 raise
 
         self._configure_widget(widget=widget, **attributes)

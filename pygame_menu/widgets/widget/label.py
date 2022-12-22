@@ -146,10 +146,11 @@ class Label(Widget):
     def set_title(self, title: str) -> 'Label':
         super(Label, self).set_title(title)
         if self._title_generator is not None:
-            warn(
-                f'{self.get_class_id()} title generator is not None, thus, the new'
-                f' title "{title}" will be overridden after next update'
-            )
+            if self._verbose:
+                warn(
+                    f'{self.get_class_id()} title generator is not None, thus, the new'
+                    f' title "{title}" will be overridden after next update'
+                )
         return self
 
     def _get_leading(self) -> int:

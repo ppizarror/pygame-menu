@@ -749,7 +749,8 @@ class Frame(Widget):
 
         # If it has title
         if self._has_title:
-            warn(f'previous {self.get_class_id()} title has been removed')
+            if self._verbose:
+                warn(f'previous {self.get_class_id()} title has been removed')
             self.remove_title()
 
         return self
@@ -1522,12 +1523,13 @@ class Frame(Widget):
             f'{widget.get_class_id()} must be configured before packing'
 
         if widget.get_margin() != (0, 0) and self._pack_margin_warning:
-            warn(
-                f'{widget.get_class_id()} margin should be (0, 0) if packed, but'
-                f' received {widget.get_margin()}; {self.get_class_id()}.pack() '
-                f'does not consider previous widget margin. Set '
-                f'frame._pack_margin_warning=False to hide this warning'
-            )
+            if self._verbose:
+                warn(
+                    f'{widget.get_class_id()} margin should be (0, 0) if packed, but'
+                    f' received {widget.get_margin()}; {self.get_class_id()}.pack() '
+                    f'does not consider previous widget margin. Set '
+                    f'frame._pack_margin_warning=False to hide this warning'
+                )
 
         if isinstance(widget, Frame):
             widget.update_indices()

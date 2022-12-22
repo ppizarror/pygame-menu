@@ -100,7 +100,7 @@ class Menu(Base):
     :param theme: Menu theme
     :param touchscreen: Enable/disable touch action inside the Menu. Only available on pygame 2
     :param touchscreen_motion_selection: Select widgets using touchscreen motion. If ``True`` menu draws a ``focus`` on the selected widget
-    :param verbose: Enable/disable verbose mode (warnings/errors)
+    :param verbose: Enable/disable verbose mode (warnings/errors). Propagates to all widgets
     """
     _auto_centering: bool
     _background_function: Tuple[bool, Optional[Union[Callable[['Menu'], Any], CallableNoArgsType]]]
@@ -209,6 +209,7 @@ class Menu(Base):
             verbose: bool = True
     ) -> None:
         super(Menu, self).__init__(object_id=menu_id)
+        self._verbose = verbose
 
         assert isinstance(center_content, bool)
         assert isinstance(column_max_width, (VectorInstance, type(None), NumberInstance))
@@ -226,6 +227,7 @@ class Menu(Base):
             'theme bust be a pygame_menu.themes.Theme object instance'
         assert isinstance(touchscreen, bool)
         assert isinstance(touchscreen_motion_selection, bool)
+        assert isinstance(verbose, bool)
 
         # Assert theme
         theme.validate()
@@ -278,12 +280,13 @@ class Menu(Base):
                 'column_min_width must be equal or greater than zero'
             if columns != 1:
                 if column_min_width > 0:  # Ignore the default value
-                    warn(
-                        f'column_min_width can be a single number if there is only '
-                        f'1 column, but there is {columns} columns. Thus, column_min_width '
-                        f'should be a vector of {columns} items. By default a vector has '
-                        f'been created using the same value for each column'
-                    )
+                    if self._verbose:
+                        warn(
+                            f'column_min_width can be a single number if there is only '
+                            f'1 column, but there is {columns} columns. Thus, column_min_width '
+                            f'should be a vector of {columns} items. By default a vector has '
+                            f'been created using the same value for each column'
+                        )
                 column_min_width = [column_min_width for _ in range(columns)]
             else:
                 column_min_width = [column_min_width]
@@ -504,7 +507,6 @@ class Menu(Base):
             offsety=theme.title_offset[1],
             onreturn=self._back,
             title=title,
-            verbose=verbose,
             width=self._width,
         )
         self._menubar.set_menu(self)
@@ -587,6 +589,14 @@ class Menu(Base):
         self._disable_update = False
         self._validate_frame_widgetmove = True
 
+        # Configure verbose
+        self.add._verbose = verbose
+        self._decorator._verbose = verbose
+        self._menubar._verbose = verbose
+        self._scrollarea._verbose = verbose
+        self._scrollarea._verbose = verbose
+        self._sound._verbose = verbose
+
     def resize(
             self,
             width: NumberType,
@@ -649,11 +659,12 @@ class Menu(Base):
         # If centering is enabled, but widget offset in the vertical is different
         # from zero a warning is raised
         if self._auto_centering and self._widget_offset[1] != 0:
-            warn(
-                f'menu is vertically centered (center_content=True), but widget '
-                f'offset (from theme) is different than zero ({self._widget_offset[1]}px). '
-                f'Auto-centering has been disabled'
-            )
+            if self._verbose:
+                warn(
+                    f'menu is vertically centered (center_content=True), but widget '
+                    f'offset (from theme) is different than zero ({self._widget_offset[1]}px). '
+                    f'Auto-centering has been disabled'
+                )
             self._auto_centering = False
 
         # Scroll area outer margin
@@ -668,11 +679,12 @@ class Menu(Base):
         # If centering is enabled, but ScrollArea margin in the vertical is
         # different from zero a warning is raised
         if self._auto_centering and self._scrollarea_margin[1] != 0:
-            warn(
-                f'menu is vertically centered (center_content=True), but '
-                f'ScrollArea outer margin (from theme) is different than zero '
-                f'({round(self._scrollarea_margin[1], 3)}px). Auto-centering has been disabled'
-            )
+            if self._verbose:
+                warn(
+                    f'menu is vertically centered (center_content=True), but '
+                    f'ScrollArea outer margin (from theme) is different than zero '
+                    f'({round(self._scrollarea_margin[1], 3)}px). Auto-centering has been disabled'
+                )
             self._auto_centering = False
 
         # Configure menubar
@@ -1262,7 +1274,8 @@ class Menu(Base):
                 try:
                     widget.update_position()
                 except:
-                    warn(f'{widget.get_class_id()} failed to update')
+                    if self._verbose:
+                        warn(f'{widget.get_class_id()} failed to update')
                     raise
                 has_frame = True
 
@@ -3321,7 +3334,8 @@ class Menu(Base):
 
         widget_scroll = widget.get_scrollarea()
         if widget_scroll is None:
-            warn(f'{widget.get_class_id()} scrollarea is None, thus, scroll to widget cannot be performed')
+            if self._verbose:
+                warn(f'{widget.get_class_id()} scrollarea is None, thus, scroll to widget cannot be performed')
             return self
 
         # Scroll to rect

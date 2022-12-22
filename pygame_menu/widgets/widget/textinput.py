@@ -1812,11 +1812,12 @@ class TextInput(Widget):
                 # Any other key, add as input
                 elif event.key not in self._ignore_keys and hasattr(event, 'unicode'):
                     if event.unicode == ' ' and event.key != 32:
-                        warn(
-                            f'{self.get_class_id()} received "{event.unicode}" '
-                            f'unicode but key is different than 32 ({event.key}), '
-                            f'check if event has defined the proper unicode char'
-                        )
+                        if self._verbose:
+                            warn(
+                                f'{self.get_class_id()} received "{event.unicode}" '
+                                f'unicode but key is different than 32 ({event.key}), '
+                                f'check if event has defined the proper unicode char'
+                            )
                         break
 
                     # Error in char, not valid or string limit exceeds
