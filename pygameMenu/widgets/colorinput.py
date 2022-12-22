@@ -250,7 +250,7 @@ class ColorInput(TextInput):
         # If previsualization surface is None or the color changed
         if self._last_r != r or self._last_b != b or self._last_g != g or self._prev_surface is None:
             _width = self._prev_size * self._rect.height
-            self._prev_surface = _pygame.Surface((_width, self._rect.height))  # lgtm [py/call/wrong-arguments]
+            self._prev_surface = _pygame.Surface((_width, self._rect.height))
             try:
                 self._prev_surface.fill((r, g, b))
                 self._last_r = r

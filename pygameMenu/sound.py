@@ -144,7 +144,7 @@ class Sound(object):
                                 buffer=buffer)
 
                 # <2.0.0 & >= 1.9.5
-                elif version_major == 1 and version_minor > 4:  # lgtm [py/redundant-comparison]
+                elif version_major == 1 and version_minor > 4:
                     _mixer.init(frequency=frequency,
                                 size=size,
                                 channels=channels,

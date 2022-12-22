@@ -298,7 +298,7 @@ class Widget(object):
 
             # Create surface
             size = (text.get_width() + 2, text.get_height() + 2)
-            surface = _pygame.Surface(size, _pygame.SRCALPHA, 32)  # lgtm [py/call/wrong-arguments]
+            surface = _pygame.Surface(size, _pygame.SRCALPHA, 32)
             # noinspection PyArgumentList
             surface = _pygame.Surface.convert_alpha(surface)  # type: _pygame.SurfaceType
 
