@@ -27,7 +27,7 @@ pygame-menu
     :target: https://pypi.org/project/pygame-menu
     :alt: PyPi package
 
-.. image:: https://img.shields.io/github/workflow/status/ppizarror/pygame-menu/Run%20Tests
+.. image:: https://img.shields.io/github/actions/workflow/status/ppizarror/pygame-menu/tests.yml?branch=master
     :target: https://github.com/ppizarror/pygame-menu/actions/workflows/tests.yml
     :alt: Build status
     
@@ -38,14 +38,6 @@ pygame-menu
 .. image:: https://readthedocs.org/projects/pygame-menu/badge/?version=latest
     :target: https://pygame-menu.readthedocs.io
     :alt: Documentation Status
-
-.. image:: https://img.shields.io/lgtm/alerts/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18
-    :target: https://lgtm.com/projects/g/ppizarror/pygame-menu/alerts
-    :alt: Total alerts
-
-.. image:: https://img.shields.io/lgtm/grade/python/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18
-    :target: https://lgtm.com/projects/g/ppizarror/pygame-menu/context:python
-    :alt: Language grade: Python
 
 .. image:: https://codecov.io/gh/ppizarror/pygame-menu/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/ppizarror/pygame-menu
