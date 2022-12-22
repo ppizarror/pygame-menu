@@ -52,11 +52,14 @@ _MODE_CLOSE = 1020
 _MODE_BACK = 1021
 
 # Custom types
-MenuBarStyleModeType = Literal[MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_SIMPLE,
-MENUBAR_STYLE_TITLE_ONLY,
-MENUBAR_STYLE_TITLE_ONLY_DIAGONAL,
-MENUBAR_STYLE_NONE, MENUBAR_STYLE_UNDERLINE,
-MENUBAR_STYLE_UNDERLINE_TITLE]
+MenuBarStyleModeType = Literal[
+    MENUBAR_STYLE_ADAPTIVE,
+    MENUBAR_STYLE_SIMPLE,
+    MENUBAR_STYLE_TITLE_ONLY,
+    MENUBAR_STYLE_TITLE_ONLY_DIAGONAL,
+    MENUBAR_STYLE_NONE,
+    MENUBAR_STYLE_UNDERLINE,
+    MENUBAR_STYLE_UNDERLINE_TITLE]
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -79,7 +82,6 @@ class MenuBar(Widget):
     :param offsetx: Offset x-position of title in px
     :param offsety: Offset y-position of title in px
     :param onreturn: Callback when pressing the back-box button
-    :param verbose: Enable verbose mode (errors/warnings)
     :param args: Optional arguments for callbacks
     :param kwargs: Optional keyword arguments for callbacks
     """
@@ -97,7 +99,6 @@ class MenuBar(Widget):
     _style: int
     _width: int
     fixed: bool
-    verbose: bool
 
     def __init__(
             self,
@@ -112,7 +113,6 @@ class MenuBar(Widget):
             offsetx: NumberType = 0,
             offsety: NumberType = 0,
             onreturn: CallbackType = None,
-            verbose: bool = False,
             *args,
             **kwargs
     ) -> None:
@@ -150,7 +150,6 @@ class MenuBar(Widget):
         self._style = mode
         self._title = ''
         self._width = int(width)
-        self._verbose = verbose
 
         self.set_title(title, offsetx, offsety)
 

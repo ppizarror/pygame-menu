@@ -251,6 +251,7 @@ class WidgetManager(
 
     def _configure_widget(self, widget: 'Widget', **kwargs) -> None:
         assert isinstance(widget, Widget)
+        widget._verbose = self._verbose
 
         widget.set_alignment(
             align=kwargs['align']
@@ -422,10 +423,11 @@ class WidgetManager(
 
         # Raise warning if adding button with Menu
         if isinstance(widget, pygame_menu.widgets.Button) and widget.to_menu:
-            warn(
-                'prefer adding submenus using add_button method instead, '
-                'unintended behaviours may occur'
-            )
+            if self._verbose:
+                warn(
+                    'prefer adding submenus using add_button method instead, '
+                    'unintended behaviours may occur'
+                )
 
         # Configure widget
         if configure_defaults:

@@ -163,8 +163,9 @@ class Sound(Base):
         # Check if mixer is init
         mixer_missing = 'MissingModule' in str(type(mixer))
         if mixer_missing:
-            warn('pygame mixer module could not be found, NotImplementedError'
-                 'has been raised. Sound support is disabled')
+            if self._verbose:
+                warn('pygame mixer module could not be found, NotImplementedError'
+                     'has been raised. Sound support is disabled')
             SOUND_INITIALIZED[1] = False
 
         # Initialize sounds if not initialized
@@ -200,9 +201,11 @@ class Sound(Base):
                 mixer.init(**mixer_kwargs)
 
             except Exception as e:
-                warn('sound error: ' + str(e))
+                if self._verbose:
+                    warn('sound error: ' + str(e))
             except pygame_error as e:
-                warn('sound engine could not be initialized, pygame error: ' + str(e))
+                if self._verbose:
+                    warn('sound engine could not be initialized, pygame error: ' + str(e))
 
         # Store mixer configs
         self._mixer_configs = {
@@ -332,7 +335,8 @@ class Sound(Base):
             # noinspection PyTypeChecker
             sound_data = mixer.Sound(file=sound_file)
         except pygame_error:
-            warn(f'the sound file "{sound_file}" could not be loaded, it has been disabled')
+            if self._verbose:
+                warn(f'the sound file "{sound_file}" could not be loaded, it has been disabled')
             self._sound[sound_type] = {}
             return False
 

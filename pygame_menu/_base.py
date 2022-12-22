@@ -21,6 +21,7 @@ class Base(object):
     _class_id__repr__: bool
     _id: str
     _id__repr__: bool
+    _verbose: bool
 
     def __init__(self, object_id: str) -> None:
         """
@@ -35,6 +36,7 @@ class Base(object):
         self._class_id__repr__ = False  # If True, repr/str of the object is class id
         self._id = object_id
         self._id__repr__ = False  # If True, repr/str of the object adds object id
+        self._verbose = True  # Enable verbose mode (errors/warnings)
 
     def __repr__(self) -> str:
         """

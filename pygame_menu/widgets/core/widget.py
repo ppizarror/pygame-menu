@@ -140,7 +140,7 @@ def _check_widget_mouseleave(
             WIDGET_MOUSEOVER[0] = None
             WIDGET_MOUSEOVER[1] = []
             if prev_cursor != WIDGET_TOP_CURSOR[0]:
-                if WIDGET_TOP_CURSOR_WARNING:
+                if WIDGET_TOP_CURSOR_WARNING and current._verbose:
                     warn(
                         f'expected {WIDGET_TOP_CURSOR[0]} to be the top cursor '
                         f'(WIDGET_TOP_CURSOR), but {prev_cursor} is the current '
@@ -1342,8 +1342,9 @@ class Widget(Base):
                 WIDGET_SHADOW_GENERATOR.clear_short_term_caches()
                 self._shadow['surface'] = s
             if not self._shadow['surface']:
-                warn(f'{self.get_class_id()} shadow computation failed, check if'
-                     f' the radius is smaller than the width and height of the menu')
+                if self._verbose:
+                    warn(f'{self.get_class_id()} shadow computation failed, check if'
+                         f' the radius is smaller than the width and height of the menu')
                 self._shadow['enabled'] = False
                 return
             w = self._shadow['properties'][1]
@@ -1802,7 +1803,8 @@ class Widget(Base):
             # Font background color must be opaque, otherwise the results are quite bad
             if len(background_color) == 4 and background_color[3] != 255:
                 background_color = None
-                warn('font background color must be opaque, alpha channel must be 255')
+                if self._verbose:
+                    warn('font background color must be opaque, alpha channel must be 255')
 
         font_size = int(font_size)
 
@@ -2126,6 +2128,8 @@ class Widget(Base):
         :param maxwidth: Warn bout maxwidth
         :param maxheight: Warn about maxheight
         """
+        if not self._verbose:
+            return
         if self._scale[0] and scale:
             warn('widget already has a scaling factor applied. Scaling has '
                  'been disabled')
@@ -2353,7 +2357,8 @@ class Widget(Base):
         """
         self._disable_scale()
         if width == 1 and height == 1:
-            warn('did you mean widget.scale(1,1) instead of widget.resize(1,1)?')
+            if self._verbose:
+                warn('did you mean widget.scale(1,1) instead of widget.resize(1,1)?')
         self.scale(float(width) / self.get_width(),
                    float(height) / self.get_height(), smooth)
         return self

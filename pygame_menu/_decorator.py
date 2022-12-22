@@ -58,8 +58,7 @@ class Decorator(Base):
     :param obj: Object to decorate
     :param decorator_id: ID of the decorator
     """
-    _coord_cache: Dict[
-        str, Tuple[int, int, Union[Tuple[Tuple2NumberType, ...], Tuple2NumberType]]]  # centerx, centery, coords
+    _coord_cache: Dict[str, Tuple[int, int, Union[Tuple[Tuple2NumberType, ...], Tuple2NumberType]]]  # centerx, centery, coords
     _cache_last_status: Dict[str, Tuple[int, int, int, int, int, int]]
     _cache_needs_update: Dict[str, bool]
     _cache_surface: Dict[str, Optional['pygame.Surface']]
@@ -153,7 +152,8 @@ class Decorator(Base):
 
         # Check sizes
         if self._total_decor() >= 300 and not self.cache:
-            warn('cache is recommended if the total number of decorations exceeds 300')
+            if self._verbose:
+                warn('cache is recommended if the total number of decorations exceeds 300')
 
         # Set automatically as enabled
         self._decor_enabled[decor_id] = True

@@ -185,3 +185,15 @@ class ToggleSwitchWidgetTest(BaseTest):
         menu = MenuUtils.generic_menu()
         switch = menu.add.toggle_switch('')
         self.assertEqual(switch.get_size(), (191, 49))
+
+    def test_update_font(self) -> None:
+        """
+        Test update font.
+        """
+        menu = MenuUtils.generic_menu()
+        switch = menu.add.toggle_switch('abc')
+        self.assertEqual(switch.get_size(), (240, 49))
+        self.assertEqual(switch._state_font.get_height(), 41)
+        switch.update_font(dict(size=100))
+        self.assertEqual(switch._state_font.get_height(), 137)
+        self.assertEqual(switch.get_size(), (356, 145))

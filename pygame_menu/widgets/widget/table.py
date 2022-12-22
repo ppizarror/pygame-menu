@@ -363,13 +363,14 @@ class Table(Frame):
                 cell = c
                 if c._accept_events:
                     cell_widget_type = True
-                    warn(
-                        f'{self.get_class_id()} does not accept events in current'
-                        f' pygame-menu v{ver}; thus appended cell row widget '
-                        f'{c.get_class_id()} (pos {j}) would not work properly, '
-                        f'as it will ignore all inputs. Also, widgets within Tables'
-                        f' cannot be selected. Consider Tables as visual-only'
-                    )
+                    if self._verbose:
+                        warn(
+                            f'{self.get_class_id()} does not accept events in current'
+                            f' pygame-menu v{ver}; thus appended cell row widget '
+                            f'{c.get_class_id()} (pos {j}) would not work properly, '
+                            f'as it will ignore all inputs. Also, widgets within Tables'
+                            f' cannot be selected. Consider Tables as visual-only'
+                        )
                 # self._append_menu_update_frame(self)
 
             # Configure cell
