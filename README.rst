@@ -31,14 +31,6 @@ pygame-menu
     :target: https://travis-ci.com/ppizarror/pygame-menu
     :alt: Travis
 
-.. image:: https://img.shields.io/lgtm/alerts/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18
-    :target: https://lgtm.com/projects/g/ppizarror/pygame-menu/alerts
-    :alt: Total alerts
-
-.. image:: https://img.shields.io/lgtm/grade/python/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18
-    :target: https://lgtm.com/projects/g/ppizarror/pygame-menu/context:python
-    :alt: Language grade: Python
-
 .. image:: https://codecov.io/gh/ppizarror/pygame-menu/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/ppizarror/pygame-menu
     :alt: Codecov
