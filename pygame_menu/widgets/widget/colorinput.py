@@ -43,7 +43,7 @@ TYPE_HEX = 'hex'
 TYPE_RGB = 'rgb'
 
 
-class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
+class ColorInput(TextInput):
     """
     Color input widget.
 
