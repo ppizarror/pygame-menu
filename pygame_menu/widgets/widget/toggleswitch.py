@@ -277,12 +277,9 @@ class ToggleSwitch(Widget):
         return self._state_values[self._state]
 
     def _apply_font(self) -> None:
-        if self._state_text_font is None:
-            self._state_text_font = self._font_name
-        if self._state_text_font_size is None:
-            self._state_text_font_size = self._font_size
         self._state_font = pygame_menu.font.get_font(
-            self._state_text_font, self._state_text_font_size
+            self._font_name if self._state_text_font is None else self._state_text_font,
+            self._font_size if self._state_text_font_size is None else self._state_text_font_size
         )
 
         # Compute the height
@@ -291,6 +288,7 @@ class ToggleSwitch(Widget):
         self._slider_height = int(self._switch_height * self._slider_height_factor) - 2 * self._switch_border_width
 
         # Render the state texts
+        self._switch_font_rendered = []
         for t in range(self._total_states):
             f_render = self._state_font.render(self._state_text[t], True, self._state_text_font_color[t])
             self._switch_font_rendered.append(f_render)
