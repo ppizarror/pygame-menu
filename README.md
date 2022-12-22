@@ -10,7 +10,6 @@
 <a href="https://opensource.org/licenses/MIT/"><img alt="License MIT" src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
 <a href="https://www.python.org/downloads/"><img alt="Python 2.7+/3.5+" src="https://img.shields.io/badge/python-2.7+ / 3.5+-red.svg" /></a>
 <a href="https://www.pygame.org/"><img alt="Pygame 1.9.4+" src="https://img.shields.io/badge/pygame-1.9.4+-orange.svg" /></a>
-<br />
 <a href="https://travis-ci.org/ppizarror/pygame-menu"><img src="https://travis-ci.org/ppizarror/pygame-menu.svg?branch=v2" /></a>
 <a href="https://codecov.io/gh/ppizarror/pygame-menu"><img src="https://codecov.io/gh/ppizarror/pygame-menu/branch/v2/graph/badge.svg" /></a>
 </div><br />
