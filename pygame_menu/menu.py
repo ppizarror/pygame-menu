@@ -1342,7 +1342,10 @@ class Menu(Base):
         # If some columns were not used, set these widths to zero
         for col in range(self._used_columns, self._columns):
             column_widths.pop()
-            del self._widget_columns[col]
+            try:
+                del self._widget_columns[col]
+            except KeyError:
+                pass
 
         # If the total weight is less than the window width (so there's no horizontal
         # scroll), scale the columns. Only None column_max_widths and columns less
