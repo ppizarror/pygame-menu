@@ -1958,3 +1958,23 @@ class FrameWidgetTest(unittest.TestCase):
         self.assertEqual(frame4.get_size(), (600, 641 if PYGAME_V2 else 642))  # Plus title height
         self.assertNotEqual(frame4title, frame4._frame_title)
         self.assertEqual(new_frame4title_widgets, (label, btn1, btn2))
+
+    def test_pack_columns(self) -> None:
+        """
+        Test frame pack within columns.
+        """
+        menu = pygame_menu.Menu(
+            columns=2, rows=1,
+            height=500,
+            theme=pygame_menu.themes.THEME_BLUE.copy(),
+            title='Title',
+            width=600
+        )
+        frame = menu.add.frame_h(width=250, height=100, border_width=3)
+        frame_label = menu.add.label('Col One')
+        frame.pack(frame_label)
+        menu_label = menu.add.label('Col Two')
+        self.assertEqual(menu._used_columns, 2)
+        self.assertEqual(frame.get_col_row_index(), (0, 0, 0))
+        self.assertEqual(frame_label.get_col_row_index(), (0, 0, 1))
+        self.assertEqual(menu_label.get_col_row_index(), (1, 0, 2))
