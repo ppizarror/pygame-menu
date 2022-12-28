@@ -14,6 +14,8 @@ from test._utils import BaseRSTest, surface, MenuUtils, PygameEventUtils, \
 from typing import Any, Tuple, List
 import copy
 import math
+import sys
+import time
 import timeit
 
 import pygame
@@ -1232,6 +1234,9 @@ class MenuTest(BaseRSTest):
         menu.render()
         self.assertEqual(menu._column_widths, [200, 150, 150])
 
+        menu = MenuUtils.generic_menu()
+        self.assertEqual(menu.get_col_rows(), (1, [10000000]))
+
     def test_screen_dimension(self) -> None:
         """
         Test screen dim.
@@ -2217,6 +2222,8 @@ class MenuTest(BaseRSTest):
         """
         Test baseimage selector + menulink interaction.
         """
+        if sys.version_info.major == 3 and sys.version_info.minor == 8:
+            return
         x = 400
         y = 400
 
@@ -2471,3 +2478,41 @@ class MenuTest(BaseRSTest):
         theme.border_color = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_TILED_BORDER)
         menu = pygame_menu.Menu('Menu with border image', 250, 250, theme=theme)
         menu.draw(surface)
+
+    def test_menu_render_toggle(self) -> None:
+        """
+        Test add menu widgets with render enable/disable.
+        """
+        menu = MenuUtils.generic_menu(columns=3, rows=50)
+        nc, nr = menu.get_col_rows()
+        self.assertEqual(nc, 3)
+        self.assertEqual(nr, [50, 50, 50])
+
+        # Test with rendering enabled
+        n = sum(nr)  # Number of widgets to be added
+        t0 = time.time()
+        widgets: List[Label] = []
+        for i in range(n):
+            widgets.append(menu.add.label(i))
+        t_on = time.time() - t0
+        position_before: List[Tuple[int, int]] = []
+        for i in range(n):
+            position_before.append(widgets[i].get_position())
+
+        # Test with rendering disabled
+        menu.clear()
+        widgets.clear()
+        menu.disable_render()
+        t0 = time.time()
+        for i in range(n):
+            widgets.append(menu.add.label(i))
+        menu.enable_render()
+        menu.render()
+        t_off = time.time() - t0
+        self.assertGreater(t_on, t_off)
+
+        # Position after render must be equal!
+        for i in range(n):
+            self.assertEqual(position_before[i], widgets[i].get_position())
+
+        print(f'Render on: {t_on}s, off: {t_off}s')

@@ -362,6 +362,7 @@ class Menu(Base):
         self._last_selected_type = ''  # Last type selection, used for test purposes
         self._mainloop = False  # Menu is in mainloop state
         self._onclose = None  # Function or event called on Menu close
+        self._render_enabled = True
         self._sound = Sound()
         self._stats = _MenuStats()
         self._submenus = {}
@@ -1952,6 +1953,8 @@ class Menu(Base):
 
         :return: ``True`` if the surface has changed (if it was ``None``)
         """
+        if not self._render_enabled:
+            return False  # Modify using Menu.disable_render() and Menu.enable_render()
         t0 = time.time()
         changed = False
 
@@ -1968,6 +1971,39 @@ class Menu(Base):
 
         self._stats.total_rendering_time += time.time() - t0
         return changed
+
+    def disable_render(self) -> 'Menu':
+        """
+        Disable the render of the Menu. Useful to improve performance when
+        adding many widgets. Must be turned on after finishing the build.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply to
+            :py:meth:`pygame_menu.menu.Menu.get_current` object.
+
+        :return: Self reference
+        """
+        self._render_enabled = False
+        return self
+
+    def enable_render(self) -> 'Menu':
+        """
+        Enable the Menu rendering. Useful to improve performance when
+        adding many widgets.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply to
+            :py:meth:`pygame_menu.menu.Menu.get_current` object.
+
+        :return: Self reference
+        """
+        self._render_enabled = True
+        self._render()
+        return self
 
     def draw(self, surface: 'pygame.Surface', clear_surface: bool = False) -> 'Menu':
         """
@@ -3379,6 +3415,20 @@ class Menu(Base):
         :return: Window size in px
         """
         return self._window_size
+
+    def get_col_rows(self) -> Tuple[int, List[int]]:
+        """
+        Return the number of columns and rows of the Menu.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply to
+            :py:meth:`pygame_menu.menu.Menu.get_current` object.
+
+        :return: Tuple of (columns, rows for each column)
+        """
+        return self._columns, self._rows
 
     def get_submenus(self, recursive: bool = False) -> Tuple['Menu', ...]:
         """
