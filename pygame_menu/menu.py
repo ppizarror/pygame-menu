@@ -3416,7 +3416,7 @@ class Menu(Base):
         """
         return self._window_size
 
-    def get_col_rows(self) -> tuple[int, List[int]]:
+    def get_col_rows(self) -> Tuple[int, List[int]]:
         """
         Return the number of columns and rows of the Menu.
 
