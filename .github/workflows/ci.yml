@@ -1,4 +1,4 @@
-name: Run Tests
+name: CI
 
 on:
   push:
@@ -9,14 +9,21 @@ on:
     - master
 
 jobs:
-  testing:
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: [3.7, 3.8, 3.9, '3.10']
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Cancel previous runs
+        uses: styfle/cancel-workflow-action@0.11.0
+        with:
+          access_token: ${{ github.token }}
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
