@@ -18,7 +18,7 @@ env:
 
 jobs:
   test:
-    uses: ppizarror/workflow-actions/.github/workflows/test_python.yml@master]
+    uses: ppizarror/workflow-actions/.github/workflows/test_python.yml@master
     strategy:
       matrix:
         python-version: [ 3.7, 3.8, 3.9, '3.10' ]
