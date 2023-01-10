@@ -12,6 +12,7 @@ on:
     branches:
       - master
 
+
 env:
   SDL_AUDIODRIVER: disk
   SDL_VIDEODRIVER: dummy
