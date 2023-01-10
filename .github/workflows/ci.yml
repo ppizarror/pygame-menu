@@ -19,8 +19,8 @@ jobs:
       matrix:
         python-version: [ 3.7, 3.8, 3.9, '3.10' ]
     with:
+      env_vars: |
+        SDL_AUDIODRIVER=disk
+        SDL_VIDEODRIVER=dummy
       os: ubuntu-latest
       python_version: ${{ matrix.python-version }}
-    env:
-      SDL_AUDIODRIVER: disk
-      SDL_VIDEODRIVER: dummy
