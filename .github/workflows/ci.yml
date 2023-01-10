@@ -1,5 +1,3 @@
-# CI: Test, Build - Python
-# v1.0.2 (2023/01/10) @ppizarror
 name: CI
 
 concurrency:
@@ -9,37 +7,21 @@ concurrency:
 on:
   push:
     branches:
-    - master
+      - master
   pull_request:
     branches:
-    - master
+      - master
+
+env:
+  SDL_AUDIODRIVER: disk
+  SDL_VIDEODRIVER: dummy
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    uses: ppizarror/workflow-actions/.github/workflows/test_python.yml@master]
     strategy:
       matrix:
-        python-version: [3.7, 3.8, 3.9, '3.10']
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install dependencies
-        run: pip install -e .[test]
-
-      - name: Test
-        env:
-          SDL_AUDIODRIVER: disk
-          SDL_VIDEODRIVER: dummy
-        run: |
-          export PYTHONPATH=$PWD
-          nose2 --verbose --with-coverage
-
-      - name: Coverage report
-        run: bash <(curl -s https://codecov.io/bash)
+        python-version: [ 3.7, 3.8, 3.9, '3.10' ]
+    with:
+      os: ubuntu-latest
+      python_version: ${{ matrix.python-version }}
