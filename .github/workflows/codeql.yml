@@ -1,5 +1,9 @@
 name: CodeQL
 
+concurrency:
+  cancel-in-progress: true
+  group: ${{ github.repository }}-${{ github.workflow }}-${{ github.ref }}
+
 on:
   push:
     branches:
