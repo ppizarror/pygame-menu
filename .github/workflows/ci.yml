@@ -12,11 +12,6 @@ on:
     branches:
       - master
 
-
-env:
-  SDL_AUDIODRIVER: disk
-  SDL_VIDEODRIVER: dummy
-
 jobs:
   test:
     uses: ppizarror/workflow-actions/.github/workflows/test_python.yml@master
@@ -26,3 +21,6 @@ jobs:
     with:
       os: ubuntu-latest
       python_version: ${{ matrix.python-version }}
+    env:
+      SDL_AUDIODRIVER: disk
+      SDL_VIDEODRIVER: dummy
