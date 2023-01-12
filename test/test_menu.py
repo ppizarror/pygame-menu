@@ -11,7 +11,6 @@ __all__ = ['MenuTest']
 from test._utils import BaseRSTest, surface, MenuUtils, PygameEventUtils, \
     TEST_THEME, PYGAME_V2, WIDGET_MOUSEOVER, WIDGET_TOP_CURSOR, reset_widgets_over, \
     THEME_NON_FIXED_TITLE
-from typing import Any, Tuple, List
 import copy
 import math
 import sys
@@ -23,6 +22,8 @@ import pygame_menu
 import pygame_menu.controls as ctrl
 
 from pygame_menu import events
+# noinspection PyProtectedMember
+from pygame_menu._types import Any, Tuple, List
 from pygame_menu.locals import FINGERDOWN, FINGERMOTION
 from pygame_menu.utils import set_pygame_cursor, get_cursor
 from pygame_menu.widgets import Label, Button

@@ -91,9 +91,10 @@ class TextInput(Widget):
     :param onselect: Function when selecting the widget
     :param password: Input string is displayed as a password
     :param password_char: Character used by password type
-    :param repeat_keys_initial_ms: Time in ms before keys are repeated when held in ms
-    :param repeat_keys_interval_ms: Interval between key press repetition when held in ms
-    :param repeat_mouse_interval_ms: Interval between mouse events when held in ms
+    :param repeat_keys: Enable key repeat
+    :param repeat_keys_initial_ms: Time in milliseconds before keys are repeated when held in milliseconds
+    :param repeat_keys_interval_ms: Interval between key press repetition when held in milliseconds
+    :param repeat_mouse_interval_ms: Interval between mouse events when held in milliseconds
     :param text_ellipsis: Ellipsis text when overflow occurs (input length exceeds maxwidth)
     :param valid_chars: List of chars that are valid, ``None`` if all chars are valid
     :param kwargs: Optional keyword arguments
@@ -130,6 +131,7 @@ class TextInput(Widget):
     _input_underline_vmargin: int
     _key_is_pressed: bool
     _keychar_size: Dict[str, NumberType]
+    _keyrepeat: bool
     _keyrepeat_counters: Dict[int, List[int]]
     _keyrepeat_initial_interval_ms: NumberType
     _keyrepeat_interval_ms: NumberType
@@ -181,6 +183,7 @@ class TextInput(Widget):
             onselect: CallbackType = None,
             password: bool = False,
             password_char: str = '*',
+            repeat_keys: bool = True,
             repeat_keys_initial_ms: NumberType = 400,
             repeat_keys_interval_ms: NumberType = 50,
             repeat_mouse_interval_ms: NumberType = 400,
@@ -202,6 +205,7 @@ class TextInput(Widget):
         assert isinstance(maxwidth, int)
         assert isinstance(password, bool)
         assert isinstance(password_char, str)
+        assert isinstance(repeat_keys, bool)
         assert isinstance(repeat_keys_initial_ms, NumberInstance)
         assert isinstance(repeat_keys_interval_ms, NumberInstance)
         assert isinstance(repeat_mouse_interval_ms, NumberInstance)
@@ -222,11 +226,11 @@ class TextInput(Widget):
         assert cursor_switch_ms > 0, \
             'cursor switch in milliseconds must be greater than zero'
         assert repeat_keys_initial_ms > 0, \
-            'ms cannot be lower or equal than zero'
+            'repeat keys initial ms cannot be lower or equal than zero'
         assert repeat_keys_interval_ms > 0, \
-            'ms cannot be lower or equal than zero'
+            'repeat keys interval ms cannot be lower or equal than zero'
         assert repeat_mouse_interval_ms > 0, \
-            'ms cannot be lower or equal than zero'
+            'repeat mouse interval ms cannot be lower or equal than zero'
 
         cursor_color = assert_color(cursor_color)
         cursor_selection_color = assert_color(cursor_selection_color)
@@ -273,6 +277,7 @@ class TextInput(Widget):
         # Vars to make keydown repeat after user pressed a key for some time:
         self._block_copy_paste = False  # Blocks event
         self._key_is_pressed = False
+        self._keyrepeat = repeat_keys
         self._keyrepeat_counters = {}  # {event.key: (counter_int, event.unicode)} (look for "***")
         self._keyrepeat_initial_interval_ms = repeat_keys_initial_ms
         self._keyrepeat_interval_ms = repeat_keys_interval_ms
@@ -1877,22 +1882,23 @@ class TextInput(Widget):
                 pos = pygame.mouse.get_pos()
                 self._check_mouse_collide_input((pos[0], pos[1]))
 
-        # Update key counters:
-        for key in self._keyrepeat_counters:
-            self._keyrepeat_counters[key][0] += time_clock  # Update clock
+        # Update key counters
+        if self._keyrepeat:
+            for key in self._keyrepeat_counters:
+                self._keyrepeat_counters[key][0] += time_clock  # Update clock
 
-            # Generate new key events if enough time has passed:
-            if self._keyrepeat_counters[key][0] >= self._keyrepeat_initial_interval_ms:
-                self._keyrepeat_counters[key][0] = \
-                    self._keyrepeat_initial_interval_ms - self._keyrepeat_interval_ms
+                # Generate new key events if enough time has passed:
+                if self._keyrepeat_counters[key][0] >= self._keyrepeat_initial_interval_ms:
+                    self._keyrepeat_counters[key][0] = \
+                        self._keyrepeat_initial_interval_ms - self._keyrepeat_interval_ms
 
-                event_key, event_unicode = key, self._keyrepeat_counters[key][1]
-                self._add_event(
-                    pygame.event.Event(
-                        pygame.KEYDOWN,
-                        key=event_key,
-                        unicode=event_unicode)
-                )
+                    event_key, event_unicode = key, self._keyrepeat_counters[key][1]
+                    self._add_event(
+                        pygame.event.Event(
+                            pygame.KEYDOWN,
+                            key=event_key,
+                            unicode=event_unicode)
+                    )
 
         return updated
 
@@ -1968,9 +1974,10 @@ class TextInputManager(AbstractWidgetManager, ABC):
             - ``password_char``                 (str) - Character used by password type. ``"*"`` by default
             - ``readonly_color``                (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the widget if readonly mode
             - ``readonly_selected_color``       (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the widget if readonly mode and is selected
-            - ``repeat_keys_initial_ms``        (int, float) - Time in ms before keys are repeated when held in ms. ``400`` by default
-            - ``repeat_keys_interval_ms``       (int, float) - Interval between key press repetition when held in ms. ``50`` by default
-            - ``repeat_mouse_interval_ms``      (int, float) - Interval between mouse events when held in ms. ``400`` by default
+            - ``repeat_keys``                   (bool) - Enable key repeat. ``True`` by default
+            - ``repeat_keys_initial_ms``        (int, float) - Time in milliseconds before keys are repeated when held in milliseconds. ``400`` by default
+            - ``repeat_keys_interval_ms``       (int, float) - Interval between key press repetition when held in milliseconds. ``50`` by default
+            - ``repeat_mouse_interval_ms``      (int, float) - Interval between mouse events when held in milliseconds. ``400`` by default
             - ``selection_color``               (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the selected widget; only affects the font color
             - ``selection_effect``              (:py:class:`pygame_menu.widgets.core.Selection`) – Widget selection effect
             - ``shadow_color``                  (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the widget shadow

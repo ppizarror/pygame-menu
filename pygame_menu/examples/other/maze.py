@@ -571,7 +571,7 @@ class MazeApp(object):
         """
         Sleep time.
 
-        :param ms: Sleep in ms
+        :param ms: Sleep time in milliseconds
         """
         time.sleep(ms)
 
@@ -751,8 +751,8 @@ class MazeApp(object):
         """
         Performs recursive division.
 
-        :param chamber: Limits
-        :param halving: Divides the recursion area by two
+        :param chamber: Limit
+        :param halving: Divide the recursion area by two
         """
 
         def _gaps_to_offset() -> List[int]:
