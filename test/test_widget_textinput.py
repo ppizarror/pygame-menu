@@ -8,9 +8,8 @@ Test TextInput and ColorInput widgets.
 
 __all__ = ['TextInputWidgetTest']
 
-import time
 from test._utils import MenuUtils, surface, PygameEventUtils, TEST_THEME, PYGAME_V2, \
-    BaseTest
+    BaseTest, sleep
 
 import pygame
 import pygame_menu
@@ -831,14 +830,15 @@ class TextInputWidgetTest(BaseTest):
         """
         menu = MenuUtils.generic_menu(keyboard_ignore_nonphysical=False)
 
+        e = PygameEventUtils.key(pygame.K_a, keydown=True, char='a')
         textinput_on = menu.add.text_input('On', repeat_keys=True)
-        textinput_on.update(PygameEventUtils.key(pygame.K_a, keydown=True, char='a'))
+        textinput_on.update(e)
         textinput_off = menu.add.text_input('Off', repeat_keys=False)
-        textinput_off.update(PygameEventUtils.key(pygame.K_a, keydown=True, char='a'))
+        textinput_off.update(e)
 
         # Test with time
         for i in range(5):
-            time.sleep(0.5)
+            sleep(0.5)
             textinput_on.update([])
             textinput_off.update([])
         self.assertGreater(len(textinput_on.get_value()), 1)
