@@ -17,10 +17,10 @@ jobs:
     uses: ppizarror/workflow-actions/.github/workflows/test_python.yml@master
     strategy:
       matrix:
-        python-version: [ 3.7, 3.8, 3.9, '3.10' ]
+        python: [ 3.7, 3.8, 3.9, '3.10' ]
     with:
-      env_vars: |
+      env-vars: |
         SDL_AUDIODRIVER=disk
         SDL_VIDEODRIVER=dummy
       os: ubuntu-latest
-      python_version: ${{ matrix.python-version }}
+      python-version: ${{ matrix.python }}
