@@ -90,7 +90,7 @@ class ColorInput(TextInput):
     :param onselect: Function when selecting the widget
     :param prev_margin: Horizontal margin between the previsualization and the input text in px
     :param prev_width_factor: Width of the previsualization box in terms of the height of the widget
-    :param repeat_keys_initial_ms: Time in ms before keys are repeated when held
+    :param repeat_keys_initial_ms: Time in milliseconds before keys are repeated when held
     :param repeat_keys_interval_ms: Interval between key press repetition when held
     :param repeat_mouse_interval_ms: Interval between mouse events when held
     :param kwargs: Optional keyword arguments
@@ -635,9 +635,10 @@ class ColorInputManager(AbstractWidgetManager, ABC):
             - ``previsualization_width``        (int, float) – Pre-visualization width as a factor of the height. Default is ``3``
             - ``readonly_color``                (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the widget if readonly mode
             - ``readonly_selected_color``       (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the widget if readonly mode and is selected
-            - ``repeat_keys_initial_ms``        (int, float) - Time in ms before keys are repeated when held in ms. ``400`` by default
-            - ``repeat_keys_interval_ms``       (int, float) - Interval between key press repetition when held in ms. ``50`` by default
-            - ``repeat_mouse_interval_ms``      (int, float) - Interval between mouse events when held in ms. ``400`` by default
+            - ``repeat_keys``                   (bool) - Enable key repeat. ``True`` by default
+            - ``repeat_keys_initial_ms``        (int, float) - Time in milliseconds before keys are repeated when held in milliseconds. ``400`` by default
+            - ``repeat_keys_interval_ms``       (int, float) - Interval between key press repetition when held in milliseconds. ``50`` by default
+            - ``repeat_mouse_interval_ms``      (int, float) - Interval between mouse events when held in milliseconds. ``400`` by default
             - ``selection_color``               (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the selected widget; only affects the font color
             - ``selection_effect``              (:py:class:`pygame_menu.widgets.core.Selection`) – Widget selection effect
             - ``shadow_color``                  (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the widget shadow

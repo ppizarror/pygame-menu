@@ -8,7 +8,7 @@ Test RangeSlider widget.
 
 __all__ = ['RangeSliderWidgetTest']
 
-from test._utils import MenuUtils, surface, PygameEventUtils, BaseTest
+from test._utils import MenuUtils, surface, PygameEventUtils, BaseTest, sleep
 
 import pygame
 import pygame_menu
@@ -477,3 +477,23 @@ class RangeSliderWidgetTest(BaseTest):
         r.reset_value()
         self.assertEqual(r.get_value(), (0.2, 0.6))
         self.assertFalse(r.value_changed())
+
+    def test_keyrepeat(self) -> None:
+        """
+        Test keyrepeat.
+        """
+        menu = MenuUtils.generic_menu(keyboard_ignore_nonphysical=False)
+
+        e = PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True)
+        slider_on = menu.add.range_slider('', 0, [0, 1], increment=0.1)
+        slider_on.update(e)
+        slider_off = menu.add.range_slider('', 0, [0, 1], increment=0.1, repeat_keys=False)
+        slider_off.update(e)
+
+        # Test with time
+        for i in range(5):
+            sleep(0.5)
+            slider_on.update([])
+            slider_off.update([])
+        self.assertGreater(slider_on.get_value(), 0.1)
+        self.assertEqual(slider_off.get_value(), 0.1)

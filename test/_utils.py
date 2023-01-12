@@ -19,6 +19,7 @@ __all__ = [
 
     # Methods
     'reset_widgets_over',
+    'sleep',
     'surface',
     'test_reset_surface',
 
@@ -33,6 +34,8 @@ __all__ = [
 import random
 import sys
 import unittest
+
+from time import sleep
 
 import pygame
 import pygame_menu

@@ -90,7 +90,7 @@ class ArrowSelection(Selection):
         :param b: Arrow coord B
         :param c: Arrow coord C
         """
-        SELECTOR_CLOCK.tick(60)  # As blink is in ms
+        SELECTOR_CLOCK.tick(60)
         self._blink_time += SELECTOR_CLOCK.get_time()
 
         # Switch the blinking if the time exceeded or the widget has changed

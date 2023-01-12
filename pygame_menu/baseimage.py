@@ -466,7 +466,7 @@ class BaseImage(Base):
         """
         Return the image bit size.
 
-        :return: Image bit size
+        :return: Image size
         """
         return self._surface.get_bitsize()
 

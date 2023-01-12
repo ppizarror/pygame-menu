@@ -9,7 +9,7 @@ Test TextInput and ColorInput widgets.
 __all__ = ['TextInputWidgetTest']
 
 from test._utils import MenuUtils, surface, PygameEventUtils, TEST_THEME, PYGAME_V2, \
-    BaseTest
+    BaseTest, sleep
 
 import pygame
 import pygame_menu
@@ -410,7 +410,6 @@ class TextInputWidgetTest(BaseTest):
         self.assertEqual(textinput_copy.get_value(), '')
         textinput_copy._block_copy_paste = False
         textinput_copy._paste()
-        #  self.assertEqual(textinput_copy.get_value(), 'er than the max char')
         textinput_copy._cut()
         textinput_copy._block_copy_paste = False
         # self.assertEqual(textinput_copy.get_value(), '')
@@ -824,3 +823,23 @@ class TextInputWidgetTest(BaseTest):
         menu = MenuUtils.generic_menu()
         text = menu.add.text_input('')
         self.assertEqual(text.get_size(), (16, 49))
+
+    def test_keyrepeat(self) -> None:
+        """
+        Test keyrepeat.
+        """
+        menu = MenuUtils.generic_menu(keyboard_ignore_nonphysical=False)
+
+        e = PygameEventUtils.key(pygame.K_a, keydown=True, char='a')
+        textinput_on = menu.add.text_input('On', repeat_keys=True)
+        textinput_on.update(e)
+        textinput_off = menu.add.text_input('Off', repeat_keys=False)
+        textinput_off.update(e)
+
+        # Test with time
+        for i in range(5):
+            sleep(0.5)
+            textinput_on.update([])
+            textinput_off.update([])
+        self.assertGreater(len(textinput_on.get_value()), 1)
+        self.assertEqual(len(textinput_off.get_value()), 1)
