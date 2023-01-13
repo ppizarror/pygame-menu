@@ -321,8 +321,8 @@ class ButtonWidgetTest(BaseTest):
             image_path=pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU
         ).scale(0.25, 0.25)
         btn = menu.add.banner(image, test)
-        self.assertTrue(abs(btn.get_size()[0] - image.get_size()[0]) <= 1)
-        self.assertTrue(abs(btn.get_size()[1] - image.get_size()[1]) <= 1)
+        self.assertLessEqual(abs(btn.get_size()[0] - image.get_size()[0]), 1)
+        self.assertLessEqual(abs(btn.get_size()[1] - image.get_size()[1]), 1)
         self.assertFalse(apply_test[0])
         btn.apply()
         self.assertTrue(apply_test[0])
