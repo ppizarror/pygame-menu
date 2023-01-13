@@ -56,6 +56,29 @@ to a button by defining the ``action`` parameter with one of the three values:
 .. automethod:: pygame_menu._widgetmanager.WidgetManager.button
 
 
+Add a button banner
+-------------------
+
+Adds a clickable button using only an Image.
+
+**Example:**
+
+.. image:: ../_static/widget_banner.png
+    :scale: 75%
+    :align: center
+
+.. code-block:: python
+
+    menu = pygame_menu.Menu(...)
+
+    image = pygame_menu.BaseImage(
+        image_path=pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU
+    ).scale(0.25, 0.25)
+    menu.add.banner(image, pygame_menu.events.EXIT)
+
+.. automethod:: pygame_menu._widgetmanager.WidgetManager.banner
+
+
 Add a choices list (selector)
 -----------------------------
 

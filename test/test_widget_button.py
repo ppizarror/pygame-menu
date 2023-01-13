@@ -305,3 +305,24 @@ class ButtonWidgetTest(BaseTest):
 
         # Test select
         self.assertTrue(btn.update(PygameEventUtils.joy_button(ctrl.JOY_BUTTON_SELECT)))
+
+    def test_button_image(self) -> None:
+        """
+        Test button with an image.
+        """
+        menu = MenuUtils.generic_menu()
+        apply_test = [False]
+
+        def test() -> None:
+            print('clicked')
+            apply_test[0] = True
+
+        image = pygame_menu.BaseImage(
+            image_path=pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU
+        ).scale(0.25, 0.25)
+        btn = menu.add.banner(image, test)
+        self.assertTrue(abs(btn.get_size()[0] - image.get_size()[0]) <= 1)
+        self.assertTrue(abs(btn.get_size()[1] - image.get_size()[1]) <= 1)
+        self.assertFalse(apply_test[0])
+        btn.apply()
+        self.assertTrue(apply_test[0])

@@ -237,6 +237,90 @@ class ButtonManager(AbstractWidgetManager, ABC):
     """
 
     # noinspection PyProtectedMember
+    def banner(
+            self,
+            image: 'pygame_menu.BaseImage',
+            action: Optional[Union['pygame_menu.Menu', '_events.MenuAction', Callable, int]] = None,
+            *args,
+            **kwargs
+    ) -> 'pygame_menu.widgets.Button':
+        """
+        Adds a clickeable image to the Menu with same behaviour as a Button.
+
+        The arguments and unknown keyword arguments are passed to the action, if
+        it's a callable object:
+
+        .. code-block:: python
+
+            action(*args)
+
+        If ``accept_kwargs=True`` then the ``**kwargs`` are also unpacked on action
+        call:
+
+        .. code-block:: python
+
+            action(*args, **kwargs)
+
+        If ``onselect`` is defined, the callback is executed as follows, where
+        ``selected`` is a boolean representing the selected status:
+
+        .. code-block:: python
+
+            onselect(selected, widget, menu)
+
+        kwargs (Optional)
+            - ``accept_kwargs``                 (bool) – Button action accepts ``**kwargs`` if it's a callable object (function-type), ``False`` by default
+            - ``align``                         (str) – Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/themes.html#alignment>`_
+            - ``back_count``                    (int) – Number of menus to go back if action is :py:data:`pygame_menu.events.BACK` event, default is ``1``
+            - ``border_color``                  (tuple, list, str, int, :py:class:`pygame.Color`) – Widget border color. ``None`` for no-color
+            - ``border_inflate``                (tuple, list) – Widget border inflate on x-axis and y-axis (x, y) in px
+            - ``border_position``               (str, tuple, list) – Widget border positioning. It can be a single position, or a tuple/list of positions. Only are accepted: north, south, east, and west. See :py:mod:`pygame_menu.locals`
+            - ``border_width``                  (int) – Border width in px. If ``0`` disables the border
+            - ``button_id``                     (str) – Widget ID
+            - ``cursor``                        (int, :py:class:`pygame.cursors.Cursor`, None) – Cursor of the widget if the mouse is placed over
+            - ``float``                         (bool) - If ``True`` the widget don't contribute width/height to the Menu widget positioning computation, and don't add one unit to the rows
+            - ``float_origin_position``         (bool) - If ``True`` the widget position is set to the top-left position of the Menu if the widget is floating
+            - ``margin``                        (tuple, list) – Widget (left, bottom) margin in px
+            - ``onselect``                      (callable, None) – Callback executed when selecting the widget
+            - ``padding``                       (int, float, tuple, list) – Widget padding according to CSS rules. General shape: (top, right, bottom, left)
+            - ``selection_color``               (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the selected widget; only affects the font color
+            - ``selection_effect``              (:py:class:`pygame_menu.widgets.core.Selection`) – Widget selection effect
+            - ``shadow_color``                  (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the widget shadow
+            - ``shadow_radius``                 (int) - Border radius of the shadow
+            - ``shadow_type``                   (str) - Shadow type, it can be ``'rectangular'`` or ``'ellipse'``
+            - ``shadow_width``                  (int) - Width of the shadow. If ``0`` the shadow is disabled
+
+        .. note::
+
+            All theme-related optional kwargs use the default Menu theme if not defined.
+
+        .. note::
+
+            Using ``action=None`` is the same as using ``action=pygame_menu.events.NONE``.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply to
+            :py:meth:`pygame_menu.menu.Menu.get_current` object.
+
+        .. warning::
+
+            Be careful with kwargs collision. Consider that all optional documented
+            kwargs keys are removed from the object.
+
+        :param image: Image of the clickeable button
+        :param action: Action of the button, can be a Menu, an event, or a function
+        :param args: Additional arguments used by a function
+        :param kwargs: Optional keyword arguments
+        :return: Widget object
+        :rtype: :py:class:`pygame_menu.widgets.Button`
+        """
+        kwargs['background_color'] = image
+        button = self.button(' ', action, *args, **kwargs)
+        return button.resize(*image.get_size())
+
+    # noinspection PyProtectedMember
     def button(
             self,
             title: Any,
