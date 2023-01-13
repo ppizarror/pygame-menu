@@ -398,7 +398,7 @@ class Menu(Base):
         # Menu widgets, it should not be accessed outside the object as strange
         # issues can occur
         self.add = WidgetManager(self)
-        self._widget_selected_update = True
+        self._widget_selected_update = True  # If True, the selected widget receives the updates, if False, the events only are passed to the Menu
         self._widgets = []  # This list may change during execution (replaced by a new one)
 
         # Stores the frames which receive update events, updated and managed only
@@ -2493,11 +2493,11 @@ class Menu(Base):
         frames_updated = False
         if not selected_widget_disable_frame_update:
             for frame in self._current._update_frames:
-                frames_updated = frames_updated or frame.update(events)
+                frames_updated = frames_updated or frame.update_menu(events)
 
         # Update widgets on update list
         for widget in self._current._update_widgets:
-            widget.update(events)
+            widget.update_menu(events)
 
         # Frames have updated
         if frames_updated:
@@ -2511,13 +2511,13 @@ class Menu(Base):
 
         # Update the menubar, it may change the status of the widget because
         # of the button back/close
-        elif self._current._menubar.update(events):
+        elif self._current._menubar.update_menu(events):
             self._current._last_update_mode.append(_events.MENU_LAST_MENUBAR)
             updated = True
 
         # Check selected widget
         elif selected_widget is not None and self._current._widget_selected_update and \
-                selected_widget.update(events):
+                selected_widget.update_menu(events):
             self._current._last_update_mode.append(
                 f'{_events.MENU_LAST_SELECTED_WIDGET_EVENT}#{selected_widget.get_id()}'
             )
@@ -2531,7 +2531,6 @@ class Menu(Base):
                 events.append(mouse_motion_current_mouse_position())
 
             for event in events:
-
                 # User closes window
                 close_altf4 = event.type == pygame.KEYDOWN and event.key == pygame.K_F4 and (
                         event.mod == pygame.KMOD_LALT or event.mod == pygame.KMOD_RALT)
@@ -2542,7 +2541,6 @@ class Menu(Base):
 
                 # User press key
                 elif event.type == pygame.KEYDOWN and self._current._keyboard:
-
                     # Check key event is valid
                     if self._keyboard_ignore_nonphysical and not check_key_pressed_valid(event):
                         continue
@@ -2777,7 +2775,7 @@ class Menu(Base):
                         selected_widget is not None and event.button in (1, 2, 3):
                     self._current._sound.play_click_mouse()
                     if selected_widget_scrollarea.collide(selected_widget, event):
-                        updated = selected_widget.update([event])
+                        updated = selected_widget.update_menu([event])
                         if updated:
                             self._current._last_update_mode.append(
                                 f'{_events.MENU_LAST_SELECTED_WIDGET_BUTTON_UP}#{selected_widget.get_id()}'
@@ -2786,7 +2784,6 @@ class Menu(Base):
 
                 # Touchscreen event:
                 elif event.type == FINGERDOWN and self._current._touchscreen:
-
                     # If the touchscreen motion selection is disabled then select
                     # a widget by clicking
                     if not self._current._touchscreen_motion_selection:
@@ -2825,7 +2822,7 @@ class Menu(Base):
                         selected_widget is not None:
                     self._current._sound.play_click_touch()
                     if selected_widget_scrollarea.collide(selected_widget, event):
-                        updated = selected_widget.update([event])
+                        updated = selected_widget.update_menu([event])
                         if updated:
                             self._current._last_update_mode.append(
                                 f'{_events.MENU_LAST_SELECTED_WIDGET_FINGER_UP}#{selected_widget.get_id()}'
@@ -2836,7 +2833,6 @@ class Menu(Base):
                 # current selected widget is not active and the pointed widget is
                 # selectable
                 elif event.type == FINGERMOTION and self._current._touchscreen_motion_selection:
-
                     # If selected widget is active then motion should not select
                     # any widget
                     if selected_widget is not None and selected_widget.active:

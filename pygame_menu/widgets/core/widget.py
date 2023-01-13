@@ -459,6 +459,7 @@ class Widget(Base):
         self.last_surface = None  # Stores the last surface the widget has been drawn
         self.lock_position = False  # If True, the widget don't update the position if .set_position() is executed
         self.readonly = False  # If True, widget ignores all input
+        self.receive_menu_update_events = True  # If False, the widget does not receive events from Menu.update(events)
         self.selection_expand_background = False  # If True, the widget background will inflate to match selection margin if selected
 
     def _ignores_keyboard_nonphysical(self) -> bool:
@@ -683,7 +684,7 @@ class Widget(Base):
         :param check_all_widget_mouseleave: Check widget leave statutes
         :return: ``True`` if the mouseover status changed
         """
-        if event.type not in (pygame.MOUSEMOTION, pygame.ACTIVEEVENT):
+        if not hasattr(event, 'type') or event.type not in (pygame.MOUSEMOTION, pygame.ACTIVEEVENT):
             return False
 
         # If mouse out from window
@@ -2741,6 +2742,18 @@ class Widget(Base):
         :return: ``True`` if updated
         """
         raise NotImplementedError('override is mandatory')
+
+    def update_menu(self, events: EventVectorType) -> bool:
+        """
+        Update the widget from Menu. This method is the same as update(), however,
+        it takes into account the value of ``widget.receive_menu_update_events``.
+
+        :param events: List/Tuple of pygame events
+        :return: ``True`` if updated
+        """
+        if not self.receive_menu_update_events:
+            return False
+        return self.update(events)
 
     def add_draw_callback(
             self,

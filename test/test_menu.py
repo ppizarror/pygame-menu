@@ -2517,3 +2517,39 @@ class MenuTest(BaseRSTest):
             self.assertEqual(position_before[i], widgets[i].get_position())
 
         print(f'Render on: {t_on}s, off: {t_off}s')
+
+    def test_menu_widget_selected_events(self) -> None:
+        """
+        Test menu passing events to selected widget.
+        """
+        menu = MenuUtils.generic_menu()
+        age = menu.add.text_input('Character age:')
+        name = menu.add.text_input('Character name:')
+        menu.update(PygameEventUtils.key(pygame.K_a, keydown=True, char='a'))
+        self.assertTrue(age.is_selected())
+        self.assertFalse(name.is_selected())
+        self.assertEqual(age.get_value(), 'a')
+        self.assertEqual(name.get_value(), '')
+        menu.update(PygameEventUtils.key(ctrl.KEY_MOVE_DOWN, keydown=True))
+        self.assertFalse(age.is_selected())
+        self.assertTrue(name.is_selected())
+
+        # Now, disable global widget selected event
+        menu._widget_selected_update = False
+        menu.update(PygameEventUtils.key(pygame.K_a, keydown=True, char='a'))
+        self.assertEqual(name.get_value(), '')
+
+        # Re-enable global widget selected event
+        menu._widget_selected_update = True
+        menu.update(PygameEventUtils.key(pygame.K_a, keydown=True, char='a'))
+        self.assertEqual(name.get_value(), 'a')
+
+        # Disable local widget accept event
+        name.receive_menu_update_events = False
+        menu.update(PygameEventUtils.key(pygame.K_a, keydown=True, char='a'))
+        self.assertEqual(name.get_value(), 'a')
+
+        # Enable local widget accept event
+        name.receive_menu_update_events = True
+        menu.update(PygameEventUtils.key(pygame.K_s, keydown=True, char='s'))
+        self.assertEqual(name.get_value(), 'as')
