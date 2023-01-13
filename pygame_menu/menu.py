@@ -65,7 +65,7 @@ class Menu(Base):
 
     Menu can receive many callbacks; callbacks ``onclose`` and ``onreset`` are fired
     (if them are callable-type). They can only receive 1 argument maximum, if so,
-    the Menu instance is provided
+    the Menu instance is provided.
 
     .. code-block:: python
 
