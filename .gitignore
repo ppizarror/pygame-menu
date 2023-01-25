@@ -10,7 +10,7 @@ venv/
 *.zip
 
 # Compiled python files
-*/__pycache__
+*/__pycache__/
 *.pyc
 
 # Distribution files
