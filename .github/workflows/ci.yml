@@ -22,6 +22,7 @@ jobs:
       env-vars: |
         SDL_AUDIODRIVER=disk
         SDL_VIDEODRIVER=dummy
+      install-extras: test
       os: ubuntu-latest
       python-version: ${{ matrix.python }}
 
