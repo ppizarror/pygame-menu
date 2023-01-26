@@ -338,7 +338,7 @@ class ScrollArea(Base):
             color: Optional[Union[ColorInputType, 'pygame_menu.BaseImage']]
     ) -> 'ScrollArea':
         """
-        Updates area color.
+        Updates area color (background).
 
         :param color: Color
         :return: Self reference
