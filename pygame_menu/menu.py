@@ -787,7 +787,10 @@ class Menu(Base):
     ) -> 'Menu':
         """
         Set ``onbeforeopen`` callback. Callback is executed before opening the
-        Menu, it receives the current Menu and the next Menu:
+        Menu, it receives the current Menu and the next Menu. This method is only
+        executed programatically (by calling ``menu._open``) or by applying to
+        certain widgets, like :py:class:`pygame_menu.widgets.Button`. Rendering, or
+        drawing the current Menu does not trigger this event.
 
         .. code-block:: python
 
@@ -3181,12 +3184,12 @@ class Menu(Base):
         self._top._current = menu._current
         self._top._prev = [self._top._prev, current]
 
+        # Select the first widget
+        self._current._select(0, 1, SELECT_OPEN, False, update_mouse_position=False)
+
         # Call event
         if menu._onbeforeopen is not None:
             menu._onbeforeopen(current, menu)
-
-        # Select the first widget
-        self._current._select(0, 1, SELECT_OPEN, False, update_mouse_position=False)
 
         # Re-render menu
         check_widget_mouseleave(force=True)
