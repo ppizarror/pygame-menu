@@ -1564,7 +1564,7 @@ class Menu(Base):
             min_x = min(min_x, x_coord - padding[3] - sm_left)
             min_y = min(min_y, y_coord - padding[0])
 
-            # Adds scrollbar thickess if not ignored
+            # Restore the discounted scrollbar thickness
             if self._theme.widget_alignment_ignore_scrollbar_thickness:
                 x_coord += self._get_scrollbar_thickness()[1] / 2
 
