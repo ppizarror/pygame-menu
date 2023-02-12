@@ -1485,7 +1485,7 @@ class MenuTest(BaseRSTest):
         # Test applying to submenu, which should trigger onbeforeopen
         self.assertEqual(submenu.get_selected_widget().get_id(), 'option1')  # By default, submenu always start as 0
         btn_submenu.apply()
-        self.assertEqual(submenu.get_selected_widget().get_id(), 'option2', 0)  # Test if onbeforeopen did its work
+        self.assertEqual(submenu.get_selected_widget().get_id(), 'option2')  # Test if onbeforeopen did its work
 
     def test_focus(self) -> None:
         """
