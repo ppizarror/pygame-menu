@@ -1551,9 +1551,6 @@ class Menu(Base):
                     y=menubar_height + padding[0] + d_border)
                 continue
 
-            # Update the position of the widget
-            widget.set_position(x_coord, y_coord)
-
             # Add the widget translation to the widget for computing the min/max position. This
             # feature does not work as intended as there's edge cases not covered, and centering makes
             # the translation more difficult
@@ -1566,6 +1563,13 @@ class Menu(Base):
             max_y = max(max_y, y_coord + get_rect(widget).height - padding[2] + ty)  # minus bottom padding
             min_x = min(min_x, x_coord - padding[3] - sm_left)
             min_y = min(min_y, y_coord - padding[0])
+
+            # Adds scrollbar thickess if not ignored
+            if self._theme.widget_alignment_ignore_scrollbar_thickness:
+                x_coord += self._get_scrollbar_thickness()[1] / 2
+
+            # Update the position of the widget
+            widget.set_position(x_coord, y_coord)
 
         # Update position
         if min_max_updated:
