@@ -1472,7 +1472,6 @@ class MenuTest(BaseRSTest):
             """
             Selects widget before opening.
             """
-            print('sad')
             _to.select_widget('option2')
 
         menu = MenuUtils.generic_menu()
