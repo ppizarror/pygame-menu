@@ -1,4 +1,3 @@
-
 :orphan:
 
 .. module:: pygame_menu.events

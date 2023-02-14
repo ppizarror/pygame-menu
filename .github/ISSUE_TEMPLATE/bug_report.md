@@ -9,6 +9,7 @@ assignees: ''
 
 **Environment information**
 Describe your environment information, such as:
+
 - OS: win/linux
 - python version: v3.x
 - pygame version: v2.x
