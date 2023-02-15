@@ -17,7 +17,7 @@ jobs:
     uses: ppizarror/workflow-actions/.github/workflows/test_python.yml@master
     strategy:
       matrix:
-        python: [3.7, 3.8, 3.9, '3.10']
+        python: [ 3.7, 3.8, 3.9, '3.10' ]
     with:
       env-vars: |
         SDL_AUDIODRIVER=disk

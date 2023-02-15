@@ -133,13 +133,13 @@ class Node(object):
         self.color = self.pcolor if self.is_path else self.vcolor if self.is_visited else self.rcolor
 
     def update(
-            self,
-            nodetype: Union[bool, str] = False,
-            is_visited: Union[bool, str] = 'unchanged',
-            is_path: Union[bool, str] = 'unchanged',
-            colors: dict = colors,
-            dmf: dict = distance_modifiers,
-            nodetypes: dict = nodetypes
+        self,
+        nodetype: Union[bool, str] = False,
+        is_visited: Union[bool, str] = 'unchanged',
+        is_path: Union[bool, str] = 'unchanged',
+        colors: dict = colors,
+        dmf: dict = distance_modifiers,
+        nodetypes: dict = nodetypes
     ) -> None:
         """
         Update the node.
@@ -190,10 +190,10 @@ class MazeApp(object):
     _width: int
 
     def __init__(
-            self,
-            width: int = 8,
-            rows: int = 75,
-            margin: int = 0
+        self,
+        width: int = 8,
+        rows: int = 75,
+        margin: int = 0
     ) -> None:
         """
         Creates the maze.
@@ -744,9 +744,9 @@ class MazeApp(object):
         return mazearray
 
     def _recursive_division(
-            self,
-            chamber: Optional[Tuple[int, int, int, int]] = None,
-            halving=True
+        self,
+        chamber: Optional[Tuple[int, int, int, int]] = None,
+        halving=True
     ) -> None:
         """
         Performs recursive division.
@@ -967,9 +967,9 @@ class MazeApp(object):
         return path_found
 
     def _get_neighbours(
-            self,
-            node: _Point2,
-            max_width: Optional[int] = None
+        self,
+        node: _Point2,
+        max_width: Optional[int] = None
     ) -> Generator[Tuple[_Point2, str], Any, None]:
         """
         Get the neighbours.
@@ -1040,11 +1040,11 @@ class MazeApp(object):
         pygame.event.pump()
 
     def _dijkstra(
-            self,
-            mazearray: _MazeType,
-            start_point: _Point2 = (0, 0),
-            goal_node: Optional[_Point2] = None,
-            astar: bool = False
+        self,
+        mazearray: _MazeType,
+        start_point: _Point2 = (0, 0),
+        goal_node: Optional[_Point2] = None,
+        astar: bool = False
     ) -> bool:
         """
         Dijkstra's pathfinding algorithm, with the option to switch to A* by

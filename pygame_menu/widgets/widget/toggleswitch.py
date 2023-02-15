@@ -103,33 +103,33 @@ class ToggleSwitch(Widget):
     _total_states: int
 
     def __init__(
-            self,
-            title: Any,
-            toggleswitch_id: str = '',
-            default_state: int = 0,
-            infinite: bool = False,
-            onchange: CallbackType = None,
-            onselect: CallbackType = None,
-            single_click: bool = False,
-            single_click_dir: bool = True,
-            slider_color: ColorInputType = (255, 255, 255),
-            slider_height_factor: NumberType = 1,
-            slider_thickness: int = 25,
-            slider_vmargin: NumberType = 0,
-            state_color: Tuple[ColorInputType, ...] = ((178, 178, 178), (117, 185, 54)),
-            state_text: Tuple[str, ...] = ('Off', 'On'),
-            state_text_font: Optional[FontType] = None,
-            state_text_font_color: Tuple[ColorInputType, ...] = ((255, 255, 255), (255, 255, 255)),
-            state_text_font_size: Optional[int] = None,
-            state_text_position: Tuple2NumberType = (0.5, 0.5),
-            state_values: Tuple[Any, ...] = (False, True),
-            state_width: Union[Tuple[int, ...], int] = 150,
-            switch_border_color: ColorInputType = (40, 40, 40),
-            switch_border_width: int = 1,
-            switch_height: NumberType = 1.25,
-            switch_margin: Tuple2IntType = (25, 0),
-            *args,
-            **kwargs
+        self,
+        title: Any,
+        toggleswitch_id: str = '',
+        default_state: int = 0,
+        infinite: bool = False,
+        onchange: CallbackType = None,
+        onselect: CallbackType = None,
+        single_click: bool = False,
+        single_click_dir: bool = True,
+        slider_color: ColorInputType = (255, 255, 255),
+        slider_height_factor: NumberType = 1,
+        slider_thickness: int = 25,
+        slider_vmargin: NumberType = 0,
+        state_color: Tuple[ColorInputType, ...] = ((178, 178, 178), (117, 185, 54)),
+        state_text: Tuple[str, ...] = ('Off', 'On'),
+        state_text_font: Optional[FontType] = None,
+        state_text_font_color: Tuple[ColorInputType, ...] = ((255, 255, 255), (255, 255, 255)),
+        state_text_font_size: Optional[int] = None,
+        state_text_position: Tuple2NumberType = (0.5, 0.5),
+        state_values: Tuple[Any, ...] = (False, True),
+        state_width: Union[Tuple[int, ...], int] = 150,
+        switch_border_color: ColorInputType = (40, 40, 40),
+        switch_border_width: int = 1,
+        switch_height: NumberType = 1.25,
+        switch_margin: Tuple2IntType = (25, 0),
+        *args,
+        **kwargs
     ) -> None:
         super(ToggleSwitch, self).__init__(
             args=args,
@@ -328,9 +328,7 @@ class ToggleSwitch(Widget):
         surface.blit(self._slider, (slider_x, slider_y))
 
     def _render(self) -> Optional[bool]:
-        if not self._render_hash_changed(
-                self._selected, self._title, self._visible, self.readonly,
-                self._state):
+        if not self._render_hash_changed(self._selected, self._title, self._visible, self.readonly, self._state):
             return True
 
         # Create basic title
@@ -405,23 +403,28 @@ class ToggleSwitch(Widget):
             joy_axismotion = self._joystick_enabled and event.type == pygame.JOYAXISMOTION
 
             # Left button
-            if keydown and self._ctrl.left(event, self) or \
-                    joy_hatmotion and self._ctrl.joy_left(event, self) or \
-                    joy_axismotion and self._ctrl.joy_axis_x_left(event, self):
+            if (
+                keydown and self._ctrl.left(event, self) or
+                joy_hatmotion and self._ctrl.joy_left(event, self) or
+                joy_axismotion and self._ctrl.joy_axis_x_left(event, self)
+            ):
                 self._left()
                 return True
 
             # Right button
-            elif keydown and self._ctrl.right(event, self) or \
-                    joy_hatmotion and self._ctrl.joy_right(event, self) or \
-                    joy_axismotion and self._ctrl.joy_axis_x_right(event, self):
+            elif (
+                keydown and self._ctrl.right(event, self) or
+                joy_hatmotion and self._ctrl.joy_right(event, self) or
+                joy_axismotion and self._ctrl.joy_axis_x_right(event, self)
+            ):
                 self._right()
                 return True
 
             # Press enter
-            elif keydown and self._ctrl.apply(event, self) and self._total_states == 2 or \
-                    event.type == pygame.JOYBUTTONDOWN and self._joystick_enabled and \
-                    self._ctrl.joy_select(event, self) and self._total_states == 2:
+            elif (
+                keydown and self._ctrl.apply(event, self) and self._total_states == 2 or
+                event.type == pygame.JOYBUTTONDOWN and self._joystick_enabled and self._ctrl.joy_select(event, self) and self._total_states == 2
+            ):
                 self._sound.play_key_add()
                 self._state = int(not self._state)
                 self.change()
@@ -429,10 +432,10 @@ class ToggleSwitch(Widget):
                 return True
 
             # Click on switch; don't consider the mouse wheel (button 4 & 5)
-            elif event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and \
-                    event.button in (1, 2, 3) or \
-                    event.type == FINGERUP and self._touchscreen_enabled and \
-                    self._menu is not None:
+            elif (
+                event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and event.button in (1, 2, 3) or
+                event.type == FINGERUP and self._touchscreen_enabled and self._menu is not None
+            ):
                 event_pos = get_finger_pos(self._menu, event)
 
                 # If collides
@@ -479,17 +482,17 @@ class ToggleSwitchManager(AbstractWidgetManager, ABC):
     """
 
     def toggle_switch(
-            self,
-            title: Any,
-            default: Union[int, bool] = 0,
-            onchange: CallbackType = None,
-            onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
-            toggleswitch_id: str = '',
-            single_click: bool = True,
-            state_text: Tuple[str, ...] = ('Off', 'On'),
-            state_values: Tuple[Any, ...] = (False, True),
-            width: int = 150,
-            **kwargs
+        self,
+        title: Any,
+        default: Union[int, bool] = 0,
+        onchange: CallbackType = None,
+        onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
+        toggleswitch_id: str = '',
+        single_click: bool = True,
+        state_text: Tuple[str, ...] = ('Off', 'On'),
+        state_values: Tuple[Any, ...] = (False, True),
+        width: int = 150,
+        **kwargs
     ) -> 'pygame_menu.widgets.ToggleSwitch':
         """
         Add a toggle switch to the Menu: It can switch between two states.

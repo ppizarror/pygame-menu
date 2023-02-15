@@ -101,20 +101,20 @@ class MenuBar(Widget):
     fixed: bool
 
     def __init__(
-            self,
-            title: Any,
-            width: NumberType,
-            background_color: ColorInputType,
-            menubar_id: str = '',
-            back_box: bool = False,
-            back_box_background_color: ColorInputType = (0, 0, 0),
-            mode: MenuBarStyleModeType = MENUBAR_STYLE_ADAPTIVE,
-            modify_scrollarea: bool = True,
-            offsetx: NumberType = 0,
-            offsety: NumberType = 0,
-            onreturn: CallbackType = None,
-            *args,
-            **kwargs
+        self,
+        title: Any,
+        width: NumberType,
+        background_color: ColorInputType,
+        menubar_id: str = '',
+        back_box: bool = False,
+        back_box_background_color: ColorInputType = (0, 0, 0),
+        mode: MenuBarStyleModeType = MENUBAR_STYLE_ADAPTIVE,
+        modify_scrollarea: bool = True,
+        offsetx: NumberType = 0,
+        offsety: NumberType = 0,
+        onreturn: CallbackType = None,
+        *args,
+        **kwargs
     ) -> None:
         assert isinstance(width, NumberInstance)
         assert isinstance(back_box, bool)
@@ -300,9 +300,8 @@ class MenuBar(Widget):
         # noinspection PyProtectedMember
         menu_prev_condition = not self._menu or not self._menu._top or not self._menu._top._prev
 
-        if not self._render_hash_changed(
-                self._menu.get_id(), self._rect.x, self._rect.y, self._title, self._width,
-                self._visible, self._font_selected_color, menu_prev_condition):
+        if not self._render_hash_changed(self._menu.get_id(), self._rect.x, self._rect.y, self._title, self._width,
+                                         self._visible, self._font_selected_color, menu_prev_condition):
             return True
 
         # Update box mode
@@ -529,10 +528,10 @@ class MenuBar(Widget):
                 self._check_mouseover(event)
 
             # User clicks/touches the backbox rect; don't consider the mouse wheel (button 4 & 5)
-            if event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and \
-                    event.button in (1, 2, 3) or \
-                    event.type == FINGERUP and self._touchscreen_enabled and \
-                    self._menu is not None:
+            if (
+                event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and event.button in (1, 2, 3) or
+                event.type == FINGERUP and self._touchscreen_enabled and self._menu is not None
+            ):
                 event_pos = get_finger_pos(self._menu, event)
                 if self._backbox_visible() and self._backbox_rect.collidepoint(*event_pos):
                     if event.type == pygame.MOUSEBUTTONUP:

@@ -161,9 +161,11 @@ class WidgetManager(
         # font_background_color
         font_background_color = kwargs.pop('font_background_color',
                                            self._theme.widget_font_background_color)
-        if font_background_color is None and \
-                self._theme.widget_font_background_color_from_menu and \
-                not background_is_color:
+        if (
+            font_background_color is None and
+            self._theme.widget_font_background_color_from_menu and
+            not background_is_color
+        ):
             if not isinstance(self._theme.background_color, pygame_menu.BaseImage):
                 font_background_color = assert_color(self._theme.background_color)
         attributes['font_background_color'] = font_background_color
@@ -390,9 +392,9 @@ class WidgetManager(
         self._configure_widget(widget, **self._filter_widget_attributes({}))
 
     def generic_widget(
-            self,
-            widget: 'Widget',
-            configure_defaults: bool = False
+        self,
+        widget: 'Widget',
+        configure_defaults: bool = False
     ) -> 'Widget':
         """
         Add generic widget to the Menu.

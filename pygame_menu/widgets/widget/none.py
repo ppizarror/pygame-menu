@@ -38,8 +38,8 @@ class NoneWidget(Widget):
     """
 
     def __init__(
-            self,
-            widget_id: str = ''
+        self,
+        widget_id: str = ''
     ) -> None:
         super(NoneWidget, self).__init__(widget_id=widget_id)
         self.is_selectable = False
@@ -185,8 +185,8 @@ class NoneWidgetManager(AbstractWidgetManager, ABC):
     """
 
     def none_widget(
-            self,
-            widget_id: str = ''
+        self,
+        widget_id: str = ''
     ) -> 'pygame_menu.widgets.NoneWidget':
         """
         Add a none widget to the Menu.

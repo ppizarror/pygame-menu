@@ -35,9 +35,9 @@ class VMargin(NoneWidget):
     """
 
     def __init__(
-            self,
-            margin: NumberType,
-            widget_id: str = ''
+        self,
+        margin: NumberType,
+        widget_id: str = ''
     ) -> None:
         assert isinstance(margin, NumberInstance)
         assert margin > 0, 'negative or zero margin is not valid'
@@ -55,9 +55,9 @@ class VMarginManager(AbstractWidgetManager, ABC):
     """
 
     def vertical_margin(
-            self,
-            margin: NumberType,
-            margin_id: str = ''
+        self,
+        margin: NumberType,
+        margin_id: str = ''
     ) -> 'pygame_menu.widgets.VMargin':
         """
         Adds a vertical margin to the Menu.

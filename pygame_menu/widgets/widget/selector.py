@@ -118,24 +118,24 @@ class Selector(Widget):
     _title_size: int
 
     def __init__(
-            self,
-            title: Any,
-            items: Union[List[Tuple[Any, ...]], List[str]],
-            selector_id: str = '',
-            default: int = 0,
-            onchange: CallbackType = None,
-            onreturn: CallbackType = None,
-            onselect: CallbackType = None,
-            style: SelectorStyleType = SELECTOR_STYLE_CLASSIC,
-            style_fancy_arrow_color: ColorInputType = (160, 160, 160),
-            style_fancy_arrow_margin: Tuple3IntType = (5, 5, 0),
-            style_fancy_bgcolor: ColorInputType = (180, 180, 180),
-            style_fancy_bordercolor: ColorInputType = (0, 0, 0),
-            style_fancy_borderwidth: int = 1,
-            style_fancy_box_inflate: Tuple2IntType = (0, 0),
-            style_fancy_box_margin: Tuple2NumberType = (25, 0),
-            *args,
-            **kwargs
+        self,
+        title: Any,
+        items: Union[List[Tuple[Any, ...]], List[str]],
+        selector_id: str = '',
+        default: int = 0,
+        onchange: CallbackType = None,
+        onreturn: CallbackType = None,
+        onselect: CallbackType = None,
+        style: SelectorStyleType = SELECTOR_STYLE_CLASSIC,
+        style_fancy_arrow_color: ColorInputType = (160, 160, 160),
+        style_fancy_arrow_margin: Tuple3IntType = (5, 5, 0),
+        style_fancy_bgcolor: ColorInputType = (180, 180, 180),
+        style_fancy_bordercolor: ColorInputType = (0, 0, 0),
+        style_fancy_borderwidth: int = 1,
+        style_fancy_box_inflate: Tuple2IntType = (0, 0),
+        style_fancy_box_margin: Tuple2NumberType = (25, 0),
+        *args,
+        **kwargs
     ) -> None:
         assert isinstance(items, list)
         assert isinstance(selector_id, str)
@@ -229,9 +229,7 @@ class Selector(Widget):
 
     def _render(self) -> Optional[bool]:
         current_selected = self.get_value()[0][0]
-        if not self._render_hash_changed(
-                current_selected, self._selected, self._visible, self._index,
-                self.readonly):
+        if not self._render_hash_changed(current_selected, self._selected, self._visible, self._index, self.readonly):
             return True
 
         color = self.get_font_color_status()
@@ -449,31 +447,37 @@ class Selector(Widget):
             joy_button_down = self._joystick_enabled and event.type == pygame.JOYBUTTONDOWN
 
             # Left button
-            if keydown and self._ctrl.left(event, self) or \
-                    joy_hatmotion and self._ctrl.joy_left(event, self) or \
-                    joy_axismotion and self._ctrl.joy_axis_x_left(event, self):
+            if (
+                keydown and self._ctrl.left(event, self) or
+                joy_hatmotion and self._ctrl.joy_left(event, self) or
+                joy_axismotion and self._ctrl.joy_axis_x_left(event, self)
+            ):
                 self._left()
                 return True
 
             # Right button
-            elif keydown and self._ctrl.right(event, self) or \
-                    joy_hatmotion and self._ctrl.joy_right(event, self) or \
-                    joy_axismotion and self._ctrl.joy_axis_x_right(event, self):
+            elif (
+                keydown and self._ctrl.right(event, self) or
+                joy_hatmotion and self._ctrl.joy_right(event, self) or
+                joy_axismotion and self._ctrl.joy_axis_x_right(event, self)
+            ):
                 self._right()
                 return True
 
             # Press enter
-            elif keydown and self._ctrl.apply(event, self) or \
-                    joy_button_down and self._ctrl.joy_select(event, self):
+            elif (
+                keydown and self._ctrl.apply(event, self) or
+                joy_button_down and self._ctrl.joy_select(event, self)
+            ):
                 self._sound.play_key_add()
                 self.apply(*self._items[self._index][1:])
                 return True
 
             # Click on selector; don't consider the mouse wheel (button 4 & 5)
-            elif event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and \
-                    event.button in (1, 2, 3) or \
-                    event.type == FINGERUP and self._touchscreen_enabled and \
-                    self._menu is not None:
+            elif (
+                event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and event.button in (1, 2, 3) or
+                event.type == FINGERUP and self._touchscreen_enabled and self._menu is not None
+            ):
                 event_pos = get_finger_pos(self._menu, event)
 
                 # If collides
@@ -503,16 +507,16 @@ class SelectorManager(AbstractWidgetManager, ABC):
     """
 
     def selector(
-            self,
-            title: Any,
-            items: Union[List[Tuple[Any, ...]], List[str]],
-            default: int = 0,
-            onchange: CallbackType = None,
-            onreturn: CallbackType = None,
-            onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
-            selector_id: str = '',
-            style: SelectorStyleType = SELECTOR_STYLE_CLASSIC,
-            **kwargs
+        self,
+        title: Any,
+        items: Union[List[Tuple[Any, ...]], List[str]],
+        default: int = 0,
+        onchange: CallbackType = None,
+        onreturn: CallbackType = None,
+        onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
+        selector_id: str = '',
+        style: SelectorStyleType = SELECTOR_STYLE_CLASSIC,
+        **kwargs
     ) -> 'pygame_menu.widgets.Selector':
         """
         Add a selector to the Menu: several items and two functions that are

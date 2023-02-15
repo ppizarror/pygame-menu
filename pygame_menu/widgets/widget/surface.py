@@ -38,10 +38,10 @@ class SurfaceWidget(Widget):
     _surface_obj: 'pygame.Surface'
 
     def __init__(
-            self,
-            surface: 'pygame.Surface',
-            surface_id: str = '',
-            onselect: CallbackType = None
+        self,
+        surface: 'pygame.Surface',
+        surface_id: str = '',
+        onselect: CallbackType = None
     ) -> None:
         assert isinstance(surface, pygame.Surface)
         assert isinstance(surface_id, str)
@@ -113,12 +113,12 @@ class SurfaceWidgetManager(AbstractWidgetManager, ABC):
     """
 
     def surface(
-            self,
-            surface: 'pygame.Surface',
-            surface_id: str = '',
-            onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
-            selectable: bool = False,
-            **kwargs
+        self,
+        surface: 'pygame.Surface',
+        surface_id: str = '',
+        onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
+        selectable: bool = False,
+        **kwargs
     ) -> 'pygame_menu.widgets.SurfaceWidget':
         """
         Add a surface widget to the Menu.

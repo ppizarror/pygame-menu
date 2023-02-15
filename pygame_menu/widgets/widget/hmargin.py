@@ -35,9 +35,9 @@ class HMargin(NoneWidget):
     """
 
     def __init__(
-            self,
-            margin: NumberType,
-            widget_id: str = ''
+        self,
+        margin: NumberType,
+        widget_id: str = ''
     ) -> None:
         assert isinstance(margin, NumberInstance)
         assert margin > 0, \
@@ -56,9 +56,9 @@ class HMarginManager(AbstractWidgetManager, ABC):
     """
 
     def horizontal_margin(
-            self,
-            margin: NumberType,
-            margin_id: str = ''
+        self,
+        margin: NumberType,
+        margin_id: str = ''
     ) -> 'pygame_menu.widgets.HMargin':
         """
         Adds a horizontal margin to the Menu. Only useful in frames.

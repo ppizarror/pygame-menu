@@ -134,16 +134,16 @@ class Sound(Base):
     _uniquechannel: bool
 
     def __init__(
-            self,
-            allowedchanges: int = AUDIO_ALLOW_CHANNELS_CHANGE | AUDIO_ALLOW_FREQUENCY_CHANGE,
-            buffer: int = 4096,
-            channels: int = 2,
-            devicename: str = '',
-            force_init: bool = False,
-            frequency: int = 22050,
-            size: int = -16,
-            sound_id: str = '',
-            uniquechannel: bool = True
+        self,
+        allowedchanges: int = AUDIO_ALLOW_CHANNELS_CHANGE | AUDIO_ALLOW_FREQUENCY_CHANGE,
+        buffer: int = 4096,
+        channels: int = 2,
+        devicename: str = '',
+        force_init: bool = False,
+        frequency: int = 22050,
+        size: int = -16,
+        sound_id: str = '',
+        uniquechannel: bool = True
     ) -> None:
         super(Sound, self).__init__(object_id=sound_id)
 
@@ -169,10 +169,7 @@ class Sound(Base):
             SOUND_INITIALIZED[1] = False
 
         # Initialize sounds if not initialized
-        if not mixer_missing and \
-                ((mixer.get_init() is None and not SOUND_INITIALIZED[0]) or
-                 force_init):
-
+        if not mixer_missing and ((mixer.get_init() is None and not SOUND_INITIALIZED[0]) or force_init):
             # Set sound as initialized globally
             SOUND_INITIALIZED[0] = True
 
@@ -286,13 +283,13 @@ class Sound(Base):
         return self._channel
 
     def set_sound(
-            self,
-            sound_type: str,
-            sound_file: Optional[Union[str, 'Path']],
-            volume: float = 0.5,
-            loops: int = 0,
-            maxtime: NumberType = 0,
-            fade_ms: NumberType = 0
+        self,
+        sound_type: str,
+        sound_file: Optional[Union[str, 'Path']],
+        volume: float = 0.5,
+        loops: int = 0,
+        maxtime: NumberType = 0,
+        fade_ms: NumberType = 0
     ) -> bool:
         """
         Link a sound file to a sound type.
@@ -387,8 +384,11 @@ class Sound(Base):
         sound_time = time.time()
 
         # If the previous sound is the same and has not ended (max 10% overlap)
-        if sound['type'] != self._last_play or \
-                sound_time - self._last_time >= 0.1 * sound['length'] or self._uniquechannel:
+        if (
+            sound['type'] != self._last_play or
+            sound_time - self._last_time >= 0.1 * sound['length'] or
+            self._uniquechannel
+        ):
             try:
                 if self._uniquechannel:  # Stop the current channel if it's unique
                     channel.stop()

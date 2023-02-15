@@ -40,14 +40,14 @@ class ArrowSelection(Selection):
     _last_widget: Optional['pygame_menu.widgets.Widget']
 
     def __init__(
-            self,
-            margin_left: NumberType,
-            margin_right: NumberType,
-            margin_top: NumberType,
-            margin_bottom: NumberType,
-            arrow_size: Tuple2IntType = (10, 15),
-            arrow_vertical_offset: NumberType = 0,
-            blink_ms: NumberType = 0
+        self,
+        margin_left: NumberType,
+        margin_right: NumberType,
+        margin_top: NumberType,
+        margin_bottom: NumberType,
+        arrow_size: Tuple2IntType = (10, 15),
+        arrow_vertical_offset: NumberType = 0,
+        blink_ms: NumberType = 0
     ) -> None:
         super(ArrowSelection, self).__init__(
             margin_left=margin_left,
@@ -74,12 +74,12 @@ class ArrowSelection(Selection):
         raise NotImplementedError('override is mandatory')
 
     def _draw_arrow(
-            self,
-            surface: 'pygame.Surface',
-            widget: 'pygame_menu.widgets.Widget',
-            a: Tuple2IntType,
-            b: Tuple2IntType,
-            c: Tuple2IntType
+        self,
+        surface: 'pygame.Surface',
+        widget: 'pygame_menu.widgets.Widget',
+        a: Tuple2IntType,
+        b: Tuple2IntType,
+        c: Tuple2IntType
     ) -> None:
         """
         Draw the selection arrow.

@@ -124,11 +124,11 @@ class Frame(Widget):
     last_index: int  # Last selectable widget index
 
     def __init__(
-            self,
-            width: NumberType,
-            height: NumberType,
-            orientation: str,
-            frame_id: str = ''
+        self,
+        width: NumberType,
+        height: NumberType,
+        orientation: str,
+        frame_id: str = ''
     ) -> None:
         super(Frame, self).__init__(widget_id=frame_id)
         assert isinstance(width, NumberInstance)
@@ -172,18 +172,18 @@ class Frame(Widget):
         self.last_index = -1
 
     def set_title(
-            self,
-            title: str,
-            cursor: CursorInputType = None,
-            background_color: FrameTitleBackgroundColorType = FRAME_DEFAULT_TITLE_BACKGROUND_COLOR,
-            draggable: bool = False,
-            padding_inner: PaddingType = 0,
-            padding_outer: PaddingType = 0,
-            title_alignment: str = ALIGN_LEFT,
-            title_buttons_alignment: str = ALIGN_RIGHT,
-            title_font: Optional[FontType] = None,
-            title_font_color: Optional[ColorInputType] = None,
-            title_font_size: Optional[int] = None
+        self,
+        title: str,
+        cursor: CursorInputType = None,
+        background_color: FrameTitleBackgroundColorType = FRAME_DEFAULT_TITLE_BACKGROUND_COLOR,
+        draggable: bool = False,
+        padding_inner: PaddingType = 0,
+        padding_outer: PaddingType = 0,
+        title_alignment: str = ALIGN_LEFT,
+        title_buttons_alignment: str = ALIGN_RIGHT,
+        title_font: Optional[FontType] = None,
+        title_font_color: Optional[ColorInputType] = None,
+        title_font_size: Optional[int] = None
     ) -> 'Frame':
         """
         Add a title to the frame.
@@ -367,9 +367,9 @@ class Frame(Widget):
         return self
 
     def add_title_generic_button(
-            self,
-            button: 'Button',
-            margin: Vector2NumberType = (0, 0)
+        self,
+        button: 'Button',
+        margin: Vector2NumberType = (0, 0)
     ) -> 'Frame':
         """
         Add button to title. Button kwargs receive the ``button`` reference and
@@ -419,15 +419,15 @@ class Frame(Widget):
         return self
 
     def add_title_button(
-            self,
-            style: FrameTitleButtonType,
-            callback: CallbackType,
-            background_color: ColorInputType = (150, 150, 150),
-            cursor: CursorInputType = CURSOR_HAND,
-            margin: Vector2NumberType = (4, 0),
-            symbol_color: ColorInputType = (0, 0, 0),
-            symbol_height: NumberType = 0.75,
-            symbol_margin: int = 4
+        self,
+        style: FrameTitleButtonType,
+        callback: CallbackType,
+        background_color: ColorInputType = (150, 150, 150),
+        cursor: CursorInputType = CURSOR_HAND,
+        margin: Vector2NumberType = (4, 0),
+        symbol_color: ColorInputType = (0, 0, 0),
+        symbol_height: NumberType = 0.75,
+        symbol_margin: int = 4
     ) -> 'Button':
         """
         Add predefined button to title. The button kwargs receive the ``button``
@@ -615,21 +615,21 @@ class Frame(Widget):
         return self.get_size()
 
     def make_scrollarea(
-            self,
-            max_width: Optional[NumberType],
-            max_height: Optional[NumberType],
-            scrollarea_color: Optional[Union[ColorInputType, 'pygame_menu.BaseImage']],
-            scrollbar_color: ColorInputType,
-            scrollbar_cursor: CursorInputType,
-            scrollbar_shadow: bool,
-            scrollbar_shadow_color: ColorInputType,
-            scrollbar_shadow_offset: int,
-            scrollbar_shadow_position: str,
-            scrollbar_slider_color: ColorInputType,
-            scrollbar_slider_hover_color: ColorInputType,
-            scrollbar_slider_pad: NumberType,
-            scrollbar_thick: NumberType,
-            scrollbars: Union[str, Tuple[str, ...]]
+        self,
+        max_width: Optional[NumberType],
+        max_height: Optional[NumberType],
+        scrollarea_color: Optional[Union[ColorInputType, 'pygame_menu.BaseImage']],
+        scrollbar_color: ColorInputType,
+        scrollbar_cursor: CursorInputType,
+        scrollbar_shadow: bool,
+        scrollbar_shadow_color: ColorInputType,
+        scrollbar_shadow_offset: int,
+        scrollbar_shadow_position: str,
+        scrollbar_slider_color: ColorInputType,
+        scrollbar_slider_hover_color: ColorInputType,
+        scrollbar_slider_pad: NumberType,
+        scrollbar_thick: NumberType,
+        scrollbars: Union[str, Tuple[str, ...]]
     ) -> 'Frame':
         """
         Make the scrollarea of the frame.
@@ -1096,10 +1096,10 @@ class Frame(Widget):
         return self
 
     def get_widgets(
-            self,
-            unpack_subframes: bool = True,
-            unpack_subframes_include_frame: bool = False,
-            reverse: bool = False
+        self,
+        unpack_subframes: bool = True,
+        unpack_subframes_include_frame: bool = False,
+        reverse: bool = False
     ) -> Tuple['Widget', ...]:
         """
         Get widgets as a tuple.
@@ -1139,11 +1139,11 @@ class Frame(Widget):
         return tuple(unpacked)
 
     def resize(
-            self,
-            width: NumberType,
-            height: NumberType,
-            max_width: Optional[NumberType] = None,
-            max_height: Optional[NumberType] = None
+        self,
+        width: NumberType,
+        height: NumberType,
+        max_width: Optional[NumberType] = None,
+        max_height: Optional[NumberType] = None
     ) -> 'Frame':
         """
         Resize the Frame.
@@ -1421,11 +1421,11 @@ class Frame(Widget):
         return widget
 
     def pack(
-            self,
-            widget: Union['Widget', List['Widget'], Tuple['Widget', ...]],
-            align: str = ALIGN_LEFT,
-            vertical_position: str = POSITION_NORTH,
-            margin: Vector2NumberType = (0, 0)
+        self,
+        widget: Union['Widget', List['Widget'], Tuple['Widget', ...]],
+        align: str = ALIGN_LEFT,
+        vertical_position: str = POSITION_NORTH,
+        margin: Vector2NumberType = (0, 0)
     ) -> Union['Widget', List['Widget'], Tuple['Widget', ...], Any]:
         """
         Packs widget in the frame line. To pack a widget it has to be already
@@ -1562,9 +1562,7 @@ class Frame(Widget):
 
                 # Check for last if w_last is frame
                 while True:
-                    if not (isinstance(w_last, Frame) and
-                            w_last.get_indices() != (-1, -1)) or \
-                            w_last.get_menu() is None:
+                    if not (isinstance(w_last, Frame) and w_last.get_indices() != (-1, -1)) or w_last.get_menu() is None:
                         break
                     w_last = menu_widgets[w_last.last_index]
 
@@ -1676,8 +1674,7 @@ class Frame(Widget):
         self.first_index = -1
         self.last_index = -1
         for widget in self.get_widgets(unpack_subframes=False):
-            if (widget.is_selectable or isinstance(widget, Frame)) and \
-                    widget.get_menu() is not None:
+            if (widget.is_selectable or isinstance(widget, Frame)) and widget.get_menu() is not None:
                 if isinstance(widget, Frame) and widget.get_indices() == (-1, -1):
                     continue  # Frames with not selectable indices are not counted
                 windex = widget.get_col_row_index()[2]
@@ -1711,9 +1708,10 @@ class Frame(Widget):
                 self._frame_title._check_mouseover(event)
 
                 # If clicked in title
-                if (event.type == pygame.MOUSEBUTTONDOWN and self._mouse_enabled and event.button in
-                    (1, 2, 3) or event.type == FINGERDOWN and self._touchscreen_enabled and self._menu is not None) and \
-                        self._draggable:
+                if self._draggable and (
+                    event.type == pygame.MOUSEBUTTONDOWN and self._mouse_enabled and event.button in (1, 2, 3) or
+                    event.type == FINGERDOWN and self._touchscreen_enabled and self._menu is not None
+                ):
                     event_pos = get_finger_pos(self._menu, event)
 
                     if self._frame_title.get_rect(to_real_position=True).collidepoint(*event_pos):
@@ -1722,9 +1720,10 @@ class Frame(Widget):
                             updated = True
 
                 # User releases the button
-                elif event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and \
-                        event.button in (1, 2, 3) or \
-                        event.type == FINGERUP and self._touchscreen_enabled:
+                elif (
+                    event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and event.button in (1, 2, 3) or
+                    event.type == FINGERUP and self._touchscreen_enabled
+                ):
                     self._frame_title.set_attribute('drag', False)
 
                 # Mouse out from window
@@ -1734,8 +1733,10 @@ class Frame(Widget):
                 #         break
 
                 # User moves the mouse while drag
-                elif event.type == pygame.MOUSEMOTION and hasattr(event, 'rel') or \
-                        event.type == FINGERMOTION and self._touchscreen_enabled and self._menu is not None:
+                elif (
+                    event.type == pygame.MOUSEMOTION and hasattr(event, 'rel') or
+                    event.type == FINGERMOTION and self._touchscreen_enabled and self._menu is not None
+                ):
 
                     if self._frame_title.get_attribute('drag', False) and self._draggable:
                         # Get relative movement
@@ -1814,12 +1815,12 @@ class FrameManager(AbstractWidgetManager, ABC):
     """
 
     def _frame(
-            self,
-            width: NumberType,
-            height: NumberType,
-            orientation: str,
-            frame_id: str = '',
-            **kwargs
+        self,
+        width: NumberType,
+        height: NumberType,
+        orientation: str,
+        frame_id: str = '',
+        **kwargs
     ) -> 'pygame_menu.widgets.Frame':
         """
         Adds a frame to the Menu.
@@ -1889,11 +1890,11 @@ class FrameManager(AbstractWidgetManager, ABC):
         return widget
 
     def frame_h(
-            self,
-            width: NumberType,
-            height: NumberType,
-            frame_id: str = '',
-            **kwargs
+        self,
+        width: NumberType,
+        height: NumberType,
+        frame_id: str = '',
+        **kwargs
     ) -> 'pygame_menu.widgets.Frame':
         """
         Adds a horizontal frame to the Menu. Frame is a widget container that
@@ -1987,11 +1988,11 @@ class FrameManager(AbstractWidgetManager, ABC):
         return self._frame(width, height, ORIENTATION_HORIZONTAL, frame_id, **kwargs)
 
     def frame_v(
-            self,
-            width: NumberType,
-            height: NumberType,
-            frame_id: str = '',
-            **kwargs
+        self,
+        width: NumberType,
+        height: NumberType,
+        frame_id: str = '',
+        **kwargs
     ) -> 'pygame_menu.widgets.Frame':
         """
         Adds a vertical frame to the Menu. Frame is a widget container that packs

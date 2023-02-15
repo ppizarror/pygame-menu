@@ -135,8 +135,7 @@ Print pygame-menu version.
 """
 import os
 
-if 'PYGAME_MENU_HIDE_VERSION' not in os.environ and \
-        'PYGAME_HIDE_SUPPORT_PROMPT' not in os.environ:
+if 'PYGAME_MENU_HIDE_VERSION' not in os.environ and 'PYGAME_HIDE_SUPPORT_PROMPT' not in os.environ:
     print(f'{__module_name__} {__version__}')
 
 # Cleanup namespace

@@ -150,50 +150,50 @@ class DropSelect(Widget):
     _title_size: Tuple2IntType
 
     def __init__(
-            self,
-            title: Any,
-            items: Union[List[Tuple[Any, ...]], List[str]],
-            dropselect_id: str = '',
-            default: Optional[int] = None,
-            onchange: CallbackType = None,
-            onreturn: CallbackType = None,
-            onselect: CallbackType = None,
-            open_middle: bool = False,
-            placeholder: str = 'Select an option',
-            placeholder_add_to_selection_box: bool = True,
-            scrollbar_color: ColorInputType = (235, 235, 235),
-            scrollbar_cursor: CursorInputType = None,
-            scrollbar_shadow: bool = False,
-            scrollbar_shadow_color: ColorInputType = (0, 0, 0),
-            scrollbar_shadow_offset: int = 2,
-            scrollbar_shadow_position: str = POSITION_NORTHWEST,
-            scrollbar_slider_color: ColorInputType = (200, 200, 200),
-            scrollbar_slider_hover_color: ColorInputType = (170, 170, 170),
-            scrollbar_slider_pad: NumberType = 0,
-            scrollbar_thick: int = 20,
-            scrollbars: str = POSITION_SOUTHEAST,
-            selection_box_arrow_color: ColorInputType = (150, 150, 150),
-            selection_box_arrow_margin: Tuple3IntType = (5, 5, 0),
-            selection_box_bgcolor: ColorInputType = (255, 255, 255),
-            selection_box_border_color: ColorInputType = (150, 150, 150),
-            selection_box_border_width: int = 1,
-            selection_box_height: int = 3,
-            selection_box_inflate: Tuple2IntType = (0, 0),
-            selection_box_margin: Tuple2NumberType = (25, 0),
-            selection_box_text_margin: int = 5,
-            selection_box_width: int = 0,
-            selection_infinite: bool = False,
-            selection_option_border_color: ColorInputType = (220, 220, 220),
-            selection_option_border_width: int = 1,
-            selection_option_cursor: CursorInputType = None,
-            selection_option_font: Optional[FontType] = None,
-            selection_option_font_color: ColorInputType = (0, 0, 0),
-            selection_option_font_size: Optional[int] = None,
-            selection_option_padding: PaddingType = 5,
-            selection_option_selected_bgcolor: ColorInputType = (188, 227, 244),
-            selection_option_selected_font_color: ColorInputType = (0, 0, 0),
-            *args,
-            **kwargs
+        self,
+        title: Any,
+        items: Union[List[Tuple[Any, ...]], List[str]],
+        dropselect_id: str = '',
+        default: Optional[int] = None,
+        onchange: CallbackType = None,
+        onreturn: CallbackType = None,
+        onselect: CallbackType = None,
+        open_middle: bool = False,
+        placeholder: str = 'Select an option',
+        placeholder_add_to_selection_box: bool = True,
+        scrollbar_color: ColorInputType = (235, 235, 235),
+        scrollbar_cursor: CursorInputType = None,
+        scrollbar_shadow: bool = False,
+        scrollbar_shadow_color: ColorInputType = (0, 0, 0),
+        scrollbar_shadow_offset: int = 2,
+        scrollbar_shadow_position: str = POSITION_NORTHWEST,
+        scrollbar_slider_color: ColorInputType = (200, 200, 200),
+        scrollbar_slider_hover_color: ColorInputType = (170, 170, 170),
+        scrollbar_slider_pad: NumberType = 0,
+        scrollbar_thick: int = 20,
+        scrollbars: str = POSITION_SOUTHEAST,
+        selection_box_arrow_color: ColorInputType = (150, 150, 150),
+        selection_box_arrow_margin: Tuple3IntType = (5, 5, 0),
+        selection_box_bgcolor: ColorInputType = (255, 255, 255),
+        selection_box_border_color: ColorInputType = (150, 150, 150),
+        selection_box_border_width: int = 1,
+        selection_box_height: int = 3,
+        selection_box_inflate: Tuple2IntType = (0, 0),
+        selection_box_margin: Tuple2NumberType = (25, 0),
+        selection_box_text_margin: int = 5,
+        selection_box_width: int = 0,
+        selection_infinite: bool = False,
+        selection_option_border_color: ColorInputType = (220, 220, 220),
+        selection_option_border_width: int = 1,
+        selection_option_cursor: CursorInputType = None,
+        selection_option_font: Optional[FontType] = None,
+        selection_option_font_color: ColorInputType = (0, 0, 0),
+        selection_option_font_size: Optional[int] = None,
+        selection_option_padding: PaddingType = 5,
+        selection_option_selected_bgcolor: ColorInputType = (188, 227, 244),
+        selection_option_selected_font_color: ColorInputType = (0, 0, 0),
+        *args,
+        **kwargs
     ) -> None:
         assert isinstance(default, (int, type(None)))
         assert isinstance(dropselect_id, str)
@@ -716,11 +716,9 @@ class DropSelect(Widget):
         menu_height = 0 if self._menu is None else self._menu.get_height(widget=True)
         current_selected = self._get_current_selected_text()
 
-        if not self._render_hash_changed(
-                current_selected, self._selected, self._visible, self._index,
-                self.readonly, self.active, self._open_bottom, scroll_v,
-                menu_height, self._open_middle, len(self._items), self._rect.x,
-                self._rect.y):
+        if not self._render_hash_changed(current_selected, self._selected, self._visible, self._index,
+                                         self.readonly, self.active, self._open_bottom, scroll_v,
+                                         menu_height, self._open_middle, len(self._items), self._rect.x, self._rect.y):
             return True
 
         title = self._render_string(self._title, self.get_font_color_status())
@@ -1111,18 +1109,22 @@ class DropSelect(Widget):
             joy_button_down = self._joystick_enabled and event.type == pygame.JOYBUTTONDOWN
 
             # Left button
-            if keydown and self._ctrl.move_down(event, self) or \
-                    joy_hatmotion and self._ctrl.joy_left(event, self) or \
-                    joy_axismotion and self._ctrl.joy_axis_x_left(event, self):
+            if (
+                keydown and self._ctrl.move_down(event, self) or
+                joy_hatmotion and self._ctrl.joy_left(event, self) or
+                joy_axismotion and self._ctrl.joy_axis_x_left(event, self)
+            ):
                 if not self.active:
                     continue
                 self._down()
                 return True
 
             # Right button
-            elif keydown and self._ctrl.move_up(event, self) or \
-                    joy_hatmotion and self._ctrl.joy_right(event, self) or \
-                    joy_axismotion and self._ctrl.joy_axis_x_right(event, self):
+            elif (
+                keydown and self._ctrl.move_up(event, self) or
+                joy_hatmotion and self._ctrl.joy_right(event, self) or
+                joy_axismotion and self._ctrl.joy_axis_x_right(event, self)
+            ):
                 if not self.active:
                     continue
                 self._up()
@@ -1150,21 +1152,18 @@ class DropSelect(Widget):
 
             # Click on dropselect; don't consider the mouse wheel (button 4 & 5)
             elif self.active and (
-                    event.type == pygame.MOUSEBUTTONDOWN and self._mouse_enabled and
-                    event.button in (1, 2, 3) or
-                    event.type == FINGERDOWN and self._touchscreen_enabled and
-                    self._menu is not None and not self._drop_frame_scrolling()
+                event.type == pygame.MOUSEBUTTONDOWN and self._mouse_enabled and event.button in (1, 2, 3) or
+                event.type == FINGERDOWN and self._touchscreen_enabled and self._menu is not None and not self._drop_frame_scrolling()
             ):
                 event_pos = get_finger_pos(self._menu, event)
                 if self._drop_frame.get_rect(apply_padding=False, to_real_position=True).collidepoint(*event_pos):
                     return True
 
             # Click on dropselect; don't consider the mouse wheel (button 4 & 5)
-            elif event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and \
-                    event.button in (1, 2, 3) or \
-                    event.type == FINGERUP and self._touchscreen_enabled and \
-                    self._menu is not None and not self._drop_frame_scrolling():
-
+            elif (
+                event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and event.button in (1, 2, 3) or
+                event.type == FINGERUP and self._touchscreen_enabled and self._menu is not None and not self._drop_frame_scrolling()
+            ):
                 # Check for mouse clicks within
                 if self.active:
                     for btn in self._option_buttons:
@@ -1218,18 +1217,18 @@ class DropSelectManager(AbstractWidgetManager, ABC):
     """
 
     def dropselect(
-            self,
-            title: Any,
-            items: Union[List[Tuple[Any, ...]], List[str]],
-            default: Optional[int] = None,
-            dropselect_id: str = '',
-            onchange: CallbackType = None,
-            onreturn: CallbackType = None,
-            onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
-            open_middle: bool = False,
-            placeholder: str = 'Select an option',
-            placeholder_add_to_selection_box: bool = True,
-            **kwargs
+        self,
+        title: Any,
+        items: Union[List[Tuple[Any, ...]], List[str]],
+        default: Optional[int] = None,
+        dropselect_id: str = '',
+        onchange: CallbackType = None,
+        onreturn: CallbackType = None,
+        onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
+        open_middle: bool = False,
+        placeholder: str = 'Select an option',
+        placeholder_add_to_selection_box: bool = True,
+        **kwargs
     ) -> 'pygame_menu.widgets.DropSelect':
         """
         Add a dropselect to the Menu: Drop select is a selector within a Frame.

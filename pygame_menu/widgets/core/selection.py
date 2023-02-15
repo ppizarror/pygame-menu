@@ -40,11 +40,11 @@ class Selection(object):
     widget_apply_font_color: bool
 
     def __init__(
-            self,
-            margin_left: NumberType,
-            margin_right: NumberType,
-            margin_top: NumberType,
-            margin_bottom: NumberType
+        self,
+        margin_left: NumberType,
+        margin_right: NumberType,
+        margin_top: NumberType,
+        margin_bottom: NumberType
     ) -> None:
         assert isinstance(margin_left, NumberInstance)
         assert isinstance(margin_right, NumberInstance)
@@ -173,8 +173,8 @@ class Selection(object):
         return t + b
 
     def inflate(
-            self,
-            rect: 'pygame.Rect', inflate: Optional[Tuple2IntType] = None
+        self,
+        rect: 'pygame.Rect', inflate: Optional[Tuple2IntType] = None
     ) -> 'pygame.Rect':
         """
         Grow or shrink the rectangle size according to margins.

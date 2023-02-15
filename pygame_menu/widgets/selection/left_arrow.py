@@ -29,11 +29,11 @@ class LeftArrowSelection(ArrowSelection):
     _arrow_right_margin: int
 
     def __init__(
-            self,
-            arrow_size: Tuple2IntType = (10, 15),
-            arrow_right_margin: int = 5,
-            arrow_vertical_offset: int = 0,
-            blink_ms: NumberType = 0
+        self,
+        arrow_size: Tuple2IntType = (10, 15),
+        arrow_right_margin: int = 5,
+        arrow_vertical_offset: int = 0,
+        blink_ms: NumberType = 0
     ) -> None:
         assert isinstance(arrow_right_margin, NumberInstance)
         assert arrow_right_margin >= 0, 'margin cannot be negative'
