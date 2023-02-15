@@ -144,7 +144,8 @@ class ProgressBar(Widget):
         assert_vector(box_margin, 2, int)
         assert_vector(progress_text_margin, 2, int)
         assert isinstance(width, int)
-        assert width > 0, 'width must be greater than zero'
+        assert width > 0, \
+            'width must be greater than zero'
         box_progress_padding = parse_padding(box_progress_padding)
         self._box_progress_padding = box_progress_padding
 
