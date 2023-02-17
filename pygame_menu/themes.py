@@ -167,6 +167,8 @@ class Theme(object):
     :type title_updates_pygame_display: bool
     :param widget_alignment: Widget default `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/themes.html#alignment>`_. See :py:mod:`pygame_menu.locals`
     :type widget_alignment: str
+    :param widget_alignment_ignore_scrollbar_thickness: Widget positioning ignores the scrollbar thickness. If ``True``, the widgets only consider the menu size, ignoring the thickness of the visible scrollbars
+    :type widget_alignment_ignore_scrollbar_thickness: bool
     :param widget_background_color: Background color of a widget, it can be a color, ``None`` (transparent), or a BaseImage object. Background fills the entire widget + the padding
     :type widget_background_color: tuple, list, str, int, :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage`, None
     :param widget_background_inflate: Inflate background on x-axis and y-axis (x, y) in px. By default, it uses the highlight margin. This parameter is visual only. For modifying widget size use padding instead
@@ -284,6 +286,7 @@ class Theme(object):
     title_offset: Tuple2NumberType
     title_updates_pygame_display: bool
     widget_alignment: str
+    widget_alignment_ignore_scrollbar_thickness: bool
     widget_background_color: Optional[Union[ColorType, 'BaseImage']]
     widget_background_inflate: Tuple2IntType
     widget_background_inflate_to_selection: bool
@@ -378,6 +381,7 @@ class Theme(object):
 
         # Generic widget themes
         self.widget_alignment = self._get(kwargs, 'widget_alignment', 'alignment', ALIGN_CENTER)
+        self.widget_alignment_ignore_scrollbar_thickness = self._get(kwargs, 'widget_alignment_ignore_scrollbar_thickness', bool, False)
         self.widget_background_color = self._get(kwargs, 'widget_background_color', 'color_image_none')
         self.widget_background_inflate = self._get(kwargs, 'background_inflate', 'tuple2int', (0, 0))
         self.widget_background_inflate_to_selection = self._get(kwargs, 'widget_background_inflate_to_selection', bool,

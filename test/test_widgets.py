@@ -542,3 +542,25 @@ class WidgetsTest(BaseTest):
         image_widget.translate(-50, 0)
         menu.render()
         self.assertEqual(image_widget.get_position(), (-42, 60))
+
+    def test_widget_center_overflow_ignore_scrollbar_thickness(self) -> None:
+        """
+        Test widget centering if overflow ignores scrollbar thickness.
+        """
+        theme = TEST_THEME.copy()
+
+        menu = MenuUtils.generic_menu(width=320, theme=theme)
+        for i in range(5):
+            menu.add.button(f'Option{i + 1}')
+            menu.add.button('Quit', pygame_menu.events.EXIT)
+
+        pos_before = menu.get_selected_widget().get_position()
+        theme.widget_alignment_ignore_scrollbar_thickness = True
+        menu.render()
+        pos_after = menu.get_selected_widget().get_position()
+
+        # If we ignore scrollbar thickess in position, the difference
+        # should be equal to the half of the scrollbar thickness (because
+        # we have centered alignment)
+        self.assertEqual(pos_after[0] - pos_before[0], menu._get_scrollbar_thickness()[1] / 2)  # x
+        self.assertEqual(pos_after[1], pos_before[1])  # y
