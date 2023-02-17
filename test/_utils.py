@@ -114,10 +114,10 @@ class PygameEventUtils(object):
 
     @staticmethod
     def joy_motion(
-            x: NumberType = 0,
-            y: NumberType = 0,
-            inlist: bool = True,
-            testmode: bool = True
+        x: NumberType = 0,
+        y: NumberType = 0,
+        inlist: bool = True,
+        testmode: bool = True
     ) -> EventListType:
         """
         Create a pygame joy controller motion event.
@@ -154,8 +154,8 @@ class PygameEventUtils(object):
 
     @staticmethod
     def joy_center(
-            testmode: bool = True,
-            inlist: bool = True
+        testmode: bool = True,
+        inlist: bool = True
     ) -> EventListType:
         """
         Centers the joy.
@@ -176,9 +176,9 @@ class PygameEventUtils(object):
 
     @staticmethod
     def joy_hat_motion(
-            key: Tuple[int, int],
-            inlist: bool = True,
-            testmode: bool = True
+        key: Tuple[int, int],
+        inlist: bool = True,
+        testmode: bool = True
     ) -> EventListType:
         """
         Create a pygame joy controller key event.
@@ -199,10 +199,10 @@ class PygameEventUtils(object):
 
     @staticmethod
     def joy_button(
-            button: int,
-            evtype: int = pygame.JOYBUTTONDOWN,
-            inlist: bool = True,
-            testmode: bool = True
+        button: int,
+        evtype: int = pygame.JOYBUTTONDOWN,
+        inlist: bool = True,
+        testmode: bool = True
     ) -> EventListType:
         """
         Create a pygame joy controller key event.
@@ -224,8 +224,8 @@ class PygameEventUtils(object):
 
     @staticmethod
     def test_widget_key_press(
-            widget: 'pygame_menu.widgets.Widget',
-            testmode: bool = True
+        widget: 'pygame_menu.widgets.Widget',
+        testmode: bool = True
     ) -> None:
         """
         Test keypress widget.
@@ -242,9 +242,9 @@ class PygameEventUtils(object):
 
     @staticmethod
     def keydown_mod_ctrl(
-            key: int,
-            inlist: bool = True,
-            testmode: bool = True
+        key: int,
+        inlist: bool = True,
+        testmode: bool = True
     ) -> EventListType:
         """
         Create a mod ctrl keydown event (Ctrl+Key).
@@ -275,9 +275,9 @@ class PygameEventUtils(object):
 
     @staticmethod
     def keydown_mod_alt(
-            key: int,
-            inlist: bool = True,
-            testmode: bool = True
+        key: int,
+        inlist: bool = True,
+        testmode: bool = True
     ) -> EventListType:
         """
         Create a mod alt keydown event (Alt+Key).
@@ -300,9 +300,9 @@ class PygameEventUtils(object):
 
     @staticmethod
     def keydown(
-            key: Union[int, VectorIntType],
-            testmode: bool = True,
-            inlist: bool = True
+        key: Union[int, VectorIntType],
+        testmode: bool = True,
+        inlist: bool = True
     ) -> EventListType:
         """
         Keydown list.
@@ -325,12 +325,12 @@ class PygameEventUtils(object):
 
     @staticmethod
     def key(
-            key: int,
-            char: str = ' ',
-            inlist: bool = True,
-            keydown: bool = False,
-            keyup: bool = False,
-            testmode: bool = True
+        key: int,
+        char: str = ' ',
+        inlist: bool = True,
+        keydown: bool = False,
+        keyup: bool = False,
+        testmode: bool = True
     ) -> EventListType:
         """
         Create a keyboard event.
@@ -393,14 +393,14 @@ class PygameEventUtils(object):
 
     @staticmethod
     def mouse_click(
-            x: NumberType,
-            y: NumberType,
-            inlist: bool = True,
-            evtype: int = pygame.MOUSEBUTTONUP,
-            rel: Tuple2IntType = (0, 0),
-            button: int = 3,
-            testmode: bool = True,
-            update_mouse: bool = False
+        x: NumberType,
+        y: NumberType,
+        inlist: bool = True,
+        evtype: int = pygame.MOUSEBUTTONUP,
+        rel: Tuple2IntType = (0, 0),
+        button: int = 3,
+        testmode: bool = True,
+        update_mouse: bool = False
     ) -> EventListType:
         """
         Generate a mouse click event.
@@ -437,14 +437,14 @@ class PygameEventUtils(object):
 
     @staticmethod
     def touch_click(
-            x: NumberType,
-            y: NumberType,
-            inlist: bool = True,
-            evtype: int = FINGERUP,
-            rel: Tuple2IntType = (0, 0),
-            normalize: bool = True,
-            menu: Union['pygame_menu.Menu', None] = None,
-            testmode: bool = True
+        x: NumberType,
+        y: NumberType,
+        inlist: bool = True,
+        evtype: int = FINGERUP,
+        rel: Tuple2IntType = (0, 0),
+        normalize: bool = True,
+        menu: Union['pygame_menu.Menu', None] = None,
+        testmode: bool = True
     ) -> EventListType:
         """
         Generate a mouse click event.
@@ -481,11 +481,11 @@ class PygameEventUtils(object):
 
     @staticmethod
     def topleft_rect_mouse_motion(
-            rect: Union['pygame_menu.widgets.Widget', 'pygame.Rect', Tuple2NumberType],
-            inlist: bool = True,
-            delta: Tuple2IntType = (0, 0),
-            testmode: bool = True,
-            update_mouse: bool = False
+        rect: Union['pygame_menu.widgets.Widget', 'pygame.Rect', Tuple2NumberType],
+        inlist: bool = True,
+        delta: Tuple2IntType = (0, 0),
+        testmode: bool = True,
+        update_mouse: bool = False
     ) -> EventListType:
         """
         Mouse motion event.
@@ -516,12 +516,12 @@ class PygameEventUtils(object):
 
     @staticmethod
     def mouse_motion(
-            rect: Union['pygame_menu.widgets.Widget', 'pygame.Rect', Tuple2NumberType],
-            inlist: bool = True,
-            rel: Tuple2IntType = (0, 0),
-            delta: Tuple2IntType = (0, 0),
-            testmode: bool = True,
-            update_mouse: bool = False
+        rect: Union['pygame_menu.widgets.Widget', 'pygame.Rect', Tuple2NumberType],
+        inlist: bool = True,
+        rel: Tuple2IntType = (0, 0),
+        delta: Tuple2IntType = (0, 0),
+        testmode: bool = True,
+        update_mouse: bool = False
     ) -> EventListType:
         """
         Mouse motion event.
@@ -546,15 +546,15 @@ class PygameEventUtils(object):
 
     @staticmethod
     def middle_rect_click(
-            rect: Union['pygame_menu.widgets.Widget', 'pygame.Rect', Tuple2NumberType],
-            menu: Optional['pygame_menu.Menu'] = None,
-            evtype: int = pygame.MOUSEBUTTONUP,
-            inlist: bool = True,
-            rel: Tuple2IntType = (0, 0),
-            button: int = 3,
-            delta: Tuple2IntType = (0, 0),
-            testmode: bool = True,
-            update_mouse: bool = False
+        rect: Union['pygame_menu.widgets.Widget', 'pygame.Rect', Tuple2NumberType],
+        menu: Optional['pygame_menu.Menu'] = None,
+        evtype: int = pygame.MOUSEBUTTONUP,
+        inlist: bool = True,
+        rel: Tuple2IntType = (0, 0),
+        button: int = 3,
+        delta: Tuple2IntType = (0, 0),
+        testmode: bool = True,
+        update_mouse: bool = False
     ) -> EventListType:
         """
         Return event clicking the middle of a given rect.
@@ -660,24 +660,24 @@ class MenuUtils(object):
 
     @staticmethod
     def generic_menu(
-            center_content: bool = True,
-            column_max_width: MenuColumnMaxWidthType = None,
-            column_min_width: MenuColumnMinWidthType = 0,
-            columns: int = 1,
-            enabled: bool = True,
-            height: NumberType = 400,
-            mouse_visible: bool = True,
-            mouse_motion_selection: bool = False,
-            onclose: Any = None,
-            onreset: Any = None,
-            position_x: NumberType = 50,
-            position_y: NumberType = 50,
-            rows: MenuRowsType = None,
-            theme: 'pygame_menu.themes.Theme' = pygame_menu.themes.THEME_DEFAULT,
-            title: str = '',
-            width: NumberType = 600,
-            *args,
-            **kwargs
+        center_content: bool = True,
+        column_max_width: MenuColumnMaxWidthType = None,
+        column_min_width: MenuColumnMinWidthType = 0,
+        columns: int = 1,
+        enabled: bool = True,
+        height: NumberType = 400,
+        mouse_visible: bool = True,
+        mouse_motion_selection: bool = False,
+        onclose: Any = None,
+        onreset: Any = None,
+        position_x: NumberType = 50,
+        position_y: NumberType = 50,
+        rows: MenuRowsType = None,
+        theme: 'pygame_menu.themes.Theme' = pygame_menu.themes.THEME_DEFAULT,
+        title: str = '',
+        width: NumberType = 600,
+        *args,
+        **kwargs
     ) -> 'pygame_menu.Menu':
         """
         Generate a generic test menu.

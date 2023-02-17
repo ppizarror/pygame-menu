@@ -37,9 +37,9 @@ class VFill(NoneWidget):
     _min_height: int
 
     def __init__(
-            self,
-            min_height: NumberType,
-            widget_id: str = ''
+        self,
+        min_height: NumberType,
+        widget_id: str = ''
     ) -> None:
         assert isinstance(min_height, NumberInstance)
         assert min_height >= 0, 'negative min height is not valid'
@@ -86,9 +86,9 @@ class VFillManager(AbstractWidgetManager, ABC):
     """
 
     def vertical_fill(
-            self,
-            min_height: NumberType = 0,
-            vfill_id: str = ''
+        self,
+        min_height: NumberType = 0,
+        vfill_id: str = ''
     ) -> 'pygame_menu.widgets.VFill':
         """
         Adds a vertical fill to the Menu. This widget fills all vertical space

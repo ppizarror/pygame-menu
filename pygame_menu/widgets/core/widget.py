@@ -91,9 +91,9 @@ def check_widget_mouseleave(event: Optional[EventType] = None, force: bool = Fal
 
 # noinspection PyProtectedMember
 def _check_widget_mouseleave(
-        event: Optional[EventType] = None,
-        force: bool = False,
-        recursive: bool = False
+    event: Optional[EventType] = None,
+    force: bool = False,
+    recursive: bool = False
 ) -> None:
     """
     Check if the active widget (WIDGET_MOUSEOVER[0]) is still over, else, execute
@@ -162,8 +162,7 @@ def _check_widget_mouseleave(
         _check_widget_mouseleave(event, force, recursive=True)
 
     # Check sublist
-    if len(WIDGET_MOUSEOVER[1]) == 3 and len(WIDGET_MOUSEOVER[1][2]) > 0 and \
-            not recursive and not force:
+    if len(WIDGET_MOUSEOVER[1]) == 3 and len(WIDGET_MOUSEOVER[1][2]) > 0 and not recursive and not force:
         prev: List[Any] = WIDGET_MOUSEOVER[1][2]  # [widget, cursor, [widget, cursor, [...]]]
         while True:
             if len(prev) == 0:
@@ -307,16 +306,16 @@ class Widget(Base):
     selection_expand_background: bool
 
     def __init__(
-            self,
-            title: Any = '',
-            widget_id: str = '',
-            onchange: CallbackType = None,
-            onmouseleave: Optional[Callable[['Widget', EventType], Any]] = None,
-            onmouseover: Optional[Callable[['Widget', EventType], Any]] = None,
-            onreturn: CallbackType = None,
-            onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
-            args=None,
-            kwargs=None
+        self,
+        title: Any = '',
+        widget_id: str = '',
+        onchange: CallbackType = None,
+        onmouseleave: Optional[Callable[['Widget', EventType], Any]] = None,
+        onmouseover: Optional[Callable[['Widget', EventType], Any]] = None,
+        onreturn: CallbackType = None,
+        onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
+        args=None,
+        kwargs=None
     ) -> None:
         super(Widget, self).__init__(object_id=widget_id)
 
@@ -568,9 +567,9 @@ class Widget(Base):
         return self
 
     def mouseover(
-            self,
-            event: EventType,
-            check_all_widget_mouseleave: bool = True
+        self,
+        event: EventType,
+        check_all_widget_mouseleave: bool = True
     ) -> 'Widget':
         """
         Run the ``onmouseover`` if the mouse is placed over the Widget. The
@@ -635,9 +634,9 @@ class Widget(Base):
         return self
 
     def mouseleave(
-            self,
-            event: EventType,
-            check_all_widget_mouseleave: bool = True
+        self,
+        event: EventType,
+        check_all_widget_mouseleave: bool = True
     ) -> 'Widget':
         """
         Run the ``onmouseleave`` callback if the mouse is placed outside the Widget.
@@ -671,10 +670,10 @@ class Widget(Base):
         return self
 
     def _check_mouseover(
-            self,
-            event: EventType,
-            rect: Optional['pygame.Rect'] = None,
-            check_all_widget_mouseleave: bool = True
+        self,
+        event: EventType,
+        rect: Optional['pygame.Rect'] = None,
+        check_all_widget_mouseleave: bool = True
     ) -> bool:
         """
         Check the mouse is over the widget. If so, execute the methods.
@@ -703,10 +702,13 @@ class Widget(Base):
         menu_enabled = True if self._menu is None else self._menu.is_enabled()
 
         # Check if mouse is over the widget, the widget must be visible
-        if self.is_visible() and \
-                self._mouse_enabled and \
-                hasattr(event, 'pos') and rect.collidepoint(*event.pos) and \
-                menu_enabled:
+        if (
+            self.is_visible() and
+            self._mouse_enabled and
+            hasattr(event, 'pos') and
+            rect.collidepoint(*event.pos) and
+            menu_enabled
+        ):
             if not self._mouseover:
                 self._mouseover = True
                 self.mouseover(event, check_all_widget_mouseleave)
@@ -966,9 +968,9 @@ class Widget(Base):
         return self._title
 
     def set_background_color(
-            self,
-            color: Optional[Union[ColorInputType, 'pygame_menu.BaseImage']],
-            inflate: Optional[Tuple2IntType] = (0, 0)
+        self,
+        color: Optional[Union[ColorInputType, 'pygame_menu.BaseImage']],
+        inflate: Optional[Tuple2IntType] = (0, 0)
     ) -> 'Widget':
         """
         Set the Widget background color.
@@ -1027,9 +1029,9 @@ class Widget(Base):
         return inflate
 
     def _draw_background_color(
-            self,
-            surface: 'pygame.Surface',
-            rect: Optional['pygame.Rect'] = None
+        self,
+        surface: 'pygame.Surface',
+        rect: Optional['pygame.Rect'] = None
     ) -> None:
         """
         Fill a surface with the widget background color.
@@ -1047,8 +1049,11 @@ class Widget(Base):
             rect = self.get_rect(inflate=self._get_background_inflate())
 
         # Create the background surface if none, if the rect changed, or if the background color changed
-        if self._background_surface is None or self._background_surface[0] != rect or \
-                self._background_surface[2] != bg:
+        if (
+            self._background_surface is None or
+            self._background_surface[0] != rect or
+            self._background_surface[2] != bg
+        ):
             background_surface = make_surface(rect.width, rect.height, alpha=True)
             if isinstance(bg, pygame_menu.BaseImage):
                 bg.draw(
@@ -1133,11 +1138,11 @@ class Widget(Base):
                 )
 
     def set_border(
-            self,
-            width: int,
-            color: Optional[ColorInputType],
-            inflate: Tuple2IntType = (0, 0),
-            position: WidgetBorderPositionType = WIDGET_FULL_BORDER
+        self,
+        width: int,
+        color: Optional[ColorInputType],
+        inflate: Tuple2IntType = (0, 0),
+        position: WidgetBorderPositionType = WIDGET_FULL_BORDER
     ) -> 'Widget':
         """
         Set the Widget border.
@@ -1164,8 +1169,7 @@ class Widget(Base):
             position = [position]
 
         # Check positioning
-        if POSITION_WEST in position and POSITION_SOUTH in position and \
-                POSITION_NORTH in position and POSITION_EAST in position:
+        if POSITION_WEST in position and POSITION_SOUTH in position and POSITION_NORTH in position and POSITION_EAST in position:
             position = WIDGET_BORDER_POSITION_FULL
 
         else:
@@ -1307,8 +1311,8 @@ class Widget(Base):
             return False
 
     def _draw_shadow(
-            self,
-            surface: 'pygame.Surface', rect: Optional['pygame.Rect'] = None
+        self,
+        surface: 'pygame.Surface', rect: Optional['pygame.Rect'] = None
     ) -> None:
         """
         Draw the widget shadow.
@@ -1500,8 +1504,7 @@ class Widget(Base):
         """
         if self.has_attribute('ignore_scroll_to_widget'):
             return self
-        if self._frame is not None and self._frame.is_scrollable and \
-                self._frame.get_scrollarea() is not None:
+        if self._frame is not None and self._frame.is_scrollable and self._frame.get_scrollarea() is not None:
             self._frame.get_scrollarea().scroll_to_rect(self.get_frame().get_rect(), margin, scroll_parent)
         if self._scrollarea is not None:
             rect = self.get_rect()
@@ -1518,14 +1521,14 @@ class Widget(Base):
         return self.get_rect(to_real_position=True)
 
     def get_rect(
-            self,
-            inflate: Optional[Tuple2IntType] = None,
-            apply_padding: bool = True,
-            use_transformed_padding: bool = True,
-            to_real_position: bool = False,
-            to_absolute_position: bool = False,
-            render: bool = False,
-            real_position_visible: bool = True
+        self,
+        inflate: Optional[Tuple2IntType] = None,
+        apply_padding: bool = True,
+        use_transformed_padding: bool = True,
+        to_real_position: bool = False,
+        to_absolute_position: bool = False,
+        render: bool = False,
+        real_position_visible: bool = True
     ) -> 'pygame.Rect':
         """
         Return the :py:class:`pygame.Rect` object of the Widget. This method
@@ -1666,10 +1669,10 @@ class Widget(Base):
                                        int(self._padding[3] * pad_width))
 
     def _font_render_string(
-            self,
-            text: str,
-            color: ColorInputType = (0, 0, 0),
-            use_background_color: bool = True
+        self,
+        text: str,
+        color: ColorInputType = (0, 0, 0),
+        use_background_color: bool = True
     ) -> 'pygame.Surface':
         """
         Render text. If the font is not defined returns a zero-width surface.
@@ -1724,12 +1727,12 @@ class Widget(Base):
         return surface
 
     def shadow(
-            self,
-            shadow_type: str = WIDGET_SHADOW_TYPE_RECTANGULAR,
-            shadow_width: int = 10,
-            corner_radius: int = 0,
-            color: ColorInputType = (0, 0, 0),
-            aa_amount: int = 4
+        self,
+        shadow_type: str = WIDGET_SHADOW_TYPE_RECTANGULAR,
+        shadow_width: int = 10,
+        corner_radius: int = 0,
+        color: ColorInputType = (0, 0, 0),
+        aa_amount: int = 4
     ) -> 'Widget':
         """
         Configure the widget shadow.
@@ -1767,15 +1770,15 @@ class Widget(Base):
         return self._font_color
 
     def set_font(
-            self,
-            font: FontType,
-            font_size: int,
-            color: ColorInputType,
-            selected_color: ColorInputType,
-            readonly_color: ColorInputType,
-            readonly_selected_color: ColorInputType,
-            background_color: Optional[ColorInputType],
-            antialias: bool = True
+        self,
+        font: FontType,
+        font_size: int,
+        color: ColorInputType,
+        selected_color: ColorInputType,
+        readonly_color: ColorInputType,
+        readonly_selected_color: ColorInputType,
+        background_color: Optional[ColorInputType],
+        antialias: bool = True
     ) -> 'Widget':
         """
         Set the Widget font.
@@ -1824,11 +1827,11 @@ class Widget(Base):
         return self
 
     def set_font_shadow(
-            self,
-            enabled: bool = True,
-            color: Optional[ColorInputType] = None,
-            position: Optional[str] = None,
-            offset: int = 2
+        self,
+        enabled: bool = True,
+        color: Optional[ColorInputType] = None,
+        position: Optional[str] = None,
+        offset: int = 2
     ) -> 'Widget':
         """
         Set the Widget font shadow.
@@ -2051,12 +2054,12 @@ class Widget(Base):
         return self
 
     def get_position(
-            self,
-            apply_padding: bool = False,
-            use_transformed_padding: bool = True,
-            to_real_position: bool = False,
-            to_absolute_position: bool = False,
-            real_position_visible: bool = True
+        self,
+        apply_padding: bool = False,
+        use_transformed_padding: bool = True,
+        to_real_position: bool = False,
+        to_absolute_position: bool = False,
+        real_position_visible: bool = True
     ) -> Tuple2IntType:
         """
         Return the widget position tuple on x-axis and y-axis (x, y) in px.
@@ -2117,10 +2120,10 @@ class Widget(Base):
         self.render()
 
     def _scale_warn(
-            self,
-            scale: bool = True,
-            maxwidth: bool = True,
-            maxheight: bool = True
+        self,
+        scale: bool = True,
+        maxwidth: bool = True,
+        maxheight: bool = True
     ) -> None:
         """
         Warns user about overriding properties of scale/maxwidth/maxheight.
@@ -2146,10 +2149,10 @@ class Widget(Base):
             )
 
     def set_max_width(
-            self,
-            width: Optional[NumberType],
-            scale_height: NumberType = False,
-            smooth: bool = True
+        self,
+        width: Optional[NumberType],
+        scale_height: NumberType = False,
+        smooth: bool = True
     ) -> 'Widget':
         """
         Transformation: Set the Widget max width, it applies a scaling factor if
@@ -2207,10 +2210,10 @@ class Widget(Base):
         return self
 
     def set_max_height(
-            self,
-            height: Optional[NumberType],
-            scale_width: NumberType = False,
-            smooth: bool = True
+        self,
+        height: Optional[NumberType],
+        scale_width: NumberType = False,
+        smooth: bool = True
     ) -> 'Widget':
         """
         Transformation: Set the Widget max height, it applies a scaling factor
@@ -2263,10 +2266,10 @@ class Widget(Base):
         return self
 
     def scale(
-            self,
-            width: NumberType,
-            height: NumberType,
-            smooth: bool = True
+        self,
+        width: NumberType,
+        height: NumberType,
+        smooth: bool = True
     ) -> 'Widget':
         """
         Transformation: Scale the Widget to a desired width and height factor.
@@ -2317,10 +2320,10 @@ class Widget(Base):
         return self
 
     def resize(
-            self,
-            width: NumberType,
-            height: NumberType,
-            smooth: bool = True
+        self,
+        width: NumberType,
+        height: NumberType,
+        smooth: bool = True
     ) -> 'Widget':
         """
         Transformation: Set the Widget size to another size.
@@ -2550,9 +2553,9 @@ class Widget(Base):
         return self._surface
 
     def get_width(
-            self,
-            apply_padding: bool = True,
-            apply_selection: bool = False
+        self,
+        apply_padding: bool = True,
+        apply_selection: bool = False
     ) -> int:
         """
         Return the Widget width.
@@ -2574,9 +2577,9 @@ class Widget(Base):
         return int(width)
 
     def get_height(
-            self,
-            apply_padding: bool = True,
-            apply_selection: bool = False
+        self,
+        apply_padding: bool = True,
+        apply_selection: bool = False
     ) -> int:
         """
         Return the Widget height.
@@ -2598,9 +2601,9 @@ class Widget(Base):
         return int(height)
 
     def get_size(
-            self,
-            apply_padding: bool = True,
-            apply_selection: bool = False
+        self,
+        apply_padding: bool = True,
+        apply_selection: bool = False
     ) -> Tuple2IntType:
         """
         Return the Widget size.
@@ -2652,11 +2655,11 @@ class Widget(Base):
         return self
 
     def set_controls(
-            self,
-            joystick: bool = True,
-            mouse: bool = True,
-            touchscreen: bool = True,
-            keyboard: bool = True
+        self,
+        joystick: bool = True,
+        mouse: bool = True,
+        touchscreen: bool = True,
+        keyboard: bool = True
     ) -> 'Widget':
         """
         Enable interfaces to control the Widget.
@@ -2756,8 +2759,8 @@ class Widget(Base):
         return self.update(events)
 
     def add_draw_callback(
-            self,
-            draw_callback: Callable[['Widget', 'pygame_menu.Menu'], Any]
+        self,
+        draw_callback: Callable[['Widget', 'pygame_menu.Menu'], Any]
     ) -> str:
         """
         Adds a function to the Widget to be executed each time the widget is drawn.
@@ -2825,8 +2828,8 @@ class Widget(Base):
         return self
 
     def add_update_callback(
-            self,
-            update_callback: Callable[[EventListType, 'Widget', 'pygame_menu.Menu'], Any]
+        self,
+        update_callback: Callable[[EventListType, 'Widget', 'pygame_menu.Menu'], Any]
     ) -> str:
         """
         Adds a function to the Widget to be executed each time the Widget is
@@ -2910,10 +2913,10 @@ class Widget(Base):
         return copy_events
 
     def set_float(
-            self,
-            float_status: bool = True,
-            menu_render: bool = False,
-            origin_position: bool = False
+        self,
+        float_status: bool = True,
+        menu_render: bool = False,
+        origin_position: bool = False
     ) -> 'Widget':
         """
         Set the floating status. If ``True`` the Widget don't contribute its

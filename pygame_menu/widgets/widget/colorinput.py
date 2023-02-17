@@ -106,27 +106,27 @@ class ColorInput(TextInput):
     _separator: str
 
     def __init__(
-            self,
-            title: Any,
-            colorinput_id: str = '',
-            color_type: ColorInputColorType = COLORINPUT_TYPE_RGB,
-            cursor_color: Tuple3IntType = (0, 0, 0),
-            cursor_switch_ms: NumberType = 500,
-            dynamic_width: bool = True,
-            hex_format: ColorInputHexFormatType = COLORINPUT_HEX_FORMAT_NONE,
-            input_separator: str = ',',
-            input_underline: str = '_',
-            input_underline_vmargin: int = 0,
-            onchange: CallbackType = None,
-            onreturn: CallbackType = None,
-            onselect: CallbackType = None,
-            prev_margin: int = 10,
-            prev_width_factor: NumberType = 3,
-            repeat_keys_initial_ms: NumberType = 450,
-            repeat_keys_interval_ms: NumberType = 80,
-            repeat_mouse_interval_ms: NumberType = 100,
-            *args,
-            **kwargs
+        self,
+        title: Any,
+        colorinput_id: str = '',
+        color_type: ColorInputColorType = COLORINPUT_TYPE_RGB,
+        cursor_color: Tuple3IntType = (0, 0, 0),
+        cursor_switch_ms: NumberType = 500,
+        dynamic_width: bool = True,
+        hex_format: ColorInputHexFormatType = COLORINPUT_HEX_FORMAT_NONE,
+        input_separator: str = ',',
+        input_underline: str = '_',
+        input_underline_vmargin: int = 0,
+        onchange: CallbackType = None,
+        onreturn: CallbackType = None,
+        onselect: CallbackType = None,
+        prev_margin: int = 10,
+        prev_width_factor: NumberType = 3,
+        repeat_keys_initial_ms: NumberType = 450,
+        repeat_keys_interval_ms: NumberType = 80,
+        repeat_mouse_interval_ms: NumberType = 100,
+        *args,
+        **kwargs
     ) -> None:
         assert isinstance(color_type, str)
         assert isinstance(colorinput_id, str)
@@ -359,8 +359,7 @@ class ColorInput(TextInput):
 
         # Maybe TextInput did not render, so this has to be changed
         self._rect.width, self._rect.height = self._surface.get_size()
-        if not self._dynamic_width or \
-                (self._dynamic_width and self._previsualization_surface is not None):
+        if not self._dynamic_width or (self._dynamic_width and self._previsualization_surface is not None):
             self._rect.width += self._prev_width_factor * self._rect.height + self._prev_margin
 
         # Render the previsualization box
@@ -370,8 +369,7 @@ class ColorInput(TextInput):
             return render_text
 
         # If previsualization surface is None or the color changed
-        if self._last_r != r or self._last_b != b or self._last_g != g or \
-                self._previsualization_surface is None:
+        if self._last_r != r or self._last_b != b or self._last_g != g or self._previsualization_surface is None:
             width = self._prev_width_factor * self._rect.height
             if width == 0 or self._rect.height == 0:
                 self._previsualization_surface = None
@@ -390,8 +388,7 @@ class ColorInput(TextInput):
         """
         Apply hex format.
         """
-        if self._color_type != COLORINPUT_TYPE_HEX or \
-                self._hex_format == COLORINPUT_HEX_FORMAT_NONE:
+        if self._color_type != COLORINPUT_TYPE_HEX or self._hex_format == COLORINPUT_HEX_FORMAT_NONE:
             return
         elif self._hex_format == COLORINPUT_HEX_FORMAT_LOWER:
             self._input_string = self._input_string.lower()
@@ -420,16 +417,13 @@ class ColorInput(TextInput):
                     if self._ignores_keyboard_nonphysical() and not check_key_pressed_valid(event):
                         continue
 
-                    if disable_remove_separator and len(input_str) > 0 and \
-                            len(input_str) > cursor_pos and (
-                            f'{self._separator}{self._separator}' not in input_str or
-                            input_str[cursor_pos] == self._separator and
-                            len(input_str) == cursor_pos + 1
+                    if disable_remove_separator and len(input_str) > 0 and len(input_str) > cursor_pos and (
+                        f'{self._separator}{self._separator}' not in input_str or
+                        input_str[cursor_pos] == self._separator and len(input_str) == cursor_pos + 1
                     ):
                         # Backspace button, delete text from right
                         if self._ctrl.back(event, self):
-                            if len(input_str) >= 1 and \
-                                    input_str[cursor_pos - 1] == self._separator:
+                            if len(input_str) >= 1 and input_str[cursor_pos - 1] == self._separator:
                                 return True
 
                         # Delete button, delete text from left
@@ -442,9 +436,9 @@ class ColorInput(TextInput):
                     key = str(event.unicode)
                     if key in self._valid_chars:
                         new_string = (
-                                self._input_string[:self._cursor_position]
-                                + key
-                                + self._input_string[self._cursor_position:]
+                            self._input_string[:self._cursor_position]
+                            + key
+                            + self._input_string[self._cursor_position:]
                         )
 
                         # Cannot be separator at first
@@ -493,7 +487,6 @@ class ColorInput(TextInput):
             self._format_hex()
 
             for event in events:
-
                 # User writes
                 if event.type == pygame.KEYDOWN and self._keyboard_enabled:
                     # Check if any key is pressed
@@ -530,11 +523,10 @@ class ColorInput(TextInput):
                     total_separator += 1
 
             # Adds auto separator
-            if key == '0' and len(self._input_string) == self._cursor_position and \
-                    total_separator < 2 and \
-                    (len(self._input_string) == 1 or
-                     (len(self._input_string) > 2 and self._input_string[
-                         self._cursor_position - 2] == self._separator)):
+            if key == '0' and len(self._input_string) == self._cursor_position and total_separator < 2 and (
+                len(self._input_string) == 1 or
+                len(self._input_string) > 2 and self._input_string[self._cursor_position - 2] == self._separator
+            ):
                 self._push_key_input(self._separator, sounds=False)  # This calls .onchange()
 
             # Check number is valid (fix) because sometimes the user can type
@@ -554,16 +546,18 @@ class ColorInput(TextInput):
             if total_separator < 2 and len(self._input_string) == self._cursor_position:
                 auto_pos = len(colors) - 1
                 last_num = colors[auto_pos]
-                if (len(last_num) == 2 and int(last_num) > 25 or len(last_num) == 3 and
-                    int(last_num) <= 255) and \
-                        auto_pos not in self._auto_separator_pos:
+                if (
+                    ((len(last_num) == 2 and int(last_num) > 25) or (len(last_num) == 3 and int(last_num) <= 255)) and
+                    auto_pos not in self._auto_separator_pos
+                ):
                     self._push_key_input(self._separator, sounds=False)  # This calls .onchange()
                     self._auto_separator_pos.append(auto_pos)
 
             # If the user cleared all the string, reset auto separator
-            if total_separator == 0 and \
-                    (len(self._input_string) < 2 or len(self._input_string) == 2 and
-                     int(colors[0]) <= 25):
+            if total_separator == 0 and (
+                len(self._input_string) < 2 or
+                len(self._input_string) == 2 and int(colors[0]) <= 25
+            ):
                 self._auto_separator_pos = []
 
         return updated
@@ -575,18 +569,18 @@ class ColorInputManager(AbstractWidgetManager, ABC):
     """
 
     def color_input(
-            self,
-            title: Union[str, Any],
-            color_type: ColorInputColorType,
-            color_id: str = '',
-            default: Union[str, Tuple3IntType] = '',
-            hex_format: ColorInputHexFormatType = COLORINPUT_HEX_FORMAT_NONE,
-            input_separator: str = ',',
-            input_underline: str = '_',
-            onchange: CallbackType = None,
-            onreturn: CallbackType = None,
-            onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
-            **kwargs
+        self,
+        title: Union[str, Any],
+        color_type: ColorInputColorType,
+        color_id: str = '',
+        default: Union[str, Tuple3IntType] = '',
+        hex_format: ColorInputHexFormatType = COLORINPUT_HEX_FORMAT_NONE,
+        input_separator: str = ',',
+        input_underline: str = '_',
+        onchange: CallbackType = None,
+        onreturn: CallbackType = None,
+        onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
+        **kwargs
     ) -> 'pygame_menu.widgets.ColorInput':
         """
         Add a color widget with RGB or HEX format to the Menu.

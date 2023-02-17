@@ -32,10 +32,10 @@ widgets: List['pygame_menu.widgets.Widget']
 
 
 def make_menu(
-        menu_theme: 'pygame_menu.themes.Theme',
-        title: str,
-        center: bool = True,
-        widget_font_size: int = 25
+    menu_theme: 'pygame_menu.themes.Theme',
+    title: str,
+    center: bool = True,
+    widget_font_size: int = 25
 ) -> 'pygame_menu.Menu':
     """
     Make menu.

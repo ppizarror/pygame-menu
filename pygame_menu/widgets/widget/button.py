@@ -52,12 +52,12 @@ class Button(Widget):
     to_menu: bool
 
     def __init__(
-            self,
-            title: Any,
-            button_id: str = '',
-            onreturn: CallbackType = None,
-            *args,
-            **kwargs
+        self,
+        title: Any,
+        button_id: str = '',
+        onreturn: CallbackType = None,
+        *args,
+        **kwargs
     ) -> None:
         super(Button, self).__init__(
             args=args,
@@ -74,8 +74,8 @@ class Button(Widget):
         pass
 
     def set_selection_callback(
-            self,
-            callback: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]]
+        self,
+        callback: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]]
     ) -> None:
         """
         Update the button selection callback, once button is selected, the callback
@@ -124,11 +124,11 @@ class Button(Widget):
         self._onreturn = callback
 
     def add_underline(
-            self,
-            color: ColorInputType,
-            offset: int,
-            width: int,
-            force_render: bool = False
+        self,
+        color: ColorInputType,
+        offset: int,
+        width: int,
+        force_render: bool = False
     ) -> 'Button':
         """
         Adds an underline to text. This is added if widget is rendered.
@@ -162,9 +162,7 @@ class Button(Widget):
         surface.blit(self._surface, self._rect.topleft)
 
     def _render(self) -> Optional[bool]:
-        if not self._render_hash_changed(
-                self._selected, self._title, self._visible, self.readonly,
-                self._last_underline[1]):
+        if not self._render_hash_changed(self._selected, self._title, self._visible, self.readonly, self._last_underline[1]):
             return True
 
         # Render surface
@@ -202,10 +200,10 @@ class Button(Widget):
             self._check_mouseover(event, rect)
 
             # User applies with key
-            if event.type == pygame.KEYDOWN and self._keyboard_enabled and \
-                    self._ctrl.apply(event, self) or \
-                    event.type == pygame.JOYBUTTONDOWN and self._joystick_enabled and \
-                    self._ctrl.joy_select(event, self):
+            if (
+                event.type == pygame.KEYDOWN and self._keyboard_enabled and self._ctrl.apply(event, self) or
+                event.type == pygame.JOYBUTTONDOWN and self._joystick_enabled and self._ctrl.joy_select(event, self)
+            ):
                 if self.to_menu:
                     self._sound.play_open_menu()
                 else:
@@ -214,10 +212,10 @@ class Button(Widget):
                 return True
 
             # User clicks the button; don't consider the mouse wheel (button 4 & 5)
-            elif event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and \
-                    event.button in (1, 2, 3) or \
-                    event.type == FINGERUP and self._touchscreen_enabled and \
-                    self._menu is not None:
+            elif (
+                event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and event.button in (1, 2, 3) or
+                event.type == FINGERUP and self._touchscreen_enabled and self._menu is not None
+            ):
                 if event.type == pygame.MOUSEBUTTONUP:
                     self._sound.play_click_mouse()
                 else:
@@ -238,11 +236,11 @@ class ButtonManager(AbstractWidgetManager, ABC):
 
     # noinspection PyProtectedMember
     def banner(
-            self,
-            image: 'pygame_menu.BaseImage',
-            action: Optional[Union['pygame_menu.Menu', '_events.MenuAction', Callable, int]] = None,
-            *args,
-            **kwargs
+        self,
+        image: 'pygame_menu.BaseImage',
+        action: Optional[Union['pygame_menu.Menu', '_events.MenuAction', Callable, int]] = None,
+        *args,
+        **kwargs
     ) -> 'pygame_menu.widgets.Button':
         """
         Adds a clickeable image to the Menu with same behaviour as a Button.
@@ -322,11 +320,11 @@ class ButtonManager(AbstractWidgetManager, ABC):
 
     # noinspection PyProtectedMember
     def button(
-            self,
-            title: Any,
-            action: Optional[Union['pygame_menu.Menu', '_events.MenuAction', Callable, int]] = None,
-            *args,
-            **kwargs
+        self,
+        title: Any,
+        action: Optional[Union['pygame_menu.Menu', '_events.MenuAction', Callable, int]] = None,
+        *args,
+        **kwargs
     ) -> 'pygame_menu.widgets.Button':
         """
         Adds a button to the Menu.
@@ -511,10 +509,10 @@ class ButtonManager(AbstractWidgetManager, ABC):
         return widget
 
     def url(
-            self,
-            href: str,
-            title: str = '',
-            **kwargs
+        self,
+        href: str,
+        title: str = '',
+        **kwargs
     ) -> 'pygame_menu.widgets.Button':
         """
         Adds a Button url to the Menu. Clicking the widget will open the link.

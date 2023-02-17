@@ -89,28 +89,28 @@ class ProgressBar(Widget):
     _width: int
 
     def __init__(
-            self,
-            title: Any,
-            progressbar_id: str = '',
-            default: NumberType = 0,
-            width: int = 150,
-            onselect: CallbackType = None,
-            box_background_color: ColorInputType = (255, 255, 255),
-            box_border_color: ColorInputType = (0, 0, 0),
-            box_border_width: int = 1,
-            box_margin: Tuple2IntType = (25, 0),
-            box_progress_color: ColorInputType = (0, 255, 0),
-            box_progress_padding: PaddingType = (1, 1),
-            progress_text_align: str = ALIGN_CENTER,
-            progress_text_enabled: bool = True,
-            progress_text_font: Optional[FontType] = None,
-            progress_text_font_color: ColorInputType = (0, 0, 0),
-            progress_text_font_hfactor: float = 0.8,
-            progress_text_format: ProgressBarTextFormatType = lambda x: str(round(x, 1)),
-            progress_text_margin: Tuple2IntType = (0, 0),
-            progress_text_placeholder: str = '{0} %',
-            *args,
-            **kwargs
+        self,
+        title: Any,
+        progressbar_id: str = '',
+        default: NumberType = 0,
+        width: int = 150,
+        onselect: CallbackType = None,
+        box_background_color: ColorInputType = (255, 255, 255),
+        box_border_color: ColorInputType = (0, 0, 0),
+        box_border_width: int = 1,
+        box_margin: Tuple2IntType = (25, 0),
+        box_progress_color: ColorInputType = (0, 255, 0),
+        box_progress_padding: PaddingType = (1, 1),
+        progress_text_align: str = ALIGN_CENTER,
+        progress_text_enabled: bool = True,
+        progress_text_font: Optional[FontType] = None,
+        progress_text_font_color: ColorInputType = (0, 0, 0),
+        progress_text_font_hfactor: float = 0.8,
+        progress_text_format: ProgressBarTextFormatType = lambda x: str(round(x, 1)),
+        progress_text_margin: Tuple2IntType = (0, 0),
+        progress_text_placeholder: str = '{0} %',
+        *args,
+        **kwargs
     ) -> None:
         super(ProgressBar, self).__init__(
             args=args,
@@ -144,7 +144,8 @@ class ProgressBar(Widget):
         assert_vector(box_margin, 2, int)
         assert_vector(progress_text_margin, 2, int)
         assert isinstance(width, int)
-        assert width > 0, 'width must be greater than zero'
+        assert width > 0, \
+            'width must be greater than zero'
         box_progress_padding = parse_padding(box_progress_padding)
         self._box_progress_padding = box_progress_padding
 
@@ -228,9 +229,7 @@ class ProgressBar(Widget):
         if not hasattr(self, '_progress_font'):
             return False
 
-        if not self._render_hash_changed(
-                self._selected, self._title, self._visible, self.readonly,
-                self._progress):
+        if not self._render_hash_changed(self._selected, self._title, self._visible, self.readonly, self._progress):
             return True
 
         # Create basic title
@@ -282,15 +281,15 @@ class ProgressBarManager(AbstractWidgetManager, ABC):
     """
 
     def progress_bar(
-            self,
-            title: Any,
-            default: NumberType = 0,
-            onselect: CallbackType = None,
-            progressbar_id: str = '',
-            progress_text_format: ProgressBarTextFormatType = lambda x: str(round(x, 1)),
-            selectable: bool = False,
-            width: int = 150,
-            **kwargs
+        self,
+        title: Any,
+        default: NumberType = 0,
+        onselect: CallbackType = None,
+        progressbar_id: str = '',
+        progress_text_format: ProgressBarTextFormatType = lambda x: str(round(x, 1)),
+        selectable: bool = False,
+        width: int = 150,
+        **kwargs
     ) -> 'pygame_menu.widgets.ProgressBar':
         """
         Add a progress bar, which offers a bar that accepts a percentage from

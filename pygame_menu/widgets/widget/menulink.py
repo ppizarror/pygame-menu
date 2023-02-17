@@ -38,10 +38,10 @@ class MenuLink(NoneWidget):
     menu: 'pygame_menu.Menu'
 
     def __init__(
-            self,
-            menu: 'pygame_menu.Menu',
-            menu_opener_handler: Callable,
-            link_id: str = ''
+        self,
+        menu: 'pygame_menu.Menu',
+        menu_opener_handler: Callable,
+        link_id: str = ''
     ) -> None:
         assert isinstance(menu, pygame_menu.Menu)
         assert callable(menu_opener_handler), \
@@ -70,9 +70,9 @@ class MenuLinkManager(AbstractWidgetManager, ABC):
     """
 
     def menu_link(
-            self,
-            menu: 'pygame_menu.Menu',
-            link_id: str = ''
+        self,
+        menu: 'pygame_menu.Menu',
+        link_id: str = ''
     ) -> 'pygame_menu.widgets.MenuLink':
         """
         Adds a link to another Menu. The behaviour is similar to a button, but

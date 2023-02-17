@@ -115,14 +115,14 @@ class BaseImage(Base):
     smooth_scaling: bool
 
     def __init__(
-            self,
-            image_path: Union[str, 'Path', 'BytesIO'],
-            drawing_mode: int = IMAGE_MODE_FILL,
-            drawing_offset: Vector2NumberType = (0, 0),
-            drawing_position: str = POSITION_NORTHWEST,
-            load_from_file: bool = True,
-            frombase64: bool = False,
-            image_id: str = ''
+        self,
+        image_path: Union[str, 'Path', 'BytesIO'],
+        drawing_mode: int = IMAGE_MODE_FILL,
+        drawing_offset: Vector2NumberType = (0, 0),
+        drawing_position: str = POSITION_NORTHWEST,
+        load_from_file: bool = True,
+        frombase64: bool = False,
+        image_id: str = ''
     ) -> None:
         super(BaseImage, self).__init__(object_id=image_id)
 
@@ -241,11 +241,11 @@ class BaseImage(Base):
         return self
 
     def crop(
-            self,
-            x: NumberType,
-            y: NumberType,
-            width: NumberType,
-            height: NumberType
+        self,
+        x: NumberType,
+        y: NumberType,
+        width: NumberType,
+        height: NumberType
     ) -> 'BaseImage':
         """
         Crops the image from coordinate on x-axis and y-axis (x, y).
@@ -269,11 +269,11 @@ class BaseImage(Base):
         return self._surface.subsurface(rect)
 
     def get_crop(
-            self,
-            x: NumberType,
-            y: NumberType,
-            width: NumberType,
-            height: NumberType
+        self,
+        x: NumberType,
+        y: NumberType,
+        width: NumberType,
+        height: NumberType
     ) -> 'pygame.Surface':
         """
         Get a crop of the image from coordinate on x-axis and y-axis (x, y).
@@ -421,9 +421,9 @@ class BaseImage(Base):
         return self.get_width(), self.get_height()
 
     def get_at(
-            self,
-            pos: Tuple2NumberType,
-            ignore_alpha: bool = False
+        self,
+        pos: Tuple2NumberType,
+        ignore_alpha: bool = False
     ) -> Union[Tuple3IntType, Tuple4IntType]:
         """
         Get the color from a certain position in image on x-axis and y-axis (x, y).
@@ -528,8 +528,8 @@ class BaseImage(Base):
         return self
 
     def apply_image_function(
-            self,
-            image_function: Callable[[int, int, int, int], Tuple4IntType]
+        self,
+        image_function: Callable[[int, int, int, int], Tuple4IntType]
     ) -> 'BaseImage':
         """
         Apply a function to each pixel of the image. The function will receive the
@@ -624,10 +624,10 @@ class BaseImage(Base):
         return self
 
     def scale(
-            self,
-            width: NumberType,
-            height: NumberType,
-            smooth: bool = True
+        self,
+        width: NumberType,
+        height: NumberType,
+        smooth: bool = True
     ) -> 'BaseImage':
         """
         Scale the image to a desired width and height factor.
@@ -681,10 +681,10 @@ class BaseImage(Base):
         return self.scale2x().scale2x()
 
     def resize(
-            self,
-            width: NumberType,
-            height: NumberType,
-            smooth: bool = True
+        self,
+        width: NumberType,
+        height: NumberType,
+        smooth: bool = True
     ) -> 'BaseImage':
         """
         Resize the image to a desired (width, height) size in pixels.
@@ -794,10 +794,10 @@ class BaseImage(Base):
             raise ValueError('unknown drawing position')
 
     def draw(
-            self,
-            surface: 'pygame.Surface',
-            area: Optional['pygame.Rect'] = None,
-            position: Tuple2IntType = (0, 0)
+        self,
+        surface: 'pygame.Surface',
+        area: Optional['pygame.Rect'] = None,
+        position: Tuple2IntType = (0, 0)
     ) -> 'BaseImage':
         """
         Draw the image in a given surface.
@@ -825,8 +825,11 @@ class BaseImage(Base):
 
         if self._drawing_mode == IMAGE_MODE_FILL:
             # Check if exists the transformed surface
-            if area.width == self._last_transform[0] and area.height == self._last_transform[1] and \
-                    self._last_transform[2] is not None:
+            if (
+                area.width == self._last_transform[0] and
+                area.height == self._last_transform[1] and
+                self._last_transform[2] is not None
+            ):
                 surf = self._last_transform[2]
             else:  # Transform scale
                 if self.smooth_scaling and self._surface.get_bitsize() > 8:

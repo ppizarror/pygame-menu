@@ -45,13 +45,13 @@ class Image(Widget):
     _image: 'BaseImage'
 
     def __init__(
-            self,
-            image_path: Union[str, 'BaseImage', 'Path', 'BytesIO'],
-            angle: NumberType = 0,
-            image_id: str = '',
-            onselect: CallbackType = None,
-            scale: Tuple2NumberType = (1, 1),
-            scale_smooth: bool = True
+        self,
+        image_path: Union[str, 'BaseImage', 'Path', 'BytesIO'],
+        angle: NumberType = 0,
+        image_id: str = '',
+        onselect: CallbackType = None,
+        scale: Tuple2NumberType = (1, 1),
+        scale_smooth: bool = True
     ) -> None:
         assert isinstance(image_path, (str, Path, BaseImage, BytesIO))
         assert isinstance(image_id, str)
@@ -181,15 +181,15 @@ class ImageManager(AbstractWidgetManager, ABC):
     """
 
     def image(
-            self,
-            image_path: Union[str, 'Path', 'pygame_menu.BaseImage', 'BytesIO'],
-            angle: NumberType = 0,
-            image_id: str = '',
-            onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
-            scale: Vector2NumberType = (1, 1),
-            scale_smooth: bool = True,
-            selectable: bool = False,
-            **kwargs
+        self,
+        image_path: Union[str, 'Path', 'pygame_menu.BaseImage', 'BytesIO'],
+        angle: NumberType = 0,
+        image_id: str = '',
+        onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
+        scale: Vector2NumberType = (1, 1),
+        scale_smooth: bool = True,
+        selectable: bool = False,
+        **kwargs
     ) -> 'pygame_menu.widgets.Image':
         """
         Add a simple image to the Menu.

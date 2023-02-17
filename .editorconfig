@@ -1,0 +1,19 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# Top-most EditorConfig file
+root = true
+
+# Unix-style newlines
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = false
+
+# Configure languages
+[*.py]
+indent_size = 4
+indent_style = space
+
+[{*.json, *.yml}]
+indent_size = 2
+indent_style = space

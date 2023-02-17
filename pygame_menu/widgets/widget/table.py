@@ -63,8 +63,8 @@ class Table(Frame):
     default_row_background_color: Optional[ColorInputType]
 
     def __init__(
-            self,
-            table_id: str = ''
+        self,
+        table_id: str = ''
     ) -> None:
         super(Table, self).__init__(
             width=1,
@@ -143,13 +143,13 @@ class Table(Frame):
 
     @staticmethod
     def _check_cell_style(
-            align: str,
-            background_color: ColorInputType,
-            border_color: ColorInputType,
-            border_position: WidgetBorderPositionType,
-            border_width: int,
-            padding: PaddingType,
-            vertical_position: str
+        align: str,
+        background_color: ColorInputType,
+        border_color: ColorInputType,
+        border_position: WidgetBorderPositionType,
+        border_width: int,
+        padding: PaddingType,
+        vertical_position: str
     ) -> None:
         """
         Assert cell style.
@@ -194,18 +194,18 @@ class Table(Frame):
                 f'but received "{pos}"'
 
     def add_row(
-            self,
-            cells: Union[ColumnInputType, 'Widget'],
-            cell_align: Optional[str] = None,
-            cell_border_color: Optional[ColorInputType] = None,
-            cell_border_position: Optional[WidgetBorderPositionType] = None,
-            cell_border_width: Optional[int] = None,
-            cell_font: Optional[FontType] = None,
-            cell_font_color: Optional[ColorInputType] = None,
-            cell_font_size: Optional[int] = None,
-            cell_padding: PaddingType = None,
-            cell_vertical_position: Optional[str] = None,
-            row_background_color: Optional[ColorInputType] = None
+        self,
+        cells: Union[ColumnInputType, 'Widget'],
+        cell_align: Optional[str] = None,
+        cell_border_color: Optional[ColorInputType] = None,
+        cell_border_position: Optional[WidgetBorderPositionType] = None,
+        cell_border_width: Optional[int] = None,
+        cell_font: Optional[FontType] = None,
+        cell_font_color: Optional[ColorInputType] = None,
+        cell_font_size: Optional[int] = None,
+        cell_padding: PaddingType = None,
+        cell_vertical_position: Optional[str] = None,
+        row_background_color: Optional[ColorInputType] = None
     ) -> 'Frame':
         """
         Add row to table.
@@ -602,8 +602,7 @@ class Table(Frame):
                 col += 1
 
                 # Draw the border
-                if border_position == WIDGET_BORDER_POSITION_NONE or \
-                        border_width == 0:
+                if border_position == WIDGET_BORDER_POSITION_NONE or border_width == 0:
                     continue
                 for pos in border_position:
                     if pos == POSITION_NORTH:
@@ -662,19 +661,19 @@ class Table(Frame):
         return True
 
     def update_cell_style(
-            self,
-            column: Union[int, Vector2IntType],
-            row: Union[int, Vector2IntType],
-            align: Optional[str] = None,
-            background_color: Optional[ColorInputType] = None,
-            border_color: Optional[ColorInputType] = None,
-            border_position: Optional[WidgetBorderPositionType] = None,
-            border_width: Optional[int] = None,
-            font: Optional[FontType] = None,
-            font_color: Optional[ColorInputType] = None,
-            font_size: Optional[int] = None,
-            padding: Optional[PaddingType] = None,
-            vertical_position: Optional[str] = None
+        self,
+        column: Union[int, Vector2IntType],
+        row: Union[int, Vector2IntType],
+        align: Optional[str] = None,
+        background_color: Optional[ColorInputType] = None,
+        border_color: Optional[ColorInputType] = None,
+        border_position: Optional[WidgetBorderPositionType] = None,
+        border_width: Optional[int] = None,
+        font: Optional[FontType] = None,
+        font_color: Optional[ColorInputType] = None,
+        font_size: Optional[int] = None,
+        padding: Optional[PaddingType] = None,
+        vertical_position: Optional[str] = None
     ) -> Union['Widget', List['Widget']]:
         """
         Update cell style. If a parameter is ``None`` the default cell property
@@ -897,9 +896,9 @@ class TableManager(AbstractWidgetManager, ABC):
     """
 
     def table(
-            self,
-            table_id: str = '',
-            **kwargs
+        self,
+        table_id: str = '',
+        **kwargs
     ) -> 'pygame_menu.widgets.Table':
         """
         Adds a Table to the Menu. A table is a frame which can pack widgets in a

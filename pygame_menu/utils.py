@@ -75,8 +75,8 @@ def assert_alignment(align: str) -> None:
 
 
 def assert_color(
-        color: Union[ColorInputType, List[int]],
-        warn_if_invalid: bool = True
+    color: Union[ColorInputType, List[int]],
+    warn_if_invalid: bool = True
 ) -> ColorType:
     """
     Assert that a certain color is valid.
@@ -174,9 +174,9 @@ def assert_position_vector(position: Union[str, List[str], Tuple[str, ...]]) -> 
 
 
 def assert_vector(
-        num_vector: VectorType,
-        length: int,
-        instance: type = NumberInstance
+    num_vector: VectorType,
+    length: int,
+    instance: type = NumberInstance
 ) -> None:
     """
     Assert that a fixed length vector is numeric.
@@ -219,12 +219,12 @@ def check_key_pressed_valid(event: EventType) -> bool:
 
 
 def fill_gradient(
-        surface: 'pygame.Surface',
-        color: ColorInputType,
-        gradient: ColorInputType,
-        rect: Optional['pygame.Rect'] = None,
-        vertical: bool = True,
-        forward: bool = True
+    surface: 'pygame.Surface',
+    color: ColorInputType,
+    gradient: ColorInputType,
+    rect: Optional['pygame.Rect'] = None,
+    vertical: bool = True,
+    forward: bool = True
 ) -> None:
     """
     Fill a surface with a gradient pattern.
@@ -275,8 +275,8 @@ def fill_gradient(
 
 
 def format_color(
-        color: Union[ColorInputType, Any],
-        warn_if_invalid: bool = True
+    color: Union[ColorInputType, Any],
+    warn_if_invalid: bool = True
 ) -> Union[ColorType, Any]:
     """
     Format color from string, int, or tuple to tuple type.
@@ -409,10 +409,10 @@ def load_pygame_image_file(image_path: str, **kwargs) -> 'pygame.Surface':
 
 
 def make_surface(
-        width: NumberType,
-        height: NumberType,
-        alpha: bool = False,
-        fill_color: Optional[ColorInputType] = None
+    width: NumberType,
+    height: NumberType,
+    alpha: bool = False,
+    fill_color: Optional[ColorInputType] = None
 ) -> 'pygame.Surface':
     """
     Creates a pygame surface object.
@@ -489,8 +489,8 @@ def parse_padding(padding: PaddingType) -> Tuple4IntType:
 
 
 def print_menu_widget_structure(
-        widgets: List['pygame_menu.widgets.Widget'],
-        index: int
+    widgets: List['pygame_menu.widgets.Widget'],
+    index: int
 ) -> None:
     """
     Test printing widgets order.
@@ -638,9 +638,9 @@ def warn(message: str, print_stack: bool = True) -> None:
 
 
 def widget_terminal_title(
-        widget: 'pygame_menu.widgets.Widget',
-        widget_index: int = -1,
-        current_index: int = -1
+    widget: 'pygame_menu.widgets.Widget',
+    widget_index: int = -1,
+    current_index: int = -1
 ) -> str:
     """
     Return widget title to be printed on terminals.
@@ -763,11 +763,11 @@ class ShadowGenerator(object):
             self._short_term_rect_cache.clear()
 
     def _create_shadow_corners(
-            self,
-            shadow_width_param: int,
-            corner_radius_param: int,
-            color: Tuple3IntType,
-            aa_amount: int = 4
+        self,
+        shadow_width_param: int,
+        corner_radius_param: int,
+        color: Tuple3IntType,
+        aa_amount: int = 4
     ) -> Dict[str, 'pygame.Surface']:
         """
         Create corners for our rectangular shadows. These can be used across many
@@ -841,11 +841,11 @@ class ShadowGenerator(object):
 
     @staticmethod
     def _create_single_corner_and_edge(
-            aa_amount: int,
-            corner_radius_param: int,
-            corner_rect: 'pygame.Rect',
-            shadow_width_param: int,
-            color: Tuple3IntType
+        aa_amount: int,
+        corner_radius_param: int,
+        corner_rect: 'pygame.Rect',
+        shadow_width_param: int,
+        color: Tuple3IntType
     ) -> Tuple['pygame.Surface', 'pygame.Surface']:
         """
         Creates a single corner surface and a single edge surface for a shadow.
@@ -915,13 +915,13 @@ class ShadowGenerator(object):
         return final_corner_surface, final_edge_surface
 
     def create_new_rectangle_shadow(
-            self,
-            width: int,
-            height: int,
-            shadow_width_param: int,
-            corner_radius_param: int,
-            aa_amount: int = 4,
-            color: Tuple3IntType = (0, 0, 0)
+        self,
+        width: int,
+        height: int,
+        shadow_width_param: int,
+        corner_radius_param: int,
+        aa_amount: int = 4,
+        color: Tuple3IntType = (0, 0, 0)
     ) -> Optional['pygame.Surface']:
         """
         Creates a rectangular shadow surface at the specified size and stores it for later use.
@@ -938,7 +938,7 @@ class ShadowGenerator(object):
         assert isinstance(height, int)
         assert_vector(color, 3, int)
         shadow_width_param, corner_radius_param, aa_amount = int(shadow_width_param), \
-                                                             int(corner_radius_param), int(aa_amount)
+            int(corner_radius_param), int(aa_amount)
         if width < corner_radius_param or height < corner_radius_param or shadow_width_param == 0:
             return None
         r, g, b = color
@@ -994,12 +994,12 @@ class ShadowGenerator(object):
         return final_surface
 
     def create_new_ellipse_shadow(
-            self,
-            width: int,
-            height: int,
-            shadow_width_param: int,
-            aa_amount: int = 4,
-            color: Tuple3IntType = (0, 0, 0)
+        self,
+        width: int,
+        height: int,
+        shadow_width_param: int,
+        aa_amount: int = 4,
+        color: Tuple3IntType = (0, 0, 0)
     ) -> Optional['pygame.Surface']:
         """
         Creates an ellipse shaped shadow surface at the specified size and stores it for later use.

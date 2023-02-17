@@ -31,10 +31,10 @@ class HighlightSelection(Selection):
     _border_width: int
 
     def __init__(
-            self,
-            border_width: int = 1,
-            margin_x: NumberType = 16,
-            margin_y: NumberType = 8
+        self,
+        border_width: int = 1,
+        margin_x: NumberType = 16,
+        margin_y: NumberType = 8
     ) -> None:
         assert isinstance(border_width, int)
         assert margin_x >= 0 and margin_y >= 0

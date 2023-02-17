@@ -1467,6 +1467,26 @@ class MenuTest(BaseRSTest):
         menu.add.button('to2', menu2).apply()
         self.assertTrue(test[0])
 
+        # Test select widget
+        def onbeforeopen_select_widget(_from: 'pygame_menu.Menu', _to: 'pygame_menu.Menu'):
+            """
+            Selects widget before opening.
+            """
+            _to.select_widget('option2')
+
+        menu = MenuUtils.generic_menu()
+        submenu = MenuUtils.generic_menu()
+        submenu.add.button('Option 1', button_id='option1')
+        submenu.add.button('Option 2', button_id='option2')
+        submenu.add.button('Option 3', button_id='option3')
+        submenu.set_onbeforeopen(onbeforeopen_select_widget)
+        btn_submenu = menu.add.button('Submenu', submenu)
+
+        # Test applying to submenu, which should trigger onbeforeopen
+        self.assertEqual(submenu.get_selected_widget().get_id(), 'option1')  # By default, submenu always start as 0
+        btn_submenu.apply()
+        self.assertEqual(submenu.get_selected_widget().get_id(), 'option2')  # Test if onbeforeopen did its work
+
     def test_focus(self) -> None:
         """
         Test menu focus effect.

@@ -81,8 +81,7 @@ def is_event(event: Any) -> bool:
     :param event: Event
     :return: ``True`` if it's an event
     """
-    return isinstance(event, MenuAction) or \
-           str(type(event)) == "<class 'pygame_menu.events.MenuAction'>"
+    return isinstance(event, MenuAction) or str(type(event)) == "<class 'pygame_menu.events.MenuAction'>"
 
 
 # Events

@@ -637,8 +637,8 @@ class Theme(object):
 
     @staticmethod
     def _format_color_opacity(
-            color: Optional[Union[ColorInputType, 'BaseImage']],
-            none: bool = False
+        color: Optional[Union[ColorInputType, 'BaseImage']],
+        none: bool = False
     ) -> Optional[Union[ColorType, 'BaseImage']]:
         """
         Adds opacity to a 3 channel color. (R,G,B) -> (R,G,B,A) if the color

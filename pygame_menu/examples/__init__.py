@@ -18,12 +18,12 @@ _PYGAME_ICON = [None]
 
 # noinspection PyTypeChecker
 def create_example_window(
-        title: str,
-        window_size: Tuple[int, int],
-        pygame_menu_icon: bool = True,
-        init_pygame: bool = True,
-        center_window: bool = True,
-        **kwargs
+    title: str,
+    window_size: Tuple[int, int],
+    pygame_menu_icon: bool = True,
+    init_pygame: bool = True,
+    center_window: bool = True,
+    **kwargs
 ) -> 'pygame.Surface':
     """
     Set pygame window.

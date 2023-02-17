@@ -1,4 +1,3 @@
-
 .. module:: pygame_menu.widgets.widget.dropselect_multiple
 
 ==================

@@ -106,9 +106,9 @@ class App(object):
         self._update_from_selection(int(self.selector_widget.get_value()[0][1]))
 
     def animate_quit_button(
-            self,
-            widget: 'pygame_menu.widgets.Widget',
-            menu: 'pygame_menu.Menu'
+        self,
+        widget: 'pygame_menu.widgets.Widget',
+        menu: 'pygame_menu.Menu'
     ) -> None:
         """
         Animate widgets if the last option is selected.

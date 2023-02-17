@@ -33,13 +33,13 @@ class Planet(object):
     url: str
 
     def __init__(
-            self,
-            image: 'pygame_menu.BaseImage',
-            info: str,
-            url: str,
-            radius: float,
-            period: float,
-            fontsize: Union[int, float]
+        self,
+        image: 'pygame_menu.BaseImage',
+        info: str,
+        url: str,
+        radius: float,
+        period: float,
+        fontsize: Union[int, float]
     ) -> None:
         """
         Create a planet.

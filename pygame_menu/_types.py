@@ -51,6 +51,7 @@ Tuple2IntType = Tuple[int, int]
 Tuple2NumberType = Tuple[NumberType, NumberType]
 Tuple3IntType = Tuple[int, int, int]
 Tuple4IntType = Tuple[int, int, int, int]
+Tuple4NumberType = Tuple[NumberType, NumberType, NumberType, NumberType]
 Tuple4Tuple2IntType = Tuple[Tuple2IntType, Tuple2IntType, Tuple2IntType, Tuple2IntType]
 TupleIntType = Tuple[int, ...]
 
@@ -60,10 +61,7 @@ MenuColumnMinWidthType = Union[int, float, VectorType]
 MenuRowsType = Optional[Union[int, VectorIntType]]
 
 # Other
-PaddingType = Optional[Union[NumberType, List[NumberType], Tuple[NumberType],
-                             Tuple[NumberType, NumberType],
-                             Tuple[NumberType, NumberType, NumberType, NumberType],
-                             Tuple[NumberType, NumberType, NumberType, NumberType]]]
+PaddingType = Optional[Union[NumberType, List[NumberType], Tuple[NumberType], Tuple2NumberType, Tuple4NumberType]]
 StringVector = Union[str, Tuple[str, ...], List[str]]
 
 # Instances
