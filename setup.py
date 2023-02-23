@@ -63,6 +63,7 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
         'Operating System :: OS Independent',
+        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
@@ -75,7 +76,7 @@ setup(
     ],
     include_package_data=True,
     packages=find_packages(exclude=['test']),
-    python_requires='>=3.7, <4',
+    python_requires='>=3.6, <4',
     install_requires=requirements,
     extras_require={
         'docs': ['sphinx', 'sphinx-autodoc-typehints>=1.2.0', 'sphinx-rtd-theme'],
