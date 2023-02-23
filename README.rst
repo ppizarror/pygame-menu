@@ -14,9 +14,9 @@ pygame-menu
     :target: https://opensource.org/licenses/MIT
     :alt: License MIT
 
-.. image:: https://img.shields.io/badge/python-3.7+-red.svg
+.. image:: https://img.shields.io/badge/python-3.6+-red.svg
     :target: https://www.python.org/downloads
-    :alt: Python 3.7+
+    :alt: Python 3.6+
 
 .. image:: https://img.shields.io/badge/pygame-1.9.3%2B%2F2.0%2B-orange
     :target: https://www.pygame.org
