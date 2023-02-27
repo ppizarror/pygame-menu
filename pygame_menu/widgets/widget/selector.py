@@ -41,7 +41,7 @@ from pygame_menu._types import Tuple, Union, List, Any, Optional, CallbackType, 
 SELECTOR_STYLE_CLASSIC = 'classic'
 SELECTOR_STYLE_FANCY = 'fancy'
 
-SelectorStyleType = Literal[SELECTOR_STYLE_CLASSIC, SELECTOR_STYLE_FANCY]
+SelectorStyleType = str
 
 
 def check_selector_items(items: Union[Tuple, List]) -> None:

@@ -35,15 +35,13 @@ from pygame_menu.widgets.widget.dropselect import DropSelect
 
 from pygame_menu._types import Tuple, Union, List, Any, Optional, CallbackType, \
     ColorType, ColorInputType, Tuple2IntType, Tuple3IntType, PaddingType, \
-    Tuple2NumberType, CursorInputType, NumberType, Literal, Callable
+    Tuple2NumberType, CursorInputType, NumberType, Callable
 
 DROPSELECT_MULTIPLE_SFORMAT_LIST_COMMA = 'comma-list'
 DROPSELECT_MULTIPLE_SFORMAT_LIST_HYPHEN = 'hyphen-list'
 DROPSELECT_MULTIPLE_SFORMAT_TOTAL = 'total'
 
-DropSelectMultipleSFormatType = Union[
-    Literal[DROPSELECT_MULTIPLE_SFORMAT_TOTAL, DROPSELECT_MULTIPLE_SFORMAT_LIST_COMMA, DROPSELECT_MULTIPLE_SFORMAT_LIST_HYPHEN],
-    Callable[[List[str]], str]]
+DropSelectMultipleSFormatType = Union[str, Callable[[List[str]], str]]
 
 
 # noinspection PyMissingOrEmptyDocstring

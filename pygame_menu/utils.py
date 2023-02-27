@@ -332,7 +332,7 @@ def get_cursor() -> CursorInputType:
     return None
 
 
-def get_finger_pos(menu: 'pygame_menu.Menu', event: EventType) -> Tuple2IntType:
+def get_finger_pos(menu: Optional['pygame_menu.Menu'], event: EventType) -> Tuple2IntType:
     """
     Return the position from finger (or mouse) event on x-axis and y-axis (x, y).
 

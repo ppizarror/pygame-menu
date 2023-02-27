@@ -49,8 +49,8 @@ COLORINPUT_HEX_FORMAT_NONE = 'none'
 COLORINPUT_HEX_FORMAT_UPPER = 'upper'
 
 # Custom typing
-ColorInputColorType = Literal[COLORINPUT_TYPE_RGB, COLORINPUT_TYPE_HEX]
-ColorInputHexFormatType = Literal[COLORINPUT_HEX_FORMAT_LOWER, COLORINPUT_HEX_FORMAT_UPPER, COLORINPUT_HEX_FORMAT_NONE]
+ColorInputColorType = str
+ColorInputHexFormatType = str
 
 
 # noinspection PyMissingOrEmptyDocstring

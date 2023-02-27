@@ -29,13 +29,13 @@ from pygame_menu._types import Optional, Any, CallbackType, Tuple, List, ColorTy
 
 try:
     # noinspection PyProtectedMember
-    from pyperclip import copy, paste, PyperclipException
+    from pyperclip import copy, paste, PyperclipException  # type: ignore
 
 except (ModuleNotFoundError, ImportError):
     copy, paste = lambda text: None, lambda: ''
 
 
-    class PyperclipException(RuntimeError):
+    class PyperclipException(RuntimeError):  # type: ignore
         """
         Pyperclip exception thrown by pyperclip.
         """

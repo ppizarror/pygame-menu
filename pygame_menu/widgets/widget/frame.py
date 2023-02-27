@@ -56,11 +56,7 @@ S_FINGER_FACTOR = 0.25, 0.25
 
 # Types
 FrameTitleBackgroundColorType = Optional[Union[ColorInputType, ColorInputGradientType, BaseImage]]
-FrameTitleButtonType = Literal[
-    FRAME_TITLE_BUTTON_CLOSE,
-    FRAME_TITLE_BUTTON_MAXIMIZE,
-    FRAME_TITLE_BUTTON_MINIMIZE
-]
+FrameTitleButtonType = str
 
 
 # noinspection PyMissingOrEmptyDocstring,PyProtectedMember

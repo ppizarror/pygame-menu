@@ -68,7 +68,7 @@ class MenuAction(object):
         assert isinstance(action, int)
         self._action = action
 
-    def __eq__(self, other: 'MenuAction') -> bool:
+    def __eq__(self, other: object) -> bool:
         if isinstance(other, MenuAction):
             return self._action == other._action
         return False

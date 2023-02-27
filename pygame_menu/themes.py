@@ -26,6 +26,7 @@ __all__ = [
 
 import copy
 
+import pygame_menu
 from pygame_menu.baseimage import BaseImage
 from pygame_menu.font import FontType, FONT_OPEN_SANS, assert_font
 from pygame_menu.locals import POSITION_NORTHWEST, POSITION_SOUTHEAST, ALIGN_CENTER, \

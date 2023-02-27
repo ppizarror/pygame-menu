@@ -234,7 +234,7 @@ class Widget(Base):
     _cursor: CursorType
     _decorator: 'Decorator'
     _default_value: Any
-    _draw_callbacks: Dict[str, Callable[['Widget', 'pygame_menu.Menu'], Any]]
+    _draw_callbacks: Dict[str, Callable[['Widget', Optional['pygame_menu.Menu']], Any]]
     _events: EventListType
     _flip: Tuple2BoolType
     _floating: bool
