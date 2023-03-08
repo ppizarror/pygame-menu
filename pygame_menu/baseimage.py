@@ -823,7 +823,7 @@ class BaseImage(Base):
         offx = self._drawing_offset[0] - px
         offy = self._drawing_offset[1] - py
 
-        if self._drawing_mode == IMAGE_MODE_FILL:
+        if self._drawing_mode == IMAGE_MODE_FILL and area is not None:
             # Check if exists the transformed surface
             if (
                 area.width == self._last_transform[0] and

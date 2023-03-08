@@ -265,9 +265,9 @@ class Table(Frame):
 
         # If cells is a previous table row
         if isinstance(cells, Frame) and cells.has_attribute('is_row'):
-            row_cells = list(cells.get_widgets(unpack_subframes=False))
+            _row_cells = list(cells.get_widgets(unpack_subframes=False))
             cells.clear()
-            cells = row_cells
+            cells = _row_cells
         if isinstance(cells, Widget):
             cells = [cells]
 
