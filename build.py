@@ -28,7 +28,7 @@ elif mode == 'twine':
     if os.path.isdir('dist'):
         os.system(f'python -m twine upload dist/*')
     else:
-        raise FileNotFoundError('Not distribution been found, execute build.py pip')
+        raise FileNotFoundError('Not distribution has been found, execute build.py pip')
 
 elif mode == 'gource':
     os.system('gource -s 0.25 --title pygame-menu --disable-auto-rotate --key '
