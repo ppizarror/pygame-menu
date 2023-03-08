@@ -2444,7 +2444,7 @@ class MenuTest(BaseRSTest):
         self.assertEqual(menu.get_submenus(True), (menu2, menu3))
         for m in (menu, menu2, menu3):
             self.assertEqual(m.get_size(), (600, 400))
-        menu.resize(300, 300, recursive=True) # Now, resize
+        menu.resize(300, 300, recursive=True)  # Now, resize
         for m in (menu, menu2, menu3):
             self.assertEqual(m.get_size(), (300, 300))
 
