@@ -298,6 +298,8 @@ class ScrollBar(Widget):
 
     def _render(self) -> Optional[bool]:
         width, height = self._rect.width + self._rect_size_delta[0], self._rect.height + self._rect_size_delta[1]
+        if self._slider_rect is None:
+            return
 
         if not self._render_hash_changed(width, height, self._slider_rect.x, self._slider_rect.y,
                                          self.readonly, self._slider_rect.width, self._slider_rect.height,
