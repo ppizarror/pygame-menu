@@ -90,7 +90,8 @@ class Menu(Base):
     :param menu_id: ID of the Menu
     :param mouse_enabled: Enable/disable mouse click inside the Menu
     :param mouse_motion_selection: Select widgets using mouse motion. If ``True`` menu draws a ``focus`` on the selected widget
-    :param mouse_visible: Set mouse visible on Menu
+    :param mouse_visible: Set mouse cursor visible on Menu. Auto-enables if the Menu has scrollbars. Also requires ``mouse_visible_update`` to be True for the Menu to update cursor visibility
+    :param mouse_visible_update: Menu can update the cursor mouse visibility. If ``False``, the Menu does not update cursor visibility
     :param onclose: Event or function executed when closing the Menu. If not ``None`` the menu disables and executes the event or function it points to. If a function (callable) is provided it can be both non-argument or single argument (Menu instance)
     :param onreset: Function executed when resetting the Menu. The function must be non-argument or single argument (Menu instance)
     :param overflow: Enables overflow on x/y axes. If ``False`` then scrollbars will not work and the maximum width/height of the scrollarea is the same as the Menu container. Style: (overflow_x, overflow_y). If ``False`` or ``True`` the value will be set on both axis
@@ -135,6 +136,7 @@ class Menu(Base):
     _mouse_motion_selection: bool
     _mouse_visible: bool
     _mouse_visible_default: bool
+    _mouse_visible_update: bool
     _mouseover: bool
     _onbeforeopen: Optional[Callable[['Menu', 'Menu'], Any]]
     _onclose: Optional[Union['_events.MenuAction', Callable[['Menu'], Any], CallableNoArgsType]]
@@ -197,6 +199,7 @@ class Menu(Base):
         mouse_enabled: bool = True,
         mouse_motion_selection: bool = False,
         mouse_visible: bool = True,
+        mouse_visible_update: bool = True,
         onclose: Optional[Union['_events.MenuAction', Callable[['Menu'], Any], CallableNoArgsType]] = None,
         onreset: Optional[Union[Callable[['Menu'], Any], CallableNoArgsType]] = None,
         overflow: Union[Vector2BoolType, bool] = (True, True),
@@ -221,6 +224,7 @@ class Menu(Base):
         assert isinstance(mouse_enabled, bool)
         assert isinstance(mouse_motion_selection, bool)
         assert isinstance(mouse_visible, bool)
+        assert isinstance(mouse_visible_update, bool)
         assert isinstance(overflow, (VectorInstance, bool))
         assert isinstance(rows, (int, type(None), VectorInstance))
         assert isinstance(theme, Theme), \
@@ -489,6 +493,7 @@ class Menu(Base):
         self._mouse_motion_selection = mouse_motion_selection
         self._mouse_visible = mouse_visible
         self._mouse_visible_default = mouse_visible
+        self._mouse_visible_update = mouse_visible_update
 
         # Init touchscreen
         if touchscreen_motion_selection:
@@ -2494,7 +2499,8 @@ class Menu(Base):
         updated = False
 
         # Update mouse
-        pygame.mouse.set_visible(self._current._mouse_visible)
+        if self._mouse_visible_update:
+            pygame.mouse.set_visible(self._current._mouse_visible)
         mouse_motion_event = None
 
         selected_widget = self._current.get_selected_widget()
