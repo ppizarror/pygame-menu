@@ -6,7 +6,7 @@ exclude .replit
 exclude docs/*
 exclude docs/_source/*
 exclude docs/_static/*
-exclude pygame_menu/examples/other/_test*
+exclude pygame_menu/examples/other/_test*.py
 exclude test/*.py
 
 include requirements.txt
