@@ -8,8 +8,6 @@ Library version.
 
 __all__ = ['Version', 'vernum', 'ver', 'rev']
 
-from typing import Tuple
-
 
 class Version(tuple):
     """

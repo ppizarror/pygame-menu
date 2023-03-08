@@ -43,7 +43,7 @@ from pygame_menu.widgets.widget.button import Button
 from pygame_menu.widgets.widget.label import Label
 
 from pygame_menu._types import Optional, NumberType, Dict, Tuple, Union, List, \
-    Vector2NumberType, Literal, Tuple2IntType, NumberInstance, Any, ColorInputType, \
+    Vector2NumberType, Tuple2IntType, NumberInstance, Any, ColorInputType, \
     EventVectorType, PaddingType, CallbackType, ColorInputGradientType, \
     CursorInputType, VectorInstance
 

@@ -37,7 +37,7 @@ from pygame_menu.widgets.core.widget import AbstractWidgetManager, Widget
 from pygame_menu.widgets.widget.textinput import TextInput
 
 from pygame_menu._types import Union, List, NumberType, Any, Optional, CallbackType, \
-    Literal, Tuple3IntType, NumberInstance, EventVectorType, Callable
+    Tuple3IntType, NumberInstance, EventVectorType, Callable
 
 # Input modes
 COLORINPUT_TYPE_HEX = 'hex'

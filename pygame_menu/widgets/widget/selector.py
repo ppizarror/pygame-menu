@@ -35,7 +35,7 @@ from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vect
 from pygame_menu.widgets.core.widget import Widget, AbstractWidgetManager
 
 from pygame_menu._types import Tuple, Union, List, Any, Optional, CallbackType, \
-    Literal, ColorType, ColorInputType, Tuple2IntType, Tuple3IntType, EventVectorType, \
+    ColorType, ColorInputType, Tuple2IntType, Tuple3IntType, EventVectorType, \
     Tuple2NumberType, Callable
 
 SELECTOR_STYLE_CLASSIC = 'classic'

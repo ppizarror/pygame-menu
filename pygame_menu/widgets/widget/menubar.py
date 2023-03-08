@@ -34,7 +34,7 @@ from pygame_menu.locals import FINGERUP, POSITION_EAST, POSITION_WEST, POSITION_
 from pygame_menu.utils import assert_color, get_finger_pos, warn
 from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImplemented
 
-from pygame_menu._types import Tuple, CallbackType, Tuple2IntType, Literal, Any, \
+from pygame_menu._types import Tuple, CallbackType, Tuple2IntType, Any, \
     Optional, NumberInstance, ColorInputType, EventVectorType, VectorInstance, \
     List, ColorType, NumberType
 
@@ -52,7 +52,7 @@ _MODE_CLOSE = 1020
 _MODE_BACK = 1021
 
 # Custom types
-MenuBarStyleModeType = str
+MenuBarStyleModeType = int
 
 
 # noinspection PyMissingOrEmptyDocstring
