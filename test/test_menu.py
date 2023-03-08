@@ -2378,7 +2378,7 @@ class MenuTest(BaseRSTest):
         self.assertEqual(menu._column_max_width, [300])
         self.assertEqual(menu._menubar._width, 300)
 
-        # render
+        # Render
         self.assertIsNone(menu._widgets_surface)
         menu.render()
         self.assertIsNotNone(menu._widgets_surface)
@@ -2434,6 +2434,19 @@ class MenuTest(BaseRSTest):
         self.assertEqual(sa.get_size(inner=True), (580, 400))
         sa.show_scrollbars(pygame_menu.locals.ORIENTATION_VERTICAL, force=False)
         self.assertEqual(sa.get_size(inner=True), (580, 400))
+
+        # Test submenu recursive resizing
+        menu = MenuUtils.generic_menu(theme=theme)
+        menu2 = MenuUtils.generic_menu(theme=theme)
+        menu3 = MenuUtils.generic_menu(theme=theme)
+        menu.add.button('btn', menu2)
+        menu2.add.button('btn', menu3)
+        self.assertEqual(menu.get_submenus(True), (menu2, menu3))
+        for m in (menu, menu2, menu3):
+            self.assertEqual(m.get_size(), (600, 400))
+        menu.resize(300, 300, recursive=True) # Now, resize
+        for m in (menu, menu2, menu3):
+            self.assertEqual(m.get_size(), (300, 300))
 
     def test_get_size(self) -> None:
         """
