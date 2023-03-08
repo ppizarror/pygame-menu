@@ -613,7 +613,7 @@ class Menu(Base):
         :param height: Menu height (px)
         :param screen_dimension: List/Tuple representing the dimensions the Menu should reference for sizing/positioning (width, height), if ``None`` pygame is queried for the display mode. This value defines the ``window_size`` of the Menu
         :param position: Position on x-axis and y-axis. If the value is only 2 elements, the position is relative to the window width (thus, values must be 0-100%); else, the third element defines if the position is relative or not. If ``(x, y, False)`` the values of ``(x, y)`` are in px. If ``None`` use the default from the menu constructor
-        :param recursive: If true, resize all menus in a recursive fashion
+        :param recursive: If true, resize all submenus in a recursive fashion
         :return: Self reference
         """
         assert isinstance(width, NumberInstance)

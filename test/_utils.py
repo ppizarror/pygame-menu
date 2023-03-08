@@ -21,11 +21,9 @@ __all__ = [
     'reset_widgets_over',
     'sleep',
     'surface',
-    'test_reset_surface',
 
     # Class utils
     'BaseTest',
-    'BaseRSTest',
     'PygameEventUtils',
     'MenuUtils'
 
@@ -94,13 +92,13 @@ class BaseTest(unittest.TestCase):
     Base test class.
     """
 
-
-class BaseRSTest(unittest.TestCase):
-    """
-    Test class that Reset the Surface (RS) each time a test runs.
-    """
-
     def setUp(self) -> None:
+        """
+        Reset the surface.
+        """
+        test_reset_surface()
+
+    def tearDown(self) -> None:
         """
         Reset the surface.
         """

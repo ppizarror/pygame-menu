@@ -8,7 +8,7 @@ Menu object tests.
 
 __all__ = ['MenuTest']
 
-from test._utils import BaseRSTest, surface, MenuUtils, PygameEventUtils, \
+from test._utils import BaseTest, surface, MenuUtils, PygameEventUtils, \
     TEST_THEME, PYGAME_V2, WIDGET_MOUSEOVER, WIDGET_TOP_CURSOR, reset_widgets_over, \
     THEME_NON_FIXED_TITLE
 import copy
@@ -40,7 +40,7 @@ def dummy_function() -> None:
     return
 
 
-class MenuTest(BaseRSTest):
+class MenuTest(BaseTest):
 
     def test_mainloop_disabled(self) -> None:
         """

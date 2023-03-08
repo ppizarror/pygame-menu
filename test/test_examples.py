@@ -8,7 +8,7 @@ Test example files.
 
 __all__ = ['ExamplesTest']
 
-from test._utils import BaseRSTest, MenuUtils, PygameEventUtils, test_reset_surface
+from test._utils import BaseTest, MenuUtils, PygameEventUtils
 
 import pygame
 import pygame_menu
@@ -30,11 +30,8 @@ import pygame_menu.examples.other.scrollbar_area as scrollbar_area
 import pygame_menu.examples.other.ui_solar_system as ui_solarsystem
 import pygame_menu.examples.other.widget_positioning as widget_positioning
 
-# Reset the surface as some example could have changed it
-test_reset_surface()
 
-
-class ExamplesTest(BaseRSTest):
+class ExamplesTest(BaseTest):
 
     def test_example_game_selector(self) -> None:
         """
