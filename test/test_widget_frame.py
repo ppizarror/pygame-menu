@@ -9,9 +9,8 @@ its layout and contains other widgets.
 
 __all__ = ['FrameWidgetTest']
 
-from test._utils import MenuUtils, surface, PygameEventUtils, test_reset_surface, \
+from test._utils import BaseTest, MenuUtils, surface, PygameEventUtils, \
     TEST_THEME, PYGAME_V2, WIDGET_MOUSEOVER, reset_widgets_over, THEME_NON_FIXED_TITLE
-import unittest
 
 import pygame
 import pygame_menu
@@ -30,13 +29,7 @@ from pygame_menu._scrollarea import get_scrollbars_from_position
 from pygame_menu.widgets.widget.frame import _FrameDoNotAcceptScrollarea
 
 
-class FrameWidgetTest(unittest.TestCase):
-
-    def setUp(self) -> None:
-        """
-        Setup frame widget test.
-        """
-        test_reset_surface()
+class FrameWidgetTest(BaseTest):
 
     def test_general(self) -> None:
         """

@@ -150,6 +150,10 @@ class ScrollAreaTest(BaseTest):
         s1.hide()
         self.assertFalse(s1.is_visible())
 
+        # Check scrollbar render
+        s1._slider_rect = None
+        self.assertIsNone(s1._render())
+
     def test_size(self) -> None:
         """
         Test size.

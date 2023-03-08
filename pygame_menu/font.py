@@ -39,7 +39,7 @@ __all__ = [
 ]
 
 from pathlib import Path
-from typing import Union, Optional, Any
+from typing import Union, Optional, Any, Dict, Tuple
 import os.path as path
 
 import pygame.font as __font
@@ -71,11 +71,11 @@ FONT_EXAMPLES = (FONT_8BIT, FONT_BEBAS, FONT_COMIC_NEUE, FONT_DIGITAL, FONT_FRAN
                  FONT_PT_SERIF, FONT_FIRACODE, FONT_FIRACODE_BOLD, FONT_FIRACODE_ITALIC,
                  FONT_FIRACODE_BOLD_ITALIC)
 
-# Stores font cache
-_cache = {}
-
 FontType = Union[str, __font.Font, Path]
 FontInstance = (str, __font.Font, Path)
+
+# Stores font cache
+_cache: Dict[Tuple[FontType, int], '__font.Font'] = {}
 
 
 def assert_font(font: Any) -> None:

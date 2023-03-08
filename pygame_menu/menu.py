@@ -603,21 +603,29 @@ class Menu(Base):
         width: NumberType,
         height: NumberType,
         screen_dimension: Optional[Vector2IntType] = None,
-        position: Optional[Union[Vector2NumberType, Tuple[NumberType, NumberType, bool]]] = None
+        position: Optional[Union[Vector2NumberType, Tuple[NumberType, NumberType, bool]]] = None,
+        recursive: bool = False
     ) -> 'Menu':
         """
-        Resize the menu to another width/height
+        Resizes the menu to another width/height.
 
         :param width: Menu width (px)
         :param height: Menu height (px)
         :param screen_dimension: List/Tuple representing the dimensions the Menu should reference for sizing/positioning (width, height), if ``None`` pygame is queried for the display mode. This value defines the ``window_size`` of the Menu
         :param position: Position on x-axis and y-axis. If the value is only 2 elements, the position is relative to the window width (thus, values must be 0-100%); else, the third element defines if the position is relative or not. If ``(x, y, False)`` the values of ``(x, y)`` are in px. If ``None`` use the default from the menu constructor
+        :param recursive: If true, resize all submenus in a recursive fashion
         :return: Self reference
         """
         assert isinstance(width, NumberInstance)
         assert isinstance(height, NumberInstance)
         assert width > 0 and height > 0, \
             'menu width and height must be greater than zero'
+        assert isinstance(recursive, bool)
+
+        # Resize recursively
+        if recursive:
+            for menu in self.get_submenus(True):
+                menu.resize(width, height, screen_dimension, position)
 
         # Convert to int
         width, height = int(width), int(height)
