@@ -21,6 +21,7 @@ __all__ = [
     'reset_widgets_over',
     'sleep',
     'surface',
+    'test_reset_surface',
 
     # Class utils
     'BaseTest',
