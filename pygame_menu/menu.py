@@ -1617,20 +1617,24 @@ class Menu(Base):
         # Get scrollbars size
         sx, sy = self._get_scrollbar_thickness()
 
+        # Check if there is an overflow
+        overflow_x = max_x - (self._width - sy) > 1
+        overflow_y = max_y - (self._height - sx - menubar_height) > 1
+
         # Remove the thick of the scrollbar to avoid displaying a horizontal one
         # If overflow on both axis
-        if max_x > self._width - sy and max_y > self._height - sx - menubar_height:
+        if overflow_x and overflow_y:
             width, height = max_x, max_y
             if not self._mouse_visible:
                 self._mouse_visible = True
 
         # If horizontal overflow
-        elif max_x > self._width - sy:
+        elif overflow_x:
             width, height = max_x, self._height - menubar_height - sx
             self._mouse_visible = self._mouse_visible_default
 
         # If vertical overflow
-        elif max_y > self._height - sx - menubar_height:
+        elif overflow_y:
             width, height = self._width - sy, max_y
             if not self._mouse_visible:
                 self._mouse_visible = True
