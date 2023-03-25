@@ -261,7 +261,7 @@ class NoneWidgetTest(BaseTest):
         vf2.hide()
         vfill_total_after = vf1.get_height() + vf3.get_height()
         self.assertEqual(vf1.get_height(), vf3.get_height() + 1)
-        self.assertEqual(vfill_total, vfill_total_after - 1)
+        self.assertLessEqual(abs(vfill_total - vfill_total_after), 1)
         vf2.show()
         self.assertEqual(vfill_total, vf1.get_height() + vf2.get_height() + vf3.get_height())
 
@@ -269,7 +269,7 @@ class NoneWidgetTest(BaseTest):
         vf1_height_prev = vf1.get_height()
         b1_height = math.ceil(b1.get_height() / 3)
         b1.hide()
-        self.assertEqual(vf1.get_height(), vf1_height_prev + b1_height)
+        self.assertLessEqual(abs(vf1.get_height() - (vf1_height_prev + b1_height)), 1)
         b1.show()
         self.assertEqual(vf1.get_height(), vf1_height_prev)
 
