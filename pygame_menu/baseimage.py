@@ -424,7 +424,7 @@ class BaseImage(Base):
         self,
         pos: Tuple2NumberType,
         ignore_alpha: bool = False
-    ) -> Union[Tuple3IntType, Tuple4IntType]:
+    ) -> Union[Tuple3IntType, Tuple4IntType, 'pygame.Color']:
         """
         Get the color from a certain position in image on x-axis and y-axis (x, y).
 
