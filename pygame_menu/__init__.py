@@ -1,5 +1,5 @@
 """
-pygame-menu
+pygame-menu (for pygame-ce)
 https://github.com/ppizarror/pygame-menu
 
 PYGAME-MENU
@@ -119,11 +119,11 @@ __contributors__ = [
 
 ]
 __copyright__ = 'Copyright 2017 Pablo Pizarro R. @ppizarror'
-__description__ = 'A menu for pygame. Simple, and easy to use'
+__description__ = 'A menu for pygame-ce. Simple, and easy to use'
 __email__ = 'pablo@ppizarror.com'
 __keywords__ = 'pygame menu menus gui widget input button pygame-menu image sound ui'
 __license__ = 'MIT'
-__module_name__ = 'pygame-menu'
+__module_name__ = 'pygame-menu-ce'
 __url__ = 'https://pygame-menu.readthedocs.io'
 __url_bug_tracker__ = 'https://github.com/ppizarror/pygame-menu/issues'
 __url_documentation__ = 'https://pygame-menu.readthedocs.io'
