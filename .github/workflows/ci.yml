@@ -8,11 +8,9 @@ on:
   push:
     branches:
       - master
-      - pygame-ce
   pull_request:
     branches:
       - master
-      - pygame-ce
 
 jobs:
   test:
