@@ -2601,9 +2601,14 @@ class MenuTest(BaseTest):
         b1 = menu.add.button('Button')
         self.assertEqual(menu.get_last_surface_offset(), (0, 0))
         self.assertEqual(b1.get_rect(to_real_position=True, apply_menu_surface_offset=True).x, 94)
+        self.assertIsNone(menu._surface_last)
         menu._surface = menu_surface
         self.assertEqual(menu.get_last_surface_offset(), (300, 0))
         self.assertEqual(b1.get_rect(to_real_position=True, apply_menu_surface_offset=True).x, 394)
         self.assertIsNone(menu._surface_last)
         menu.draw()
         self.assertEqual(menu._surface_last, menu_surface)
+        menu.draw(surface)  # This updates last surface
+        self.assertEqual(menu._surface_last, surface)
+        menu._surface = surface
+        self.assertEqual(menu.get_last_surface_offset(), (0, 0))

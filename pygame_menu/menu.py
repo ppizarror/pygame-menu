@@ -375,7 +375,7 @@ class Menu(Base):
         self._stats = _MenuStats()
         self._submenus = {}
         self._surface = surface
-        self._surface_last = surface
+        self._surface_last = None
         self._theme = theme
 
         # Set callbacks
