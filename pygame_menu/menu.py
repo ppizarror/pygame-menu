@@ -98,6 +98,7 @@ class Menu(Base):
     :param position: Position on x-axis and y-axis. If the value is only 2 elements, the position is relative to the window width (thus, values must be 0-100%); else, the third element defines if the position is relative or not. If ``(x, y, False)`` the values of ``(x, y)`` are in px
     :param rows: Number of rows of each column, if there's only 1 column ``None`` can be used for no-limit. Also, a tuple can be provided for defining different number of rows for each column, for example ``rows=10`` (each column can have a maximum 10 widgets), or ``rows=[2, 3, 5]`` (first column has 2 widgets, second 3, and third 5)
     :param screen_dimension: List/Tuple representing the dimensions the Menu should reference for sizing/positioning (width, height), if ``None`` pygame is queried for the display mode. This value defines the ``window_size`` of the Menu
+    :param surface: The surface that contains the Menu. By default the Menu always considers that it is drawn on a surface that uses all window width/height. However, if a sub-surface is used the ``surface`` value will be used instead to retrieve the offset. Also, if ``surface`` is provided the menu can be drawn without providing a surface object while calling ``Menu.draw()``
     :param theme: Menu theme
     :param touchscreen: Enable/disable touch action inside the Menu. Only available on pygame 2
     :param touchscreen_motion_selection: Select widgets using touchscreen motion. If ``True`` menu draws a ``focus`` on the selected widget
@@ -158,6 +159,8 @@ class Menu(Base):
     _sound: 'Sound'
     _stats: '_MenuStats'
     _submenus: Dict['Menu', List['Widget']]
+    _surface: Optional['pygame.Surface']  # The surface that contains the menu
+    _surface_last: Optional['pygame.Surface']  # The last surface used to draw the menu
     _theme: 'Theme'
     _top: 'Menu'
     _touchscreen: bool
@@ -206,6 +209,7 @@ class Menu(Base):
         position: Union[Vector2NumberType, Tuple[NumberType, NumberType, bool]] = (50, 50, True),
         rows: MenuRowsType = None,
         screen_dimension: Optional[Vector2IntType] = None,
+        surface: Optional['pygame.Surface'] = None,
         theme: 'Theme' = THEME_DEFAULT.copy(),
         touchscreen: bool = False,
         touchscreen_motion_selection: bool = False,
@@ -370,6 +374,8 @@ class Menu(Base):
         self._sound = Sound()
         self._stats = _MenuStats()
         self._submenus = {}
+        self._surface = surface
+        self._surface_last = surface
         self._theme = theme
 
         # Set callbacks
@@ -2029,7 +2035,7 @@ class Menu(Base):
         self._render()
         return self
 
-    def draw(self, surface: 'pygame.Surface', clear_surface: bool = False) -> 'Menu':
+    def draw(self, surface: Optional['pygame.Surface'] = None, clear_surface: bool = False) -> 'Menu':
         """
         Draw the **current** Menu into the given surface.
 
@@ -2038,12 +2044,17 @@ class Menu(Base):
             This method should not be used along :py:meth:`pygame_menu.menu.Menu.get_current`,
             for example, ``menu.get_current().draw(...)``
 
-        :param surface: Pygame surface to draw the Menu
+        :param surface: Pygame surface to draw the Menu. If None, the menu will use the provided ``surface`` value from the constructor
         :param clear_surface: Clear surface using theme ``surface_clear_color``
         :return: Self reference **(current)**
         """
+        if surface is None:
+            surface = self._surface
         assert isinstance(surface, pygame.Surface)
         assert isinstance(clear_surface, bool)
+
+        # Update last surface
+        self._surface_last = surface
 
         if not self.is_enabled():
             self._current._runtime_errors.throw(self._current._runtime_errors.draw, 'menu is not enabled')
@@ -2450,6 +2461,21 @@ class Menu(Base):
         elif self._current._used_columns > 1:
             return self._current._move_selected_left_right(1)
         return False
+
+    def get_last_surface_offset(self) -> Tuple2IntType:
+        """
+        Return the last menu surface offset.
+
+        .. warning::
+
+            This method should not be used along :py:meth:`pygame_menu.menu.Menu.get_current`,
+            for example, ``menu.get_current().update(...)``.
+
+        :return: Return the offset of the last surface used. If ``surface`` param was provided within Menu constructor that offset will be used instead, else, the returned value will be the last surface used to draw the Menu. Else, ``(0, 0)`` will be returned
+        """
+        if self._surface is not None:
+            return self._surface.get_offset()
+        return self._surface_last.get_offset() if self._surface_last is not None else (0, 0)
 
     def get_last_update_mode(self) -> List[str]:
         """
