@@ -2586,3 +2586,24 @@ class MenuTest(BaseTest):
         name.receive_menu_update_events = True
         menu.update(PygameEventUtils.key(pygame.K_s, keydown=True, char='s'))
         self.assertEqual(name.get_value(), 'as')
+
+    def test_subsurface_offset(self) -> None:
+        """
+        Test subsurface widget offset.
+        """
+        main_surface = surface
+        w, h = surface.get_size()
+        left_surf_w, left_surf_h = 300, h
+        menu_w, menu_h = w - left_surf_w, h
+        # left_surface = main_surface.subsurface((0, 0, left_surf_w, left_surf_h))
+        menu_surface = main_surface.subsurface((300, 0, menu_w, menu_h))
+        menu = MenuUtils.generic_menu(title='Subsurface', width=menu_w, height=menu_h, position_x=0, position_y=0, mouse_motion_selection=True)
+        b1 = menu.add.button('Button')
+        self.assertEqual(menu.get_last_surface_offset(), (0, 0))
+        self.assertEqual(b1.get_rect(to_real_position=True, apply_menu_surface_offset=True).x, 94)
+        menu._surface = menu_surface
+        self.assertEqual(menu.get_last_surface_offset(), (300, 0))
+        self.assertEqual(b1.get_rect(to_real_position=True, apply_menu_surface_offset=True).x, 394)
+        self.assertIsNone(menu._surface_last)
+        menu.draw()
+        self.assertEqual(menu._surface_last, menu_surface)
