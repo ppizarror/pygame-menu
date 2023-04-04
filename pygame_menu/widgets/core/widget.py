@@ -1566,13 +1566,11 @@ class Widget(Base):
                 'real and absolute positions cannot be True at the same time'
             if to_real_position:
                 rect = self._scrollarea.to_real_position(rect, visible=real_position_visible)
+                soff = (0, 0) if self._menu is None else self._menu.get_last_surface_offset()
+                rect.x += soff[0]
+                rect.y += soff[1]
             elif to_absolute_position:
                 rect = self._scrollarea.to_absolute_position(rect)
-
-        if to_real_position:
-            soff = (0, 0) if self._menu is None else self._menu.get_last_surface_offset()
-            rect.x += soff[0]
-            rect.y += soff[1]
 
         return rect
 

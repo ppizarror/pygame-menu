@@ -2597,7 +2597,7 @@ class MenuTest(BaseTest):
         menu_w, menu_h = w - left_surf_w, h
         # left_surface = main_surface.subsurface((0, 0, left_surf_w, left_surf_h))
         menu_surface = main_surface.subsurface((300, 0, menu_w, menu_h))
-        menu = MenuUtils.generic_menu(title='Subsurface', width=menu_w, height=menu_h, position_x=0, position_y=0, mouse_motion_selection=True)
+        menu = MenuUtils.generic_menu(title='Subsurface', width=menu_w, height=menu_h, position_x=0, position_y=0, mouse_motion_selection=True, surface=menu_surface)
         btn_click = [False]
 
         def btn() -> None:
@@ -2607,10 +2607,12 @@ class MenuTest(BaseTest):
             btn_click[0] = True
 
         b1 = menu.add.button('Button', btn)
+        menu._surface = None
         self.assertEqual(menu.get_last_surface_offset(), (0, 0))
         self.assertEqual(b1.get_rect(to_real_position=True).x, 94)
         self.assertIsNone(menu._surface_last)
         menu._surface = menu_surface
+        self.assertEqual(menu._surface, menu_surface)
         self.assertEqual(menu.get_last_surface_offset(), (300, 0))
         r = b1.get_rect(to_real_position=True)
         self.assertEqual(r.x, 394)

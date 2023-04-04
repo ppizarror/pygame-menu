@@ -231,6 +231,7 @@ class Menu(Base):
         assert isinstance(mouse_visible_update, bool)
         assert isinstance(overflow, (VectorInstance, bool))
         assert isinstance(rows, (int, type(None), VectorInstance))
+        assert isinstance(surface, (pygame.Surface, type(None)))
         assert isinstance(theme, Theme), \
             'theme bust be a pygame_menu.themes.Theme object instance'
         assert isinstance(touchscreen, bool)
@@ -2044,7 +2045,7 @@ class Menu(Base):
             This method should not be used along :py:meth:`pygame_menu.menu.Menu.get_current`,
             for example, ``menu.get_current().draw(...)``
 
-        :param surface: Pygame surface to draw the Menu. If None, the menu will use the provided ``surface`` from the constructor
+        :param surface: Pygame surface to draw the Menu. If None, the Menu will use the provided ``surface`` from the constructor
         :param clear_surface: Clear surface using theme ``surface_clear_color``
         :return: Self reference **(current)**
         """
@@ -2971,7 +2972,7 @@ class Menu(Base):
             This method should not be used along :py:meth:`pygame_menu.menu.Menu.get_current`,
             for example, ``menu.get_current().mainloop(...)``.
 
-        :param surface: Pygame surface to draw the Menu. If None, the menu will use the provided ``surface`` from the constructor
+        :param surface: Pygame surface to draw the Menu. If None, the Menu will use the provided ``surface`` from the constructor
         :param bgfun: Background function called on each loop iteration before drawing the Menu
         :param kwargs: Optional keyword arguments
         :return: Self reference **(current)**
