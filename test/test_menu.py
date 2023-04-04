@@ -2598,13 +2598,22 @@ class MenuTest(BaseTest):
         # left_surface = main_surface.subsurface((0, 0, left_surf_w, left_surf_h))
         menu_surface = main_surface.subsurface((300, 0, menu_w, menu_h))
         menu = MenuUtils.generic_menu(title='Subsurface', width=menu_w, height=menu_h, position_x=0, position_y=0, mouse_motion_selection=True)
-        b1 = menu.add.button('Button')
+        btn_click = [False]
+
+        def btn() -> None:
+            """
+            Method executed by button.
+            """
+            btn_click[0] = True
+
+        b1 = menu.add.button('Button', btn)
         self.assertEqual(menu.get_last_surface_offset(), (0, 0))
-        self.assertEqual(b1.get_rect(to_real_position=True, apply_menu_surface_offset=True).x, 94)
+        self.assertEqual(b1.get_rect(to_real_position=True).x, 94)
         self.assertIsNone(menu._surface_last)
         menu._surface = menu_surface
         self.assertEqual(menu.get_last_surface_offset(), (300, 0))
-        self.assertEqual(b1.get_rect(to_real_position=True, apply_menu_surface_offset=True).x, 394)
+        r = b1.get_rect(to_real_position=True)
+        self.assertEqual(r.x, 394)
         self.assertIsNone(menu._surface_last)
         menu.draw()
         self.assertEqual(menu._surface_last, menu_surface)
@@ -2612,3 +2621,10 @@ class MenuTest(BaseTest):
         self.assertEqual(menu._surface_last, surface)
         menu._surface = surface
         self.assertEqual(menu.get_last_surface_offset(), (0, 0))
+        surface.fill((0, 0, 0))
+
+        # Now, test click event
+        menu._surface = menu_surface
+        self.assertFalse(btn_click[0])
+        menu.update(PygameEventUtils.middle_rect_click(r))
+        self.assertTrue(btn_click[0])
