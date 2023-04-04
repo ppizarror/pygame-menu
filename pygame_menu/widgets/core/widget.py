@@ -1537,7 +1537,7 @@ class Widget(Base):
         :param inflate: Inflate rect on x-axis and y-axis (x, y) in px
         :param apply_padding: Apply widget padding
         :param use_transformed_padding: Use scaled padding if the widget is scaled
-        :param to_real_position: Transform the widget rect to real coordinates (if the Widget change the position if scrollbars move offsets). Used by events
+        :param to_real_position: Transform the widget rect to real coordinates (if the Widget change the position if scrollbars move offsets) within the window. Used by events
         :param to_absolute_position: Transform the widget rect to absolute coordinates (if the Widget does not change the position if scrollbars move offsets). Used by events
         :param render: Force widget rendering
         :param real_position_visible: Return only the visible width/height if ``to_real_position=True``
@@ -1566,6 +1566,9 @@ class Widget(Base):
                 'real and absolute positions cannot be True at the same time'
             if to_real_position:
                 rect = self._scrollarea.to_real_position(rect, visible=real_position_visible)
+                soff = (0, 0) if self._menu is None else self._menu.get_last_surface_offset()
+                rect.x += soff[0]
+                rect.y += soff[1]
             elif to_absolute_position:
                 rect = self._scrollarea.to_absolute_position(rect)
 
