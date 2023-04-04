@@ -1,6 +1,6 @@
-===========
-pygame-menu
-===========
+==============
+pygame-menu-ce
+==============
 
 .. image:: docs/_static/pygame_menu_small.png
     :align: center
@@ -77,7 +77,7 @@ https://pygame-menu.readthedocs.io
 Install Instructions
 --------------------
 
-Pygame-menu can be installed via pip. Simply run:
+Pygame-menu-ce can be installed via pip. Simply run:
 
 .. code-block:: bash
 

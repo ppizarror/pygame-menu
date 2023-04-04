@@ -2586,3 +2586,51 @@ class MenuTest(BaseTest):
         name.receive_menu_update_events = True
         menu.update(PygameEventUtils.key(pygame.K_s, keydown=True, char='s'))
         self.assertEqual(name.get_value(), 'as')
+
+    def test_subsurface_offset(self) -> None:
+        """
+        Test subsurface widget offset.
+        """
+        main_surface = surface
+        w, h = surface.get_size()
+        left_surf_w, left_surf_h = 300, h
+        menu_w, menu_h = w - left_surf_w, h
+        # left_surface = main_surface.subsurface((0, 0, left_surf_w, left_surf_h))
+        menu_surface = main_surface.subsurface((300, 0, menu_w, menu_h))
+        menu = MenuUtils.generic_menu(title='Subsurface', width=menu_w, height=menu_h, position_x=0, position_y=0, mouse_motion_selection=True, surface=menu_surface)
+        btn_click = [False]
+
+        def btn() -> None:
+            """
+            Method executed by button.
+            """
+            btn_click[0] = True
+
+        b1 = menu.add.button('Button', btn)
+        menu._surface = None
+        self.assertEqual(menu.get_last_surface_offset(), (0, 0))
+        self.assertEqual(b1.get_rect(to_real_position=True).x, 94)
+        self.assertIsNone(menu._surface_last)
+        menu._surface = menu_surface
+        self.assertEqual(menu._surface, menu_surface)
+        self.assertEqual(menu.get_last_surface_offset(), (300, 0))
+        r = b1.get_rect(to_real_position=True)
+        self.assertEqual(r.x, 394)
+        self.assertIsNone(menu._surface_last)
+        menu.draw()
+        self.assertEqual(menu._surface_last, menu_surface)
+        menu.draw(surface)  # This updates last surface
+        self.assertEqual(menu._surface_last, surface)
+        menu._surface = surface
+        self.assertEqual(menu.get_last_surface_offset(), (0, 0))
+        surface.fill((0, 0, 0))
+
+        # Now, test click event
+        menu._surface = menu_surface
+        self.assertFalse(btn_click[0])
+        menu.update(PygameEventUtils.middle_rect_click(r))
+        self.assertTrue(btn_click[0])
+
+        # Mainloop also updates last surface
+        menu.mainloop(disable_loop=True)
+        self.assertEqual(menu._surface_last, menu_surface)

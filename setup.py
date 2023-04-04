@@ -1,5 +1,5 @@
 """
-pygame-menu
+pygame-menu-ce
 https://github.com/ppizarror/pygame-menu
 
 SETUP DISTRIBUTION
@@ -44,11 +44,11 @@ with open('requirements.txt') as f:
 
 # Setup library
 setup(
-    name=pygame_menu.__module_name__,
+    name=pygame_menu.__module_name__ + '-ce',
     version=pygame_menu.__version__,
     author=pygame_menu.__author__,
     author_email=pygame_menu.__email__,
-    description=pygame_menu.__description__,
+    description=pygame_menu.__description__.replace('pygame', 'pygame-ce'),
     long_description=long_description,
     url=pygame_menu.__url__,
     project_urls={
