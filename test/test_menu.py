@@ -2628,3 +2628,7 @@ class MenuTest(BaseTest):
         self.assertFalse(btn_click[0])
         menu.update(PygameEventUtils.middle_rect_click(r))
         self.assertTrue(btn_click[0])
+
+        # Mainloop also updates last surface
+        menu.mainloop(disable_loop=True)
+        self.assertEqual(menu._surface_last, menu_surface)
