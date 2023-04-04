@@ -2044,7 +2044,7 @@ class Menu(Base):
             This method should not be used along :py:meth:`pygame_menu.menu.Menu.get_current`,
             for example, ``menu.get_current().draw(...)``
 
-        :param surface: Pygame surface to draw the Menu. If None, the menu will use the provided ``surface`` value from the constructor
+        :param surface: Pygame surface to draw the Menu. If None, the menu will use the provided ``surface`` from the constructor
         :param clear_surface: Clear surface using theme ``surface_clear_color``
         :return: Self reference **(current)**
         """
@@ -2932,7 +2932,7 @@ class Menu(Base):
 
     def mainloop(
         self,
-        surface: 'pygame.Surface',
+        surface: Optional['pygame.Surface'] = None,
         bgfun: Optional[Union[Callable[['Menu'], Any], CallableNoArgsType]] = None,
         **kwargs
     ) -> 'Menu':
@@ -2961,7 +2961,7 @@ class Menu(Base):
         Finally, mainloop can be disabled externally if menu.disable() is called.
 
         kwargs (Optional)
-            - ``clear_surface``     (bool) – If ``True`` surface is cleared using ``theme.surface_clear_color``
+            - ``clear_surface``     (bool) – If ``True`` surface is cleared using ``theme.surface_clear_color``. Default equals to ``True``
             - ``disable_loop``      (bool) – If ``True`` the mainloop only runs once. Use for running draw and update in a single call
             - ``fps_limit``         (int) – Maximum FPS of the loop. Default equals to ``theme.fps``. If ``0`` there's no limit
             - ``wait_for_event``    (bool) – Holds the loop until an event is provided, useful to save CPU power
@@ -2971,7 +2971,7 @@ class Menu(Base):
             This method should not be used along :py:meth:`pygame_menu.menu.Menu.get_current`,
             for example, ``menu.get_current().mainloop(...)``.
 
-        :param surface: Pygame surface to draw the Menu
+        :param surface: Pygame surface to draw the Menu. If None, the menu will use the provided ``surface`` from the constructor
         :param bgfun: Background function called on each loop iteration before drawing the Menu
         :param kwargs: Optional keyword arguments
         :return: Self reference **(current)**
@@ -2981,6 +2981,9 @@ class Menu(Base):
         disable_loop = kwargs.get('disable_loop', False)
         fps_limit = kwargs.get('fps_limit', self._theme.fps)
         wait_for_event = kwargs.get('wait_for_event', False)
+
+        if surface is None:
+            surface = self._surface
 
         assert isinstance(clear_surface, bool)
         assert isinstance(disable_loop, bool)
