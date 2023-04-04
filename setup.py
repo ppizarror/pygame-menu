@@ -68,6 +68,7 @@ setup(
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
         'Programming Language :: Python',
         'Topic :: Games/Entertainment',
         'Topic :: Multimedia',
@@ -76,7 +77,7 @@ setup(
     ],
     include_package_data=True,
     packages=find_packages(exclude=['test']),
-    python_requires='>=3.6, <4',
+    python_requires='>=3.7, <4',
     install_requires=requirements,
     extras_require={
         'docs': ['sphinx', 'sphinx-autodoc-typehints>=1.2.0', 'sphinx-rtd-theme'],
