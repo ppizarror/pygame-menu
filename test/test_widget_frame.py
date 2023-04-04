@@ -1815,12 +1815,12 @@ class FrameWidgetTest(BaseTest):
         self.assertEqual(frame._frame_title.get_index(btn2), 2)
         self.assertEqual(frame._frame_title.get_index(btn3), 3)
         self.assertFalse(test[0])
-        # menu.update(PygameEventUtils.middle_rect_click(btn1))
-        # self.assertTrue(test[0])
-        # menu.update(PygameEventUtils.middle_rect_click(btn2))
-        # self.assertFalse(test[0])
-        # menu.update(PygameEventUtils.middle_rect_click(btn3))
-        # self.assertTrue(test[0])
+        menu.update(PygameEventUtils.middle_rect_click(btn1))
+        self.assertTrue(test[0])
+        menu.update(PygameEventUtils.middle_rect_click(btn2))
+        self.assertFalse(test[0])
+        menu.update(PygameEventUtils.middle_rect_click(btn3))
+        self.assertTrue(test[0])
 
         # Scrollable widget
         # menu.add.vertical_margin(50)
