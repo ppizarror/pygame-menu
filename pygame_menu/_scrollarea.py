@@ -1256,7 +1256,7 @@ class ScrollArea(Base):
         :return: ``True`` if collide
         """
         if not isinstance(widget, pygame.Rect):
-            widget_rect = widget.get_rect(to_real_position=True, apply_menu_surface_offset=True)
+            widget_rect = widget.get_rect(to_real_position=True)
         else:
             widget_rect = widget
         return bool(widget_rect.collidepoint(*get_finger_pos(self._menu, event)))

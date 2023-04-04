@@ -355,7 +355,7 @@ class Widget(Base):
 
         # Which function is used to get the rect which checks if the widget is
         # active or not
-        self._mouseover_check_rect = lambda: self.get_rect(to_real_position=True, apply_menu_surface_offset=True)
+        self._mouseover_check_rect = lambda: self.get_rect(to_real_position=True)
 
         # Widget transforms
         self._angle = 0  # Rotation angle (degrees)
@@ -1528,8 +1528,7 @@ class Widget(Base):
         to_real_position: bool = False,
         to_absolute_position: bool = False,
         render: bool = False,
-        real_position_visible: bool = True,
-        apply_menu_surface_offset: bool = False
+        real_position_visible: bool = True
     ) -> 'pygame.Rect':
         """
         Return the :py:class:`pygame.Rect` object of the Widget. This method
@@ -1538,11 +1537,10 @@ class Widget(Base):
         :param inflate: Inflate rect on x-axis and y-axis (x, y) in px
         :param apply_padding: Apply widget padding
         :param use_transformed_padding: Use scaled padding if the widget is scaled
-        :param to_real_position: Transform the widget rect to real coordinates (if the Widget change the position if scrollbars move offsets). Used by events
+        :param to_real_position: Transform the widget rect to real coordinates (if the Widget change the position if scrollbars move offsets) within the window. Used by events
         :param to_absolute_position: Transform the widget rect to absolute coordinates (if the Widget does not change the position if scrollbars move offsets). Used by events
         :param render: Force widget rendering
         :param real_position_visible: Return only the visible width/height if ``to_real_position=True``
-        :param apply_menu_surface_offset: If true, adds the offset of the menu surface. Used by events
         :return: Widget rect object
         """
         if render:
@@ -1571,7 +1569,7 @@ class Widget(Base):
             elif to_absolute_position:
                 rect = self._scrollarea.to_absolute_position(rect)
 
-        if apply_menu_surface_offset:
+        if to_real_position:
             soff = (0, 0) if self._menu is None else self._menu.get_last_surface_offset()
             rect.x += soff[0]
             rect.y += soff[1]
