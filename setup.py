@@ -80,7 +80,7 @@ setup(
     install_requires=requirements,
     extras_require={
         'docs': ['sphinx', 'sphinx-autodoc-typehints>=1.2.0', 'sphinx-rtd-theme'],
-        'test': ['codecov', 'nose2']
+        'test': ['nose2[coverage_plugin]']
     },
     setup_requires=[
         'setuptools',
