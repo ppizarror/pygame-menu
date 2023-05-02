@@ -521,6 +521,7 @@ class Menu(Base):
             onreturn=self._back,
             title=title,
             width=self._width,
+            verbose=verbose
         )
         self._menubar.set_menu(self)
         self._menubar.set_font(
@@ -1230,7 +1231,7 @@ class Menu(Base):
             # If added on execution time forces the update of the surface
             self._widgets_surface = None
 
-    def _back(self) -> None:
+    def _back(self, **kwargs) -> None:
         """
         Go to previous Menu or close if the top Menu is currently displayed.
         """
