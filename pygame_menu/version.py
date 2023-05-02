@@ -32,6 +32,6 @@ class Version(tuple):
     patch = property(lambda self: self[2])
 
 
-vernum = Version(4, 4, 2)
+vernum = Version(4, 4, 3)
 ver = str(vernum)
 rev = ''
