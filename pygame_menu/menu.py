@@ -1231,7 +1231,7 @@ class Menu(Base):
             # If added on execution time forces the update of the surface
             self._widgets_surface = None
 
-    def _back(self) -> None:
+    def _back(self, **kwargs) -> None:
         """
         Go to previous Menu or close if the top Menu is currently displayed.
         """
