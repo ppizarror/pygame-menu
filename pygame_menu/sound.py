@@ -125,6 +125,7 @@ class Sound(Base):
     :param size: Size of sample
     :param sound_id: Sound ID
     :param uniquechannel: Force the channel to be unique, this is set at the object creation moment
+    :param verbose: Enable/disable verbose mode (warnings/errors)
     """
     _channel: Optional['mixer.Channel']
     _last_play: str
@@ -143,9 +144,10 @@ class Sound(Base):
         frequency: int = 22050,
         size: int = -16,
         sound_id: str = '',
-        uniquechannel: bool = True
+        uniquechannel: bool = True,
+        verbose: bool = True
     ) -> None:
-        super(Sound, self).__init__(object_id=sound_id)
+        super(Sound, self).__init__(object_id=sound_id, verbose=verbose)
 
         assert isinstance(allowedchanges, int)
         assert isinstance(buffer, int)

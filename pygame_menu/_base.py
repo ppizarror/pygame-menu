@@ -23,20 +23,22 @@ class Base(object):
     _id__repr__: bool
     _verbose: bool
 
-    def __init__(self, object_id: str) -> None:
+    def __init__(self, object_id: str, verbose: bool = True) -> None:
         """
         Base constructor.
 
         :param object_id: Object ID
+        :param verbose: Enable verbose mode (errors/warnings)
         """
         assert isinstance(object_id, str)
+        assert isinstance(verbose, bool)
         if len(object_id) == 0:
             object_id = uuid4()
         self._attributes = None
         self._class_id__repr__ = False  # If True, repr/str of the object is class id
         self._id = object_id
         self._id__repr__ = False  # If True, repr/str of the object adds object id
-        self._verbose = True  # Enable verbose mode (errors/warnings)
+        self._verbose = verbose
 
     def __repr__(self) -> str:
         """

@@ -57,6 +57,7 @@ class Decorator(Base):
 
     :param obj: Object to decorate
     :param decorator_id: ID of the decorator
+    :param verbose: Enable/disable verbose mode (warnings/errors)
     """
     _coord_cache: Dict[str, Tuple[int, int, Union[Tuple[Tuple2NumberType, ...], Tuple2NumberType]]]  # centerx, centery, coords
     _cache_last_status: Dict[str, Tuple[int, int, int, int, int, int]]
@@ -73,9 +74,10 @@ class Decorator(Base):
     def __init__(
         self,
         obj: Union['pygame_menu.widgets.Widget', 'pygame_menu._scrollarea.ScrollArea', 'pygame_menu.Menu'],
-        decorator_id: str = ''
+        decorator_id: str = '',
+        verbose: bool = True
     ) -> None:
-        super(Decorator, self).__init__(object_id=decorator_id)
+        super(Decorator, self).__init__(object_id=decorator_id, verbose=verbose)
 
         self._coord_cache = {}
         self._decor = {DECOR_TYPE_PREV: [], DECOR_TYPE_POST: []}

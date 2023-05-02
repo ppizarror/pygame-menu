@@ -68,10 +68,11 @@ class WidgetManager(
     Add/Remove widgets to the Menu.
 
     :param menu: Menu reference
+    :param verbose: Enable/disable verbose mode (warnings/errors)
     """
 
-    def __init__(self, menu: 'pygame_menu.Menu') -> None:
-        super(WidgetManager, self).__init__(object_id=menu.get_id() + '+widget-manager')
+    def __init__(self, menu: 'pygame_menu.Menu', verbose: bool = True) -> None:
+        super(WidgetManager, self).__init__(object_id=menu.get_id() + '+widget-manager', verbose=verbose)
         self._menu = menu
 
     @property
@@ -89,7 +90,7 @@ class WidgetManager(
         self._menu._submenus[menu].append(hook)
         hook._menu_hook = menu
 
-    def _filter_widget_attributes(self, kwargs: Dict) -> Dict[str, Any]:
+    def _filter_widget_attributes(self, kwargs: Dict[str, Any]) -> Dict[str, Any]:
         attributes = {}
 
         # align
@@ -340,7 +341,7 @@ class WidgetManager(
         widget._configure()
 
     @staticmethod
-    def _check_kwargs(kwargs: Dict) -> None:
+    def _check_kwargs(kwargs: Dict[str, Any]) -> None:
         for invalid_keyword in kwargs.keys():
             raise ValueError(f'widget addition optional parameter kwargs.{invalid_keyword} is not valid')
 

@@ -257,7 +257,7 @@ class Widget(Base):
     _joystick_enabled: bool
     _keyboard_enabled: bool
     _keyboard_ignore_nonphysical: bool
-    _kwargs: Dict[Any, Any]
+    _kwargs: Dict[str, Any]
     _last_render_hash: int
     _margin: Tuple2IntType
     _max_height: List[Optional[bool]]
@@ -1955,8 +1955,6 @@ class Widget(Base):
         :param menu: Menu object
         :return: Self reference
         """
-        if self._kwargs.get('verbose') is not None:
-            self._verbose = self._kwargs['verbose']
         self._menu = menu
         if menu is None:
             self._col_row_index = (-1, -1, -1)
@@ -3214,7 +3212,7 @@ class AbstractWidgetManager(object):
         """
         raise NotImplementedError('override is mandatory')
 
-    def _filter_widget_attributes(self, kwargs: Dict) -> Dict[str, Any]:
+    def _filter_widget_attributes(self, kwargs: Dict[str, Any]) -> Dict[str, Any]:
         """
         Return the valid widgets attributes from a dictionary.
 
@@ -3236,7 +3234,7 @@ class AbstractWidgetManager(object):
         raise NotImplementedError('override is mandatory')
 
     @staticmethod
-    def _check_kwargs(kwargs: Dict) -> None:
+    def _check_kwargs(kwargs: Dict[str, Any]) -> None:
         """
         Check kwargs after widget addition. It should be empty. Raises ``ValueError``.
 

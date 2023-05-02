@@ -215,8 +215,7 @@ class Menu(Base):
         touchscreen_motion_selection: bool = False,
         verbose: bool = True
     ) -> None:
-        super(Menu, self).__init__(object_id=menu_id)
-        self._verbose = verbose
+        super(Menu, self).__init__(object_id=menu_id, verbose=verbose)
 
         assert isinstance(center_content, bool)
         assert isinstance(column_max_width, (VectorInstance, type(None), NumberInstance))
@@ -236,7 +235,6 @@ class Menu(Base):
             'theme bust be a pygame_menu.themes.Theme object instance'
         assert isinstance(touchscreen, bool)
         assert isinstance(touchscreen_motion_selection, bool)
-        assert isinstance(verbose, bool)
 
         # Assert theme
         theme.validate()
@@ -364,7 +362,7 @@ class Menu(Base):
         self._auto_centering = center_content
         self._background_function = (False, None)  # Accept menu as argument, callable object
         self._clock = pygame.time.Clock()
-        self._decorator = Decorator(self)
+        self._decorator = Decorator(self, verbose=verbose)
         self._enabled = enabled  # Menu is enabled or not. If disabled menu can't update or draw
         self._index = -1  # Selected index, if -1 the widget does not have been selected yet
         self._last_scroll_thickness = [(0, 0), 0]  # scroll and the number of recursive states
@@ -372,7 +370,7 @@ class Menu(Base):
         self._mainloop = False  # Menu is in mainloop state
         self._onclose = None  # Function or event called on Menu close
         self._render_enabled = True
-        self._sound = Sound()
+        self._sound = Sound(verbose=verbose)
         self._stats = _MenuStats()
         self._submenus = {}
         self._surface = surface
@@ -408,7 +406,7 @@ class Menu(Base):
 
         # Menu widgets, it should not be accessed outside the object as strange
         # issues can occur
-        self.add = WidgetManager(self)
+        self.add = WidgetManager(self, verbose=verbose)
         self._widget_selected_update = True  # If True, the selected widget receives the updates, if False, the events only are passed to the Menu
         self._widgets = []  # This list may change during execution (replaced by a new one)
 
@@ -520,9 +518,9 @@ class Menu(Base):
             offsety=theme.title_offset[1],
             onreturn=self._back,
             title=title,
-            width=self._width,
-            verbose=verbose
+            width=self._width
         )
+        self._menubar._verbose = verbose
         self._menubar.set_menu(self)
         self._menubar.set_font(
             antialias=self._theme.title_font_antialias,
@@ -586,6 +584,7 @@ class Menu(Base):
             shadow_offset=self._theme.scrollbar_shadow_offset,
             shadow_position=self._theme.scrollbar_shadow_position
         )
+        self._scrollarea._verbose = verbose
         self._scrollarea.set_menu(self)
         self._scrollarea.set_position(*self.get_position())
         self._overflow = tuple(overflow)
@@ -602,14 +601,6 @@ class Menu(Base):
         self._disable_widget_update_mousepos_mouseselection = False
         self._disable_update = False
         self._validate_frame_widgetmove = True
-
-        # Configure verbose
-        self.add._verbose = verbose
-        self._decorator._verbose = verbose
-        self._menubar._verbose = verbose
-        self._scrollarea._verbose = verbose
-        self._scrollarea._verbose = verbose
-        self._sound._verbose = verbose
 
     def resize(
         self,
@@ -1231,7 +1222,7 @@ class Menu(Base):
             # If added on execution time forces the update of the surface
             self._widgets_surface = None
 
-    def _back(self, **kwargs) -> None:
+    def _back(self) -> None:
         """
         Go to previous Menu or close if the top Menu is currently displayed.
         """
@@ -3131,6 +3122,7 @@ class Menu(Base):
         if sound is None:
             sound = Sound()
         self._sound = sound
+        self._sound._verbose = self._verbose
         for widget in self._widgets:
             widget.set_sound(sound)
         if recursive:
