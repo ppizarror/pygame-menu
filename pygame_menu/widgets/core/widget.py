@@ -1955,6 +1955,8 @@ class Widget(Base):
         :param menu: Menu object
         :return: Self reference
         """
+        if self._kwargs.get('verbose') is not None:
+            self._verbose = self._kwargs['verbose']
         self._menu = menu
         if menu is None:
             self._col_row_index = (-1, -1, -1)

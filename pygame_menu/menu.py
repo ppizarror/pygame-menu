@@ -521,6 +521,7 @@ class Menu(Base):
             onreturn=self._back,
             title=title,
             width=self._width,
+            verbose=verbose
         )
         self._menubar.set_menu(self)
         self._menubar.set_font(
