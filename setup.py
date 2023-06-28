@@ -79,7 +79,7 @@ setup(
     python_requires='>=3.6, <4',
     install_requires=requirements,
     extras_require={
-        'docs': ['sphinx', 'sphinx-autodoc-typehints>=1.2.0', 'sphinx-rtd-theme'],
+        'docs': ['sphinx<7', 'sphinx-autodoc-typehints>=1.2.0', 'sphinx-rtd-theme'],
         'test': ['nose2[coverage_plugin]']
     },
     setup_requires=[
