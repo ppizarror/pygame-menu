@@ -47,7 +47,7 @@ with open('requirements.txt') as f:
         requirements_docs.append(line.strip())
 
 requirements_docs.extend([
-    'sphinx',
+    'sphinx<7',
     'sphinx-rtd-theme'
 ])
 
