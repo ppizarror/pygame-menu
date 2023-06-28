@@ -827,7 +827,7 @@ class Widget(Base):
         This method automatically updates widget decoration cache as Menu render
         forces it to re-render.
 
-        This method also should be aclled by each widget after render.
+        This method also should be called by each widget after render.
 
         .. note::
 
