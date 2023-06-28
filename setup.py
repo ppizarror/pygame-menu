@@ -85,7 +85,7 @@ setup(
     python_requires='>=2.7, <4',
     install_requires=requirements,
     extras_require={
-        'doc': ['sphinx', 'sphinx-rtd-theme'],
+        'doc': ['sphinx<7', 'sphinx-rtd-theme'],
     },
     setup_requires=[
         'setuptools',
