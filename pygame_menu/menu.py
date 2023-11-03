@@ -521,7 +521,7 @@ class Menu(Base):
             width=self._width
         )
         self._menubar._verbose = verbose
-        self._menubar.set_menu(self)
+
         self._menubar.set_font(
             antialias=self._theme.title_font_antialias,
             background_color=None,
@@ -532,6 +532,9 @@ class Menu(Base):
             readonly_selected_color=self._theme.readonly_selected_color,
             selected_color=self._theme.title_font_color
         )
+
+        self._menubar.set_menu(self)
+
         self._menubar.set_cursor(self._theme.title_close_button_cursor)
         self._menubar.set_font_shadow(
             color=self._theme.title_font_shadow_color,
