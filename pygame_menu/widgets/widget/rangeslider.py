@@ -1115,7 +1115,7 @@ class RangeSliderManager(AbstractWidgetManager, ABC):
     def range_slider(
         self,
         title: str,
-        default_value: RangeSliderValueType,
+        default: RangeSliderValueType,
         range_values: RangeSliderRangeValueType,
         increment: Optional[NumberType] = None,
         onchange: CallbackType = None,
@@ -1123,7 +1123,7 @@ class RangeSliderManager(AbstractWidgetManager, ABC):
         onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
         rangeslider_id: str = '',
         value_format: RangeSliderValueFormatType = lambda x: str(round(x, 3)),
-        range_width: int = 150,
+        width: int = 150,
         **kwargs
     ) -> 'pygame_menu.widgets.RangeSlider':
         """
@@ -1271,9 +1271,9 @@ class RangeSliderManager(AbstractWidgetManager, ABC):
         widget = RangeSlider(
             title=title,
             rangeslider_id=rangeslider_id,
-            default_value=default_value,
+            default_value=default,
             range_values=range_values,
-            range_width=range_width,
+            range_width=width,
             increment=increment,
             onchange=onchange,
             onreturn=onreturn,
