@@ -34,9 +34,9 @@ from pygame_menu.locals import FINGERUP, POSITION_EAST, POSITION_WEST, POSITION_
 from pygame_menu.utils import assert_color, get_finger_pos, warn
 from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImplemented
 
-from pygame_menu._types import Tuple, CallbackType, Tuple2IntType, Any, \
+from pygame_menu._types import CallbackType, Tuple2IntType, Any, \
     Optional, NumberInstance, ColorInputType, EventVectorType, VectorInstance, \
-    List, ColorType, NumberType
+    ColorType, NumberType
 
 # Menubar styles
 MENUBAR_STYLE_ADAPTIVE = 1000
@@ -88,7 +88,7 @@ class MenuBar(Widget):
     _offsetx: NumberType
     _offsety: NumberType
     _polygon_pos: Any
-    _scrollbar_deltas: List[Tuple[int, Tuple2IntType]]
+    _scrollbar_deltas: list[tuple[int, Tuple2IntType]]
     _style: int
     _width: int
     fixed: bool
@@ -259,7 +259,7 @@ class MenuBar(Widget):
                      (self._rect.topleft[0] + self._offsetx,
                       self._rect.topleft[1] + self._offsety))
 
-    def get_scrollbar_style_change(self, position: str) -> Tuple[int, Tuple2IntType]:
+    def get_scrollbar_style_change(self, position: str) -> tuple[int, Tuple2IntType]:
         """
         Return scrollbar change (width, position) depending on the style of the
         menubar.

@@ -38,7 +38,7 @@ from pygame_menu.widgets.widget.toggleswitch import ToggleSwitchManager
 from pygame_menu.widgets.widget.vfill import VFillManager
 from pygame_menu.widgets.widget.vmargin import VMarginManager
 
-from pygame_menu._types import Any, Dict, PaddingInstance
+from pygame_menu._types import Any, PaddingInstance
 
 
 # noinspection PyProtectedMember
@@ -90,7 +90,7 @@ class WidgetManager(
         self._menu._submenus[menu].append(hook)
         hook._menu_hook = menu
 
-    def _filter_widget_attributes(self, kwargs: Dict[str, Any]) -> Dict[str, Any]:
+    def _filter_widget_attributes(self, kwargs: dict[str, Any]) -> dict[str, Any]:
         attributes = {}
 
         # align
@@ -341,7 +341,7 @@ class WidgetManager(
         widget._configure()
 
     @staticmethod
-    def _check_kwargs(kwargs: Dict[str, Any]) -> None:
+    def _check_kwargs(kwargs: dict[str, Any]) -> None:
         for invalid_keyword in kwargs.keys():
             raise ValueError(f'widget addition optional parameter kwargs.{invalid_keyword} is not valid')
 

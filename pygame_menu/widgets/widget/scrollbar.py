@@ -16,7 +16,7 @@ from pygame_menu.utils import make_surface, assert_orientation, \
     mouse_motion_current_mouse_position, assert_color, get_finger_pos
 from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImplemented
 
-from pygame_menu._types import Optional, List, VectorIntType, ColorType, Literal, \
+from pygame_menu._types import Optional, VectorIntType, ColorType, Literal, \
     Tuple2IntType, CallbackType, NumberInstance, ColorInputType, NumberType, \
     EventVectorType, VectorInstance
 
@@ -66,7 +66,7 @@ class ScrollBar(Widget):
     _slider_pad: int
     _slider_position: int
     _slider_rect: Optional['pygame.Rect']
-    _values_range: List[NumberType]
+    _values_range: list[NumberType]
     _visible_force: int  # -1: not set, 0: hidden, 1: shown
     scrolling: bool
 

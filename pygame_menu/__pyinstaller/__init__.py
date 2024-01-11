@@ -9,10 +9,9 @@ Module for pyinstaller.
 __all__ = ['get_hook_dirs']
 
 import os
-from typing import List
 
 
-def get_hook_dirs() -> List[str]:
+def get_hook_dirs() -> list[str]:
     """
     Return hook dirs to PyInstaller.
 

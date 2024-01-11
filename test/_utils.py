@@ -45,11 +45,11 @@ from pygame_menu.utils import assert_vector, PYGAME_V2
 from pygame_menu.widgets.core.widget import check_widget_mouseleave
 
 # noinspection PyProtectedMember
-from pygame_menu._types import NumberType, Union, List, Tuple, Optional, EventType, \
+from pygame_menu._types import NumberType, Union, Optional, EventType, \
     Tuple2IntType, MenuColumnMaxWidthType, MenuColumnMinWidthType, Any, MenuRowsType, \
     Tuple2NumberType, VectorIntType, VectorInstance, NumberInstance
 
-EventListType = Union[EventType, List[EventType]]
+EventListType = Union[EventType, list[EventType]]
 
 # Constants
 WINDOW_SIZE = (600, 600)  # Width, height
@@ -175,7 +175,7 @@ class PygameEventUtils(object):
 
     @staticmethod
     def joy_hat_motion(
-        key: Tuple[int, int],
+        key: tuple[int, int],
         inlist: bool = True,
         testmode: bool = True
     ) -> EventListType:

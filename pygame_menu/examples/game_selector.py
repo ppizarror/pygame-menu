@@ -13,7 +13,7 @@ import pygame_menu
 from pygame_menu.examples import create_example_window
 
 from random import randrange
-from typing import Tuple, Any, Optional, List
+from typing import Any, Optional
 
 # Constants and global variables
 ABOUT = [f'pygame-menu {pygame_menu.__version__}',
@@ -28,7 +28,7 @@ main_menu: Optional['pygame_menu.Menu'] = None
 surface: Optional['pygame.Surface'] = None
 
 
-def change_difficulty(value: Tuple[Any, int], difficulty: str) -> None:
+def change_difficulty(value: tuple[Any, int], difficulty: str) -> None:
     """
     Change difficulty of the game.
 
@@ -40,7 +40,7 @@ def change_difficulty(value: Tuple[Any, int], difficulty: str) -> None:
     DIFFICULTY[0] = difficulty
 
 
-def random_color() -> Tuple[int, int, int]:
+def random_color() -> tuple[int, int, int]:
     """
     Return a random color.
 
@@ -49,7 +49,7 @@ def random_color() -> Tuple[int, int, int]:
     return randrange(0, 255), randrange(0, 255), randrange(0, 255)
 
 
-def play_function(difficulty: List, font: 'pygame.font.Font', test: bool = False) -> None:
+def play_function(difficulty: list[str], font: 'pygame.font.Font', test: bool = False) -> None:
     """
     Main game function.
 

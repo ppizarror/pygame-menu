@@ -31,14 +31,14 @@ from pygame_menu.utils import make_surface, assert_color, assert_position, \
     assert_orientation, get_finger_pos
 from pygame_menu.widgets import ScrollBar
 
-from pygame_menu._types import Union, NumberType, Tuple, List, Dict, Tuple2NumberType, \
+from pygame_menu._types import Union, NumberType, Tuple2NumberType, \
     CursorInputType, Optional, Tuple2IntType, NumberInstance, ColorInputType, \
     EventVectorType, EventType, VectorInstance, StringVector, Any
 
 
 def get_scrollbars_from_position(
     position: str
-) -> Union[str, Tuple[str, str], Tuple[str, str, str, str]]:
+) -> Union[str, tuple[str, str], tuple[str, str, str, str]]:
     """
     Return the scrollbars from the given position.
 
@@ -120,7 +120,7 @@ class ScrollArea(Base):
     """
     _area_color: Optional[Union[ColorInputType, 'pygame_menu.BaseImage']]
     _border_color: Optional[Union[ColorInputType, 'pygame_menu.BaseImage']]
-    _border_tiles: List['pygame.Surface']
+    _border_tiles: list['pygame.Surface']
     _border_tiles_size: Tuple2IntType
     _border_width: int
     _bg_surface: Optional['pygame.Surface']
@@ -131,9 +131,9 @@ class ScrollArea(Base):
     _menubar: 'pygame_menu.widgets.MenuBar'
     _parent_scrollarea: 'ScrollArea'
     _rect: 'pygame.Rect'
-    _scrollbar_positions: Tuple[str, ...]
-    _scrollbars: List['ScrollBar']
-    _scrollbars_props: Tuple[Any, ...]
+    _scrollbar_positions: tuple[str, ...]
+    _scrollbars: list['ScrollBar']
+    _scrollbars_props: tuple[Any, ...]
     _translate: Tuple2IntType
     _view_rect: 'pygame.Rect'
     _world: 'pygame.Surface'
@@ -392,7 +392,7 @@ class ScrollArea(Base):
         """
         raise _ScrollAreaCopyException('ScrollArea class cannot be copied')
 
-    def __deepcopy__(self, memodict: Dict) -> 'ScrollArea':
+    def __deepcopy__(self, memodict: dict) -> 'ScrollArea':
         """
         Deep-copy method.
 
@@ -540,7 +540,7 @@ class ScrollArea(Base):
             top -= th
 
             # draw top and bottom tiles
-            area: Optional[Tuple[int, int, int, int]]
+            area: Optional[tuple[int, int, int, int]]
 
             for x in range(border_rect.left, border_rect.right, tw):
                 if x + tw >= border_rect.right:
@@ -865,7 +865,7 @@ class ScrollArea(Base):
             ):
                 sbar.set_value(value)
 
-    def get_parent_scroll_value_percentage(self, orientation: str) -> Tuple[float]:
+    def get_parent_scroll_value_percentage(self, orientation: str) -> tuple[float]:
         """
         Get percentage scroll values of scroll and parents; if ``0`` the scroll
         is at top/left, ``1`` bottom/right.

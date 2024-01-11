@@ -22,7 +22,7 @@ from pygame_menu.locals import FINGERUP, CURSOR_HAND
 from pygame_menu.utils import assert_color, get_finger_pos, warn
 from pygame_menu.widgets.core.widget import AbstractWidgetManager, Widget
 
-from pygame_menu._types import Any, CallbackType, Callable, Union, List, Tuple, \
+from pygame_menu._types import Any, CallbackType, Callable, Union, \
     Optional, ColorType, ColorInputType, EventVectorType
 
 
@@ -48,7 +48,7 @@ class Button(Widget):
     :param args: Optional arguments for callbacks
     :param kwargs: Optional keyword arguments
     """
-    _last_underline: List[Union[str, Optional[Tuple[ColorType, int, int]]]]  # deco id, (color, offset, width)
+    _last_underline: list[Union[str, Optional[tuple[ColorType, int, int]]]]  # deco id, (color, offset, width)
     to_menu: bool
 
     def __init__(

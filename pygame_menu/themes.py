@@ -41,9 +41,9 @@ from pygame_menu.widgets.core import Selection
 from pygame_menu.widgets.core.widget import WidgetBorderPositionType, WIDGET_FULL_BORDER, \
     WIDGET_SHADOW_TYPE_ELLIPSE, WIDGET_SHADOW_TYPE_RECTANGULAR
 
-from pygame_menu._types import ColorType, ColorInputType, Tuple, List, Union, Dict, \
+from pygame_menu._types import ColorType, ColorInputType, Union, \
     Any, Tuple2IntType, VectorInstance, Tuple2NumberType, NumberType, PaddingType, \
-    Optional, Type, NumberInstance, PaddingInstance, Tuple3IntType, CursorType
+    Optional, NumberInstance, PaddingInstance, Tuple3IntType, CursorType
 
 TRANSPARENT_COLOR: ColorType = (0, 0, 0, 0)
 
@@ -598,7 +598,7 @@ class Theme(object):
         return self
 
     @staticmethod
-    def _vec_to_tuple(obj: Union[Tuple, List], check_length: int = 0, check_instance: Type = Any) -> Tuple:
+    def _vec_to_tuple(obj: Union[tuple, list], check_length: int = 0, check_instance: type = Any) -> tuple:
         """
         Return a tuple from a list or tuple object.
 
@@ -678,8 +678,8 @@ class Theme(object):
 
     # noinspection PyTypeChecker
     @staticmethod
-    def _get(params: Dict[str, Any], key: str,
-             allowed_types: Optional[Union[Type, str, List[Type], Tuple[Type, ...]]] = None,
+    def _get(params: dict[str, Any], key: str,
+             allowed_types: Optional[Union[type, str, list[type], tuple[type, ...]]] = None,
              default: Any = None) -> Any:
         """
         Return a value from a dictionary.

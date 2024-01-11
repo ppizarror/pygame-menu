@@ -39,7 +39,7 @@ __all__ = [
 ]
 
 from pathlib import Path
-from typing import Union, Optional, Any, Dict, Tuple
+from typing import Union, Optional, Any
 import os.path as path
 
 import pygame.font as __font
@@ -75,7 +75,7 @@ FontType = Union[str, __font.Font, Path]
 FontInstance = (str, __font.Font, Path)
 
 # Stores font cache
-_cache: Dict[Tuple[FontType, int], '__font.Font'] = {}
+_cache: dict[tuple[FontType, int], '__font.Font'] = {}
 
 
 def assert_font(font: Any) -> None:

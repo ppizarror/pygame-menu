@@ -33,7 +33,7 @@ from pygame_menu.widgets.core.widget import AbstractWidgetManager, Widget
 from pygame_menu.widgets.widget.button import Button
 from pygame_menu.widgets.widget.dropselect import DropSelect
 
-from pygame_menu._types import Tuple, Union, List, Any, Optional, CallbackType, \
+from pygame_menu._types import Union, Any, Optional, CallbackType, \
     ColorType, ColorInputType, Tuple2IntType, Tuple3IntType, PaddingType, \
     Tuple2NumberType, CursorInputType, NumberType, Callable
 
@@ -41,7 +41,7 @@ DROPSELECT_MULTIPLE_SFORMAT_LIST_COMMA = 'comma-list'
 DROPSELECT_MULTIPLE_SFORMAT_LIST_HYPHEN = 'hyphen-list'
 DROPSELECT_MULTIPLE_SFORMAT_TOTAL = 'total'
 
-DropSelectMultipleSFormatType = Union[str, Callable[[List[str]], str]]
+DropSelectMultipleSFormatType = Union[str, Callable[[list[str]], str]]
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -125,7 +125,7 @@ class DropSelectMultiple(DropSelect):
     """
     _max_selected: int
     _placeholder_selected: str
-    _selected_indices: List[int]
+    _selected_indices: list[int]
     _selection_option_active_bgcolor: ColorType
     _selection_option_active_font_color: ColorType
     _selection_option_selected_box: bool
@@ -136,9 +136,9 @@ class DropSelectMultiple(DropSelect):
     def __init__(
         self,
         title: Any,
-        items: Union[List[Tuple[Any, ...]], List[str]],
+        items: Union[list[tuple[Any, ...]], list[str]],
         dropselect_id: str = '',
-        default: Optional[Union[int, List[int]]] = None,
+        default: Optional[Union[int, list[int]]] = None,
         max_selected: int = 0,
         onchange: CallbackType = None,
         onreturn: CallbackType = None,
@@ -263,7 +263,7 @@ class DropSelectMultiple(DropSelect):
 
         self.set_default_value(default)
 
-    def get_index(self) -> List[int]:
+    def get_index(self) -> list[int]:
         """
         Get selected index(es).
 
@@ -334,13 +334,13 @@ class DropSelectMultiple(DropSelect):
                                  ' and must return a string')
             assert isinstance(o, str), \
                 f'output from selection placeholder format function must be a ' \
-                f'string (List[str]=>str), not {type(o)} type ({o} returned)'
+                f'string (list[str]=>str), not {type(o)} type ({o} returned)'
             return self._placeholder_selected.format(o)
 
         else:
             raise ValueError('invalid selection placeholder format type')
 
-    def _get_selected_items_list_str(self) -> List[str]:
+    def _get_selected_items_list_str(self) -> list[str]:
         """
         Return the selected items list of strings.
 
@@ -351,7 +351,7 @@ class DropSelectMultiple(DropSelect):
             sel_items.append(self._items[i][0])
         return sel_items
 
-    def get_value(self) -> Tuple[List[Union[Tuple[Any, ...], str]], List[int]]:
+    def get_value(self) -> tuple[list[Union[tuple[Any, ...], str]], list[int]]:
         selected_items = []
         for j in self._selected_indices:
             selected_items.append(self._items[j])
@@ -365,7 +365,7 @@ class DropSelectMultiple(DropSelect):
         """
         return len(self._selected_indices)
 
-    def set_default_value(self, default: Optional[Union[int, List[int]]]) -> 'DropSelectMultiple':
+    def set_default_value(self, default: Optional[Union[int, list[int]]]) -> 'DropSelectMultiple':
         if default is None or default == -1:
             default = []
         if isinstance(default, int):
@@ -383,7 +383,7 @@ class DropSelectMultiple(DropSelect):
         self.render()
         return self
 
-    def update_items(self, items: Union[List[Tuple[Any, ...]], List[str]]) -> None:
+    def update_items(self, items: Union[list[tuple[Any, ...]], list[str]]) -> None:
         """
         Update drop select multiple items. This method updates the current index,
         but removes the selected indices.
@@ -538,8 +538,8 @@ class DropSelectMultipleManager(AbstractWidgetManager, ABC):
     def dropselect_multiple(
         self,
         title: Any,
-        items: Union[List[Tuple[Any, ...]], List[str]],
-        default: Optional[Union[int, List[int]]] = None,
+        items: Union[list[tuple[Any, ...]], list[str]],
+        default: Optional[Union[int, list[int]]] = None,
         dropselect_multiple_id: str = '',
         max_selected: int = 0,
         onchange: CallbackType = None,

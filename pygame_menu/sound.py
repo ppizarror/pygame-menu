@@ -49,7 +49,7 @@ from pygame import vernum as pygame_version
 from pygame_menu._base import Base
 from pygame_menu.utils import warn
 
-from pygame_menu._types import NumberType, Dict, Any, Optional, Union, NumberInstance
+from pygame_menu._types import NumberType, Any, Optional, Union, NumberInstance
 
 try:  # pygame<2.0.0 compatibility
     from pygame import AUDIO_ALLOW_CHANNELS_CHANGE, AUDIO_ALLOW_FREQUENCY_CHANGE
@@ -130,8 +130,8 @@ class Sound(Base):
     _channel: Optional['mixer.Channel']
     _last_play: str
     _last_time: float
-    _mixer_configs: Dict[str, Union[bool, int, str]]
-    _sound: Dict[str, Dict[str, Any]]
+    _mixer_configs: dict[str, Union[bool, int, str]]
+    _sound: dict[str, dict[str, Any]]
     _uniquechannel: bool
 
     def __init__(
@@ -260,7 +260,7 @@ class Sound(Base):
         """
         return self.copy()
 
-    def __deepcopy__(self, memodict: Dict) -> 'Sound':
+    def __deepcopy__(self, memodict: dict) -> 'Sound':
         """
         Deep-copy method.
 
@@ -367,7 +367,7 @@ class Sound(Base):
             self.set_sound(SOUND_TYPES[sound], SOUND_EXAMPLES[sound], volume=float(volume))
         return self
 
-    def _play_sound(self, sound: Optional[Dict[str, Any]]) -> bool:
+    def _play_sound(self, sound: Optional[dict[str, Any]]) -> bool:
         """
         Play a sound.
 
@@ -542,7 +542,7 @@ class Sound(Base):
             pass
         return self
 
-    def get_channel_info(self) -> Dict[str, Any]:
+    def get_channel_info(self) -> dict[str, Any]:
         """
         Return the channel information.
 

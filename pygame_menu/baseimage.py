@@ -48,7 +48,7 @@ from pygame_menu.utils import assert_vector, assert_position, assert_color, \
     load_pygame_image_file
 
 from pygame_menu._types import Tuple2IntType, Union, Vector2NumberType, Callable, \
-    Tuple, List, NumberType, Optional, Dict, Tuple4IntType, Literal, Tuple2NumberType, \
+    NumberType, Optional, Tuple4IntType, Literal, Tuple2NumberType, \
     ColorInputType, Tuple3IntType, NumberInstance, VectorInstance
 
 # Example image paths
@@ -84,7 +84,7 @@ _VALID_IMAGE_FORMATS = ['.jpg', '.png', '.gif', '.bmp', '.pcx', '.tga', '.tif',
 
 # Custom types
 ColorChannelType = Literal['r', 'g', 'b']
-ChannelType = Union[ColorChannelType, Tuple[ColorChannelType, ColorChannelType], Tuple[ColorChannelType, ColorChannelType, ColorChannelType], List[ColorChannelType]]
+ChannelType = Union[ColorChannelType, tuple[ColorChannelType, ColorChannelType], tuple[ColorChannelType, ColorChannelType, ColorChannelType], list[ColorChannelType]]
 
 
 class BaseImage(Base):
@@ -108,7 +108,7 @@ class BaseImage(Base):
     _filename: str
     _filepath: Union[str, 'BytesIO']
     _frombase64: bool
-    _last_transform: Tuple[int, int, Optional['pygame.Surface']]
+    _last_transform: tuple[int, int, Optional['pygame.Surface']]
     _original_surface: 'pygame.Surface'
     _rotated: bool
     _surface: 'pygame.Surface'
@@ -192,7 +192,7 @@ class BaseImage(Base):
         """
         return self.copy()
 
-    def __deepcopy__(self, memodict: Dict) -> 'BaseImage':
+    def __deepcopy__(self, memodict: dict) -> 'BaseImage':
         """
         Deep-copy method.
 

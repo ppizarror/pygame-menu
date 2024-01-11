@@ -30,11 +30,11 @@ from pygame_menu.widgets.widget.image import Image
 from pygame_menu.widgets.widget.label import Label
 from pygame_menu.widgets.widget.surface import SurfaceWidget
 
-from pygame_menu._types import List, Union, ColorInputType, Optional, Tuple, \
-    VectorInstance, PaddingType, Dict, NumberType, Vector2IntType, EventVectorType
+from pygame_menu._types import Union, ColorInputType, Optional, \
+    VectorInstance, PaddingType, NumberType, Vector2IntType, EventVectorType
 
 CellType = Union['Widget', str, int, float, bool, 'BaseImage', 'pygame.Surface']
-ColumnInputType = Union[Tuple[CellType, ...], List[CellType]]
+ColumnInputType = Union[tuple[CellType, ...], list[CellType]]
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -52,8 +52,8 @@ class Table(Frame):
 
     :param table_id: ID of the table
     """
-    _rows: List['Frame']
-    _update_widgets: List['Widget']
+    _rows: list['Frame']
+    _update_widgets: list['Widget']
     default_cell_align: str
     default_cell_border_color: ColorInputType
     default_cell_border_position: WidgetBorderPositionType
@@ -317,7 +317,7 @@ class Table(Frame):
         # row.set_frame(self) This cannot be executed as row is packed within
 
         # Create widgets
-        row_cells: List['Widget'] = []
+        row_cells: list['Widget'] = []
         cell: 'Widget'
         j = 0
 
@@ -436,14 +436,14 @@ class Table(Frame):
                 if w.get_attribute('accept_events'):
                     self._update_widgets.append(w)
 
-    def _get_column_width_row_height(self) -> Tuple[Dict[int, int], Dict['Frame', int]]:
+    def _get_column_width_row_height(self) -> tuple[dict[int, int], dict['Frame', int]]:
         """
         Return column width and row height.
 
         :return: Column width and row height dict
         """
-        column_widths: Dict[int, int] = {}  # column/width
-        row_heights: Dict['Frame', int] = {}  # row/height
+        column_widths: dict[int, int] = {}  # column/width
+        row_heights: dict['Frame', int] = {}  # row/height
 
         for f in self._rows:
             col = 0  # Column
@@ -557,7 +557,7 @@ class Table(Frame):
         return self
 
     @staticmethod
-    def get_cell_column_row(cell: 'Widget') -> Tuple[int, int]:
+    def get_cell_column_row(cell: 'Widget') -> tuple[int, int]:
         """
         Return the column/row within table layout for the given widget.
 
@@ -674,7 +674,7 @@ class Table(Frame):
         font_size: Optional[int] = None,
         padding: Optional[PaddingType] = None,
         vertical_position: Optional[str] = None
-    ) -> Union['Widget', List['Widget']]:
+    ) -> Union['Widget', list['Widget']]:
         """
         Update cell style. If a parameter is ``None`` the default cell property
         will be used.

@@ -23,8 +23,8 @@ from pygame_menu.font import FontType
 from pygame_menu.utils import assert_list_vector, assert_color, make_surface, \
     assert_vector, uuid4, warn
 
-from pygame_menu._types import List, Tuple2NumberType, ColorInputType, Tuple, \
-    Any, Dict, Union, NumberType, Tuple2IntType, Optional, Callable, NumberInstance, \
+from pygame_menu._types import Tuple2NumberType, ColorInputType, \
+    Any, Union, NumberType, Tuple2IntType, Optional, Callable, NumberInstance, \
     CallableNoArgsType
 
 # Decoration constants
@@ -59,13 +59,13 @@ class Decorator(Base):
     :param decorator_id: ID of the decorator
     :param verbose: Enable/disable verbose mode (warnings/errors)
     """
-    _coord_cache: Dict[str, Tuple[int, int, Union[Tuple[Tuple2NumberType, ...], Tuple2NumberType]]]  # centerx, centery, coords
-    _cache_last_status: Dict[str, Tuple[int, int, int, int, int, int]]
-    _cache_needs_update: Dict[str, bool]
-    _cache_surface: Dict[str, Optional['pygame.Surface']]
-    _decor: Dict[str, List[Tuple[int, str, Any]]]  # type, id, data
-    _decor_enabled: Dict[str, bool]
-    _decor_prev_id: List[str]
+    _coord_cache: dict[str, tuple[int, int, Union[tuple[Tuple2NumberType, ...], Tuple2NumberType]]]  # centerx, centery, coords
+    _cache_last_status: dict[str, tuple[int, int, int, int, int, int]]
+    _cache_needs_update: dict[str, bool]
+    _cache_surface: dict[str, Optional['pygame.Surface']]
+    _decor: dict[str, list[tuple[int, str, Any]]]  # type, id, data
+    _decor_enabled: dict[str, bool]
+    _decor_prev_id: list[str]
     _obj: Union['pygame_menu.widgets.Widget', 'pygame_menu._scrollarea.ScrollArea', 'pygame_menu.Menu']
     _post_enabled: bool
     _prev_enabled: bool
@@ -117,7 +117,7 @@ class Decorator(Base):
         """
         raise _DecoratorCopyException('Decorator class cannot be copied')
 
-    def __deepcopy__(self, memodict: Dict) -> 'Decorator':
+    def __deepcopy__(self, memodict: dict) -> 'Decorator':
         """
         Deep-copy method.
 
@@ -193,7 +193,7 @@ class Decorator(Base):
 
     def add_polygon(
         self,
-        coords: Union[List[Tuple2NumberType], Tuple[Tuple2NumberType, ...]],
+        coords: Union[list[Tuple2NumberType], tuple[Tuple2NumberType, ...]],
         color: ColorInputType,
         filled: bool,
         width: int = 0,
@@ -233,7 +233,7 @@ class Decorator(Base):
 
     def add_bezier(
         self,
-        coords: Union[List[Tuple2NumberType], Tuple[Tuple2NumberType, ...]],
+        coords: Union[list[Tuple2NumberType], tuple[Tuple2NumberType, ...]],
         color: ColorInputType,
         steps: int = 5,
         prev: bool = True,
@@ -669,7 +669,7 @@ class Decorator(Base):
 
     def add_textured_polygon(
         self,
-        coords: Union[List[Tuple2NumberType], Tuple[Tuple2NumberType, ...]],
+        coords: Union[list[Tuple2NumberType], tuple[Tuple2NumberType, ...]],
         texture: Union['pygame.Surface', 'pygame_menu.BaseImage'],
         tx: int = 0,
         ty: int = 0,
@@ -892,7 +892,7 @@ class Decorator(Base):
     def _draw_assemble_cache(
         self,
         prev: str,
-        deco: List[Tuple[int, str, Any]],
+        deco: list[tuple[int, str, Any]],
         surface: 'pygame.Surface'
     ) -> None:
         """
@@ -957,7 +957,7 @@ class Decorator(Base):
         return self
 
     # noinspection PyArgumentList
-    def _draw(self, deco: List[Tuple[int, str, Any]], surface: 'pygame.Surface') -> None:
+    def _draw(self, deco: list[tuple[int, str, Any]], surface: 'pygame.Surface') -> None:
         """
         Draw.
 
@@ -1080,9 +1080,9 @@ class Decorator(Base):
         self,
         rect: 'pygame.Rect',
         decoid: str,
-        pos: Union[Tuple2NumberType, Tuple[Tuple2NumberType, ...]],  # only (x, y) or ((x1,y1), ...
+        pos: Union[Tuple2NumberType, tuple[Tuple2NumberType, ...]],  # only (x, y) or ((x1,y1), ...
         use_center_positioning=True
-    ) -> Union[Tuple[Tuple2IntType, ...], Tuple2IntType]:
+    ) -> Union[tuple[Tuple2IntType, ...], Tuple2IntType]:
         """
         Updates position list based on rect center. If position of the rect changes,
         update the coords.

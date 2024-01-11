@@ -12,7 +12,7 @@ import pygame
 import pygame_menu
 from pygame_menu.examples import create_example_window
 
-from typing import Union, List
+from typing import Union
 
 
 class CalculatorApp(object):
@@ -128,7 +128,7 @@ class CalculatorApp(object):
         self.menu.set_onupdate(self.process_events)
         self.menu.set_onwindowmouseleave(lambda m: self.screen.select(update_menu=True))
 
-    def process_events(self, events: List['pygame.event.Event'], _=None) -> None:
+    def process_events(self, events: list['pygame.event.Event'], _=None) -> None:
         """
         Process events from user.
         """
