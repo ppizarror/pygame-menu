@@ -25,7 +25,6 @@ jobs:
       install-extras: test
       os: ubuntu-20.04
       python-version: ${{ matrix.python }}
-      test-repeat-on-failure: true
 
   codeql:
     uses: ppizarror/workflow-actions/.github/workflows/codeql.yml@master
