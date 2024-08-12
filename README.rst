@@ -73,8 +73,6 @@ more, with multiple customization options.
 Comprehensive documentation for the latest version is available at
 https://pygame-menu.readthedocs.io
 
-**Note**: For `pygame-ce`, check out `pygame-menu-ce <https://github.com/ppizarror/pygame-menu/tree/pygame-ce>`_.
-
 
 Install Instructions
 --------------------
