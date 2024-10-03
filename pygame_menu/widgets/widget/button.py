@@ -445,7 +445,7 @@ class ButtonManager(AbstractWidgetManager, ABC):
             action = _events.NONE
 
         # If element is a Menu
-        if isinstance(action, type(self._menu)):
+        if isinstance(action, pygame_menu.Menu):
             # Check for recursive
             if action == self._menu or action.in_submenu(self._menu, recursive=True):
                 raise ValueError(
