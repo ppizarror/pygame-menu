@@ -127,8 +127,8 @@ in charge to update and draw the menu when it is necessary.
                 exit()
 
         if mymenu.is_enabled():
-            mymenu.update(events)
             mymenu.draw(surface)
+            mymenu.update(events)
 
         pygame.display.update()
 
