@@ -590,7 +590,7 @@ class Menu(Base):
         self._scrollarea._verbose = verbose
         self._scrollarea.set_menu(self)
         self._scrollarea.set_position(*self.get_position())
-        self._overflow = tuple(overflow)
+        self._overflow = (overflow[0], overflow[1])
 
         # Controls the behaviour of runtime errors
         self._runtime_errors = _MenuRuntimeErrorConfig()

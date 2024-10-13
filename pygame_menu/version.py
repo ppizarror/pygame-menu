@@ -18,6 +18,7 @@ class Version(tuple):
     fields = 'major', 'minor', 'patch'
 
     def __new__(cls, major, minor, patch) -> 'Version':
+        # noinspection PyTypeChecker
         return tuple.__new__(cls, (major, minor, patch))
 
     def __repr__(self) -> str:

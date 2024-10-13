@@ -1396,6 +1396,7 @@ class DropSelectManager(AbstractWidgetManager, ABC):
         if isinstance(selection_box_margin, NumberInstance):
             selection_box_margin = (selection_box_margin, selection_box_margin)
 
+        # noinspection PyTypeChecker
         widget = DropSelect(
             default=default,
             dropselect_id=dropselect_id,

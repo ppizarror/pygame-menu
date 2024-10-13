@@ -428,6 +428,7 @@ class Theme(object):
         # Test purpose only, if True disables any validation
         self._disable_validation = False
 
+    # noinspection PyTypeChecker
     def validate(self) -> 'Theme':
         """
         Validate the values of the theme. If there's an invalid parameter throws an
@@ -640,6 +641,7 @@ class Theme(object):
         """
         return self.copy()
 
+    # noinspection PyTypeChecker
     @staticmethod
     def _format_color_opacity(
         color: Optional[Union[ColorInputType, 'BaseImage']],

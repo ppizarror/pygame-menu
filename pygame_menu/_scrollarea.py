@@ -865,7 +865,7 @@ class ScrollArea(Base):
             ):
                 sbar.set_value(value)
 
-    def get_parent_scroll_value_percentage(self, orientation: str) -> Tuple[float]:
+    def get_parent_scroll_value_percentage(self, orientation: str) -> Tuple[float, ...]:
         """
         Get percentage scroll values of scroll and parents; if ``0`` the scroll
         is at top/left, ``1`` bottom/right.
@@ -873,7 +873,7 @@ class ScrollArea(Base):
         :param orientation: Orientation. See :py:mod:`pygame_menu.locals`
         :return: Value from ``0`` to ``1`` as a tuple; first item is the current scrollarea
         """
-        values = [self.get_scroll_value_percentage(orientation)]
+        values: List[float] = [self.get_scroll_value_percentage(orientation)]
         parent = self._parent_scrollarea
         if parent is not None:
             while True:  # Recursive

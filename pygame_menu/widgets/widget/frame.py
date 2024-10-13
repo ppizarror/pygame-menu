@@ -55,7 +55,7 @@ FRAME_TITLE_BUTTON_MINIMIZE = 'minimize'
 S_FINGER_FACTOR = 0.25, 0.25
 
 # Types
-FrameTitleBackgroundColorType = Optional[Union[ColorInputType, ColorInputGradientType, BaseImage]]
+FrameTitleBackgroundColorType = Optional[ColorInputGradientType]
 FrameTitleButtonType = str
 
 

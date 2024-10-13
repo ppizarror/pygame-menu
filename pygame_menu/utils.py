@@ -384,7 +384,7 @@ def load_pygame_image_file(image_path: str, **kwargs) -> 'pygame.Surface':
 
             # Check if Pillow exists
             try:
-                # noinspection PyPackageRequirements
+                # noinspection PyPackageRequirements,PyUnresolvedReferences
                 from PIL import Image, UnidentifiedImageError
 
                 pil_invalid_exception = UnidentifiedImageError

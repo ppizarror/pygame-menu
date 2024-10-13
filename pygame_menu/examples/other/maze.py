@@ -152,11 +152,11 @@ class Node(object):
                 self.nodetype = nodetype
 
         if is_visited != 'unchanged':
-            assert type(is_visited) == bool, "'is_visited' must be boolean: True or False"
+            assert isinstance(is_visited, bool), "'is_visited' must be boolean: True or False"
             self.is_visited = is_visited
 
         if is_path != 'unchanged':
-            assert type(is_path) == bool, "'is_path' must be boolean: True or False"
+            assert isinstance(is_path, bool), "'is_path' must be boolean: True or False"
             self.is_path = is_path
 
         self.rcolor = colors['regular'][self.nodetype]

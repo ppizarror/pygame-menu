@@ -1094,7 +1094,7 @@ class Decorator(Base):
         :return: Position list updated to
         """
         if not use_center_positioning:
-            return tuple(pos)
+            return tuple([(int(p[0]), int(p[1])) for p in pos])
 
         cx, cy = rect.centerx, rect.centery  # Center position
 
