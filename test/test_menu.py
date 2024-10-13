@@ -2634,3 +2634,17 @@ class MenuTest(BaseTest):
         # Mainloop also updates last surface
         menu.mainloop(disable_loop=True)
         self.assertEqual(menu._surface_last, menu_surface)
+
+    def test_inheritance(self) -> None:
+        """
+        Test Menu class inheritance.
+        We check widgets within inherited class. #486
+        """
+
+        class SubMenu(pygame_menu.Menu):
+            def __init__(self) -> None:
+                super().__init__(title='Test', width=150, height=200, theme=pygame_menu.themes.THEME_DARK.copy())
+                help_menu = pygame_menu.Menu(title='Help', width=150, height=200)
+                self.add.button(help_menu.get_title(), help_menu)
+
+        self.assertEqual(len(SubMenu().get_widgets()), 1)
