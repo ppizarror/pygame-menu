@@ -1211,7 +1211,9 @@ class TextInput(Widget):
             # Add new status to history
             self._history.insert(self._history_index, new_string)
             self._history_cursor.insert(self._history_index, self._cursor_position)
-            self._history_renderbox.insert(self._history_index, [self._renderbox[0], self._renderbox[1], self._renderbox[2]])
+            self._history_renderbox.insert(
+                self._history_index,
+                [self._renderbox[0], self._renderbox[1], self._renderbox[2]])
 
             if len(self._history) > self._max_history:
                 self._history.pop(0)
@@ -1560,7 +1562,7 @@ class TextInput(Widget):
                     self._keyrepeat_counters[event.key] = [0, event.unicode]
 
                 # User press ctrl+something
-                if pygame.key.get_mods() in CTRL_KMOD:
+                if any(pygame.key.get_mods() & mod == mod for mod in CTRL_KMOD):
                     # If test, disable CTRL
                     if 'test' in event.dict and event.dict['test']:
                         # noinspection PyArgumentList
