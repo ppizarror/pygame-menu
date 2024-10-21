@@ -1082,9 +1082,8 @@ class MazeApp(object):
             if current_node in visited_nodes:
                 if len(queue.show()) == 0:
                     return False
-                else:
-                    priority, current_distance, current_node = queue.pop()
-                    continue
+                _, current_distance, current_node = queue.pop()
+                continue
 
             # Call to check neighbours of the current node
             for neighbour in self._get_neighbours(current_node, n):

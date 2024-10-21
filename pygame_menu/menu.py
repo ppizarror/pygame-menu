@@ -1096,7 +1096,7 @@ class Menu(Base):
                 w.select(False)
             self._index = -1
             return self
-        if isinstance(widget, str):
+        elif isinstance(widget, str):
             widget = self.get_widget(widget)
         assert isinstance(widget, Widget)
         if not widget.is_selectable:
@@ -3669,7 +3669,7 @@ class Menu(Base):
                 del self._submenus[menu]
             self._update_after_remove_or_hidden(self._index)
             return True
-        if recursive:
+        elif recursive:
             for sm in self._submenus:
                 if sm._remove_submenu(menu, hook, recursive):
                     return True

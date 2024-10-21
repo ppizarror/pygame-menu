@@ -300,9 +300,9 @@ class ScrollBar(Widget):
         if self._slider_rect is None:
             return
 
-        if not self._render_hash_changed(width, height, self._slider_rect.x, self._slider_rect.y,
-                                         self.readonly, self._slider_rect.width, self._slider_rect.height,
-                                         self.scrolling, self._mouseover, self._clicked):
+        elif not self._render_hash_changed(width, height, self._slider_rect.x, self._slider_rect.y,
+                                           self.readonly, self._slider_rect.width, self._slider_rect.height,
+                                           self.scrolling, self._mouseover, self._clicked):
             return True
 
         self._surface = make_surface(width, height)

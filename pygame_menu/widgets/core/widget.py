@@ -601,7 +601,7 @@ class Widget(Base):
                     while True:
                         if len(prev) == 0:
                             break
-                        if prev[0] == self._frame:
+                        elif prev[0] == self._frame:
                             in_prev = True
                             break
                         prev = prev[2]
@@ -689,7 +689,7 @@ class Widget(Base):
             return False
 
         # If mouse out from window
-        if event.type == pygame.ACTIVEEVENT and hasattr(event, 'gain'):
+        elif event.type == pygame.ACTIVEEVENT and hasattr(event, 'gain'):
             if event.gain == 1:
                 return False
             # Mouse is outside window
@@ -1702,7 +1702,6 @@ class Widget(Base):
 
         # Replace tabs
         text = text.replace('\t', ' ' * self._tab_size)
-
         surface = self._font.render(text, self._font_antialias, color, bgcolor)
         return surface
 
@@ -2028,9 +2027,6 @@ class Widget(Base):
             c, r, _ = self._frame.get_col_row_index()
             self.set_col_row_index(c, r, index)
             self._frame.update_indices()
-        else:
-            # raise ValueError(f'{self.get_class_id()} is not within a frame')
-            pass
         return self
 
     def set_position(self, x: NumberType, y: NumberType) -> 'Widget':
@@ -3124,6 +3120,7 @@ class Widget(Base):
                     data.append(ww._get_status())
 
         # Append inner widgets if drop select
+        # noinspection PyUnresolvedReferences
         if (isinstance(self, pygame_menu.widgets.DropSelect) and
             hasattr(self, '_drop_frame') and
             self._drop_frame is not None and

@@ -592,7 +592,7 @@ class ScrollArea(Base):
         if isinstance(self._border_color, pygame_menu.BaseImage):  # Image
             return self._border_tiles_size
         # Color
-        if self._border_color is None:
+        elif self._border_color is None:
             return 0, 0
         return self._border_width, self._border_width
 
@@ -658,15 +658,13 @@ class ScrollArea(Base):
         """
         assert_orientation(orientation)
         assert isinstance(visible, bool)
-
         if visible:
             total = 0
             for sbar in self._scrollbars:
                 if sbar.get_orientation() == orientation and sbar.is_visible():
                     total += sbar.get_thickness()
             return total
-
-        if orientation == ORIENTATION_HORIZONTAL:
+        elif orientation == ORIENTATION_HORIZONTAL:
             return int(self._rect.height - self._view_rect.height)
         elif orientation == ORIENTATION_VERTICAL:
             return int(self._rect.width - self._view_rect.width)
@@ -702,7 +700,7 @@ class ScrollArea(Base):
             return rect
 
         # All scrollbars: the world is too large
-        if self._world.get_height() > self._rect.height and self._world.get_width() > self._rect.width:
+        elif self._world.get_height() > self._rect.height and self._world.get_width() > self._rect.width:
             for sbar in self._scrollbars:
                 if not sbar.is_visible():
                     continue

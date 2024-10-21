@@ -148,7 +148,7 @@ class DropSelectMultiple(DropSelect):
         placeholder_add_to_selection_box: bool = True,
         placeholder_selected: str = '{0} selected',
         scrollbar_color: ColorInputType = (235, 235, 235),
-        scrollbar_cursor: CursorInputType = None,
+        scrollbar_cursor: CursorInputType = None,  # type: ignore
         scrollbar_shadow: bool = False,
         scrollbar_shadow_color: ColorInputType = (0, 0, 0),
         scrollbar_shadow_offset: int = 2,
@@ -173,7 +173,7 @@ class DropSelectMultiple(DropSelect):
         selection_option_active_font_color: ColorInputType = (0, 0, 0),
         selection_option_border_color: ColorInputType = (220, 220, 220),
         selection_option_border_width: int = 1,
-        selection_option_cursor: CursorInputType = None,
+        selection_option_cursor: CursorInputType = None,  # type: ignore
         selection_option_font: Optional[FontType] = None,
         selection_option_font_color: ColorInputType = (0, 0, 0),
         selection_option_font_size: Optional[int] = None,
@@ -337,7 +337,7 @@ class DropSelectMultiple(DropSelect):
                 f'string (List[str]=>str), not {type(o)} type ({o} returned)'
             return self._placeholder_selected.format(o)
 
-        raise ValueError('invalid selection placeholder format type')
+        raise ValueError(f'invalid selection placeholder format type "{self._selection_placeholder_format}"')
 
     def _get_selected_items_list_str(self) -> List[str]:
         """

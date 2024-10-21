@@ -229,7 +229,7 @@ class ProgressBar(Widget):
         if not hasattr(self, '_progress_font'):
             return False
 
-        if not self._render_hash_changed(self._selected, self._title, self._visible, self.readonly, self._progress):
+        elif not self._render_hash_changed(self._selected, self._title, self._visible, self.readonly, self._progress):
             return True
 
         # Create basic title

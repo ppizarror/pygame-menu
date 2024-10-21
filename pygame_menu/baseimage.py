@@ -652,7 +652,7 @@ class BaseImage(Base):
         w, h = self.get_size()
         if width == 1 and height == 1:
             return self
-        if not smooth or self._surface.get_bitsize() < 24:
+        elif not smooth or self._surface.get_bitsize() < 24:
             self._surface = pygame.transform.scale(self._surface, (int(w * width), int(h * height)))
         else:  # image bitsize less than 24 bits raises ValueError
             self._surface = pygame.transform.smoothscale(self._surface, (int(w * width), int(h * height)))
@@ -749,7 +749,7 @@ class BaseImage(Base):
         assert isinstance(angle, NumberInstance)
         if angle == self._angle:
             return self
-        if not self._rotated and auto_checkpoint:
+        elif not self._rotated and auto_checkpoint:
             self.checkpoint()
         if self._rotated:
             self.restore()

@@ -270,13 +270,13 @@ class MenuBar(Widget):
         self._render()
         if not self._modify_scrollarea or not self.is_visible():
             return 0, (0, 0)
-        if not self.fixed or self.is_floating():
+        elif not self.fixed or self.is_floating():
             if self._style == MENUBAR_STYLE_ADAPTIVE:
                 if position == POSITION_EAST:
                     t = self._polygon_pos[4][1] - self._polygon_pos[2][1]
                     return t, (0, -t)
             return 0, (0, 0)
-        if position == POSITION_NORTH:
+        elif position == POSITION_NORTH:
             return self._scrollbar_deltas[0]
         elif position == POSITION_EAST:
             return self._scrollbar_deltas[1]
@@ -298,7 +298,7 @@ class MenuBar(Widget):
             return True
 
         # Update box mode
-        if menu_prev_condition:
+        elif menu_prev_condition:
             self._box_mode = _MODE_CLOSE
         else:
             self._box_mode = _MODE_BACK

@@ -654,9 +654,9 @@ class RangeSlider(Widget):
         if not hasattr(self, '_font_range_value'):
             return False
 
-        if not self._render_hash_changed(self._selected, self._title, self._visible, self.readonly,
-                                         self._range_values, self._slider_selected, self._value[0],
-                                         self._value[1], self._scrolling, self._selected_mouse):
+        elif not self._render_hash_changed(self._selected, self._title, self._visible, self.readonly,
+                                           self._range_values, self._slider_selected, self._value[0],
+                                           self._value[1], self._scrolling, self._selected_mouse):
             return True
 
         # Create basic title
