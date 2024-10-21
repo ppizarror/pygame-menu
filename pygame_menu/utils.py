@@ -104,7 +104,7 @@ def assert_color(
     return color
 
 
-def assert_cursor(cursor: CursorInputType) -> None:
+def assert_cursor(cursor: CursorInputType) -> None: # type: ignore
     """
     Assert a given cursor is valid.
 
@@ -319,7 +319,7 @@ def format_color(
     return c.r, c.g, c.b, c.a
 
 
-def get_cursor() -> CursorInputType:
+def get_cursor() -> CursorInputType: # type: ignore
     """
     Return the pygame cursor object.
 
@@ -385,7 +385,7 @@ def load_pygame_image_file(image_path: str, **kwargs) -> 'pygame.Surface':
             # Check if Pillow exists
             try:
                 # noinspection PyPackageRequirements,PyUnresolvedReferences
-                from PIL import Image, UnidentifiedImageError
+                from PIL import Image, UnidentifiedImageError # type: ignore
 
                 pil_invalid_exception = UnidentifiedImageError
                 img_pil = Image.open(image_path)
@@ -582,7 +582,7 @@ def print_menu_widget_structure(
     close_frames(0)
 
 
-def set_pygame_cursor(cursor: CursorInputType) -> None:
+def set_pygame_cursor(cursor: CursorInputType) -> None: # type: ignore
     """
     Set pygame cursor.
 
@@ -897,6 +897,7 @@ class ShadowGenerator(object):
                 corner_shadow_surface = pygame.surface.Surface(corner_rect.size,
                                                                flags=pygame.SRCALPHA,
                                                                depth=32)
+                # noinspection PyUnresolvedReferences
                 corner_shadow_surface.fill(pygame.Color('#00000000'))
                 pygame.draw.circle(corner_shadow_surface,
                                    pygame.Color(r, g, b, int(shadow_alpha)),

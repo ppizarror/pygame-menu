@@ -170,7 +170,7 @@ class Frame(Widget):
     def set_title(
         self,
         title: str,
-        cursor: CursorInputType = None,
+        cursor: CursorInputType = None, # type: ignore
         background_color: FrameTitleBackgroundColorType = FRAME_DEFAULT_TITLE_BACKGROUND_COLOR,
         draggable: bool = False,
         padding_inner: PaddingType = 0,
@@ -420,7 +420,7 @@ class Frame(Widget):
         style: FrameTitleButtonType,
         callback: CallbackType,
         background_color: ColorInputType = (150, 150, 150),
-        cursor: CursorInputType = CURSOR_HAND,
+        cursor: CursorInputType = CURSOR_HAND, # type: ignore
         margin: Vector2NumberType = (4, 0),
         symbol_color: ColorInputType = (0, 0, 0),
         symbol_height: NumberType = 0.75,
@@ -617,7 +617,7 @@ class Frame(Widget):
         max_height: Optional[NumberType],
         scrollarea_color: Optional[Union[ColorInputType, 'pygame_menu.BaseImage']],
         scrollbar_color: ColorInputType,
-        scrollbar_cursor: CursorInputType,
+        scrollbar_cursor: CursorInputType, # type: ignore
         scrollbar_shadow: bool,
         scrollbar_shadow_color: ColorInputType,
         scrollbar_shadow_offset: int,

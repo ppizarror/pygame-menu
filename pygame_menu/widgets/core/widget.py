@@ -727,7 +727,7 @@ class Widget(Base):
 
         return updated
 
-    def set_cursor(self, cursor: CursorInputType) -> 'Widget':
+    def set_cursor(self, cursor: CursorInputType) -> 'Widget': # type: ignore
         """
         Set the Widget cursor if user places the mouse over the Widget.
 
@@ -3124,8 +3124,10 @@ class Widget(Base):
                     data.append(ww._get_status())
 
         # Append inner widgets if drop select
-        if (isinstance(self, pygame_menu.widgets.DropSelect) and hasattr(self, '_drop_frame') and
-            self._drop_frame is not None):
+        if (isinstance(self, pygame_menu.widgets.DropSelect) and
+            hasattr(self, '_drop_frame') and
+            self._drop_frame is not None and
+            hasattr(self, '_option_buttons')):
             data.append(self._drop_frame._get_status())
             for btn in self._option_buttons:
                 data.append(btn._get_status())
