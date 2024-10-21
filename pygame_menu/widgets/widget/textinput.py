@@ -1295,6 +1295,7 @@ class TextInput(Widget):
         except PyperclipException as e:
             if self._verbose:
                 clipboard_warn(e, 'Copying')
+            return False
 
         self._block_copy_paste = True
         return True

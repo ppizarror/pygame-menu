@@ -403,8 +403,8 @@ class TextInputWidgetTest(BaseTest):
         textinput_copy.set_value('this value should be cropped as this is longer than the max char')
         self.assertFalse(textinput_copy._block_copy_paste)
         textinput_copy._copy()
-        self.assertTrue(textinput_copy._block_copy_paste)
-        textinput_copy._block_copy_paste = False
+        if textinput_copy._block_copy_paste:  # Otherwise, an exception happened
+            textinput_copy._block_copy_paste = False
         textinput_copy._select_all()
         textinput_copy._cut()
         self.assertEqual(textinput_copy.get_value(), '')
