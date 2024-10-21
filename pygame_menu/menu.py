@@ -1305,7 +1305,7 @@ class Menu(Base):
 
             # Check if the maximum number of elements was reached, if so raise an exception
             # If menu has frames, this check is disabled
-            if not has_frame and not i_index < self._max_row_column_elements:
+            elif not has_frame and not i_index < self._max_row_column_elements:
                 raise _MenuWidgetOverflow(max_elements_msg.replace('[widg]', str(i_index)))
 
             # Set the widget column/row position
@@ -1499,7 +1499,7 @@ class Menu(Base):
                 continue
 
             # If widget within frame update col/row position
-            if widget.get_frame() is not None:
+            elif widget.get_frame() is not None:
                 # noinspection PyProtectedMember
                 widget._set_position_relative_to_frame(index)
                 continue
@@ -1540,7 +1540,7 @@ class Menu(Base):
                 _, r, _ = r_widget.get_col_row_index()
                 if r >= row:
                     break
-                if (
+                elif (
                     r_widget.is_visible() and
                     not r_widget.is_floating() and
                     not r_widget.get_frame() is not None
@@ -1866,7 +1866,7 @@ class Menu(Base):
         if len(self._widgets) == 0:  # If this happens, get_widget_max returns an immense value
             self._widget_offset[1] = 0
             return self
-        if self._widgets_surface is None:
+        elif self._widgets_surface is None:
             self._update_widget_position()  # For position (max/min)
         available = self.get_height(inner=True)
         widget_height = self.get_height(widget=True)
@@ -2602,7 +2602,7 @@ class Menu(Base):
                     if self._keyboard_ignore_nonphysical and not check_key_pressed_valid(event):
                         continue
 
-                    if self._ctrl.move_down(event, self):
+                    elif self._ctrl.move_down(event, self):
                         if self._current._down(apply_sound=True):
                             self._current._last_update_mode.append(_events.MENU_LAST_MOVE_DOWN)
                             updated = True
@@ -3323,7 +3323,7 @@ class Menu(Base):
             return False
 
         # This stores +/-1 if the index increases or decreases, used by non-selectable selection
-        if dwidget == 0:
+        elif dwidget == 0:
             if new_index < self._index:
                 dwidget = -1
             else:

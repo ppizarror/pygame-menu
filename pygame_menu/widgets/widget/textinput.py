@@ -678,10 +678,10 @@ class TextInput(Widget):
             return
 
         # Cursor surface does not exist
-        if self._cursor_surface is None:
+        elif self._cursor_surface is None:
             if self._rect.height == 0:  # If Menu has not been initialized this error can occur
                 return
-            if self._cursor_size is not None:
+            elif self._cursor_size is not None:
                 self._cursor_surface = make_surface(*self._cursor_size)
             else:
                 self._cursor_surface = make_surface(self._font_size / 20 + 1, self._rect.height - 2)
@@ -769,7 +769,6 @@ class TextInput(Widget):
         :return: String
         """
         string = self._get_input_string_filtered()
-
         if self._maxwidth != 0 and len(string) > self._maxwidth:
             text = string[self._renderbox[0]:self._renderbox[1]]
             if add_ellipsis:
@@ -778,8 +777,7 @@ class TextInput(Widget):
                 if self._ellipsis_left():
                     text = self._ellipsis + text
             return text
-        else:
-            return string
+        return string
 
     def _update_renderbox(
         self,
@@ -814,7 +812,7 @@ class TextInput(Widget):
             return
 
         # Move cursor to start
-        if start:
+        elif start:
             self._renderbox[0] = 0
             self._renderbox[1] = min(len_string, self._maxwidth)
             self._renderbox[2] = 0
@@ -825,7 +823,7 @@ class TextInput(Widget):
             return
 
         # If no overflow
-        if len_string <= self._maxwidth:
+        elif len_string <= self._maxwidth:
             if right < 0 and self._renderbox[2] == len_string:  # If del at the end of string
                 return
             if left < 0 and self._renderbox[2] == 0:  # If cursor is at beginning
@@ -849,7 +847,7 @@ class TextInput(Widget):
                 if right < 0 and self._renderbox[2] == self._maxwidth:
                     return
                 # If backspace at beginning of string
-                if left < 0 and self._renderbox[2] == 0:
+                elif left < 0 and self._renderbox[2] == 0:
                     return
 
                 # If user deletes something and it is in the end
@@ -1064,7 +1062,7 @@ class TextInput(Widget):
         """
         if self._password and text != '':
             raise ValueError('value cannot be set in password type')
-        if self._check_input_type(text):
+        elif self._check_input_type(text):
             default_text = str(text)
 
             # Filter valid chars
@@ -1120,7 +1118,7 @@ class TextInput(Widget):
 
         if string == '-':
             return True
-        if conv is None:
+        elif conv is None:
             return False
 
         try:
@@ -1479,7 +1477,7 @@ class TextInput(Widget):
             return False
 
         # Check if char is valid
-        if self._valid_chars is not None and keychar not in self._valid_chars:
+        elif self._valid_chars is not None and keychar not in self._valid_chars:
             if sounds:
                 self._sound.play_event_error()
             return False
