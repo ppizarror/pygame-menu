@@ -42,6 +42,43 @@ except (ModuleNotFoundError, ImportError):
         Pyperclip exception thrown by pyperclip.
         """
 
+
+def clipboard_copy(text: str) -> None:
+    """
+    Copy text into clipboard.
+
+    :param text: Text to copy
+    """
+    copy(text)
+
+
+def clipboard_paste() -> str:
+    """
+    Return copied text from clipboard.
+
+    :return: Copied text
+    """
+    return paste()
+
+
+def clipboard_warn(e: PyperclipException, op: str) -> None:
+    """
+    Generates a warning message if clipboard failed.
+
+    :param e: Exception
+    :param op: Operation that failed
+    """
+    paste_warn: str = f'{op} from clipboard failed ({e}). '
+    if os.getenv('XDG_SESSION_TYPE') == 'wayland':
+        paste_warn += 'Please install package "wl-clipboard"'
+    elif platform.system() == 'Linux':
+        paste_warn += 'On Linux, install "xclip" or "xsel"'
+    else:
+        paste_warn += (f'An unrecognized error happened. '
+                       f'Please create a new issue on {pygame_menu.__url_bug_tracker__}')
+    warn(paste_warn)
+
+
 CTRL_KMOD = (
     pygame.KMOD_CTRL, pygame.KMOD_CTRL | pygame.KMOD_CAPS,
     pygame.KMOD_LCTRL, pygame.KMOD_LCTRL | pygame.KMOD_CAPS,
@@ -295,7 +332,7 @@ class TextInput(Widget):
         self._ellipsis_size = 0
         self._renderbox = [0, 0, 0]  # Left/Right/Inner, int
 
-        # Things cursor:
+        # Cursor
         self._clock = pygame.time.Clock()
         self._cursor_color = cursor_color
         self._cursor_ms_counter = 0
@@ -321,8 +358,7 @@ class TextInput(Widget):
         self._selection_box = [0, 0]  # [from, to], int
         self._selection_color = cursor_selection_color
         self._selection_enabled = cursor_selection_enable
-        # Touch emulates a mouse, so this is used by both touch and mouse
-        self._selection_mouse_first_position = -1
+        self._selection_mouse_first_position = -1  # Touch emulates a mouse
         self._selection_position = [0, 0]  # x,y (float)
         self._selection_surface = None
 
@@ -904,6 +940,18 @@ class TextInput(Widget):
         if update_maxwidth:
             self._update_maxlimit_renderbox()
 
+    def _get_char_size(self, char) -> int:
+        """
+        Return the widget char size in pixels.
+
+        :param char: Char
+        :return: Char size in px
+        """
+        if char in self._keychar_size.keys():
+            return self._keychar_size[char]
+        self._keychar_size[char] = self._font_render_string(char).get_size()[0]
+        return self._keychar_size[char]
+
     def _update_maxlimit_renderbox(self) -> None:
         """
         Update renderbox based on how many characters have been written on input.
@@ -1232,18 +1280,22 @@ class TextInput(Widget):
 
         :return: ``True`` if copied
         """
-        if self._block_copy_paste:  # Prevents multiple executions of event
+        if not self._copy_paste_enabled:  # Not enabled
+            return False
+        elif self._block_copy_paste:  # Prevents multiple executions of event
             return False
         elif self._password:  # Password cannot be copied
             return False
 
         try:
             if self._selection_surface:  # If text is selected
-                copy(self._get_selected_text())
-            else:  # Copy all text
-                copy(self._input_string)
-        except PyperclipException:
-            pass
+                clipboard_copy(self._get_selected_text())
+            else:
+                clipboard_copy(self._input_string)  # Copy all text
+        except PyperclipException as e:
+            if self._verbose:
+                clipboard_warn(e, 'Copying')
+            return False
 
         self._block_copy_paste = True
         return True
@@ -1254,7 +1306,7 @@ class TextInput(Widget):
 
         :return: ``True`` if cut
         """
-        if not self._copy_paste_enabled:  # Ignore cut
+        if not self._copy_paste_enabled:  # Not enabled
             return False
 
         self._copy()  # This is a safe operation, all checks have been passed
@@ -1265,45 +1317,25 @@ class TextInput(Widget):
             return True
         return False
 
-    def _get_char_size(self, char) -> int:
-        """
-        Return the widget char size in pixels.
-
-        :param char: Char
-        :return: Char size in px
-        """
-        if char in self._keychar_size.keys():
-            return self._keychar_size[char]
-        self._keychar_size[char] = self._font_render_string(char).get_size()[0]
-        return self._keychar_size[char]
-
     def _paste(self) -> bool:
         """
         Paste text from clipboard.
 
         :return: ``True`` if pasted
         """
-        if self._block_copy_paste:  # Prevents multiple executions of event
+        if not self._copy_paste_enabled:  # Not enabled
             return False
-
-        # If text is selected
-        if self._selection_surface:
+        elif self._block_copy_paste:  # Prevents multiple executions of event
+            return False
+        elif self._selection_surface:  # If text is selected
             self._remove_selection()
 
         # Paste text in cursor
         try:
-            text: str = paste()
+            text: str = clipboard_paste()
         except PyperclipException as e:
             if self._verbose:
-                paste_warn: str = 'Pasting from clipboard failed. '
-                if os.getenv('XDG_SESSION_TYPE') == 'wayland':
-                    paste_warn += 'Please install package "wl-clipboard"'
-                elif platform.system() == 'Linux':
-                    paste_warn += 'On Linux, install "xclip" or "xsel"'
-                else:
-                    paste_warn += (f'An unrecognized error happened ({e}). '
-                                   f'Please create a new issue on {pygame_menu.__url_bug_tracker__}')
-                warn(paste_warn)
+                clipboard_warn(e, 'Pasting')
             return False
 
         text = text.strip()
@@ -1317,7 +1349,7 @@ class TextInput(Widget):
             return False
 
         # Remove invalid chars
-        if self._valid_chars is not None:
+        elif self._valid_chars is not None:
             valid_text = ''
             for ch in text:
                 if ch in self._valid_chars:
@@ -1497,7 +1529,7 @@ class TextInput(Widget):
             return False
 
         # If data is valid
-        if self._check_input_type(new_string):
+        elif self._check_input_type(new_string):
             l_key = len(keychar)
             if l_key > 0:
 
@@ -1642,8 +1674,7 @@ class TextInput(Widget):
                         break
 
                     # Command not found, returns
-                    else:
-                        break
+                    break
 
                 # User press alt+x get the unicode char from string
                 if (

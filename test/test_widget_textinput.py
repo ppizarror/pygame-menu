@@ -390,9 +390,9 @@ class TextInputWidgetTest(BaseTest):
                                                maxwidth=20,
                                                copy_paste_enable=False)
         textinput_nocopy.set_value('this cannot be copied')
-        textinput_nocopy._copy()
-        textinput_nocopy._paste()
-        textinput_nocopy._cut()
+        self.assertFalse(textinput_nocopy._copy())
+        self.assertFalse(textinput_nocopy._paste())
+        self.assertFalse(textinput_nocopy._cut())
         self.assertEqual(textinput_nocopy.get_value(), 'this cannot be copied')
 
         # Test copy/paste without block
@@ -419,6 +419,26 @@ class TextInputWidgetTest(BaseTest):
         # Copy password
         textinput_copy._password = True
         self.assertFalse(textinput_copy._copy())
+        textinput_copy._password = False
+
+        # Test copy/paste exception
+        import pygame_menu.widgets.widget.textinput as tinput
+
+        def invalid_clipboard(*args) -> None:
+            """
+            Tests invalid copying/pasting from clipboard.
+            """
+            raise tinput.PyperclipException(f'test: {args}')
+
+        original_copy = tinput.clipboard_copy
+        tinput.clipboard_copy = invalid_clipboard
+        self.assertFalse(textinput_copy._copy())
+        tinput.clipboard_copy = original_copy
+
+        original_paste = tinput.clipboard_paste
+        tinput.clipboard_paste = invalid_clipboard
+        self.assertFalse(textinput_copy._paste())
+        tinput.clipboard_paste = original_paste
 
     def test_overflow_removal(self) -> None:
         """
@@ -603,7 +623,8 @@ class TextInputWidgetTest(BaseTest):
         self.assertRaises(AssertionError, lambda: menu.add.color_input('title', color_type='rgb', input_separator='  '))
         self.assertRaises(AssertionError, lambda: menu.add.color_input('title', color_type='unknown'))
         for i in range(10):
-            self.assertRaises(AssertionError, lambda: menu.add.color_input('title', color_type='rgb', input_separator=str(i)))
+            self.assertRaises(AssertionError,
+                              lambda: menu.add.color_input('title', color_type='rgb', input_separator=str(i)))
 
         # Empty rgb
         widget = menu.add.color_input('color', color_type='rgb', input_separator=',')
@@ -680,7 +701,8 @@ class TextInputWidgetTest(BaseTest):
         # Assert invalid defaults rgb
         self.assertRaises(AssertionError, lambda: menu.add.color_input('title', color_type='rgb', default=(255, 255,)))
         self.assertRaises(AssertionError, lambda: menu.add.color_input('title', color_type='rgb', default=(255, 255)))
-        self.assertRaises(AssertionError, lambda: menu.add.color_input('title', color_type='rgb', default=(255, 255, 255, 255)))
+        self.assertRaises(AssertionError,
+                          lambda: menu.add.color_input('title', color_type='rgb', default=(255, 255, 255, 255)))
 
         # Assert hex widget
         widget = menu.add.color_input('title', color_type='hex')
@@ -751,7 +773,8 @@ class TextInputWidgetTest(BaseTest):
         self.assertEqual(widget.get_value(as_string=True), '#')
         widget.set_value('#ffffff')
         self.assertEqual(widget.get_width(), width)
-        widget.update(PygameEventUtils.key(pygame.K_BACKSPACE, keydown=True))  # remove the last character, now color is invalid
+        widget.update(
+            PygameEventUtils.key(pygame.K_BACKSPACE, keydown=True))  # remove the last character, now color is invalid
         self.assertEqual(widget.get_value(as_string=True), '#FFFFF')  # is upper
         widget.render()
         self.assertEqual(widget.get_width(), 200)
