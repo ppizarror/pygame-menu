@@ -154,7 +154,7 @@ class ScrollArea(Base):
         parent_scrollarea: Optional['ScrollArea'] = None,
         scrollarea_id: str = '',
         scrollbar_color: ColorInputType = (235, 235, 235),
-        scrollbar_cursor: CursorInputType = None, # type: ignore
+        scrollbar_cursor: CursorInputType = None,  # type: ignore
         scrollbar_slider_color: ColorInputType = (200, 200, 200),
         scrollbar_slider_hover_color: ColorInputType = (180, 180, 180),
         scrollbar_slider_pad: NumberType = 0,

@@ -1885,8 +1885,10 @@ class Menu(Base):
         """
         Return the scrollbar thickness from x-axis and y-axis (horizontal and vertical).
 
-        :return: Scrollbar thickness in px
+        :return: Scrollbar thickness in px (horizontal, vertical)
         """
+        if not hasattr(self, '_scrollarea'):  # Prevent issues if computing
+            return 0, 0
         return self._scrollarea.get_scrollbar_thickness(ORIENTATION_HORIZONTAL), \
             self._scrollarea.get_scrollbar_thickness(ORIENTATION_VERTICAL)
 
@@ -1908,7 +1910,7 @@ class Menu(Base):
         if widget:
             return int(self._widget_max_position[0] - self._widget_min_position[0])
         elif not inner:
-            bw = 0 if not border else 2 * self._scrollarea.get_border_size()[0]
+            bw: int = 0 if not border else 2 * self._scrollarea.get_border_size()[0]
             return int(self._width) + bw
         return int(self._width - self._get_scrollbar_thickness()[1])
 
@@ -3270,6 +3272,7 @@ class Menu(Base):
                 if self._top._prev is not None:
                     prev = self._top._prev
                     self._top._current = prev[1]  # This changes the "current" pointer
+                    # noinspection PyUnresolvedReferences
                     self._top._prev = prev[0]  # Eventually will reach None
                     i += 1
                     if i == total:
