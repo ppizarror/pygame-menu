@@ -74,8 +74,8 @@ class SolarSystemApp(object):
     surface: 'pygame.Surface'
 
     def __init__(self) -> None:
-        self.surface = create_example_window('Example - Dynamic Widget Update',
-                                             (640, 480), flags=pygame.NOFRAME)
+        self.surface = create_example_window('Example - Solar System',
+                                             (1280, 720), flags=pygame.NOFRAME)
 
         # Create app theme and menu
         theme = pygame_menu.Theme()
@@ -238,7 +238,7 @@ class SolarSystemApp(object):
             ),
         }
 
-        self.menu = pygame_menu.Menu('Solar System', 640, 480,
+        self.menu = pygame_menu.Menu('Solar System', *self.surface.get_size(),
                                      onclose=pygame_menu.events.EXIT,
                                      theme=theme, mouse_motion_selection=True)
 
@@ -250,7 +250,7 @@ class SolarSystemApp(object):
             planet.name = str(p).capitalize()
 
             # Create submenu for given planet
-            submenu = pygame_menu.Menu(planet.name + ' Info', 640, 480, theme=theme,
+            submenu = pygame_menu.Menu(planet.name + ' Info', *self.surface.get_size(), theme=theme,
                                        mouse_motion_selection=True, center_content=False)
             submenu_area_deco = submenu.get_scrollarea().get_decorator()
             submenu_area_deco.add_callable(self.draw_universe_background)
