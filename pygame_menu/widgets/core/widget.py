@@ -727,7 +727,7 @@ class Widget(Base):
 
         return updated
 
-    def set_cursor(self, cursor: CursorInputType) -> 'Widget': # type: ignore
+    def set_cursor(self, cursor: CursorInputType) -> 'Widget':  # type: ignore
         """
         Set the Widget cursor if user places the mouse over the Widget.
 

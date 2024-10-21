@@ -179,7 +179,8 @@ class LabelWidgetTest(BaseTest):
         Tests wordwrap.
         """
         menu = MenuUtils.generic_menu()
-        label = menu.add.label('lorem ipsum dolor sit amet this was very important nice a test is required', wordwrap=True)
+        label = menu.add.label('lorem ipsum dolor sit amet this was very important nice a test is required',
+                               wordwrap=True)
         self.assertEqual(label.get_width(), 586)
         self.assertRaises(AssertionError, lambda: label.get_overflow_lines())
         self.assertEqual(label._get_max_container_width(), 584)

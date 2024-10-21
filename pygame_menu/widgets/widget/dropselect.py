@@ -162,7 +162,7 @@ class DropSelect(Widget):
         placeholder: str = 'Select an option',
         placeholder_add_to_selection_box: bool = True,
         scrollbar_color: ColorInputType = (235, 235, 235),
-        scrollbar_cursor: CursorInputType = None, # type: ignore
+        scrollbar_cursor: CursorInputType = None,  # type: ignore
         scrollbar_shadow: bool = False,
         scrollbar_shadow_color: ColorInputType = (0, 0, 0),
         scrollbar_shadow_offset: int = 2,
@@ -185,7 +185,7 @@ class DropSelect(Widget):
         selection_infinite: bool = False,
         selection_option_border_color: ColorInputType = (220, 220, 220),
         selection_option_border_width: int = 1,
-        selection_option_cursor: CursorInputType = None, # type: ignore
+        selection_option_cursor: CursorInputType = None,  # type: ignore
         selection_option_font: Optional[FontType] = None,
         selection_option_font_color: ColorInputType = (0, 0, 0),
         selection_option_font_size: Optional[int] = None,

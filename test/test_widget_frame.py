@@ -1742,8 +1742,10 @@ class FrameWidgetTest(BaseTest):
         # self.assertRaises(ValueError, lambda: frame.get_title())
         frame._accepts_title = False
         self.assertRaises(pygame_menu.widgets.widget.frame._FrameDoNotAcceptTitle, lambda: frame.set_title('title'))
-        self.assertRaises(pygame_menu.widgets.widget.frame._FrameDoNotAcceptTitle, lambda: frame.add_title_button('none', None))
-        self.assertRaises(pygame_menu.widgets.widget.frame._FrameDoNotAcceptTitle, lambda: frame.add_title_generic_button(None))
+        self.assertRaises(pygame_menu.widgets.widget.frame._FrameDoNotAcceptTitle,
+                          lambda: frame.add_title_button('none', None))
+        self.assertRaises(pygame_menu.widgets.widget.frame._FrameDoNotAcceptTitle,
+                          lambda: frame.add_title_generic_button(None))
         self.assertRaises(pygame_menu.widgets.widget.frame._FrameDoNotAcceptTitle, lambda: frame.remove_title())
         frame._accepts_title = True
         self.assertEqual(frame.get_size(), (300, 200))
@@ -1922,7 +1924,8 @@ class FrameWidgetTest(BaseTest):
         self.assertEqual(frame.get_size(), (400, 400))
 
         # No title, scrollable to non-scrollable
-        frame2 = menu.add.frame_v(300, 200, background_color=(170, 170, 170), frame_id='f2', max_width=200, max_height=100)
+        frame2 = menu.add.frame_v(300, 200, background_color=(170, 170, 170), frame_id='f2', max_width=200,
+                                  max_height=100)
         self.assertEqual(frame2.get_size(), (204, 112))
         frame2.resize(400, 400)  # Now it's not scrollable
         self.assertFalse(frame2.is_scrollable)
@@ -1930,7 +1933,8 @@ class FrameWidgetTest(BaseTest):
         self.assertRaises(AssertionError, lambda: frame2.resize(400, 400, max_width=300, max_height=200))
 
         # No title, scrollable to scrollable
-        frame3 = menu.add.frame_v(300, 200, background_color=(170, 170, 170), frame_id='f3', max_width=200, max_height=100)
+        frame3 = menu.add.frame_v(300, 200, background_color=(170, 170, 170), frame_id='f3', max_width=200,
+                                  max_height=100)
         self.assertTrue(frame3.is_scrollable)
         frame3.resize(400, 400, max_width=300, max_height=300)
         self.assertEqual(frame3.get_size(), (320, 320))

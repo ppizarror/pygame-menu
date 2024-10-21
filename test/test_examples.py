@@ -120,7 +120,8 @@ class ExamplesTest(BaseTest):
         app = calculator.main(test=True)
 
         # Process events
-        app.process_events(PygameEventUtils.keydown([pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5, pygame.K_PLUS]))
+        app.process_events(
+            PygameEventUtils.keydown([pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5, pygame.K_PLUS]))
         self.assertEqual(app.prev, '12345')
         self.assertEqual(app.op, '+')
         app.process_events(PygameEventUtils.keydown([pygame.K_6, pygame.K_7, pygame.K_8, pygame.K_9, pygame.K_0]))
@@ -250,7 +251,8 @@ class ExamplesTest(BaseTest):
         self.assertFalse(app.menu._disable_draw)
         app.process_events(PygameEventUtils.keydown([pygame.K_p]), app.menu)
         self.assertTrue(app.menu._disable_draw)
-        app.process_events(PygameEventUtils.keydown([pygame.K_p, pygame.K_q, pygame.K_e, pygame.K_s, pygame.K_c]), app.menu)
+        app.process_events(PygameEventUtils.keydown([pygame.K_p, pygame.K_q, pygame.K_e, pygame.K_s, pygame.K_c]),
+                           app.menu)
         self.assertFalse(app.menu._disable_draw)
 
     def test_example_other_widget_positioning(self) -> None:

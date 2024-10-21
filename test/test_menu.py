@@ -1001,12 +1001,14 @@ class MenuTest(BaseTest):
         column_menu.disable()
         self.assertEqual(len(column_menu._widgets), 8)
         self.assertRaises(RuntimeError, lambda: column_menu.draw(surface))
-        self.assertRaises(pygame_menu.menu._MenuWidgetOverflow, lambda: column_menu.add.button('test', pygame_menu.events.BACK))
+        self.assertRaises(pygame_menu.menu._MenuWidgetOverflow,
+                          lambda: column_menu.add.button('test', pygame_menu.events.BACK))
         column_menu._update_widget_position()
         self.assertEqual(len(column_menu._widgets), 8)  # Widget not added
 
         # Test max width
-        self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(columns=3, rows=4, column_max_width=[500, 500, 500, 500]))
+        self.assertRaises(AssertionError,
+                          lambda: MenuUtils.generic_menu(columns=3, rows=4, column_max_width=[500, 500, 500, 500]))
         column_menu = MenuUtils.generic_menu(columns=3, rows=4, column_max_width=0)  # max menu width
         self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(columns=3, rows=4, column_max_width=-1))
         column_menu = MenuUtils.generic_menu(columns=3, rows=4, column_max_width=500)  # max menu width
@@ -1015,7 +1017,8 @@ class MenuTest(BaseTest):
             self.assertEqual(column_menu._column_max_width[i], 500)
 
         # Test min width
-        self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(columns=3, rows=4, column_min_width=[500, 500, 500, 500]))
+        self.assertRaises(AssertionError,
+                          lambda: MenuUtils.generic_menu(columns=3, rows=4, column_min_width=[500, 500, 500, 500]))
         column_menu = MenuUtils.generic_menu(columns=3, rows=4, column_min_width=100)  # max menu width
         self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(columns=3, rows=4, column_min_width=-100))
         column_menu = MenuUtils.generic_menu(columns=3, rows=4, column_min_width=500)  # max menu width
@@ -1031,7 +1034,8 @@ class MenuTest(BaseTest):
         self.assertRaises(AssertionError,
                           lambda: MenuUtils.generic_menu(columns=2, rows=4, column_min_width=[500, 500],
                                                          column_max_width=[500, 100]))
-        self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(rows=4, column_min_width=10, column_max_width=1))
+        self.assertRaises(AssertionError,
+                          lambda: MenuUtils.generic_menu(rows=4, column_min_width=10, column_max_width=1))
 
         self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(columns=-1, rows=4, column_max_width=500))
         self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(rows=0, column_max_width=500))
@@ -1255,7 +1259,8 @@ class MenuTest(BaseTest):
         """
         Test menu touchscreen behaviour.
         """
-        self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(title='mainmenu', touchscreen=False, touchscreen_motion_selection=True, ))
+        self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(title='mainmenu', touchscreen=False,
+                                                                         touchscreen_motion_selection=True, ))
         menu = MenuUtils.generic_menu(title='mainmenu', touchscreen=True, enabled=False, mouse_visible=False)
         self.assertRaises(RuntimeError, lambda: menu.mainloop(surface, bgfun=dummy_function))
 
@@ -1892,7 +1897,8 @@ class MenuTest(BaseTest):
         btn2 = menu.add.button('2')
         btn3 = menu.add.button('3')
 
-        def test_order(button: Tuple['pygame_menu.widgets.Button', ...], selected: 'pygame_menu.widgets.Button') -> None:
+        def test_order(button: Tuple['pygame_menu.widgets.Button', ...],
+                       selected: 'pygame_menu.widgets.Button') -> None:
             """
             Test button order.
             """
@@ -2597,7 +2603,8 @@ class MenuTest(BaseTest):
         menu_w, menu_h = w - left_surf_w, h
         # left_surface = main_surface.subsurface((0, 0, left_surf_w, left_surf_h))
         menu_surface = main_surface.subsurface((300, 0, menu_w, menu_h))
-        menu = MenuUtils.generic_menu(title='Subsurface', width=menu_w, height=menu_h, position_x=0, position_y=0, mouse_motion_selection=True, surface=menu_surface)
+        menu = MenuUtils.generic_menu(title='Subsurface', width=menu_w, height=menu_h, position_x=0, position_y=0,
+                                      mouse_motion_selection=True, surface=menu_surface)
         btn_click = [False]
 
         def btn() -> None:

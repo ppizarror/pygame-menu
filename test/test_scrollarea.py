@@ -38,8 +38,10 @@ class ScrollAreaTest(BaseTest):
         self.assertEqual(get_scrollbars_from_position(POSITION_NORTHEAST), (POSITION_NORTH, POSITION_EAST))
         self.assertEqual(get_scrollbars_from_position(POSITION_SOUTHEAST), (POSITION_SOUTH, POSITION_EAST))
         self.assertEqual(get_scrollbars_from_position(POSITION_SOUTHWEST), (POSITION_SOUTH, POSITION_WEST))
-        self.assertEqual(get_scrollbars_from_position(SCROLLAREA_POSITION_BOTH_HORIZONTAL), (POSITION_SOUTH, POSITION_NORTH))
-        self.assertEqual(get_scrollbars_from_position(SCROLLAREA_POSITION_BOTH_VERTICAL), (POSITION_EAST, POSITION_WEST))
+        self.assertEqual(get_scrollbars_from_position(SCROLLAREA_POSITION_BOTH_HORIZONTAL),
+                         (POSITION_SOUTH, POSITION_NORTH))
+        self.assertEqual(get_scrollbars_from_position(SCROLLAREA_POSITION_BOTH_VERTICAL),
+                         (POSITION_EAST, POSITION_WEST))
         self.assertEqual(get_scrollbars_from_position(SCROLLAREA_POSITION_NONE), '')
 
         # Invalid

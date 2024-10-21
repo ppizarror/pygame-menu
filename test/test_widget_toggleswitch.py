@@ -131,7 +131,8 @@ class ToggleSwitchWidgetTest(BaseTest):
         self.assertIsNone(switch._max_height[0])
 
         # Assert switch values
-        self.assertRaises(ValueError, lambda: menu.add.toggle_switch('toggle', 'false', onchange=onchange, infinite=False))
+        self.assertRaises(ValueError,
+                          lambda: menu.add.toggle_switch('toggle', 'false', onchange=onchange, infinite=False))
 
         # Test single click toggle
         switch_single = menu.add.toggle_switch('toggle', False, onchange=onchange)

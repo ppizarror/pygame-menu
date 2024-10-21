@@ -104,7 +104,7 @@ def assert_color(
     return color
 
 
-def assert_cursor(cursor: CursorInputType) -> None: # type: ignore
+def assert_cursor(cursor: CursorInputType) -> None:  # type: ignore
     """
     Assert a given cursor is valid.
 
@@ -319,7 +319,7 @@ def format_color(
     return c.r, c.g, c.b, c.a
 
 
-def get_cursor() -> CursorInputType: # type: ignore
+def get_cursor() -> CursorInputType:  # type: ignore
     """
     Return the pygame cursor object.
 
@@ -385,7 +385,7 @@ def load_pygame_image_file(image_path: str, **kwargs) -> 'pygame.Surface':
             # Check if Pillow exists
             try:
                 # noinspection PyPackageRequirements,PyUnresolvedReferences
-                from PIL import Image, UnidentifiedImageError # type: ignore
+                from PIL import Image, UnidentifiedImageError  # type: ignore
 
                 pil_invalid_exception = UnidentifiedImageError
                 img_pil = Image.open(image_path)
@@ -582,7 +582,7 @@ def print_menu_widget_structure(
     close_frames(0)
 
 
-def set_pygame_cursor(cursor: CursorInputType) -> None: # type: ignore
+def set_pygame_cursor(cursor: CursorInputType) -> None:  # type: ignore
     """
     Set pygame cursor.
 
