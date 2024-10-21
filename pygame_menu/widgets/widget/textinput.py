@@ -12,6 +12,8 @@ __all__ = [
 ]
 
 import math
+import os
+import platform
 import pygame
 import pygame_menu
 import pygame_menu.controls as ctrl
@@ -503,7 +505,7 @@ class TextInput(Widget):
         if not self._selection_enabled:
             return
 
-        if force or self._selection_active and (
+        elif force or self._selection_active and (
             self._last_selection_render[0] != self._selection_box[0] or
             self._last_selection_render[1] != self._selection_box[1]
         ):
@@ -768,7 +770,7 @@ class TextInput(Widget):
         :param add_ellipsis: Adds ellipsis text
         :return: String
         """
-        string = self._get_input_string_filtered()
+        string: str = self._get_input_string_filtered()
         if self._maxwidth != 0 and len(string) > self._maxwidth:
             text = string[self._renderbox[0]:self._renderbox[1]]
             if add_ellipsis:
@@ -826,7 +828,7 @@ class TextInput(Widget):
         elif len_string <= self._maxwidth:
             if right < 0 and self._renderbox[2] == len_string:  # If del at the end of string
                 return
-            if left < 0 and self._renderbox[2] == 0:  # If cursor is at beginning
+            elif left < 0 and self._renderbox[2] == 0:  # If cursor is at beginning
                 return
             self._renderbox[0] = 0  # To catch unexpected errors
             if addition:  # left/right are ignored
@@ -1034,6 +1036,7 @@ class TextInput(Widget):
             topleft, _ = rect.topleft
             self._update_cursor_mouse(mouse_x - topleft)
             return True  # Prevents double click
+        return False
 
     def _check_touch_collide_input(self, pos: Tuple2NumberType) -> bool:
         """
@@ -1053,6 +1056,7 @@ class TextInput(Widget):
             topleft, _ = rect.topleft
             self._update_cursor_mouse(touch_x - topleft)
             return True  # Prevents double click
+        return False
 
     def set_value(self, text: Any) -> None:
         """
@@ -1107,7 +1111,7 @@ class TextInput(Widget):
         """
         if string == '':  # Empty is valid
             return True
-        if self._input_type == INPUT_TEXT:
+        elif self._input_type == INPUT_TEXT:
             return True
 
         conv = None
@@ -1230,7 +1234,7 @@ class TextInput(Widget):
         """
         if self._block_copy_paste:  # Prevents multiple executions of event
             return False
-        if self._password:  # Password cannot be copied
+        elif self._password:  # Password cannot be copied
             return False
 
         try:
@@ -1288,8 +1292,18 @@ class TextInput(Widget):
 
         # Paste text in cursor
         try:
-            text = paste()
-        except PyperclipException:
+            text: str = paste()
+        except PyperclipException as e:
+            if self._verbose:
+                paste_warn: str = 'Pasting from clipboard failed. '
+                if os.getenv('XDG_SESSION_TYPE') == 'wayland':
+                    paste_warn += 'Please install package "wl-clipboard"'
+                elif platform.system() == 'Linux':
+                    paste_warn += 'On Linux, install "xclip" or "xsel"'
+                else:
+                    paste_warn += (f'An unrecognized error happened ({e}). '
+                                   f'Please create a new issue on {pygame_menu.__url_bug_tracker__}')
+                warn(paste_warn)
             return False
 
         text = text.strip()
@@ -1297,7 +1311,7 @@ class TextInput(Widget):
             text = text.replace(i, '')
 
         # Delete escape chars
-        escapes = ''.join([chr(char) for char in range(1, 32)])
+        escapes: str = ''.join([chr(char) for char in range(1, 32)])
         text = text.translate(escapes)
         if text == '':
             return False
@@ -1313,7 +1327,7 @@ class TextInput(Widget):
                 return False
 
         # Cut string (if limit does exist)
-        text_end = len(text)
+        text_end: int = len(text)
         if self._maxchar != 0:
             char_limit = self._maxchar - len(self._input_string)
             text_end = min(char_limit, text_end)
@@ -1321,9 +1335,9 @@ class TextInput(Widget):
                 self._sound.play_event_error()
                 return False
 
-        new_string = self._input_string[0:self._cursor_position] \
-                     + text[0:text_end] \
-                     + self._input_string[self._cursor_position:len(self._input_string)]
+        new_string: str = self._input_string[0:self._cursor_position] \
+                          + text[0:text_end] \
+                          + self._input_string[self._cursor_position:len(self._input_string)]
 
         # If string is valid
         if self._check_input_type(new_string):
@@ -1367,7 +1381,7 @@ class TextInput(Widget):
         """
         if self._history_index == 0:  # There's no back history
             return False
-        if self._history_index == len(self._history):  # If the actual is the last
+        elif self._history_index == len(self._history):  # If the actual is the last
             self._history_index -= 1
         self._history_index = max(0, self._history_index - 1)
         self._update_from_history()
@@ -1390,7 +1404,7 @@ class TextInput(Widget):
         Remove text from selection.
         """
         removed = self._selection_box[1] - self._selection_box[0]
-        left = False
+        left: bool = False
         if self._selection_box[0] == self._cursor_position:
             left = True
 
