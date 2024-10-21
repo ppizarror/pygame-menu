@@ -791,8 +791,7 @@ class BaseImage(Base):
             return rect.midbottom
         elif self._drawing_position == POSITION_SOUTHEAST:
             return rect.bottomright
-        else:
-            raise ValueError('unknown drawing position')
+        raise ValueError(f'unknown drawing position "{self._drawing_position}"')
 
     def draw(
         self,

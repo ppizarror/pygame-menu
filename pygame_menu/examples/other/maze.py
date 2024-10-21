@@ -722,7 +722,7 @@ class MazeApp(object):
             for wall_neighbour, ntype in wall_neighbours:
                 if wall_neighbour == (start_point or self._end_point):
                     continue
-                if mazearray[wall_neighbour[0]][wall_neighbour[1]].nodetype != 'wall':
+                elif mazearray[wall_neighbour[0]][wall_neighbour[1]].nodetype != 'wall':
                     pcount += 1
                 else:
                     neighbouring_walls.add(wall_neighbour)

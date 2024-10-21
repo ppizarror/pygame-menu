@@ -259,8 +259,7 @@ class ScrollBar(Widget):
         """
         if self._orientation == 0:
             return ORIENTATION_HORIZONTAL
-        else:
-            return ORIENTATION_VERTICAL
+        return ORIENTATION_VERTICAL
 
     def get_page_step(self) -> int:
         """
@@ -588,7 +587,7 @@ class ScrollBar(Widget):
                     self._last_mouse_pos = (-1, -1)
                     if lmx == -1 or lmy == -1:
                         continue
-                    if self.scrolling:
+                    elif self.scrolling:
                         if self._orientation == 0:  # Horizontal
                             self._scroll(rect, mx - lmx)
                         else:

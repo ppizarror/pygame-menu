@@ -692,9 +692,9 @@ class Widget(Base):
         if event.type == pygame.ACTIVEEVENT and hasattr(event, 'gain'):
             if event.gain == 1:
                 return False
-            else:  # Mouse out from window
-                check_widget_mouseleave(force=True)
-                return True
+            # Mouse is outside window
+            check_widget_mouseleave(force=True)
+            return True
 
         if rect is None:
             rect = self._mouseover_check_rect()
@@ -770,14 +770,14 @@ class Widget(Base):
         """
         if not check_frame:
             return self._visible
-        if not self._visible:
+        elif not self._visible:
             return False
         frame = self._frame
         if frame is not None:
             while True:
                 if frame is None:
                     break
-                if not frame._visible:
+                elif not frame._visible:
                     return False
                 frame = frame._frame
         return True
@@ -1047,7 +1047,7 @@ class Widget(Base):
 
         if bg is None:
             return
-        if rect is None:
+        elif rect is None:
             rect = self.get_rect(inflate=self._get_background_inflate())
 
         # Create the background surface if none, if the rect changed, or if the background color changed
@@ -1256,7 +1256,7 @@ class Widget(Base):
         self.scroll_to_widget(scroll_parent=False)
         if self.readonly:
             return
-        if self._onreturn:
+        elif self._onreturn:
             args = list(args) + list(self._args)
             try:
                 args.insert(0, self.get_value())
@@ -1290,7 +1290,7 @@ class Widget(Base):
         self.scroll_to_widget(scroll_parent=False)
         if self.readonly:
             return val
-        if self._onchange:
+        elif self._onchange:
             args = list(args) + list(self._args)
             try:
                 args.insert(0, self.get_value())
@@ -1506,7 +1506,7 @@ class Widget(Base):
         """
         if self.has_attribute('ignore_scroll_to_widget'):
             return self
-        if self._frame is not None and self._frame.is_scrollable and self._frame.get_scrollarea() is not None:
+        elif self._frame is not None and self._frame.is_scrollable and self._frame.get_scrollarea() is not None:
             self._frame.get_scrollarea().scroll_to_rect(self.get_frame().get_rect(), margin, scroll_parent)
         if self._scrollarea is not None:
             rect = self.get_rect()
@@ -1771,7 +1771,7 @@ class Widget(Base):
             if self._selected:
                 return self._font_readonly_selected_color
             return self._font_readonly_color
-        if self._selected and check_selection and self._selection_effect.widget_apply_font_color:
+        elif self._selected and check_selection and self._selection_effect.widget_apply_font_color:
             return self._font_selected_color
         return self._font_color
 
@@ -2140,7 +2140,7 @@ class Widget(Base):
         """
         if not self._verbose:
             return
-        if self._scale[0] and scale:
+        elif self._scale[0] and scale:
             warn('widget already has a scaling factor applied. Scaling has '
                  'been disabled')
         if self._max_width[0] is not None and maxwidth:

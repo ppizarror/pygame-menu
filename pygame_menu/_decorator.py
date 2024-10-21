@@ -665,8 +665,7 @@ class Decorator(Base):
         assert isinstance(pass_args, bool)
         if pass_args:
             return self._add_decor(DECORATION_CALLABLE, prev, fun)
-        else:
-            return self._add_decor(DECORATION_CALLABLE_NO_ARGS, prev, fun)
+        return self._add_decor(DECORATION_CALLABLE_NO_ARGS, prev, fun)
 
     def add_textured_polygon(
         self,
@@ -974,7 +973,7 @@ class Decorator(Base):
             if not self._decor_enabled[decoid]:
                 continue
 
-            if dtype == DECORATION_POLYGON:
+            elif dtype == DECORATION_POLYGON:
                 points, color, filled, width, gfx, kwargs = data
                 points = self._update_pos_list(rect, decoid, points, **kwargs)
                 if gfx:

@@ -67,8 +67,7 @@ def get_scrollbars_from_position(
         return ''
     elif position == POSITION_CENTER:
         raise ValueError('cannot init scrollbars from center position')
-    else:
-        raise ValueError('unknown ScrollArea position')
+    raise ValueError('unknown ScrollArea position')
 
 
 DEFAULT_SCROLLBARS = get_scrollbars_from_position(POSITION_SOUTHEAST)
@@ -504,7 +503,7 @@ class ScrollArea(Base):
         for sbar in self._scrollbars:
             if not sbar.is_visible():
                 continue
-            if sbar.get_orientation() == ORIENTATION_HORIZONTAL:
+            elif sbar.get_orientation() == ORIENTATION_HORIZONTAL:
                 if self.get_hidden_width():
                     sbar.draw(surface)
             else:
@@ -592,10 +591,10 @@ class ScrollArea(Base):
         """
         if isinstance(self._border_color, pygame_menu.BaseImage):  # Image
             return self._border_tiles_size
-        else:  # Color
-            if self._border_color is None:
-                return 0, 0
-            return self._border_width, self._border_width
+        # Color
+        if self._border_color is None:
+            return 0, 0
+        return self._border_width, self._border_width
 
     def get_hidden_width(self) -> int:
         """
@@ -629,7 +628,7 @@ class ScrollArea(Base):
         for sbar in self._scrollbars:
             if not sbar.is_visible():
                 continue
-            if sbar.get_orientation() == ORIENTATION_HORIZONTAL:
+            elif sbar.get_orientation() == ORIENTATION_HORIZONTAL:
                 if self.get_hidden_width():
                     offsets[0] = sbar.get_value()  # Cannot add as each scrollbar can only affect 1 axis only
             else:
@@ -671,6 +670,7 @@ class ScrollArea(Base):
             return int(self._rect.height - self._view_rect.height)
         elif orientation == ORIENTATION_VERTICAL:
             return int(self._rect.width - self._view_rect.width)
+        return 0
 
     def get_world_rect(self, absolute: bool = False) -> 'pygame.Rect':
         """
@@ -900,7 +900,7 @@ class ScrollArea(Base):
         for sbar in self._scrollbars:
             if not sbar.is_visible():
                 continue
-            if sbar.get_orientation() == orientation:
+            elif sbar.get_orientation() == orientation:
                 return sbar.get_value_percentage()
         return -1
 
@@ -917,7 +917,7 @@ class ScrollArea(Base):
         for sbar in self._scrollbars:
             if not sbar.is_visible():
                 continue
-            if sbar.get_orientation() == orientation:
+            elif sbar.get_orientation() == orientation:
                 v_min, v_max = sbar.get_minmax()
                 delta = v_max - v_min
                 new_value = int(min(v_min + delta * float(value), v_max))
@@ -967,7 +967,7 @@ class ScrollArea(Base):
         for sbar in self._scrollbars:
             if not sbar.is_visible():
                 continue
-            if sbar.get_orientation() == ORIENTATION_HORIZONTAL and self.get_hidden_width():
+            elif sbar.get_orientation() == ORIENTATION_HORIZONTAL and self.get_hidden_width():
                 shortest_move = min(real_rect.left - view_rect.left, real_rect.right - view_rect.right, key=abs)
                 value = min(sbar.get_maximum(), sbar.get_value() + shortest_move)
                 value = max(sbar.get_minimum(), value)
@@ -1218,7 +1218,7 @@ class ScrollArea(Base):
         for sbar in self._scrollbars:
             if not sbar.is_visible():
                 continue
-            if self.get_hidden_width() and not updated[0] and sbar.get_orientation() == ORIENTATION_HORIZONTAL:
+            elif self.get_hidden_width() and not updated[0] and sbar.get_orientation() == ORIENTATION_HORIZONTAL:
                 updated[0] = sbar.update(events)
             elif self.get_hidden_height() and not updated[1] and sbar.get_orientation() == ORIENTATION_VERTICAL:
                 updated[1] = sbar.update(events)

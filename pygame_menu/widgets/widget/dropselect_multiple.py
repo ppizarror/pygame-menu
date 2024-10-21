@@ -312,7 +312,7 @@ class DropSelectMultiple(DropSelect):
             return self._placeholder
 
         # Apply selected format
-        if self._selection_placeholder_format == DROPSELECT_MULTIPLE_SFORMAT_TOTAL:
+        elif self._selection_placeholder_format == DROPSELECT_MULTIPLE_SFORMAT_TOTAL:
             return self._placeholder_selected.format(len(self._selected_indices))
 
         list_items = self._get_selected_items_list_str()
@@ -337,8 +337,7 @@ class DropSelectMultiple(DropSelect):
                 f'string (List[str]=>str), not {type(o)} type ({o} returned)'
             return self._placeholder_selected.format(o)
 
-        else:
-            raise ValueError('invalid selection placeholder format type')
+        raise ValueError('invalid selection placeholder format type')
 
     def _get_selected_items_list_str(self) -> List[str]:
         """
@@ -406,7 +405,7 @@ class DropSelectMultiple(DropSelect):
         """
         if self._index == -1:
             return
-        if self._index in self._selected_indices:
+        elif self._index in self._selected_indices:
             self._selected_indices.remove(self._index)
         else:
             if self._max_selected == 0 or len(self._selected_indices) < self._max_selected:

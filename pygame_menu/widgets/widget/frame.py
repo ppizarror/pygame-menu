@@ -915,8 +915,7 @@ class Frame(Widget):
             return int((self._width - w) / 2)
         elif a == ALIGN_RIGHT:
             return self._width - w
-        else:  # Alignment left
-            return 0
+        return 0  # Alignment left
 
     def _get_vt(self, widget: 'Widget', v: str) -> int:
         """
@@ -937,8 +936,7 @@ class Frame(Widget):
             return int((self._height - h) / 2)
         elif v == POSITION_SOUTH:
             return self._height - h
-        else:  # Position north
-            return 0
+        return 0  # Position north
 
     def _update_position_horizontal(self) -> None:
         """
@@ -952,7 +950,7 @@ class Frame(Widget):
             align, v_pos = self._widgets_props[w.get_id()]
             if not w.is_visible(check_frame=False) or w.is_floating():
                 continue
-            if align == ALIGN_CENTER:
+            elif align == ALIGN_CENTER:
                 w_center += w.get_width() + w.get_margin()[0]
                 continue
             elif align == ALIGN_LEFT:
@@ -982,7 +980,7 @@ class Frame(Widget):
             align, v_pos = self._widgets_props[w.get_id()]
             if not w.is_visible(check_frame=False) or w.is_floating():
                 continue
-            if align == ALIGN_CENTER:
+            elif align == ALIGN_CENTER:
                 x_center += w.get_margin()[0]
                 self._pos[w.get_id()] = (x_center, self._get_vt(w, v_pos) + w.get_margin()[1])
                 x_center += w.get_width()
@@ -998,7 +996,7 @@ class Frame(Widget):
             align, v_pos = self._widgets_props[w.get_id()]
             if not w.is_visible(check_frame=False) or w.is_floating():
                 continue
-            if v_pos == POSITION_CENTER:
+            elif v_pos == POSITION_CENTER:
                 w_center += w.get_height() + w.get_margin()[1]
                 continue
             elif v_pos == POSITION_NORTH:
@@ -1029,7 +1027,7 @@ class Frame(Widget):
             align, v_pos = self._widgets_props[w.get_id()]
             if not w.is_visible(check_frame=False) or w.is_floating():
                 continue
-            if v_pos == POSITION_CENTER:
+            elif v_pos == POSITION_CENTER:
                 y_center += w.get_margin()[1]
                 self._pos[w.get_id()] = (self._get_ht(w, align) + w.get_margin()[0], y_center)
                 y_center += w.get_height()
@@ -1055,7 +1053,7 @@ class Frame(Widget):
             if not widget.is_visible(check_frame=False):
                 widget.set_position(0, 0)
                 continue
-            if widget.is_floating():
+            elif widget.is_floating():
                 tx = 0
                 ty = 0
             else:

@@ -417,7 +417,7 @@ class ColorInput(TextInput):
                     if self._ignores_keyboard_nonphysical() and not check_key_pressed_valid(event):
                         continue
 
-                    if disable_remove_separator and len(input_str) > 0 and len(input_str) > cursor_pos and (
+                    elif disable_remove_separator and len(input_str) > 0 and len(input_str) > cursor_pos and (
                         f'{self._separator}{self._separator}' not in input_str or
                         input_str[cursor_pos] == self._separator and len(input_str) == cursor_pos + 1
                     ):
@@ -478,9 +478,9 @@ class ColorInput(TextInput):
                                 if int(num) > 255:  # Number exceeds 25X
                                     return False
                                 # User adds 0 at left, example: 12 -> 012
-                                if num != str(int(num)) and key == '0':
+                                elif num != str(int(num)) and key == '0':
                                     return False
-                                if len(num) > 3:  # Number like 0XXX
+                                elif len(num) > 3:  # Number like 0XXX
                                     return False
 
         elif self._color_type == COLORINPUT_TYPE_HEX:
@@ -494,7 +494,7 @@ class ColorInput(TextInput):
                         continue
 
                     # Backspace button, delete text from right
-                    if self._ctrl.back(event, self):
+                    elif self._ctrl.back(event, self):
                         if cursor_pos == 1:
                             return True
 
@@ -509,7 +509,7 @@ class ColorInput(TextInput):
                     if key in self._valid_chars:
                         if key == '#':
                             return True
-                        if cursor_pos == 0:
+                        elif cursor_pos == 0:
                             return True
 
         # Update

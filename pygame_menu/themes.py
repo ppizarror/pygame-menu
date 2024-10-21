@@ -744,7 +744,7 @@ class Theme(object):
         """
         if isinstance(color, BaseImage):
             return color
-        if color is None and none:
+        elif color is None and none:
             return color
         color = format_color(color)
         if isinstance(color, VectorInstance):

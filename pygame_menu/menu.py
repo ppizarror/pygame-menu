@@ -1981,8 +1981,8 @@ class Menu(Base):
         """
         if not self._render_enabled:
             return False  # Modify using Menu.disable_render() and Menu.enable_render()
-        t0 = time.time()
-        changed = False
+        t0: float = time.time()
+        changed: bool = False
 
         if self._widgets_surface_need_update:
             self._widgets_surface = None
@@ -2370,8 +2370,7 @@ class Menu(Base):
             _, _, i = first_widget.get_col_row_index()
             return self._select(i, pos, SELECT_KEY, apply_sound)
 
-        else:
-            return _default()
+        return _default()
 
     def _handle_joy_event(self, apply_sound: bool = False) -> bool:
         """
@@ -2717,8 +2716,8 @@ class Menu(Base):
                             widget = self._current._widgets[index]
                             if isinstance(widget, Frame):  # Frame does not accept click
                                 continue
-                            if (widget.is_selectable and widget.is_visible() and
-                                widget.get_scrollarea().collide(widget, event)):
+                            elif (widget.is_selectable and widget.is_visible() and
+                                  widget.get_scrollarea().collide(widget, event)):
                                 sel = self._current._select(index, 1, SELECT_MOUSE_BUTTON_DOWN, True)
                                 break
 
@@ -3344,7 +3343,7 @@ class Menu(Base):
             return False
 
         # If new widget is not selectable or visible
-        if not new_widget.is_selectable or not new_widget.is_visible():
+        elif not new_widget.is_selectable or not new_widget.is_visible():
 
             # If it is a frame, select the first selectable object
             if isinstance(new_widget, Frame):
@@ -3373,8 +3372,7 @@ class Menu(Base):
                                     apply_sound, **kwargs)
 
             # No selectable options, quit
-            else:
-                return False
+            return False
 
         # Selecting widgets forces rendering
         old_widget.select(False)

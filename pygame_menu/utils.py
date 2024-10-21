@@ -484,8 +484,7 @@ def parse_padding(padding: PaddingType) -> Tuple4IntType:
             return int(padding[0]), int(padding[1]), int(padding[0]), int(padding[1])
         elif len(padding) == 3:
             return int(padding[0]), int(padding[1]), int(padding[2]), int(padding[1])
-        else:
-            return int(padding[0]), int(padding[1]), int(padding[2]), int(padding[3])
+        return int(padding[0]), int(padding[1]), int(padding[2]), int(padding[3])
 
 
 def print_menu_widget_structure(

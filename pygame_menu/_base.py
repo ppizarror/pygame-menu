@@ -51,7 +51,7 @@ class Base(object):
             'class id and id __repr__ cannot be True at the same time'
         if self._class_id__repr__:
             return self.get_class_id()
-        if self._id__repr__:
+        elif self._id__repr__:
             return sup_repr.replace(' object at ', f'["{self.get_id()}"] object at ')
         return sup_repr
 
