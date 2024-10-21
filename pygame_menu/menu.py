@@ -1713,29 +1713,27 @@ class Menu(Base):
         if onclose is None or onclose == _events.NONE:
             return False
 
-        else:
-            # Closing disables the Menu
-            self.disable()
+        # Closing disables the Menu
+        self.disable()
 
-            # If action is an event
-            if _events.is_event(onclose):
+        # If action is an event
+        if _events.is_event(onclose):
+            # Sort through events
+            if onclose == _events.BACK:
+                self.reset(1)
+            elif onclose == _events.CLOSE:
+                pass
+            elif onclose == _events.EXIT:
+                self._exit()
+            elif onclose == _events.RESET:
+                self.full_reset()
 
-                # Sort through events
-                if onclose == _events.BACK:
-                    self.reset(1)
-                elif onclose == _events.CLOSE:
-                    pass
-                elif onclose == _events.EXIT:
-                    self._exit()
-                elif onclose == _events.RESET:
-                    self.full_reset()
-
-            # If action is callable (function)
-            elif callable(onclose):
-                try:
-                    onclose(self)
-                except TypeError:
-                    onclose()
+        # If action is callable (function)
+        elif callable(onclose):
+            try:
+                onclose(self)
+            except TypeError:
+                onclose()
 
         return True
 
