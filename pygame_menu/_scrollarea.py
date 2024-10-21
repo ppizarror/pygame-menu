@@ -326,7 +326,8 @@ class ScrollArea(Base):
             return
 
         # Make surface
-        self._bg_surface = make_surface(width=self._rect.width + self._extend_x, height=self._rect.height + self._extend_y)
+        self._bg_surface = make_surface(width=self._rect.width + self._extend_x,
+                                        height=self._rect.height + self._extend_y)
         rect = self._bg_surface.get_rect()
         if self._area_color is not None:
             if isinstance(self._area_color, pygame_menu.BaseImage):
@@ -940,7 +941,8 @@ class ScrollArea(Base):
         :return: Scrollarea scrolled to rect. If ``False`` the rect was already inside the visible area
         """
         # Check if visible
-        if self.to_real_position(rect, visible=True).height == 0 and self._parent_scrollarea is not None and scroll_parent:
+        if (self.to_real_position(rect, visible=True).height == 0 and
+            self._parent_scrollarea is not None and scroll_parent):
             self._parent_scrollarea.scroll_to_rect(self._parent_scrollarea.get_rect(), margin, scroll_parent)
             self._parent_scrollarea.scroll_to_rect(self.get_rect(), margin, scroll_parent)
 

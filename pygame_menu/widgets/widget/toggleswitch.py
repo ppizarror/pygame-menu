@@ -422,8 +422,9 @@ class ToggleSwitch(Widget):
 
             # Press enter
             elif (
-                keydown and self._ctrl.apply(event, self) and self._total_states == 2 or
-                event.type == pygame.JOYBUTTONDOWN and self._joystick_enabled and self._ctrl.joy_select(event, self) and self._total_states == 2
+                (keydown and self._ctrl.apply(event, self) and self._total_states == 2) or
+                (event.type == pygame.JOYBUTTONDOWN and self._joystick_enabled and
+                 self._ctrl.joy_select(event, self) and self._total_states == 2)
             ):
                 self._sound.play_key_add()
                 self._state = int(not self._state)
@@ -601,12 +602,13 @@ class ToggleSwitchManager(AbstractWidgetManager, ABC):
 
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
+        default_state_text_fcolor = (self._theme.widget_box_background_color, self._theme.widget_box_background_color)
 
         infinite = kwargs.pop('infinite', False)
         slider_color = kwargs.pop('slider_color', self._theme.widget_box_background_color)
         slider_thickness = kwargs.pop('slider_thickness', self._theme.scrollbar_thick)
         state_color = kwargs.pop('state_color', ((178, 178, 178), (117, 185, 54)))
-        state_text_font_color = kwargs.pop('state_text_font_color', (self._theme.widget_box_background_color, self._theme.widget_box_background_color))
+        state_text_font_color = kwargs.pop('state_text_font_color', default_state_text_fcolor)
         state_text_font_size = kwargs.pop('state_text_font_size', None)
         switch_border_color = kwargs.pop('switch_border_color', self._theme.widget_box_border_color)
         switch_border_width = kwargs.pop('switch_border_width', self._theme.widget_box_border_width)

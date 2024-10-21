@@ -59,7 +59,8 @@ class Decorator(Base):
     :param decorator_id: ID of the decorator
     :param verbose: Enable/disable verbose mode (warnings/errors)
     """
-    _coord_cache: Dict[str, Tuple[int, int, Union[Tuple[Tuple2NumberType, ...], Tuple2NumberType]]]  # centerx, centery, coords
+    _coord_cache: Dict[
+        str, Tuple[int, int, Union[Tuple[Tuple2NumberType, ...], Tuple2NumberType]]]  # centerx, centery, coords
     _cache_last_status: Dict[str, Tuple[int, int, int, int, int, int]]
     _cache_needs_update: Dict[str, bool]
     _cache_surface: Dict[str, Optional['pygame.Surface']]

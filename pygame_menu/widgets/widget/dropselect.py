@@ -333,7 +333,8 @@ class DropSelect(Widget):
             self._selection_option_font_style['name'] = self._font_name
         if self._selection_option_font_style['size'] is None:
             self._selection_option_font_style['size'] = int(self._font_size)
-        self._option_font = get_font(self._selection_option_font_style['name'], self._selection_option_font_style['size'])
+        self._option_font = get_font(self._selection_option_font_style['name'],
+                                     self._selection_option_font_style['size'])
         if self._selection_box_width == 0:
             f = self._render_option_string(self._placeholder)
             h = self._render_string(self._title, self.get_font_color_status()).get_height()
@@ -456,7 +457,8 @@ class DropSelect(Widget):
             self._drop_frame.set_menu(None)
 
         # Create frame
-        self._drop_frame = Frame(max_width, max(total_height, 1), ORIENTATION_VERTICAL, frame_id=self._id + '+frame-' + uuid4(short=True))
+        self._drop_frame = Frame(max_width, max(total_height, 1), ORIENTATION_VERTICAL,
+                                 frame_id=self._id + '+frame-' + uuid4(short=True))
         self._drop_frame._accepts_title = False
         self._drop_frame._menu_can_be_none_pack = True
         self._drop_frame.hide()
@@ -1387,7 +1389,8 @@ class DropSelectManager(AbstractWidgetManager, ABC):
         scrollbar_shadow_position = kwargs.pop('scrollbar_shadow_position', self._theme.scrollbar_shadow_position)
         scrollbar_shadow = kwargs.pop('scrollbar_shadow', self._theme.scrollbar_shadow)
         scrollbar_slider_color = kwargs.pop('scrollbar_slider_color', self._theme.scrollbar_slider_color)
-        scrollbar_slider_hover_color = kwargs.pop('scrollbar_slider_hover_color', self._theme.scrollbar_slider_hover_color)
+        scrollbar_slider_hover_color = kwargs.pop('scrollbar_slider_hover_color',
+                                                  self._theme.scrollbar_slider_hover_color)
         scrollbar_slider_pad = kwargs.pop('scrollbar_slider_pad', self._theme.scrollbar_slider_pad)
         scrollbar_thick = kwargs.pop('scrollbar_thick', self._theme.scrollbar_thick)
         scrollbars = kwargs.pop('scrollbars', self._theme.scrollarea_position)

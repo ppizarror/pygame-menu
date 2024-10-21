@@ -162,7 +162,8 @@ class Button(Widget):
         surface.blit(self._surface, self._rect.topleft)
 
     def _render(self) -> Optional[bool]:
-        if not self._render_hash_changed(self._selected, self._title, self._visible, self.readonly, self._last_underline[1]):
+        if not self._render_hash_changed(self._selected, self._title, self._visible, self.readonly,
+                                         self._last_underline[1]):
             return True
 
         # Render surface

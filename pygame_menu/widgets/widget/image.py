@@ -122,7 +122,8 @@ class Image(Widget):
         self._surface = None
         return self._update_surface()
 
-    def set_max_width(self, width: Optional[NumberType], scale_height: NumberType = False, smooth: bool = True) -> 'Image':
+    def set_max_width(self, width: Optional[NumberType], scale_height: NumberType = False,
+                      smooth: bool = True) -> 'Image':
         if width is not None and self._image.get_width() > width:
             sx = width / self._image.get_width()
             height = self._image.get_height()
@@ -132,7 +133,8 @@ class Image(Widget):
             return self._update_surface()
         return self
 
-    def set_max_height(self, height: Optional[NumberType], scale_width: NumberType = False, smooth: bool = True) -> 'Image':
+    def set_max_height(self, height: Optional[NumberType], scale_width: NumberType = False,
+                       smooth: bool = True) -> 'Image':
         if height is not None and self._image.get_height() > height:
             sy = height / self._image.get_height()
             width = self._image.get_width()

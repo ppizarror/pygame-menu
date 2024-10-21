@@ -567,12 +567,14 @@ class RangeSlider(Widget):
 
         # Draw range box
         if self._range_box_enabled and (not self._single or self._range_box_single_slider):
-            surface.blit(self._range_box, (self._range_box_pos[0] + self._rect.x, self._range_box_pos[1] + self._rect.y))
+            surface.blit(self._range_box,
+                         (self._range_box_pos[0] + self._rect.x, self._range_box_pos[1] + self._rect.y))
 
         # Draw sliders
         surface.blit(self._slider[0], (self._slider_pos[0][0] + self._rect.x, self._slider_pos[0][1] + self._rect.y))
         if not self._single:
-            surface.blit(self._slider[1], (self._slider_pos[1][0] + self._rect.x, self._slider_pos[1][1] + self._rect.y))
+            surface.blit(self._slider[1],
+                         (self._slider_pos[1][0] + self._rect.x, self._slider_pos[1][1] + self._rect.y))
 
         # Draw slider highlighted
         if self._slider_selected[0] and not self.readonly and self.is_selected():
@@ -733,7 +735,8 @@ class RangeSlider(Widget):
         range_values_size = 0, 0  # Stores sizing
         if self._range_text_value_enabled:
             s = self._range_text_value_surfaces[0]
-            range_values_size = (int(s.get_width() * 0.7), int(self._range_text_value_surfaces_pos[0][1] + s.get_height() * 0.9))
+            range_values_size = (int(s.get_width() * 0.7),
+                                 int(self._range_text_value_surfaces_pos[0][1] + s.get_height() * 0.9))
 
         # Create the range box surface
         if not self._single or self._range_box_single_slider:
@@ -742,18 +745,22 @@ class RangeSlider(Widget):
             self._range_box = make_surface(
                 max(0, r_width), self._range_box_height,
                 fill_color=self._range_box_color if not self.readonly else self._range_box_color_readonly)
-            self._range_box_pos = (self._range_pos[0] + r_pos, self._range_pos[1] - int(self._range_box.get_height() / 2))
+            self._range_box_pos = (self._range_pos[0] + r_pos,
+                                   self._range_pos[1] - int(self._range_box.get_height() / 2))
 
         # Create the slider values
         self._slider_text_value_surfaces = []
         self._slider_text_value_surfaces_pos = []
         for v in self._value:
-            t = self._font_slider_value.render(self._value_format(v), self._font_antialias, self._slider_text_value_color)  # Value text
+            t = self._font_slider_value.render(self._value_format(v), self._font_antialias,
+                                               self._slider_text_value_color)  # Value text
             st = make_surface(
                 t.get_width() + self._slider_text_value_padding[1] + self._slider_text_value_padding[3],
                 t.get_height() + self._slider_text_value_padding[0] + self._slider_text_value_padding[2],
                 fill_color=self._slider_text_value_bgcolor)
-            st.blit(t, (self._slider_text_value_padding[1], self._slider_text_value_padding[0] + self._slider_text_value_vmargin))
+            st.blit(t, (
+                self._slider_text_value_padding[1],
+                self._slider_text_value_padding[0] + self._slider_text_value_vmargin))
 
             # Create surface that considers st and the triangle
             tri_height = int(self._slider_text_value_margin / 2) - int(self._slider_height / 2)
@@ -1064,7 +1071,8 @@ class RangeSlider(Widget):
                 event.type == pygame.MOUSEMOTION and self._mouse_enabled and hasattr(event, 'rel') or
                 event.type == FINGERMOTION and self._touchscreen_enabled and self._menu is not None
             ):
-                rel = event.rel[0] if event.type == pygame.MOUSEMOTION else event.dx * 2 * self._menu.get_window_size()[0]
+                rel = event.rel[0] if event.type == pygame.MOUSEMOTION else (
+                    event.dx * 2 * self._menu.get_window_size()[0])
                 delta = (self._range_values[-1] - self._range_values[0]) * rel / self._range_width
 
                 # Check mouse position

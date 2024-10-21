@@ -339,9 +339,11 @@ class ScrollBar(Widget):
             return False
 
         axis = self._orientation
-        space_before = rect.topleft[axis] - self._slider_rect.move(*rect.topleft).topleft[axis] + self._slider_pad
-        move = max(round(pixels), space_before)
-        space_after = rect.bottomright[axis] - self._slider_rect.move(*rect.topleft).bottomright[axis] - self._slider_pad
+        space_before: int = (rect.topleft[axis] + self._slider_pad
+                             - self._slider_rect.move(*rect.topleft).topleft[axis])
+        move: int = max(round(pixels), space_before)
+        space_after: int = (rect.bottomright[axis] - self._slider_pad
+                            - self._slider_rect.move(*rect.topleft).bottomright[axis])
         move = min(move, space_after)
 
         if not move:

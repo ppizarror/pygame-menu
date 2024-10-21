@@ -1101,7 +1101,7 @@ class Menu(Base):
         assert isinstance(widget, Widget)
         if not widget.is_selectable:
             raise ValueError(f'{widget.get_class_id()} is not selectable')
-        if not widget.is_visible():  # Considers frame
+        elif not widget.is_visible():  # Considers frame
             raise ValueError(f'{widget.get_class_id()} is not visible')
         try:
             index = self._widgets.index(widget)  # If not exists this raises ValueError
@@ -1764,7 +1764,7 @@ class Menu(Base):
         :return: Menu depth
         """
         prev = self._top._prev
-        depth = 0
+        depth: int = 0
         if prev is not None:
             while True:
                 if prev is not None:
@@ -1907,7 +1907,7 @@ class Menu(Base):
         """
         if widget:
             return int(self._widget_max_position[0] - self._widget_min_position[0])
-        if not inner:
+        elif not inner:
             bw = 0 if not border else 2 * self._scrollarea.get_border_size()[0]
             return int(self._width) + bw
         return int(self._width - self._get_scrollbar_thickness()[1])
@@ -1929,7 +1929,7 @@ class Menu(Base):
         """
         if widget:
             return int(self._widget_max_position[1] - self._widget_min_position[1])
-        if not inner:
+        elif not inner:
             bh = 0 if not border else 2 * self._scrollarea.get_border_size()[1]
             return int(self._height) + bh
         return int(self._height - self._menubar.get_height() - self._get_scrollbar_thickness()[0])
@@ -2055,7 +2055,7 @@ class Menu(Base):
         if not self.is_enabled():
             self._current._runtime_errors.throw(self._current._runtime_errors.draw, 'menu is not enabled')
             return self._current
-        if self._current._disable_draw:
+        elif self._current._disable_draw:
             return self._current
 
         # Render menu; if True, the surface widget has changed, thus cache should
@@ -2063,7 +2063,8 @@ class Menu(Base):
         render = self._current._render()
 
         # Updates title
-        if self._current._theme.title_updates_pygame_display and pygame.display.get_caption()[0] != self._current.get_title():
+        if (self._current._theme.title_updates_pygame_display and
+            pygame.display.get_caption()[0] != self._current.get_title()):
             pygame.display.set_caption(self._current.get_title())
 
         # Clear surface
@@ -2107,7 +2108,7 @@ class Menu(Base):
                 # Widgets within frames are not drawn as it's frame draw these widgets
                 if widget.get_frame() is not None:
                     continue
-                if widget.is_selected():
+                elif widget.is_selected():
                     selected_widget_draw = widget, self._current._widgets_surface
                 widget.draw(self._current._widgets_surface)
 
@@ -2150,12 +2151,14 @@ class Menu(Base):
         assert isinstance(widget, (Widget, type(None)))
 
         force = force or (widget is not None and widget.active and widget.force_menu_draw_focus)
-        if not force and (widget is None
-                          or not widget.active
-                          or not widget.is_selectable
-                          or not widget.is_selected()
-                          or not (self._mouse_motion_selection or self._touchscreen_motion_selection)
-                          or not widget.is_visible()):
+        if not force and (
+            widget is None
+            or not widget.active
+            or not widget.is_selectable
+            or not widget.is_selected()
+            or not (self._mouse_motion_selection or self._touchscreen_motion_selection)
+            or not widget.is_visible()
+        ):
             return
         window_width, window_height = self._window_size
 
@@ -2375,16 +2378,17 @@ class Menu(Base):
         Handle joy events.
 
         :param apply_sound: Apply sound on widget selection
-        :return: ``True`` if widget changed
+        :return: ``True`` if the widget changed
         """
         if self._joy_event & JOY_EVENT_UP:
             return self._select(self._index - 1, -1, SELECT_KEY, apply_sound)
-        if self._joy_event & JOY_EVENT_DOWN:
+        elif self._joy_event & JOY_EVENT_DOWN:
             return self._select(self._index + 1, 1, SELECT_KEY, apply_sound)
-        if self._joy_event & JOY_EVENT_LEFT:
+        elif self._joy_event & JOY_EVENT_LEFT:
             return self._move_selected_left_right(-1, apply_sound)
-        if self._joy_event & JOY_EVENT_RIGHT:
+        elif self._joy_event & JOY_EVENT_RIGHT:
             return self._move_selected_left_right(1, apply_sound)
+        return False
 
     def _up(self, apply_sound: bool = False) -> bool:
         """
@@ -2703,7 +2707,8 @@ class Menu(Base):
                         pygame.time.set_timer(self._current._joy_event_repeat, 0)
 
                 # Select widget by clicking
-                elif event.type == pygame.MOUSEBUTTONDOWN and self._current._mouse and event.button in (1, 2, 3):  # Don't consider the mouse wheel (button 4 & 5)
+                elif (event.type == pygame.MOUSEBUTTONDOWN and self._current._mouse and
+                      event.button in (1, 2, 3)):  # Don't consider the mouse wheel (button 4 & 5)
 
                     # If the mouse motion selection is disabled then select a widget by clicking
                     if not self._current._mouse_motion_selection:
@@ -2712,7 +2717,8 @@ class Menu(Base):
                             widget = self._current._widgets[index]
                             if isinstance(widget, Frame):  # Frame does not accept click
                                 continue
-                            if widget.is_selectable and widget.is_visible() and widget.get_scrollarea().collide(widget, event):
+                            if (widget.is_selectable and widget.is_visible() and
+                                widget.get_scrollarea().collide(widget, event)):
                                 sel = self._current._select(index, 1, SELECT_MOUSE_BUTTON_DOWN, True)
                                 break
 
@@ -2796,7 +2802,7 @@ class Menu(Base):
                         continue
 
                     # Check if "rel" exists within the event
-                    if not hasattr(event, 'rel'):
+                    elif not hasattr(event, 'rel'):
                         continue
 
                     # Select if mouse motion
@@ -2804,7 +2810,8 @@ class Menu(Base):
                     for index in range(len(self._current._widgets)):
                         widget = self._current._widgets[index]
                         if widget.is_visible() and widget.get_scrollarea().collide(widget, event):
-                            if self._current._mouse_motion_selection and widget.is_selectable and not isinstance(widget, Frame):
+                            if (self._current._mouse_motion_selection and widget.is_selectable
+                                and not isinstance(widget, Frame)):
                                 sel = self._current._select(index, 1, SELECT_MOUSE_MOTION, True)
                         # noinspection PyProtectedMember
                         widget._check_mouseover(event)
@@ -2818,7 +2825,8 @@ class Menu(Base):
                         break
 
                 # Mouse events in selected widget; don't consider the mouse wheel (button 4 & 5)
-                elif event.type == pygame.MOUSEBUTTONUP and self._current._mouse and selected_widget is not None and event.button in (1, 2, 3):
+                elif (event.type == pygame.MOUSEBUTTONUP and self._current._mouse and
+                      selected_widget is not None and event.button in (1, 2, 3)):
                     self._current._sound.play_click_mouse()
                     if selected_widget_scrollarea.collide(selected_widget, event):
                         updated = selected_widget.update_menu([event])
@@ -2838,7 +2846,8 @@ class Menu(Base):
                             widget = self._current._widgets[index]
                             if isinstance(widget, Frame):  # Frame does not accept touch
                                 continue
-                            if widget.is_selectable and widget.is_visible() and widget.get_scrollarea().collide(widget, event):
+                            elif (widget.is_selectable and widget.is_visible() and
+                                  widget.get_scrollarea().collide(widget, event)):
                                 sel = self._current._select(index, 1, SELECT_TOUCH, True)
                                 if not isinstance(widget, Frame):
                                     break
@@ -2887,7 +2896,8 @@ class Menu(Base):
                         widget = self._current._widgets[index]
                         if isinstance(widget, Frame):  # Frame does not accept touch
                             continue
-                        if widget.is_selectable and widget.is_visible() and widget.get_scrollarea().collide(widget, event):
+                        elif (widget.is_selectable and widget.is_visible() and
+                              widget.get_scrollarea().collide(widget, event)):
                             sel = self._current._select(index, 1, SELECT_TOUCH, True)
                             if not isinstance(widget, Frame):
                                 break
@@ -3180,7 +3190,7 @@ class Menu(Base):
 
         :return: Self reference
         """
-        depth = self._get_depth()
+        depth: int = self._get_depth()
         if depth > 0:
             self.reset(depth)
         return self
@@ -3746,7 +3756,7 @@ class Menu(Base):
         if not isinstance(self._index, int):
             self._index = 0
             return None
-        if self._index < 0:
+        elif self._index < 0:
             return None
         try:
             return self._widgets[self._index % len(self._widgets)]
@@ -3949,7 +3959,7 @@ class Menu(Base):
                                             reverse=not to_last_position):
                     if w.get_menu() is None:
                         continue
-                    if not to_last_position:
+                    elif not to_last_position:
                         self.move_widget_index(
                             w, self._widgets.index(widget) + 1, render=False, depth=depth + 1
                         )

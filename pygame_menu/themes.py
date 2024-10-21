@@ -328,98 +328,178 @@ class Theme(object):
     def __init__(self, **kwargs) -> None:
 
         # Menu general
-        self.background_color = self._get(kwargs, 'background_color', 'color_image', (220, 220, 220))
-        self.border_color = self._get(kwargs, 'border_color', 'color_image_none')
-        self.border_width = self._get(kwargs, 'border_width', int, 0)
-        self.focus_background_color = self._get(kwargs, 'focus_background_color', 'color', (0, 0, 0, 180))
-        self.fps = self._get(kwargs, 'fps', NumberInstance, 30)
-        self.readonly_color = self._get(kwargs, 'readonly_color', 'color', (120, 120, 120))
-        self.readonly_selected_color = self._get(kwargs, 'readonly_selected_color', 'color', (190, 190, 190))
-        self.selection_color = self._get(kwargs, 'selection_color', 'color', (255, 255, 255))
-        self.surface_clear_color = self._get(kwargs, 'surface_clear_color', 'color', (0, 0, 0))
+        self.background_color = self._get(
+            kwargs, 'background_color', 'color_image', (220, 220, 220))
+        self.border_color = self._get(
+            kwargs, 'border_color', 'color_image_none')
+        self.border_width = self._get(
+            kwargs, 'border_width', int, 0)
+        self.focus_background_color = self._get(
+            kwargs, 'focus_background_color', 'color', (0, 0, 0, 180))
+        self.fps = self._get(
+            kwargs, 'fps', NumberInstance, 30)
+        self.readonly_color = self._get(
+            kwargs, 'readonly_color', 'color', (120, 120, 120))
+        self.readonly_selected_color = self._get(
+            kwargs, 'readonly_selected_color', 'color', (190, 190, 190))
+        self.selection_color = self._get(
+            kwargs, 'selection_color', 'color', (255, 255, 255))
+        self.surface_clear_color = self._get(
+            kwargs, 'surface_clear_color', 'color', (0, 0, 0))
 
         # Cursor/Text gathering
-        self.cursor_color = self._get(kwargs, 'cursor_color', 'color', (0, 0, 0))
-        self.cursor_selection_color = self._get(kwargs, 'cursor_selection_color', 'color', (30, 30, 30, 120))
-        self.cursor_switch_ms = self._get(kwargs, 'cursor_switch_ms', NumberInstance, 750)
+        self.cursor_color = self._get(
+            kwargs, 'cursor_color', 'color', (0, 0, 0))
+        self.cursor_selection_color = self._get(
+            kwargs, 'cursor_selection_color', 'color', (30, 30, 30, 120))
+        self.cursor_switch_ms = self._get(
+            kwargs, 'cursor_switch_ms', NumberInstance, 750)
 
         # Menubar/Title
-        self.title = self._get(kwargs, 'title', bool, True)
-        self.title_background_color = self._get(kwargs, 'title_background_color', 'color', (70, 70, 70))
-        self.title_bar_modify_scrollarea = self._get(kwargs, 'title_bar_modify_scrollarea', bool, True)
-        self.title_bar_style = self._get(kwargs, 'title_bar_style', int, MENUBAR_STYLE_ADAPTIVE)
-        self.title_close_button = self._get(kwargs, 'title_close_button', bool, True)
-        self.title_close_button_background_color = self._get(kwargs, 'title_close_button_background_color', 'color', (255, 255, 255))
-        self.title_close_button_cursor = self._get(kwargs, 'title_close_button_cursor', 'cursor')
-        self.title_fixed = self._get(kwargs, 'title_fixed', bool, True)
-        self.title_floating = self._get(kwargs, 'title_floating', bool, False)
-        self.title_font = self._get(kwargs, 'title_font', 'font', FONT_OPEN_SANS)
-        self.title_font_antialias = self._get(kwargs, 'title_font_antialias', bool, True)
-        self.title_font_color = self._get(kwargs, 'title_font_color', 'color', (220, 220, 220))
-        self.title_font_shadow = self._get(kwargs, 'title_font_shadow', bool, False)
-        self.title_font_shadow_color = self._get(kwargs, 'title_font_shadow_color', 'color', (0, 0, 0))
-        self.title_font_shadow_offset = self._get(kwargs, 'title_font_shadow_offset', int, 2)
-        self.title_font_shadow_position = self._get(kwargs, 'title_font_shadow_position', 'position', POSITION_NORTHWEST)
-        self.title_font_size = self._get(kwargs, 'title_font_size', int, 40)
-        self.title_offset = self._get(kwargs, 'title_offset', 'tuple2', (5, -1))
-        self.title_updates_pygame_display = self._get(kwargs, 'title_updates_pygame_display', bool, False)
+        self.title = self._get(
+            kwargs, 'title', bool, True)
+        self.title_background_color = self._get(
+            kwargs, 'title_background_color', 'color', (70, 70, 70))
+        self.title_bar_modify_scrollarea = self._get(
+            kwargs, 'title_bar_modify_scrollarea', bool, True)
+        self.title_bar_style = self._get(
+            kwargs, 'title_bar_style', int, MENUBAR_STYLE_ADAPTIVE)
+        self.title_close_button = self._get(
+            kwargs, 'title_close_button', bool, True)
+        self.title_close_button_background_color = self._get(
+            kwargs, 'title_close_button_background_color', 'color', (255, 255, 255))
+        self.title_close_button_cursor = self._get(
+            kwargs, 'title_close_button_cursor', 'cursor')
+        self.title_fixed = self._get(
+            kwargs, 'title_fixed', bool, True)
+        self.title_floating = self._get(
+            kwargs, 'title_floating', bool, False)
+        self.title_font = self._get(
+            kwargs, 'title_font', 'font', FONT_OPEN_SANS)
+        self.title_font_antialias = self._get(
+            kwargs, 'title_font_antialias', bool, True)
+        self.title_font_color = self._get(
+            kwargs, 'title_font_color', 'color', (220, 220, 220))
+        self.title_font_shadow = self._get(
+            kwargs, 'title_font_shadow', bool, False)
+        self.title_font_shadow_color = self._get(
+            kwargs, 'title_font_shadow_color', 'color', (0, 0, 0))
+        self.title_font_shadow_offset = self._get(
+            kwargs, 'title_font_shadow_offset', int, 2)
+        self.title_font_shadow_position = self._get(
+            kwargs, 'title_font_shadow_position', 'position', POSITION_NORTHWEST)
+        self.title_font_size = self._get(
+            kwargs, 'title_font_size', int, 40)
+        self.title_offset = self._get(
+            kwargs, 'title_offset', 'tuple2', (5, -1))
+        self.title_updates_pygame_display = self._get(
+            kwargs, 'title_updates_pygame_display', bool, False)
 
         # ScrollArea
-        self.scrollarea_outer_margin = self._get(kwargs, 'scrollarea_outer_margin', 'tuple2', (0, 0))
-        self.scrollarea_position = self._get(kwargs, 'scrollarea_position', str, POSITION_SOUTHEAST)
+        self.scrollarea_outer_margin = self._get(
+            kwargs, 'scrollarea_outer_margin', 'tuple2', (0, 0))
+        self.scrollarea_position = self._get(
+            kwargs, 'scrollarea_position', str, POSITION_SOUTHEAST)
 
         # ScrollBar
-        self.scrollbar_color = self._get(kwargs, 'scrollbar_color', 'color', (235, 235, 235))
-        self.scrollbar_cursor = self._get(kwargs, 'scrollbar_cursor', 'cursor')
-        self.scrollbar_shadow = self._get(kwargs, 'scrollbar_shadow', bool, False)
-        self.scrollbar_shadow_color = self._get(kwargs, 'scrollbar_shadow_color', 'color', (0, 0, 0))
-        self.scrollbar_shadow_offset = self._get(kwargs, 'scrollbar_shadow_offset', int, 2)
-        self.scrollbar_shadow_position = self._get(kwargs, 'scrollbar_shadow_position', 'position', POSITION_NORTHWEST)
-        self.scrollbar_slider_color = self._get(kwargs, 'scrollbar_slider_color', 'color', (200, 200, 200))
-        self.scrollbar_slider_hover_color = self._get(kwargs, 'scrollbar_slider_hover_color', 'color', (170, 170, 170))
-        self.scrollbar_slider_pad = self._get(kwargs, 'scrollbar_slider_pad', NumberInstance, 0)
-        self.scrollbar_thick = self._get(kwargs, 'scrollbar_thick', int, 20)
+        self.scrollbar_color = self._get(
+            kwargs, 'scrollbar_color', 'color', (235, 235, 235))
+        self.scrollbar_cursor = self._get(
+            kwargs, 'scrollbar_cursor', 'cursor')
+        self.scrollbar_shadow = self._get(
+            kwargs, 'scrollbar_shadow', bool, False)
+        self.scrollbar_shadow_color = self._get(
+            kwargs, 'scrollbar_shadow_color', 'color', (0, 0, 0))
+        self.scrollbar_shadow_offset = self._get(
+            kwargs, 'scrollbar_shadow_offset', int, 2)
+        self.scrollbar_shadow_position = self._get(
+            kwargs, 'scrollbar_shadow_position', 'position', POSITION_NORTHWEST)
+        self.scrollbar_slider_color = self._get(
+            kwargs, 'scrollbar_slider_color', 'color', (200, 200, 200))
+        self.scrollbar_slider_hover_color = self._get(
+            kwargs, 'scrollbar_slider_hover_color', 'color', (170, 170, 170))
+        self.scrollbar_slider_pad = self._get(
+            kwargs, 'scrollbar_slider_pad', NumberInstance, 0)
+        self.scrollbar_thick = self._get(
+            kwargs, 'scrollbar_thick', int, 20)
 
         # Generic widget themes
-        self.widget_alignment = self._get(kwargs, 'widget_alignment', 'alignment', ALIGN_CENTER)
-        self.widget_alignment_ignore_scrollbar_thickness = self._get(kwargs, 'widget_alignment_ignore_scrollbar_thickness', bool, False)
-        self.widget_background_color = self._get(kwargs, 'widget_background_color', 'color_image_none')
-        self.widget_background_inflate = self._get(kwargs, 'background_inflate', 'tuple2int', (0, 0))
-        self.widget_background_inflate_to_selection = self._get(kwargs, 'widget_background_inflate_to_selection', bool,
-                                                                False)
-        self.widget_border_color = self._get(kwargs, 'widget_border_color', 'color', (0, 0, 0))
-        self.widget_border_inflate = self._get(kwargs, 'widget_border_inflate', 'tuple2int', (0, 0))
-        self.widget_border_position = self._get(kwargs, 'widget_border_position', 'position_vector', WIDGET_FULL_BORDER)
-        self.widget_border_width = self._get(kwargs, 'widget_border_width', int, 0)
-        self.widget_box_arrow_color = self._get(kwargs, 'widget_box_arrow_color', 'color', (150, 150, 150))
-        self.widget_box_arrow_margin = self._get(kwargs, 'widget_box_arrow_margin', 'tuple3int', (5, 5, 0))
-        self.widget_box_background_color = self._get(kwargs, 'widget_box_background_color', 'color', (255, 255, 255))
-        self.widget_box_border_color = self._get(kwargs, 'widget_box_border_color', 'color', (0, 0, 0))
-        self.widget_box_border_width = self._get(kwargs, 'widget_box_border_width', int, 1)
-        self.widget_box_inflate = self._get(kwargs, 'widget_box_inflate', 'tuple2int', (0, 0))
-        self.widget_box_margin = self._get(kwargs, 'widget_box_margin', 'tuple2', (25, 0))
-        self.widget_cursor = self._get(kwargs, 'widget_cursor', 'cursor', CURSOR_ARROW)
-        self.widget_font = self._get(kwargs, 'widget_font', 'font', FONT_OPEN_SANS)
-        self.widget_font_antialias = self._get(kwargs, 'widget_font_antialias', bool, True)
-        self.widget_font_background_color = self._get(kwargs, 'widget_font_background_color', 'color_none', )
-        self.widget_font_background_color_from_menu = self._get(kwargs, 'widget_font_background_color_from_menu', bool, False)
-        self.widget_font_color = self._get(kwargs, 'widget_font_color', 'color', (70, 70, 70))
-        self.widget_font_shadow = self._get(kwargs, 'widget_font_shadow', bool, False)
-        self.widget_font_shadow_color = self._get(kwargs, 'widget_font_shadow_color', 'color', (0, 0, 0))
-        self.widget_font_shadow_offset = self._get(kwargs, 'widget_font_shadow_offset', int, 2)
-        self.widget_font_shadow_position = self._get(kwargs, 'widget_font_shadow_position', 'position', POSITION_NORTHWEST)
-        self.widget_font_size = self._get(kwargs, 'widget_font_size', int, 30)
-        self.widget_margin = self._get(kwargs, 'widget_margin', 'tuple2', (0, 0))
-        self.widget_offset = self._get(kwargs, 'widget_offset', 'tuple2', (0, 0))
-        self.widget_padding = self._get(kwargs, 'widget_padding', PaddingInstance, (4, 8))
-        self.widget_selection_effect = self._get(kwargs, 'widget_selection_effect', Selection, HighlightSelection(margin_x=0, margin_y=0))
-        self.widget_shadow_aa = self._get(kwargs, 'widget_shadow_aa', int, 4)
-        self.widget_shadow_color = self._get(kwargs, 'widget_shadow_color', 'color', (0, 0, 0))
-        self.widget_shadow_radius = self._get(kwargs, 'widget_shadow_radius', int, 0)
-        self.widget_shadow_type = self._get(kwargs, 'widget_shadow_type', str, WIDGET_SHADOW_TYPE_RECTANGULAR)
-        self.widget_shadow_width = self._get(kwargs, 'widget_shadow_width', int, 0)
-        self.widget_tab_size = self._get(kwargs, 'widget_tab_size', int, 4)
-        self.widget_url_color = self._get(kwargs, 'widget_url_color', 'color', (6, 69, 173))
+        self.widget_alignment = self._get(
+            kwargs, 'widget_alignment', 'alignment', ALIGN_CENTER)
+        self.widget_alignment_ignore_scrollbar_thickness = self._get(
+            kwargs, 'widget_alignment_ignore_scrollbar_thickness', bool, False)
+        self.widget_background_color = self._get(
+            kwargs, 'widget_background_color', 'color_image_none')
+        self.widget_background_inflate = self._get(
+            kwargs, 'background_inflate', 'tuple2int', (0, 0))
+        self.widget_background_inflate_to_selection = self._get(
+            kwargs, 'widget_background_inflate_to_selection', bool, False)
+        self.widget_border_color = self._get(
+            kwargs, 'widget_border_color', 'color', (0, 0, 0))
+        self.widget_border_inflate = self._get(
+            kwargs, 'widget_border_inflate', 'tuple2int', (0, 0))
+        self.widget_border_position = self._get(
+            kwargs, 'widget_border_position', 'position_vector', WIDGET_FULL_BORDER)
+        self.widget_border_width = self._get(
+            kwargs, 'widget_border_width', int, 0)
+        self.widget_box_arrow_color = self._get(
+            kwargs, 'widget_box_arrow_color', 'color', (150, 150, 150))
+        self.widget_box_arrow_margin = self._get(
+            kwargs, 'widget_box_arrow_margin', 'tuple3int', (5, 5, 0))
+        self.widget_box_background_color = self._get(
+            kwargs, 'widget_box_background_color', 'color', (255, 255, 255))
+        self.widget_box_border_color = self._get(
+            kwargs, 'widget_box_border_color', 'color', (0, 0, 0))
+        self.widget_box_border_width = self._get(
+            kwargs, 'widget_box_border_width', int, 1)
+        self.widget_box_inflate = self._get(
+            kwargs, 'widget_box_inflate', 'tuple2int', (0, 0))
+        self.widget_box_margin = self._get(
+            kwargs, 'widget_box_margin', 'tuple2', (25, 0))
+        self.widget_cursor = self._get(
+            kwargs, 'widget_cursor', 'cursor', CURSOR_ARROW)
+        self.widget_font = self._get(
+            kwargs, 'widget_font', 'font', FONT_OPEN_SANS)
+        self.widget_font_antialias = self._get(
+            kwargs, 'widget_font_antialias', bool, True)
+        self.widget_font_background_color = self._get(
+            kwargs, 'widget_font_background_color', 'color_none', )
+        self.widget_font_background_color_from_menu = self._get(
+            kwargs, 'widget_font_background_color_from_menu', bool, False)
+        self.widget_font_color = self._get(
+            kwargs, 'widget_font_color', 'color', (70, 70, 70))
+        self.widget_font_shadow = self._get(
+            kwargs, 'widget_font_shadow', bool, False)
+        self.widget_font_shadow_color = self._get(
+            kwargs, 'widget_font_shadow_color', 'color', (0, 0, 0))
+        self.widget_font_shadow_offset = self._get(
+            kwargs, 'widget_font_shadow_offset', int, 2)
+        self.widget_font_shadow_position = self._get(
+            kwargs, 'widget_font_shadow_position', 'position', POSITION_NORTHWEST)
+        self.widget_font_size = self._get(
+            kwargs, 'widget_font_size', int, 30)
+        self.widget_margin = self._get(
+            kwargs, 'widget_margin', 'tuple2', (0, 0))
+        self.widget_offset = self._get(
+            kwargs, 'widget_offset', 'tuple2', (0, 0))
+        self.widget_padding = self._get(
+            kwargs, 'widget_padding', PaddingInstance, (4, 8))
+        self.widget_selection_effect = self._get(
+            kwargs, 'widget_selection_effect', Selection, HighlightSelection(margin_x=0, margin_y=0))
+        self.widget_shadow_aa = self._get(
+            kwargs, 'widget_shadow_aa', int, 4)
+        self.widget_shadow_color = self._get(
+            kwargs, 'widget_shadow_color', 'color', (0, 0, 0))
+        self.widget_shadow_radius = self._get(
+            kwargs, 'widget_shadow_radius', int, 0)
+        self.widget_shadow_type = self._get(
+            kwargs, 'widget_shadow_type', str, WIDGET_SHADOW_TYPE_RECTANGULAR)
+        self.widget_shadow_width = self._get(
+            kwargs, 'widget_shadow_width', int, 0)
+        self.widget_tab_size = self._get(
+            kwargs, 'widget_tab_size', int, 4)
+        self.widget_url_color = self._get(
+            kwargs, 'widget_url_color', 'color', (6, 69, 173))
 
         # Upon this, no more kwargs should exist, raise exception if there's more
         for invalid_keyword in kwargs.keys():
@@ -595,7 +675,8 @@ class Theme(object):
         self.background_color = assert_color(self.background_color)
         assert isinstance(opacity, NumberInstance)
         assert 0 <= opacity <= 1, 'opacity must be a number between 0 (transparent) and 1 (opaque)'
-        self.background_color = (self.background_color[0], self.background_color[1], self.background_color[2], int(float(opacity) * 255))
+        self.background_color = (self.background_color[0], self.background_color[1],
+                                 self.background_color[2], int(float(opacity) * 255))
         return self
 
     @staticmethod
