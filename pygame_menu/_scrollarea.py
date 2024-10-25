@@ -529,7 +529,7 @@ class ScrollArea(Base):
                 tile_w,
                 tile_sw,
                 tile_n,
-                tile_c,
+                _,
                 tile_s,
                 tile_ne,
                 tile_e,

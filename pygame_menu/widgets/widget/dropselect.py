@@ -1187,12 +1187,10 @@ class DropSelect(Widget):
                     # Check if mouse collides left or right as percentage, use only X coordinate
                     mouse_x, _ = event_pos
                     topleft, _ = rect.topleft
-                    topright, _ = rect.topright
                     dist = mouse_x - (topleft + self._title_size[0])  # Distance from title
                     if dist > 0:  # User clicked the options, not title
                         self._toggle_drop()
                         return True
-
                 else:
                     if self.active and not self.get_focus_rect().collidepoint(*event_pos):
                         self._toggle_drop()

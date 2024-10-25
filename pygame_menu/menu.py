@@ -2356,7 +2356,7 @@ class Menu(Base):
             # Get the first similar row in that column, if no widget is found
             # then select the first widget
             for widget in self._widget_columns[col]:
-                c, r, i = widget.get_col_row_index()
+                _, r, i = widget.get_col_row_index()
                 if r == row:
                     return self._select(i, pos, SELECT_KEY, apply_sound)
 

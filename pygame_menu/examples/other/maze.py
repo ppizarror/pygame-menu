@@ -609,10 +609,9 @@ class MazeApp(object):
             pygame.display.flip()
 
         walls = set()
-
         starting_walls = self._get_neighbours(start_point, n)
 
-        for wall, ntype in starting_walls:
+        for wall, _ in starting_walls:
             if mazearray[wall[0]][wall[1]].nodetype == 'wall':
                 walls.add(wall)
 
@@ -627,7 +626,7 @@ class MazeApp(object):
             visited = 0
             add_to_maze = []
 
-            for wall_neighbour, ntype in self._get_neighbours(wall, n):
+            for wall_neighbour, _ in self._get_neighbours(wall, n):
                 if mazearray[wall_neighbour[0]][wall_neighbour[1]].nodetype == 'blank':
                     visited += 1
 
@@ -643,7 +642,7 @@ class MazeApp(object):
                 # otherwise the maze generated doesn't look like a traditional maze.
                 # Every dormant eventually becomes a blank node, while the regular walls
                 # sometimes become a passage between blanks and are sometimes left as walls
-                for neighbour, ntype in self._get_neighbours(wall, n):
+                for neighbour, _ in self._get_neighbours(wall, n):
                     if mazearray[neighbour[0]][neighbour[1]].nodetype == 'dormant':
                         add_to_maze.append((neighbour[0], neighbour[1]))
 
@@ -656,7 +655,7 @@ class MazeApp(object):
                         self._update_square(cell[0], cell[1])
                         self._sleep(0.0001)
 
-                    for cell_neighbour, ntype in self._get_neighbours(cell, n):
+                    for cell_neighbour, _ in self._get_neighbours(cell, n):
                         if mazearray[cell_neighbour[0]][cell_neighbour[1]].nodetype == 'wall':
                             walls.add(cell_neighbour)
 
@@ -701,10 +700,9 @@ class MazeApp(object):
             pygame.display.flip()
 
         walls = set([])
-
         neighbours = self._get_neighbours(start_point, n)
 
-        for neighbour, ntype in neighbours:
+        for neighbour, _ in neighbours:
             if mazearray[neighbour[0]][neighbour[1]].nodetype == 'wall':
                 walls.add(neighbour)
 
@@ -719,7 +717,7 @@ class MazeApp(object):
             wall_neighbours = self._get_neighbours(wall, n)
             neighbouring_walls = set()
             pcount = 0
-            for wall_neighbour, ntype in wall_neighbours:
+            for wall_neighbour, _ in wall_neighbours:
                 if wall_neighbour == (start_point or self._end_point):
                     continue
                 elif mazearray[wall_neighbour[0]][wall_neighbour[1]].nodetype != 'wall':
@@ -857,7 +855,7 @@ class MazeApp(object):
                 self._sleep(sleep)
 
         # recursively apply the algorithm to all chambers
-        for num, chamber in enumerate(chambers):
+        for _, chamber in enumerate(chambers):
             self._recursive_division(chamber)
             self._check_esc()
 
@@ -899,8 +897,7 @@ class MazeApp(object):
 
                 neighbour_cycles += 1
 
-                for node, ntype in self._get_neighbours(node):
-
+                for node, _ in self._get_neighbours(node):
                     if self._grid[node[0]][node[1]].nodetype == 'mud':
                         continue
                     threshold = 700 - (neighbour_cycles * 10)
@@ -1073,7 +1070,7 @@ class MazeApp(object):
         # If a goal_node is not set, put it in the bottom right (1 square away from either edge)
         if not goal_node:
             goal_node = (n, n)
-        priority, current_distance, current_node = queue.pop()
+        _, current_distance, current_node = queue.pop()
         start = time.perf_counter()
 
         # Main algorithm loop
@@ -1121,8 +1118,7 @@ class MazeApp(object):
             if len(queue.show()) == 0:
                 return False
             # Otherwise, we take the minimum distance as the new current node
-            else:
-                priority, current_distance, current_node = queue.pop()
+            _, current_distance, current_node = queue.pop()
 
         v_distances[goal_node] = current_distance + (1 if not self._diagonals else 2 ** 0.5)
         visited_nodes.add(goal_node)
@@ -1189,13 +1185,13 @@ class MazeApp(object):
 
             # For each neighbour of the current node, add its location and distance
             # to a priority queue
-            for neighbour, ntype in neighbours:
+            for neighbour, _ in neighbours:
                 if neighbour in v_distances:
                     distance = v_distances[neighbour]
                     neighbour_distances.push(distance, neighbour)
 
             # Pop the lowest value off; that is the next node in our path
-            distance, smallest_neighbour = neighbour_distances.pop()
+            _, smallest_neighbour = neighbour_distances.pop()
             mazearray[smallest_neighbour[0]][smallest_neighbour[1]].update(is_path=True)
 
             # Update pygame display
@@ -1263,7 +1259,7 @@ class MazeApp(object):
                     self._update_square(current_node[0], current_node[1])
                     self._sleep(0.001)
 
-                for neighbour, ntype in self._get_neighbours(current_node, n):
+                for neighbour, _ in self._get_neighbours(current_node, n):
                     mydeque.append(neighbour)
                     # Used for tracing back
                     if neighbour not in visited_nodes:
@@ -1363,7 +1359,7 @@ class MazeApp(object):
                 # Moves the mouse
                 elif event.type == pygame.MOUSEMOTION:
                     # Boolean values saying whether left, middle and right mouse buttons are currently pressed
-                    left, middle, right = pygame.mouse.get_pressed()
+                    left, _, _ = pygame.mouse.get_pressed()
 
                     # Sometimes we get stuck in this loop if the mousebutton is released while not in the pygame screen
                     # This acts to break out of that loop

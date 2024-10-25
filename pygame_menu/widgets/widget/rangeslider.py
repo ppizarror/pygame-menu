@@ -1043,7 +1043,6 @@ class RangeSlider(Widget):
                 if rect.collidepoint(*event_pos) and not self._scrolling and self._selected_mouse:
                     mouse_x, _ = event_pos
                     topleft, _ = rect.topleft
-                    topright, _ = rect.topright
 
                     # Distance from title
                     dist = mouse_x - (topleft + self._range_pos[0])

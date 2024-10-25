@@ -446,7 +446,7 @@ class ToggleSwitch(Widget):
                     # only X coordinate
                     mouse_x, _ = event_pos
                     topleft, _ = rect.topleft
-                    topright, _ = rect.topright
+
                     # Distance from title
                     dist = mouse_x - (topleft + self._switch_margin[0] + self._switch_pos[0])
 
