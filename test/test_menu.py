@@ -2653,5 +2653,9 @@ class MenuTest(BaseTest):
                 super().__init__(title='Test', width=150, height=200, theme=pygame_menu.themes.THEME_DARK.copy())
                 help_menu = pygame_menu.Menu(title='Help', width=150, height=200)
                 self.add.button(help_menu.get_title(), help_menu)
+                self.enable()
 
         self.assertEqual(len(SubMenu().get_widgets()), 1)
+        main_menu = SubMenu()
+        test_menu = pygame_menu.Menu('test', 500, 400)
+        self.assertEqual(main_menu.add.menu_link(test_menu).get_menu(), main_menu)

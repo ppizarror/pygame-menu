@@ -92,7 +92,7 @@ class MenuLinkManager(AbstractWidgetManager, ABC):
         :return: Menu link widget
         :rtype: :py:class:`pygame_menu.widgets.MenuLink`
         """
-        if isinstance(menu, type(self._menu)):
+        if isinstance(menu, (pygame_menu.Menu, type(self._menu))):
             # Check for recursive
             if menu == self._menu or menu.in_submenu(self._menu, recursive=True):
                 raise ValueError(
