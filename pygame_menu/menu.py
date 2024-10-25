@@ -96,6 +96,7 @@ class Menu(Base):
     :param onreset: Function executed when resetting the Menu. The function must be non-argument or single argument (Menu instance)
     :param overflow: Enables overflow on x/y axes. If ``False`` then scrollbars will not work and the maximum width/height of the scrollarea is the same as the Menu container. Style: (overflow_x, overflow_y). If ``False`` or ``True`` the value will be set on both axis
     :param position: Position on x-axis and y-axis. If the value is only 2 elements, the position is relative to the window width (thus, values must be 0-100%); else, the third element defines if the position is relative or not. If ``(x, y, False)`` the values of ``(x, y)`` are in px
+    :param remember_selection: Menu remembers selection when moving through submenus. By default it is false, so, when moving back the selected widget will be the first one of the Menu
     :param rows: Number of rows of each column, if there's only 1 column ``None`` can be used for no-limit. Also, a tuple can be provided for defining different number of rows for each column, for example ``rows=10`` (each column can have a maximum 10 widgets), or ``rows=[2, 3, 5]`` (first column has 2 widgets, second 3, and third 5)
     :param screen_dimension: List/Tuple representing the dimensions the Menu should reference for sizing/positioning (width, height), if ``None`` pygame is queried for the display mode. This value defines the ``window_size`` of the Menu
     :param surface: The surface that contains the Menu. By default the Menu always considers that it is drawn on a surface that uses all window width/height. However, if a sub-surface is used the ``surface`` value will be used instead to retrieve the offset. Also, if ``surface`` is provided the menu can be drawn without providing a surface object while calling ``Menu.draw()``
@@ -153,6 +154,7 @@ class Menu(Base):
     _position_default: Tuple2IntType
     _position_relative: bool
     _prev: Optional[List[Union['Menu', List['Menu']]]]
+    _remember_selection: bool
     _runtime_errors: '_MenuRuntimeErrorConfig'
     _scrollarea: 'ScrollArea'
     _scrollarea_margin: List[int]
@@ -207,6 +209,7 @@ class Menu(Base):
         onreset: Optional[Union[Callable[['Menu'], Any], CallableNoArgsType]] = None,
         overflow: Union[Vector2BoolType, bool] = (True, True),
         position: Union[Vector2NumberType, Tuple[NumberType, NumberType, bool]] = (50, 50, True),
+        remember_selection: bool = False,
         rows: MenuRowsType = None,
         screen_dimension: Optional[Vector2IntType] = None,
         surface: Optional['pygame.Surface'] = None,
@@ -229,6 +232,7 @@ class Menu(Base):
         assert isinstance(mouse_visible, bool)
         assert isinstance(mouse_visible_update, bool)
         assert isinstance(overflow, (VectorInstance, bool))
+        assert isinstance(remember_selection, bool)
         assert isinstance(rows, (int, type(None), VectorInstance))
         assert isinstance(surface, (pygame.Surface, type(None)))
         assert isinstance(theme, Theme), \
@@ -369,6 +373,7 @@ class Menu(Base):
         self._last_selected_type = ''  # Last type selection, used for test purposes
         self._mainloop = False  # Menu is in mainloop state
         self._onclose = None  # Function or event called on Menu close
+        self._remember_selection = remember_selection
         self._render_enabled = True
         self._sound = Sound(verbose=verbose)
         self._stats = _MenuStats()
@@ -3237,8 +3242,9 @@ class Menu(Base):
         self._top._current = menu._current
         self._top._prev = [self._top._prev, current]
 
-        # Select the first widget
-        self._current._select(0, 1, SELECT_OPEN, False, update_mouse_position=False)
+        # Select the first widget (if not remember the selection)
+        if not self._current._remember_selection:
+            self._current._select(0, 1, SELECT_OPEN, False, update_mouse_position=False)
 
         # Call event
         if menu._onbeforeopen is not None:

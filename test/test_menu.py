@@ -2599,7 +2599,7 @@ class MenuTest(BaseTest):
         """
         main_surface = surface
         w, h = surface.get_size()
-        left_surf_w, left_surf_h = 300, h
+        left_surf_w, _ = 300, h
         menu_w, menu_h = w - left_surf_w, h
         # left_surface = main_surface.subsurface((0, 0, left_surf_w, left_surf_h))
         menu_surface = main_surface.subsurface((300, 0, menu_w, menu_h))
@@ -2651,7 +2651,7 @@ class MenuTest(BaseTest):
         class SubMenu(pygame_menu.Menu):
             def __init__(self) -> None:
                 super().__init__(title='Test', width=150, height=200, theme=pygame_menu.themes.THEME_DARK.copy())
-                help_menu = pygame_menu.Menu(title='Help', width=150, height=200)
+                help_menu = MenuUtils.generic_menu()
                 self.add.button(help_menu.get_title(), help_menu)
                 self.enable()
 
@@ -2659,3 +2659,47 @@ class MenuTest(BaseTest):
         main_menu = SubMenu()
         test_menu = pygame_menu.Menu('test', 500, 400)
         self.assertEqual(main_menu.add.menu_link(test_menu).get_menu(), main_menu)
+
+    def test_selection(self) -> None:
+        """
+        Test menu widget selection. Based on #471.
+        """
+        menu, sub, sub2 = MenuUtils.generic_menu(), MenuUtils.generic_menu(), MenuUtils.generic_menu()
+
+        # Add "sub" as a link within "menu"
+        sub_link = menu.add.menu_link(sub)
+        btn_back = sub.add.button('Back', pygame_menu.events.BACK)
+
+        # Add "sub2" as a link within "sub"
+        sub2_link = sub.add.menu_link(sub2)
+        btn_back_2 = sub2.add.button('Back', pygame_menu.events.BACK)
+
+        btn = menu.add.button('No-op Button')
+        btn2 = menu.add.button('Sub', sub_link.open)
+        btn3 = sub.add.button('Sub2', sub2_link.open)
+
+        menu.render()
+        self.assertEqual(menu.get_selected_widget(), btn)
+
+        # Now, we test selection preservation on return. By default, menu does not
+        # keep previous selection. So, selecting widget 2 (that opens the new menu
+        # sub2), and moving back, the index should be 0
+        menu.select_widget(btn2).get_selected_widget().apply()
+        self.assertEqual(menu.get_current(), sub)
+        self.assertEqual(menu.get_current().get_selected_widget(), btn_back)
+        # Now we select the btn3 and apply
+        menu.get_current().select_widget(btn3).get_selected_widget().apply()
+        btn_back_2.apply()
+        self.assertEqual(menu.get_current().get_selected_widget(), btn_back)
+
+        menu.get_current()._remember_selection = True
+        menu.get_current().select_widget(btn3).get_selected_widget().apply()
+        btn_back_2.apply()
+        self.assertEqual(menu.get_current().get_selected_widget(), btn3)
+
+        # Disable the feature, and now see what happens if trying to select first index if menu is empty
+        menu.get_current()._remember_selection = True
+        btn3.apply()
+        self.assertEqual(menu.get_current(), sub2)
+        sub.clear(reset=False)
+        self.assertEqual(menu.get_current(), sub2)
