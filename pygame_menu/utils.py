@@ -294,7 +294,7 @@ def format_color(
     """
     if not isinstance(color, ColorInputInstance):
         return color
-    if not isinstance(color, pygame.Color):
+    elif not isinstance(color, pygame.Color):
         if isinstance(color, str):
             if len(color) == 4 and color[0] == '#':
                 r, g, b = color[1], color[2], color[3]

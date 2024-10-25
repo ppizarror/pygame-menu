@@ -106,15 +106,12 @@ def get_font(name: FontType, size: int) -> '__font.Font':
 
     else:
         name = str(name)
-
         if name == '':
             raise ValueError('font name cannot be empty')
-
-        if size <= 0:
+        elif size <= 0:
             raise ValueError('font size cannot be lower or equal than zero')
-
         # Font is not a file, then use a system font
-        if not path.isfile(name):
+        elif not path.isfile(name):
             font_name = name
             name = __font.match_font(font_name)
 

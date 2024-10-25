@@ -857,7 +857,7 @@ class TextInput(Widget):
             return
 
         # Check limits
-        if left < 0 and len_string == 0:
+        elif left < 0 and len_string == 0:
             return
 
         # If no overflow
@@ -884,18 +884,19 @@ class TextInput(Widget):
                 # If press del at the end of string
                 if right < 0 and self._renderbox[2] == self._maxwidth:
                     return
+
                 # If backspace at beginning of string
                 elif left < 0 and self._renderbox[2] == 0:
                     return
 
                 # If user deletes something and it is in the end
-                if right < 0:  # del
+                elif right < 0:  # del
                     if self._ellipsis_left():
                         if (self._renderbox[1] - 1) == len_string:  # At the end
                             self._renderbox[2] -= right
 
                 # If the user writes, move renderbox
-                if right > 0:
+                elif right > 0:
                     # If cursor is at the end push box
                     if self._renderbox[2] == self._maxwidth:
                         self._renderbox[0] += right
@@ -1177,7 +1178,8 @@ class TextInput(Widget):
             conv(string)
             return True
         except ValueError:
-            return False
+            pass
+        return False
 
     def _move_cursor_left(self) -> None:
         """
@@ -1532,7 +1534,6 @@ class TextInput(Widget):
         elif self._check_input_type(new_string):
             l_key = len(keychar)
             if l_key > 0:
-
                 # Update char size
                 if keychar not in self._keychar_size.keys():
                     self._get_char_size(keychar)  # This updates keychar size data

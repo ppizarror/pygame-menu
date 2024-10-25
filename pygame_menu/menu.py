@@ -3129,7 +3129,7 @@ class Menu(Base):
         :param recursive: Set the sound engine to all submenus
         :return: Self reference
         """
-        assert isinstance(sound, (type(self._sound), type(None))), \
+        assert isinstance(sound, (Sound, type(self._sound), type(None))), \
             'sound must be pygame_menu.Sound type or None'
         if sound is None:
             sound = Sound()
@@ -3637,7 +3637,7 @@ class Menu(Base):
         """
         if menu in self._submenus.keys():
             return True
-        if recursive:
+        elif recursive:
             for sm in self._submenus.keys():
                 if sm.in_submenu(menu, recursive):
                     return True
@@ -3760,7 +3760,8 @@ class Menu(Base):
         try:
             return self._widgets[self._index % len(self._widgets)]
         except (IndexError, ZeroDivisionError):
-            return None
+            pass
+        return None
 
     def get_decorator(self) -> 'Decorator':
         """

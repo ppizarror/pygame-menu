@@ -317,7 +317,7 @@ class ColorInput(TextInput):
         if as_string:
             return self._input_string
 
-        if self._color_type == COLORINPUT_TYPE_RGB:
+        elif self._color_type == COLORINPUT_TYPE_RGB:
             color = self._input_string.split(self._separator)
             if len(color) == 3 and color[0] != '' and color[1] != '' and color[2] != '':
                 r, g, b = int(color[0]), int(color[1]), int(color[2])
@@ -339,9 +339,7 @@ class ColorInput(TextInput):
         :return: ``True`` if valid
         """
         r, g, b = self.get_value()
-        if r == -1 or g == -1 or b == -1:
-            return False
-        return True
+        return not (r == -1 or g == -1 or b == -1)
 
     def _draw(self, surface: 'pygame.Surface') -> None:
         super(ColorInput, self)._draw(surface)  # This calls _render()
@@ -369,7 +367,7 @@ class ColorInput(TextInput):
             return render_text
 
         # If previsualization surface is None or the color changed
-        if self._last_r != r or self._last_b != b or self._last_g != g or self._previsualization_surface is None:
+        elif self._last_r != r or self._last_b != b or self._last_g != g or self._previsualization_surface is None:
             width = self._prev_width_factor * self._rect.height
             if width == 0 or self._rect.height == 0:
                 self._previsualization_surface = None
@@ -445,7 +443,7 @@ class ColorInput(TextInput):
                         if len(input_str) == 0 and key == self._separator:
                             return False
 
-                        if len(input_str) > 1:
+                        elif len(input_str) > 1:
                             # Check separators
                             if key == self._separator:
                                 # If more than 2 separators
