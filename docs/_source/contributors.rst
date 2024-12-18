@@ -32,6 +32,7 @@ Other contributors:
 - `vnmabus <https://github.com/vnmabus>`_
 - `werdeil <https://github.com/werdeil>`_
 - `zPaw <https://github.com/zPaw>`_
+- `neilsimp1 <https://github.com/neilsimp1>`_
 
 Ideas and contributions are always welcome. Any found bugs or enhancement
 suggestions should be posted on the `GitHub project page <https://github.com/ppizarror/pygame-menu>`_.
