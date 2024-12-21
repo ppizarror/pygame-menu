@@ -26,7 +26,6 @@ from pygame_menu.widgets.widget.label import Label
 from pygame_menu._types import Any, CallbackType, Callable, Union, Optional, EventVectorType
 
 
-# noinspection PyMissingOrEmptyDocstring
 class Button(Label):
     """
     Button widget.
@@ -45,7 +44,7 @@ class Button(Label):
     :param title: Button title
     :param button_id: Button ID
     :param onreturn: Callback when pressing the button
-    :param wordwrap: Wraps label if newline is found on widget
+    :param args: Optional arguments for callbacks
     :param kwargs: Optional keyword arguments
     """
     to_menu: bool
@@ -123,7 +122,7 @@ class Button(Label):
 
     def update(self, events: EventVectorType) -> bool:
         self.apply_update_callbacks(events)
-        rect = self.get_rect(to_real_position=True)
+        rect: 'pygame.Rect' = self.get_rect(to_real_position=True)
 
         if self.readonly or not self.is_visible():
             self._readonly_check_mouseover(events, rect)
@@ -250,8 +249,7 @@ class ButtonManager(AbstractWidgetManager, ABC):
         :rtype: :py:class:`pygame_menu.widgets.Button`
         """
         kwargs['background_color'] = image
-        button = self.button(' ', action, *args, **kwargs)
-        return button.resize(*image.get_size())
+        return self.button(' ', action, *args, **kwargs).resize(*image.get_size())
 
     # noinspection PyProtectedMember
     def button(
@@ -402,24 +400,24 @@ class ButtonManager(AbstractWidgetManager, ABC):
                     f'back_count number of menus to return from, default is 1'
                 )
 
-            widget = Button(title, button_id, self._menu._open, action, *args, **kwargs)
+            widget = Button(title, button_id, self._menu._open, action)
             widget.to_menu = True
 
         # If element is a MenuAction
         elif action == _events.BACK:  # Back to Menu
-            widget = Button(title, button_id, self._menu.reset, total_back, *args, **kwargs)
+            widget = Button(title, button_id, self._menu.reset, total_back)
 
         elif action == _events.CLOSE:  # Close Menu
-            widget = Button(title, button_id, self._menu._close, *args, **kwargs)
+            widget = Button(title, button_id, self._menu._close)
 
         elif action == _events.EXIT:  # Exit program
-            widget = Button(title, button_id, self._menu._exit, *args, **kwargs)
+            widget = Button(title, button_id, self._menu._exit)
 
         elif action == _events.NONE:  # None action
             widget = Button(title, button_id)
 
         elif action == _events.RESET:  # Back to Top Menu
-            widget = Button(title, button_id, self._menu.full_reset, *args, **kwargs)
+            widget = Button(title, button_id, self._menu.full_reset)
 
         # If element is a function or callable
         elif callable(action):
