@@ -18,6 +18,16 @@ import pygame_menu.utils as ut
 
 class UtilsTest(BaseTest):
 
+    def test_alpha(self) -> None:
+        """
+        Configure alpha state.
+        """
+        self.assertTrue(ut._ALPHA_CHANNEL[0])
+        ut.configure_alpha(False)
+        self.assertFalse(ut._ALPHA_CHANNEL[0])
+        ut.configure_alpha(True)
+        self.assertTrue(ut._ALPHA_CHANNEL[0])
+
     def test_callable(self) -> None:
         """
         Test is callable.

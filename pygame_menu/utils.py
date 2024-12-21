@@ -18,6 +18,7 @@ __all__ = [
     'assert_position_vector',
     'assert_vector',
     'check_key_pressed_valid',
+    'configure_alpha',
     'fill_gradient',
     'format_color',
     'get_cursor',
@@ -59,6 +60,7 @@ from pygame_menu._types import ColorType, ColorInputType, Union, List, Vector2Nu
     PaddingType, Tuple4IntType, ColorInputInstance, VectorType, EventType, \
     CursorInputInstance, CursorInputType, Tuple2IntType, Dict, Tuple3IntType
 
+_ALPHA_CHANNEL: List[bool] = [True]
 PYGAME_V2 = pygame.version.vernum[0] >= 2
 WARNINGS_LAST_MESSAGES: Dict[int, bool] = {}
 
@@ -216,6 +218,16 @@ def check_key_pressed_valid(event: EventType) -> bool:
         ev = pygame.event.Event(pygame.KEYUP, {'key': event.key})
         pygame.event.post(ev)
     return not bad_event
+
+
+def configure_alpha(state: bool) -> None:
+    """
+    Configures alpha mode.
+
+    :param state: State on/off
+    """
+    assert isinstance(state, bool)
+    _ALPHA_CHANNEL[0] = state
 
 
 def fill_gradient(
@@ -429,7 +441,7 @@ def make_surface(
     assert width >= 0 and height >= 0, \
         'surface width and height must be equal or greater than zero'
     surface = pygame.Surface((int(width), int(height)), pygame.SRCALPHA, 32)
-    if alpha:
+    if alpha and _ALPHA_CHANNEL[0]:
         # noinspection PyArgumentList
         surface = pygame.Surface.convert_alpha(surface)
     if fill_color is not None:
