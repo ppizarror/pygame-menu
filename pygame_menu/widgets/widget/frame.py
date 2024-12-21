@@ -59,7 +59,7 @@ FrameTitleBackgroundColorType = Optional[ColorInputGradientType]
 FrameTitleButtonType = str
 
 
-# noinspection PyMissingOrEmptyDocstring,PyProtectedMember
+# noinspection PyProtectedMember
 class Frame(Widget):
     """
     Frame is a widget container, it can pack many widgets.

@@ -60,7 +60,6 @@ def check_selector_items(items: Union[Tuple, List]) -> None:
             f'(the title of each item), but received "{e[0]}"'
 
 
-# noinspection PyMissingOrEmptyDocstring
 class Selector(Widget):
     """
     Selector widget: several items and two functions that are executed when changing

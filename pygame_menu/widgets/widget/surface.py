@@ -22,7 +22,6 @@ from pygame_menu._types import CallbackType, Optional, EventVectorType, Callable
     Any
 
 
-# noinspection PyMissingOrEmptyDocstring
 class SurfaceWidget(Widget):
     """
     Surface widget. Implements a widget from an external surface.

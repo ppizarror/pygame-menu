@@ -27,7 +27,6 @@ from pygame_menu._types import Any, CallbackType, Union, List, Tuple, Optional, 
     ColorInputType, EventVectorType, Callable
 
 
-# noinspection PyMissingOrEmptyDocstring
 class ToggleSwitch(Widget):
     """
     Toggle switch widget.

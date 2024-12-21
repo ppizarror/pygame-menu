@@ -42,7 +42,6 @@ RangeSliderValueFormatType = Callable[[NumberType], str]
 RangeSliderValueType = Union[NumberType, Vector2NumberType]
 
 
-# noinspection PyMissingOrEmptyDocstring
 class RangeSlider(Widget):
     """
     Range slider widget. Offers 1 or 2 sliders for defining a unique value or

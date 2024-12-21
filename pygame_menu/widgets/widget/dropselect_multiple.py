@@ -44,7 +44,6 @@ DROPSELECT_MULTIPLE_SFORMAT_TOTAL = 'total'
 DropSelectMultipleSFormatType = Union[str, Callable[[List[str]], str]]
 
 
-# noinspection PyMissingOrEmptyDocstring
 class DropSelectMultiple(DropSelect):
     """
     Drop select multiple is a drop select which can select many options at the

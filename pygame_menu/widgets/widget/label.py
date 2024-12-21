@@ -26,7 +26,6 @@ from pygame_menu._types import Any, CallbackType, List, Union, Tuple, Optional, 
 LabelTitleGeneratorType = Optional[Callable[[], str]]
 
 
-# noinspection PyMissingOrEmptyDocstring
 class Label(Widget):
     """
     Label widget.

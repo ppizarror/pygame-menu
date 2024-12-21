@@ -86,7 +86,6 @@ CTRL_KMOD = (
 )
 
 
-# noinspection PyMissingOrEmptyDocstring
 class TextInput(Widget):
     """
     Text input widget.

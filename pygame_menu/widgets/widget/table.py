@@ -37,7 +37,6 @@ CellType = Union['Widget', str, int, float, bool, 'BaseImage', 'pygame.Surface']
 ColumnInputType = Union[Tuple[CellType, ...], List[CellType]]
 
 
-# noinspection PyMissingOrEmptyDocstring
 class Table(Frame):
     """
     Table is a frame which can pack widgets in a structured way.

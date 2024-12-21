@@ -26,7 +26,6 @@ from pygame_menu._types import Union, NumberType, CallbackType, Tuple2NumberType
     Optional, NumberInstance, EventVectorType, Callable, Vector2NumberType, Any
 
 
-# noinspection PyMissingOrEmptyDocstring
 class Image(Widget):
     """
     Image widget.

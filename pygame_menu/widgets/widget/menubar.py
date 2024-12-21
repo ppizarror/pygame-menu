@@ -55,7 +55,6 @@ _MODE_BACK = 1021
 MenuBarStyleModeType = int
 
 
-# noinspection PyMissingOrEmptyDocstring
 class MenuBar(Widget):
     """
     MenuBar widget.

@@ -35,7 +35,6 @@ from pygame_menu._types import Any, CallbackType, Optional, ColorType, NumberTyp
 ProgressBarTextFormatType = Callable[[NumberType], str]
 
 
-# noinspection PyMissingOrEmptyDocstring
 class ProgressBar(Widget):
     """
     Progress bar widget, offers a bar that accepts a percentage from ``0`` to ``100``.

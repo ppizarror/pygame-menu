@@ -21,7 +21,6 @@ from pygame_menu._types import Optional, List, VectorIntType, ColorType, Literal
     EventVectorType, VectorInstance
 
 
-# noinspection PyMissingOrEmptyDocstring
 class ScrollBar(Widget):
     """
     A scroll bar include 3 separate controls: a slider, scroll arrows, and a
