@@ -53,7 +53,6 @@ ColorInputColorType = str
 ColorInputHexFormatType = str
 
 
-# noinspection PyMissingOrEmptyDocstring
 class ColorInput(TextInput):
     """
     Color input widget.
@@ -149,14 +148,14 @@ class ColorInput(TextInput):
                               COLORINPUT_HEX_FORMAT_UPPER), \
             'invalid hex format mode, it must be "none", "lower" or "upper"'
 
-        _maxchar = 0
+        maxchar: int = 0
         self._color_type = color_type.lower()
         if self._color_type == COLORINPUT_TYPE_RGB:
-            _maxchar = 11  # RRR,GGG,BBB
+            maxchar = 11  # RRR,GGG,BBB
             self._valid_chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
                                  input_separator]
         elif self._color_type == COLORINPUT_TYPE_HEX:
-            _maxchar = 7  # #XXYYZZ
+            maxchar = 7  # #XXYYZZ
             self._valid_chars = ['a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E',
                                  'f', 'F', '#', '0', '1', '2', '3', '4', '5', '6',
                                  '7', '8', '9']
@@ -171,7 +170,7 @@ class ColorInput(TextInput):
             input_type=INPUT_TEXT,
             input_underline=input_underline,
             input_underline_vmargin=input_underline_vmargin,
-            maxchar=_maxchar,
+            maxchar=maxchar,
             maxwidth=0,
             onchange=onchange,
             onreturn=onreturn,
@@ -213,7 +212,7 @@ class ColorInput(TextInput):
 
         # Compute the size of the underline
         if self._input_underline != '':
-            max_width = 0  # Max expected width
+            max_width: int = 0  # Max expected width
             if self._color_type == COLORINPUT_TYPE_RGB:
                 max_width = self._font_render_string(
                     f'255{self._separator}255{self._separator}255'
@@ -250,7 +249,7 @@ class ColorInput(TextInput):
         """
         if color is None:
             color = ''
-        format_color = ''
+        format_color: str = ''
         if self._color_type == COLORINPUT_TYPE_RGB:
             if color == '':
                 super(ColorInput, self).set_value('')
@@ -269,7 +268,7 @@ class ColorInput(TextInput):
             self._auto_separator_pos = [0, 1]
 
         elif self._color_type == COLORINPUT_TYPE_HEX:
-            text = str(color).strip()
+            text: str = str(color).strip()
             if text == '' or text == '#':
                 format_color = '#'
             else:
@@ -346,10 +345,10 @@ class ColorInput(TextInput):
 
         # Draw previsualization box
         if self._previsualization_surface is not None:
-            posx = self._rect.x + self._rect.width \
-                   - self._prev_width_factor * self._rect.height \
-                   + self._rect.height / 10
-            posy = self._rect.y
+            posx: float = self._rect.x + self._rect.width \
+                          - self._prev_width_factor * self._rect.height \
+                          + self._rect.height / 10
+            posy: int = self._rect.y
             surface.blit(self._previsualization_surface, (int(posx), int(posy)))
 
     def _render(self) -> Optional[bool]:

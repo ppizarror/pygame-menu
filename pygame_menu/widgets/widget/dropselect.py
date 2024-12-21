@@ -34,7 +34,7 @@ from pygame_menu._types import Tuple, Union, List, Any, Optional, CallbackType, 
     CursorInputType, CursorType, NumberInstance, Callable
 
 
-# noinspection PyMissingOrEmptyDocstring,PyProtectedMember
+# noinspection PyProtectedMember
 class DropSelect(Widget):
     """
     Drop select is a selector within a Frame. This drops a vertical frame if
@@ -358,9 +358,9 @@ class DropSelect(Widget):
             raise RuntimeError(f'{self.get_class_id()} must be configured before creating selection drop')
 
         # Create options buttons
-        total_height = 0
-        max_height = 0
-        frame_width = self._selection_box_width + self._selection_box_inflate[0]
+        total_height: int = 0
+        max_height: int = 0
+        frame_width: int = self._selection_box_width + self._selection_box_inflate[0]
         self._option_buttons = []
 
         # Add placeholder button
@@ -714,8 +714,8 @@ class DropSelect(Widget):
         if self._option_font is None:
             return
 
-        scroll_v = 0
-        menu_height = 0 if self._menu is None else self._menu.get_height(widget=True)
+        scroll_v: int = 0
+        menu_height: int = 0 if self._menu is None else self._menu.get_height(widget=True)
         current_selected = self._get_current_selected_text()
 
         if not self._render_hash_changed(current_selected, self._selected, self._visible, self._index,
