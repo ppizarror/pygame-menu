@@ -21,7 +21,6 @@ from pygame_menu.widgets.widget.none import NoneWidget
 from pygame_menu._types import Callable
 
 
-# noinspection PyMissingOrEmptyDocstring
 class MenuLink(NoneWidget):
     """
     Menu link widget; adds a link to another Menu. The behaviour is similar to a
@@ -29,7 +28,7 @@ class MenuLink(NoneWidget):
 
     .. note::
 
-        MenuLink does not accept any transformation.
+        MenuLink does not accept transformations.
 
     :param link_id: Link ID
     :param menu_opener_handler: Callback for opening the menu object
@@ -61,6 +60,9 @@ class MenuLink(NoneWidget):
         pass
 
     def open(self) -> None:
+        """
+        Open the menu link.
+        """
         return self._onreturn(self.menu)
 
 

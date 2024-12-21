@@ -22,7 +22,6 @@ from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImple
 from pygame_menu._types import Optional, NumberType, EventVectorType
 
 
-# noinspection PyMissingOrEmptyDocstring
 class NoneWidget(Widget):
     """
     None widget. Useful if used for filling column/row layout. None widget don't
@@ -32,7 +31,7 @@ class NoneWidget(Widget):
 
     .. note::
 
-        NoneWidget does not accept any transformation.
+        NoneWidget does not accept transformations.
 
     :param widget_id: ID of the widget
     """

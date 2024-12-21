@@ -21,14 +21,13 @@ from pygame_menu.widgets.widget.none import NoneWidget
 from pygame_menu._types import NumberType, NumberInstance
 
 
-# noinspection PyMissingOrEmptyDocstring
 class HMargin(NoneWidget):
     """
     Horizontal margin widget.
 
     .. note::
 
-        HMargin does not accept any transformation.
+        HMargin does not accept transformations.
 
     :param margin: Horizontal margin in px
     :param widget_id: ID of the widget

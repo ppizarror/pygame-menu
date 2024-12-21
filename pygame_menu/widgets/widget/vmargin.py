@@ -21,14 +21,13 @@ from pygame_menu.widgets.widget.none import NoneWidget
 from pygame_menu._types import NumberType, NumberInstance
 
 
-# noinspection PyMissingOrEmptyDocstring
 class VMargin(NoneWidget):
     """
     Vertical margin widget. VMargin only accepts margin, not padding.
 
     .. note::
 
-        VMargin does not accept any transformation.
+        VMargin does not accept transformations.
 
     :param margin: Vertical margin in px
     :param widget_id: ID of the widget

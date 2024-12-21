@@ -21,7 +21,6 @@ from pygame_menu.widgets.widget.none import NoneWidget
 from pygame_menu._types import NumberType, NumberInstance
 
 
-# noinspection PyMissingOrEmptyDocstring
 class VFill(NoneWidget):
     """
     Vertical fill widget. This widget fills all vertical space if available, else,
@@ -29,7 +28,7 @@ class VFill(NoneWidget):
 
     .. note::
 
-        VFill does not accept any transformation.
+        VFill does not accept transformations.
 
     :param min_height: Minimum height in px
     :param widget_id: ID of the widget
