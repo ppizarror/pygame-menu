@@ -64,7 +64,7 @@ def make_menu(
 # noinspection PyMissingTypeHints,PyMissingOrEmptyDocstring
 def change_background_color(selected_value, color, **kwargs):
     from random import randrange
-    value_tuple, index = selected_value
+    value_tuple, _ = selected_value
     print('Change widget color to', value_tuple[0])  # selected_value format ('Color', surface, color)
     if color == (-1, -1, -1):  # Generate a random color
         color = (randrange(0, 255), randrange(0, 255), randrange(0, 255))

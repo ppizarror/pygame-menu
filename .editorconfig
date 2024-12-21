@@ -14,6 +14,6 @@ insert_final_newline = false
 indent_size = 4
 indent_style = space
 
-[{*.json, *.yml}]
+[{*.json,*.yml}]
 indent_size = 2
 indent_style = space

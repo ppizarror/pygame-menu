@@ -649,6 +649,7 @@ class DropSelectWidgetTest(BaseTest):
         # Ignore buttons if not active
         self.assertFalse(sel.update(PygameEventUtils.key(pygame_menu.controls.KEY_MOVE_UP, keydown=True)))
 
+    # noinspection PyTypeChecker
     def test_dropselect_multiple(self) -> None:
         """
         Test dropselect multiple widget.

@@ -130,12 +130,12 @@ class ScrollArea(Base):
     _menubar: 'pygame_menu.widgets.MenuBar'
     _parent_scrollarea: 'ScrollArea'
     _rect: 'pygame.Rect'
-    _scrollbar_positions: Tuple[str, ...]
+    _scrollbar_positions: Union[str, Tuple[str, ...]]
     _scrollbars: List['ScrollBar']
     _scrollbars_props: Tuple[Any, ...]
     _translate: Tuple2IntType
     _view_rect: 'pygame.Rect'
-    _world: 'pygame.Surface'
+    _world: Optional['pygame.Surface']
 
     def __init__(
         self,

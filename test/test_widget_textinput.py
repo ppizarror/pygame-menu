@@ -344,6 +344,7 @@ class TextInputWidgetTest(BaseTest):
         textinput._input_type = 'other'
         self.assertTrue(textinput._check_input_type('-'))
         self.assertFalse(textinput._check_input_type('x'))
+        # noinspection PyTypeChecker
         textinput._maxwidth_update = None
         self.assertIsNone(textinput._update_maxlimit_renderbox())
 

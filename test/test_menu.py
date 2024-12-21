@@ -675,6 +675,7 @@ class MenuTest(BaseTest):
         self.assertIsNone(menu.get_selected_widget())
 
         # Destroy index
+        # noinspection PyTypeChecker
         menu._index = '0'
         self.assertIsNone(menu.get_selected_widget())
         self.assertEqual(menu._index, 0)
