@@ -424,7 +424,7 @@ class ButtonManager(AbstractWidgetManager, ABC):
         # If element is a function or callable
         elif callable(action):
             if not accept_kwargs:
-                widget = Button(title, button_id, action, *args, **kwargs)
+                widget = Button(title, button_id, action, *args)
             else:
                 widget = Button(title, button_id, action, *args, **kwargs)
 
