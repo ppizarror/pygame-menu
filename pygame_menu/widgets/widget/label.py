@@ -46,7 +46,7 @@ class Label(Widget):
     _leading: Optional[int]
     _lines: List[str]
     _max_nlines: Optional[int]
-    _overflow_lines: List[str]  # Store how many lines are overflowed starting end
+    _overflow_lines: List[str]  # Store how many lines are overflowed
     _title_generator: LabelTitleGeneratorType
     _wordwrap: bool
 
@@ -61,6 +61,7 @@ class Label(Widget):
     ) -> None:
         assert isinstance(leading, (type(None), int))
         assert isinstance(max_nlines, (type(None), int))
+        assert isinstance(wordwrap, bool)
         super(Label, self).__init__(
             title=title,
             onselect=onselect,
@@ -102,7 +103,7 @@ class Label(Widget):
 
     def remove_underline(self) -> 'Label':
         """
-        Remove underline of the label.
+        Remove the underline.
 
         :return: Self reference
         """
@@ -233,7 +234,7 @@ class Label(Widget):
 
     def get_overflow_lines(self) -> List[str]:
         """
-        Return the overflow lines ir ``wordwrap`` is active and ``max_nlines`` is set.
+        Return the overflow lines if ``wordwrap`` is active and ``max_nlines`` is set.
 
         :return: Lines not displayed
         """
@@ -242,22 +243,23 @@ class Label(Widget):
         return self._overflow_lines
 
     def _render(self) -> Optional[bool]:
-        if not self._render_hash_changed(self._title, self._font_color, self._visible, self._menu, self._font,
-                                         self._last_underline[1], self._padding, self._selection_effect.get_width()):
+        font_color: ColorType = self.get_font_color_status()
+        if not self._render_hash_changed(self._title, font_color, self._visible, self._menu, self._font,
+                                         self._last_underline[1], self._padding, self._selection_effect.get_width(),
+                                         self.readonly):
             return True
-        self._lines = []
+        self._lines.clear()
 
         # Generate surface
         if not self._wordwrap:
-            self._surface = self._render_string(self._title, self._font_color)
+            self._surface = self._render_string(self._title, font_color)
             self._lines.append(self._title)
 
         else:
-            self._overflow_lines = []
+            self._overflow_lines.clear()
             if self._font is None or self._menu is None:
                 self._surface = make_surface(0, 0, alpha=True)
             else:
-                lines = self._title.split('\n')
                 lines = sum(
                     (
                         self._wordwrap_line(
@@ -266,7 +268,7 @@ class Label(Widget):
                             max_width=self._get_max_container_width(),
                             tab_size=self._tab_size
                         )
-                        for line in lines
+                        for line in self._title.split('\n')
                     ),
                     []
                 )
@@ -284,7 +286,7 @@ class Label(Widget):
                 )
 
                 for n_line, line in enumerate(lines):
-                    line_surface = self._render_string(line, self._font_color)
+                    line_surface = self._render_string(line, font_color)
                     self._surface.blit(
                         line_surface,
                         pygame.Rect(
@@ -302,7 +304,7 @@ class Label(Widget):
         self._apply_transforms()
         self._rect.width, self._rect.height = self._surface.get_size()
 
-        # Apply underline
+        # Add underline
         if not self._wordwrap:
             self.remove_underline()
             if self._last_underline[1] is not None:
@@ -410,7 +412,7 @@ class LabelManager(AbstractWidgetManager, ABC):
         :param max_char: Split the title in several labels if the string length exceeds ``max_char``; ``0``: don't split, ``-1``: split to Menu width
         :param onselect: Callback executed when selecting the widget; only executed if ``selectable`` is ``True``
         :param selectable: Label accepts user selection; useful to move along the Menu using label selection
-        :param wordwrap: Wraps label if newline is found on widget. If ``False`` the manager splits the string and creates a list of widgets, else, the widget itself splits and updates the height
+        :param wordwrap: Wraps label text if newline (\n) is found on text. If ``False`` the manager splits the string and creates a list of widgets, else, the widget itself splits and updates the height
         :param kwargs: Optional keyword arguments
         :return: Widget object, or List of widgets if the text overflows
         :rtype: :py:class:`pygame_menu.widgets.Label`, :py:class:`typing.List` [:py:class:`pygame_menu.widgets.Label`]
@@ -592,7 +594,7 @@ class LabelManager(AbstractWidgetManager, ABC):
         :param onselect: Callback executed when selecting the widget; only executed if ``selectable`` is ``True``
         :param selectable: Label accepts user selection; useful to move along the Menu using label selection
         :param title_format: Title format which accepts ``{0}`` as the string from ``time.strftime``, for example, ``'My Clock {0}'`` can be a title format
-        :param wordwrap: Wraps label if newline is found on widget. If ``False`` the manager splits the string and creates a list of widgets, else, the widget itself splits and updates the height
+        :param wordwrap: Wraps label if newline is found on widget or it exceeds the maximum width from its container. If ``False`` the manager splits the string and creates a list of widgets, else, the widget itself splits and updates the height
         :param kwargs: Optional keyword arguments
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.Label`

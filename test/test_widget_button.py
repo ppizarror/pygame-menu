@@ -326,3 +326,15 @@ class ButtonWidgetTest(BaseTest):
         self.assertFalse(apply_test[0])
         btn.apply()
         self.assertTrue(apply_test[0])
+
+    def test_multiline(self) -> None:
+        """
+        Test multiline button capabilities.
+        """
+        menu = MenuUtils.generic_menu()
+        s = 'lorem ipsum dolor sit amet this was very important nice a test is required ' \
+            'lorem ipsum dolor sit amet this was very important nice a test is required'
+        button = menu.add.button(s, wordwrap=True, max_nlines=3)  # Maximum number of lines
+        self.assertEqual(len(button.get_lines()), 3)  # The widget needs 4 lines, but maximum is 3
+        self.assertEqual(button.get_height(), 131)
+        self.assertEqual(button.get_overflow_lines(), ['important nice a test is required'])

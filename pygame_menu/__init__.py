@@ -107,6 +107,7 @@ __contributors__ = [
     'maditnerd',
     'MayuSakurai',
     'mrkprdo',
+    'neilsimp1',
     'notrurs',
     'NullP01nt',
     'PandaRoux8',
