@@ -39,7 +39,7 @@ class Label(Widget):
     :param onselect: Function when selecting the label widget
     :param wordwrap: Wraps label if newline is found on widget
     :param leading: Font leading for ``wordwrap``. If ``None`` retrieves from widget font
-    :param max_nlines: Number of maximum lines for ``wordwrap``. If ``None`` the number is dynamically computed. If exceded, ``label.get_overflow_lines()`` will return the lines not displayed
+    :param max_nlines: Number of maximum lines for ``wordwrap``. If ``None`` the number is dynamically computed. If exceeded, ``get_overflow_lines()`` will return the non displayed lines
     """
     _last_underline: List[Union[str, Optional[Tuple[ColorType, int, int]]]]
     _leading: Optional[int]
@@ -83,7 +83,7 @@ class Label(Widget):
     ) -> 'Label':
         """
         Adds an underline to text. This is added if widget is rendered. Underline
-        is only enabled for non wordwrap label.
+        is only enabled for non wordwrap mode.
 
         :param color: Underline color
         :param offset: Underline offset
@@ -235,7 +235,7 @@ class Label(Widget):
         """
         Return the overflow lines if ``wordwrap`` is active and ``max_nlines`` is set.
 
-        :return: Lines not displayed
+        :return: Non displayed lines
         """
         assert self._wordwrap, 'wordwrap must be enabled'
         assert isinstance(self._max_nlines, int), 'max_nlines must be defined'
@@ -382,7 +382,7 @@ class LabelManager(AbstractWidgetManager, ABC):
             - ``font_size``                     (int) – Font size of the widget
             - ``leading``                       (int) - Font leading for ``wordwrap``. If ``None`` retrieves from widget font
             - ``margin``                        (tuple, list) – Widget (left, bottom) margin in px
-            - ``max_nlines``                    (int) - Number of maximum lines for ``wordwrap``. If ``None`` the number is dynamically computed. If exceded, ``label.get_overflow_lines()`` will return the lines not displayed
+            - ``max_nlines``                    (int) - Number of maximum lines for ``wordwrap``. If ``None`` the number is dynamically computed. If exceeded, ``get_overflow_lines()`` will return the non displayed lines
             - ``padding``                       (int, float, tuple, list) – Widget padding according to CSS rules. General shape: (top, right, bottom, left)
             - ``selection_color``               (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the selected widget; only affects the font color
             - ``selection_effect``              (:py:class:`pygame_menu.widgets.core.Selection`) – Widget selection effect. Applied only if ``selectable`` is ``True``
@@ -563,7 +563,7 @@ class LabelManager(AbstractWidgetManager, ABC):
             - ``font_size``                     (int) – Font size of the widget
             - ``leading``                       (int) - Font leading for ``wordwrap``. If ``None`` retrieves from widget font
             - ``margin``                        (tuple, list) – Widget (left, bottom) margin in px
-            - ``max_nlines``                    (int) - Number of maximum lines for ``wordwrap``. If ``None`` the number is dynamically computed. If exceded, ``label.get_overflow_lines()`` will return the lines not displayed
+            - ``max_nlines``                    (int) - Number of maximum lines for ``wordwrap``. If ``None`` the number is dynamically computed. If exceeded, ``get_overflow_lines()`` will return the non displayed lines
             - ``padding``                       (int, float, tuple, list) – Widget padding according to CSS rules. General shape: (top, right, bottom, left)
             - ``selection_color``               (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the selected widget; only affects the font color
             - ``selection_effect``              (:py:class:`pygame_menu.widgets.core.Selection`) – Widget selection effect. Applied only if ``selectable`` is ``True``

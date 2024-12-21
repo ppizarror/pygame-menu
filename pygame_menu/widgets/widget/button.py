@@ -307,7 +307,7 @@ class ButtonManager(AbstractWidgetManager, ABC):
             - ``font_size``                     (int) – Font size of the widget
             - ``leading``                       (int) - Font leading for ``wordwrap``. If ``None`` retrieves from widget font
             - ``margin``                        (tuple, list) – Widget (left, bottom) margin in px
-            - ``max_nlines``                    (int) - Number of maximum lines for ``wordwrap``. If ``None`` the number is dynamically computed. If exceded, ``button.get_overflow_lines()`` will return the lines not displayed
+            - ``max_nlines``                    (int) - Number of maximum lines for ``wordwrap``. If ``None`` the number is dynamically computed. If exceeded, ``get_overflow_lines()`` will return the non displayed lines
             - ``onselect``                      (callable, None) – Callback executed when selecting the widget
             - ``padding``                       (int, float, tuple, list) – Widget padding according to CSS rules. General shape: (top, right, bottom, left)
             - ``readonly_color``                (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the widget if readonly mode
