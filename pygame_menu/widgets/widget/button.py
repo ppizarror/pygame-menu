@@ -46,14 +46,13 @@ class Button(Widget):
     :param button_id: Button ID
     :param onreturn: Callback when pressing the button
     :param wordwrap: Wraps label if newline is found on widget
-    :param leading: Font leading for ``wordwrap``. If ``None`` retrieves from widget font
-    :param max_nlines: Number of maximum lines for ``wordwrap``. If ``None`` the number is dynamically computed. If exceded, ``label.get_overflow_lines()`` will return the lines not displayed
-    :param args: Optional arguments for callbacks
     :param kwargs: Optional keyword arguments
     """
     _last_underline: List[Union[str, Optional[Tuple[ColorType, int, int]]]]  # deco id, (color, offset, width)
     _leading: Optional[int]
+    _lines: List[str]
     _max_nlines: Optional[int]
+    _overflow_lines: List[str]  # Store how many lines are overflowed
     _wordwrap: bool
     to_menu: bool
 
@@ -65,9 +64,6 @@ class Button(Widget):
         *args,
         **kwargs
     ) -> None:
-        leading = kwargs.pop('leading', None)
-        max_nlines = kwargs.pop('max_nlines', None)
-        wordwrap = kwargs.pop('wordwrap', False)
         super(Button, self).__init__(
             args=args,
             kwargs=kwargs,
@@ -77,14 +73,25 @@ class Button(Widget):
         )
         self._accept_events = True
         self._last_underline = ['', None]
-        self._leading = leading
+        self._leading = None
         self._lines = []  # Lines of text displayed
-        self._max_nlines = max_nlines
-        self._wordwrap = wordwrap
+        self._max_nlines = None
+        self._overflow_lines = []
+        self._wordwrap = False
         self.to_menu = False  # True if the button opens a new Menu
 
     def _apply_font(self) -> None:
         pass
+
+    def get_overflow_lines(self) -> List[str]:
+        """
+        Return the overflow lines if ``wordwrap`` is active and ``max_nlines`` is set.
+
+        :return: Lines not displayed
+        """
+        assert self._wordwrap, 'wordwrap must be enabled'
+        assert isinstance(self._max_nlines, int), 'max_nlines must be defined'
+        return self._overflow_lines
 
     def set_selection_callback(
         self,
@@ -181,7 +188,7 @@ class Button(Widget):
         if not self._render_hash_changed(self._selected, self._title, self._visible, self.readonly,
                                          self._last_underline[1]):
             return True
-        self._lines = []
+        self._lines.clear()
 
         # Generate surface
         if not self._wordwrap:
@@ -189,11 +196,10 @@ class Button(Widget):
             self._lines.append(self._title)
 
         else:
-            self._overflow_lines = []
+            self._overflow_lines.clear()
             if self._font is None or self._menu is None:
                 self._surface = make_surface(0, 0, alpha=True)
             else:
-                lines = self._title.split('\n')
                 lines = sum(
                     (
                         self._wordwrap_line(
@@ -202,7 +208,7 @@ class Button(Widget):
                             max_width=self._get_max_container_width(),
                             tab_size=self._tab_size
                         )
-                        for line in lines
+                        for line in self._title.split('\n')
                     ),
                     []
                 )
@@ -267,7 +273,7 @@ class Button(Widget):
             if self._leading is None
             else self._leading
         )
-    
+
     def get_lines(self) -> List[str]:
         """
         Return the lines of text displayed. Each new line belongs to an item on list.
@@ -275,46 +281,6 @@ class Button(Widget):
         :return: List of displayed lines
         """
         return self._lines
-
-    @staticmethod
-    def _wordwrap_line(
-        line: str,
-        font: pygame.font.Font,
-        max_width: int,
-        tab_size: int,
-    ) -> List[str]:
-        """
-        Wordwraps line.
-
-        :param line: Line
-        :param font: Font
-        :param max_width: Max width
-        :param tab_size: Tab size
-        :return: List of strings
-        """
-        final_lines = []
-        words = line.split(' ')
-        i, current_line = 0, ''
-
-        while True:
-            split_line = False
-            for i, _ in enumerate(words):
-                current_line = ' '.join(words[:i + 1])
-                current_line = current_line.replace('\t', ' ' * tab_size)
-                current_line_size = font.size(current_line)
-                if current_line_size[0] > max_width:
-                    split_line = True
-                    break
-
-            if split_line:
-                i = i if i > 0 else 1
-                final_lines.append(' '.join(words[:i]))
-                words = words[i:]
-            else:
-                final_lines.append(current_line)
-                break
-
-        return final_lines
 
     def _get_max_container_width(self) -> int:
         """
@@ -476,8 +442,8 @@ class ButtonManager(AbstractWidgetManager, ABC):
         """
         Adds a button to the Menu.
 
-        # The arguments and unknown keyword arguments are passed to the action, if
-        # it's a callable object:
+        The arguments and unknown keyword arguments are passed to the action, if
+        it's a callable object:
 
         .. code-block:: python
 
@@ -519,7 +485,9 @@ class ButtonManager(AbstractWidgetManager, ABC):
             - ``font_shadow_position``          (str) – Font shadow position, see locals for position
             - ``font_shadow``                   (bool) – Font shadow is enabled or disabled
             - ``font_size``                     (int) – Font size of the widget
+            - ``leading``                       (int) - Font leading for ``wordwrap``. If ``None`` retrieves from widget font
             - ``margin``                        (tuple, list) – Widget (left, bottom) margin in px
+            - ``max_nlines``                    (int) - Number of maximum lines for ``wordwrap``. If ``None`` the number is dynamically computed. If exceded, ``button.get_overflow_lines()`` will return the lines not displayed
             - ``onselect``                      (callable, None) – Callback executed when selecting the widget
             - ``padding``                       (int, float, tuple, list) – Widget padding according to CSS rules. General shape: (top, right, bottom, left)
             - ``readonly_color``                (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the widget if readonly mode
@@ -535,7 +503,7 @@ class ButtonManager(AbstractWidgetManager, ABC):
             - ``underline_offset``              (int) – Vertical offset in px. ``2`` by default
             - ``underline_width``               (int) – Underline width in px. ``2`` by default
             - ``underline``                     (bool) – Enables text underline, using a properly placed decoration. ``False`` by default
-            - ``wordwrap``                      (bool) – Wraps label if newline is found on widget. If ``False`` the manager splits the string and creates a list of widgets, else, the widget itself splits and updates the height
+            - ``wordwrap``                      (bool) – Wraps button text if newline (\n) is found on text or it exceeds the maximum width from its container. If ``False`` the manager splits the string and creates a list of widgets, else, the widget itself splits and updates the height
 
         .. note::
 
@@ -563,10 +531,6 @@ class ButtonManager(AbstractWidgetManager, ABC):
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.Button`
         """
-
-        # wordwrap = kwargs.pop('wordwrap', False)
-        # assert isinstance(wordwrap, bool)
-
         total_back = kwargs.pop('back_count', 1)
         assert isinstance(total_back, int) and 1 <= total_back
 
@@ -589,6 +553,14 @@ class ButtonManager(AbstractWidgetManager, ABC):
         underline_color = kwargs.pop('underline_color', attributes['font_color'])
         underline_offset = kwargs.pop('underline_offset', 1)
         underline_width = kwargs.pop('underline_width', 1)
+
+        # Wordwrap
+        wordwrap = kwargs.pop('wordwrap', False)
+        assert isinstance(wordwrap, bool)
+        leading = kwargs.pop('leading', None)
+        assert isinstance(leading, (type(None), int))
+        max_nlines = kwargs.pop('max_nlines', None)
+        assert isinstance(max_nlines, (type(None), int))
 
         # Change action if certain events
         if action == _events.PYGAME_QUIT or action == _events.PYGAME_WINDOWCLOSE:
@@ -652,6 +624,9 @@ class ButtonManager(AbstractWidgetManager, ABC):
         if underline:
             widget.add_underline(underline_color, underline_offset, underline_width)
         widget.set_selection_callback(onselect)
+        widget._leading = leading  # Configure wordwrap
+        widget._max_nlines = max_nlines
+        widget._wordwrap = wordwrap
         self._append_widget(widget)
 
         # Add to submenu
