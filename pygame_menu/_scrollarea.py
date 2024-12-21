@@ -207,7 +207,7 @@ class ScrollArea(Base):
         assert area_width > 0 and area_height > 0, 'area size must be greater than zero'
 
         assert isinstance(scrollbars, (str, VectorInstance))
-        unique_scrolls = []
+        unique_scrolls: List[str] = []
         if isinstance(scrollbars, str):
             unique_scrolls.append(scrollbars)
         else:

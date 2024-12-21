@@ -1379,7 +1379,7 @@ class Menu(Base):
         if 0 <= sum_width_columns < max_width and len(self._widgets) > 0:
 
             # First, scale columns to its maximum
-            sum_contrib = []
+            sum_contrib: List[float] = []
             for col in range(self._used_columns):
                 if self._column_max_width[col] is None:
                     sum_contrib.append(0)
@@ -1400,7 +1400,7 @@ class Menu(Base):
 
             # Scale column widths if None
             sum_width_columns = sum(column_widths)
-            sum_contrib = []
+            sum_contrib: List[float] = []
             for col in range(self._used_columns):
                 if self._column_max_width[col] is None:
                     sum_contrib.append(column_widths[col])
@@ -3868,10 +3868,10 @@ class Menu(Base):
         # Reverse widgets
         if widget is None:
             new_widgets = []
-            lw = len(self._widgets)
-            j_limit = -1  # Last position containing non frame
+            lw: int = len(self._widgets)
+            j_limit: int = -1  # Last position containing non frame
             for i in range(lw):
-                j = lw - 1 - i
+                j: int = lw - 1 - i
                 if self._widgets[j].get_frame() is None:
                     new_widgets.append(self._widgets[j])
                     if j_limit != -1:

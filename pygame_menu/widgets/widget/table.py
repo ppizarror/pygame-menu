@@ -319,7 +319,7 @@ class Table(Frame):
         # Create widgets
         row_cells: List['Widget'] = []
         cell: 'Widget'
-        j = 0
+        j: int = 0
 
         for c in cells:
             cell_widget_type = False

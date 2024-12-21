@@ -989,9 +989,9 @@ class Frame(Widget):
         """
         Compute widget position for vertical orientation.
         """
-        y_top = 0  # Total added to top
-        y_bottom = 0  # Total added to bottom
-        w_center = 0
+        y_top: int = 0  # Total added to top
+        y_bottom: int = 0  # Total added to bottom
+        w_center: int = 0
         for w in self._widgets.values():
             align, v_pos = self._widgets_props[w.get_id()]
             if not w.is_visible(check_frame=False) or w.is_floating():
@@ -1152,8 +1152,8 @@ class Frame(Widget):
         assert isinstance(width, NumberInstance)
         assert isinstance(height, NumberInstance)
 
-        pad_h = self._padding[1] + self._padding[3]
-        pad_v = self._padding[0] + self._padding[2]
+        pad_h: int = self._padding[1] + self._padding[3]
+        pad_v: int = self._padding[0] + self._padding[2]
 
         # Subtract padding
         width -= pad_h

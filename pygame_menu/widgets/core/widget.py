@@ -593,7 +593,7 @@ class Widget(Base):
         # Check if within frame, and the previous frame has not been called, call it
         if check_all_widget_mouseleave:
             if self._frame is not None and WIDGET_MOUSEOVER[0] != self._frame:
-                in_prev = False
+                in_prev: bool = False
 
                 # Check frame not in previous
                 prev = WIDGET_MOUSEOVER[1]
@@ -698,10 +698,10 @@ class Widget(Base):
 
         if rect is None:
             rect = self._mouseover_check_rect()
-        updated = False
+        updated: bool = False
 
         # Check if menu is active
-        menu_enabled = True if self._menu is None else self._menu.is_enabled()
+        menu_enabled: bool = True if self._menu is None else self._menu.is_enabled()
 
         # Check if mouse is over the widget, the widget must be visible
         if (
@@ -918,7 +918,7 @@ class Widget(Base):
         :param args: Variables to compute hash
         :return: Hash data
         """
-        h = hash(args)
+        h: int = hash(args)
         if h == 0:  # Menu considers 0 as un-rendered status
             h = random.randrange(-100000, 100000)
         return h
@@ -932,7 +932,7 @@ class Widget(Base):
         :param args: Variables to check the hash
         :return: ``True`` if render has changed the widget
         """
-        _hash = self._hash_variables(*args)
+        _hash: int = self._hash_variables(*args)
         if _hash != self._last_render_hash or self._last_render_hash == 0:
             self._last_render_hash = _hash
             return True
@@ -1378,7 +1378,7 @@ class Widget(Base):
             return self
 
         # Check for consistency
-        if self.active and not self._selected:
+        elif self.active and not self._selected:
             self.active = False
 
         # Force rendering
@@ -2134,6 +2134,7 @@ class Widget(Base):
         :param maxwidth: Warn bout maxwidth
         :param maxheight: Warn about maxheight
         """
+        # noinspection PyUnresolvedReferences
         if not self._verbose:
             return
         elif self._scale[0] and scale:
@@ -2512,7 +2513,7 @@ class Widget(Base):
             self._selection_time = time.time()
         else:
             self._blur()
-            self._events = []  # Remove events
+            self._events.clear()  # Remove events
 
         self._force_render()
 
@@ -2572,8 +2573,8 @@ class Widget(Base):
         """
         assert isinstance(apply_padding, bool)
         assert isinstance(apply_selection, bool)
-        rect = self.get_rect(apply_padding=apply_padding, render=True)
-        width = rect.width
+        rect: 'pygame.Rect' = self.get_rect(apply_padding=apply_padding, render=True)
+        width: int = rect.width
         if apply_selection:
             width += self._selection_effect.get_width()
         return int(width)
@@ -2596,8 +2597,8 @@ class Widget(Base):
         """
         assert isinstance(apply_padding, bool)
         assert isinstance(apply_selection, bool)
-        rect = self.get_rect(apply_padding=apply_padding, render=True)
-        height = rect.height
+        rect: 'pygame.Rect' = self.get_rect(apply_padding=apply_padding, render=True)
+        height: int = rect.height
         if apply_selection:
             height += self._selection_effect.get_height()
         return int(height)
@@ -2800,7 +2801,7 @@ class Widget(Base):
         """
         assert callable(draw_callback), \
             'draw callback must be callable (function-type)'
-        callback_id = uuid4()
+        callback_id: str = uuid4()
         self._draw_callbacks[callback_id] = draw_callback
         return callback_id
 
@@ -2855,7 +2856,7 @@ class Widget(Base):
         """
         assert callable(update_callback), \
             'update callback must be callable (function-type)'
-        callback_id = uuid4()
+        callback_id: str = uuid4()
         self._update_callbacks[callback_id] = update_callback
         return callback_id
 
@@ -2900,18 +2901,19 @@ class Widget(Base):
     def _merge_events(self, events: EventListType) -> EventListType:
         """
         Append the Widget events to events list.
+        This also clears self events.
 
         :param events: Event list
         :return: Augmented event list
         """
         if len(self._events) == 0:
             return events
-        copy_events = []
+        copy_events: EventListType = []
         for e in events:
             copy_events.append(e)
         for e in self._events:
             copy_events.append(e)
-        self._events = []
+        self._events.clear()
         return copy_events
 
     def set_float(
@@ -2986,7 +2988,7 @@ class Widget(Base):
 
         :return: Self reference
         """
-        prev_visible = self._visible
+        prev_visible: bool = self._visible
         self._visible = True
         return self.__update_menu_after_toggle(prev_visible)
 
@@ -2996,7 +2998,7 @@ class Widget(Base):
 
         :return: Self reference
         """
-        prev_visible = self._visible
+        prev_visible: bool = self._visible
         if self._mouseover:
             self._mouseover = False
             self.mouseleave(mouse_motion_current_mouse_position())
@@ -3082,15 +3084,15 @@ class Widget(Base):
         :return: Data
         """
         # Assemble class name
-        cls_name = self.__class__.__name__
+        cls_name: str = self.__class__.__name__
         if self.get_title() != '':
             cls_name += '-' + self.get_title()
 
         # Assemble geometric data
-        rect = self.get_rect(render=True)
-        rect_real = self.get_rect(to_real_position=True)
-        rect_abs = self.get_rect(to_absolute_position=True)
-        cri = self.get_col_row_index()
+        rect: 'pygame.Rect' = self.get_rect(render=True)
+        rect_real: 'pygame.Rect' = self.get_rect(to_real_position=True)
+        rect_abs: 'pygame.Rect' = self.get_rect(to_absolute_position=True)
+        cri: Tuple3IntType = self.get_col_row_index()
         geom = (
             cri[0], cri[1], cri[2],  # Column/row layout
             rect.x, rect.y, rect.width, rect.height,  # Drawing rect

@@ -55,9 +55,9 @@ class VFill(NoneWidget):
             self._rect.height = self._min_height
             return self._rect
         menu_widgets_col = self.get_menu().get_widgets_column(c)
-        available_height = self.get_menu().get_height(inner=True)
-        total_column_height = 0
-        total_vfills = 0
+        available_height: int = self.get_menu().get_height(inner=True)
+        total_column_height: int = 0
+        total_vfills: int = 0
         column_vfills = []
 
         for w in menu_widgets_col:

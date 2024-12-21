@@ -237,7 +237,7 @@ class ColorInput(TextInput):
     def clear(self) -> None:
         super(ColorInput, self).clear()
         self._previsualization_surface = None
-        self._auto_separator_pos = []
+        self._auto_separator_pos.clear()
         if self._color_type == COLORINPUT_TYPE_HEX:
             super(ColorInput, self).set_value('#')
         self.change()
@@ -556,7 +556,7 @@ class ColorInput(TextInput):
                 len(self._input_string) < 2 or
                 len(self._input_string) == 2 and int(colors[0]) <= 25
             ):
-                self._auto_separator_pos = []
+                self._auto_separator_pos.clear()
 
         return updated
 

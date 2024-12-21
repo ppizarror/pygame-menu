@@ -288,7 +288,7 @@ class ToggleSwitch(Widget):
         self._slider_height = int(self._switch_height * self._slider_height_factor) - 2 * self._switch_border_width
 
         # Render the state texts
-        self._switch_font_rendered = []
+        self._switch_font_rendered.clear()
         for t in range(self._total_states):
             f_render = self._state_font.render(self._state_text[t], True, self._state_text_font_color[t])
             self._switch_font_rendered.append(f_render)
