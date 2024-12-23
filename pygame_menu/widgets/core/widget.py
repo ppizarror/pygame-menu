@@ -2144,19 +2144,16 @@ class Widget(Base):
         # noinspection PyUnresolvedReferences
         if not self._verbose:
             return
-        elif self._scale[0] and scale:
+        # Iterate each type and warn accordingly
+        if self._scale[0] and scale:
             warn('widget already has a scaling factor applied. Scaling has '
                  'been disabled')
         if self._max_width[0] is not None and maxwidth:
-            warn(
-                'widget max width is not None. Set widget.set_max_width(None) '
-                'for disabling such feature. This scaling will be ignored'
-            )
+            warn('widget max width is not None. Set widget.set_max_width(None) '
+                 'for disabling such feature. This scaling will be ignored')
         if self._max_height[0] is not None and maxheight:
-            warn(
-                'widget max height is not None. Set widget.set_max_height(None) '
-                'for disabling such feature. This scaling will be ignored'
-            )
+            warn('widget max height is not None. Set widget.set_max_height(None) '
+                 'for disabling such feature. This scaling will be ignored')
 
     def set_max_width(
         self,
