@@ -346,3 +346,7 @@ class ButtonWidgetTest(BaseTest):
                          ['required', 'nice a test is', 'important', 'was very', 'amet this', 'dolor sit',
                           'lorem ipsum', 'required', 'nice a test is', 'important', 'was very'])
         self.assertLessEqual(abs(button.get_width() - button._get_max_container_width()), 2)
+
+        # Taking button out from Frame must restore its container and reassemble wrap
+        f1.unpack(button)
+        self.assertEqual(button.get_overflow_lines(), ['important nice a test is required'])
