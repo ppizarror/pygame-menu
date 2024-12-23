@@ -2084,7 +2084,7 @@ class Widget(Base):
         )
         return rect.x, rect.y
 
-    def flip(self, x: bool, y: bool) -> 'Widget':
+    def flip(self, x: bool, y: bool, render: bool = True) -> 'Widget':
         """
         Transformation: This method can flip the Widget either vertically,
         horizontally, or both. Flipping a Widget is non-destructive and does not
@@ -2102,24 +2102,31 @@ class Widget(Base):
 
         :param x: Flip on x-axis
         :param y: Flip on y-axis
+        :param render: Render after applying transformation
         :return: Self reference
         """
         assert isinstance(x, bool)
         assert isinstance(y, bool)
+        assert isinstance(render, bool)
         self._flip = (x, y)
-        self._force_render()
+        if render:
+            self._force_render()
         return self
 
-    def _disable_scale(self) -> None:
+    def _disable_scale(self, render: bool = True) -> None:
         """
         Disables Widget scale.
+
+        :param render: Render after applying transformation
         """
+        assert isinstance(render, bool)
         self._scale[0] = False
         self._scale[1] = 1
         self._scale[2] = 1
         self._max_width[0] = None
         self._max_height[0] = None
-        self.render()
+        if render:
+            self.render()
 
     def _scale_warn(
         self,
@@ -2155,7 +2162,8 @@ class Widget(Base):
         self,
         width: Optional[NumberType],
         scale_height: NumberType = False,
-        smooth: bool = True
+        smooth: bool = True,
+        render: bool = True
     ) -> 'Widget':
         """
         Transformation: Set the Widget max width, it applies a scaling factor if
@@ -2182,8 +2190,8 @@ class Widget(Base):
 
         .. warning::
 
-            Final Widget size may not be exactly the same as the desired (width,
-            height) tuple due to rounding errors, expect ±2 px average.
+            Final Widget width may not be exactly the same as the desired one
+            due to rounding errors, expect ±2 px on average.
 
         .. warning::
 
@@ -2194,13 +2202,15 @@ class Widget(Base):
         :param width: Width in px, ``None`` if max width is disabled
         :param scale_height: If ``True`` the height is also scaled if the width exceeds the limit
         :param smooth: Smooth scaling
+        :param render: Render after applying transformation
         :return: Self reference
         """
         assert isinstance(scale_height, bool)
         assert isinstance(smooth, bool)
+        assert isinstance(render, bool)
 
         self._scale_warn(maxwidth=False)
-        self._disable_scale()
+        self._disable_scale(render=render)
 
         if width is None:
             self._max_width[0] = None
@@ -2209,14 +2219,16 @@ class Widget(Base):
             assert width >= 0, 'width must be equal or greater than zero'
             self._max_width = [width, scale_height, smooth]
 
-        self._force_render()
+        if render:
+            self._force_render()
         return self
 
     def set_max_height(
         self,
         height: Optional[NumberType],
         scale_width: NumberType = False,
-        smooth: bool = True
+        smooth: bool = True,
+        render: bool = True
     ) -> 'Widget':
         """
         Transformation: Set the Widget max height, it applies a scaling factor
@@ -2238,8 +2250,8 @@ class Widget(Base):
 
         .. warning::
 
-            Final Widget size may not be exactly the same as the desired (width,
-            height) tuple due to rounding errors, expect ±2 px average.
+            Final Widget height may not be exactly the same as the desired one
+            due to rounding errors, expect ±2 px on average.
 
         .. warning::
 
@@ -2250,13 +2262,15 @@ class Widget(Base):
         :param height: Height in px, ``None`` if max height is disabled
         :param scale_width: If ``True`` the width is also scaled if the height exceeds the limit
         :param smooth: Smooth scaling
+        :param render: Render after applying transformation
         :return: Self reference
         """
         assert isinstance(scale_width, bool)
         assert isinstance(smooth, bool)
+        assert isinstance(render, bool)
 
         self._scale_warn(maxheight=False)
-        self._disable_scale()
+        self._disable_scale(render=render)
 
         if height is None:
             self._max_height[0] = None
@@ -2265,14 +2279,16 @@ class Widget(Base):
             assert height > 0, 'height must be greater than zero'
             self._max_height = [height, scale_width, smooth]
 
-        self._force_render()
+        if render:
+            self._force_render()
         return self
 
     def scale(
         self,
         width: NumberType,
         height: NumberType,
-        smooth: bool = True
+        smooth: bool = True,
+        render: bool = True
     ) -> 'Widget':
         """
         Transformation: Scale the Widget to a desired width and height factor.
@@ -2304,6 +2320,7 @@ class Widget(Base):
         :param width: Scale factor of the width
         :param height: Scale factor of the height
         :param smooth: Smooth scaling
+        :param render: Render after applying transformation
         :return: Self reference
         """
         assert isinstance(width, NumberInstance)
@@ -2313,20 +2330,22 @@ class Widget(Base):
             'width and height must be greater than zero'
 
         self._scale_warn(scale=False)
-        self._disable_scale()
+        self._disable_scale(render=render)
 
         self._scale = [True, width, height, smooth]
         if width == 1 and height == 1:  # Disables scaling
             self._scale[0] = False
 
-        self._force_render()
+        if render:
+            self._force_render()
         return self
 
     def resize(
         self,
         width: NumberType,
         height: NumberType,
-        smooth: bool = True
+        smooth: bool = True,
+        render: bool = True
     ) -> 'Widget':
         """
         Transformation: Set the Widget size to another size.
@@ -2355,22 +2374,23 @@ class Widget(Base):
         .. warning::
 
             Final Widget size may not be exactly the same as the desired (width,
-            height) tuple due to rounding errors, expect ±2 px average.
+            height) tuple due to rounding errors, expect ±2 px on average.
 
         :param width: New width of the widget in px
         :param height: New height of the widget in px
         :param smooth: Smooth scaling
+        :param render: Render after applying transformation
         :return: Self reference
         """
-        self._disable_scale()
+        self._disable_scale(render=render)
         if width == 1 and height == 1:
             if self._verbose:
                 warn('did you mean widget.scale(1,1) instead of widget.resize(1,1)?')
         self.scale(float(width) / self.get_width(),
-                   float(height) / self.get_height(), smooth)
+                   float(height) / self.get_height(), smooth, render)
         return self
 
-    def translate(self, x: NumberType, y: NumberType) -> 'Widget':
+    def translate(self, x: NumberType, y: NumberType, render: bool = True) -> 'Widget':
         """
         Transformation: Translate to (+x, +y) according to the default position.
 
@@ -2393,11 +2413,14 @@ class Widget(Base):
 
         :param x: +X in px
         :param y: +Y in px
+        :param render: Render after applying transformation
         """
         assert isinstance(x, NumberInstance)
         assert isinstance(y, NumberInstance)
+        assert isinstance(render, bool)
         self._translate = (int(x), int(y))
-        self._force_render()
+        if render:
+            self._force_render()
         return self
 
     def get_translate(self, virtual: bool = False) -> Tuple2IntType:
@@ -2411,7 +2434,7 @@ class Widget(Base):
             return self._translate_virtual
         return self._translate
 
-    def rotate(self, angle: NumberType) -> 'Widget':
+    def rotate(self, angle: NumberType, render: bool = True) -> 'Widget':
         """
         Transformation: Unfiltered counterclockwise rotation. The angle argument
         represents degrees and can be any floating point value. Negative angle
@@ -2433,14 +2456,17 @@ class Widget(Base):
             to force widget rendering after calling this method.
 
         :param angle: Rotation angle (degrees ``0-360``)
+        :param render: Render after applying transformation
         :return: Self reference
         """
         assert isinstance(angle, NumberInstance)
+        assert isinstance(render, bool)
         self._angle = angle
-        self._force_render()
+        if render:
+            self._force_render()
         return self
 
-    def set_alignment(self, align: str) -> 'Widget':
+    def set_alignment(self, align: str, render: bool = True) -> 'Widget':
         """
         Set the alignment of the Widget.
 
@@ -2460,11 +2486,13 @@ class Widget(Base):
             See :py:mod:`pygame_menu.locals` for valid ``align`` values.
 
         :param align: Widget align
+        :param render: Render after applying transformation
         :return: Self reference
         """
         assert_alignment(align)
         self._alignment = align
-        self._force_render()
+        if render:
+            self._force_render()
         return self
 
     def get_alignment(self) -> str:
