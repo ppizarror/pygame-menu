@@ -65,7 +65,7 @@ class Button(Label):
         self._args = list(args)
         self._kwargs = kwargs
         self.set_onreturn(onreturn)
-        self.to_menu = False  # True if the button opens a new Menu
+        self.to_menu = False  # True if button opens a new Menu
 
     def set_selection_callback(
         self,
