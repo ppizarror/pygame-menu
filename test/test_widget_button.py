@@ -338,3 +338,11 @@ class ButtonWidgetTest(BaseTest):
         self.assertEqual(len(button.get_lines()), 3)  # The widget needs 4 lines, but maximum is 3
         self.assertEqual(button.get_height(), 131)
         self.assertEqual(button.get_overflow_lines(), ['important nice a test is required'])
+
+        # Test multiline within Frame
+        f1 = menu.add.frame_h(200, 200)
+        f1.pack(button)
+        self.assertEqual(button.get_overflow_lines(),
+                         ['required', 'nice a test is', 'important', 'was very', 'amet this', 'dolor sit',
+                          'lorem ipsum', 'required', 'nice a test is', 'important', 'was very'])
+        self.assertLessEqual(abs(button.get_width() - button._get_max_container_width()), 2)

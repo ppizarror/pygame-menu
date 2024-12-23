@@ -190,15 +190,14 @@ class Label(Widget):
         :param tab_size: Tab size
         :return: List of strings
         """
-        final_lines = []
-        words = line.split(' ')
-        i, current_line = 0, ''
+        final_lines: List[str] = []
+        words: List[str] = line.split(' ')
 
         while True:
-            split_line = False
+            split_line: bool = False
+            current_line: str
             for i, _ in enumerate(words):
-                current_line = ' '.join(words[:i + 1])
-                current_line = current_line.replace('\t', ' ' * tab_size)
+                current_line = ' '.join(words[:i + 1]).replace('\t', ' ' * tab_size)
                 current_line_size = font.size(current_line)
                 if current_line_size[0] > max_width:
                     split_line = True
@@ -216,19 +215,23 @@ class Label(Widget):
 
     def _get_max_container_width(self) -> int:
         """
-        Return the maximum label container width. It can be the column width,
-        menu width or frame width if horizontal.
+        Return the maximum container width. It can be the column width,
+        menu width or frame width.
 
-        :return: Container width
+        :return: Container width (px)
         """
         menu = self._menu
+        max_width: int = 0
         if menu is None:
             return 0
-        try:
-            # noinspection PyProtectedMember
-            max_width = menu._column_widths[self.get_col_row_index()[0]]
-        except IndexError:
-            max_width = menu.get_width(inner=True)
+        elif self._frame is not None:
+            max_width = self._frame.get_width()
+        else:  # Infers width from container Menu
+            try:
+                # noinspection PyProtectedMember
+                max_width = menu._column_widths[self.get_col_row_index()[0]]
+            except IndexError:
+                max_width = menu.get_width(inner=True)
         return max_width - self._padding[1] - self._padding[3] - self._selection_effect.get_width()
 
     def get_overflow_lines(self) -> List[str]:
@@ -245,11 +248,12 @@ class Label(Widget):
         font_color: ColorType = self.get_font_color_status()
         if not self._render_hash_changed(self._title, font_color, self._visible, self._menu, self._font,
                                          self._last_underline[1], self._padding, self._selection_effect.get_width(),
-                                         self.readonly):
+                                         self.readonly, self._frame):
             return True
         self._lines.clear()
 
         # Generate surface
+        max_width: int = 0
         if not self._wordwrap:
             self._surface = self._render_string(self._title, font_color)
             self._lines.append(self._title)
@@ -259,12 +263,13 @@ class Label(Widget):
             if self._font is None or self._menu is None:
                 self._surface = make_surface(0, 0, alpha=True)
             else:
-                lines = sum(
+                max_width = self._get_max_container_width()
+                lines: List[str] = sum(
                     (
                         self._wordwrap_line(
                             line=line,
                             font=self._font,
-                            max_width=self._get_max_container_width(),
+                            max_width=max_width,
                             tab_size=self._tab_size
                         )
                         for line in self._title.split('\n')
@@ -298,6 +303,13 @@ class Label(Widget):
                     self._lines.append(line)
                     if n_line + 1 == num_lines:
                         break
+
+        # Apply max width if wordwrap exceeds size
+        if self._wordwrap and self.get_width() > max_width > 0:
+            verbose_prev: bool = self._verbose
+            self._verbose = False  # Disable auto-warns while setting max width
+            self.set_max_width(max_width, render=False)
+            self._verbose = verbose_prev
 
         # Update rect object
         self._apply_transforms()
