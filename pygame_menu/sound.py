@@ -407,14 +407,24 @@ class Sound(Base):
         self._last_time = sound_time
         return True
 
+    def play_sound_type(self, sound_type: str) -> 'Sound':
+        """
+        Play a sound based on its type.
+
+        :param sound_type: The type of sound to play.
+        :return: Self reference.
+        """
+        if sound_type in self._sound:
+            self._play_sound(self._sound[sound_type])
+        return self
+
     def play_click_mouse(self) -> 'Sound':
         """
         Play click mouse sound.
 
         :return: Self reference
         """
-        self._play_sound(self._sound[SOUND_TYPE_CLICK_MOUSE])
-        return self
+        return self.play_sound_type(SOUND_TYPE_CLICK_MOUSE)
 
     def play_click_touch(self) -> 'Sound':
         """
@@ -422,8 +432,7 @@ class Sound(Base):
 
         :return: Self reference
         """
-        self._play_sound(self._sound[SOUND_TYPE_CLICK_TOUCH])
-        return self
+        return self.play_sound_type(SOUND_TYPE_CLICK_TOUCH)
 
     def play_error(self) -> 'Sound':
         """
@@ -431,8 +440,7 @@ class Sound(Base):
 
         :return: Self reference
         """
-        self._play_sound(self._sound[SOUND_TYPE_ERROR])
-        return self
+        return self.play_sound_type(SOUND_TYPE_ERROR)
 
     def play_event(self) -> 'Sound':
         """
@@ -440,8 +448,7 @@ class Sound(Base):
 
         :return: Self reference
         """
-        self._play_sound(self._sound[SOUND_TYPE_EVENT])
-        return self
+        return self.play_sound_type(SOUND_TYPE_EVENT)
 
     def play_event_error(self) -> 'Sound':
         """
@@ -449,8 +456,7 @@ class Sound(Base):
 
         :return: Self reference
         """
-        self._play_sound(self._sound[SOUND_TYPE_EVENT_ERROR])
-        return self
+        return self.play_sound_type(SOUND_TYPE_EVENT_ERROR)
 
     def play_key_add(self) -> 'Sound':
         """
@@ -458,8 +464,7 @@ class Sound(Base):
 
         :return: Self reference
         """
-        self._play_sound(self._sound[SOUND_TYPE_KEY_ADDITION])
-        return self
+        return self.play_sound_type(SOUND_TYPE_KEY_ADDITION)
 
     def play_key_del(self) -> 'Sound':
         """
@@ -467,8 +472,7 @@ class Sound(Base):
 
         :return: Self reference
         """
-        self._play_sound(self._sound[SOUND_TYPE_KEY_DELETION])
-        return self
+        return self.play_sound_type(SOUND_TYPE_KEY_DELETION)
 
     def play_open_menu(self) -> 'Sound':
         """
@@ -476,8 +480,7 @@ class Sound(Base):
 
         :return: Self reference
         """
-        self._play_sound(self._sound[SOUND_TYPE_OPEN_MENU])
-        return self
+        return self.play_sound_type(SOUND_TYPE_OPEN_MENU)
 
     def play_close_menu(self) -> 'Sound':
         """
@@ -485,8 +488,7 @@ class Sound(Base):
 
         :return: Self reference
         """
-        self._play_sound(self._sound[SOUND_TYPE_CLOSE_MENU])
-        return self
+        return self.play_sound_type(SOUND_TYPE_CLOSE_MENU)
 
     def play_widget_selection(self) -> 'Sound':
         """
@@ -494,8 +496,7 @@ class Sound(Base):
 
         :return: Self reference
         """
-        self._play_sound(self._sound[SOUND_TYPE_WIDGET_SELECTION])
-        return self
+        return self.play_sound_type(SOUND_TYPE_WIDGET_SELECTION)
 
     def stop(self) -> 'Sound':
         """
@@ -558,3 +559,20 @@ class Sound(Base):
         data['sound'] = channel.get_sound()
         data['volume'] = channel.get_volume()
         return data
+
+    def set_sound_volume(self, sound_type: str, volume: float) -> bool:
+        """
+        Set the volume of a specific sound type.
+    
+        :param sound_type: Sound type
+        :param volume: Volume of the sound, from ``0.0`` to ``1.0``
+        :return: ``True`` if the volume was set, ``False`` otherwise
+        """
+        if sound_type not in SOUND_TYPES:
+            return False
+        sound_data = self._sound.get(sound_type)
+        if sound_data:
+            sound_data['file'].set_volume(volume)
+            sound_data['volume'] = volume
+            return True
+        return False
