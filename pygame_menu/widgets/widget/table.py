@@ -871,10 +871,10 @@ class Table(Frame):
         return self
 
     def draw(self, surface: 'pygame.Surface') -> 'Table':
-        if not self.is_visible():
-            return self
-        super(Table, self).draw(surface)
-        self._draw_cell_borders(self.last_surface)
+        if self.is_visible():
+            super(Table, self).draw(surface)
+            self._draw_cell_borders(self.last_surface)
+        return self
 
     def update(self, events: EventVectorType) -> bool:
         super(Table, self).update(events)

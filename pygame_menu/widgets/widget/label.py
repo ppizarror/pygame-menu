@@ -195,7 +195,8 @@ class Label(Widget):
 
         while True:
             split_line: bool = False
-            current_line: str
+            current_line: str = ''
+            i: int = 0
             for i, _ in enumerate(words):
                 current_line = ' '.join(words[:i + 1]).replace('\t', ' ' * tab_size)
                 current_line_size = font.size(current_line)
@@ -221,7 +222,7 @@ class Label(Widget):
         :return: Container width (px)
         """
         menu = self._menu
-        max_width: int = 0
+        max_width: int
         if menu is None:
             return 0
         elif self._frame is not None:
