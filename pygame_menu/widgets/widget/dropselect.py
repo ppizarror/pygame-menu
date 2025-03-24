@@ -845,6 +845,7 @@ class DropSelect(Widget):
 
         self._rect.width, self._rect.height = self._surface.get_size()
         self.force_menu_surface_update()
+        return True
 
     def get_index(self) -> int:
         """
