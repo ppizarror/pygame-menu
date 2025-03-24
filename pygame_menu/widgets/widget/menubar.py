@@ -482,6 +482,7 @@ class MenuBar(Widget):
                     (self._backbox_rect.centerx, self._backbox_rect.bottom - 5),
                     (self._backbox_rect.left + 5, self._backbox_rect.centery)
                 )
+        return True
 
     def set_title(self, title: Any, offsetx: NumberType = 0, offsety: NumberType = 0) -> 'MenuBar':
         """
