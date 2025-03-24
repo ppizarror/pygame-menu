@@ -96,7 +96,7 @@ class SurfaceWidget(Widget):
 
     def _render(self) -> Optional[bool]:
         self._rect.width, self._rect.height = self._surface_obj.get_size()
-        return
+        return None
 
     def update(self, events: EventVectorType) -> bool:
         self.apply_update_callbacks(events)

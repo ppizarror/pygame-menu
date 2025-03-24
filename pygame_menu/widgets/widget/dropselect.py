@@ -712,7 +712,7 @@ class DropSelect(Widget):
 
     def _render(self) -> Optional[bool]:
         if self._option_font is None:
-            return
+            return None
 
         scroll_v: int = 0
         menu_height: int = 0 if self._menu is None else self._menu.get_height(widget=True)

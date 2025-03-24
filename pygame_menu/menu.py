@@ -2164,7 +2164,7 @@ class Menu(Base):
             or not (self._mouse_motion_selection or self._touchscreen_motion_selection)
             or not widget.is_visible()
         ):
-            return
+            return None
         window_width, window_height = self._window_size
 
         self._render()  # Surface may be none, then update the positioning
@@ -2173,7 +2173,7 @@ class Menu(Base):
         # Apply selection effect
         rect = widget.get_selection_effect().inflate(rect)
         if rect.width == 0 or rect.height == 0:
-            return
+            return None
 
         x1, y1, x2, y2 = rect.topleft + rect.bottomright
         x1 = int(x1)
@@ -3743,7 +3743,7 @@ class Menu(Base):
         """
         widget = WIDGET_MOUSEOVER[0]
         if widget is None or filter_appended and widget.get_menu() != self:
-            return
+            return None
         return widget
 
     def get_selected_widget(self) -> Optional['Widget']:
@@ -3838,7 +3838,7 @@ class Menu(Base):
         :param kwargs: Optional keyword arguments
         :return: The new indices of the widget and the previous index element
         """
-        depth = kwargs.get('depth', 0)
+        depth: int = kwargs.get('depth', 0)
 
         # Update only selected index
         if kwargs.get('update_selected_index', False):
@@ -3861,7 +3861,7 @@ class Menu(Base):
                     f'selected (sorted by index): {selected}, but the following '
                     f'are also selected: {", ".join(invalid_w)}'
                 )
-            return
+            return None
 
         selected_widget = self.get_selected_widget()
 
@@ -3898,7 +3898,7 @@ class Menu(Base):
                 self._render()
 
             check_widget_mouseleave()
-            return
+            return None
 
         # Asserts
         assert len(self._widgets) >= 2, \
@@ -3924,12 +3924,12 @@ class Menu(Base):
         assert widget_index != index, \
             f'target index must be different than the current widget index ({index})'
 
-        target_index = index
+        target_index: int = index
         target_widget = self._widgets[target_index]
 
         # If target widget is frame, find the latest index
-        both_frames = isinstance(target_widget, Frame) and isinstance(widget, Frame)
-        check_if_last = both_frames and self._validate_frame_widgetmove and target_index != 0
+        both_frames: bool = isinstance(target_widget, Frame) and isinstance(widget, Frame)
+        check_if_last: bool = both_frames and self._validate_frame_widgetmove and target_index != 0
         if check_if_last:
             w_last = target_widget
             while True:
@@ -3938,7 +3938,7 @@ class Menu(Base):
                 target_widget = w_last
                 if not (isinstance(w_last, Frame) and w_last.get_indices() != (-1, -1)) or w_last.get_menu() is None:
                     break
-        to_last_position = target_index == len(self._widgets) - 1
+        to_last_position: bool = target_index == len(self._widgets) - 1
 
         if not to_last_position and check_if_last:
             target_index = index
@@ -3953,7 +3953,7 @@ class Menu(Base):
         self._widgets.pop(widget_index)
         self._widgets.insert(target_index, widget)
 
-        new_widget_index = self._widgets.index(widget)
+        new_widget_index: int = self._widgets.index(widget)
         assert new_widget_index != widget_index, 'widget index has not changed'
         assert widget != target_widget, 'widget must be different than target'
 

@@ -287,7 +287,7 @@ class MenuBar(Widget):
 
     def _render(self) -> Optional[bool]:
         if self._menu is None:
-            return
+            return None
 
         # noinspection PyProtectedMember
         menu_prev_condition = not self._menu or not self._menu._top or not self._menu._top._prev
