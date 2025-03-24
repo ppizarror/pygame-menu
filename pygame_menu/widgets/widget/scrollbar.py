@@ -18,7 +18,7 @@ from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImple
 
 from pygame_menu._types import Optional, List, VectorIntType, ColorType, Literal, \
     Tuple2IntType, CallbackType, NumberInstance, ColorInputType, NumberType, \
-    EventVectorType, VectorInstance
+    EventVectorType, VectorInstance, Tuple
 
 
 class ScrollBar(Widget):
@@ -47,6 +47,8 @@ class ScrollBar(Widget):
     :param page_ctrl_color: Page control color
     :param onchange: Callback when pressing and moving the scroll
     """
+    _at_bottom: bool
+    _at_top: bool
     _clicked: bool
     _last_mouse_pos: Tuple2IntType
     _orientation: Literal[0, 1]
@@ -68,8 +70,6 @@ class ScrollBar(Widget):
     _values_range: List[NumberType]
     _visible_force: int  # -1: not set, 0: hidden, 1: shown
     scrolling: bool
-    _at_bottom: bool
-    _at_top: bool
 
     def __init__(
         self,
@@ -178,9 +178,11 @@ class ScrollBar(Widget):
         raise WidgetTransformationNotImplemented()
 
     def _apply_size_changes(self) -> None:
-        """Apply scrollbar changes."""
-        opp_orientation = 1 if self._orientation == 0 else 0  # Opposite of orientation
-        dims = ('width', 'height')
+        """
+        Apply scrollbar changes.
+        """
+        opp_orientation: int = 1 if self._orientation == 0 else 0  # Opposite of orientation
+        dims: Tuple[str, str] = ('width', 'height')
         setattr(self._rect, dims[self._orientation], int(self._page_ctrl_length))
         setattr(self._rect, dims[opp_orientation], self._page_ctrl_thick)
         if self._slider_rect is None:
@@ -294,7 +296,7 @@ class ScrollBar(Widget):
     def _render(self) -> Optional[bool]:
         width, height = self._rect.width + self._rect_size_delta[0], self._rect.height + self._rect_size_delta[1]
         if self._slider_rect is None:
-            return
+            return None
 
         elif not self._render_hash_changed(width, height, self._slider_rect.x, self._slider_rect.y,
                                            self.readonly, self._slider_rect.width, self._slider_rect.height,
@@ -498,15 +500,19 @@ class ScrollBar(Widget):
         return self._slider_rect.move(*self.get_rect(to_absolute_position=True).topleft)
 
     def _update_slider_position_flags(self) -> None:
-        """Updates the at_bottom and at_top flags based on slider position."""
+        """
+        Updates the at_bottom and at_top flags based on slider position.
+        """
         max_slider_position = self._page_ctrl_length - self._page_step
         self._at_bottom = self._slider_position >= max_slider_position
         self._at_top = self._slider_position <= 0
 
     def _update_slider_rect(self) -> None:
-        """Updates the slider rect based on position and size."""
-        opp_orientation = 1 if self._orientation == 0 else 0  # Opposite of orientation
-        dims = ('width', 'height')
+        """
+        Updates the slider rect based on position and size.
+        """
+        opp_orientation: int = 1 if self._orientation == 0 else 0  # Opposite of orientation
+        dims: Tuple[str, str] = ('width', 'height')
         setattr(self._slider_rect, dims[self._orientation], int(self._page_step))
         setattr(self._slider_rect, dims[opp_orientation], self._page_ctrl_thick)
         # Update slider position according to the current one
@@ -515,32 +521,52 @@ class ScrollBar(Widget):
         self._slider_rect = self._slider_rect.inflate(-2 * self._slider_pad, -2 * self._slider_pad)
 
     def _set_slider_position(self, position: int) -> None:
-        """Sets the slider position and updates related flags."""
+        """
+        Sets the slider position and updates related flags.
+        """
         self._slider_position = position
         self._update_slider_rect()
         self._update_slider_position_flags()
         self._render()
 
     def is_at_bottom(self) -> bool:
-        """Return True if the scrollbar is at the bottom, False otherwise."""
+        """
+        Checks if scrollbar is at bottom of its container.
+
+        :return: ``True`` if the scrollbar is at the bottom, ``False`` otherwise
+        """
         self._update_slider_position_flags()
         return self._at_bottom
 
     def is_at_top(self) -> bool:
-        """Return True if the scrollbar is at the top, False otherwise."""
+        """
+        Checks if scrollbar is at top of its container.
+
+        :return: ``True`` if the scrollbar is at the top, ``False`` otherwise
+        """
         self._update_slider_position_flags()
         return self._at_top
 
     def bump_to_top(self) -> None:
-        """Set the scrollbar to the top."""
+        """
+        Set the scrollbar to the top.
+        """
         self._set_slider_position(0)
 
     def bump_to_bottom(self) -> None:
-        """Set the scrollbar to the bottom."""
+        """
+        Set the scrollbar to the bottom.
+        """
         self._set_slider_position(self._page_ctrl_length - self._page_step)
 
     def _handle_mouse_event(self, event: pygame.event.Event, rect: pygame.Rect) -> bool:
-        """Handles mouse related events."""
+        """
+        Handles mouse related events.
+
+        :param event: Mouse event
+        :param rect: Widget rect
+        :return: True if changed
+        """
         # Vertical bar: scroll down (4) or up (5). Mouse must be placed
         # over the area to enable this feature
         if event.button in (4, 5) and self._orientation == 1 and (
@@ -561,14 +587,21 @@ class ScrollBar(Widget):
             elif rect.collidepoint(*event.pos):
                 # Moves towards the click by one "page" (= slider length without pad)
                 s_rect = self.get_slider_rect()
-                direction = 1 if event.pos[self._orientation] > (s_rect.x if self._orientation == 0 else s_rect.y) else -1
+                direction = 1 if event.pos[self._orientation] > (
+                    s_rect.x if self._orientation == 0 else s_rect.y) else -1
                 if self._scroll(rect, direction * self._page_step):
                     self.change()
                     return True
         return False
 
     def _handle_touch_event(self, event: pygame.event.Event, rect: pygame.Rect) -> bool:
-        """Handles touchscreen related events."""
+        """
+        Handles touchscreen related events.
+
+        :param event: Touchscreen event
+        :param rect: Widget rect
+        :return: True if changed
+        """
         pos = get_finger_pos(self._menu, event)
         # The _slider_rect origin is related to the widget surface
         if self.get_slider_rect().collidepoint(*pos):
@@ -586,7 +619,12 @@ class ScrollBar(Widget):
         return False
 
     def _render_shadow(self, surface: pygame.Surface, slider_color: ColorType) -> None:
-        """Renders the slider shadow if enabled."""
+        """
+        Renders the slider shadow if enabled.
+
+        :param surface: Draw surface
+        :param slider_color: Slider color
+        """
         if self._shadow_enabled:
             lit_rect = pygame.Rect(self._slider_rect)
             slider_rect = lit_rect.inflate(-self._shadow_offset * 2, -self._shadow_offset * 2)

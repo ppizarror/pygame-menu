@@ -106,6 +106,9 @@ class SoundTest(BaseTest):
         self.assertEqual(menu.get_sound(), menu._sound)
 
     def test_set_sound_volume(self) -> None:
+        """
+        Test sound volume.
+        """
         self.sound.load_example_sounds()
         self.assertTrue(self.sound.set_sound_volume(pygame_menu.sound.SOUND_TYPE_CLICK_MOUSE, 0.5))
         self.assertEqual(self.sound._sound[pygame_menu.sound.SOUND_TYPE_CLICK_MOUSE]['volume'], 0.5)

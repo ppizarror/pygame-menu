@@ -411,8 +411,8 @@ class Sound(Base):
         """
         Play a sound based on its type.
 
-        :param sound_type: The type of sound to play.
-        :return: Self reference.
+        :param sound_type: The type of sound to play
+        :return: Self reference
         """
         if sound_type in self._sound:
             self._play_sound(self._sound[sound_type])

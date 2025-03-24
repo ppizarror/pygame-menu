@@ -185,16 +185,25 @@ class ScrollBarWidgetTest(BaseTest):
         self.assertTrue(sb.is_at_bottom())
 
     def test_set_length(self) -> None:
+        """
+        Test scrollbar set length.
+        """
         sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
         sb.set_length(200)
         self.assertEqual(sb._page_ctrl_length, 200)
 
     def test_set_page_step(self) -> None:
+        """
+        Test scrollbar set page step.
+        """
         sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
         sb.set_page_step(20)
         self.assertEqual(sb._page_step, 20)
 
     def test_set_value_out_of_range(self) -> None:
+        """
+        Test scrollbar set value of out range.
+        """
         sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
         with self.assertRaises(AssertionError):
             sb.set_value(-10)
@@ -202,11 +211,17 @@ class ScrollBarWidgetTest(BaseTest):
             sb.set_value(110)
 
     def test_get_value_percentage(self) -> None:
+        """
+        Test scrollbar get value percentage
+        """
         sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
         sb.set_value(50)
         self.assertAlmostEqual(sb.get_value_percentage(), 0.5, delta=0.01)
 
     def test_is_at_top_and_bottom(self) -> None:
+        """
+        Test scrollbar it at top/bottom.
+        """
         sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
         self.assertTrue(sb.is_at_top())
         self.assertFalse(sb.is_at_bottom())
@@ -215,6 +230,9 @@ class ScrollBarWidgetTest(BaseTest):
         self.assertTrue(sb.is_at_bottom())
 
     def test_bump_to_top_and_bottom(self) -> None:
+        """
+        Test scrollbar bump to top/bottom.
+        """
         sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
         sb.set_value(50)
         sb.bump_to_top()
@@ -223,15 +241,24 @@ class ScrollBarWidgetTest(BaseTest):
         self.assertEqual(sb.get_value(), 100)
 
     def test_scroll_to_widget(self) -> None:
+        """
+        Test scrollbar scroll to widget.
+        """
         sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
         self.assertEqual(sb.scroll_to_widget(), sb)
 
     def test_set_orientation(self) -> None:
+        """
+        Test scrollbar set orientation.
+        """
         sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
         sb.set_orientation(ORIENTATION_HORIZONTAL)
         self.assertEqual(sb.get_orientation(), ORIENTATION_HORIZONTAL)
 
     def test_set_maximum_and_minimum(self) -> None:
+        """
+        Test scrollbar set maximum and minimum.
+        """
         sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
         sb.set_maximum(200)
         self.assertEqual(sb.get_maximum(), 200)
@@ -239,90 +266,150 @@ class ScrollBarWidgetTest(BaseTest):
         self.assertEqual(sb.get_minimum(), 50)
 
     def test_set_length_zero(self) -> None:
+        """
+        Test scrollbar set length zero.
+        """
         sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
         with self.assertRaises(AssertionError):
             sb.set_length(0)
 
     def test_set_page_step_zero(self) -> None:
+        """
+        Test scrollbar set page step zero.
+        """
         sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
         with self.assertRaises(AssertionError):
             sb.set_page_step(0)
 
     def test_set_minimum_greater_than_maximum(self) -> None:
+        """
+        Test scrollbar set minimum greater than maximum.
+        """
         sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
         with self.assertRaises(AssertionError):
             sb.set_minimum(100)
 
     def test_set_maximum_less_than_minimum(self) -> None:
+        """
+        Test scrollbar set maximum less than minimum.
+        """
         sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
         with self.assertRaises(AssertionError):
             sb.set_maximum(0)
 
     def test_get_value_percentage_zero(self) -> None:
+        """
+        Test scrollbar get value percentage is zero.
+        """
         sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
         self.assertAlmostEqual(sb.get_value_percentage(), 0, delta=0.01)
 
     def test_get_value_percentage_one(self) -> None:
+        """
+        Test scrollbar get value percentage is one.
+        """
         sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
         sb.set_value(100)
         self.assertAlmostEqual(sb.get_value_percentage(), 1, delta=0.01)
 
     def test_is_at_top_zero(self) -> None:
+        """
+        Test scrollbar is at top zero.
+        """
         sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
         self.assertTrue(sb.is_at_top())
 
     def test_is_at_bottom_max(self) -> None:
+        """
+        Test scrollbar is at bottom max.
+        """
         sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
         sb.set_value(100)
         self.assertTrue(sb.is_at_bottom())
 
     def test_bump_to_top_zero(self) -> None:
+        """
+        Test scrollbar bump to top zero.
+        """
         sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
         sb.set_value(100)
         sb.bump_to_top()
         self.assertTrue(sb.is_at_top())
 
     def test_bump_to_bottom_max(self) -> None:
+        """
+        Test scrollbar bump to bottom max.
+        """
         sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
         sb.set_value(0)
         sb.bump_to_bottom()
         self.assertTrue(sb.is_at_bottom())
 
     def test_scroll_to_widget_invalid_widget(self) -> None:
+        """
+        Test scrollbar scroll to invalid widget.
+        """
         sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
-        self.assertEqual(sb.scroll_to_widget("invalid_widget"), sb)
+        self.assertEqual(sb.scroll_to_widget('invalid_widget'), sb)
 
     def test_set_orientation_invalid_orientation(self) -> None:
+        """
+        Test scrollbar set invalid orientation.
+        """
         sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
         with self.assertRaises(AssertionError):
-            sb.set_orientation("invalid_orientation")
+            sb.set_orientation('invalid_orientation')
 
     def test_set_page_ctrl_color_invalid_color(self) -> None:
+        """
+        Test scrollbar set page ctrl invalid color.
+        """
         sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
         with self.assertRaises(TypeError):
-            sb._page_ctrl_color("invalid_color")
+            # noinspection PyCallingNonCallable
+            sb._page_ctrl_color('invalid_color')
 
     def test_set_slider_color_invalid_color(self) -> None:
+        """
+        Test scrollbar set invalid slider color.
+        """
         sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
         with self.assertRaises(TypeError):
-            sb._slider_color("invalid_color")
+            # noinspection PyCallingNonCallable
+            sb._slider_color('invalid_color')
 
     def test_set_slider_hover_color_invalid_color(self) -> None:
+        """
+        Test scrollbar set slider hover invalid color.
+        """
         sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
         with self.assertRaises(TypeError):
-            sb._slider_hover_color("invalid_color")
+            # noinspection PyCallingNonCallable
+            sb._slider_hover_color('invalid_color')
 
     def test_get_slider_rect_invalid_rect(self) -> None:
+        """
+        Test scrollbar get invalid slider rect.
+        """
         sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
         with self.assertRaises(AttributeError):
+            # noinspection PyUnresolvedReferences
             sb.get_slider_rect().invalid_method()
 
     def test_update_invalid_event(self) -> None:
+        """
+        Test scrollbar update with an invalid event.
+        """
         sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
         with self.assertRaises(AttributeError):
-            sb.update("invalid_event")
+            # noinspection PyTypeChecker
+            sb.update('invalid_event')
 
     def test_draw_invalid_surface(self) -> None:
+        """
+        Test scrollbar draw to invalid surface.
+        """
         sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
         with self.assertRaises(AttributeError):
-            sb.draw("invalid_surface")
+            # noinspection PyTypeChecker
+            sb.draw('invalid_surface')
