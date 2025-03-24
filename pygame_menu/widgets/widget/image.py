@@ -112,17 +112,17 @@ class Image(Widget):
         self._render()
         return self
 
-    def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'Image':
+    def scale(self, width: NumberType, height: NumberType, smooth: bool = False, render: bool = True) -> 'Image':
         self._image.scale(width, height, smooth)
         return self._update_surface()
 
-    def resize(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'Image':
+    def resize(self, width: NumberType, height: NumberType, smooth: bool = False, render: bool = True) -> 'Image':
         self._image.resize(width, height, smooth)
         self._surface = None
         return self._update_surface()
 
     def set_max_width(self, width: Optional[NumberType], scale_height: NumberType = False,
-                      smooth: bool = True) -> 'Image':
+                      smooth: bool = True, render: bool = True) -> 'Image':
         if width is not None and self._image.get_width() > width:
             sx = width / self._image.get_width()
             height = self._image.get_height()
@@ -133,7 +133,7 @@ class Image(Widget):
         return self
 
     def set_max_height(self, height: Optional[NumberType], scale_width: NumberType = False,
-                       smooth: bool = True) -> 'Image':
+                       smooth: bool = True, render: bool = True) -> 'Image':
         if height is not None and self._image.get_height() > height:
             sy = height / self._image.get_height()
             width = self._image.get_width()
@@ -143,11 +143,11 @@ class Image(Widget):
             return self._update_surface()
         return self
 
-    def rotate(self, angle: NumberType) -> 'Image':
+    def rotate(self, angle: NumberType, render: bool = True) -> 'Image':
         self._image.rotate(angle)
         return self._update_surface()
 
-    def flip(self, x: bool, y: bool) -> 'Image':
+    def flip(self, x: bool, y: bool, render: bool = True) -> 'Image':
         assert isinstance(x, bool)
         assert isinstance(y, bool)
         self._flip = (x, y)

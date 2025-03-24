@@ -468,8 +468,8 @@ class TextInput(Widget):
     def rotate(self, *args, **kwargs) -> 'TextInput':
         raise WidgetTransformationNotImplemented()
 
-    def flip(self, x: bool, y: bool) -> 'TextInput':  # Actually flip on x-axis is disabled
-        super(TextInput, self).flip(False, y)
+    def flip(self, x: bool, y: bool, render: bool = True) -> 'TextInput':  # Actually flip on x-axis is disabled
+        super(TextInput, self).flip(False, y, render)
         return self
 
     def _draw(self, surface: 'pygame.Surface') -> None:
