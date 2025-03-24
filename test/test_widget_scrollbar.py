@@ -8,11 +8,11 @@ Test ScrollBar widget.
 
 __all__ = ['ScrollBarWidgetTest']
 
-from test._utils import surface, PygameEventUtils, WINDOW_SIZE, BaseTest, MenuUtils
+from test._utils import WINDOW_SIZE, BaseTest, MenuUtils, PygameEventUtils, surface
 
 import pygame
 
-from pygame_menu.locals import ORIENTATION_VERTICAL, POSITION_SOUTHEAST
+from pygame_menu.locals import ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL, POSITION_SOUTHEAST
 from pygame_menu.widgets import ScrollBar
 from pygame_menu.widgets.core.widget import WidgetTransformationNotImplemented
 
@@ -159,3 +159,170 @@ class ScrollBarWidgetTest(BaseTest):
         sb.reset_value()
         self.assertEqual(sb.get_value(), 0)
         self.assertFalse(sb.value_changed())
+
+        # Test at_bottom and at_top
+        self.assertTrue(sb.is_at_top())
+        self.assertFalse(sb.is_at_bottom())
+
+        sb.set_value(sb.get_maximum())
+        self.assertFalse(sb.is_at_top())
+        self.assertTrue(sb.is_at_bottom())
+
+        sb.set_value(0)
+        self.assertTrue(sb.is_at_top())
+        self.assertFalse(sb.is_at_bottom())
+
+        # Test bump_to_top and bump_to_bottom
+        sb.set_value(sb.get_maximum())
+        sb.bump_to_top()
+        self.assertEqual(sb.get_value(), 0)
+        self.assertTrue(sb.is_at_top())
+        self.assertFalse(sb.is_at_bottom())
+
+        sb.bump_to_bottom()
+        self.assertEqual(sb.get_value(), sb.get_maximum())
+        self.assertFalse(sb.is_at_top())
+        self.assertTrue(sb.is_at_bottom())
+
+    def test_set_length(self) -> None:
+        sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
+        sb.set_length(200)
+        self.assertEqual(sb._page_ctrl_length, 200)
+
+    def test_set_page_step(self) -> None:
+        sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
+        sb.set_page_step(20)
+        self.assertEqual(sb._page_step, 20)
+
+    def test_set_value_out_of_range(self) -> None:
+        sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
+        with self.assertRaises(AssertionError):
+            sb.set_value(-10)
+        with self.assertRaises(AssertionError):
+            sb.set_value(110)
+
+    def test_get_value_percentage(self) -> None:
+        sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
+        sb.set_value(50)
+        self.assertAlmostEqual(sb.get_value_percentage(), 0.5, delta=0.01)
+
+    def test_is_at_top_and_bottom(self) -> None:
+        sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
+        self.assertTrue(sb.is_at_top())
+        self.assertFalse(sb.is_at_bottom())
+        sb.set_value(100)
+        self.assertFalse(sb.is_at_top())
+        self.assertTrue(sb.is_at_bottom())
+
+    def test_bump_to_top_and_bottom(self) -> None:
+        sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
+        sb.set_value(50)
+        sb.bump_to_top()
+        self.assertEqual(sb.get_value(), 0)
+        sb.bump_to_bottom()
+        self.assertEqual(sb.get_value(), 100)
+
+    def test_scroll_to_widget(self) -> None:
+        sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
+        self.assertEqual(sb.scroll_to_widget(), sb)
+
+    def test_set_orientation(self) -> None:
+        sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
+        sb.set_orientation(ORIENTATION_HORIZONTAL)
+        self.assertEqual(sb.get_orientation(), ORIENTATION_HORIZONTAL)
+
+    def test_set_maximum_and_minimum(self) -> None:
+        sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
+        sb.set_maximum(200)
+        self.assertEqual(sb.get_maximum(), 200)
+        sb.set_minimum(50)
+        self.assertEqual(sb.get_minimum(), 50)
+
+    def test_set_length_zero(self) -> None:
+        sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
+        with self.assertRaises(AssertionError):
+            sb.set_length(0)
+
+    def test_set_page_step_zero(self) -> None:
+        sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
+        with self.assertRaises(AssertionError):
+            sb.set_page_step(0)
+
+    def test_set_minimum_greater_than_maximum(self) -> None:
+        sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
+        with self.assertRaises(AssertionError):
+            sb.set_minimum(100)
+
+    def test_set_maximum_less_than_minimum(self) -> None:
+        sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
+        with self.assertRaises(AssertionError):
+            sb.set_maximum(0)
+
+    def test_get_value_percentage_zero(self) -> None:
+        sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
+        self.assertAlmostEqual(sb.get_value_percentage(), 0, delta=0.01)
+
+    def test_get_value_percentage_one(self) -> None:
+        sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
+        sb.set_value(100)
+        self.assertAlmostEqual(sb.get_value_percentage(), 1, delta=0.01)
+
+    def test_is_at_top_zero(self) -> None:
+        sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
+        self.assertTrue(sb.is_at_top())
+
+    def test_is_at_bottom_max(self) -> None:
+        sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
+        sb.set_value(100)
+        self.assertTrue(sb.is_at_bottom())
+
+    def test_bump_to_top_zero(self) -> None:
+        sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
+        sb.set_value(100)
+        sb.bump_to_top()
+        self.assertTrue(sb.is_at_top())
+
+    def test_bump_to_bottom_max(self) -> None:
+        sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
+        sb.set_value(0)
+        sb.bump_to_bottom()
+        self.assertTrue(sb.is_at_bottom())
+
+    def test_scroll_to_widget_invalid_widget(self) -> None:
+        sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
+        self.assertEqual(sb.scroll_to_widget("invalid_widget"), sb)
+
+    def test_set_orientation_invalid_orientation(self) -> None:
+        sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
+        with self.assertRaises(AssertionError):
+            sb.set_orientation("invalid_orientation")
+
+    def test_set_page_ctrl_color_invalid_color(self) -> None:
+        sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
+        with self.assertRaises(TypeError):
+            sb._page_ctrl_color("invalid_color")
+
+    def test_set_slider_color_invalid_color(self) -> None:
+        sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
+        with self.assertRaises(TypeError):
+            sb._slider_color("invalid_color")
+
+    def test_set_slider_hover_color_invalid_color(self) -> None:
+        sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
+        with self.assertRaises(TypeError):
+            sb._slider_hover_color("invalid_color")
+
+    def test_get_slider_rect_invalid_rect(self) -> None:
+        sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
+        with self.assertRaises(AttributeError):
+            sb.get_slider_rect().invalid_method()
+
+    def test_update_invalid_event(self) -> None:
+        sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
+        with self.assertRaises(AttributeError):
+            sb.update("invalid_event")
+
+    def test_draw_invalid_surface(self) -> None:
+        sb = ScrollBar(100, (0, 100), 'sb', ORIENTATION_VERTICAL)
+        with self.assertRaises(AttributeError):
+            sb.draw("invalid_surface")
