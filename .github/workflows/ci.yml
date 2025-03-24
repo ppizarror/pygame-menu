@@ -7,17 +7,17 @@ concurrency:
 on:
   push:
     branches:
-      - master
+      - pygame-ce
   pull_request:
     branches:
-      - master
+      - pygame-ce
 
 jobs:
   test:
     uses: ppizarror/workflow-actions/.github/workflows/test_python.yml@master
     strategy:
       matrix:
-        python: [ 3.6, 3.7, 3.8, 3.9, '3.10', '3.11', '3.12' ]
+        python: [ 3.7, 3.8, 3.9, '3.10', '3.11', '3.12' ]
     with:
       env-vars: |
         SDL_AUDIODRIVER=disk
