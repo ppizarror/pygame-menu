@@ -332,6 +332,7 @@ class Label(Widget):
                     )
 
         self.force_menu_surface_update()
+        return None
 
     def update(self, events: EventVectorType) -> bool:
         # If generator is not None

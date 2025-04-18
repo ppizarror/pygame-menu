@@ -320,6 +320,7 @@ class Selector(Widget):
         self._apply_transforms()
         self._rect.width, self._rect.height = self._surface.get_size()
         self.force_menu_surface_update()
+        return None
 
     def get_index(self) -> int:
         """

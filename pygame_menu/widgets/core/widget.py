@@ -233,7 +233,7 @@ class Widget(Base):
     _check_mouseleave_call_render: bool
     _col_row_index: Tuple3IntType
     _ctrl: 'Controller'
-    _cursor: CursorType
+    _cursor: CursorType  # type: ignore
     _decorator: 'Decorator'
     _default_value: Any
     _draw_callbacks: Dict[str, Callable[['Widget', Optional['pygame_menu.Menu']], Any]]
@@ -1255,7 +1255,7 @@ class Widget(Base):
         """
         self.scroll_to_widget(scroll_parent=False)
         if self.readonly:
-            return
+            return None
         elif self._onreturn:
             args = list(args) + list(self._args)
             try:
@@ -1263,6 +1263,7 @@ class Widget(Base):
             except ValueError:
                 pass
             return self._onreturn(*args, **self._kwargs)
+        return None
 
     def change(self, *args) -> Any:
         """
@@ -3137,7 +3138,7 @@ class Widget(Base):
         )
 
         # Starting data
-        data = [cls_name, geom, bool_status]
+        data: List[Any] = [cls_name, geom, bool_status]
 
         # Append inner widgets if frame and not menu
         if isinstance(self, pygame_menu.widgets.Frame):

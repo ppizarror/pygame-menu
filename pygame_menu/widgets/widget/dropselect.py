@@ -117,7 +117,7 @@ class DropSelect(Widget):
     _placeholder: str
     _placeholder_add_to_selection_box: bool
     _scrollbar_color: ColorType
-    _scrollbar_cursor: CursorType
+    _scrollbar_cursor: CursorType  # type: ignore
     _scrollbar_shadow: bool
     _scrollbar_shadow_color: ColorType
     _scrollbar_shadow_offset: int
@@ -140,7 +140,7 @@ class DropSelect(Widget):
     _selection_infinite: bool
     _selection_option_border_color: ColorType
     _selection_option_border_width: int
-    _selection_option_cursor: CursorType
+    _selection_option_cursor: CursorType  # type: ignore
     _selection_option_font_style: Dict[str, Any]
     _selection_option_left_space: bool
     _selection_option_left_space_height_factor: float
@@ -873,9 +873,9 @@ class DropSelect(Widget):
         Move current selection down.
         """
         if self.readonly:
-            return
+            return None
         elif len(self._items) == 0:
-            return
+            return None
         elif not self.active:
             return self._toggle_drop()
         elif self._index == -1:
@@ -887,19 +887,20 @@ class DropSelect(Widget):
                 prev = self._index
                 new = max(0, self._index - 1)
                 if prev == new:
-                    return
+                    return None
                 self.set_value(new)
         self.change(*self._items[self._index][1:])
         self._sound.play_key_add()
+        return None
 
     def _up(self) -> None:
         """
         Move current selection up.
         """
         if self.readonly:
-            return
+            return None
         elif len(self._items) == 0:
-            return
+            return None
         elif not self.active:
             return self._toggle_drop()
         elif self._index == -1:
@@ -911,10 +912,11 @@ class DropSelect(Widget):
                 prev = self._index
                 new = min(self._index + 1, len(self._items) - 1)
                 if prev == new:
-                    return
+                    return None
                 self.set_value(new)
         self.change(*self._items[self._index][1:])
         self._sound.play_key_add()
+        return None
 
     def set_value(self, item: Union[str, int]) -> None:
         """

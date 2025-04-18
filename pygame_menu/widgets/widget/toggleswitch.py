@@ -349,6 +349,7 @@ class ToggleSwitch(Widget):
 
         # Finals
         self.force_menu_surface_update()
+        return None
 
     def _left(self) -> None:
         """
