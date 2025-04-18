@@ -108,7 +108,7 @@ class Menu(Base):
     _auto_centering: bool
     _background_function: Tuple[bool, Optional[Union[Callable[['Menu'], Any], CallableNoArgsType]]]
     _clock: 'pygame.time.Clock'
-    _column_max_width: VectorType
+    _column_max_width: Union[List[None], VectorType]
     _column_max_width_zero: List[bool]
     _column_min_width: VectorType
     _column_pos_x: List[NumberType]
@@ -339,6 +339,7 @@ class Menu(Base):
         # Check that every column max width is equal or greater than minimum width
         for i in range(len(column_max_width)):
             if column_max_width[i] is not None:
+                # noinspection PyTypeChecker
                 assert column_max_width[i] >= column_min_width[i], \
                     f'item {i} of column_max_width ({column_max_width[i]}) must be equal or greater ' \
                     f'than column_min_width ({column_min_width[i]})'
@@ -724,6 +725,7 @@ class Menu(Base):
         # Update column max width
         for i in range(len(self._column_max_width)):
             if self._column_max_width_zero[i]:
+                # noinspection PyTypeChecker
                 self._column_max_width[i] = self._width
 
         # Force the rendering
@@ -2280,6 +2282,7 @@ class Menu(Base):
             # noinspection PyUnresolvedReferences,PyProtectedMember
             os._exit(1)
         # This should be unreachable
+        # noinspection PyUnreachableCode
         exit(0)
 
     def is_enabled(self) -> bool:
@@ -2652,19 +2655,19 @@ class Menu(Base):
 
                     elif self._ctrl.joy_down(event, self):
                         if self._current._up(apply_sound=True):
-                            self._current._last_update_mode = _events.MENU_LAST_MOVE_UP
+                            self._current._last_update_mode = [_events.MENU_LAST_MOVE_UP]
                             updated = True
                             break
 
                     elif self._ctrl.joy_left(event, self):
                         if self._current._left(apply_sound=True):
-                            self._current._last_update_mode = _events.MENU_LAST_MOVE_LEFT
+                            self._current._last_update_mode = [_events.MENU_LAST_MOVE_LEFT]
                             updated = True
                             break
 
                     elif self._ctrl.joy_right(event, self):
                         if self._current._right(apply_sound=True):
-                            self._current._last_update_mode = _events.MENU_LAST_MOVE_RIGHT
+                            self._current._last_update_mode = [_events.MENU_LAST_MOVE_RIGHT]
                             updated = True
                             break
 
