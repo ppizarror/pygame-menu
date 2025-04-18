@@ -247,9 +247,9 @@ class Menu(Base):
         assert not hasattr(pygame, 'get_init') or pygame.get_init(), \
             'pygame is not initialized'
 
-        # Assert python version is greater than 3.6
-        assert sys.version_info >= (3, 6, 0), \
-            'pygame-menu only supports python equal or greater than version 3.6.0'
+        # Assert python version is greater than 3.8
+        assert sys.version_info >= (3, 8, 0), \
+            'pygame-menu only supports python equal or greater than version 3.8.0'
 
         # Column/row asserts
         assert columns >= 1, \
