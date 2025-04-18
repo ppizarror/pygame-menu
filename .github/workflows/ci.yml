@@ -23,7 +23,7 @@ jobs:
         SDL_AUDIODRIVER=disk
         SDL_VIDEODRIVER=dummy
       install-extras: test
-      os: ubuntu-20.04
+      os: ubuntu-latest
       python-version: ${{ matrix.python }}
 
   codeql:
