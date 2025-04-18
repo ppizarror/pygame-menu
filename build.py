@@ -11,7 +11,7 @@ import shutil
 import sys
 
 assert len(sys.argv) == 2, 'Argument is required, usage: build.py pip/twine'
-mode = sys.argv[1].strip()
+mode: str = sys.argv[1].strip()
 
 if mode == 'pip':
     if os.path.isdir('dist'):
