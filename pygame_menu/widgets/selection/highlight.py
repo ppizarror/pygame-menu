@@ -55,7 +55,6 @@ class HighlightSelection(Selection):
     def draw(self, surface: 'pygame.Surface', widget: 'pygame_menu.widgets.Widget') -> 'HighlightSelection':
         if self._border_width == 0:
             return self
-        # noinspection PyArgumentList
         pygame.draw.rect(
             surface,
             self.color,

@@ -271,21 +271,22 @@ def fill_gradient(
     if vertical:
         for line in range(y1, y2):
             color = (
-                min(max(a[0] + (rate[0] * (line - y1)), 0), 255),
-                min(max(a[1] + (rate[1] * (line - y1)), 0), 255),
-                min(max(a[2] + (rate[2] * (line - y1)), 0), 255)
+                int(min(max(a[0] + (rate[0] * (line - y1)), 0), 255)),
+                int(min(max(a[1] + (rate[1] * (line - y1)), 0), 255)),
+                int(min(max(a[2] + (rate[2] * (line - y1)), 0), 255))
             )
             fn_line(surface, color, (x1, line), (x2, line))
     else:
         for col in range(x1, x2):
             color = (
-                min(max(a[0] + (rate[0] * (col - x1)), 0), 255),
-                min(max(a[1] + (rate[1] * (col - x1)), 0), 255),
-                min(max(a[2] + (rate[2] * (col - x1)), 0), 255)
+                int(min(max(a[0] + (rate[0] * (col - x1)), 0), 255)),
+                int(min(max(a[1] + (rate[1] * (col - x1)), 0), 255)),
+                int(min(max(a[2] + (rate[2] * (col - x1)), 0), 255))
             )
             fn_line(surface, color, (col, y1), (col, y2))
 
 
+# noinspection PyUnusedLocal
 def format_color(
     color: Union[ColorInputType, Any],
     warn_if_invalid: bool = True
@@ -401,15 +402,13 @@ def load_pygame_image_file(image_path: str, **kwargs) -> 'pygame.Surface':
 
                 pil_invalid_exception = UnidentifiedImageError
                 img_pil = Image.open(image_path)
-                # noinspection PyTypeChecker
+                # noinspection PyTypeChecker,PyUnusedLocal
                 surface = pygame.image.fromstring(
                     img_pil.tobytes(), img_pil.size, img_pil.mode).convert()
-
             except (ModuleNotFoundError, ImportError):
                 warn(f'Image file "{image_path}" could not be loaded, as pygame.error '
                      f'is raised. To avoid this issue install the Pillow library')
                 raise
-
             except pil_invalid_exception:
                 warn(f'The image "{image_path}" could not be loaded using Pillow')
                 raise
@@ -442,7 +441,6 @@ def make_surface(
         'surface width and height must be equal or greater than zero'
     surface = pygame.Surface((int(width), int(height)), pygame.SRCALPHA, 32)
     if alpha and _ALPHA_CHANNEL[0]:
-        # noinspection PyArgumentList
         surface = pygame.Surface.convert_alpha(surface)
     if fill_color is not None:
         fill_color = assert_color(fill_color)
@@ -602,7 +600,6 @@ def set_pygame_cursor(cursor: CursorInputType) -> None:  # type: ignore
     """
     try:
         if cursor is not None:
-            # noinspection PyArgumentList
             pygame.mouse.set_cursor(cursor)
     except (pygame.error, TypeError):
         if PYGAME_V2:

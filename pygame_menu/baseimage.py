@@ -554,7 +554,6 @@ class BaseImage(Base):
                 g = int(max(0, min(g, 255)))
                 b = int(max(0, min(b, 255)))
                 a = int(max(0, min(a, 255)))
-                # noinspection PyArgumentList
                 self.set_at((x, y), pygame.Color(r, g, b, a))
         return self
 
@@ -605,7 +604,6 @@ class BaseImage(Base):
                     g = 0
                 if 'b' not in channels:
                     b = 0
-                # noinspection PyArgumentList
                 self._surface.set_at((x, y), pygame.Color(r, g, b, a))
         return self
 

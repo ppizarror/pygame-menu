@@ -36,10 +36,8 @@ def make_world(width: int, height: int) -> 'pygame.Surface':
         for y in range(100, height, 200):
             if number_x in (0, max_x - 1) or number_y in (0, max_y - 1):
                 # White circles to delimit world boundaries
-                # noinspection PyArgumentList
                 pygame.draw.circle(world, (255, 255, 255), (x, y), 100, 10)
             else:
-                # noinspection PyArgumentList
                 pygame.draw.circle(world, color, (x, y), 100, 10)
                 if color[0] + 15 < 255:
                     color[0] += 15

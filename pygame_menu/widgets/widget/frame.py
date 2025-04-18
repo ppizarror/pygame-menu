@@ -506,7 +506,6 @@ class Frame(Widget):
 
         # Draw style
         style_surface = make_surface(h, h, alpha=True)
-        # noinspection PyArgumentList
         pygame.draw.polygon(style_surface, symbol_color, style_pos, border)
         btn.get_decorator().add_surface(0, 0, surface=style_surface, centered=True)
 
