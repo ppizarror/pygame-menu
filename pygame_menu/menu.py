@@ -2655,19 +2655,19 @@ class Menu(Base):
 
                     elif self._ctrl.joy_down(event, self):
                         if self._current._up(apply_sound=True):
-                            self._current._last_update_mode = [_events.MENU_LAST_MOVE_UP]
+                            self._current._last_update_mode.append(_events.MENU_LAST_MOVE_UP)
                             updated = True
                             break
 
                     elif self._ctrl.joy_left(event, self):
                         if self._current._left(apply_sound=True):
-                            self._current._last_update_mode = [_events.MENU_LAST_MOVE_LEFT]
+                            self._current._last_update_mode.append(_events.MENU_LAST_MOVE_LEFT)
                             updated = True
                             break
 
                     elif self._ctrl.joy_right(event, self):
                         if self._current._right(apply_sound=True):
-                            self._current._last_update_mode = [_events.MENU_LAST_MOVE_RIGHT]
+                            self._current._last_update_mode.append(_events.MENU_LAST_MOVE_RIGHT)
                             updated = True
                             break
 
