@@ -250,7 +250,6 @@ class MenuBar(Widget):
 
         # Draw backbox if enabled
         if self._backbox_visible():
-            # noinspection PyArgumentList
             pygame.draw.rect(surface, self._backbox_background_color, self._backbox_rect, self._backbox_border_width)
             pygame.draw.polygon(surface, self._backbox_background_color, self._backbox_pos)
 

@@ -1027,7 +1027,6 @@ class MazeApp(object):
         :param column: Column number
         :return:
         """
-        # noinspection PyArgumentList
         pygame.display.update(
             (self._margin + self._width) * column + self._margin + self._offset[0],
             (self._margin + self._height) * row + self._margin + self._offset[1],
@@ -1234,6 +1233,8 @@ class MazeApp(object):
                 current_node = mydeque.pop()
             elif x == 'b':
                 current_node = mydeque.popleft()
+            else:
+                return False
 
             # noinspection PyUnboundLocalVariable
             if current_node == goal_node:
@@ -1248,10 +1249,10 @@ class MazeApp(object):
                     if path_node == start_point:
                         return True
 
-            if mazearray[current_node[0]][current_node[1]].nodetype == 'wall':
+            elif mazearray[current_node[0]][current_node[1]].nodetype == 'wall':
                 continue
 
-            if current_node not in visited_nodes:
+            elif current_node not in visited_nodes:
                 visited_nodes.add(current_node)
                 mazearray[current_node[0]][current_node[1]].update(is_visited=True)
                 self._draw_square(mazearray, current_node[0], current_node[1])

@@ -144,7 +144,6 @@ class CalculatorApp(object):
         """
         for event in events:
             if event.type == pygame.KEYDOWN:
-                # noinspection PyUnresolvedReferences
                 if event.key == pygame.K_0:
                     self._press(0)
                 elif event.key == pygame.K_1:

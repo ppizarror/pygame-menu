@@ -496,7 +496,6 @@ class ScrollArea(Base):
             surface.blit(self._bg_surface, (self._rect.x - self._extend_x, self._rect.y - self._extend_y))
 
         # Draw world surface
-        # noinspection PyTypeChecker
         surface.blit(self._world, self._view_rect.topleft, (self.get_offsets(), self._view_rect.size))
 
         # Then draw scrollbars
@@ -923,7 +922,6 @@ class ScrollArea(Base):
                 break
         return self
 
-    # noinspection PyTypeChecker
     def scroll_to_rect(
         self,
         rect: 'pygame.Rect',

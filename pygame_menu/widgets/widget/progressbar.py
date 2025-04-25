@@ -268,6 +268,7 @@ class ProgressBar(Widget):
 
         # Finals
         self.force_menu_surface_update()
+        return None
 
     def update(self, events: EventVectorType) -> bool:
         self.apply_update_callbacks(events)

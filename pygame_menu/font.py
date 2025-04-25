@@ -124,7 +124,6 @@ def get_font(name: FontType, size: int) -> '__font.Font':
                 most_similar = 0
                 most_similar_index = 0
                 for i in range(len(system_fonts)):
-                    # noinspection PyArgumentEqualDefault
                     sim = SequenceMatcher(None, system_fonts[i], font_name).ratio()
                     if sim > most_similar:
                         most_similar = sim

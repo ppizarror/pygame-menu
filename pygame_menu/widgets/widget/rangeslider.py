@@ -786,6 +786,7 @@ class RangeSlider(Widget):
 
         # Finals
         self.force_menu_surface_update()
+        return None
 
     def _get_pos_range(self, value: NumberType, surface: Optional['pygame.Surface'] = None) -> int:
         """

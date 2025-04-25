@@ -530,6 +530,7 @@ class TextInput(Widget):
 
         # Force Menu update
         self.force_menu_surface_update()
+        return None
 
     def _render_selection_box(self, force: bool = False) -> None:
         """
@@ -1559,7 +1560,6 @@ class TextInput(Widget):
         self._clock.tick(60)
 
         # Check mouse pressed
-        # noinspection PyArgumentList
         mouse_left, mouse_middle, mouse_right = pygame.mouse.get_pressed()
         self._mouse_is_pressed = (mouse_left or mouse_right or mouse_middle) and self._mouse_enabled
 
@@ -1609,7 +1609,6 @@ class TextInput(Widget):
                 if any(pygame.key.get_mods() & mod == mod for mod in CTRL_KMOD):
                     # If test, disable CTRL
                     if 'test' in event.dict and event.dict['test']:
-                        # noinspection PyArgumentList
                         pygame.key.set_mods(pygame.KMOD_NONE)
 
                     # Ctrl+C copy

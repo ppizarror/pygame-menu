@@ -167,6 +167,7 @@ class Image(Widget):
         if not self._render_hash_changed(self._visible):
             return True
         self.force_menu_surface_update()
+        return None
 
     def update(self, events: EventVectorType) -> bool:
         self.apply_update_callbacks(events)

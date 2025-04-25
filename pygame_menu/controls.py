@@ -36,26 +36,25 @@ __all__ = [
 ]
 
 # Imports
-# noinspection PyUnresolvedReferences
-import pygame_menu
 import pygame.locals as _locals
 from pygame.event import Event as EventType
+from pygame_menu._types import Tuple2IntType
 from typing import Union
 
-WidgetType = Union['pygame_menu.Menu', 'pygame_menu.widgets.Widget']
+WidgetType = Union['pygame_menu.Menu', 'pygame_menu.widgets.Widget']  # type: ignore
 
 # Joy pad
-JOY_AXIS_X = 0
-JOY_AXIS_Y = 1
-JOY_BUTTON_BACK = 1
-JOY_BUTTON_SELECT = 0
-JOY_DEADZONE = 0.5
-JOY_DELAY = 300  # ms
-JOY_DOWN = (0, -1)
-JOY_LEFT = (-1, 0)
-JOY_REPEAT = 100  # ms
-JOY_RIGHT = (1, 0)
-JOY_UP = (0, 1)
+JOY_AXIS_X: int = 0
+JOY_AXIS_Y: int = 1
+JOY_BUTTON_BACK: int = 1
+JOY_BUTTON_SELECT: int = 0
+JOY_DEADZONE: float = 0.5
+JOY_DELAY: int = 300  # ms
+JOY_DOWN: Tuple2IntType = (0, -1)
+JOY_LEFT: Tuple2IntType = (-1, 0)
+JOY_REPEAT: int = 100  # ms
+JOY_RIGHT: Tuple2IntType = (1, 0)
+JOY_UP: Tuple2IntType = (0, 1)
 
 # Keyboard events
 KEY_APPLY = _locals.K_RETURN

@@ -181,7 +181,7 @@ class Sound(Base):
             # noinspection PyBroadException
             try:
                 # pygame < 1.9.5
-                mixer_kwargs = {
+                mixer_kwargs: Dict[str, Union[int, str]] = {
                     'frequency': frequency,
                     'size': size,
                     'channels': channels,
@@ -275,7 +275,6 @@ class Sound(Base):
 
         :return: Sound engine channel
         """
-        # noinspection PyArgumentList
         channel = mixer.find_channel()  # force only available on pygame v2
         if self._uniquechannel:  # If the channel is unique
             if self._channel is None:  # If the channel has not been set
@@ -331,7 +330,6 @@ class Sound(Base):
 
         # Load the sound
         try:
-            # noinspection PyTypeChecker
             sound_data = mixer.Sound(file=sound_file)
         except pygame_error:
             if self._verbose:
