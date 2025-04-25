@@ -1,5 +1,5 @@
 """
-pygame-menu-ce
+pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 SETUP DISTRIBUTION
