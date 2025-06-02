@@ -403,8 +403,12 @@ def load_pygame_image_file(image_path: str, **kwargs) -> 'pygame.Surface':
                 pil_invalid_exception = UnidentifiedImageError
                 img_pil = Image.open(image_path)
                 # noinspection PyTypeChecker,PyUnusedLocal
-                surface = pygame.image.fromstring(
-                    img_pil.tobytes(), img_pil.size, img_pil.mode).convert()
+                if pygame.version.vernum >= (2, 3, 0):
+                    surface = pygame.image.frombytes(
+                        img_pil.tobytes(), img_pil.size, img_pil.mode).convert()
+                else:
+                    surface = pygame.image.fromstring(
+                        img_pil.tobytes(), img_pil.size, img_pil.mode).convert()
             except (ModuleNotFoundError, ImportError):
                 warn(f'Image file "{image_path}" could not be loaded, as pygame.error '
                      f'is raised. To avoid this issue install the Pillow library')
