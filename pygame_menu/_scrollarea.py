@@ -1259,6 +1259,18 @@ class ScrollArea(Base):
             widget_rect = widget
         return bool(widget_rect.collidepoint(*get_finger_pos(self._menu, event)))
 
+    def get_scrollbar(self, position: str) -> Optional['ScrollBar']:
+        """
+        Returns the scrollbar at the given position, or None if not present.
+        :param position: The position of the scrollbar (e.g., POSITION_NORTH, POSITION_EAST).
+        :return: The ScrollBar object or None.
+        """
+        assert_position(position) # Ensure valid position string
+        for sbar, pos in zip(self._scrollbars, self._scrollbar_positions):
+            if pos == position:
+                return sbar
+        return None
+
     def get_decorator(self) -> 'Decorator':
         """
         Return the ScrollArea decorator API.
