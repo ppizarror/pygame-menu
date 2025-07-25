@@ -471,6 +471,24 @@ class RangeSlider(Widget):
             self.set_value(self._default_value)
         return self
 
+    def set_default_value(self, value: RangeSliderValueType) -> 'RangeSlider':
+        """
+        Set the RangeSlider default value.
+        Ensures the default value is stored in the correct internal format.
+
+        :param value: Default range slider value, can be a number or a tuple/list of 2 elements.
+        :return: Self reference
+        """
+        # Call the existing set_value to handle validation and internal format conversion
+        # This ensures 'value' is valid and updates self._value to the correct internal list format.
+        self.set_value(value)
+
+        # Store the internally formatted _value (which is a list like [val, 0] or [min, max])
+        # as the new _default_value. Convert to tuple for immutability and consistency with __init__.
+        self._default_value = tuple(self._value)
+
+        return self
+
     def set_value(self, value: RangeSliderValueType) -> None:
         if self._single:
             assert isinstance(value, NumberInstance)

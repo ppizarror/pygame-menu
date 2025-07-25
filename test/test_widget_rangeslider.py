@@ -503,3 +503,49 @@ class RangeSliderWidgetTest(BaseTest):
             slider_off.update([])
         self.assertGreater(slider_on.get_value(), 0.1)
         self.assertEqual(slider_off.get_value(), 0.1)
+
+def test_set_default_value(self) -> None:
+        """
+        Test set_default_value method for RangeSlider.
+        This specifically checks the fix for ensuring _default_value is always a tuple/list.
+        """
+        # Test with a single slider (float default)
+        slider_single = pygame_menu.widgets.RangeSlider('Single', default_value=0.5, range_values=(0, 1), increment=0.1)
+        self.assertEqual(slider_single._default_value, [0.5])
+        self.assertEqual(slider_single.get_value(), 0.5)
+
+        # Change value and reset
+        slider_single.set_value(0.8)
+        self.assertEqual(slider_single.get_value(), 0.8)
+        slider_single.reset_value()
+        self.assertEqual(slider_single.get_value(), 0.5)
+
+        # Test with a double slider (tuple default)
+        slider_double = pygame_menu.widgets.RangeSlider('Double', default_value=(0.2, 0.7), range_values=(0, 1), increment=0.1)
+        self.assertEqual(slider_double._default_value, [0.2, 0.7])
+        self.assertEqual(slider_double.get_value(), (0.2, 0.7))
+
+        # Change values and reset
+        slider_double.set_value((0.3, 0.9))
+        self.assertEqual(slider_double.get_value(), (0.3, 0.9))
+        slider_double.reset_value()
+        self.assertEqual(slider_double.get_value(), (0.2, 0.7))
+
+        # Test setting a new default value after initialization
+        slider_single.set_default_value(0.3)
+        self.assertEqual(slider_single._default_value, [0.3])
+        slider_single.reset_value()
+        self.assertEqual(slider_single.get_value(), 0.3)
+
+        slider_double.set_default_value((0.1, 0.4))
+        self.assertEqual(slider_double._default_value, [0.1, 0.4])
+        slider_double.reset_value()
+        self.assertEqual(slider_double.get_value(), (0.1, 0.4))
+
+        # Test invalid default value types for single slider
+        self.assertRaises(AssertionError, lambda: slider_single.set_default_value([0.1, 0.2]))
+        self.assertRaises(AssertionError, lambda: slider_single.set_default_value('invalid'))
+
+        # Test invalid default value types for double slider
+        self.assertRaises(AssertionError, lambda: slider_double.set_default_value(0.5))
+        self.assertRaises(AssertionError, lambda: slider_double.set_default_value((0.1, 0.2, 0.3)))
