@@ -429,3 +429,48 @@ class BaseImageTest(BaseTest):
         image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_TILED_BORDER)
         self.assertEqual(image.get_size(), (18, 18))
         self.assertEqual(image.subsurface((0, 0, 3, 3)).get_size(), (3, 3))
+
+    def test_from_surface(self) -> None:
+        """
+        Test image load from a pygame.Surface object.
+        """
+        # Create a simple surface
+        surf = pygame.Surface((50, 50))
+        surf.fill((255, 0, 0))
+
+        # Load BaseImage from surface
+        image = pygame_menu.BaseImage(surf)
+
+        # Basic properties
+        self.assertEqual(image.get_width(), 50)
+        self.assertEqual(image.get_height(), 50)
+        self.assertEqual(image.get_extension(), '<surface>')
+        self.assertEqual(image.get_path(), '<surface>')
+
+        # Ensure the internal surface is not the same object
+        self.assertIsNot(image._surface, surf)
+
+        self.assertIsNot(image._original_surface, surf)
+
+        image.to_bw()
+        color = image.get_at((10, 10))
+        self.assertEqual(color[0], color[1])
+        self.assertEqual(color[1], color[2])
+
+        image_copy = image.copy()
+        self.assertTrue(image.equals(image_copy))
+        self.assertEqual(image_copy.get_extension(), '<surface>')
+
+        self.assertIsNot(image_copy._surface, image._surface)
+
+        image.set_at((0, 0), (0, 255, 0))
+        self.assertNotEqual(image.get_at((0, 0)), color)
+        image.restore()
+        self.assertEqual(image.get_at((0, 0)), surf.get_at((0, 0)))
+
+        surf2 = pygame.Surface((50, 50))
+        surf2.fill((0, 0, 255))
+        image2 = pygame_menu.BaseImage(surf2)
+        image2.set_at((0, 0), (255, 255, 0))
+        self.assertEqual(surf2.get_at((0, 0)), (0, 0, 255, 255))
+
