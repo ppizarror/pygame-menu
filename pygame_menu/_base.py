@@ -13,7 +13,7 @@ from pygame_menu.utils import uuid4
 from pygame_menu._types import Dict, Any, NumberInstance, NumberType, Optional
 
 
-class Base(object):
+class Base:
     """
     Base object.
     """

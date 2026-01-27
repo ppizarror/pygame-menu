@@ -78,7 +78,7 @@ class Decorator(Base):
         decorator_id: str = '',
         verbose: bool = True
     ) -> None:
-        super(Decorator, self).__init__(object_id=decorator_id, verbose=verbose)
+        super().__init__(object_id=decorator_id, verbose=verbose)
 
         self._coord_cache = {}
         self._decor = {DECOR_TYPE_PREV: [], DECOR_TYPE_POST: []}

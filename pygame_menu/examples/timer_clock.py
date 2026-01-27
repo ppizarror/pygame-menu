@@ -49,7 +49,7 @@ def reset_timer() -> None:
     timer[0] = 0
 
 
-class TestCallClassMethod(object):
+class TestCallClassMethod:
     """
     Class call method.
     """

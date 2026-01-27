@@ -58,7 +58,7 @@ class Image(Widget):
         assert isinstance(scale_smooth, bool)
         assert_vector(scale, 2)
 
-        super(Image, self).__init__(
+        super().__init__(
             onselect=onselect,
             widget_id=image_id
         )

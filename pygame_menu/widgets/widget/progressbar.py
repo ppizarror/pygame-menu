@@ -111,7 +111,7 @@ class ProgressBar(Widget):
         *args,
         **kwargs
     ) -> None:
-        super(ProgressBar, self).__init__(
+        super().__init__(
             args=args,
             kwargs=kwargs,
             onselect=onselect,

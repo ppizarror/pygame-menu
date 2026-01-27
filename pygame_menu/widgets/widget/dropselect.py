@@ -249,7 +249,7 @@ class DropSelect(Widget):
         if selection_option_font_size is not None:
             assert isinstance(selection_option_font_size, int) and selection_option_font_size > 0
 
-        super(DropSelect, self).__init__(
+        super().__init__(
             onchange=onchange,
             onreturn=onreturn,
             onselect=onselect,
@@ -547,13 +547,13 @@ class DropSelect(Widget):
         return self
 
     def hide(self) -> 'DropSelect':
-        super(DropSelect, self).hide()
+        super().hide()
         if self._drop_frame is not None:
             self._drop_frame.hide()
         return self
 
     def show(self) -> 'DropSelect':
-        super(DropSelect, self).show()
+        super().show()
         if self.active:
             self._toggle_drop()
         return self
@@ -598,12 +598,12 @@ class DropSelect(Widget):
         return -1
 
     def set_scrollarea(self, scrollarea: 'pygame_menu._scrollarea.ScrollArea') -> None:
-        super(DropSelect, self).set_scrollarea(scrollarea)
+        super().set_scrollarea(scrollarea)
         if self._drop_frame is not None:
             self._drop_frame.set_scrollarea(scrollarea)
 
     def set_frame(self, frame: 'pygame_menu.widgets.Frame') -> 'DropSelect':
-        super(DropSelect, self).set_frame(frame)
+        super().set_frame(frame)
         if self._drop_frame is not None:
             self._drop_frame.set_frame(frame)
         return self
@@ -626,7 +626,7 @@ class DropSelect(Widget):
         btn.remove_attribute('ignore_scroll_to_widget')
 
     def set_position(self, x: NumberType, y: NumberType) -> 'DropSelect':
-        super(DropSelect, self).set_position(x, y)
+        super().set_position(x, y)
         if self._drop_frame is not None:
             x = self._rect.x
             y = self._rect.y
@@ -671,7 +671,7 @@ class DropSelect(Widget):
         surface.blit(self._surface, self._rect.topleft)
 
     def draw_after_if_selected(self, surface: Optional['pygame.Surface']) -> 'DropSelect':
-        super(DropSelect, self).draw_after_if_selected(surface)
+        super().draw_after_if_selected(surface)
         if self.active and self.is_visible():
             self._check_drop_made()
 

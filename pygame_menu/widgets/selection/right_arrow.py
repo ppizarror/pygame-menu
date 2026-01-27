@@ -38,7 +38,7 @@ class RightArrowSelection(ArrowSelection):
         assert isinstance(arrow_left_margin, NumberInstance)
         assert arrow_left_margin >= 0, 'margin cannot be negative'
 
-        super(RightArrowSelection, self).__init__(
+        super().__init__(
             margin_left=0,
             margin_right=arrow_size[0] + arrow_left_margin,
             margin_top=0,
@@ -63,5 +63,5 @@ class RightArrowSelection(ArrowSelection):
              rect.midright[1] + self._arrow_vertical_offset)
         c = (rect.bottomright[0] + self._arrow_size[0] + self._arrow_left_margin,
              int(rect.midright[1] + self._arrow_size[1] / 2 + self._arrow_vertical_offset))
-        super(RightArrowSelection, self)._draw_arrow(surface, widget, a, b, c)
+        super()._draw_arrow(surface, widget, a, b, c)
         return self

@@ -65,7 +65,7 @@ class Table(Frame):
         self,
         table_id: str = ''
     ) -> None:
-        super(Table, self).__init__(
+        super().__init__(
             width=1,
             height=1,
             orientation=ORIENTATION_VERTICAL,
@@ -416,7 +416,7 @@ class Table(Frame):
             row.pack(c)
 
         # Pack rows to self
-        super(Table, self).pack(row)
+        super().pack(row)
         self._rows.append(row)
 
         # Update size
@@ -465,7 +465,7 @@ class Table(Frame):
         return column_widths, row_heights
 
     # def set_frame(self, frame: 'pygame_menu.widgets.Frame') -> 'Table':
-    #     super(Frame, self).set_frame(frame)
+    #     super().set_frame(frame)
     #     for f in self._rows:
     #         f.set_frame(frame)
     #     return self
@@ -855,12 +855,12 @@ class Table(Frame):
 
     # noinspection PyProtectedMember
     def set_scrollarea(self, scrollarea: Optional['pygame_menu._scrollarea.ScrollArea']) -> None:
-        super(Table, self).set_scrollarea(scrollarea)
+        super().set_scrollarea(scrollarea)
         for f in self._rows:
             f.set_scrollarea(scrollarea)
 
     def set_position(self, x: NumberType, y: NumberType) -> 'Table':
-        super(Table, self).set_position(x, y)
+        super().set_position(x, y)
         x = self._rect.x
         y = self._rect.y
         for f in self._rows:
@@ -872,12 +872,12 @@ class Table(Frame):
 
     def draw(self, surface: 'pygame.Surface') -> 'Table':
         if self.is_visible():
-            super(Table, self).draw(surface)
+            super().draw(surface)
             self._draw_cell_borders(self.last_surface)
         return self
 
     def update(self, events: EventVectorType) -> bool:
-        super(Table, self).update(events)
+        super().update(events)
         updated = False
 
         # if self.readonly or not self.is_visible():

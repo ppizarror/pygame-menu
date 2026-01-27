@@ -147,7 +147,7 @@ class Sound(Base):
         uniquechannel: bool = True,
         verbose: bool = True
     ) -> None:
-        super(Sound, self).__init__(object_id=sound_id, verbose=verbose)
+        super().__init__(object_id=sound_id, verbose=verbose)
 
         assert isinstance(allowedchanges, int)
         assert isinstance(buffer, int)
