@@ -129,7 +129,7 @@ class BaseImage(Base):
         frombase64: bool = False,
         image_id: str = ''
     ) -> None:
-        super(BaseImage, self).__init__(object_id=image_id)
+        super().__init__(object_id=image_id)
 
         assert isinstance(load_from_file, bool)
         assert isinstance(frombase64, bool)

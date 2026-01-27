@@ -57,7 +57,7 @@ class Button(Label):
         *args,
         **kwargs
     ) -> None:
-        super(Button, self).__init__(
+        super().__init__(
             title=title,
             label_id=button_id
         )

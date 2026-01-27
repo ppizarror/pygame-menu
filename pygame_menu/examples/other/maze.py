@@ -37,7 +37,7 @@ WHITE = (255, 255, 255)
 
 
 # noinspection PyMissingTypeHints,PyMissingOrEmptyDocstring
-class AStarQueue(object):
+class AStarQueue:
     """
     A* Queue.
     """
@@ -57,7 +57,7 @@ class AStarQueue(object):
 
 
 # noinspection PyMissingTypeHints,PyMissingOrEmptyDocstring
-class PriorityQueue(object):
+class PriorityQueue:
     """
     Priority Queue.
     """
@@ -77,7 +77,7 @@ class PriorityQueue(object):
 
 
 # noinspection PyMissingTypeHints,PyMissingOrEmptyDocstring
-class PrioritySet(object):
+class PrioritySet:
     """
     Create a priority queue that doesn't add duplicate nodes.
     """
@@ -101,7 +101,7 @@ class PrioritySet(object):
 
 
 # noinspection PyDefaultArgument
-class Node(object):
+class Node:
     """
     Make it easier to add different node types.
     """
@@ -170,7 +170,7 @@ _MazeType = List[List['Node']]
 _Point2 = Tuple[int, int]
 
 
-class MazeApp(object):
+class MazeApp:
     """
     Maze class.
     """

@@ -166,7 +166,7 @@ class ScrollArea(Base):
         shadow_position: str = POSITION_SOUTHEAST,
         world: Optional['pygame.Surface'] = None
     ) -> None:
-        super(ScrollArea, self).__init__(object_id=scrollarea_id)
+        super().__init__(object_id=scrollarea_id)
 
         assert isinstance(area_height, int)
         assert isinstance(area_width, int)

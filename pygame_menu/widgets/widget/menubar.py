@@ -117,7 +117,7 @@ class MenuBar(Widget):
         back_box_background_color = assert_color(back_box_background_color)
 
         # MenuBar has no ID
-        super(MenuBar, self).__init__(
+        super().__init__(
             args=args,
             kwargs=kwargs,
             onreturn=onreturn,
@@ -504,7 +504,7 @@ class MenuBar(Widget):
     def get_height(self, apply_padding: bool = True, apply_selection: bool = False) -> int:
         if self._floating or not self.is_visible():
             return 0
-        return super(MenuBar, self).get_height(apply_padding, apply_selection)
+        return super().get_height(apply_padding, apply_selection)
 
     def update(self, events: EventVectorType) -> bool:
         self.apply_update_callbacks(events)

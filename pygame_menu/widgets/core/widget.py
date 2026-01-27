@@ -319,7 +319,7 @@ class Widget(Base):
         args=None,
         kwargs=None
     ) -> None:
-        super(Widget, self).__init__(object_id=widget_id)
+        super().__init__(object_id=widget_id)
 
         self._accept_events = False  # Indicate the widget receives events (info)
         self._alignment = ALIGN_CENTER  # Widget alignment
@@ -3201,7 +3201,7 @@ class _WidgetCopyException(Exception):
     pass
 
 
-class _WidgetNoValue(object):
+class _WidgetNoValue:
     """
     No value class.
     """
@@ -3215,7 +3215,7 @@ class WidgetTransformationNotImplemented(Exception):
     pass
 
 
-class AbstractWidgetManager(object):
+class AbstractWidgetManager:
     """
     Add/Remove widgets to the Menu.
     """

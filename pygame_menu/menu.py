@@ -218,7 +218,7 @@ class Menu(Base):
         touchscreen_motion_selection: bool = False,
         verbose: bool = True
     ) -> None:
-        super(Menu, self).__init__(object_id=menu_id, verbose=verbose)
+        super().__init__(object_id=menu_id, verbose=verbose)
 
         assert isinstance(center_content, bool)
         assert isinstance(column_max_width, (VectorInstance, type(None), NumberInstance))
@@ -4049,7 +4049,7 @@ class Menu(Base):
         self._theme = self._theme.copy()
 
 
-class _MenuStats(object):
+class _MenuStats:
     """
     Menu stats.
     """
@@ -4088,7 +4088,7 @@ class _MenuCopyException(Exception):
     pass
 
 
-class _MenuRuntimeErrorConfig(object):
+class _MenuRuntimeErrorConfig:
     """
     Controls the runtime errors of the Menu.
     """

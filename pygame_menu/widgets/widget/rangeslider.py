@@ -243,7 +243,7 @@ class RangeSlider(Widget):
         *args,
         **kwargs
     ) -> None:
-        super(RangeSlider, self).__init__(
+        super().__init__(
             args=args,
             kwargs=kwargs,
             onchange=onchange,
@@ -606,7 +606,7 @@ class RangeSlider(Widget):
             )
 
     def draw_after_if_selected(self, surface: Optional['pygame.Surface']) -> 'RangeSlider':
-        super(RangeSlider, self).draw_after_if_selected(surface)
+        super().draw_after_if_selected(surface)
         self.last_surface = surface
 
         # Draw slider value

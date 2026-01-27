@@ -617,7 +617,8 @@ def uuid4(short: bool = False) -> str:
     :param short: If ``True`` only returns the first 8 chars of the uuid, else, 18
     :return: UUID of 18 chars
     """
-    return str(uuid.uuid4())[:18 if not short else 8]
+    uid = uuid.uuid4().hex
+    return uid[:8] if short else uid[:18]
 
 
 def warn(message: str, print_stack: bool = True) -> None:
@@ -719,7 +720,7 @@ def widget_terminal_title(
     return w_title
 
 
-class TerminalColors(object):
+class TerminalColors:
     """
     Terminal colors.
 
@@ -739,7 +740,7 @@ class TerminalColors(object):
     UNDERLINE = '\033[4m'
 
 
-class ShadowGenerator(object):
+class ShadowGenerator:
     """
     A class to generate surfaces that work as a 'shadow' for rectangular UI elements. Base shadow
     surface are generated with an algorithm, then when one is requested at a specific size the
