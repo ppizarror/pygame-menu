@@ -61,7 +61,6 @@ class Planet:
         self.url = url
 
 
-# noinspection SpellCheckingInspection
 class SolarSystemApp:
     """
     Draws a fancy solar system.
@@ -308,7 +307,7 @@ class SolarSystemApp:
 
         # Initialize stars random colors
         self.stars = []
-        for i in range(100):
+        for _ in range(100):
             self.add_star()
 
         # Set the nebulas

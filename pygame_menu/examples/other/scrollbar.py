@@ -144,8 +144,6 @@ def main(test: bool = False) -> None:
 
         trunc_world_orig = (sb_h.get_value(), sb_v.get_value())
         trunc_world = (scr_size[0] - thick_v, scr_size[1] - thick_h)
-
-        # noinspection PyTypeChecker
         screen.blit(world, (0, 0), (trunc_world_orig, trunc_world))
         pygame.display.update()
 

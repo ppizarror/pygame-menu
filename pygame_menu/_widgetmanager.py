@@ -388,7 +388,6 @@ class WidgetManager(
         # Call event
         widget._append_to_menu()
 
-    # noinspection PyMissingOrEmptyDocstring
     def configure_defaults_widget(self, widget: 'Widget') -> None:
         self._configure_widget(widget, **self._filter_widget_attributes({}))
 
@@ -407,12 +406,12 @@ class WidgetManager(
         .. note::
 
             This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply to
+            stored in ``_current`` pointer); for such behavior apply to
             :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         .. warning::
 
-            Unintended behaviours may happen while using this method, use only with
+            Unintended behaviors may happen while using this method, use only with
             caution; specially while creating nested submenus with buttons.
 
         :param widget: Widget to be added

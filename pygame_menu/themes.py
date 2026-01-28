@@ -76,7 +76,7 @@ class Theme:
 
     .. note::
 
-        Themes only modify visual behaviour of the Menu. For other options
+        Themes only modify visual behavior of the Menu. For other options
         like rows/columns, enabling or disabling overflow, position, or Menu
         width/height see Menu parameters.
 
@@ -256,7 +256,7 @@ class Theme:
     scrollarea_outer_margin: Tuple2NumberType
     scrollarea_position: str
     scrollbar_color: ColorType
-    scrollbar_cursor: CursorType
+    scrollbar_cursor: CursorType  # type: ignore
     scrollbar_shadow: bool
     scrollbar_shadow_color: ColorType
     scrollbar_shadow_offset: int
@@ -273,7 +273,7 @@ class Theme:
     title_bar_style: int
     title_close_button: bool
     title_close_button_background_color: ColorType
-    title_close_button_cursor: CursorType
+    title_close_button_cursor: CursorType  # type: ignore
     title_fixed: bool
     title_floating: bool
     title_font: FontType
@@ -302,7 +302,7 @@ class Theme:
     widget_box_border_width: int
     widget_box_inflate: Tuple2IntType
     widget_box_margin: Tuple2NumberType
-    widget_cursor: CursorType
+    widget_cursor: CursorType  # type: ignore
     widget_font: FontType
     widget_font_antialias: str
     widget_font_background_color: Optional[ColorType]
@@ -722,7 +722,6 @@ class Theme:
         """
         return self.copy()
 
-    # noinspection PyTypeChecker
     @staticmethod
     def _format_color_opacity(
         color: Optional[Union[ColorInputType, 'BaseImage']],
@@ -752,14 +751,13 @@ class Theme:
             if len(color) == 4:
                 if isinstance(color, tuple):
                     return color
-                return tuple(color)
+                return tuple(color)  # type: ignore
             elif len(color) == 3:
                 color = color[0], color[1], color[2], 255
         else:
             raise ValueError(f'invalid color type {color}, only tuple or list are valid')
         return color
 
-    # noinspection PyTypeChecker
     @staticmethod
     def _get(params: Dict[str, Any], key: str,
              allowed_types: Optional[Union[Type, str, List[Type], Tuple[Type, ...]]] = None,

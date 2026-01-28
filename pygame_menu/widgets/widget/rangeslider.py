@@ -468,7 +468,7 @@ class RangeSlider(Widget):
         if self._single:
             self.set_value(self._default_value[0])
         else:
-            self.set_value(self._default_value)
+            self.set_value(self._default_value)  # type: ignore
         return self
 
     def set_default_value(self, value: RangeSliderValueType) -> 'RangeSlider':
@@ -492,7 +492,6 @@ class RangeSlider(Widget):
     def set_value(self, value: RangeSliderValueType) -> None:
         if self._single:
             assert isinstance(value, NumberInstance)
-            # noinspection PyTypeChecker
             assert self._range_values[0] <= value <= self._range_values[-1], \
                 f'value ({value}) must be within range {self._range_values[0]} <=' \
                 f' {value} <= {self._range_values[1]}'
@@ -1253,7 +1252,7 @@ class RangeSliderManager(AbstractWidgetManager, ABC):
         .. note::
 
             This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply to
+            stored in ``_current`` pointer); for such behavior apply to
             :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         .. warning::

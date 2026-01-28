@@ -11,11 +11,9 @@ from pygame.event import Event as EventType
 
 from typing import Union, List, Tuple, Any, Callable, Sequence, Mapping, Optional
 
-# noinspection PyUnresolvedReferences
-from typing import Dict, Type
+from typing import Dict, Type  # type: ignore
 
-# noinspection PyUnresolvedReferences
-from typing_extensions import Literal
+from typing_extensions import Literal  # type: ignore
 
 # Common types
 ArgsType = Optional[Sequence[Any]]
@@ -72,8 +70,7 @@ VectorInstance = (tuple, list)
 
 # Cursor
 try:
-    # noinspection PyUnresolvedReferences
-    from pygame.cursors import Cursor as __Cursor
+    from pygame.cursors import Cursor as __Cursor  # type: ignore
 
     CursorInputType = Optional[Union[int, __Cursor]]
     CursorInputInstance = (int, __Cursor, type(None))

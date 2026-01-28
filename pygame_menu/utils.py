@@ -286,7 +286,6 @@ def fill_gradient(
             fn_line(surface, color, (col, y1), (col, y2))
 
 
-# noinspection PyUnusedLocal
 def format_color(
     color: Union[ColorInputType, Any],
     warn_if_invalid: bool = True
@@ -397,12 +396,9 @@ def load_pygame_image_file(image_path: str, **kwargs) -> 'pygame.Surface':
 
             # Check if Pillow exists
             try:
-                # noinspection PyPackageRequirements,PyUnresolvedReferences
                 from PIL import Image, UnidentifiedImageError  # type: ignore
-
                 pil_invalid_exception = UnidentifiedImageError
                 img_pil = Image.open(image_path)
-                # noinspection PyTypeChecker,PyUnusedLocal
                 if pygame.version.vernum >= (2, 3, 0):
                     surface = pygame.image.frombytes(
                         img_pil.tobytes(), img_pil.size, img_pil.mode).convert()
@@ -629,8 +625,6 @@ def warn(message: str, print_stack: bool = True) -> None:
     :param print_stack: Print stack trace of the call
     """
     assert isinstance(message, str)
-
-    # noinspection PyUnresolvedReferences,PyProtectedMember
     frame = sys._getframe().f_back
     # frame_info = inspect.getframeinfo(frame)  # Traceback(filename, lineno, function, code_context, index)
 
@@ -911,7 +905,6 @@ class ShadowGenerator:
                 corner_shadow_surface = pygame.surface.Surface(corner_rect.size,
                                                                flags=pygame.SRCALPHA,
                                                                depth=32)
-                # noinspection PyUnresolvedReferences
                 corner_shadow_surface.fill(pygame.Color('#00000000'))
                 pygame.draw.circle(corner_shadow_surface,
                                    pygame.Color(r, g, b, int(shadow_alpha)),

@@ -88,7 +88,6 @@ def play_function(difficulty: List, font: 'pygame.font.Font', test: bool = False
 
     while True:
 
-        # noinspection PyUnresolvedReferences
         clock.tick(60)
         frame += 1
 

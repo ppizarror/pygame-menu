@@ -18,8 +18,7 @@ class Version(tuple):
     fields = 'major', 'minor', 'patch'
 
     def __new__(cls, major, minor, patch) -> 'Version':
-        # noinspection PyTypeChecker
-        return tuple.__new__(cls, (major, minor, patch))
+        return tuple.__new__(cls, (major, minor, patch))  # type: ignore
 
     def __repr__(self) -> str:
         fields = (f'{fld}={val}' for fld, val in zip(self.fields, self))
@@ -33,6 +32,6 @@ class Version(tuple):
     patch = property(lambda self: self[2])
 
 
-vernum = Version(4, 5, 4)
+vernum = Version(4, 5, 5)
 ver = str(vernum)
 rev = ''

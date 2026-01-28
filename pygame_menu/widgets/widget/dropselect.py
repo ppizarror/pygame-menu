@@ -273,7 +273,7 @@ class DropSelect(Widget):
         self._title_size = (0, 0)
 
         # If True adds a space equals to the height of the option at left, used for
-        # drawing some options (for example, ticks, boxes, etc)
+        # drawing some options (for example, ticks, boxes, etc.)
         self._selection_option_left_space = False
         self._selection_option_left_space_height_factor = 1
         self._selection_option_left_space_margin = (0, 0, 0)  # left, right, top
@@ -351,7 +351,6 @@ class DropSelect(Widget):
 
         :return: Self reference
         """
-        # noinspection PyUnresolvedReferences
         from pygame_menu._scrollarea import get_scrollbars_from_position
 
         if not self.configured:
@@ -381,10 +380,10 @@ class DropSelect(Widget):
                 color=self._selection_option_border_color
             )
             btn.set_controls(
-                joystick=False,  # Only drop select controls the joystick behaviour
+                joystick=False,  # Only drop select controls the joystick behavior
                 mouse=self._mouse_enabled,
                 touchscreen=self._touchscreen_enabled,
-                keyboard=False  # Only drop select controls the keyboard behaviour
+                keyboard=False  # Only drop select controls the keyboard behavior
             )
             btn.set_cursor(  # This feature does not work properly
                 cursor=self._selection_option_cursor
@@ -1335,7 +1334,7 @@ class DropSelectManager(AbstractWidgetManager, ABC):
         .. note::
 
             This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply to
+            stored in ``_current`` pointer); for such behavior apply to
             :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         .. warning::
@@ -1400,7 +1399,6 @@ class DropSelectManager(AbstractWidgetManager, ABC):
         if isinstance(selection_box_margin, NumberInstance):
             selection_box_margin = (selection_box_margin, selection_box_margin)
 
-        # noinspection PyTypeChecker
         widget = DropSelect(
             default=default,
             dropselect_id=dropselect_id,
