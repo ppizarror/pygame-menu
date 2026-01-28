@@ -136,7 +136,7 @@ def get_font(name: FontType, size: int) -> '__font.Font':
                 examples_number = 3
                 examples = []
                 j = 0
-                for i in range(len(system_fonts)):
+                for _ in range(len(system_fonts)):
                     font_random = system_fonts[randrange(0, len(system_fonts))]
                     if font_random not in examples:
                         examples.append(font_random)

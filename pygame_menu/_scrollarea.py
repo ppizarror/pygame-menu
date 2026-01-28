@@ -1265,7 +1265,7 @@ class ScrollArea(Base):
         :param position: The position of the scrollbar (e.g., POSITION_NORTH, POSITION_EAST).
         :return: The ScrollBar object or None.
         """
-        assert_position(position) # Ensure valid position string
+        assert_position(position)  # Ensure valid position string
         for sbar, pos in zip(self._scrollbars, self._scrollbar_positions):
             if pos == position:
                 return sbar

@@ -464,12 +464,6 @@ class Table(Frame):
 
         return column_widths, row_heights
 
-    # def set_frame(self, frame: 'pygame_menu.widgets.Frame') -> 'Table':
-    #     super().set_frame(frame)
-    #     for f in self._rows:
-    #         f.set_frame(frame)
-    #     return self
-
     def _update_row_sizing(self) -> None:
         """
         Update row sizing.
@@ -939,7 +933,7 @@ class TableManager(AbstractWidgetManager, ABC):
         .. note::
 
             This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply to
+            stored in ``_current`` pointer); for such behavior apply to
             :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param table_id: ID of the table
