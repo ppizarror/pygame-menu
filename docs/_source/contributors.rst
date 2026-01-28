@@ -13,6 +13,7 @@ Main contributors:
 
 Other contributors:
 
+- `JaskRendix <https://github.com/JaskRendix>`
 - `apuly <https://github.com/apuly>`_
 - `arpruss <https://github.com/arpruss>`_
 - `asierrayk <https://github.com/asierrayk>`_
