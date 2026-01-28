@@ -417,7 +417,7 @@ class LabelManager(AbstractWidgetManager, ABC):
         .. note::
 
             This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply to
+            stored in ``_current`` pointer); for such behavior apply to
             :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param title: Text to be displayed
@@ -599,7 +599,7 @@ class LabelManager(AbstractWidgetManager, ABC):
         .. note::
 
             This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply to
+            stored in ``_current`` pointer); for such behavior apply to
             :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param clock_format: Format of clock used by ``time.strftime``

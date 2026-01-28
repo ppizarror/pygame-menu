@@ -873,8 +873,8 @@ class MazeApp:
         if self._visualize:
             pygame.display.flip()
 
-        # For each patch we are creating we start with a centre node and branch outwards
-        # getting neighbours of neighbours etc. for each node that we consider, there is
+        # For each patch we are creating we start with a center node and branch outwards
+        # getting neighbors of neighbors etc. for each node that we consider, there is
         # a variable probability of it becoming a patch of mud
         # As we branch outwards that probability decreases
         for patch in range(num_patches + 1):
@@ -969,11 +969,11 @@ class MazeApp:
         max_width: Optional[int] = None
     ) -> Generator[Tuple[_Point2, str], Any, None]:
         """
-        Get the neighbours.
+        Get the neighbors.
 
         :param node: Node
         :param max_width: Max width
-        :return: Neighbours
+        :return: Neighbors
         """
         if not max_width:
             max_width = self._rows - 1
@@ -996,7 +996,7 @@ class MazeApp:
                 ((max(0, node[0] - 1), max(0, node[1] - 1)), 'x')
             )
 
-        # return neighbours
+        # return neighbors
         return (neighbour for neighbour in neighbours if neighbour[0] != node)
 
     def _draw_square(self, grid: _MazeType, row: int, column: int) -> None:
@@ -1081,7 +1081,7 @@ class MazeApp:
                 _, current_distance, current_node = queue.pop()
                 continue
 
-            # Call to check neighbours of the current node
+            # Call to check neighbors of the current node
             for neighbour in self._get_neighbours(current_node, n):
                 self._neighbours_loop(
                     neighbour,
@@ -1107,7 +1107,7 @@ class MazeApp:
                 mazearray[current_node[0]][current_node[1]].update(is_visited=True)
                 self._draw_square(mazearray, current_node[0], current_node[1])
 
-                # If we want to visualise it (rather than run instantly)
+                # If we want to visualize it (rather than run instantly)
                 # then we update the grid with each loop
                 if self._visualize:
                     self._update_square(current_node[0], current_node[1])
@@ -1138,7 +1138,7 @@ class MazeApp:
     def _neighbours_loop(self, neighbour, mazearr, visited_nodes, unvisited_nodes, queue,  # v_distances, current_node,
                          current_distance, astar=False) -> None:
         """
-        Loop through neighbours.
+        Loop through neighbors.
         """
         neighbour, ntype = neighbour
         heuristic = 0
@@ -1147,7 +1147,7 @@ class MazeApp:
             heuristic += abs(self._end_point[0] - neighbour[0]) + abs(self._end_point[1] - neighbour[1])
             heuristic *= 1  # If this goes above 1 then the shortest path is not guaranteed, but the attempted route becomes more direct
 
-        # If the neighbour has already been visited
+        # If the neighbor has already been visited
         if neighbour in visited_nodes:
             pass
         elif mazearr[neighbour[0]][neighbour[1]].nodetype == 'wall':
@@ -1171,7 +1171,7 @@ class MazeApp:
 
         # Set the loop in motion until we get back to the start
         while current_node != start_node:
-            # Start an empty priority queue for the current node to check all neighbours
+            # Start an empty priority queue for the current node to check all neighbors
             neighbour_distances = PriorityQueue()
 
             neighbours = self._get_neighbours(current_node, n)
@@ -1182,7 +1182,7 @@ class MazeApp:
             except Exception as e:
                 print(e)
 
-            # For each neighbour of the current node, add its location and distance
+            # For each neighbor of the current node, add its location and distance
             # to a priority queue
             for neighbour, _ in neighbours:
                 if neighbour in v_distances:
@@ -1236,16 +1236,15 @@ class MazeApp:
             else:
                 return False
 
-            # noinspection PyUnboundLocalVariable
             if current_node == goal_node:
                 # Trace back to start using path_dict
                 path_node = goal_node
                 while True:
                     path_node = path_dict[path_node]
-                    mazearray[path_node[0]][path_node[1]].update(is_path=True)
-                    self._draw_square(mazearray, path_node[0], path_node[1])
+                    mazearray[path_node[0]][path_node[1]].update(is_path=True)  # type: ignore
+                    self._draw_square(mazearray, path_node[0], path_node[1])  # type: ignore
                     if self._visualize:
-                        self._update_square(path_node[0], path_node[1])
+                        self._update_square(path_node[0], path_node[1])  # type: ignore
                     if path_node == start_point:
                         return True
 

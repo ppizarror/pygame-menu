@@ -23,7 +23,7 @@ from pygame_menu._types import Callable
 
 class MenuLink(NoneWidget):
     """
-    Menu link widget; adds a link to another Menu. The behaviour is similar to a
+    Menu link widget; adds a link to another Menu. The behavior is similar to a
     button, but this widget is invisible, and cannot be selectable.
 
     .. note::
@@ -77,7 +77,7 @@ class MenuLinkManager(AbstractWidgetManager, ABC):
         link_id: str = ''
     ) -> 'pygame_menu.widgets.MenuLink':
         """
-        Adds a link to another Menu. The behaviour is similar to a button, but
+        Adds a link to another Menu. The behavior is similar to a button, but
         this widget is invisible, and cannot be selectable.
 
         Added menus can be opened using the ``.open()`` method. Opened menus change
@@ -86,7 +86,7 @@ class MenuLinkManager(AbstractWidgetManager, ABC):
         .. note::
 
             This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply to
+            stored in ``_current`` pointer); for such behavior apply to
             :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param menu: Menu to be added as a link (the new submenu)

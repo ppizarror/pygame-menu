@@ -89,7 +89,7 @@ class Button(Label):
     def update_callback(self, callback: Callable, *args) -> None:
         """
         Update function triggered by the button; ``callback`` cannot point to a Menu, that
-        behaviour is only valid using :py:meth:`pygame_menu.menu.Menu.add.button` method.
+        behavior is only valid using :py:meth:`pygame_menu.menu.Menu.add.button` method.
 
         .. note::
 
@@ -177,7 +177,7 @@ class ButtonManager(AbstractWidgetManager, ABC):
         **kwargs
     ) -> 'pygame_menu.widgets.Button':
         """
-        Adds a clickeable image to the Menu with same behaviour as a Button.
+        Adds a clickeable image to the Menu with same behavior as a Button.
 
         The arguments and unknown keyword arguments are passed to the action, if
         it's a callable object:
@@ -233,7 +233,7 @@ class ButtonManager(AbstractWidgetManager, ABC):
         .. note::
 
             This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply to
+            stored in ``_current`` pointer); for such behavior apply to
             :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         .. warning::
@@ -254,20 +254,20 @@ class ButtonManager(AbstractWidgetManager, ABC):
         # We use setdefault so we don't overwrite the user
         # but WE provide the values for the filter to "pop"
         kwargs.setdefault('padding', 0)
-       
+
         # This prevents the theme selection effect from overwriting the banner
         if 'selection_effect' not in kwargs:
             kwargs['selection_effect'] = pygame_menu.widgets.NoneSelection()
-           
+
         # Ensure the selection color doesn't show up on the ' ' character
         kwargs.setdefault('selection_color', (0, 0, 0, 0))
 
         # Set image as background
         kwargs['background_color'] = image
-       
+
         # Call button - this will now "pop" our custom padding and selection_effect
         btn = self.button(' ', action, *args, **kwargs)
-       
+
         return btn.resize(*image.get_size())
 
     # noinspection PyProtectedMember
@@ -355,7 +355,7 @@ class ButtonManager(AbstractWidgetManager, ABC):
         .. note::
 
             This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply to
+            stored in ``_current`` pointer); for such behavior apply to
             :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         .. warning::
@@ -470,7 +470,7 @@ class ButtonManager(AbstractWidgetManager, ABC):
 
         # Add to submenu
         if widget.to_menu:
-            self._add_submenu(action, widget)
+            self._add_submenu(action, widget)  # type: ignore
 
         return widget
 
@@ -531,7 +531,7 @@ class ButtonManager(AbstractWidgetManager, ABC):
         .. note::
 
             This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply to
+            stored in ``_current`` pointer); for such behavior apply to
             :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param href: Link to open

@@ -96,7 +96,7 @@ class VFillManager(AbstractWidgetManager, ABC):
         .. note::
 
             This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply to
+            stored in ``_current`` pointer); for such behavior apply to
             :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param min_height: Minimum height in px
