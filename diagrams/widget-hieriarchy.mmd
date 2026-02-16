@@ -1,0 +1,32 @@
+graph TD
+    Widget[Widget Base Class]
+    
+    Widget --> Button
+    Widget --> Label
+    Widget --> Image
+    Widget --> Frame
+    Widget --> Surface
+    Widget --> VMargin
+    Widget --> HMargin
+    Widget --> Scrollbar
+    Widget --> ProgressBar
+    Widget --> Selector
+    
+    Label --> Clock
+    
+    Frame --> Table
+    Frame --> MenuBar
+    
+    Selector --> DropSelect
+    Selector --> RangeSlider
+    
+    DropSelect --> DropSelectMultiple
+    
+    Widget --> TextInput
+    TextInput --> ColorInput
+    
+    Button --> ToggleSwitch
+    
+    style Widget fill:#e1f5ff
+    style Selector fill:#fff4e1
+    style Frame fill:#f0ffe1

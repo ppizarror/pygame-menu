@@ -1,0 +1,78 @@
+graph TB
+    subgraph "widgets Package"
+        subgraph "widgets/core"
+            Widget[widget.py<br/>Base Widget class]
+            Selector[selector.py<br/>Base Selector]
+            Selection[selection.py<br/>Selection base]
+        end
+        
+        subgraph "widgets/widget (Implementations)"
+            Button[button.py]
+            TextInput[textinput.py]
+            Label[label.py]
+            Image[image.py]
+            Frame[frame.py]
+            Table[table.py]
+            ColorInput[colorinput.py]
+            DropSelect[dropselect.py]
+            DropSelectMultiple[dropselectmultiple.py]
+            ToggleSwitch[toggleswitch.py]
+            RangeSlider[rangeslider.py]
+            Clock[clock.py]
+            Surface[surface.py]
+            VMargin[vmargin.py]
+            HMargin[hmargin.py]
+            Scrollbar[scrollbar.py]
+            ProgressBar[progressbar.py]
+            MenuBar[menubar.py]
+        end
+        
+        subgraph "widgets/selection (Selection Effects)"
+            NoneSelection[none_selection.py]
+            HighlightSelection[highlight_selection.py]
+            ArrowSelection[arrow_selection.py]
+            LeftArrowSelection[leftarrow_selection.py]
+            RightArrowSelection[rightarrow_selection.py]
+            SimpleSelection[simple_selection.py]
+        end
+        
+        subgraph "widgets/examples"
+            ScrollbarExample[scrollbar.py]
+        end
+    end
+    
+    %% Core inheritance
+    Button --> Widget
+    TextInput --> Widget
+    Label --> Widget
+    Image --> Widget
+    Frame --> Widget
+    Table --> Frame
+    ColorInput --> TextInput
+    DropSelect --> Selector
+    DropSelectMultiple --> DropSelect
+    ToggleSwitch --> Button
+    RangeSlider --> Selector
+    Clock --> Label
+    Surface --> Widget
+    VMargin --> Widget
+    HMargin --> Widget
+    Scrollbar --> Widget
+    ProgressBar --> Widget
+    MenuBar --> Frame
+    
+    Selector --> Widget
+    
+    %% Selection effects
+    NoneSelection --> Selection
+    HighlightSelection --> Selection
+    ArrowSelection --> Selection
+    LeftArrowSelection --> Selection
+    RightArrowSelection --> Selection
+    SimpleSelection --> Selection
+    
+    %% Examples
+    ScrollbarExample --> Scrollbar
+    
+    %% Widget uses Selection
+    Widget -.uses.-> Selection
