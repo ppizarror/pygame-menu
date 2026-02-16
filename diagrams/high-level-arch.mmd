@@ -1,0 +1,39 @@
+graph TB
+    subgraph "pygame-menu Library"
+        Menu[Menu<br/>Core menu management]
+        WidgetManager[WidgetManager<br/>Widget creation & configuration]
+        Widgets[Widgets Package<br/>UI Components]
+        Themes[Themes<br/>Visual styling]
+        Events[Events<br/>Event handling]
+        Sound[Sound<br/>Audio system]
+        BaseImage[BaseImage<br/>Image handling]
+        Font[Font<br/>Font management]
+        Locals[Locals<br/>Constants & configs]
+        Utils[Utils<br/>Helper functions]
+        Scrollarea[ScrollArea<br/>Scrolling logic]
+        Version[Version<br/>Version info]
+    end
+    
+    subgraph "External Dependencies"
+        Pygame[pygame/pygame-ce]
+        Python[Python 3.8+]
+    end
+    
+    Menu --> WidgetManager
+    Menu --> Widgets
+    Menu --> Themes
+    Menu --> Events
+    Menu --> Sound
+    Menu --> Scrollarea
+    WidgetManager --> Widgets
+    Widgets --> BaseImage
+    Widgets --> Font
+    Widgets --> Locals
+    Themes --> Locals
+    Sound --> Pygame
+    Menu --> Pygame
+    Widgets --> Pygame
+    BaseImage --> Pygame
+    Font --> Pygame
+    Widgets --> Utils
+    Menu --> Utils
