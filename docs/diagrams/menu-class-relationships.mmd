@@ -1,0 +1,68 @@
+classDiagram
+    class Menu {
+        +add: WidgetManager
+        +get_scrollarea()
+        +get_theme()
+        +get_widget()
+        +get_selected_widget()
+        +mainloop()
+        +draw()
+        +update()
+        +enable()
+        +disable()
+        +is_enabled()
+    }
+    
+    class WidgetManager {
+        +button()
+        +text_input()
+        +label()
+        +image()
+        +frame()
+        +table()
+        +color_input()
+        +selector()
+        +dropselect()
+        +dropselect_multiple()
+        +toggle_switch()
+        +range_slider()
+        +clock()
+        +surface()
+        +vertical_margin()
+        +horizontal_margin()
+        +scrollbar()
+        +progress_bar()
+    }
+    
+    class Theme {
+        +background_color
+        +title_font
+        +title_font_size
+        +title_font_color
+        +widget_font
+        +widget_font_size
+        +widget_selection_effect
+        +widget_alignment
+    }
+    
+    class ScrollArea {
+        +update()
+        +draw()
+        +scroll_to_widget()
+        +get_scrollbar_thickness()
+    }
+    
+    class Sound {
+        +play()
+        +pause()
+        +unpause()
+        +stop()
+        +set_sound()
+        +get_channel()
+    }
+    
+    Menu --> WidgetManager: creates widgets
+    Menu --> Theme: uses styling
+    Menu --> ScrollArea: manages scrolling
+    Menu --> Sound: plays sounds
+    WidgetManager --> Widget: creates

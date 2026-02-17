@@ -1,0 +1,57 @@
+graph LR
+    subgraph "pygame_menu Package"
+        direction TB
+        
+        subgraph "Core"
+            Menu[menu.py<br/>Menu class]
+            WidgetMgr[_widgetmanager.py<br/>WidgetManager]
+            ScrollArea[scrollarea.py<br/>ScrollArea]
+            BaseImg[baseimage.py<br/>BaseImage]
+        end
+        
+        subgraph "Configuration"
+            Themes[themes.py<br/>Theme definitions]
+            Events[events.py<br/>Event types]
+            Locals[locals.py<br/>Constants]
+            Controls[controls.py<br/>Control mappings]
+            Config[_config.py<br/>Config manager]
+        end
+        
+        subgraph "Utilities"
+            Utils[utils.py<br/>Utility functions]
+            Font[font.py<br/>Font utilities]
+            Sound[sound.py<br/>Sound engine]
+            Version[version.py<br/>Version]
+        end
+        
+        subgraph "widgets Package"
+            WidgetCore[widgets/core/<br/>Widget base classes]
+            WidgetImpl[widgets/widget/<br/>Widget implementations]
+            Selection[widgets/selection/<br/>Selection effects]
+            Examples[widgets/examples/<br/>Widget examples]
+        end
+    end
+    
+    Menu --> WidgetMgr
+    Menu --> ScrollArea
+    Menu --> Themes
+    Menu --> Events
+    Menu --> Sound
+    Menu --> Utils
+    
+    WidgetMgr --> WidgetImpl
+    WidgetMgr --> WidgetCore
+    
+    ScrollArea --> WidgetCore
+    
+    WidgetImpl --> WidgetCore
+    WidgetImpl --> BaseImg
+    WidgetImpl --> Font
+    WidgetImpl --> Selection
+    
+    Themes --> Locals
+    Themes --> Font
+    
+    Sound --> Config
+    
+    Examples --> WidgetImpl
