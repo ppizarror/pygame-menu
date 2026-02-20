@@ -52,7 +52,7 @@ from pygame_menu._types import Tuple2IntType, Union, Vector2NumberType, Callable
     ColorInputType, Tuple3IntType, NumberInstance, VectorInstance
 
 # Example image paths
-__images_path__ = path.join(path.dirname(path.abspath(__file__)), 'resources', 'images', '{0}')
+__images_path__ = (Path(__file__).resolve().parent / 'resources' / 'images' / '{0}').as_posix()
 
 IMAGE_EXAMPLE_CARBON_FIBER = __images_path__.format('carbon_fiber.png')
 IMAGE_EXAMPLE_GRAY_LINES = __images_path__.format('gray_lines.png')
