@@ -40,7 +40,6 @@ __all__ = [
 
 from dataclasses import dataclass
 from pathlib import Path
-import os.path as path
 import time
 
 from pygame import error as pygame_error
