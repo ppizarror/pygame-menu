@@ -34,18 +34,19 @@ __all__ = [
 
     # Utils
     'assert_font',
-    'get_font'
+    'get_font',
+    'load_font_file',
+    'load_system_font'
 
 ]
 
 from pathlib import Path
-from typing import Union, Optional, Any, Dict, Tuple
-import os.path as path
+from typing import Union, Any, Dict, Tuple
 
 import pygame.font as __font
 
 # Available fonts path
-__fonts_path__ = path.join(path.dirname(path.abspath(__file__)), 'resources', 'fonts', '{0}')
+__fonts_path__ = (Path(__file__).resolve().parent / 'resources' / 'fonts' / '{0}').as_posix()
 
 FONT_8BIT = __fonts_path__.format('8bit.ttf')
 FONT_BEBAS = __fonts_path__.format('bebas.ttf')
@@ -84,83 +85,116 @@ def assert_font(font: Any) -> None:
 
     :param font: Font object
     """
-    assert isinstance(font, FontInstance), \
-        'value must be a font type (str, Path, pygame.Font)'
+    if not isinstance(font, FontInstance):
+        raise AssertionError('value must be a font type (str, Path, pygame.Font)')
 
 
 def get_font(name: FontType, size: int) -> '__font.Font':
     """
     Return a :py:class:`pygame.font.Font` object from a name or file.
 
-    :param name: Font name or path
-    :param size: Font size in px
-    :return: Font object
+    This is the backward-compatible smart loader. It delegates to:
+    - load_font_file() for explicit file paths
+    - load_system_font() for system font names
+    - returns pygame.Font instances unchanged
     """
     assert_font(name)
     assert isinstance(size, int)
 
-    font: Optional['__font.Font']
+    # Case 1: direct pygame.Font instance
     if isinstance(name, __font.Font):
-        font = name
-        return font
+        return name
 
-    else:
-        name = str(name)
-        if name == '':
-            raise ValueError('font name cannot be empty')
-        elif size <= 0:
-            raise ValueError('font size cannot be lower or equal than zero')
-        # Font is not a file, then use a system font
-        elif not path.isfile(name):
-            font_name = name
-            name = __font.match_font(font_name)
+    # Normalize
+    name_str = str(name)
+    if not name_str:
+        raise ValueError('font name cannot be empty')
+    if size <= 0:
+        raise ValueError('font size cannot be lower or equal than zero')
 
-            if name is None:  # Show system available fonts
-                from difflib import SequenceMatcher
-                from random import randrange
-                system_fonts = __font.get_fonts()
+    # Case 2: explicit file path
+    font_path = Path(name_str)
+    if font_path.is_file():
+        return load_font_file(font_path, size)
 
-                # Get the most similar example
-                most_similar = 0
-                most_similar_index = 0
-                for i in range(len(system_fonts)):
-                    sim = SequenceMatcher(None, system_fonts[i], font_name).ratio()
-                    if sim > most_similar:
-                        most_similar = sim
-                        most_similar_index = i
-                sys_font_sim = system_fonts[most_similar_index]
-                sys_suggestion = f'system font "{font_name}" unknown, use "{sys_font_sim}" instead'
-                sys_message = 'check system fonts with pygame.font.get_fonts() function'
+    # Case 3: system font
+    return load_system_font(name_str, size)
 
-                # Get examples
-                examples_number = 3
-                examples = []
-                j = 0
-                for _ in range(len(system_fonts)):
-                    font_random = system_fonts[randrange(0, len(system_fonts))]
-                    if font_random not in examples:
-                        examples.append(font_random)
-                        j += 1
-                    if j >= examples_number:
-                        break
-                examples.sort()
-                fonts_random = ', '.join(examples)
-                sys_message_2 = f'some examples: {fonts_random}'
 
-                # Raise the exception
-                raise ValueError(f'{sys_suggestion}\n{sys_message}\n{sys_message_2}')
+def load_font_file(path: Union[str, Path], size: int) -> '__font.Font':
+    """
+    Explicitly load a font from a file path.
 
-        # Try to load the font
-        font = None
-        if (name, size) in _cache:
-            return _cache[(name, size)]
-        try:
-            font = __font.Font(name, size)
-        except IOError:
-            pass
+    :param path: Path to a .ttf/.otf font file
+    :param size: Font size in px
+    :return: pygame.font.Font instance
+    """
+    if size <= 0:
+        raise ValueError('font size cannot be lower or equal than zero')
 
-        # If font was not loaded throw an exception
-        if font is None:
-            raise IOError(f'font file "{font}" cannot be loaded')
-        _cache[(name, size)] = font
-        return font
+    font_path = Path(path)
+    if not font_path.is_file():
+        raise IOError(f'font file \"{font_path}\" does not exist')
+
+    key = (font_path.as_posix(), size)
+    if key in _cache:
+        return _cache[key]
+
+    try:
+        font = __font.Font(font_path.as_posix(), size)
+    except IOError:
+        raise IOError(f'font file \"{font_path}\" cannot be loaded')
+
+    _cache[key] = font
+    return font
+
+
+def load_system_font(name: str, size: int) -> '__font.Font':
+    """
+    Explicitly load a system font by name.
+
+    :param name: System font name (e.g. 'arial', 'freesans', etc.)
+    :param size: Font size in px
+    :return: pygame.font.Font instance
+    """
+    if not isinstance(name, str):
+        raise TypeError('system font name must be a string')
+
+    if not name:
+        raise ValueError('system font name cannot be empty')
+
+    if size <= 0:
+        raise ValueError('font size cannot be lower or equal than zero')
+
+    matched = __font.match_font(name)
+    if matched is None:
+        from difflib import SequenceMatcher
+        from random import randrange
+
+        system_fonts = __font.get_fonts()
+
+        # Find closest match
+        best = max(system_fonts, key=lambda f: SequenceMatcher(None, f, name).ratio())
+        suggestion = f'system font "{name}" unknown, use "{best}" instead'
+
+        # Random examples
+        examples = sorted({system_fonts[randrange(len(system_fonts))] for _ in range(3)})
+        examples_str = ', '.join(examples)
+
+        raise ValueError(
+            f'{suggestion}\n'
+            f'check system fonts with pygame.font.get_fonts() function\n'
+            f'some examples: {examples_str}'
+        )
+
+    key = (matched, size)
+    if key in _cache:
+        return _cache[key]
+
+    try:
+        font = __font.Font(matched, size)
+    except IOError:
+        raise IOError(f'system font file "{matched}" cannot be loaded')
+
+    _cache[key] = font
+    return font
