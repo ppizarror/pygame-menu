@@ -436,8 +436,7 @@ class LabelManager(AbstractWidgetManager, ABC):
         assert max_char >= -1
 
         title = str(title)
-        if len(label_id) == 0:
-            label_id = uuid4()
+        label_id = label_id or uuid4()
 
         # If newline detected, split in two new lines
         if '\n' in title and not wordwrap:

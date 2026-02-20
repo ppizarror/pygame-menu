@@ -1076,7 +1076,7 @@ class MazeApp:
         while current_node != goal_node and len(unvisited_nodes) > 0:
             self._check_esc()
             if current_node in visited_nodes:
-                if len(queue.show()) == 0:
+                if not queue.show():
                     return False
                 _, current_distance, current_node = queue.pop()
                 continue
@@ -1114,7 +1114,7 @@ class MazeApp:
                     self._sleep(0.000001)
 
             # If there are no nodes in the queue then we return False (no path)
-            if len(queue.show()) == 0:
+            if not queue.show():
                 return False
             # Otherwise, we take the minimum distance as the new current node
             _, current_distance, current_node = queue.pop()

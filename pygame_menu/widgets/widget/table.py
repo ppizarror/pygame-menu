@@ -567,7 +567,7 @@ class Table(Frame):
 
         :param surface: Surface to draw the cell border
         """
-        if len(self._rows) == 0:
+        if not self._rows:
             return
 
         # Get first row position
@@ -645,7 +645,7 @@ class Table(Frame):
 
         :return: Bool
         """
-        if len(self._rows) == 0:
+        if not self._rows:
             return True
         c = self._rows[0].get_total_packed()
         for f in self._rows:

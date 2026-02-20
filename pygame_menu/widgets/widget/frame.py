@@ -648,7 +648,7 @@ class Frame(Widget):
         """
         if not self._accepts_scrollarea:
             raise _FrameDoNotAcceptScrollarea(f'{self.get_class_id()} does not accept a scrollarea')
-        assert len(self._widgets.keys()) == 0, 'frame widgets must be empty if creating the scrollarea'
+        assert not self._widgets, 'frame widgets must be empty if creating the scrollarea'
         assert self.configured, 'frame must be configured before adding the scrollarea'
         if max_width is None:
             max_width = self._width
@@ -1037,7 +1037,7 @@ class Frame(Widget):
 
         :return: Self reference
         """
-        if len(self._widgets) == 0:
+        if not self._widgets:
             return self
 
         # Update position based on orientation
@@ -1402,7 +1402,7 @@ class Frame(Widget):
         if widget.is_selected():
             widget.scroll_to_widget()
 
-        if len(self._widgets) == 0:  # Scroll to top
+        if not self._widgets:  # Scroll to top
             self.scrollv(0)
             self.scrollh(0)
 
