@@ -439,7 +439,7 @@ class ColorInput(TextInput):
                         )
 
                         # Cannot be separator at first
-                        if len(input_str) == 0 and key == self._separator:
+                        if not input_str and key == self._separator:
                             return False
 
                         elif len(input_str) > 1:

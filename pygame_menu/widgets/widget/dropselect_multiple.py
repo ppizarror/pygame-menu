@@ -274,7 +274,7 @@ class DropSelectMultiple(DropSelect):
         color = self._selection_option_font_style['color']
         if (
             self.readonly or
-            len(self._selected_indices) == 0 or
+            not self._selected_indices or
             self._max_selected != 0 and len(self._selected_indices) == self._max_selected
         ):
             color = self._font_readonly_color
@@ -307,7 +307,7 @@ class DropSelectMultiple(DropSelect):
                                             + 2 * self._selection_box_border_width)
 
     def _get_current_selected_text(self) -> str:
-        if len(self._selected_indices) == 0:
+        if not self._selected_indices:
             return self._placeholder
 
         # Apply selected format

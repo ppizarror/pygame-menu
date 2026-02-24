@@ -666,11 +666,15 @@ class Menu(Base):
         self._width = width
 
         # Compute widget offset
-        self._widget_offset = [self._theme.widget_offset[0], self._theme.widget_offset[1]]
-        if abs(self._widget_offset[0]) < 1:
-            self._widget_offset[0] *= self._width
-        if abs(self._widget_offset[1]) < 1:
-            self._widget_offset[1] *= self._height
+        ox, oy = self._theme.widget_offset
+
+        # Convert relative offsets to absolute pixel offsets
+        if -1 < ox < 1:
+            ox *= self._width
+        if -1 < oy < 1:
+            oy *= self._height
+
+        self._widget_offset = [ox, oy]
 
         # Cast to int offset
         self._widget_offset[0] = int(self._widget_offset[0])
@@ -688,13 +692,15 @@ class Menu(Base):
             self._auto_centering = False
 
         # Scroll area outer margin
-        self._scrollarea_margin = [self._theme.scrollarea_outer_margin[0], self._theme.scrollarea_outer_margin[1]]
-        if abs(self._scrollarea_margin[0]) < 1:
-            self._scrollarea_margin[0] *= self._width
-        if abs(self._scrollarea_margin[1]) < 1:
-            self._scrollarea_margin[1] *= self._height
-        self._scrollarea_margin[0] = int(self._scrollarea_margin[0])
-        self._scrollarea_margin[1] = int(self._scrollarea_margin[1])
+        ox, oy = self._theme.scrollarea_outer_margin
+
+        # Convert relative offsets to absolute pixel offsets
+        if -1 < ox < 1:
+            ox *= self._width
+        if -1 < oy < 1:
+            oy *= self._height
+
+        self._scrollarea_margin = [int(ox), int(oy)]
 
         # If centering is enabled, but ScrollArea margin in the vertical is
         # different from zero a warning is raised
@@ -1865,7 +1871,7 @@ class Menu(Base):
         :return: Self reference
         """
         self._stats.center_content += 1
-        if len(self._widgets) == 0:  # If this happens, get_widget_max returns an immense value
+        if not self._widgets:  # If this happens, get_widget_max returns an immense value
             self._widget_offset[1] = 0
             return self
         elif self._widgets_surface is None:
@@ -2365,7 +2371,7 @@ class Menu(Base):
                     return self._select(i, pos, SELECT_KEY, apply_sound)
 
             # If no widget is in that column
-            if len(self._widget_columns[col]) == 0:
+            if not self._widget_columns[col]:
                 return _default()
 
             # If the number of rows in that column is less than current,
@@ -2491,7 +2497,7 @@ class Menu(Base):
 
         :return: Returns a string that represents the update status, see ``pygame_menu.events``. Some also indicate which widget updated in the format ``EVENT_NAME#widget_id``
         """
-        if len(self._current._last_update_mode) == 0:
+        if not self._current._last_update_mode:
             return [_events.MENU_LAST_NONE]
         return self._current._last_update_mode
 
@@ -3324,7 +3330,7 @@ class Menu(Base):
         self._stats.select += 1
         self._last_selected_type = select_type
 
-        if len(self._widgets) == 0:
+        if not self._widgets:
             return False
 
         # This stores +/-1 if the index increases or decreases, used by non-selectable selection
@@ -3670,7 +3676,7 @@ class Menu(Base):
                 self._submenus[menu].remove(hook)
             hook._menu_hook = None
             # If total hooks are empty, remove the menu
-            if len(self._submenus[menu]) == 0:
+            if not self._submenus[menu]:
                 del self._submenus[menu]
             self._update_after_remove_or_hidden(self._index)
             return True

@@ -247,7 +247,7 @@ class Sound(Base):
         new_sound._last_time = self._last_time
         for sound_type in self._sound.keys():
             s = self._sound[sound_type]
-            if len(s) != 0:
+            if s:
                 new_sound.set_sound(
                     sound_type=sound_type,
                     sound_file=s['path'],

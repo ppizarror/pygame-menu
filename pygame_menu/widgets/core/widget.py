@@ -105,7 +105,7 @@ def _check_widget_mouseleave(
     """
     # If no widget is over, return
     if WIDGET_MOUSEOVER[0] is None:
-        assert len(WIDGET_MOUSEOVER[1]) == 0, 'widget leave sublist must be empty'
+        assert not WIDGET_MOUSEOVER[1], 'widget leave sublist must be empty'
         assert WIDGET_TOP_CURSOR[0] is None, 'widget top cursor must be None'
         return
 
@@ -136,7 +136,7 @@ def _check_widget_mouseleave(
         set_pygame_cursor(prev_cursor)
 
         # Unpack list
-        if len(prev_list) == 0:
+        if not prev_list:
             WIDGET_MOUSEOVER[0] = None
             WIDGET_MOUSEOVER[1] = []
             if prev_cursor != WIDGET_TOP_CURSOR[0]:
@@ -165,7 +165,7 @@ def _check_widget_mouseleave(
     if len(WIDGET_MOUSEOVER[1]) == 3 and len(WIDGET_MOUSEOVER[1][2]) > 0 and not recursive and not force:
         prev: List[Any] = WIDGET_MOUSEOVER[1][2]  # [widget, cursor, [widget, cursor, [...]]]
         while True:
-            if len(prev) == 0:
+            if not prev:
                 break
             widget: 'Widget' = prev[0]
             cursor = prev[1]
@@ -597,9 +597,9 @@ class Widget(Base):
 
                 # Check frame not in previous
                 prev = WIDGET_MOUSEOVER[1]
-                if len(prev) != 0:
+                if prev:
                     while True:
-                        if len(prev) == 0:
+                        if not prev:
                             break
                         elif prev[0] == self._frame:
                             in_prev = True
@@ -1598,7 +1598,8 @@ class Widget(Base):
         :param key: Name of the parameter
         :return: Self reference
         """
-        assert isinstance(key, str)
+        if not isinstance(key, str):
+            raise TypeError("key must be a string")
         if key in self._kwargs.keys():
             raise KeyError('duplicated key')
         self._kwargs[key] = self
@@ -2850,7 +2851,7 @@ class Widget(Base):
 
         :return: Self reference
         """
-        if len(self._draw_callbacks) == 0:
+        if not self._draw_callbacks:
             return self
         for callback in self._draw_callbacks.values():
             callback(self, self._menu)
@@ -2910,7 +2911,7 @@ class Widget(Base):
         :param events: Events list
         :return: Self reference
         """
-        if len(self._update_callbacks) == 0 or self.readonly:
+        if not self._update_callbacks or self.readonly:
             return self
         for callback in self._update_callbacks.values():
             callback(events, self, self._menu)
@@ -2932,7 +2933,7 @@ class Widget(Base):
         :param events: Event list
         :return: Augmented event list
         """
-        if len(self._events) == 0:
+        if not self._events:
             return events
         copy_events: EventListType = []
         for e in events:

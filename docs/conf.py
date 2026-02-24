@@ -14,12 +14,12 @@ https://www.sphinx-doc.org/en/master/usage/configuration.html
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here
+# documentation root, use pathlib to build absolute paths in a portable way.
 #
-import os
+from pathlib import Path
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, Path(__file__).resolve().parent.parent.as_posix())
 
 import pygame_menu
 

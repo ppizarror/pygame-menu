@@ -873,7 +873,7 @@ class DropSelect(Widget):
         """
         if self.readonly:
             return None
-        elif len(self._items) == 0:
+        elif not self._items:
             return None
         elif not self.active:
             return self._toggle_drop()
@@ -898,7 +898,7 @@ class DropSelect(Widget):
         """
         if self.readonly:
             return None
-        elif len(self._items) == 0:
+        elif not self._items:
             return None
         elif not self.active:
             return self._toggle_drop()
@@ -1018,7 +1018,7 @@ class DropSelect(Widget):
         self._check_drop_made()
         if not self._selected:
             return
-        elif len(self._items) == 0:
+        elif not self._items:
             return
         self.active = not self.active
         if self.active:
