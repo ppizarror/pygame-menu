@@ -126,7 +126,7 @@ class Frame(Widget):
         orientation: str,
         frame_id: str = ''
     ) -> None:
-        super(Frame, self).__init__(widget_id=frame_id)
+        super().__init__(widget_id=frame_id)
         assert isinstance(width, NumberInstance)
         assert isinstance(height, NumberInstance)
         assert width > 0, \
@@ -581,7 +581,7 @@ class Frame(Widget):
         self._remove_menu_update_frame(self)
 
         # Update menu
-        super(Frame, self).set_menu(menu)
+        super().set_menu(menu)
 
         # Add self to scrollable
         if self.is_scrollable:
@@ -648,7 +648,7 @@ class Frame(Widget):
         """
         if not self._accepts_scrollarea:
             raise _FrameDoNotAcceptScrollarea(f'{self.get_class_id()} does not accept a scrollarea')
-        assert len(self._widgets.keys()) == 0, 'frame widgets must be empty if creating the scrollarea'
+        assert not self._widgets, 'frame widgets must be empty if creating the scrollarea'
         assert self.configured, 'frame must be configured before adding the scrollarea'
         if max_width is None:
             max_width = self._width
@@ -842,7 +842,7 @@ class Frame(Widget):
             self._frame_title.set_position(x - pad[3] + tx, y - pad[0] + ty)
             for w in self._frame_title.get_widgets():
                 w._set_position_relative_to_frame()
-        super(Frame, self).set_position(x, y)
+        super().set_position(x, y)
         if self.is_scrollable:
             self._frame_scrollarea.set_position(self._rect.x, self._rect.y + self._title_height())
         return self
@@ -1037,7 +1037,7 @@ class Frame(Widget):
 
         :return: Self reference
         """
-        if len(self._widgets) == 0:
+        if not self._widgets:
             return self
 
         # Update position based on orientation
@@ -1273,7 +1273,7 @@ class Frame(Widget):
     def set_frame(self, frame: 'pygame_menu.widgets.Frame') -> 'Frame':
         assert self != frame, \
             f'{frame.get_class_id()} cannot set itself as a frame'
-        super(Frame, self).set_frame(frame)
+        super().set_frame(frame)
         if self._frame_title is not None:
             self._frame_title.set_frame(frame)
         return self
@@ -1402,7 +1402,7 @@ class Frame(Widget):
         if widget.is_selected():
             widget.scroll_to_widget()
 
-        if len(self._widgets) == 0:  # Scroll to top
+        if not self._widgets:  # Scroll to top
             self.scrollv(0)
             self.scrollh(0)
 
@@ -1633,7 +1633,7 @@ class Frame(Widget):
         return widget.get_frame() == self and widget.get_id() in self._widgets.keys()
 
     def hide(self) -> 'Frame':
-        super(Frame, self).hide()
+        super().hide()
         if self._has_title:
             self._frame_title.hide()
         # sub-widgets cannot be hidden because some widgets compute sizing even
@@ -1643,7 +1643,7 @@ class Frame(Widget):
         return self
 
     def show(self) -> 'Frame':
-        super(Frame, self).show()
+        super().show()
         # same as hiding, sub-widgets should not be modified
         # for w in self.get_widgets(unpack_subframes=False):
         #     w.show()

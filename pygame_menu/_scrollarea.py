@@ -166,7 +166,7 @@ class ScrollArea(Base):
         shadow_position: str = POSITION_SOUTHEAST,
         world: Optional['pygame.Surface'] = None
     ) -> None:
-        super(ScrollArea, self).__init__(object_id=scrollarea_id)
+        super().__init__(object_id=scrollarea_id)
 
         assert isinstance(area_height, int)
         assert isinstance(area_width, int)
@@ -1016,9 +1016,11 @@ class ScrollArea(Base):
         :param widget: Widget to check the position
         :return: Relative position to view rect on x-axis and y-axis
         """
-        assert widget.get_scrollarea() == self, \
-            '{0} scrollarea {1} is different than current {2}' \
-                .format(widget, widget.get_scrollarea().get_class_id(), self.get_class_id())
+        if widget.get_scrollarea() != self:
+            raise AssertionError(
+                f"{widget} scrollarea {widget.get_scrollarea().get_class_id()} "
+                f"is different than current {self.get_class_id()}"
+            )
         wx, wy = widget.get_position()
         view_rect = self.get_view_rect()
         vx, vy = view_rect.width, view_rect.height
@@ -1258,6 +1260,18 @@ class ScrollArea(Base):
         else:
             widget_rect = widget
         return bool(widget_rect.collidepoint(*get_finger_pos(self._menu, event)))
+
+    def get_scrollbar(self, position: str) -> Optional['ScrollBar']:
+        """
+        Returns the scrollbar at the given position, or None if not present.
+        :param position: The position of the scrollbar (e.g., POSITION_NORTH, POSITION_EAST).
+        :return: The ScrollBar object or None.
+        """
+        assert_position(position) # Ensure valid position string
+        for sbar, pos in zip(self._scrollbars, self._scrollbar_positions):
+            if pos == position:
+                return sbar
+        return None
 
     def get_decorator(self) -> 'Decorator':
         """

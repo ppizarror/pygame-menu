@@ -28,7 +28,7 @@ most basic widget should contain this code:
     class MyWidget(Widget):
 
         def __init__(self, params):
-            super(MyWidget, self).__init__(params)
+            super().__init__(params)
             ...
 
         def _apply_font(self) -> None:
@@ -196,7 +196,7 @@ basic class must contain the following code:
             # |         v bottom         |  in pixels
             #  --------------------------
             #
-            super(MySelection, self).__init__(margin_left, margin_right, margin_top, margin_bottom)
+            super().__init__(margin_left, margin_right, margin_top, margin_bottom)
             self.your_params = ...
 
         def draw(self, surface, widget):

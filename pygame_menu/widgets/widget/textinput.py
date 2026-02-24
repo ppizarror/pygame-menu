@@ -285,7 +285,7 @@ class TextInput(Widget):
             assert cursor_size[1] > 0, \
                 'cursor size height must be greater than zero'
 
-        super(TextInput, self).__init__(
+        super().__init__(
             args=args,
             kwargs=kwargs,
             onchange=onchange,
@@ -469,7 +469,7 @@ class TextInput(Widget):
         raise WidgetTransformationNotImplemented()
 
     def flip(self, x: bool, y: bool, render: bool = True) -> 'TextInput':  # Actually flip on x-axis is disabled
-        super(TextInput, self).flip(False, y, render)
+        super().flip(False, y, render)
         return self
 
     def _draw(self, surface: 'pygame.Surface') -> None:

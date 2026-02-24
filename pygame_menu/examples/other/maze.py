@@ -37,7 +37,7 @@ WHITE = (255, 255, 255)
 
 
 # noinspection PyMissingTypeHints,PyMissingOrEmptyDocstring
-class AStarQueue(object):
+class AStarQueue:
     """
     A* Queue.
     """
@@ -57,7 +57,7 @@ class AStarQueue(object):
 
 
 # noinspection PyMissingTypeHints,PyMissingOrEmptyDocstring
-class PriorityQueue(object):
+class PriorityQueue:
     """
     Priority Queue.
     """
@@ -77,7 +77,7 @@ class PriorityQueue(object):
 
 
 # noinspection PyMissingTypeHints,PyMissingOrEmptyDocstring
-class PrioritySet(object):
+class PrioritySet:
     """
     Create a priority queue that doesn't add duplicate nodes.
     """
@@ -101,7 +101,7 @@ class PrioritySet(object):
 
 
 # noinspection PyDefaultArgument
-class Node(object):
+class Node:
     """
     Make it easier to add different node types.
     """
@@ -170,7 +170,7 @@ _MazeType = List[List['Node']]
 _Point2 = Tuple[int, int]
 
 
-class MazeApp(object):
+class MazeApp:
     """
     Maze class.
     """
@@ -699,7 +699,7 @@ class MazeApp(object):
             self._draw_square(mazearray, start_point[0], start_point[1])
             pygame.display.flip()
 
-        walls = set([])
+        walls = set()
         neighbours = self._get_neighbours(start_point, n)
 
         for neighbour, _ in neighbours:
@@ -868,7 +868,7 @@ class MazeApp(object):
         if not num_patches:
             num_patches: int = random.randrange(int(self._rows / 10), int(self._rows / 4))
 
-        terrain_nodes = set([])
+        terrain_nodes = set()
 
         if self._visualize:
             pygame.display.flip()
@@ -1060,7 +1060,7 @@ class MazeApp(object):
 
         # Create the various data structures with speed in mind
         visited_nodes = set()
-        unvisited_nodes = set([(x, y) for x in range(n + 1) for y in range(n + 1)])
+        unvisited_nodes = {(x, y) for x in range(n + 1) for y in range(n + 1)}
         queue = AStarQueue()
 
         queue.push(distance + heuristic, distance, start_point)
@@ -1076,7 +1076,7 @@ class MazeApp(object):
         while current_node != goal_node and len(unvisited_nodes) > 0:
             self._check_esc()
             if current_node in visited_nodes:
-                if len(queue.show()) == 0:
+                if not queue.show():
                     return False
                 _, current_distance, current_node = queue.pop()
                 continue
@@ -1114,7 +1114,7 @@ class MazeApp(object):
                     self._sleep(0.000001)
 
             # If there are no nodes in the queue then we return False (no path)
-            if len(queue.show()) == 0:
+            if not queue.show():
                 return False
             # Otherwise, we take the minimum distance as the new current node
             _, current_distance, current_node = queue.pop()
@@ -1223,7 +1223,7 @@ class MazeApp(object):
         # Create the various data structures with speed in mind
         mydeque = deque()
         mydeque.append(start_point)
-        visited_nodes = set([])
+        visited_nodes = set()
         path_dict = {start_point: None}
 
         # Main algorithm loop

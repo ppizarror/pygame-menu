@@ -21,7 +21,7 @@ class SimpleSelection(Selection):
     """
 
     def __init__(self) -> None:
-        super(SimpleSelection, self).__init__(
+        super().__init__(
             margin_left=0, margin_right=0, margin_top=0, margin_bottom=0
         )
 

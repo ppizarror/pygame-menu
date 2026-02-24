@@ -68,7 +68,7 @@ KEY_TAB = _locals.K_TAB
 
 
 # noinspection PyUnusedLocal
-class Controller(object):
+class Controller:
     """
     Controller class. Accepts any object and provides functions to handle each
     event.

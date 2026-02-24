@@ -13,7 +13,7 @@ from pygame_menu.utils import uuid4
 from pygame_menu._types import Dict, Any, NumberInstance, NumberType, Optional
 
 
-class Base(object):
+class Base:
     """
     Base object.
     """
@@ -30,13 +30,14 @@ class Base(object):
         :param object_id: Object ID
         :param verbose: Enable verbose mode (errors/warnings)
         """
-        assert isinstance(object_id, str)
-        assert isinstance(verbose, bool)
-        if len(object_id) == 0:
-            object_id = uuid4()
+        if not isinstance(object_id, str):
+            raise TypeError("object_id must be a string")
+        if not isinstance(verbose, bool):
+            raise TypeError("verbose must be a bool")
+
+        self._id = object_id if len(object_id) > 0 else uuid4()
         self._attributes = None
         self._class_id__repr__ = False  # If True, repr/str of the object is class id
-        self._id = object_id
         self._id__repr__ = False  # If True, repr/str of the object adds object id
         self._verbose = verbose
 
@@ -46,13 +47,17 @@ class Base(object):
 
         :return: Object str status
         """
-        sup_repr = super(Base, self).__repr__()
+        sup_repr = super().__repr__()
+
         assert not (self._class_id__repr__ and self._id__repr__), \
             'class id and id __repr__ cannot be True at the same time'
+
         if self._class_id__repr__:
             return self.get_class_id()
-        elif self._id__repr__:
+
+        if self._id__repr__:
             return sup_repr.replace(' object at ', f'["{self.get_id()}"] object at ')
+
         return sup_repr
 
     def _update__repr___(self, obj: 'Base') -> None:
@@ -72,9 +77,12 @@ class Base(object):
         :param value: Value of the attribute
         :return: Self reference
         """
-        assert isinstance(key, str)
+        if not isinstance(key, str):
+            raise TypeError("key must be a string")
+
         if self._attributes is None:
             self._attributes = {}
+
         self._attributes[key] = value
         return self
 
@@ -84,11 +92,12 @@ class Base(object):
 
         :param key: Key of the attribute
         :param incr: Increase value
-        :param default: Default vale to start with, by default it's zero
-        :return: New increase value
+        :param default: Default value to start with, by default it's zero
+        :return: New increased value
         """
         if not isinstance(incr, NumberInstance):
             incr = float(incr)
+
         if not isinstance(default, NumberInstance):
             if isinstance(incr, float):
                 default = float(default)
@@ -97,12 +106,15 @@ class Base(object):
                     default = int(default)
                 except ValueError:
                     default = float(default)
+
         if not self.has_attribute(key):
-            self.set_attribute(key, default + incr)
-            return default + incr
-        new = self.get_attribute(key) + incr
-        self.set_attribute(key, new)
-        return new
+            value = default + incr
+            self.set_attribute(key, value)
+            return value
+
+        new_value = self.get_attribute(key) + incr
+        self.set_attribute(key, new_value)
+        return new_value
 
     def get_attribute(self, key: str, default: Any = None) -> Any:
         """
@@ -112,9 +124,12 @@ class Base(object):
         :param default: Value if it does not exist
         :return: Attribute data
         """
-        assert isinstance(key, str)
+        if not isinstance(key, str):
+            raise TypeError("key must be a string")
+
         if not self.has_attribute(key):
             return default
+
         return self._attributes[key]
 
     def has_attribute(self, key: str) -> bool:
@@ -124,10 +139,10 @@ class Base(object):
         :param key: Key of the attribute
         :return: ``True`` if exists
         """
-        assert isinstance(key, str)
-        if self._attributes is None:
-            return False
-        return key in self._attributes.keys()
+        if not isinstance(key, str):
+            raise TypeError("key must be a string")
+
+        return self._attributes is not None and key in self._attributes
 
     def remove_attribute(self, key: str) -> 'Base':
         """
@@ -139,6 +154,7 @@ class Base(object):
         """
         if not self.has_attribute(key):
             raise IndexError(f'attribute "{key}" does not exists on object')
+
         del self._attributes[key]
         return self
 
