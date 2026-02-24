@@ -332,7 +332,7 @@ class Sound(Base):
         # Check the file exists
         sound_path = Path(sound_file)
         if not sound_path.is_file():
-            raise IOError(f'sound file \"{sound_path}\" does not exist')
+            raise OSError(f'sound file \"{sound_path}\" does not exist')
 
         # Load the sound
         try:

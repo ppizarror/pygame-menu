@@ -134,7 +134,7 @@ def load_font_file(path: Union[str, Path], size: int) -> '__font.Font':
 
     font_path = Path(path)
     if not font_path.is_file():
-        raise IOError(f'font file \"{font_path}\" does not exist')
+        raise OSError(f'font file \"{font_path}\" does not exist')
 
     key = (font_path.as_posix(), size)
     if key in _cache:
@@ -142,8 +142,8 @@ def load_font_file(path: Union[str, Path], size: int) -> '__font.Font':
 
     try:
         font = __font.Font(font_path.as_posix(), size)
-    except IOError:
-        raise IOError(f'font file \"{font_path}\" cannot be loaded')
+    except OSError:
+        raise OSError(f'font file \"{font_path}\" cannot be loaded')
 
     _cache[key] = font
     return font
@@ -193,8 +193,8 @@ def load_system_font(name: str, size: int) -> '__font.Font':
 
     try:
         font = __font.Font(matched, size)
-    except IOError:
-        raise IOError(f'system font file "{matched}" cannot be loaded')
+    except OSError:
+        raise OSError(f'system font file "{matched}" cannot be loaded')
 
     _cache[key] = font
     return font

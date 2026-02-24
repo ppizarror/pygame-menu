@@ -1016,9 +1016,11 @@ class ScrollArea(Base):
         :param widget: Widget to check the position
         :return: Relative position to view rect on x-axis and y-axis
         """
-        assert widget.get_scrollarea() == self, \
-            '{0} scrollarea {1} is different than current {2}' \
-                .format(widget, widget.get_scrollarea().get_class_id(), self.get_class_id())
+        if widget.get_scrollarea() != self:
+            raise AssertionError(
+                f"{widget} scrollarea {widget.get_scrollarea().get_class_id()} "
+                f"is different than current {self.get_class_id()}"
+            )
         wx, wy = widget.get_position()
         view_rect = self.get_view_rect()
         vx, vy = view_rect.width, view_rect.height

@@ -699,7 +699,7 @@ class MazeApp:
             self._draw_square(mazearray, start_point[0], start_point[1])
             pygame.display.flip()
 
-        walls = set([])
+        walls = set()
         neighbours = self._get_neighbours(start_point, n)
 
         for neighbour, _ in neighbours:
@@ -868,7 +868,7 @@ class MazeApp:
         if not num_patches:
             num_patches: int = random.randrange(int(self._rows / 10), int(self._rows / 4))
 
-        terrain_nodes = set([])
+        terrain_nodes = set()
 
         if self._visualize:
             pygame.display.flip()
@@ -1060,7 +1060,7 @@ class MazeApp:
 
         # Create the various data structures with speed in mind
         visited_nodes = set()
-        unvisited_nodes = set([(x, y) for x in range(n + 1) for y in range(n + 1)])
+        unvisited_nodes = {(x, y) for x in range(n + 1) for y in range(n + 1)}
         queue = AStarQueue()
 
         queue.push(distance + heuristic, distance, start_point)
@@ -1223,7 +1223,7 @@ class MazeApp:
         # Create the various data structures with speed in mind
         mydeque = deque()
         mydeque.append(start_point)
-        visited_nodes = set([])
+        visited_nodes = set()
         path_dict = {start_point: None}
 
         # Main algorithm loop
