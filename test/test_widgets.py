@@ -174,15 +174,15 @@ class WidgetsTest(BaseTest):
         Test non-ascii.
         """
         menu = MenuUtils.generic_menu()
-        m = MenuUtils.generic_menu(title=u'Ménu')
+        m = MenuUtils.generic_menu(title='Ménu')
         m.clear()
         menu.add.button('0', pygame_menu.events.NONE)
         menu.add.button('Test', pygame_menu.events.NONE)
-        menu.add.button(u'Menú', pygame_menu.events.NONE)
-        menu.add.color_input(u'Cólor', 'rgb')
-        text = menu.add.text_input(u'Téxt')
-        menu.add.label(u'Téxt')
-        menu.add.selector(u'Sélect'.encode('latin1'), [('a', 'a')])
+        menu.add.button('Menú', pygame_menu.events.NONE)
+        menu.add.color_input('Cólor', 'rgb')
+        text = menu.add.text_input('Téxt')
+        menu.add.label('Téxt')
+        menu.add.selector('Sélect'.encode('latin1'), [('a', 'a')])
         menu.enable()
         menu.draw(surface)
 

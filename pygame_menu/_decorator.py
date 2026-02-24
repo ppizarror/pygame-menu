@@ -78,7 +78,7 @@ class Decorator(Base):
         decorator_id: str = '',
         verbose: bool = True
     ) -> None:
-        super(Decorator, self).__init__(object_id=decorator_id, verbose=verbose)
+        super().__init__(object_id=decorator_id, verbose=verbose)
 
         self._coord_cache = {}
         self._decor = {DECOR_TYPE_PREV: [], DECOR_TYPE_POST: []}
@@ -731,8 +731,7 @@ class Decorator(Base):
         assert_vector(pos2, 2)
         color = assert_color(color)
         assert isinstance(width, int) and width >= 1
-        length = math.sqrt(math.pow(pos1[0] - pos2[0], 2) + math.pow(pos1[1] - pos2[1], 2))
-        assert length > 0, 'line cannot be zero-length'
+        assert math.dist(pos1, pos2) > 0, 'line cannot be zero-length'
         return self._add_decor(
             DECORATION_LINE, prev, ((tuple(pos1), tuple(pos2)), color, width, kwargs)
         )
@@ -902,7 +901,7 @@ class Decorator(Base):
         :param deco: Decoration lists
         :param surface: Source surface to draw from
         """
-        if len(deco) == 0:
+        if not deco:
             return
 
         w, h = surface.get_size()
@@ -963,7 +962,7 @@ class Decorator(Base):
         :param deco: Decoration list
         :param surface: Pygame surface
         """
-        if len(deco) == 0:
+        if not deco:
             return
         rect = self._obj.get_rect()
 

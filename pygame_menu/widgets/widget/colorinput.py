@@ -161,7 +161,7 @@ class ColorInput(TextInput):
                                  '7', '8', '9']
 
         # noinspection PyArgumentEqualDefault
-        super(ColorInput, self).__init__(
+        super().__init__(
             copy_paste_enable=False,
             cursor_color=cursor_color,
             cursor_switch_ms=cursor_switch_ms,
@@ -208,7 +208,7 @@ class ColorInput(TextInput):
         self._alt_x_enabled = False
 
     def _apply_font(self) -> None:
-        super(ColorInput, self)._apply_font()
+        super()._apply_font()
 
         # Compute the size of the underline
         if self._input_underline != '':
@@ -234,11 +234,11 @@ class ColorInput(TextInput):
             self._input_underline_len = char
 
     def clear(self) -> None:
-        super(ColorInput, self).clear()
+        super().clear()
         self._previsualization_surface = None
         self._auto_separator_pos.clear()
         if self._color_type == COLORINPUT_TYPE_HEX:
-            super(ColorInput, self).set_value('#')
+            super().set_value('#')
         self.change()
 
     def set_value(self, color: Optional[Union[str, Tuple3IntType]]) -> None:
@@ -252,7 +252,7 @@ class ColorInput(TextInput):
         format_color: str = ''
         if self._color_type == COLORINPUT_TYPE_RGB:
             if color == '':
-                super(ColorInput, self).set_value('')
+                super().set_value('')
                 return
             assert isinstance(color, tuple), \
                 'color in rgb format must be a tuple in (r,g,b) format'
@@ -292,7 +292,7 @@ class ColorInput(TextInput):
                     'invalid color, only formats "#RRGGBB" or "RRGGBB" are allowed'
                 format_color = text
 
-        super(ColorInput, self).set_value(format_color)
+        super().set_value(format_color)
         self._format_hex()
 
     def value_changed(self) -> bool:
@@ -341,7 +341,7 @@ class ColorInput(TextInput):
         return not (r == -1 or g == -1 or b == -1)
 
     def _draw(self, surface: 'pygame.Surface') -> None:
-        super(ColorInput, self)._draw(surface)  # This calls _render()
+        super()._draw(surface)  # This calls _render()
 
         # Draw previsualization box
         if self._previsualization_surface is not None:
@@ -352,7 +352,7 @@ class ColorInput(TextInput):
             surface.blit(self._previsualization_surface, (int(posx), int(posy)))
 
     def _render(self) -> Optional[bool]:
-        render_text = super(ColorInput, self)._render()
+        render_text = super()._render()
 
         # Maybe TextInput did not render, so this has to be changed
         self._rect.width, self._rect.height = self._surface.get_size()
@@ -439,7 +439,7 @@ class ColorInput(TextInput):
                         )
 
                         # Cannot be separator at first
-                        if len(input_str) == 0 and key == self._separator:
+                        if not input_str and key == self._separator:
                             return False
 
                         elif len(input_str) > 1:
@@ -510,7 +510,7 @@ class ColorInput(TextInput):
                             return True
 
         # Update
-        updated = super(ColorInput, self).update(events)
+        updated = super().update(events)
 
         # After
         if self._color_type == COLORINPUT_TYPE_RGB:

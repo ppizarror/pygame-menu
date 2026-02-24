@@ -42,7 +42,7 @@ class HighlightSelection(Selection):
 
         margin_x = float(margin_x)
         margin_y = float(margin_y)
-        super(HighlightSelection, self).__init__(
+        super().__init__(
             margin_left=margin_x / 2,
             margin_right=margin_x / 2,
             margin_top=margin_y / 2,

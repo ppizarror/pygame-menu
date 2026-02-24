@@ -15,7 +15,7 @@ from pygame_menu.examples import create_example_window
 from typing import Union, List
 
 
-class CalculatorApp(object):
+class CalculatorApp:
     """
     Simple calculator app.
     """

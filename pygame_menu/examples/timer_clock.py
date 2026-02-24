@@ -49,7 +49,7 @@ def reset_timer() -> None:
     timer[0] = 0
 
 
-class TestCallClassMethod(object):
+class TestCallClassMethod:
     """
     Class call method.
     """
@@ -73,7 +73,8 @@ def change_color_bg(value: Tuple, c: Optional[Tuple] = None, **kwargs) -> None:
     if c == (-1, -1, -1):  # If random color
         c = (randrange(0, 255), randrange(0, 255), randrange(0, 255))
     if kwargs['write_on_console']:
-        print('New background color: {0} ({1},{2},{3})'.format(color[0], *c))
+        r, g, b = c
+        print(f"New background color: {color[0]} ({r},{g},{b})")
     COLOR_BACKGROUND[0] = c[0]
     COLOR_BACKGROUND[1] = c[1]
     COLOR_BACKGROUND[2] = c[2]

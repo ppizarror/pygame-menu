@@ -8,7 +8,7 @@ Module for pyinstaller.
 
 __all__ = ['get_hook_dirs']
 
-import os
+from pathlib import Path
 from typing import List
 
 
@@ -18,4 +18,4 @@ def get_hook_dirs() -> List[str]:
 
     :return: Hook dir list
     """
-    return [os.path.dirname(__file__)]
+    return [Path(__file__).resolve().parent.as_posix()]

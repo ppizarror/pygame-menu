@@ -40,7 +40,7 @@ class NoneWidget(Widget):
         self,
         widget_id: str = ''
     ) -> None:
-        super(NoneWidget, self).__init__(widget_id=widget_id)
+        super().__init__(widget_id=widget_id)
         self.is_selectable = False
         self._surface = make_surface(0, 0, alpha=True)
 

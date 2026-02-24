@@ -97,7 +97,7 @@ class ScrollBar(Widget):
         slider_color = assert_color(slider_color)
         slider_hover_color = assert_color(slider_hover_color)
 
-        super(ScrollBar, self).__init__(
+        super().__init__(
             widget_id=scrollbar_id,
             onchange=onchange,
             args=args,
@@ -209,7 +209,7 @@ class ScrollBar(Widget):
         :param offset: Shadow offset
         :return: Self reference
         """
-        super(ScrollBar, self).set_font_shadow(enabled, color, position, offset)
+        super().set_font_shadow(enabled, color, position, offset)
 
         # Store shadow from font
         self._shadow_color = self._font_shadow_color

@@ -34,7 +34,7 @@ class Image(Widget):
 
         Image accepts all transformations.
 
-    :param image_path: Path of the image, BytesIO object, or :py:class:`pygame_menu.baseimage.BaseImage` object. If :py:class:`pygame_menu.baseimage.BaseImage` object is provided drawing mode is not considered
+    :param image_path: Path of the image, BytesIO object, a pygame.Surface, or :py:class:`pygame_menu.baseimage.BaseImage` object. If :py:class:`pygame_menu.baseimage.BaseImage` object is provided drawing mode is not considered
     :param image_id: Image ID
     :param angle: Angle of the image in degrees (clockwise)
     :param onselect: Function when selecting the widget
@@ -45,20 +45,20 @@ class Image(Widget):
 
     def __init__(
         self,
-        image_path: Union[str, 'BaseImage', 'Path', 'BytesIO'],
+        image_path: Union[str, 'Path', 'BaseImage', 'BytesIO', pygame.Surface],
         angle: NumberType = 0,
         image_id: str = '',
         onselect: CallbackType = None,
         scale: Tuple2NumberType = (1, 1),
         scale_smooth: bool = True
     ) -> None:
-        assert isinstance(image_path, (str, Path, BaseImage, BytesIO))
+        assert isinstance(image_path, (str, Path, BaseImage, BytesIO, pygame.Surface))
         assert isinstance(image_id, str)
         assert isinstance(angle, NumberInstance)
         assert isinstance(scale_smooth, bool)
         assert_vector(scale, 2)
 
-        super(Image, self).__init__(
+        super().__init__(
             onselect=onselect,
             widget_id=image_id
         )
@@ -184,7 +184,7 @@ class ImageManager(AbstractWidgetManager, ABC):
 
     def image(
         self,
-        image_path: Union[str, 'Path', 'pygame_menu.BaseImage', 'BytesIO'],
+        image_path: Union[str, 'Path', 'pygame_menu.BaseImage', 'BytesIO', pygame.Surface],
         angle: NumberType = 0,
         image_id: str = '',
         onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
@@ -234,7 +234,7 @@ class ImageManager(AbstractWidgetManager, ABC):
             stored in ``_current`` pointer); for such behaviour apply to
             :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
-        :param image_path: Path of the image (file) or a BaseImage object. If BaseImage object is provided the angle and scale are ignored
+        :param image_path: Path of the image (file), a pygame.Surface, or a BaseImage object. If BaseImage object is provided the angle and scale are ignored
         :param angle: Angle of the image in degrees (clockwise)
         :param image_id: ID of the image
         :param onselect: Callback executed when selecting the widget; only executed if ``selectable`` is ``True``
@@ -245,6 +245,7 @@ class ImageManager(AbstractWidgetManager, ABC):
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.Image`
         """
+        assert isinstance(image_path, (str, Path, BaseImage, BytesIO, pygame.Surface))
         assert isinstance(selectable, bool)
 
         # Remove invalid keys from kwargs
