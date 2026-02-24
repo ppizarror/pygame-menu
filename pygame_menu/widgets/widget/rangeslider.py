@@ -32,10 +32,11 @@ from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vect
 from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImplemented, \
     AbstractWidgetManager
 
-from pygame_menu._types import Any, CallbackType, Union, List, Tuple, Optional, \
+from pygame_menu._types import CallbackType, \
     ColorType, NumberType, Tuple2IntType, NumberInstance, ColorInputType, \
-    EventVectorType, Vector2NumberType, VectorType, PaddingType, Tuple4IntType, \
-    Callable, Dict
+    EventVectorType, Vector2NumberType, VectorType, PaddingType, Tuple4IntType
+from typing import Any, Optional, Union
+from collections.abc import Callable
 
 RangeSliderRangeValueType = Union[Vector2NumberType, VectorType]
 RangeSliderValueFormatType = Callable[[NumberType], str]
@@ -121,7 +122,7 @@ class RangeSlider(Widget):
     _increment: NumberType
     _increment_shift_factor: float
     _keyrepeat: bool
-    _keyrepeat_counters: Dict[int, int]
+    _keyrepeat_counters: dict[int, int]
     _keyrepeat_initial_interval_ms: NumberType
     _keyrepeat_interval_ms: NumberType
     _range_box: 'pygame.Surface'
@@ -145,27 +146,27 @@ class RangeSlider(Widget):
     _range_text_value_margin: int
     _range_text_value_margin_factor: NumberType
     _range_text_value_position: str
-    _range_text_value_surfaces: List['pygame.Surface']
-    _range_text_value_surfaces_pos: List[Tuple2IntType]
+    _range_text_value_surfaces: list['pygame.Surface']
+    _range_text_value_surfaces_pos: list[Tuple2IntType]
     _range_text_value_tick_color: ColorType
     _range_text_value_tick_enabled: bool
     _range_text_value_tick_height: int
     _range_text_value_tick_height_factor: NumberType
     _range_text_value_tick_number: int
-    _range_text_value_tick_surfaces: List['pygame.Surface']
-    _range_text_value_tick_surfaces_pos: List[Tuple2IntType]
+    _range_text_value_tick_surfaces: list['pygame.Surface']
+    _range_text_value_tick_surfaces_pos: list[Tuple2IntType]
     _range_text_value_tick_thickness: int
     _range_values: RangeSliderRangeValueType
     _range_width: int
     _scrolling: bool  # Slider is scrolling
     _selected_mouse: bool
     _single: bool  # Range single or double
-    _slider: List['pygame.Surface']
+    _slider: list['pygame.Surface']
     _slider_color: ColorType
     _slider_height: int
     _slider_height_factor: NumberType
-    _slider_pos: Tuple[Tuple2IntType, Tuple2IntType]
-    _slider_selected: Tuple[bool, bool]
+    _slider_pos: tuple[Tuple2IntType, Tuple2IntType]
+    _slider_selected: tuple[bool, bool]
     _slider_selected_color: ColorType
     _slider_selected_highlight_color: ColorType
     _slider_selected_highlight_enabled: bool
@@ -179,15 +180,15 @@ class RangeSlider(Widget):
     _slider_text_value_margin_factor: NumberType
     _slider_text_value_padding: Tuple4IntType
     _slider_text_value_position: str
-    _slider_text_value_surfaces: List['pygame.Surface']
-    _slider_text_value_surfaces_pos: List[Tuple2IntType]
+    _slider_text_value_surfaces: list['pygame.Surface']
+    _slider_text_value_surfaces_pos: list[Tuple2IntType]
     _slider_text_value_triangle: bool
     _slider_text_value_vmargin: int
     _slider_thickness: int
     _slider_vmargin: NumberType
-    _value: List[NumberType]  # Public value of the slider, generated from the hidden
+    _value: list[NumberType]  # Public value of the slider, generated from the hidden
     _value_format: RangeSliderValueFormatType
-    _value_hidden: List[NumberType]  # Hidden value of the slider, modified by events
+    _value_hidden: list[NumberType]  # Hidden value of the slider, modified by events
 
     def __init__(
         self,
@@ -534,7 +535,7 @@ class RangeSlider(Widget):
     def flip(self, *args, **kwargs) -> 'RangeSlider':
         raise WidgetTransformationNotImplemented()
 
-    def get_value(self) -> Union[NumberType, Tuple[NumberType, NumberType]]:
+    def get_value(self) -> Union[NumberType, tuple[NumberType, NumberType]]:
         if self._single:
             return self._value[0]
         return self._value[0], self._value[1]
@@ -711,7 +712,7 @@ class RangeSlider(Widget):
         self._range_line_pos = (self._range_pos[0], int(self._range_pos[1] - self._range_line_height / 2))
 
         # Create the range font surfaces
-        range_values: List[NumberType] = []
+        range_values: list[NumberType] = []
         if len(self._range_values) == 2:
             d_val = (self._range_values[1] - self._range_values[0]) \
                     / (self._range_text_value_tick_number - 1)

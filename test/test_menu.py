@@ -16,6 +16,7 @@ import math
 import sys
 import time
 import timeit
+from typing import Any
 
 import pygame
 import pygame_menu
@@ -23,7 +24,6 @@ import pygame_menu.controls as ctrl
 
 from pygame_menu import events
 # noinspection PyProtectedMember
-from pygame_menu._types import Any, Tuple, List
 from pygame_menu.locals import FINGERDOWN, FINGERMOTION
 from pygame_menu.utils import set_pygame_cursor, get_cursor
 from pygame_menu.widgets import Label, Button
@@ -1898,7 +1898,7 @@ class MenuTest(BaseTest):
         btn2 = menu.add.button('2')
         btn3 = menu.add.button('3')
 
-        def test_order(button: Tuple['pygame_menu.widgets.Button', ...],
+        def test_order(button: tuple['pygame_menu.widgets.Button', ...],
                        selected: 'pygame_menu.widgets.Button') -> None:
             """
             Test button order.
@@ -2259,7 +2259,7 @@ class MenuTest(BaseTest):
             """
             Sample example which contains a selector that changes an image.
             """
-            icons: List['pygame_menu.BaseImage']
+            icons: list['pygame_menu.BaseImage']
             icon: 'pygame_menu.widgets.Image'
             selector: 'pygame_menu.widgets.Selector'
 
@@ -2532,11 +2532,11 @@ class MenuTest(BaseTest):
         # Test with rendering enabled
         n = sum(nr)  # Number of widgets to be added
         t0 = time.time()
-        widgets: List[Label] = []
+        widgets: list[Label] = []
         for i in range(n):
             widgets.append(menu.add.label(i))
         t_on = time.time() - t0
-        position_before: List[Tuple[int, int]] = []
+        position_before: list[tuple[int, int]] = []
         for i in range(n):
             position_before.append(widgets[i].get_position())
 

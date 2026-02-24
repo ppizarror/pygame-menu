@@ -36,8 +36,10 @@ from pygame_menu.utils import check_key_pressed_valid, make_surface
 from pygame_menu.widgets.core.widget import AbstractWidgetManager, Widget
 from pygame_menu.widgets.widget.textinput import TextInput
 
-from pygame_menu._types import Union, List, NumberType, Any, Optional, CallbackType, \
-    Tuple3IntType, NumberInstance, EventVectorType, Callable
+from pygame_menu._types import NumberType, CallbackType, \
+    Tuple3IntType, NumberInstance, EventVectorType
+from typing import Any, Optional, Union
+from collections.abc import Callable
 
 # Input modes
 COLORINPUT_TYPE_HEX = 'hex'
@@ -94,7 +96,7 @@ class ColorInput(TextInput):
     :param repeat_mouse_interval_ms: Interval between mouse events when held
     :param kwargs: Optional keyword arguments
     """
-    _auto_separator_pos: List[int]
+    _auto_separator_pos: list[int]
     _color_type: str
     _dynamic_width: bool
     _hex_format: str

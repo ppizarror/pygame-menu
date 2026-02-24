@@ -18,7 +18,8 @@ import time
 
 from collections import deque
 from math import inf
-from typing import List, Union, Optional, Tuple, Any, Generator
+from typing import Union, Optional, Any
+from collections.abc import Generator
 
 from pygame_menu.examples import create_example_window
 
@@ -166,8 +167,8 @@ class Node:
         self.color = self.pcolor if self.is_path else self.vcolor if self.is_visited else self.rcolor
 
 
-_MazeType = List[List['Node']]
-_Point2 = Tuple[int, int]
+_MazeType = list[list['Node']]
+_Point2 = tuple[int, int]
 
 
 class MazeApp:
@@ -743,7 +744,7 @@ class MazeApp:
 
     def _recursive_division(
         self,
-        chamber: Optional[Tuple[int, int, int, int]] = None,
+        chamber: Optional[tuple[int, int, int, int]] = None,
         halving=True
     ) -> None:
         """
@@ -753,7 +754,7 @@ class MazeApp:
         :param halving: Divide the recursion area by two
         """
 
-        def _gaps_to_offset() -> List[int]:
+        def _gaps_to_offset() -> list[int]:
             """
             Gaps to offset.
             """
@@ -967,7 +968,7 @@ class MazeApp:
         self,
         node: _Point2,
         max_width: Optional[int] = None
-    ) -> Generator[Tuple[_Point2, str], Any, None]:
+    ) -> Generator[tuple[_Point2, str], Any, None]:
         """
         Get the neighbors.
 

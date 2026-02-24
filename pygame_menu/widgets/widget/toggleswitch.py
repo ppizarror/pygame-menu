@@ -22,9 +22,11 @@ from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vect
 from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImplemented, \
     AbstractWidgetManager
 
-from pygame_menu._types import Any, CallbackType, Union, List, Tuple, Optional, \
+from pygame_menu._types import CallbackType, \
     ColorType, NumberType, Tuple2NumberType, Tuple2IntType, NumberInstance, \
-    ColorInputType, EventVectorType, Callable
+    ColorInputType, EventVectorType
+from typing import Any, Optional, Union
+from collections.abc import Callable
 
 
 class ToggleSwitch(Widget):
@@ -81,19 +83,19 @@ class ToggleSwitch(Widget):
     _slider_thickness: int
     _slider_vmargin: int
     _state: int
-    _state_color: Tuple[ColorType, ...]
+    _state_color: tuple[ColorType, ...]
     _state_font: Optional['pygame.font.Font']
-    _state_text: Tuple[str, ...]
+    _state_text: tuple[str, ...]
     _state_text_font: Optional[FontType]
-    _state_text_font_color: Tuple[ColorType, ...]
+    _state_text_font_color: tuple[ColorType, ...]
     _state_text_font_size: Optional[int]
     _state_text_position: Tuple2NumberType
-    _state_values: Tuple[Any, ...]
-    _state_width: List[int]
+    _state_values: tuple[Any, ...]
+    _state_width: list[int]
     _switch: Optional['pygame.Surface']
     _switch_border_color: ColorType
     _switch_border_width: int
-    _switch_font_rendered: List['pygame.Surface']
+    _switch_font_rendered: list['pygame.Surface']
     _switch_height: int
     _switch_height_factor: float
     _switch_margin: Tuple2IntType
@@ -115,14 +117,14 @@ class ToggleSwitch(Widget):
         slider_height_factor: NumberType = 1,
         slider_thickness: int = 25,
         slider_vmargin: NumberType = 0,
-        state_color: Tuple[ColorInputType, ...] = ((178, 178, 178), (117, 185, 54)),
-        state_text: Tuple[str, ...] = ('Off', 'On'),
+        state_color: tuple[ColorInputType, ...] = ((178, 178, 178), (117, 185, 54)),
+        state_text: tuple[str, ...] = ('Off', 'On'),
         state_text_font: Optional[FontType] = None,
-        state_text_font_color: Tuple[ColorInputType, ...] = ((255, 255, 255), (255, 255, 255)),
+        state_text_font_color: tuple[ColorInputType, ...] = ((255, 255, 255), (255, 255, 255)),
         state_text_font_size: Optional[int] = None,
         state_text_position: Tuple2NumberType = (0.5, 0.5),
-        state_values: Tuple[Any, ...] = (False, True),
-        state_width: Union[Tuple[int, ...], int] = 150,
+        state_values: tuple[Any, ...] = (False, True),
+        state_width: Union[tuple[int, ...], int] = 150,
         switch_border_color: ColorInputType = (40, 40, 40),
         switch_border_width: int = 1,
         switch_height: NumberType = 1.25,
@@ -490,8 +492,8 @@ class ToggleSwitchManager(AbstractWidgetManager, ABC):
         onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
         toggleswitch_id: str = '',
         single_click: bool = True,
-        state_text: Tuple[str, ...] = ('Off', 'On'),
-        state_values: Tuple[Any, ...] = (False, True),
+        state_text: tuple[str, ...] = ('Off', 'On'),
+        state_values: tuple[Any, ...] = (False, True),
         width: int = 150,
         **kwargs
     ) -> 'pygame_menu.widgets.ToggleSwitch':

@@ -10,14 +10,15 @@ __all__ = ['Base']
 
 from pygame_menu.utils import uuid4
 
-from pygame_menu._types import Dict, Any, NumberInstance, NumberType, Optional
+from pygame_menu._types import NumberInstance, NumberType
+from typing import Any, Optional
 
 
 class Base:
     """
     Base object.
     """
-    _attributes: Optional[Dict[str, Any]]
+    _attributes: Optional[dict[str, Any]]
     _class_id__repr__: bool
     _id: str
     _id__repr__: bool

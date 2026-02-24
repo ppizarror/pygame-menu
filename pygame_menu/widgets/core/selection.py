@@ -15,7 +15,8 @@ import pygame_menu
 from pygame_menu.utils import assert_color
 
 from pygame_menu._types import NumberType, ColorType, ColorInputType, Tuple2IntType, \
-    Tuple4IntType, NumberInstance, Optional, Union
+    Tuple4IntType, NumberInstance
+from typing import Optional, Union
 
 
 class Selection:

@@ -23,7 +23,9 @@ from pygame_menu.utils import get_finger_pos, warn
 from pygame_menu.widgets.core.widget import AbstractWidgetManager, Widget
 
 from pygame_menu.widgets.widget.label import Label
-from pygame_menu._types import Any, CallbackType, Callable, Union, Optional, EventVectorType
+from pygame_menu._types import CallbackType, EventVectorType
+from typing import Any, Optional, Union
+from collections.abc import Callable
 
 
 class Button(Label):

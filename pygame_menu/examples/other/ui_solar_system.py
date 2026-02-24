@@ -16,7 +16,7 @@ from pygame_menu.examples._resources import SOLAR_SYSTEM_IMG, NEBULA_IMG
 
 import math
 import random
-from typing import Dict, Union, Optional, List
+from typing import Union, Optional
 
 
 class Planet:
@@ -66,10 +66,10 @@ class SolarSystemApp:
     Draws a fancy solar system.
     """
     menu: 'pygame_menu.Menu'
-    nebulas: List['pygame_menu.BaseImage']
-    planets: Dict[str, 'Planet']
+    nebulas: list['pygame_menu.BaseImage']
+    planets: dict[str, 'Planet']
     rotation_velocity: float
-    stars: List[List[Union[int, float]]]
+    stars: list[list[Union[int, float]]]
     surface: 'pygame.Surface'
 
     def __init__(self) -> None:
@@ -396,7 +396,7 @@ class SolarSystemApp:
         self.menu.force_surface_cache_update()
 
     # noinspection PyProtectedMember
-    def process_events(self, events: List['pygame.event.Event'], menu: 'pygame_menu.Menu') -> None:
+    def process_events(self, events: list['pygame.event.Event'], menu: 'pygame_menu.Menu') -> None:
         """
         Process events from user.
 

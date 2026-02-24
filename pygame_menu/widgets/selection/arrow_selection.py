@@ -14,7 +14,8 @@ import pygame_menu
 from pygame_menu.utils import assert_vector
 from pygame_menu.widgets.core import Selection
 
-from pygame_menu._types import NumberType, Tuple2IntType, Optional, NumberInstance
+from pygame_menu._types import NumberType, Tuple2IntType, NumberInstance
+from typing import Optional
 
 SELECTOR_CLOCK = pygame.time.Clock()
 

@@ -15,7 +15,7 @@ from pygame_menu._scrollarea import ScrollArea
 from pygame_menu.utils import make_surface
 
 import itertools
-from typing import Generator
+from collections.abc import Generator
 
 FPS = 30
 W_SIZE = 800  # Width of window size

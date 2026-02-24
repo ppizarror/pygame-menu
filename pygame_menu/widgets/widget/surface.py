@@ -18,8 +18,9 @@ from abc import ABC
 from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImplemented, \
     AbstractWidgetManager
 
-from pygame_menu._types import CallbackType, Optional, EventVectorType, Callable, \
-    Any
+from pygame_menu._types import CallbackType, EventVectorType
+from typing import Any, Optional
+from collections.abc import Callable
 
 
 class SurfaceWidget(Widget):

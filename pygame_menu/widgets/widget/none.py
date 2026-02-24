@@ -19,7 +19,8 @@ from pygame_menu.utils import make_surface
 from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImplemented, \
     AbstractWidgetManager
 
-from pygame_menu._types import Optional, NumberType, EventVectorType
+from pygame_menu._types import NumberType, EventVectorType
+from typing import Optional
 
 
 class NoneWidget(Widget):

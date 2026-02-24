@@ -28,10 +28,12 @@ from pygame_menu.widgets.widget.button import Button
 from pygame_menu.widgets.widget.frame import Frame
 from pygame_menu.widgets.widget.selector import check_selector_items
 
-from pygame_menu._types import Tuple, Union, List, Any, Optional, CallbackType, \
-    ColorType, Dict, ColorInputType, Tuple2IntType, Tuple3IntType, PaddingType, \
+from pygame_menu._types import CallbackType, \
+    ColorType, ColorInputType, Tuple2IntType, Tuple3IntType, PaddingType, \
     PaddingInstance, Tuple4IntType, NumberType, EventVectorType, Tuple2NumberType, \
-    CursorInputType, CursorType, NumberInstance, Callable
+    CursorInputType, CursorType, NumberInstance
+from typing import Any, Optional, Union
+from collections.abc import Callable
 
 
 # noinspection PyProtectedMember
@@ -108,11 +110,11 @@ class DropSelect(Widget):
     _close_on_apply: bool
     _drop_frame: Optional['Frame']
     _index: int
-    _items: Union[List[Tuple[Any, ...]], List[str]]
+    _items: Union[list[tuple[Any, ...]], list[str]]
     _open_bottom: bool
     _open_middle: bool
     _opened: bool
-    _option_buttons: List['Button']
+    _option_buttons: list['Button']
     _option_font: Optional['pygame.font.Font']
     _placeholder: str
     _placeholder_add_to_selection_box: bool
@@ -141,7 +143,7 @@ class DropSelect(Widget):
     _selection_option_border_color: ColorType
     _selection_option_border_width: int
     _selection_option_cursor: CursorType  # type: ignore
-    _selection_option_font_style: Dict[str, Any]
+    _selection_option_font_style: dict[str, Any]
     _selection_option_left_space: bool
     _selection_option_left_space_height_factor: float
     _selection_option_left_space_margin: Tuple3IntType
@@ -152,7 +154,7 @@ class DropSelect(Widget):
     def __init__(
         self,
         title: Any,
-        items: Union[List[Tuple[Any, ...]], List[str]],
+        items: Union[list[tuple[Any, ...]], list[str]],
         dropselect_id: str = '',
         default: Optional[int] = None,
         onchange: CallbackType = None,
@@ -854,7 +856,7 @@ class DropSelect(Widget):
         """
         return self._index
 
-    def get_value(self) -> Tuple[Union[Tuple[Any, ...], str], int]:
+    def get_value(self) -> tuple[Union[tuple[Any, ...], str], int]:
         """
         Return the current value of the selected index.
 
@@ -968,7 +970,7 @@ class DropSelect(Widget):
         # Force render
         self._render()
 
-    def update_items(self, items: Union[List[Tuple[Any, ...]], List[str]]) -> None:
+    def update_items(self, items: Union[list[tuple[Any, ...]], list[str]]) -> None:
         """
         Update drop select items.
 
@@ -1003,7 +1005,7 @@ class DropSelect(Widget):
                 f'._make_selection_drop() for avoiding this exception'
             )
 
-    def get_items(self) -> Union[List[Tuple[Any, ...]], List[str]]:
+    def get_items(self) -> Union[list[tuple[Any, ...]], list[str]]:
         """
         Return a copy of the select items.
 
@@ -1221,7 +1223,7 @@ class DropSelectManager(AbstractWidgetManager, ABC):
     def dropselect(
         self,
         title: Any,
-        items: Union[List[Tuple[Any, ...]], List[str]],
+        items: Union[list[tuple[Any, ...]], list[str]],
         default: Optional[int] = None,
         dropselect_id: str = '',
         onchange: CallbackType = None,

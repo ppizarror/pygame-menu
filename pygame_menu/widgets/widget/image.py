@@ -22,9 +22,10 @@ from pygame_menu.baseimage import BaseImage
 from pygame_menu.utils import assert_vector
 from pygame_menu.widgets.core.widget import Widget, AbstractWidgetManager
 
-from pygame_menu._types import Union, NumberType, CallbackType, Tuple2NumberType, \
-    Optional, NumberInstance, EventVectorType, Callable, Vector2NumberType, Any
-
+from pygame_menu._types import NumberType, CallbackType, Tuple2NumberType, \
+    NumberInstance, EventVectorType, Vector2NumberType
+from typing import Any, Optional, Union
+from collections.abc import Callable
 
 class Image(Widget):
     """

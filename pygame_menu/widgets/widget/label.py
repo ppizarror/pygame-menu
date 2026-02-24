@@ -20,8 +20,9 @@ from abc import ABC
 from pygame_menu.utils import assert_color, warn, uuid4, make_surface
 from pygame_menu.widgets.core.widget import Widget, AbstractWidgetManager
 
-from pygame_menu._types import Any, CallbackType, List, Union, Tuple, Optional, \
-    ColorType, ColorInputType, EventVectorType, Callable
+from pygame_menu._types import CallbackType, ColorType, ColorInputType, EventVectorType
+from typing import Any, Optional, Union
+from collections.abc import Callable
 
 LabelTitleGeneratorType = Optional[Callable[[], str]]
 
@@ -41,11 +42,11 @@ class Label(Widget):
     :param leading: Font leading for ``wordwrap``. If ``None`` retrieves from widget font
     :param max_nlines: Number of maximum lines for ``wordwrap``. If ``None`` the number is dynamically computed. If exceeded, ``get_overflow_lines()`` will return the non displayed lines
     """
-    _last_underline: List[Union[str, Optional[Tuple[ColorType, int, int]]]]
+    _last_underline: list[Union[str, Optional[tuple[ColorType, int, int]]]]
     _leading: Optional[int]
-    _lines: List[str]
+    _lines: list[str]
     _max_nlines: Optional[int]
-    _overflow_lines: List[str]  # Store how many lines are overflowed
+    _overflow_lines: list[str]  # Store how many lines are overflowed
     _title_generator: LabelTitleGeneratorType
     _wordwrap: bool
 
@@ -166,7 +167,7 @@ class Label(Widget):
             else self._leading
         )
 
-    def get_lines(self) -> List[str]:
+    def get_lines(self) -> list[str]:
         """
         Return the lines of text displayed. Each new line belongs to an item on list.
 
@@ -180,7 +181,7 @@ class Label(Widget):
         font: pygame.font.Font,
         max_width: int,
         tab_size: int,
-    ) -> List[str]:
+    ) -> list[str]:
         """
         Wordwraps line.
 
@@ -190,8 +191,8 @@ class Label(Widget):
         :param tab_size: Tab size
         :return: List of strings
         """
-        final_lines: List[str] = []
-        words: List[str] = line.split(' ')
+        final_lines: list[str] = []
+        words: list[str] = line.split(' ')
 
         while True:
             split_line: bool = False
@@ -235,7 +236,7 @@ class Label(Widget):
                 max_width = menu.get_width(inner=True)
         return max_width - self._padding[1] - self._padding[3] - self._selection_effect.get_width()
 
-    def get_overflow_lines(self) -> List[str]:
+    def get_overflow_lines(self) -> list[str]:
         """
         Return the overflow lines if ``wordwrap`` is active and ``max_nlines`` is set.
 
@@ -265,7 +266,7 @@ class Label(Widget):
                 self._surface = make_surface(0, 0, alpha=True)
             else:
                 max_width = self._get_max_container_width()
-                lines: List[str] = sum(
+                lines: list[str] = sum(
                     (
                         self._wordwrap_line(
                             line=line,
@@ -364,7 +365,7 @@ class LabelManager(AbstractWidgetManager, ABC):
         selectable: bool = False,
         wordwrap: bool = False,
         **kwargs
-    ) -> Union['pygame_menu.widgets.Label', List['pygame_menu.widgets.Label']]:
+    ) -> Union['pygame_menu.widgets.Label', list['pygame_menu.widgets.Label']]:
         """
         Add a simple text to the Menu.
 

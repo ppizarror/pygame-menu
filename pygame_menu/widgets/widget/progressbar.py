@@ -28,9 +28,11 @@ from pygame_menu.utils import assert_color, assert_vector, make_surface, \
 from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImplemented, \
     AbstractWidgetManager
 
-from pygame_menu._types import Any, CallbackType, Optional, ColorType, NumberType, \
-    Tuple2IntType, NumberInstance, ColorInputType, EventVectorType, Callable, \
+from pygame_menu._types import CallbackType, ColorType, NumberType, \
+    Tuple2IntType, NumberInstance, ColorInputType, EventVectorType, \
     PaddingType, Tuple4IntType
+from typing import Any, Optional
+from collections.abc import Callable
 
 ProgressBarTextFormatType = Callable[[NumberType], str]
 

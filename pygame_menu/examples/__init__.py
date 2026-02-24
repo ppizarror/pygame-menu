@@ -11,15 +11,13 @@ __all__ = ['create_example_window']
 import pygame
 import sys
 
-from typing import Tuple
-
 _PYGAME_ICON = [None]
 
 
 # noinspection PyTypeChecker
 def create_example_window(
     title: str,
-    window_size: Tuple[int, int],
+    window_size: tuple[int, int],
     pygame_menu_icon: bool = True,
     init_pygame: bool = True,
     center_window: bool = True,

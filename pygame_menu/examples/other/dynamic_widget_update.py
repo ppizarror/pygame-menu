@@ -13,7 +13,7 @@ import pygame_menu
 from pygame_menu.examples import create_example_window
 
 import math
-from typing import Dict, Any
+from typing import Any
 
 
 class App:
@@ -23,7 +23,7 @@ class App:
     image_widget: 'pygame_menu.widgets.Image'
     item_description_widget: 'pygame_menu.widgets.Label'
     menu: 'pygame_menu.Menu'
-    modes: Dict[int, Dict[str, Any]]
+    modes: dict[int, dict[str, Any]]
     quit_button: 'pygame_menu.widgets.Button'
     quit_button_fake: 'pygame_menu.widgets.Button'
     selector_widget: 'pygame_menu.widgets.Selector'

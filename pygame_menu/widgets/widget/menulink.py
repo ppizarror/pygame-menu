@@ -18,7 +18,7 @@ from abc import ABC
 from pygame_menu.widgets.core.widget import AbstractWidgetManager
 from pygame_menu.widgets.widget.none import NoneWidget
 
-from pygame_menu._types import Callable
+from collections.abc import Callable
 
 
 class MenuLink(NoneWidget):

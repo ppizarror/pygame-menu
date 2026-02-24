@@ -34,9 +34,11 @@ from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vect
     make_surface, get_finger_pos
 from pygame_menu.widgets.core.widget import Widget, AbstractWidgetManager
 
-from pygame_menu._types import Tuple, Union, List, Any, Optional, CallbackType, \
+from pygame_menu._types import CallbackType, \
     ColorType, ColorInputType, Tuple2IntType, Tuple3IntType, EventVectorType, \
-    Tuple2NumberType, Callable
+    Tuple2NumberType
+from typing import Any, Optional, Union
+from collections.abc import Callable
 
 SELECTOR_STYLE_CLASSIC = 'classic'
 SELECTOR_STYLE_FANCY = 'fancy'
@@ -44,7 +46,7 @@ SELECTOR_STYLE_FANCY = 'fancy'
 SelectorStyleType = str
 
 
-def check_selector_items(items: Union[Tuple, List]) -> None:
+def check_selector_items(items: Union[tuple, list]) -> None:
     """
     Check the items list.
 
@@ -104,7 +106,7 @@ class Selector(Widget):
     :param kwargs: Optional keyword arguments
     """
     _index: int
-    _items: Union[List[Tuple[Any, ...]], List[str]]
+    _items: Union[list[tuple[Any, ...]], list[str]]
     _sformat: str
     _style: SelectorStyleType
     _style_fancy_arrow_color: ColorType
@@ -119,7 +121,7 @@ class Selector(Widget):
     def __init__(
         self,
         title: Any,
-        items: Union[List[Tuple[Any, ...]], List[str]],
+        items: Union[list[tuple[Any, ...]], list[str]],
         selector_id: str = '',
         default: int = 0,
         onchange: CallbackType = None,
@@ -330,7 +332,7 @@ class Selector(Widget):
         """
         return self._index
 
-    def get_items(self) -> Union[List[Tuple[Any, ...]], List[str]]:
+    def get_items(self) -> Union[list[tuple[Any, ...]], list[str]]:
         """
         Return a copy of the select items.
 
@@ -338,7 +340,7 @@ class Selector(Widget):
         """
         return self._items.copy()
 
-    def get_value(self) -> Tuple[Union[Tuple[Any, ...], str], int]:
+    def get_value(self) -> tuple[Union[tuple[Any, ...], str], int]:
         """
         Return the current value of the selected index.
 
@@ -403,7 +405,7 @@ class Selector(Widget):
             self._index = item
         self._render()
 
-    def update_items(self, items: Union[List[Tuple[Any, ...]], List[str]]) -> None:
+    def update_items(self, items: Union[list[tuple[Any, ...]], list[str]]) -> None:
         """
         Update selector items.
 
@@ -509,7 +511,7 @@ class SelectorManager(AbstractWidgetManager, ABC):
     def selector(
         self,
         title: Any,
-        items: Union[List[Tuple[Any, ...]], List[str]],
+        items: Union[list[tuple[Any, ...]], list[str]],
         default: int = 0,
         onchange: CallbackType = None,
         onreturn: CallbackType = None,
