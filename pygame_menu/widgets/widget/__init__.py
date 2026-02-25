@@ -5,6 +5,7 @@ https://github.com/ppizarror/pygame-menu
 WIDGET
 This module contains the widgets of pygame-menu.
 """
+from __future__ import annotations
 
 from pygame_menu.widgets.widget.button import Button
 from pygame_menu.widgets.widget.colorinput import ColorInput

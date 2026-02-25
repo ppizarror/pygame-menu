@@ -6,12 +6,14 @@ EXAMPLE - DYNAMIC BUTTON
 Menu with dynamic buttons.
 """
 
+from __future__ import annotations
+
 __all__ = ['main']
+
+from random import randrange
 
 import pygame_menu
 from pygame_menu.examples import create_example_window
-
-from random import randrange
 
 surface = create_example_window('Example - Dynamic Button Append', (600, 400))
 menu = pygame_menu.Menu(

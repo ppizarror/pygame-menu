@@ -6,33 +6,38 @@ TABLE
 The table widget is a Frame which packs widgets in a structured way.
 """
 
+from __future__ import annotations
+
 __all__ = [
     'Table',
     'TableManager'
 ]
 
-import pygame
-import pygame_menu
-
 from abc import ABC
+from typing import Optional, Union
+
+import pygame
+
+import pygame_menu
+from pygame_menu._types import (ColorInputType, EventVectorType, NumberType,
+                                PaddingType, Vector2IntType, VectorInstance)
 from pygame_menu.baseimage import BaseImage
 from pygame_menu.font import FontType, assert_font
-from pygame_menu.locals import ORIENTATION_VERTICAL, ALIGN_LEFT, ALIGN_CENTER, \
-    ORIENTATION_HORIZONTAL, POSITION_NORTH, POSITION_CENTER, POSITION_SOUTH, \
-    ALIGN_RIGHT, POSITION_WEST, POSITION_EAST
-from pygame_menu.utils import assert_alignment, assert_color, uuid4, parse_padding, \
-    assert_position, assert_vector, warn
+from pygame_menu.locals import (ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT,
+                                ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL,
+                                POSITION_CENTER, POSITION_EAST, POSITION_NORTH,
+                                POSITION_SOUTH, POSITION_WEST)
+from pygame_menu.utils import (assert_alignment, assert_color, assert_position,
+                               assert_vector, parse_padding, uuid4, warn)
 from pygame_menu.version import ver
-from pygame_menu.widgets.core.widget import Widget, WidgetBorderPositionType, \
-    WIDGET_FULL_BORDER, WIDGET_BORDER_POSITION_NONE, AbstractWidgetManager
+from pygame_menu.widgets.core.widget import (WIDGET_BORDER_POSITION_NONE,
+                                             WIDGET_FULL_BORDER,
+                                             AbstractWidgetManager, Widget,
+                                             WidgetBorderPositionType)
 from pygame_menu.widgets.widget.frame import Frame
 from pygame_menu.widgets.widget.image import Image
 from pygame_menu.widgets.widget.label import Label
 from pygame_menu.widgets.widget.surface import SurfaceWidget
-
-from pygame_menu._types import ColorInputType, \
-    VectorInstance, PaddingType, NumberType, Vector2IntType, EventVectorType
-from typing import Optional, Union
 
 CellType = Union['Widget', str, int, float, bool, 'BaseImage', 'pygame.Surface']
 ColumnInputType = Union[tuple[CellType, ...], list[CellType]]

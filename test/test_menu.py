@@ -6,27 +6,30 @@ TEST MENU
 Menu object tests.
 """
 
+from __future__ import annotations
+
 __all__ = ['MenuTest']
 
-from test._utils import BaseTest, surface, MenuUtils, PygameEventUtils, \
-    TEST_THEME, PYGAME_V2, WIDGET_MOUSEOVER, WIDGET_TOP_CURSOR, reset_widgets_over, \
-    THEME_NON_FIXED_TITLE
 import copy
 import math
 import sys
 import time
 import timeit
+from test._utils import (PYGAME_V2, TEST_THEME, THEME_NON_FIXED_TITLE,
+                         WIDGET_MOUSEOVER, WIDGET_TOP_CURSOR, BaseTest,
+                         MenuUtils, PygameEventUtils, reset_widgets_over,
+                         surface)
 from typing import Any
 
 import pygame
+
 import pygame_menu
 import pygame_menu.controls as ctrl
-
 from pygame_menu import events
 # noinspection PyProtectedMember
 from pygame_menu.locals import FINGERDOWN, FINGERMOTION
-from pygame_menu.utils import set_pygame_cursor, get_cursor
-from pygame_menu.widgets import Label, Button
+from pygame_menu.utils import get_cursor, set_pygame_cursor
+from pygame_menu.widgets import Button, Label
 
 # Configure the tests
 TEST_TIME_DRAW = False

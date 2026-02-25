@@ -1,3 +1,2 @@
 pygame>=1.9.3
 pyperclip
-typing_extensions

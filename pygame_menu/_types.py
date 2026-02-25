@@ -6,12 +6,13 @@ TYPES
 Defines common pygame-menu types.
 """
 
+from __future__ import annotations
+
+from collections.abc import Callable, Mapping, Sequence
+from typing import Any, Optional, Union
+
 from pygame.color import Color as __Color
 from pygame.event import Event as EventType
-
-from typing import Union, Any, Optional
-from collections.abc import Sequence, Mapping, Callable
-
 
 # Common types
 ArgsType = Optional[Sequence[Any]]

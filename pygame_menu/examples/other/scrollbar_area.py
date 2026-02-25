@@ -6,16 +6,19 @@ EXAMPLE - SCROLL AREA
 Shows ScrollArea widget usage.
 """
 
-__all__ = ['main']
+from __future__ import annotations
 
-import pygame
-from pygame_menu import locals
-from pygame_menu.examples import create_example_window
-from pygame_menu._scrollarea import ScrollArea
-from pygame_menu.utils import make_surface
+__all__ = ['main']
 
 import itertools
 from collections.abc import Generator
+
+import pygame
+
+from pygame_menu import locals
+from pygame_menu._scrollarea import ScrollArea
+from pygame_menu.examples import create_example_window
+from pygame_menu.utils import make_surface
 
 FPS = 30
 W_SIZE = 800  # Width of window size

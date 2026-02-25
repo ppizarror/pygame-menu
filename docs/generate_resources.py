@@ -9,6 +9,7 @@ Generate resources for docs.
 __all__ = ['save_font_image', 'generate_fonts_doc']
 
 import pygame
+
 import pygame_menu
 
 pygame.init()

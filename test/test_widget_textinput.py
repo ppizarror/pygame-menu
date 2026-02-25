@@ -6,15 +6,17 @@ TEST WIDGET - TEXTINPUT
 Test TextInput and ColorInput widgets.
 """
 
+from __future__ import annotations
+
 __all__ = ['TextInputWidgetTest']
 
-from test._utils import MenuUtils, surface, PygameEventUtils, TEST_THEME, PYGAME_V2, \
-    BaseTest, sleep
+from test._utils import (PYGAME_V2, TEST_THEME, BaseTest, MenuUtils,
+                         PygameEventUtils, sleep, surface)
 
 import pygame
+
 import pygame_menu
 import pygame_menu.controls as ctrl
-
 from pygame_menu.widgets.core.widget import WidgetTransformationNotImplemented
 
 

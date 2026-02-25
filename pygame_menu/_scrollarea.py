@@ -6,6 +6,8 @@ SCROLLAREA
 ScrollArea class to manage scrolling in Menu.
 """
 
+from __future__ import annotations
+
 __all__ = [
 
     # Main class
@@ -16,25 +18,30 @@ __all__ = [
 
 ]
 
-import pygame
-import pygame_menu
-
 from itertools import product
+from typing import Any, Optional, Union
+
+import pygame
+
+import pygame_menu
 from pygame_menu._base import Base
 from pygame_menu._decorator import Decorator
-from pygame_menu.locals import POSITION_SOUTHEAST, POSITION_SOUTHWEST, POSITION_WEST, \
-    POSITION_NORTHEAST, POSITION_NORTHWEST, POSITION_CENTER, POSITION_EAST, \
-    POSITION_NORTH, ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL, \
-    SCROLLAREA_POSITION_BOTH_HORIZONTAL, POSITION_SOUTH, SCROLLAREA_POSITION_FULL, \
-    SCROLLAREA_POSITION_BOTH_VERTICAL, SCROLLAREA_POSITION_NONE
-from pygame_menu.utils import make_surface, assert_color, assert_position, \
-    assert_orientation, get_finger_pos
+from pygame_menu._types import (ColorInputType, CursorInputType, EventType,
+                                EventVectorType, NumberInstance, NumberType,
+                                StringVector, Tuple2IntType, Tuple2NumberType,
+                                VectorInstance)
+from pygame_menu.locals import (ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL,
+                                POSITION_CENTER, POSITION_EAST, POSITION_NORTH,
+                                POSITION_NORTHEAST, POSITION_NORTHWEST,
+                                POSITION_SOUTH, POSITION_SOUTHEAST,
+                                POSITION_SOUTHWEST, POSITION_WEST,
+                                SCROLLAREA_POSITION_BOTH_HORIZONTAL,
+                                SCROLLAREA_POSITION_BOTH_VERTICAL,
+                                SCROLLAREA_POSITION_FULL,
+                                SCROLLAREA_POSITION_NONE)
+from pygame_menu.utils import (assert_color, assert_orientation,
+                               assert_position, get_finger_pos, make_surface)
 from pygame_menu.widgets import ScrollBar
-
-from pygame_menu._types import NumberType, Tuple2NumberType, \
-    CursorInputType, Tuple2IntType, NumberInstance, ColorInputType, \
-    EventVectorType, EventType, VectorInstance, StringVector
-from typing import Union, Optional, Any
 
 
 def get_scrollbars_from_position(

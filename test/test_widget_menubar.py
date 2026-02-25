@@ -6,20 +6,24 @@ TEST WIDGET - MENUBAR
 Test MenuBar widget.
 """
 
+from __future__ import annotations
+
 __all__ = ['MenuBarWidgetTest']
 
-from test._utils import MenuUtils, surface, PygameEventUtils, BaseTest
+from test._utils import BaseTest, MenuUtils, PygameEventUtils, surface
 
 import pygame
+
 import pygame_menu
 import pygame_menu.controls as ctrl
-
-from pygame_menu.locals import POSITION_NORTH, POSITION_SOUTH, POSITION_EAST, \
-    POSITION_WEST, POSITION_SOUTHWEST
-from pygame_menu.widgets import MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_NONE, \
-    MENUBAR_STYLE_SIMPLE, MENUBAR_STYLE_UNDERLINE, MENUBAR_STYLE_UNDERLINE_TITLE, \
-    MENUBAR_STYLE_TITLE_ONLY, MENUBAR_STYLE_TITLE_ONLY_DIAGONAL
-from pygame_menu.widgets import MenuBar
+from pygame_menu.locals import (POSITION_EAST, POSITION_NORTH, POSITION_SOUTH,
+                                POSITION_SOUTHWEST, POSITION_WEST)
+from pygame_menu.widgets import (MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_NONE,
+                                 MENUBAR_STYLE_SIMPLE,
+                                 MENUBAR_STYLE_TITLE_ONLY,
+                                 MENUBAR_STYLE_TITLE_ONLY_DIAGONAL,
+                                 MENUBAR_STYLE_UNDERLINE,
+                                 MENUBAR_STYLE_UNDERLINE_TITLE, MenuBar)
 from pygame_menu.widgets.core.widget import WidgetTransformationNotImplemented
 
 

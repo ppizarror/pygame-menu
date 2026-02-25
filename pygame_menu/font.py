@@ -6,6 +6,8 @@ FONTS
 Menu fonts.
 """
 
+from __future__ import annotations
+
 __all__ = [
 
     # Fonts path included in resources
@@ -41,7 +43,7 @@ __all__ = [
 ]
 
 from pathlib import Path
-from typing import Union, Any
+from typing import Any, Union
 
 import pygame.font as __font
 

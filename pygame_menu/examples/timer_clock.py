@@ -6,15 +6,18 @@ EXAMPLE - TIMER CLOCK
 Example file, timer clock with in-menu options.
 """
 
-__all__ = ['main']
+from __future__ import annotations
 
-import pygame
-import pygame_menu
-from pygame_menu.examples import create_example_window
+__all__ = ['main']
 
 import datetime
 from random import randrange
 from typing import Optional
+
+import pygame
+
+import pygame_menu
+from pygame_menu.examples import create_example_window
 
 # Constants and global variables
 ABOUT = [f'pygame-menu {pygame_menu.__version__}',

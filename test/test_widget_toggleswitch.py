@@ -6,13 +6,14 @@ TEST WIDGET - TOGGLESWITCH
 Test ToggleSwitch widget.
 """
 
+from __future__ import annotations
+
 __all__ = ['ToggleSwitchWidgetTest']
 
-from test._utils import MenuUtils, surface, PygameEventUtils, BaseTest
+from test._utils import BaseTest, MenuUtils, PygameEventUtils, surface
 
 import pygame_menu
 import pygame_menu.controls as ctrl
-
 from pygame_menu.widgets.core.widget import WidgetTransformationNotImplemented
 
 

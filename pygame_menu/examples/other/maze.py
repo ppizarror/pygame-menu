@@ -7,20 +7,22 @@ Maze solver app, an improved version from https://github.com/ChrisKneller/pygame
 License: GNU General Public License v3.0
 """
 
+from __future__ import annotations
+
 __all__ = ['MazeApp']
 
 import heapq
-import pygame
-import pygame_menu
-import pygame_menu.utils as ut
 import random
 import time
-
 from collections import deque
-from math import inf
-from typing import Union, Optional, Any
 from collections.abc import Generator
+from math import inf
+from typing import Any, Optional, Union
 
+import pygame
+
+import pygame_menu
+import pygame_menu.utils as ut
 from pygame_menu.examples import create_example_window
 
 # Define some colors

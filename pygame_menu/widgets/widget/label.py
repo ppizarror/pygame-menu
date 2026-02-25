@@ -6,23 +6,26 @@ LABEL
 Label class, adds a simple text to the Menu.
 """
 
+from __future__ import annotations
+
 __all__ = [
     'Label',
     'LabelManager'
 ]
 
-import pygame
-import pygame_menu
 import textwrap
 import time
-
 from abc import ABC
-from pygame_menu.utils import assert_color, warn, uuid4, make_surface
-from pygame_menu.widgets.core.widget import Widget, AbstractWidgetManager
-
-from pygame_menu._types import CallbackType, ColorType, ColorInputType, EventVectorType
-from typing import Any, Optional, Union
 from collections.abc import Callable
+from typing import Any, Optional, Union
+
+import pygame
+
+import pygame_menu
+from pygame_menu._types import (CallbackType, ColorInputType, ColorType,
+                                EventVectorType)
+from pygame_menu.utils import assert_color, make_surface, uuid4, warn
+from pygame_menu.widgets.core.widget import AbstractWidgetManager, Widget
 
 LabelTitleGeneratorType = Optional[Callable[[], str]]
 

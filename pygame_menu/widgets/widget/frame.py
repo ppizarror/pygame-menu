@@ -6,6 +6,8 @@ FRAME
 Widget container.
 """
 
+from __future__ import annotations
+
 __all__ = [
 
     # Main class
@@ -24,29 +26,34 @@ __all__ = [
 
 ]
 
-import pygame
-import pygame_menu
-
 from abc import ABC
+from typing import Any, Optional, Union
+
+import pygame
+
+import pygame_menu
 from pygame_menu._decorator import Decorator
+from pygame_menu._types import (CallbackType, ColorInputGradientType,
+                                ColorInputType, CursorInputType,
+                                EventVectorType, NumberInstance, NumberType,
+                                PaddingType, Tuple2IntType, Vector2NumberType,
+                                VectorInstance)
 from pygame_menu.baseimage import BaseImage
-from pygame_menu.locals import CURSOR_HAND, ORIENTATION_VERTICAL, \
-    ORIENTATION_HORIZONTAL, ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT, POSITION_CENTER, \
-    POSITION_NORTH, POSITION_SOUTH, FINGERUP, FINGERDOWN, FINGERMOTION
 from pygame_menu.font import FontType, assert_font
-from pygame_menu.utils import assert_alignment, make_surface, assert_vector, \
-    assert_orientation, assert_color, fill_gradient, parse_padding, uuid4, warn, \
-    get_finger_pos
-from pygame_menu.widgets.core.widget import Widget, check_widget_mouseleave, \
-    WidgetTransformationNotImplemented, AbstractWidgetManager
+from pygame_menu.locals import (ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT,
+                                CURSOR_HAND, FINGERDOWN, FINGERMOTION,
+                                FINGERUP, ORIENTATION_HORIZONTAL,
+                                ORIENTATION_VERTICAL, POSITION_CENTER,
+                                POSITION_NORTH, POSITION_SOUTH)
+from pygame_menu.utils import (assert_alignment, assert_color,
+                               assert_orientation, assert_vector,
+                               fill_gradient, get_finger_pos, make_surface,
+                               parse_padding, uuid4, warn)
+from pygame_menu.widgets.core.widget import (
+    AbstractWidgetManager, Widget, WidgetTransformationNotImplemented,
+    check_widget_mouseleave)
 from pygame_menu.widgets.widget.button import Button
 from pygame_menu.widgets.widget.label import Label
-
-from pygame_menu._types import NumberType, \
-    Vector2NumberType, Tuple2IntType, NumberInstance, ColorInputType, \
-    EventVectorType, PaddingType, CallbackType, ColorInputGradientType, \
-    CursorInputType, VectorInstance
-from typing import Any, Optional, Union
 
 # Constants
 FRAME_DEFAULT_TITLE_BACKGROUND_COLOR = ((10, 36, 106), (166, 202, 240), False, True)

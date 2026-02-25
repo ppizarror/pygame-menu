@@ -6,10 +6,10 @@ BUILD
 Build file.
 """
 
-from pathlib import Path
 import shutil
 import subprocess
 import sys
+from pathlib import Path
 
 assert len(sys.argv) == 2, 'Argument is required, usage: build.py pip/twine'
 mode: str = sys.argv[1].strip()

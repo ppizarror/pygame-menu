@@ -6,20 +6,25 @@ SCROLLBAR
 ScrollBar class, manage the selection in a range of values.
 """
 
+from __future__ import annotations
+
 __all__ = ['ScrollBar']
+
+from typing import Literal, Optional
 
 import pygame
 
-from pygame_menu.locals import ORIENTATION_VERTICAL, ORIENTATION_HORIZONTAL, \
-    POSITION_NORTHWEST, FINGERMOTION, FINGERUP, FINGERDOWN
-from pygame_menu.utils import make_surface, assert_orientation, \
-    mouse_motion_current_mouse_position, assert_color, get_finger_pos
-from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImplemented
-
-from pygame_menu._types import VectorIntType, ColorType, \
-    Tuple2IntType, CallbackType, NumberInstance, ColorInputType, NumberType, \
-    EventVectorType, VectorInstance
-from typing import Literal, Optional
+from pygame_menu._types import (CallbackType, ColorInputType, ColorType,
+                                EventVectorType, NumberInstance, NumberType,
+                                Tuple2IntType, VectorInstance, VectorIntType)
+from pygame_menu.locals import (FINGERDOWN, FINGERMOTION, FINGERUP,
+                                ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL,
+                                POSITION_NORTHWEST)
+from pygame_menu.utils import (assert_color, assert_orientation,
+                               get_finger_pos, make_surface,
+                               mouse_motion_current_mouse_position)
+from pygame_menu.widgets.core.widget import (
+    Widget, WidgetTransformationNotImplemented)
 
 
 class ScrollBar(Widget):

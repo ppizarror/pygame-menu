@@ -6,14 +6,17 @@ EXAMPLE - SCROLL MENU
 Shows scrolling in menu.
 """
 
+from __future__ import annotations
+
 __all__ = ['main']
 
+from functools import partial
+from typing import Any
+
 import pygame
+
 import pygame_menu
 from pygame_menu.examples import create_example_window
-
-from typing import Any
-from functools import partial
 
 FPS = 30
 WINDOW_SIZE = (800, 600)

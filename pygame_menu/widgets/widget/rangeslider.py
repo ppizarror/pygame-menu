@@ -6,6 +6,8 @@ RANGE SLIDER
 Slider bar between one/two numeric ranges.
 """
 
+from __future__ import annotations
+
 __all__ = [
 
     # Class
@@ -20,23 +22,25 @@ __all__ = [
 ]
 
 import math
-import pygame
-import pygame_menu
-
 from abc import ABC
-from pygame_menu.locals import POSITION_NORTH, POSITION_SOUTH
-from pygame_menu.font import FontType, assert_font
-from pygame_menu.locals import FINGERUP, FINGERDOWN, FINGERMOTION
-from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, \
-    make_surface, get_finger_pos, assert_position, parse_padding
-from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImplemented, \
-    AbstractWidgetManager
-
-from pygame_menu._types import CallbackType, \
-    ColorType, NumberType, Tuple2IntType, NumberInstance, ColorInputType, \
-    EventVectorType, Vector2NumberType, VectorType, PaddingType, Tuple4IntType
-from typing import Any, Optional, Union
 from collections.abc import Callable
+from typing import Any, Optional, Union
+
+import pygame
+
+import pygame_menu
+from pygame_menu._types import (CallbackType, ColorInputType, ColorType,
+                                EventVectorType, NumberInstance, NumberType,
+                                PaddingType, Tuple2IntType, Tuple4IntType,
+                                Vector2NumberType, VectorType)
+from pygame_menu.font import FontType, assert_font
+from pygame_menu.locals import (FINGERDOWN, FINGERMOTION, FINGERUP,
+                                POSITION_NORTH, POSITION_SOUTH)
+from pygame_menu.utils import (assert_color, assert_position, assert_vector,
+                               check_key_pressed_valid, get_finger_pos,
+                               make_surface, parse_padding)
+from pygame_menu.widgets.core.widget import (
+    AbstractWidgetManager, Widget, WidgetTransformationNotImplemented)
 
 RangeSliderRangeValueType = Union[Vector2NumberType, VectorType]
 RangeSliderValueFormatType = Callable[[NumberType], str]

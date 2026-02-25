@@ -7,6 +7,8 @@ MenuBar class to display the Menu title.
 """
 # File constants no. 1000
 
+from __future__ import annotations
+
 __all__ = [
 
     # Main class
@@ -26,18 +28,19 @@ __all__ = [
 
 ]
 
+from typing import Any, Optional
+
 import pygame
 import pygame.gfxdraw as gfxdraw
 
-from pygame_menu.locals import FINGERUP, POSITION_EAST, POSITION_WEST, POSITION_NORTH, \
-    POSITION_SOUTH
+from pygame_menu._types import (CallbackType, ColorInputType, ColorType,
+                                EventVectorType, NumberInstance, NumberType,
+                                Tuple2IntType, VectorInstance)
+from pygame_menu.locals import (FINGERUP, POSITION_EAST, POSITION_NORTH,
+                                POSITION_SOUTH, POSITION_WEST)
 from pygame_menu.utils import assert_color, get_finger_pos, warn
-from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImplemented
-
-from pygame_menu._types import CallbackType, Tuple2IntType, \
-    NumberInstance, ColorInputType, EventVectorType, VectorInstance, \
-    ColorType, NumberType
-from typing import Optional, Any
+from pygame_menu.widgets.core.widget import (
+    Widget, WidgetTransformationNotImplemented)
 
 # Menubar styles
 MENUBAR_STYLE_ADAPTIVE = 1000

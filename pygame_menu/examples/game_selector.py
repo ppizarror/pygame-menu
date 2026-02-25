@@ -6,14 +6,17 @@ EXAMPLE - GAME SELECTOR
 Game with 3 difficulty options.
 """
 
-__all__ = ['main']
+from __future__ import annotations
 
-import pygame
-import pygame_menu
-from pygame_menu.examples import create_example_window
+__all__ = ['main']
 
 from random import randrange
 from typing import Any, Optional
+
+import pygame
+
+import pygame_menu
+from pygame_menu.examples import create_example_window
 
 # Constants and global variables
 ABOUT = [f'pygame-menu {pygame_menu.__version__}',

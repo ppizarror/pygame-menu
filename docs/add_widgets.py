@@ -11,6 +11,7 @@ import sys
 sys.path.insert(0, '../')
 
 import pygame
+
 import pygame_menu
 
 # Init pygame

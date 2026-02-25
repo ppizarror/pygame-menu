@@ -6,10 +6,13 @@ EXAMPLES
 Example file directory.
 """
 
+from __future__ import annotations
+
 __all__ = ['create_example_window']
 
-import pygame
 import sys
+
+import pygame
 
 _PYGAME_ICON = [None]
 
@@ -39,8 +42,9 @@ def create_example_window(
     assert isinstance(window_size[0], int), 'width must be an integer'
     assert isinstance(window_size[1], int), 'height must be an integer'
 
-    from pygame_menu.baseimage import IMAGE_EXAMPLE_PYGAME_MENU, BaseImage
     import os
+
+    from pygame_menu.baseimage import IMAGE_EXAMPLE_PYGAME_MENU, BaseImage
 
     if init_pygame:
         pygame.init()

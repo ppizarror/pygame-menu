@@ -6,6 +6,8 @@ EXAMPLE - WIDGET POSITIONING
 Test widget positioning example.
 """
 
+from __future__ import annotations
+
 import pygame_menu
 from pygame_menu.examples import create_example_window
 

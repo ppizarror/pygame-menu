@@ -7,25 +7,27 @@ Generic decorator, adds additional images, polygons or text to the object.
 """
 # File constants no. 2000
 
+from __future__ import annotations
+
 __all__ = ['Decorator']
 
-from math import pi
 import math
+from collections.abc import Callable
+from math import pi
+from typing import Any, Optional, Union
 
 import pygame
-import pygame_menu
 import pygame.draw as pydraw
 import pygame.gfxdraw as gfxdraw
 
+import pygame_menu
 from pygame_menu._base import Base
+from pygame_menu._types import (CallableNoArgsType, ColorInputType,
+                                NumberInstance, NumberType, Tuple2IntType,
+                                Tuple2NumberType)
 from pygame_menu.font import FontType
-from pygame_menu.utils import assert_list_vector, assert_color, make_surface, \
-    assert_vector, uuid4, warn
-
-from pygame_menu._types import Tuple2NumberType, ColorInputType, \
-    NumberType, Tuple2IntType, NumberInstance, CallableNoArgsType
-from typing import Any, Union, Optional
-from collections.abc import Callable
+from pygame_menu.utils import (assert_color, assert_list_vector, assert_vector,
+                               make_surface, uuid4, warn)
 
 # Decoration constants
 DECORATION_ARC: int = 2000
@@ -118,7 +120,7 @@ class Decorator(Base):
         """
         raise _DecoratorCopyException('Decorator class cannot be copied')
 
-    def __deepcopy__(self, memodict: dict) -> 'Decorator':
+    def __deepcopy__(self, memodict: dict[int, Any]) -> 'Decorator':
         """
         Deep-copy method.
 

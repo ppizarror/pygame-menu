@@ -7,6 +7,8 @@ Color input class, Widget created in top of TextInput that provides a textbox
 for entering and previewing colors in RGB and HEX format.
 """
 
+from __future__ import annotations
+
 __all__ = [
 
     # Main class
@@ -27,19 +29,19 @@ __all__ = [
 ]
 
 import math
-import pygame
-import pygame_menu
-
 from abc import ABC
+from collections.abc import Callable
+from typing import Any, Optional, Union
+
+import pygame
+
+import pygame_menu
+from pygame_menu._types import (CallbackType, EventVectorType, NumberInstance,
+                                NumberType, Tuple3IntType)
 from pygame_menu.locals import INPUT_TEXT
 from pygame_menu.utils import check_key_pressed_valid, make_surface
 from pygame_menu.widgets.core.widget import AbstractWidgetManager, Widget
 from pygame_menu.widgets.widget.textinput import TextInput
-
-from pygame_menu._types import NumberType, CallbackType, \
-    Tuple3IntType, NumberInstance, EventVectorType
-from typing import Any, Optional, Union
-from collections.abc import Callable
 
 # Input modes
 COLORINPUT_TYPE_HEX = 'hex'

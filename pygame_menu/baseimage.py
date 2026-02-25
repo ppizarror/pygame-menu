@@ -7,6 +7,8 @@ Provides a class to perform basic image loading and manipulation with pygame.
 """
 # File constants no. 100
 
+from __future__ import annotations
+
 __all__ = [
 
     # Base class
@@ -32,26 +34,27 @@ __all__ = [
 
 ]
 
-from io import BytesIO
-from pathlib import Path
 import base64
 import math
 import os.path as path
+from collections.abc import Callable
+from io import BytesIO
+from pathlib import Path
+from typing import Literal, Optional, Union
 
 import pygame
 
 from pygame_menu._base import Base
-from pygame_menu.locals import POSITION_NORTHWEST, POSITION_NORTHEAST, POSITION_CENTER, \
-    POSITION_WEST, POSITION_SOUTHWEST, POSITION_EAST, POSITION_SOUTHEAST, \
-    POSITION_SOUTH, POSITION_NORTH
-from pygame_menu.utils import assert_vector, assert_position, assert_color, \
-    load_pygame_image_file
-
-from pygame_menu._types import Tuple2IntType, Vector2NumberType, \
-    NumberType, Tuple4IntType, Tuple2NumberType, \
-    ColorInputType, Tuple3IntType, NumberInstance, VectorInstance
-from typing import Optional, Union, Literal
-from collections.abc import Callable
+from pygame_menu._types import (ColorInputType, NumberInstance, NumberType,
+                                Tuple2IntType, Tuple2NumberType, Tuple3IntType,
+                                Tuple4IntType, Vector2NumberType,
+                                VectorInstance)
+from pygame_menu.locals import (POSITION_CENTER, POSITION_EAST, POSITION_NORTH,
+                                POSITION_NORTHEAST, POSITION_NORTHWEST,
+                                POSITION_SOUTH, POSITION_SOUTHEAST,
+                                POSITION_SOUTHWEST, POSITION_WEST)
+from pygame_menu.utils import (assert_color, assert_position, assert_vector,
+                               load_pygame_image_file)
 
 # Example image paths
 __images_path__ = (Path(__file__).resolve().parent / 'resources' / 'images' / '{0}').as_posix()

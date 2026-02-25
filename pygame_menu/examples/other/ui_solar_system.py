@@ -6,17 +6,20 @@ EXAMPLE - UI SOLAR SYSTEM
 Advanced example with a fancy solar system.
 """
 
-__all__ = ['main']
+from __future__ import annotations
 
-import pygame
-import pygame.gfxdraw as gfxdraw
-import pygame_menu
-from pygame_menu.examples import create_example_window
-from pygame_menu.examples._resources import SOLAR_SYSTEM_IMG, NEBULA_IMG
+__all__ = ['main']
 
 import math
 import random
-from typing import Union, Optional
+from typing import Optional, Union
+
+import pygame
+import pygame.gfxdraw as gfxdraw
+
+import pygame_menu
+from pygame_menu.examples import create_example_window
+from pygame_menu.examples._resources import NEBULA_IMG, SOLAR_SYSTEM_IMG
 
 
 class Planet:

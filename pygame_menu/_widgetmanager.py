@@ -6,22 +6,25 @@ MENU WIDGET MANAGER
 Easy widget add/remove to Menus.
 """
 
+from __future__ import annotations
+
 __all__ = ['WidgetManager']
 
+from typing import Any
+
 import pygame_menu
-
 from pygame_menu._base import Base
+from pygame_menu._types import PaddingInstance
 from pygame_menu.font import assert_font
-from pygame_menu.utils import assert_vector, assert_color, assert_cursor, \
-    assert_position_vector, warn
-
+from pygame_menu.utils import (assert_color, assert_cursor,
+                               assert_position_vector, assert_vector, warn)
 # Import widgets
 from pygame_menu.widgets.core.widget import Widget, check_widget_mouseleave
-
 from pygame_menu.widgets.widget.button import ButtonManager
 from pygame_menu.widgets.widget.colorinput import ColorInputManager
 from pygame_menu.widgets.widget.dropselect import DropSelectManager
-from pygame_menu.widgets.widget.dropselect_multiple import DropSelectMultipleManager
+from pygame_menu.widgets.widget.dropselect_multiple import \
+    DropSelectMultipleManager
 from pygame_menu.widgets.widget.frame import FrameManager
 from pygame_menu.widgets.widget.hmargin import HMarginManager
 from pygame_menu.widgets.widget.image import ImageManager
@@ -37,9 +40,6 @@ from pygame_menu.widgets.widget.textinput import TextInputManager
 from pygame_menu.widgets.widget.toggleswitch import ToggleSwitchManager
 from pygame_menu.widgets.widget.vfill import VFillManager
 from pygame_menu.widgets.widget.vmargin import VMarginManager
-
-from pygame_menu._types import PaddingInstance
-from typing import Any
 
 
 # noinspection PyProtectedMember

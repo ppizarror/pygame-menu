@@ -6,6 +6,8 @@ TEXT INPUT
 Text input class, this widget lets user write text.
 """
 
+from __future__ import annotations
+
 __all__ = [
     'TextInput',
     'TextInputManager'
@@ -14,26 +16,28 @@ __all__ = [
 import math
 import os
 import platform
+from abc import ABC
+from collections.abc import Callable
+from typing import Any, Optional, Union
+
 import pygame
+
 import pygame_menu
 import pygame_menu.controls as ctrl
-
-from abc import ABC
-from pygame_menu.locals import FINGERDOWN, FINGERUP, INPUT_INT, INPUT_FLOAT, INPUT_TEXT
-from pygame_menu.utils import check_key_pressed_valid, make_surface, assert_color, \
-    get_finger_pos, warn, assert_vector
-from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImplemented, \
-    AbstractWidgetManager
-
-from pygame_menu._types import CallbackType, ColorType, \
-    NumberType, Tuple2IntType, Tuple2NumberType, NumberInstance, ColorInputType, \
-    EventVectorType
-from typing import Any, Optional, Union
-from collections.abc import Callable
+from pygame_menu._types import (CallbackType, ColorInputType, ColorType,
+                                EventVectorType, NumberInstance, NumberType,
+                                Tuple2IntType, Tuple2NumberType)
+from pygame_menu.locals import (FINGERDOWN, FINGERUP, INPUT_FLOAT, INPUT_INT,
+                                INPUT_TEXT)
+from pygame_menu.utils import (assert_color, assert_vector,
+                               check_key_pressed_valid, get_finger_pos,
+                               make_surface, warn)
+from pygame_menu.widgets.core.widget import (
+    AbstractWidgetManager, Widget, WidgetTransformationNotImplemented)
 
 try:
     # noinspection PyProtectedMember
-    from pyperclip import copy, paste, PyperclipException  # type: ignore
+    from pyperclip import PyperclipException, copy, paste  # type: ignore
 
 except (ModuleNotFoundError, ImportError):
     copy, paste = lambda text: None, lambda: ''

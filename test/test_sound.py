@@ -6,11 +6,13 @@ TEST SOUND
 Test sound management.
 """
 
+from __future__ import annotations
+
 __all__ = ['SoundTest']
 
-from pathlib import Path
-from test._utils import MenuUtils, BaseTest
 import copy
+from pathlib import Path
+from test._utils import BaseTest, MenuUtils
 
 import pygame_menu
 
@@ -149,8 +151,9 @@ class SoundTest(BaseTest):
         self.assertTrue(SOUND_INITIALIZED.available)
 
     def test_reinit_logic(self):
-        from pygame_menu.sound import SOUND_INITIALIZED
         import pygame
+
+        from pygame_menu.sound import SOUND_INITIALIZED
 
         # Reset state manually for test isolation
         SOUND_INITIALIZED.attempted = False

@@ -7,33 +7,38 @@ Drop select widget. This is similar to HTML selects, it can contain many items
 (options) to select. The selection is unique.
 """
 
+from __future__ import annotations
+
 __all__ = [
     'DropSelect',
     'DropSelectManager'
 ]
 
 import math
-import pygame
-import pygame_menu
-
 from abc import ABC
-from pygame_menu.font import FontType, get_font, assert_font
-from pygame_menu.locals import ORIENTATION_VERTICAL, FINGERDOWN, FINGERUP, \
-    POSITION_NORTHWEST, POSITION_SOUTHEAST
-from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, \
-    make_surface, parse_padding, get_finger_pos, uuid4, assert_cursor, assert_position
-from pygame_menu.widgets.core.widget import AbstractWidgetManager, Widget, \
-    WidgetTransformationNotImplemented
+from collections.abc import Callable
+from typing import Any, Optional, Union
+
+import pygame
+
+import pygame_menu
+from pygame_menu._types import (CallbackType, ColorInputType, ColorType,
+                                CursorInputType, CursorType, EventVectorType,
+                                NumberInstance, NumberType, PaddingInstance,
+                                PaddingType, Tuple2IntType, Tuple2NumberType,
+                                Tuple3IntType, Tuple4IntType)
+from pygame_menu.font import FontType, assert_font, get_font
+from pygame_menu.locals import (FINGERDOWN, FINGERUP, ORIENTATION_VERTICAL,
+                                POSITION_NORTHWEST, POSITION_SOUTHEAST)
+from pygame_menu.utils import (assert_color, assert_cursor, assert_position,
+                               assert_vector, check_key_pressed_valid,
+                               get_finger_pos, make_surface, parse_padding,
+                               uuid4)
+from pygame_menu.widgets.core.widget import (
+    AbstractWidgetManager, Widget, WidgetTransformationNotImplemented)
 from pygame_menu.widgets.widget.button import Button
 from pygame_menu.widgets.widget.frame import Frame
 from pygame_menu.widgets.widget.selector import check_selector_items
-
-from pygame_menu._types import CallbackType, \
-    ColorType, ColorInputType, Tuple2IntType, Tuple3IntType, PaddingType, \
-    PaddingInstance, Tuple4IntType, NumberType, EventVectorType, Tuple2NumberType, \
-    CursorInputType, CursorType, NumberInstance
-from typing import Any, Optional, Union
-from collections.abc import Callable
 
 
 # noinspection PyProtectedMember

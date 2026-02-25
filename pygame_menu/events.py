@@ -6,6 +6,8 @@ EVENTS
 Menu events definition and locals.
 """
 
+from __future__ import annotations
+
 __all__ = [
 
     # Class
@@ -53,6 +55,7 @@ __all__ = [
 ]
 
 from typing import Any
+
 import pygame.locals as __locals
 
 

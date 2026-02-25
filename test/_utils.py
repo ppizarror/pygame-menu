@@ -6,6 +6,8 @@ UTILS
 Test suite utility functions and classes.
 """
 
+from __future__ import annotations
+
 __all__ = [
 
     # Globals
@@ -33,22 +35,22 @@ __all__ = [
 import random
 import sys
 import unittest
-
 from time import sleep
+from typing import Any, Optional, Union
 
 import pygame
-import pygame_menu
 
+import pygame_menu
+# noinspection PyProtectedMember
+from pygame_menu._types import (EventType, MenuColumnMaxWidthType,
+                                MenuColumnMinWidthType, MenuRowsType,
+                                NumberInstance, NumberType, Tuple2IntType,
+                                Tuple2NumberType, VectorInstance,
+                                VectorIntType)
 from pygame_menu.font import FONT_EXAMPLES
 from pygame_menu.locals import FINGERDOWN, FINGERMOTION, FINGERUP
-from pygame_menu.utils import assert_vector, PYGAME_V2
+from pygame_menu.utils import PYGAME_V2, assert_vector
 from pygame_menu.widgets.core.widget import check_widget_mouseleave
-
-# noinspection PyProtectedMember
-from pygame_menu._types import NumberType, EventType, \
-    Tuple2IntType, MenuColumnMaxWidthType, MenuColumnMinWidthType, MenuRowsType, \
-    Tuple2NumberType, VectorIntType, VectorInstance, NumberInstance
-from typing import Any, Optional, Union
 
 EventListType = Union[EventType, list[EventType]]
 

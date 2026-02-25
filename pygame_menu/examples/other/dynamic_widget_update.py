@@ -6,14 +6,17 @@ EXAMPLE - DYNAMIC WIDGET UPDATE
 Dynamically updates the widgets based on user events.
 """
 
-__all__ = ['main']
+from __future__ import annotations
 
-import pygame
-import pygame_menu
-from pygame_menu.examples import create_example_window
+__all__ = ['main']
 
 import math
 from typing import Any
+
+import pygame
+
+import pygame_menu
+from pygame_menu.examples import create_example_window
 
 
 class App:

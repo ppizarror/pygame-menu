@@ -6,6 +6,8 @@ DROPSELECT MULTIPLE
 Drop select where multiple options can be selected at the same time.
 """
 
+from __future__ import annotations
+
 __all__ = [
 
     # Main Class
@@ -22,22 +24,22 @@ __all__ = [
 
 ]
 
-import pygame
-import pygame_menu
-
 from abc import ABC
+from collections.abc import Callable
+from typing import Any, Optional, Union
+
+import pygame
+
+import pygame_menu
+from pygame_menu._types import (CallbackType, ColorInputType, ColorType,
+                                CursorInputType, NumberType, PaddingType,
+                                Tuple2IntType, Tuple2NumberType, Tuple3IntType)
 from pygame_menu.font import FontType
 from pygame_menu.locals import POSITION_NORTHWEST, POSITION_SOUTHEAST
 from pygame_menu.utils import assert_color, assert_vector
 from pygame_menu.widgets.core.widget import AbstractWidgetManager, Widget
 from pygame_menu.widgets.widget.button import Button
 from pygame_menu.widgets.widget.dropselect import DropSelect
-
-from pygame_menu._types import CallbackType, \
-    ColorType, ColorInputType, Tuple2IntType, Tuple3IntType, PaddingType, \
-    Tuple2NumberType, CursorInputType, NumberType
-from typing import Any, Optional, Union
-from collections.abc import Callable
 
 DROPSELECT_MULTIPLE_SFORMAT_LIST_COMMA = 'comma-list'
 DROPSELECT_MULTIPLE_SFORMAT_LIST_HYPHEN = 'hyphen-list'

@@ -7,40 +7,46 @@ Menu class.
 """
 # File constants no. 0
 
+from __future__ import annotations
+
 __all__ = ['Menu']
 
 import math
 import os
 import sys
 import time
+from collections.abc import Callable
+from typing import Any, Optional, Union
 
 import pygame
 import pygame.gfxdraw as gfxdraw
-import pygame_menu.events as _events
 
+import pygame_menu.events as _events
 from pygame_menu._base import Base
 from pygame_menu._decorator import Decorator
+from pygame_menu._scrollarea import ScrollArea, get_scrollbars_from_position
+# Import types
+from pygame_menu._types import (CallableNoArgsType, EventListType, EventType,
+                                EventVectorType, MenuColumnMaxWidthType,
+                                MenuColumnMinWidthType, MenuRowsType,
+                                NumberInstance, NumberType, Tuple2BoolType,
+                                Tuple2IntType, Tuple4Tuple2IntType,
+                                Vector2BoolType, Vector2IntType,
+                                Vector2NumberType, VectorInstance, VectorType)
 from pygame_menu._widgetmanager import WidgetManager
 from pygame_menu.controls import Controller
-from pygame_menu.locals import ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT, \
-    ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL, FINGERDOWN, FINGERUP, FINGERMOTION
-from pygame_menu._scrollarea import ScrollArea, get_scrollbars_from_position
+from pygame_menu.locals import (ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT,
+                                FINGERDOWN, FINGERMOTION, FINGERUP,
+                                ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL)
 from pygame_menu.sound import Sound
-from pygame_menu.themes import Theme, THEME_DEFAULT
-from pygame_menu.utils import assert_vector, make_surface, warn, \
-    check_key_pressed_valid, mouse_motion_current_mouse_position, get_finger_pos, \
-    print_menu_widget_structure
-from pygame_menu.widgets import Frame, Widget, MenuBar
-from pygame_menu.widgets.core.widget import check_widget_mouseleave, WIDGET_MOUSEOVER
-
-# Import types
-from pygame_menu._types import NumberType, VectorType, \
-    Vector2NumberType, Vector2IntType, Vector2BoolType, \
-    Tuple4Tuple2IntType, Tuple2IntType, MenuColumnMaxWidthType, MenuColumnMinWidthType, \
-    MenuRowsType, Tuple2BoolType, NumberInstance, VectorInstance, EventType, \
-    EventVectorType, EventListType, CallableNoArgsType
-from typing import Union, Optional, Any
-from collections.abc import Callable
+from pygame_menu.themes import THEME_DEFAULT, Theme
+from pygame_menu.utils import (assert_vector, check_key_pressed_valid,
+                               get_finger_pos, make_surface,
+                               mouse_motion_current_mouse_position,
+                               print_menu_widget_structure, warn)
+from pygame_menu.widgets import Frame, MenuBar, Widget
+from pygame_menu.widgets.core.widget import (WIDGET_MOUSEOVER,
+                                             check_widget_mouseleave)
 
 # Joy events
 JOY_EVENT_LEFT = 1

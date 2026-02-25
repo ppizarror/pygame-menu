@@ -6,6 +6,8 @@ TEST VERSION
 Test version management.
 """
 
+from __future__ import annotations
+
 __all__ = ['VersionTest']
 
 from test._utils import BaseTest

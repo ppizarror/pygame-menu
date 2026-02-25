@@ -6,10 +6,12 @@ EXAMPLE - SIMPLE
 Super simple example of pygame-menu usage, featuring a selector and a button.
 """
 
-import pygame_menu
-from pygame_menu.examples import create_example_window
+from __future__ import annotations
 
 from typing import Any
+
+import pygame_menu
+from pygame_menu.examples import create_example_window
 
 surface = create_example_window('Example - Simple', (600, 400))
 

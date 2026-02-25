@@ -6,18 +6,21 @@ TEST WIDGET - DROPSELECT
 Test DropSelect and DropSelectMultiple widgets.
 """
 
+from __future__ import annotations
+
 __all__ = ['DropSelectWidgetTest']
 
-from test._utils import MenuUtils, surface, PygameEventUtils, PYGAME_V2, \
-    THEME_NON_FIXED_TITLE, BaseTest
+from test._utils import (PYGAME_V2, THEME_NON_FIXED_TITLE, BaseTest, MenuUtils,
+                         PygameEventUtils, surface)
 
 import pygame
+
 import pygame_menu
 import pygame_menu.controls as ctrl
-
-from pygame_menu.locals import ORIENTATION_VERTICAL, FINGERDOWN
-from pygame_menu.widgets import DROPSELECT_MULTIPLE_SFORMAT_LIST_COMMA, \
-    DROPSELECT_MULTIPLE_SFORMAT_LIST_HYPHEN, DROPSELECT_MULTIPLE_SFORMAT_TOTAL
+from pygame_menu.locals import FINGERDOWN, ORIENTATION_VERTICAL
+from pygame_menu.widgets import (DROPSELECT_MULTIPLE_SFORMAT_LIST_COMMA,
+                                 DROPSELECT_MULTIPLE_SFORMAT_LIST_HYPHEN,
+                                 DROPSELECT_MULTIPLE_SFORMAT_TOTAL)
 from pygame_menu.widgets.core.widget import WidgetTransformationNotImplemented
 
 

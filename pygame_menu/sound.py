@@ -6,6 +6,8 @@ SOUND
 Sound class.
 """
 
+from __future__ import annotations
+
 __all__ = [
 
     # Main class
@@ -38,22 +40,22 @@ __all__ = [
 
 ]
 
+import time
 from dataclasses import dataclass
 from pathlib import Path
-import time
+from typing import Any, Optional, Union
 
 from pygame import error as pygame_error
 from pygame import mixer
 from pygame import vernum as pygame_version
 
 from pygame_menu._base import Base
+from pygame_menu._types import NumberInstance, NumberType
 from pygame_menu.utils import warn
 
-from pygame_menu._types import NumberType, NumberInstance
-from typing import Optional, Union, Any
-
 try:  # pygame<2.0.0 compatibility
-    from pygame import AUDIO_ALLOW_CHANNELS_CHANGE, AUDIO_ALLOW_FREQUENCY_CHANGE
+    from pygame import (AUDIO_ALLOW_CHANNELS_CHANGE,
+                        AUDIO_ALLOW_FREQUENCY_CHANGE)
 except ImportError:
     AUDIO_ALLOW_CHANNELS_CHANGE, AUDIO_ALLOW_FREQUENCY_CHANGE = False, False
 

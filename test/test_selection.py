@@ -6,16 +6,19 @@ TEST WIDGET SELECTION.
 Test widget selection effects.
 """
 
+from __future__ import annotations
+
 __all__ = ['SelectionTest']
 
-from test._utils import MenuUtils, surface, BaseTest
 import copy
+from test._utils import BaseTest, MenuUtils, surface
 
 from pygame_menu.widgets import Button
-from pygame_menu.widgets.selection import LeftArrowSelection, RightArrowSelection, \
-    HighlightSelection, NoneSelection, SimpleSelection
-
 from pygame_menu.widgets.core.selection import Selection
+from pygame_menu.widgets.selection import (HighlightSelection,
+                                           LeftArrowSelection, NoneSelection,
+                                           RightArrowSelection,
+                                           SimpleSelection)
 from pygame_menu.widgets.selection.arrow_selection import ArrowSelection
 
 

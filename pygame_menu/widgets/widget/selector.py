@@ -7,6 +7,8 @@ Selector class, contains several items that can be changed in a horizontal way
 (left/right). Items are solely displayed.
 """
 
+from __future__ import annotations
+
 __all__ = [
 
     # Main class
@@ -25,20 +27,21 @@ __all__ = [
 
 ]
 
-import pygame
-import pygame_menu
-
 from abc import ABC
-from pygame_menu.locals import FINGERUP
-from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, \
-    make_surface, get_finger_pos
-from pygame_menu.widgets.core.widget import Widget, AbstractWidgetManager
-
-from pygame_menu._types import CallbackType, \
-    ColorType, ColorInputType, Tuple2IntType, Tuple3IntType, EventVectorType, \
-    Tuple2NumberType
-from typing import Any, Optional, Union
 from collections.abc import Callable
+from typing import Any, Optional, Union
+
+import pygame
+
+import pygame_menu
+from pygame_menu._types import (CallbackType, ColorInputType, ColorType,
+                                EventVectorType, Tuple2IntType,
+                                Tuple2NumberType, Tuple3IntType)
+from pygame_menu.locals import FINGERUP
+from pygame_menu.utils import (assert_color, assert_vector,
+                               check_key_pressed_valid, get_finger_pos,
+                               make_surface)
+from pygame_menu.widgets.core.widget import AbstractWidgetManager, Widget
 
 SELECTOR_STYLE_CLASSIC = 'classic'
 SELECTOR_STYLE_FANCY = 'fancy'

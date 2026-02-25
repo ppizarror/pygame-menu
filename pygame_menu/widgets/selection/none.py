@@ -6,11 +6,13 @@ NONE
 No selection effect.
 """
 
+from __future__ import annotations
+
 __all__ = ['NoneSelection']
 
 import pygame
-import pygame_menu
 
+import pygame_menu
 from pygame_menu.widgets.selection.simple import SimpleSelection
 
 

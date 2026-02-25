@@ -6,13 +6,17 @@ TEST DECORATOR
 Decorator API.
 """
 
+from __future__ import annotations
+
 __all__ = ['DecoratorTest']
 
-from test._utils import MenuUtils, surface, TEST_THEME, BaseTest
 import copy
-import pygame
-import pygame_menu
 import timeit
+from test._utils import TEST_THEME, BaseTest, MenuUtils, surface
+
+import pygame
+
+import pygame_menu
 
 # Configure the tests
 TEST_TIME_DRAW = False

@@ -6,14 +6,17 @@ TEST WIDGET - BUTTON
 Test Button widget.
 """
 
+from __future__ import annotations
+
 __all__ = ['ButtonWidgetTest']
 
-from test._utils import MenuUtils, surface, PygameEventUtils, BaseTest, PYGAME_V2
+from test._utils import (PYGAME_V2, BaseTest, MenuUtils, PygameEventUtils,
+                         surface)
 
 import pygame
+
 import pygame_menu
 import pygame_menu.controls as ctrl
-
 from pygame_menu.themes import THEME_DEFAULT
 from pygame_menu.widgets import Button
 from pygame_menu.widgets.core.widget import WIDGET_SHADOW_TYPE_ELLIPSE
@@ -278,8 +281,9 @@ class ButtonWidgetTest(BaseTest):
         """
         theme = THEME_DEFAULT.copy()
         menu = MenuUtils.generic_menu(theme=theme)
-        from pygame_menu.controls import Controller
         from random import randrange
+
+        from pygame_menu.controls import Controller
         custom_controller = Controller()
         test = [0]
 

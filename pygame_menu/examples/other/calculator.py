@@ -6,13 +6,16 @@ EXAMPLE - CALCULATOR
 Simple calculator app.
 """
 
+from __future__ import annotations
+
 __all__ = ['main']
 
+from typing import Union
+
 import pygame
+
 import pygame_menu
 from pygame_menu.examples import create_example_window
-
-from typing import Union
 
 
 class CalculatorApp:

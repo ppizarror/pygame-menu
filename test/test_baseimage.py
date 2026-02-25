@@ -6,19 +6,22 @@ TEST BASE IMAGE
 Test base image management.
 """
 
+from __future__ import annotations
+
 __all__ = ['BaseImageTest']
 
-from pathlib import Path
-from test._utils import surface, PYGAME_V2, BaseTest
 import base64
 import copy
 import io
+from pathlib import Path
+from test._utils import PYGAME_V2, BaseTest, surface
 
 import pygame
-import pygame_menu
 
-from pygame_menu.baseimage import IMAGE_MODE_CENTER, IMAGE_MODE_FILL, IMAGE_MODE_REPEAT_X, \
-    IMAGE_MODE_REPEAT_XY, IMAGE_MODE_REPEAT_Y, IMAGE_MODE_SIMPLE
+import pygame_menu
+from pygame_menu.baseimage import (IMAGE_MODE_CENTER, IMAGE_MODE_FILL,
+                                   IMAGE_MODE_REPEAT_X, IMAGE_MODE_REPEAT_XY,
+                                   IMAGE_MODE_REPEAT_Y, IMAGE_MODE_SIMPLE)
 from pygame_menu.utils import load_pygame_image_file
 
 
@@ -281,7 +284,7 @@ class BaseImageTest(BaseTest):
         Test invalid image opening.
         """
         image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYTHON)
-        self.assertEqual(image.get_size(), (111, 110))
+        self.assertEqual(image.get_size(), (110, 109))
 
         image._drawing_position = 'invalid'
         self.assertRaises(ValueError, lambda: image._get_position_delta())

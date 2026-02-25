@@ -6,27 +6,30 @@ TOGGLE SWITCH
 Switch between several states.
 """
 
+from __future__ import annotations
+
 __all__ = [
     'ToggleSwitch',
     'ToggleSwitchManager'
 ]
 
-import pygame
-import pygame_menu
-
 from abc import ABC
+from collections.abc import Callable
+from typing import Any, Optional, Union
+
+import pygame
+
+import pygame_menu
+from pygame_menu._types import (CallbackType, ColorInputType, ColorType,
+                                EventVectorType, NumberInstance, NumberType,
+                                Tuple2IntType, Tuple2NumberType)
 from pygame_menu.font import FontType, assert_font
 from pygame_menu.locals import FINGERUP
-from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, \
-    make_surface, get_finger_pos
-from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImplemented, \
-    AbstractWidgetManager
-
-from pygame_menu._types import CallbackType, \
-    ColorType, NumberType, Tuple2NumberType, Tuple2IntType, NumberInstance, \
-    ColorInputType, EventVectorType
-from typing import Any, Optional, Union
-from collections.abc import Callable
+from pygame_menu.utils import (assert_color, assert_vector,
+                               check_key_pressed_valid, get_finger_pos,
+                               make_surface)
+from pygame_menu.widgets.core.widget import (
+    AbstractWidgetManager, Widget, WidgetTransformationNotImplemented)
 
 
 class ToggleSwitch(Widget):

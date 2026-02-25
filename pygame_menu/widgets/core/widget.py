@@ -6,6 +6,8 @@ WIDGET
 Base class for widgets.
 """
 
+from __future__ import annotations
+
 __all__ = [
 
     # Main class
@@ -33,31 +35,35 @@ __all__ = [
 
 import random
 import time
+from collections.abc import Callable
+from typing import Any, Optional, Union
 
 import pygame
-import pygame_menu
 
+import pygame_menu
 from pygame_menu._base import Base
 from pygame_menu._decorator import Decorator
+from pygame_menu._types import (CallableNoArgsType, CallbackType,
+                                ColorInputType, ColorType, CursorInputType,
+                                CursorType, EventListType, EventType,
+                                EventVectorType, NumberInstance, NumberType,
+                                PaddingType, Tuple2BoolType, Tuple2IntType,
+                                Tuple2NumberType, Tuple3IntType, Tuple4IntType,
+                                VectorInstance)
 from pygame_menu.controls import Controller
 from pygame_menu.font import FontType
-from pygame_menu.locals import POSITION_NORTHWEST, POSITION_SOUTHWEST, POSITION_WEST, \
-    POSITION_EAST, POSITION_NORTHEAST, POSITION_CENTER, POSITION_NORTH, POSITION_SOUTH, \
-    POSITION_SOUTHEAST, ALIGN_CENTER
+from pygame_menu.locals import (ALIGN_CENTER, POSITION_CENTER, POSITION_EAST,
+                                POSITION_NORTH, POSITION_NORTHEAST,
+                                POSITION_NORTHWEST, POSITION_SOUTH,
+                                POSITION_SOUTHEAST, POSITION_SOUTHWEST,
+                                POSITION_WEST)
 from pygame_menu.sound import Sound
-from pygame_menu.utils import make_surface, assert_alignment, assert_color, \
-    assert_position, assert_vector, parse_padding, uuid4, \
-    mouse_motion_current_mouse_position, PYGAME_V2, set_pygame_cursor, warn, \
-    get_cursor, ShadowGenerator
+from pygame_menu.utils import (PYGAME_V2, ShadowGenerator, assert_alignment,
+                               assert_color, assert_position, assert_vector,
+                               get_cursor, make_surface,
+                               mouse_motion_current_mouse_position,
+                               parse_padding, set_pygame_cursor, uuid4, warn)
 from pygame_menu.widgets.core.selection import Selection
-
-from pygame_menu._types import ColorType, Tuple2IntType, NumberType, \
-    PaddingType, CallbackType, Tuple4IntType, \
-    Tuple2BoolType, Tuple3IntType, NumberInstance, ColorInputType, EventType, \
-    EventVectorType, EventListType, CursorInputType, CursorType, VectorInstance, \
-    Tuple2NumberType, CallableNoArgsType
-from typing import Any, Optional, Union
-from collections.abc import Callable
 
 # This list stores the current widget which requested the mouseover status, and
 # the previous widget list which requested the mouseover. Each time the widget

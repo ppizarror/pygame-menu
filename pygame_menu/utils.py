@@ -6,6 +6,8 @@ UTILS
 Utility functions.
 """
 
+from __future__ import annotations
+
 __all__ = [
 
     # Methods
@@ -46,20 +48,24 @@ import sys
 import traceback
 import uuid
 import warnings
+from typing import Any, Optional, Union
 
 import pygame
+
 import pygame_menu
-
-from pygame_menu.locals import ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT, POSITION_CENTER, \
-    POSITION_NORTH, POSITION_SOUTH, POSITION_SOUTHEAST, POSITION_NORTHWEST, \
-    POSITION_WEST, POSITION_EAST, POSITION_NORTHEAST, POSITION_SOUTHWEST, \
-    ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL, FINGERDOWN, FINGERUP, FINGERMOTION
-
-from pygame_menu._types import ColorType, ColorInputType, Vector2NumberType, \
-    NumberType, NumberInstance, VectorInstance, PaddingInstance, \
-    PaddingType, Tuple4IntType, ColorInputInstance, VectorType, EventType, \
-    CursorInputInstance, CursorInputType, Tuple2IntType, Tuple3IntType
-from typing import Any, Optional, Union
+from pygame_menu._types import (ColorInputInstance, ColorInputType, ColorType,
+                                CursorInputInstance, CursorInputType,
+                                EventType, NumberInstance, NumberType,
+                                PaddingInstance, PaddingType, Tuple2IntType,
+                                Tuple3IntType, Tuple4IntType,
+                                Vector2NumberType, VectorInstance, VectorType)
+from pygame_menu.locals import (ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT,
+                                FINGERDOWN, FINGERMOTION, FINGERUP,
+                                ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL,
+                                POSITION_CENTER, POSITION_EAST, POSITION_NORTH,
+                                POSITION_NORTHEAST, POSITION_NORTHWEST,
+                                POSITION_SOUTH, POSITION_SOUTHEAST,
+                                POSITION_SOUTHWEST, POSITION_WEST)
 
 _ALPHA_CHANNEL: list[bool] = [True]
 PYGAME_V2 = pygame.version.vernum[0] >= 2
