@@ -6,9 +6,12 @@ TEST WIDGET - SURFACE
 Test Surface widget.
 """
 
+from __future__ import annotations
+
 __all__ = ['SurfaceWidgetTest']
 
-from test._utils import MenuUtils, surface, PygameEventUtils, BaseTest
+from test._utils import BaseTest, MenuUtils, PygameEventUtils, surface
+
 import pygame
 
 from pygame_menu.widgets.core.widget import WidgetTransformationNotImplemented

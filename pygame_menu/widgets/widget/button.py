@@ -6,24 +6,28 @@ BUTTON
 Button widget. Basically, a label with callback function and enhanced events.
 """
 
+from __future__ import annotations
+
 __all__ = [
     'Button',
     'ButtonManager'
 ]
 
-import pygame
-import pygame_menu
-import pygame_menu.events as _events
 import re
 import webbrowser
-
 from abc import ABC
-from pygame_menu.locals import FINGERUP, CURSOR_HAND
+from collections.abc import Callable
+from typing import Any, Optional, Union
+
+import pygame
+
+import pygame_menu
+import pygame_menu.events as _events
+from pygame_menu._types import CallbackType, EventVectorType
+from pygame_menu.locals import CURSOR_HAND, FINGERUP
 from pygame_menu.utils import get_finger_pos, warn
 from pygame_menu.widgets.core.widget import AbstractWidgetManager, Widget
-
 from pygame_menu.widgets.widget.label import Label
-from pygame_menu._types import Any, CallbackType, Callable, Union, Optional, EventVectorType
 
 
 class Button(Label):

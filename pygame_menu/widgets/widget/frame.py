@@ -6,6 +6,8 @@ FRAME
 Widget container.
 """
 
+from __future__ import annotations
+
 __all__ = [
 
     # Main class
@@ -24,28 +26,34 @@ __all__ = [
 
 ]
 
-import pygame
-import pygame_menu
-
 from abc import ABC
+from typing import Any, Optional, Union
+
+import pygame
+
+import pygame_menu
 from pygame_menu._decorator import Decorator
+from pygame_menu._types import (CallbackType, ColorInputGradientType,
+                                ColorInputType, CursorInputType,
+                                EventVectorType, NumberInstance, NumberType,
+                                PaddingType, Tuple2IntType, Vector2NumberType,
+                                VectorInstance)
 from pygame_menu.baseimage import BaseImage
-from pygame_menu.locals import CURSOR_HAND, ORIENTATION_VERTICAL, \
-    ORIENTATION_HORIZONTAL, ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT, POSITION_CENTER, \
-    POSITION_NORTH, POSITION_SOUTH, FINGERUP, FINGERDOWN, FINGERMOTION
 from pygame_menu.font import FontType, assert_font
-from pygame_menu.utils import assert_alignment, make_surface, assert_vector, \
-    assert_orientation, assert_color, fill_gradient, parse_padding, uuid4, warn, \
-    get_finger_pos
-from pygame_menu.widgets.core.widget import Widget, check_widget_mouseleave, \
-    WidgetTransformationNotImplemented, AbstractWidgetManager
+from pygame_menu.locals import (ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT,
+                                CURSOR_HAND, FINGERDOWN, FINGERMOTION,
+                                FINGERUP, ORIENTATION_HORIZONTAL,
+                                ORIENTATION_VERTICAL, POSITION_CENTER,
+                                POSITION_NORTH, POSITION_SOUTH)
+from pygame_menu.utils import (assert_alignment, assert_color,
+                               assert_orientation, assert_vector,
+                               fill_gradient, get_finger_pos, make_surface,
+                               parse_padding, uuid4, warn)
+from pygame_menu.widgets.core.widget import (
+    AbstractWidgetManager, Widget, WidgetTransformationNotImplemented,
+    check_widget_mouseleave)
 from pygame_menu.widgets.widget.button import Button
 from pygame_menu.widgets.widget.label import Label
-
-from pygame_menu._types import Optional, NumberType, Dict, Tuple, Union, List, \
-    Vector2NumberType, Tuple2IntType, NumberInstance, Any, ColorInputType, \
-    EventVectorType, PaddingType, CallbackType, ColorInputGradientType, \
-    CursorInputType, VectorInstance
 
 # Constants
 FRAME_DEFAULT_TITLE_BACKGROUND_COLOR = ((10, 36, 106), (166, 202, 240), False, True)
@@ -109,11 +117,11 @@ class Frame(Widget):
     _menu_can_be_none_pack: bool
     _orientation: str
     _pack_margin_warning: bool
-    _pos: Dict[str, Tuple[int, int]]  # Widget positioning
+    _pos: dict[str, tuple[int, int]]  # Widget positioning
     _real_rect: 'pygame.Rect'
     _recursive_render: int
-    _widgets: Dict[str, 'Widget']  # widget
-    _widgets_props: Dict[str, Tuple[str, str]]  # alignment, vertical position
+    _widgets: dict[str, 'Widget']  # widget
+    _widgets_props: dict[str, tuple[str, str]]  # alignment, vertical position
     _width: int
     first_index: int  # First selectable widget index
     horizontal: bool
@@ -526,7 +534,7 @@ class Frame(Widget):
         """
         return self._width, self._height
 
-    def _get_menu_update_frames(self) -> List['pygame_menu.widgets.Frame']:
+    def _get_menu_update_frames(self) -> list['pygame_menu.widgets.Frame']:
         """
         Return the menu update frames list.
 
@@ -625,7 +633,7 @@ class Frame(Widget):
         scrollbar_slider_hover_color: ColorInputType,
         scrollbar_slider_pad: NumberType,
         scrollbar_thick: NumberType,
-        scrollbars: Union[str, Tuple[str, ...]]
+        scrollbars: Union[str, tuple[str, ...]]
     ) -> 'Frame':
         """
         Make the scrollarea of the frame.
@@ -751,7 +759,7 @@ class Frame(Widget):
 
         return self
 
-    def get_indices(self) -> Tuple[int, int]:
+    def get_indices(self) -> tuple[int, int]:
         """
         Return first and last selectable indices tuple.
 
@@ -1094,7 +1102,7 @@ class Frame(Widget):
         unpack_subframes: bool = True,
         unpack_subframes_include_frame: bool = False,
         reverse: bool = False
-    ) -> Tuple['Widget', ...]:
+    ) -> tuple['Widget', ...]:
         """
         Get widgets as a tuple.
 
@@ -1120,7 +1128,7 @@ class Frame(Widget):
             wtp.reverse()
         return tuple(wtp)
 
-    def clear(self) -> Union['Widget', Tuple['Widget', ...]]:
+    def clear(self) -> Union['Widget', tuple['Widget', ...]]:
         """
         Unpack all widgets within frame.
 
@@ -1181,7 +1189,7 @@ class Frame(Widget):
             assert self._frame_scrollarea.has_attribute('constructor'), \
                 'frame scrollarea does not have the "constructor" attribute. Make ' \
                 'sure the scrollarea has been created using make_scrollarea() method'
-            kwargs: Dict[str, Any] = self._frame_scrollarea.get_attribute('constructor')
+            kwargs: dict[str, Any] = self._frame_scrollarea.get_attribute('constructor')
             if max_width is None:
                 max_width = width
             if max_height is None:
@@ -1416,11 +1424,11 @@ class Frame(Widget):
 
     def pack(
         self,
-        widget: Union['Widget', List['Widget'], Tuple['Widget', ...]],
+        widget: Union['Widget', list['Widget'], tuple['Widget', ...]],
         align: str = ALIGN_LEFT,
         vertical_position: str = POSITION_NORTH,
         margin: Vector2NumberType = (0, 0)
-    ) -> Union['Widget', List['Widget'], Tuple['Widget', ...], Any]:
+    ) -> Union['Widget', list['Widget'], tuple['Widget', ...], Any]:
         """
         Packs widget in the frame line. To pack a widget it has to be already
         appended to Menu, and the Menu must be the same as the frame.

@@ -6,35 +6,41 @@ TABLE
 The table widget is a Frame which packs widgets in a structured way.
 """
 
+from __future__ import annotations
+
 __all__ = [
     'Table',
     'TableManager'
 ]
 
-import pygame
-import pygame_menu
-
 from abc import ABC
+from typing import Optional, Union
+
+import pygame
+
+import pygame_menu
+from pygame_menu._types import (ColorInputType, EventVectorType, NumberType,
+                                PaddingType, Vector2IntType, VectorInstance)
 from pygame_menu.baseimage import BaseImage
 from pygame_menu.font import FontType, assert_font
-from pygame_menu.locals import ORIENTATION_VERTICAL, ALIGN_LEFT, ALIGN_CENTER, \
-    ORIENTATION_HORIZONTAL, POSITION_NORTH, POSITION_CENTER, POSITION_SOUTH, \
-    ALIGN_RIGHT, POSITION_WEST, POSITION_EAST
-from pygame_menu.utils import assert_alignment, assert_color, uuid4, parse_padding, \
-    assert_position, assert_vector, warn
+from pygame_menu.locals import (ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT,
+                                ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL,
+                                POSITION_CENTER, POSITION_EAST, POSITION_NORTH,
+                                POSITION_SOUTH, POSITION_WEST)
+from pygame_menu.utils import (assert_alignment, assert_color, assert_position,
+                               assert_vector, parse_padding, uuid4, warn)
 from pygame_menu.version import ver
-from pygame_menu.widgets.core.widget import Widget, WidgetBorderPositionType, \
-    WIDGET_FULL_BORDER, WIDGET_BORDER_POSITION_NONE, AbstractWidgetManager
+from pygame_menu.widgets.core.widget import (WIDGET_BORDER_POSITION_NONE,
+                                             WIDGET_FULL_BORDER,
+                                             AbstractWidgetManager, Widget,
+                                             WidgetBorderPositionType)
 from pygame_menu.widgets.widget.frame import Frame
 from pygame_menu.widgets.widget.image import Image
 from pygame_menu.widgets.widget.label import Label
 from pygame_menu.widgets.widget.surface import SurfaceWidget
 
-from pygame_menu._types import List, Union, ColorInputType, Optional, Tuple, \
-    VectorInstance, PaddingType, Dict, NumberType, Vector2IntType, EventVectorType
-
 CellType = Union['Widget', str, int, float, bool, 'BaseImage', 'pygame.Surface']
-ColumnInputType = Union[Tuple[CellType, ...], List[CellType]]
+ColumnInputType = Union[tuple[CellType, ...], list[CellType]]
 
 
 class Table(Frame):
@@ -51,8 +57,8 @@ class Table(Frame):
 
     :param table_id: ID of the table
     """
-    _rows: List['Frame']
-    _update_widgets: List['Widget']
+    _rows: list['Frame']
+    _update_widgets: list['Widget']
     default_cell_align: str
     default_cell_border_color: ColorInputType
     default_cell_border_position: WidgetBorderPositionType
@@ -316,7 +322,7 @@ class Table(Frame):
         # row.set_frame(self) This cannot be executed as row is packed within
 
         # Create widgets
-        row_cells: List['Widget'] = []
+        row_cells: list['Widget'] = []
         cell: 'Widget'
         j: int = 0
 
@@ -435,14 +441,14 @@ class Table(Frame):
                 if w.get_attribute('accept_events'):
                     self._update_widgets.append(w)
 
-    def _get_column_width_row_height(self) -> Tuple[Dict[int, int], Dict['Frame', int]]:
+    def _get_column_width_row_height(self) -> tuple[dict[int, int], dict['Frame', int]]:
         """
         Return column width and row height.
 
         :return: Column width and row height dict
         """
-        column_widths: Dict[int, int] = {}  # column/width
-        row_heights: Dict['Frame', int] = {}  # row/height
+        column_widths: dict[int, int] = {}  # column/width
+        row_heights: dict['Frame', int] = {}  # row/height
 
         for f in self._rows:
             col = 0  # Column
@@ -550,7 +556,7 @@ class Table(Frame):
         return self
 
     @staticmethod
-    def get_cell_column_row(cell: 'Widget') -> Tuple[int, int]:
+    def get_cell_column_row(cell: 'Widget') -> tuple[int, int]:
         """
         Return the column/row within table layout for the given widget.
 
@@ -667,7 +673,7 @@ class Table(Frame):
         font_size: Optional[int] = None,
         padding: Optional[PaddingType] = None,
         vertical_position: Optional[str] = None
-    ) -> Union['Widget', List['Widget']]:
+    ) -> Union['Widget', list['Widget']]:
         """
         Update cell style. If a parameter is ``None`` the default cell property
         will be used.

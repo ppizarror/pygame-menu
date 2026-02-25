@@ -6,6 +6,8 @@ TEXT INPUT
 Text input class, this widget lets user write text.
 """
 
+from __future__ import annotations
+
 __all__ = [
     'TextInput',
     'TextInputManager'
@@ -14,24 +16,28 @@ __all__ = [
 import math
 import os
 import platform
+from abc import ABC
+from collections.abc import Callable
+from typing import Any, Optional, Union
+
 import pygame
+
 import pygame_menu
 import pygame_menu.controls as ctrl
-
-from abc import ABC
-from pygame_menu.locals import FINGERDOWN, FINGERUP, INPUT_INT, INPUT_FLOAT, INPUT_TEXT
-from pygame_menu.utils import check_key_pressed_valid, make_surface, assert_color, \
-    get_finger_pos, warn, assert_vector
-from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImplemented, \
-    AbstractWidgetManager
-
-from pygame_menu._types import Optional, Any, CallbackType, Tuple, List, ColorType, \
-    NumberType, Tuple2IntType, Dict, Tuple2NumberType, NumberInstance, ColorInputType, \
-    EventVectorType, Union, Callable
+from pygame_menu._types import (CallbackType, ColorInputType, ColorType,
+                                EventVectorType, NumberInstance, NumberType,
+                                Tuple2IntType, Tuple2NumberType)
+from pygame_menu.locals import (FINGERDOWN, FINGERUP, INPUT_FLOAT, INPUT_INT,
+                                INPUT_TEXT)
+from pygame_menu.utils import (assert_color, assert_vector,
+                               check_key_pressed_valid, get_finger_pos,
+                               make_surface, warn)
+from pygame_menu.widgets.core.widget import (
+    AbstractWidgetManager, Widget, WidgetTransformationNotImplemented)
 
 try:
     # noinspection PyProtectedMember
-    from pyperclip import copy, paste, PyperclipException  # type: ignore
+    from pyperclip import PyperclipException, copy, paste  # type: ignore
 
 except (ModuleNotFoundError, ImportError):
     copy, paste = lambda text: None, lambda: ''
@@ -151,16 +157,16 @@ class TextInput(Widget):
     _cursor_render: bool
     _cursor_size: Optional[Tuple2IntType]  # Size defined by user
     _cursor_surface: Optional['pygame.Surface']
-    _cursor_surface_pos: List[int]
+    _cursor_surface_pos: list[int]
     _cursor_switch_ms: NumberType
     _cursor_visible: bool
     _ellipsis: str
     _ellipsis_size: NumberType
-    _history: List[str]
-    _history_cursor: List[int]
+    _history: list[str]
+    _history_cursor: list[int]
     _history_index: int
-    _history_renderbox: List[List[int]]
-    _ignore_keys: Tuple[int, ...]
+    _history_renderbox: list[list[int]]
+    _ignore_keys: tuple[int, ...]
     _input_string: str
     _input_type: str
     _input_underline: str
@@ -168,9 +174,9 @@ class TextInput(Widget):
     _input_underline_size: NumberType
     _input_underline_vmargin: int
     _key_is_pressed: bool
-    _keychar_size: Dict[str, NumberType]
+    _keychar_size: dict[str, NumberType]
     _keyrepeat: bool
-    _keyrepeat_counters: Dict[int, List[int]]
+    _keyrepeat_counters: dict[int, list[int]]
     _keyrepeat_initial_interval_ms: NumberType
     _keyrepeat_interval_ms: NumberType
     _keyrepeat_mouse_interval_ms: NumberType
@@ -178,7 +184,7 @@ class TextInput(Widget):
     _last_char: str
     _last_container_width: int
     _last_key: int
-    _last_selection_render: List[int]
+    _last_selection_render: list[int]
     _maxchar: int
     _maxwidth: int
     _maxwidth_base: int
@@ -187,16 +193,16 @@ class TextInput(Widget):
     _mouse_is_pressed: bool
     _password: bool
     _password_char: str
-    _renderbox: List[int]
+    _renderbox: list[int]
     _selection_active: bool
-    _selection_box: List[int]
+    _selection_box: list[int]
     _selection_color: ColorType
     _selection_enabled: bool
     _selection_mouse_first_position: int
-    _selection_position: List[int]
+    _selection_position: list[int]
     _selection_surface: Optional['pygame.Surface']
     _title_size: NumberType
-    _valid_chars: Optional[List[str]]
+    _valid_chars: Optional[list[str]]
 
     def __init__(
         self,
@@ -226,7 +232,7 @@ class TextInput(Widget):
         repeat_keys_interval_ms: NumberType = 50,
         repeat_mouse_interval_ms: NumberType = 400,
         text_ellipsis: str = '...',
-        valid_chars: Optional[List[str]] = None,
+        valid_chars: Optional[list[str]] = None,
         *args,
         **kwargs
     ) -> None:
@@ -1976,7 +1982,7 @@ class TextInputManager(AbstractWidgetManager, ABC):
         onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
         password: bool = False,
         textinput_id: str = '',
-        valid_chars: Optional[List[str]] = None,
+        valid_chars: Optional[list[str]] = None,
         **kwargs
     ) -> 'pygame_menu.widgets.TextInput':
         """

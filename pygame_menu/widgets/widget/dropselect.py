@@ -7,31 +7,38 @@ Drop select widget. This is similar to HTML selects, it can contain many items
 (options) to select. The selection is unique.
 """
 
+from __future__ import annotations
+
 __all__ = [
     'DropSelect',
     'DropSelectManager'
 ]
 
 import math
-import pygame
-import pygame_menu
-
 from abc import ABC
-from pygame_menu.font import FontType, get_font, assert_font
-from pygame_menu.locals import ORIENTATION_VERTICAL, FINGERDOWN, FINGERUP, \
-    POSITION_NORTHWEST, POSITION_SOUTHEAST
-from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, \
-    make_surface, parse_padding, get_finger_pos, uuid4, assert_cursor, assert_position
-from pygame_menu.widgets.core.widget import AbstractWidgetManager, Widget, \
-    WidgetTransformationNotImplemented
+from collections.abc import Callable
+from typing import Any, Optional, Union
+
+import pygame
+
+import pygame_menu
+from pygame_menu._types import (CallbackType, ColorInputType, ColorType,
+                                CursorInputType, CursorType, EventVectorType,
+                                NumberInstance, NumberType, PaddingInstance,
+                                PaddingType, Tuple2IntType, Tuple2NumberType,
+                                Tuple3IntType, Tuple4IntType)
+from pygame_menu.font import FontType, assert_font, get_font
+from pygame_menu.locals import (FINGERDOWN, FINGERUP, ORIENTATION_VERTICAL,
+                                POSITION_NORTHWEST, POSITION_SOUTHEAST)
+from pygame_menu.utils import (assert_color, assert_cursor, assert_position,
+                               assert_vector, check_key_pressed_valid,
+                               get_finger_pos, make_surface, parse_padding,
+                               uuid4)
+from pygame_menu.widgets.core.widget import (
+    AbstractWidgetManager, Widget, WidgetTransformationNotImplemented)
 from pygame_menu.widgets.widget.button import Button
 from pygame_menu.widgets.widget.frame import Frame
 from pygame_menu.widgets.widget.selector import check_selector_items
-
-from pygame_menu._types import Tuple, Union, List, Any, Optional, CallbackType, \
-    ColorType, Dict, ColorInputType, Tuple2IntType, Tuple3IntType, PaddingType, \
-    PaddingInstance, Tuple4IntType, NumberType, EventVectorType, Tuple2NumberType, \
-    CursorInputType, CursorType, NumberInstance, Callable
 
 
 # noinspection PyProtectedMember
@@ -108,11 +115,11 @@ class DropSelect(Widget):
     _close_on_apply: bool
     _drop_frame: Optional['Frame']
     _index: int
-    _items: Union[List[Tuple[Any, ...]], List[str]]
+    _items: Union[list[tuple[Any, ...]], list[str]]
     _open_bottom: bool
     _open_middle: bool
     _opened: bool
-    _option_buttons: List['Button']
+    _option_buttons: list['Button']
     _option_font: Optional['pygame.font.Font']
     _placeholder: str
     _placeholder_add_to_selection_box: bool
@@ -141,7 +148,7 @@ class DropSelect(Widget):
     _selection_option_border_color: ColorType
     _selection_option_border_width: int
     _selection_option_cursor: CursorType  # type: ignore
-    _selection_option_font_style: Dict[str, Any]
+    _selection_option_font_style: dict[str, Any]
     _selection_option_left_space: bool
     _selection_option_left_space_height_factor: float
     _selection_option_left_space_margin: Tuple3IntType
@@ -152,7 +159,7 @@ class DropSelect(Widget):
     def __init__(
         self,
         title: Any,
-        items: Union[List[Tuple[Any, ...]], List[str]],
+        items: Union[list[tuple[Any, ...]], list[str]],
         dropselect_id: str = '',
         default: Optional[int] = None,
         onchange: CallbackType = None,
@@ -854,7 +861,7 @@ class DropSelect(Widget):
         """
         return self._index
 
-    def get_value(self) -> Tuple[Union[Tuple[Any, ...], str], int]:
+    def get_value(self) -> tuple[Union[tuple[Any, ...], str], int]:
         """
         Return the current value of the selected index.
 
@@ -968,7 +975,7 @@ class DropSelect(Widget):
         # Force render
         self._render()
 
-    def update_items(self, items: Union[List[Tuple[Any, ...]], List[str]]) -> None:
+    def update_items(self, items: Union[list[tuple[Any, ...]], list[str]]) -> None:
         """
         Update drop select items.
 
@@ -1003,7 +1010,7 @@ class DropSelect(Widget):
                 f'._make_selection_drop() for avoiding this exception'
             )
 
-    def get_items(self) -> Union[List[Tuple[Any, ...]], List[str]]:
+    def get_items(self) -> Union[list[tuple[Any, ...]], list[str]]:
         """
         Return a copy of the select items.
 
@@ -1221,7 +1228,7 @@ class DropSelectManager(AbstractWidgetManager, ABC):
     def dropselect(
         self,
         title: Any,
-        items: Union[List[Tuple[Any, ...]], List[str]],
+        items: Union[list[tuple[Any, ...]], list[str]],
         default: Optional[int] = None,
         dropselect_id: str = '',
         onchange: CallbackType = None,

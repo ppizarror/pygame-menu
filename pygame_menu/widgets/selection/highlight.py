@@ -6,14 +6,15 @@ HIGHLIGHT
 Widget selection highlight box effect.
 """
 
+from __future__ import annotations
+
 __all__ = ['HighlightSelection']
 
 import pygame
+
 import pygame_menu
-
-from pygame_menu.widgets.core import Selection
-
 from pygame_menu._types import NumberType
+from pygame_menu.widgets.core import Selection
 
 
 class HighlightSelection(Selection):

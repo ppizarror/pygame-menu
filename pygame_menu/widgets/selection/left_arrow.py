@@ -6,14 +6,15 @@ LEFT ARROW CLASS
 Selector with a left arrow on the item.
 """
 
+from __future__ import annotations
+
 __all__ = ['LeftArrowSelection']
 
 import pygame
+
 import pygame_menu
-
+from pygame_menu._types import NumberInstance, NumberType, Tuple2IntType
 from pygame_menu.widgets.selection.arrow_selection import ArrowSelection
-
-from pygame_menu._types import Tuple2IntType, NumberType, NumberInstance
 
 
 class LeftArrowSelection(ArrowSelection):

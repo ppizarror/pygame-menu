@@ -6,13 +6,16 @@ EXAMPLE - CALCULATOR
 Simple calculator app.
 """
 
+from __future__ import annotations
+
 __all__ = ['main']
 
+from typing import Union
+
 import pygame
+
 import pygame_menu
 from pygame_menu.examples import create_example_window
-
-from typing import Union, List
 
 
 class CalculatorApp:
@@ -138,7 +141,7 @@ class CalculatorApp:
         self.menu.set_onupdate(self.process_events)
         self.menu.set_onwindowmouseleave(lambda m: self.screen.select(update_menu=True))
 
-    def process_events(self, events: List['pygame.event.Event'], _=None) -> None:
+    def process_events(self, events: list['pygame.event.Event'], _=None) -> None:
         """
         Process events from user.
         """

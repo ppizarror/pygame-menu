@@ -7,38 +7,46 @@ Menu class.
 """
 # File constants no. 0
 
+from __future__ import annotations
+
 __all__ = ['Menu']
 
 import math
 import os
 import sys
 import time
+from collections.abc import Callable
+from typing import Any, Optional, Union
 
 import pygame
 import pygame.gfxdraw as gfxdraw
-import pygame_menu.events as _events
 
+import pygame_menu.events as _events
 from pygame_menu._base import Base
 from pygame_menu._decorator import Decorator
+from pygame_menu._scrollarea import ScrollArea, get_scrollbars_from_position
+# Import types
+from pygame_menu._types import (CallableNoArgsType, EventListType, EventType,
+                                EventVectorType, MenuColumnMaxWidthType,
+                                MenuColumnMinWidthType, MenuRowsType,
+                                NumberInstance, NumberType, Tuple2BoolType,
+                                Tuple2IntType, Tuple4Tuple2IntType,
+                                Vector2BoolType, Vector2IntType,
+                                Vector2NumberType, VectorInstance, VectorType)
 from pygame_menu._widgetmanager import WidgetManager
 from pygame_menu.controls import Controller
-from pygame_menu.locals import ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT, \
-    ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL, FINGERDOWN, FINGERUP, FINGERMOTION
-from pygame_menu._scrollarea import ScrollArea, get_scrollbars_from_position
+from pygame_menu.locals import (ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT,
+                                FINGERDOWN, FINGERMOTION, FINGERUP,
+                                ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL)
 from pygame_menu.sound import Sound
-from pygame_menu.themes import Theme, THEME_DEFAULT
-from pygame_menu.utils import assert_vector, make_surface, warn, \
-    check_key_pressed_valid, mouse_motion_current_mouse_position, get_finger_pos, \
-    print_menu_widget_structure
-from pygame_menu.widgets import Frame, Widget, MenuBar
-from pygame_menu.widgets.core.widget import check_widget_mouseleave, WIDGET_MOUSEOVER
-
-# Import types
-from pygame_menu._types import Callable, Any, Dict, NumberType, VectorType, \
-    Vector2NumberType, Union, Tuple, List, Vector2IntType, Vector2BoolType, \
-    Tuple4Tuple2IntType, Tuple2IntType, MenuColumnMaxWidthType, MenuColumnMinWidthType, \
-    MenuRowsType, Optional, Tuple2BoolType, NumberInstance, VectorInstance, EventType, \
-    EventVectorType, EventListType, CallableNoArgsType
+from pygame_menu.themes import THEME_DEFAULT, Theme
+from pygame_menu.utils import (assert_vector, check_key_pressed_valid,
+                               get_finger_pos, make_surface,
+                               mouse_motion_current_mouse_position,
+                               print_menu_widget_structure, warn)
+from pygame_menu.widgets import Frame, MenuBar, Widget
+from pygame_menu.widgets.core.widget import (WIDGET_MOUSEOVER,
+                                             check_widget_mouseleave)
 
 # Joy events
 JOY_EVENT_LEFT = 1
@@ -106,13 +114,13 @@ class Menu(Base):
     :param verbose: Enable/disable verbose mode (warnings/errors). Propagates to all widgets
     """
     _auto_centering: bool
-    _background_function: Tuple[bool, Optional[Union[Callable[['Menu'], Any], CallableNoArgsType]]]
+    _background_function: tuple[bool, Optional[Union[Callable[['Menu'], Any], CallableNoArgsType]]]
     _clock: 'pygame.time.Clock'
-    _column_max_width: Union[List[None], VectorType]
-    _column_max_width_zero: List[bool]
+    _column_max_width: Union[list[None], VectorType]
+    _column_max_width_zero: list[bool]
     _column_min_width: VectorType
-    _column_pos_x: List[NumberType]
-    _column_widths: List[NumberType]
+    _column_pos_x: list[NumberType]
+    _column_widths: list[NumberType]
     _columns: int
     _ctrl: 'Controller'
     _current: 'Menu'
@@ -128,9 +136,9 @@ class Menu(Base):
     _joystick: bool
     _keyboard: bool
     _keyboard_ignore_nonphysical: bool
-    _last_scroll_thickness: List[Union[Tuple2IntType, int]]
+    _last_scroll_thickness: list[Union[Tuple2IntType, int]]
     _last_selected_type: str
-    _last_update_mode: List[str]
+    _last_update_mode: list[str]
     _mainloop: bool
     _max_row_column_elements: int
     _menubar: 'MenuBar'
@@ -153,14 +161,14 @@ class Menu(Base):
     _position: Tuple2IntType
     _position_default: Tuple2IntType
     _position_relative: bool
-    _prev: Optional[List[Union['Menu', List['Menu']]]]
+    _prev: Optional[list[Union['Menu', list['Menu']]]]
     _remember_selection: bool
     _runtime_errors: '_MenuRuntimeErrorConfig'
     _scrollarea: 'ScrollArea'
-    _scrollarea_margin: List[int]
+    _scrollarea_margin: list[int]
     _sound: 'Sound'
     _stats: '_MenuStats'
-    _submenus: Dict['Menu', List['Widget']]
+    _submenus: dict['Menu', list['Widget']]
     _surface: Optional['pygame.Surface']  # The surface that contains the menu
     _surface_last: Optional['pygame.Surface']  # The last surface used to draw the menu
     _theme: 'Theme'
@@ -168,20 +176,20 @@ class Menu(Base):
     _touchscreen: bool
     _touchscreen_motion_selection: bool
     _translate: Tuple2IntType
-    _update_frames: List['Frame']  # Stores the reference of scrollable frames to check inputs
-    _update_widgets: List['Widget']  # Stores widgets which should always update
+    _update_frames: list['Frame']  # Stores the reference of scrollable frames to check inputs
+    _update_widgets: list['Widget']  # Stores widgets which should always update
     _used_columns: int
     _validate_frame_widgetmove: bool
-    _widget_columns: Dict[int, List['Widget']]
+    _widget_columns: dict[int, list['Widget']]
     _widget_max_position: Tuple2IntType
     _widget_min_position: Tuple2IntType
-    _widget_offset: List[int]
+    _widget_offset: list[int]
     _widget_selected_update: bool  # Selected widget receives updates
     _widget_surface_cache_enabled: bool
     _widget_surface_cache_need_update: bool
-    _widgets: List['Widget']
+    _widgets: list['Widget']
     _widgets_surface: Optional['pygame.Surface']
-    _widgets_surface_last: Tuple[int, int, Optional['pygame.Surface']]
+    _widgets_surface_last: tuple[int, int, Optional['pygame.Surface']]
     _widgets_surface_need_update: bool
     _width: int
     _window_size: Tuple2IntType
@@ -208,7 +216,7 @@ class Menu(Base):
         onclose: Optional[Union['_events.MenuAction', Callable[['Menu'], Any], CallableNoArgsType]] = None,
         onreset: Optional[Union[Callable[['Menu'], Any], CallableNoArgsType]] = None,
         overflow: Union[Vector2BoolType, bool] = (True, True),
-        position: Union[Vector2NumberType, Tuple[NumberType, NumberType, bool]] = (50, 50, True),
+        position: Union[Vector2NumberType, tuple[NumberType, NumberType, bool]] = (50, 50, True),
         remember_selection: bool = False,
         rows: MenuRowsType = None,
         screen_dimension: Optional[Vector2IntType] = None,
@@ -247,9 +255,9 @@ class Menu(Base):
         assert not hasattr(pygame, 'get_init') or pygame.get_init(), \
             'pygame is not initialized'
 
-        # Assert python version is greater than 3.8
-        assert sys.version_info >= (3, 8, 0), \
-            'pygame-menu only supports python equal or greater than version 3.8.0'
+        # Assert python version is greater than 3.9
+        assert sys.version_info >= (3, 9, 0), \
+            'pygame-menu only supports python equal or greater than version 3.9.0'
 
         # Column/row asserts
         assert columns >= 1, \
@@ -614,7 +622,7 @@ class Menu(Base):
         width: NumberType,
         height: NumberType,
         screen_dimension: Optional[Vector2IntType] = None,
-        position: Optional[Union[Vector2NumberType, Tuple[NumberType, NumberType, bool]]] = None,
+        position: Optional[Union[Vector2NumberType, tuple[NumberType, NumberType, bool]]] = None,
         recursive: bool = False
     ) -> 'Menu':
         """
@@ -757,7 +765,7 @@ class Menu(Base):
         """
         raise _MenuCopyException('Menu class cannot be copied')
 
-    def __deepcopy__(self, memodict: Dict) -> 'Menu':
+    def __deepcopy__(self, memodict: dict) -> 'Menu':
         """
         Deep-copy method.
 
@@ -1281,7 +1289,7 @@ class Menu(Base):
 
         # Checks for widget selection consistency
         has_selected_widget = False
-        invalid_selection_widgets: List[str] = []
+        invalid_selection_widgets: list[str] = []
         selected_widget = None
 
         for index in range(len(self._widgets)):
@@ -1383,7 +1391,7 @@ class Menu(Base):
         if 0 <= sum_width_columns < max_width and len(self._widgets) > 0:
 
             # First, scale columns to its maximum
-            sum_contrib: List[float] = []
+            sum_contrib: list[float] = []
             for col in range(self._used_columns):
                 if self._column_max_width[col] is None:
                     sum_contrib.append(0)
@@ -1404,7 +1412,7 @@ class Menu(Base):
 
             # Scale column widths if None
             sum_width_columns = sum(column_widths)
-            sum_contrib: List[float] = []
+            sum_contrib: list[float] = []
             for col in range(self._used_columns):
                 if self._column_max_width[col] is None:
                     sum_contrib.append(column_widths[col])
@@ -1475,7 +1483,7 @@ class Menu(Base):
         min_x, min_y = 1e8, 1e8
 
         # Cache rects
-        rects_cache: Dict[str, 'pygame.Rect'] = {}
+        rects_cache: dict[str, 'pygame.Rect'] = {}
 
         def get_rect(wid: 'Widget') -> 'pygame.Rect':
             """
@@ -2112,7 +2120,7 @@ class Menu(Base):
             scrollarea_decorator.draw_prev(self._current._widgets_surface)
 
             # Iterate through widgets and draw them
-            selected_widget_draw: Tuple[Optional['Widget'], Optional['pygame.Surface']] = (None, None)
+            selected_widget_draw: tuple[Optional['Widget'], Optional['pygame.Surface']] = (None, None)
 
             for widget in self._current._widgets:
                 # Widgets within frames are not drawn as it's frame draw these widgets
@@ -2146,7 +2154,7 @@ class Menu(Base):
         surface: 'pygame.Surface',
         widget: Optional['Widget'],
         force: bool = False
-    ) -> Optional[Dict[int, Tuple4Tuple2IntType]]:
+    ) -> Optional[dict[int, Tuple4Tuple2IntType]]:
         """
         Draw the focus background from a given widget. Widget must be selectable,
         active, selected. Not all widgets requests the active status, then focus
@@ -2309,14 +2317,14 @@ class Menu(Base):
             return
 
         # Sort frames by depth
-        widgets: List[Tuple[int, 'Frame']] = []
+        widgets: list[tuple[int, 'Frame']] = []
         for w in self._update_frames:
             assert isinstance(w, Frame)
             widgets.append((-w.get_frame_depth(), w))
         widgets.sort(key=lambda x: x[0])
 
         # Sort frames with same depth by index
-        frame_depths: Dict[int, List[Tuple[int, 'Frame']]] = {}
+        frame_depths: dict[int, list[tuple[int, 'Frame']]] = {}
         for w in widgets:
             w_depth = w[0]
             if w_depth not in frame_depths.keys():
@@ -2486,7 +2494,7 @@ class Menu(Base):
             return self._surface.get_offset()
         return self._surface_last.get_offset() if self._surface_last is not None else (0, 0)
 
-    def get_last_update_mode(self) -> List[str]:
+    def get_last_update_mode(self) -> list[str]:
         """
         Return the update mode.
 
@@ -3057,7 +3065,7 @@ class Menu(Base):
                 check_widget_mouseleave(force=True)
                 return self._current
 
-    def get_input_data(self, recursive: bool = False) -> Dict[str, Any]:
+    def get_input_data(self, recursive: bool = False) -> dict[str, Any]:
         """
         Return input data from a Menu. The results are given as a dict object.
         The keys are the ID of each element.
@@ -3075,7 +3083,7 @@ class Menu(Base):
         assert isinstance(recursive, bool)
         return self._get_input_data(recursive, depth=0)
 
-    def _get_input_data(self, recursive: bool, depth: int) -> Dict[str, Any]:
+    def _get_input_data(self, recursive: bool, depth: int) -> dict[str, Any]:
         """
         Return input data from a Menu. The results are given as a dict object.
         The keys are the ID of each element.
@@ -3481,7 +3489,7 @@ class Menu(Base):
         """
         return self._window_size
 
-    def get_col_rows(self) -> Tuple[int, List[int]]:
+    def get_col_rows(self) -> tuple[int, list[int]]:
         """
         Return the number of columns and rows of the Menu.
 
@@ -3495,7 +3503,7 @@ class Menu(Base):
         """
         return self._columns, self._rows
 
-    def get_submenus(self, recursive: bool = False) -> Tuple['Menu', ...]:
+    def get_submenus(self, recursive: bool = False) -> tuple['Menu', ...]:
         """
         Return the Menu submenus as a tuple.
 
@@ -3583,7 +3591,7 @@ class Menu(Base):
                     return widget
         return None
 
-    def get_widgets_column(self, col: int) -> Tuple['Widget', ...]:
+    def get_widgets_column(self, col: int) -> tuple['Widget', ...]:
         """
         Return all the widgets within column which are visible.
 
@@ -3592,7 +3600,7 @@ class Menu(Base):
         """
         return tuple(self._widget_columns[col])
 
-    def get_widgets(self, ids: Optional[Union[List[str], Tuple[str, ...]]] = None) -> Tuple['Widget', ...]:
+    def get_widgets(self, ids: Optional[Union[list[str], tuple[str, ...]]] = None) -> tuple['Widget', ...]:
         """
         Return the Menu widgets as a tuple.
 
@@ -3805,7 +3813,7 @@ class Menu(Base):
         """
         return self._decorator
 
-    def _test_widgets_status(self) -> Tuple[Tuple[Any, ...], ...]:
+    def _test_widgets_status(self) -> tuple[tuple[Any, ...], ...]:
         """
         Get the status of each widget as a tuple (position, indices, values, etc.).
 
@@ -3849,7 +3857,7 @@ class Menu(Base):
         if kwargs.get('update_selected_index', False):
             self._index = -1
             has_selected = False
-            invalid_w: List[str] = []
+            invalid_w: list[str] = []
             selected = None
             for w in self._widgets:
                 if w.is_selected():
@@ -3983,7 +3991,7 @@ class Menu(Base):
                 prev_frame_widgs = widget.get_frame().get_widgets(unpack_subframes=False)
 
                 # Get none-menu widgets for ordering
-                none_menu_widgs: Dict[Optional['Widget'], List['Widget']] = {}
+                none_menu_widgs: dict[Optional['Widget'], list['Widget']] = {}
                 prev_wig: Optional['Widget'] = None
                 for i in range(len(prev_frame_widgs)):
                     if prev_frame_widgs[i].get_menu() is None:

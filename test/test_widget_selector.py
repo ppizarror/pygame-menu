@@ -6,9 +6,11 @@ TEST WIDGET - SELECTOR
 Test Selector widget.
 """
 
+from __future__ import annotations
+
 __all__ = ['SelectorWidgetTest']
 
-from test._utils import MenuUtils, surface, PygameEventUtils, BaseTest
+from test._utils import BaseTest, MenuUtils, PygameEventUtils, surface
 
 import pygame_menu
 import pygame_menu.controls as ctrl

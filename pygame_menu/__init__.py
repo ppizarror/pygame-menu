@@ -6,6 +6,8 @@ PYGAME-MENU
 A menu for pygame. Simple, and easy to use.
 """
 
+from __future__ import annotations
+
 __all__ = [
 
     # Common classes

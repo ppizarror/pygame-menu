@@ -6,6 +6,8 @@ CONTROLS
 Default controls of Menu object and key definition.
 """
 
+from __future__ import annotations
+
 __all__ = [
 
     # Joy pad
@@ -35,11 +37,13 @@ __all__ = [
 
 ]
 
+from typing import Union
+
 # Imports
 import pygame.locals as _locals
 from pygame.event import Event as EventType
+
 from pygame_menu._types import Tuple2IntType
-from typing import Union
 
 WidgetType = Union['pygame_menu.Menu', 'pygame_menu.widgets.Widget']  # type: ignore
 

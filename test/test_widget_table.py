@@ -6,11 +6,14 @@ TEST WIDGET - TABLE
 Test Table widget.
 """
 
+from __future__ import annotations
+
 __all__ = ['TableWidgetTest']
 
-from test._utils import MenuUtils, surface, PYGAME_V2, BaseTest
+from test._utils import PYGAME_V2, BaseTest, MenuUtils, surface
 
 import pygame
+
 import pygame_menu
 
 

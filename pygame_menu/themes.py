@@ -6,6 +6,8 @@ THEMES
 Theme class and predefined themes.
 """
 
+from __future__ import annotations
+
 __all__ = [
 
     # Main class
@@ -25,25 +27,33 @@ __all__ = [
 ]
 
 import copy
+from typing import Any, Optional, Union
 
 import pygame_menu
-from pygame_menu.baseimage import BaseImage
-from pygame_menu.font import FontType, FONT_OPEN_SANS, assert_font
-from pygame_menu.locals import POSITION_NORTHWEST, POSITION_SOUTHEAST, ALIGN_CENTER, \
-    CURSOR_ARROW
 from pygame_menu._scrollarea import get_scrollbars_from_position
-from pygame_menu.utils import assert_alignment, assert_cursor, assert_vector, \
-    assert_position, assert_color, format_color, assert_position_vector
-from pygame_menu.widgets import HighlightSelection, NoneSelection, MENUBAR_STYLE_ADAPTIVE, \
-    MENUBAR_STYLE_SIMPLE, MENUBAR_STYLE_TITLE_ONLY, MENUBAR_STYLE_TITLE_ONLY_DIAGONAL, \
-    MENUBAR_STYLE_NONE, MENUBAR_STYLE_UNDERLINE, MENUBAR_STYLE_UNDERLINE_TITLE
+from pygame_menu._types import (ColorInputType, ColorType, CursorType,
+                                NumberInstance, NumberType, PaddingInstance,
+                                PaddingType, Tuple2IntType, Tuple2NumberType,
+                                Tuple3IntType, VectorInstance)
+from pygame_menu.baseimage import BaseImage
+from pygame_menu.font import FONT_OPEN_SANS, FontType, assert_font
+from pygame_menu.locals import (ALIGN_CENTER, CURSOR_ARROW, POSITION_NORTHWEST,
+                                POSITION_SOUTHEAST)
+from pygame_menu.utils import (assert_alignment, assert_color, assert_cursor,
+                               assert_position, assert_position_vector,
+                               assert_vector, format_color)
+from pygame_menu.widgets import (MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_NONE,
+                                 MENUBAR_STYLE_SIMPLE,
+                                 MENUBAR_STYLE_TITLE_ONLY,
+                                 MENUBAR_STYLE_TITLE_ONLY_DIAGONAL,
+                                 MENUBAR_STYLE_UNDERLINE,
+                                 MENUBAR_STYLE_UNDERLINE_TITLE,
+                                 HighlightSelection, NoneSelection)
 from pygame_menu.widgets.core import Selection
-from pygame_menu.widgets.core.widget import WidgetBorderPositionType, WIDGET_FULL_BORDER, \
-    WIDGET_SHADOW_TYPE_ELLIPSE, WIDGET_SHADOW_TYPE_RECTANGULAR
-
-from pygame_menu._types import ColorType, ColorInputType, Tuple, List, Union, Dict, \
-    Any, Tuple2IntType, VectorInstance, Tuple2NumberType, NumberType, PaddingType, \
-    Optional, Type, NumberInstance, PaddingInstance, Tuple3IntType, CursorType
+from pygame_menu.widgets.core.widget import (WIDGET_FULL_BORDER,
+                                             WIDGET_SHADOW_TYPE_ELLIPSE,
+                                             WIDGET_SHADOW_TYPE_RECTANGULAR,
+                                             WidgetBorderPositionType)
 
 TRANSPARENT_COLOR: ColorType = (0, 0, 0, 0)
 
@@ -680,7 +690,7 @@ class Theme:
         return self
 
     @staticmethod
-    def _vec_to_tuple(obj: Union[Tuple, List], check_length: int = 0, check_instance: Type = Any) -> Tuple:
+    def _vec_to_tuple(obj: Union[tuple, list], check_length: int = 0, check_instance: type = Any) -> tuple:
         """
         Return a tuple from a list or tuple object.
 
@@ -759,8 +769,8 @@ class Theme:
         return color
 
     @staticmethod
-    def _get(params: Dict[str, Any], key: str,
-             allowed_types: Optional[Union[Type, str, List[Type], Tuple[Type, ...]]] = None,
+    def _get(params: dict[str, Any], key: str,
+             allowed_types: Optional[Union[type, str, list[type], tuple[type, ...]]] = None,
              default: Any = None) -> Any:
         """
         Return a value from a dictionary.

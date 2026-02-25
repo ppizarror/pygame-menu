@@ -6,12 +6,14 @@ TEST CONTROLS
 Test controls configuration.
 """
 
+from __future__ import annotations
+
 __all__ = ['ControlsTest']
 
-from test._utils import MenuUtils, PygameEventUtils, BaseTest
+import os
+from test._utils import BaseTest, MenuUtils, PygameEventUtils
 
 import pygame
-import os
 
 
 # Fix pyautogui tests

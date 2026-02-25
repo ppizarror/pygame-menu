@@ -6,6 +6,8 @@ VERSION
 Library version.
 """
 
+from __future__ import annotations
+
 __all__ = ['Version', 'vernum', 'ver', 'rev']
 
 

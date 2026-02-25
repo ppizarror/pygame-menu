@@ -6,12 +6,15 @@ TEST FONT
 Test font management.
 """
 
+from __future__ import annotations
+
 __all__ = ['FontTest']
 
 from pathlib import Path
-from test._utils import MenuUtils, BaseTest
+from test._utils import BaseTest, MenuUtils
 
 import pygame
+
 import pygame_menu
 
 

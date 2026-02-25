@@ -6,23 +6,29 @@ TEST SCROLLAREA
 Test scrollarea.
 """
 
+from __future__ import annotations
+
 __all__ = ['ScrollAreaTest']
 
 import copy
-from test._utils import MenuUtils, PygameEventUtils, surface, TEST_THEME, PYGAME_V2, \
-    BaseTest
+from test._utils import (PYGAME_V2, TEST_THEME, BaseTest, MenuUtils,
+                         PygameEventUtils, surface)
 
 import pygame
+
 import pygame_menu
-
-from pygame_menu.locals import POSITION_SOUTHEAST, POSITION_CENTER, POSITION_NORTHWEST, \
-    POSITION_SOUTH, POSITION_NORTHEAST, POSITION_SOUTHWEST, POSITION_EAST, \
-    POSITION_WEST, POSITION_NORTH, SCROLLAREA_POSITION_FULL, \
-    SCROLLAREA_POSITION_BOTH_VERTICAL, SCROLLAREA_POSITION_BOTH_HORIZONTAL, \
-    INPUT_TEXT, ORIENTATION_VERTICAL, ORIENTATION_HORIZONTAL, SCROLLAREA_POSITION_NONE
-
 # noinspection PyProtectedMember
 from pygame_menu._scrollarea import get_scrollbars_from_position
+from pygame_menu.locals import (INPUT_TEXT, ORIENTATION_HORIZONTAL,
+                                ORIENTATION_VERTICAL, POSITION_CENTER,
+                                POSITION_EAST, POSITION_NORTH,
+                                POSITION_NORTHEAST, POSITION_NORTHWEST,
+                                POSITION_SOUTH, POSITION_SOUTHEAST,
+                                POSITION_SOUTHWEST, POSITION_WEST,
+                                SCROLLAREA_POSITION_BOTH_HORIZONTAL,
+                                SCROLLAREA_POSITION_BOTH_VERTICAL,
+                                SCROLLAREA_POSITION_FULL,
+                                SCROLLAREA_POSITION_NONE)
 
 
 class ScrollAreaTest(BaseTest):

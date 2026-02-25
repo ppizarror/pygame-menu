@@ -6,15 +6,17 @@ EXAMPLE - SIMPLE
 Super simple example of pygame-menu usage, featuring a selector and a button.
 """
 
+from __future__ import annotations
+
+from typing import Any
+
 import pygame_menu
 from pygame_menu.examples import create_example_window
-
-from typing import Tuple, Any
 
 surface = create_example_window('Example - Simple', (600, 400))
 
 
-def set_difficulty(selected: Tuple, value: Any) -> None:
+def set_difficulty(selected: tuple, value: Any) -> None:
     """
     Set the difficulty of the game.
     """

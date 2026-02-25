@@ -6,6 +6,8 @@ UTILS
 Utility functions.
 """
 
+from __future__ import annotations
+
 __all__ = [
 
     # Methods
@@ -46,23 +48,28 @@ import sys
 import traceback
 import uuid
 import warnings
+from typing import Any, Optional, Union
 
 import pygame
+
 import pygame_menu
+from pygame_menu._types import (ColorInputInstance, ColorInputType, ColorType,
+                                CursorInputInstance, CursorInputType,
+                                EventType, NumberInstance, NumberType,
+                                PaddingInstance, PaddingType, Tuple2IntType,
+                                Tuple3IntType, Tuple4IntType,
+                                Vector2NumberType, VectorInstance, VectorType)
+from pygame_menu.locals import (ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT,
+                                FINGERDOWN, FINGERMOTION, FINGERUP,
+                                ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL,
+                                POSITION_CENTER, POSITION_EAST, POSITION_NORTH,
+                                POSITION_NORTHEAST, POSITION_NORTHWEST,
+                                POSITION_SOUTH, POSITION_SOUTHEAST,
+                                POSITION_SOUTHWEST, POSITION_WEST)
 
-from pygame_menu.locals import ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT, POSITION_CENTER, \
-    POSITION_NORTH, POSITION_SOUTH, POSITION_SOUTHEAST, POSITION_NORTHWEST, \
-    POSITION_WEST, POSITION_EAST, POSITION_NORTHEAST, POSITION_SOUTHWEST, \
-    ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL, FINGERDOWN, FINGERUP, FINGERMOTION
-
-from pygame_menu._types import ColorType, ColorInputType, Union, List, Vector2NumberType, \
-    NumberType, Any, Optional, Tuple, NumberInstance, VectorInstance, PaddingInstance, \
-    PaddingType, Tuple4IntType, ColorInputInstance, VectorType, EventType, \
-    CursorInputInstance, CursorInputType, Tuple2IntType, Dict, Tuple3IntType
-
-_ALPHA_CHANNEL: List[bool] = [True]
+_ALPHA_CHANNEL: list[bool] = [True]
 PYGAME_V2 = pygame.version.vernum[0] >= 2
-WARNINGS_LAST_MESSAGES: Dict[int, bool] = {}
+WARNINGS_LAST_MESSAGES: dict[int, bool] = {}
 
 
 def assert_alignment(align: str) -> None:
@@ -77,7 +84,7 @@ def assert_alignment(align: str) -> None:
 
 
 def assert_color(
-    color: Union[ColorInputType, List[int]],
+    color: Union[ColorInputType, list[int]],
     warn_if_invalid: bool = True
 ) -> ColorType:
     """
@@ -117,7 +124,7 @@ def assert_cursor(cursor: CursorInputType) -> None:  # type: ignore
         'or pygame.cursors.Cursor'
 
 
-def assert_list_vector(list_vector: Union[List[Vector2NumberType], Tuple[Vector2NumberType, ...]],
+def assert_list_vector(list_vector: Union[list[Vector2NumberType], tuple[Vector2NumberType, ...]],
                        length: int) -> None:
     """
     Assert that a list fixed length vector is numeric.
@@ -157,7 +164,7 @@ def assert_position(position: str) -> None:
         f'invalid position value "{position}"'
 
 
-def assert_position_vector(position: Union[str, List[str], Tuple[str, ...]]) -> None:
+def assert_position_vector(position: Union[str, list[str], tuple[str, ...]]) -> None:
     """
     Assert that a position vector is valid.
 
@@ -498,7 +505,7 @@ def parse_padding(padding: PaddingType) -> Tuple4IntType:
 
 
 def print_menu_widget_structure(
-    widgets: List['pygame_menu.widgets.Widget'],
+    widgets: list['pygame_menu.widgets.Widget'],
     index: int
 ) -> None:
     """
@@ -535,7 +542,7 @@ def print_menu_widget_structure(
             line = f'·   {"│   " * j}└{"┄" * 3}'  # * depth_widths[j]
             print(c.BRIGHT_WHITE + line.ljust(0, '━') + c.ENDC)  # 80 also work
 
-    non_menu_frame_widgets: Dict[int, List['pygame_menu.widgets.Widget']] = {}
+    non_menu_frame_widgets: dict[int, list['pygame_menu.widgets.Widget']] = {}
 
     def process_non_menu_frame(w_indx: int) -> None:
         """
@@ -756,9 +763,9 @@ class ShadowGenerator:
     Source: https://github.com/MyreMylar/pygame_gui with many edits.
     """
 
-    _created_ellipse_shadows: Dict[str, 'pygame.Surface']
-    _preloaded_shadow_corners: Dict[str, Dict[str, 'pygame.Surface']]
-    _short_term_rect_cache: Dict[str, 'pygame.Surface']
+    _created_ellipse_shadows: dict[str, 'pygame.Surface']
+    _preloaded_shadow_corners: dict[str, dict[str, 'pygame.Surface']]
+    _short_term_rect_cache: dict[str, 'pygame.Surface']
 
     def __init__(self) -> None:
         self._created_ellipse_shadows = {}
@@ -784,7 +791,7 @@ class ShadowGenerator:
         corner_radius_param: int,
         color: Tuple3IntType,
         aa_amount: int = 4
-    ) -> Dict[str, 'pygame.Surface']:
+    ) -> dict[str, 'pygame.Surface']:
         """
         Create corners for our rectangular shadows. These can be used across many
         sizes of shadow with the same shadow width and corner radius.
@@ -862,7 +869,7 @@ class ShadowGenerator:
         corner_rect: 'pygame.Rect',
         shadow_width_param: int,
         color: Tuple3IntType
-    ) -> Tuple['pygame.Surface', 'pygame.Surface']:
+    ) -> tuple['pygame.Surface', 'pygame.Surface']:
         """
         Creates a single corner surface and a single edge surface for a shadow.
 

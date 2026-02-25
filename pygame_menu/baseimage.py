@@ -7,6 +7,8 @@ Provides a class to perform basic image loading and manipulation with pygame.
 """
 # File constants no. 100
 
+from __future__ import annotations
+
 __all__ = [
 
     # Base class
@@ -32,24 +34,27 @@ __all__ = [
 
 ]
 
-from io import BytesIO
-from pathlib import Path
 import base64
 import math
 import os.path as path
+from collections.abc import Callable
+from io import BytesIO
+from pathlib import Path
+from typing import Literal, Optional, Union
 
 import pygame
 
 from pygame_menu._base import Base
-from pygame_menu.locals import POSITION_NORTHWEST, POSITION_NORTHEAST, POSITION_CENTER, \
-    POSITION_WEST, POSITION_SOUTHWEST, POSITION_EAST, POSITION_SOUTHEAST, \
-    POSITION_SOUTH, POSITION_NORTH
-from pygame_menu.utils import assert_vector, assert_position, assert_color, \
-    load_pygame_image_file
-
-from pygame_menu._types import Tuple2IntType, Union, Vector2NumberType, Callable, \
-    Tuple, List, NumberType, Optional, Dict, Tuple4IntType, Literal, Tuple2NumberType, \
-    ColorInputType, Tuple3IntType, NumberInstance, VectorInstance
+from pygame_menu._types import (ColorInputType, NumberInstance, NumberType,
+                                Tuple2IntType, Tuple2NumberType, Tuple3IntType,
+                                Tuple4IntType, Vector2NumberType,
+                                VectorInstance)
+from pygame_menu.locals import (POSITION_CENTER, POSITION_EAST, POSITION_NORTH,
+                                POSITION_NORTHEAST, POSITION_NORTHWEST,
+                                POSITION_SOUTH, POSITION_SOUTHEAST,
+                                POSITION_SOUTHWEST, POSITION_WEST)
+from pygame_menu.utils import (assert_color, assert_position, assert_vector,
+                               load_pygame_image_file)
 
 # Example image paths
 __images_path__ = (Path(__file__).resolve().parent / 'resources' / 'images' / '{0}').as_posix()
@@ -88,8 +93,8 @@ _VALID_IMAGE_FORMATS = [
 
 # Custom types
 ColorChannelType = Literal['r', 'g', 'b']
-ChannelType = Union[ColorChannelType, Tuple[ColorChannelType, ColorChannelType], Tuple[
-    ColorChannelType, ColorChannelType, ColorChannelType], List[ColorChannelType]]
+ChannelType = Union[ColorChannelType, tuple[ColorChannelType, ColorChannelType], tuple[
+    ColorChannelType, ColorChannelType, ColorChannelType], list[ColorChannelType]]
 
 
 class BaseImage(Base):
@@ -113,7 +118,7 @@ class BaseImage(Base):
     _filename: str
     _filepath: Union[str, 'BytesIO']
     _frombase64: bool
-    _last_transform: Tuple[int, int, Optional['pygame.Surface']]
+    _last_transform: tuple[int, int, Optional['pygame.Surface']]
     _original_surface: 'pygame.Surface'
     _rotated: bool
     _surface: 'pygame.Surface'
@@ -221,7 +226,7 @@ class BaseImage(Base):
         """
         return self.copy()
 
-    def __deepcopy__(self, memodict: Dict) -> 'BaseImage':
+    def __deepcopy__(self, memodict: dict) -> 'BaseImage':
         """
         Deep-copy method.
 

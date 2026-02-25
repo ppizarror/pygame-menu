@@ -6,20 +6,23 @@ NONE WIDGET
 None widget definition.
 """
 
+from __future__ import annotations
+
 __all__ = [
     'NoneWidget',
     'NoneWidgetManager'
 ]
 
-import pygame
-import pygame_menu
-
 from abc import ABC
-from pygame_menu.utils import make_surface
-from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImplemented, \
-    AbstractWidgetManager
+from typing import Optional
 
-from pygame_menu._types import Optional, NumberType, EventVectorType
+import pygame
+
+import pygame_menu
+from pygame_menu._types import EventVectorType, NumberType
+from pygame_menu.utils import make_surface
+from pygame_menu.widgets.core.widget import (
+    AbstractWidgetManager, Widget, WidgetTransformationNotImplemented)
 
 
 class NoneWidget(Widget):

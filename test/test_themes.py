@@ -6,10 +6,12 @@ TEST THEME
 Test theme.
 """
 
+from __future__ import annotations
+
 __all__ = ['ThemeTest']
 
-from test._utils import MenuUtils, BaseTest
 from pathlib import Path
+from test._utils import BaseTest, MenuUtils
 
 import pygame_menu
 

@@ -6,20 +6,23 @@ SURFACE
 Surface widget. This widget contains an external surface.
 """
 
+from __future__ import annotations
+
 __all__ = [
     'SurfaceWidget',
     'SurfaceWidgetManager'
 ]
 
-import pygame
-import pygame_menu
-
 from abc import ABC
-from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImplemented, \
-    AbstractWidgetManager
+from collections.abc import Callable
+from typing import Any, Optional
 
-from pygame_menu._types import CallbackType, Optional, EventVectorType, Callable, \
-    Any
+import pygame
+
+import pygame_menu
+from pygame_menu._types import CallbackType, EventVectorType
+from pygame_menu.widgets.core.widget import (
+    AbstractWidgetManager, Widget, WidgetTransformationNotImplemented)
 
 
 class SurfaceWidget(Widget):

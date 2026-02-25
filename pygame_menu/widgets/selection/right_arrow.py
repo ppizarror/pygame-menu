@@ -6,14 +6,15 @@ RIGHT ARROW CLASS
 Selector with a right arrow on the item.
 """
 
+from __future__ import annotations
+
 __all__ = ['RightArrowSelection']
 
 import pygame
+
 import pygame_menu
-
+from pygame_menu._types import NumberInstance, NumberType, Tuple2IntType
 from pygame_menu.widgets.selection.arrow_selection import ArrowSelection
-
-from pygame_menu._types import Tuple2IntType, NumberType, NumberInstance
 
 
 class RightArrowSelection(ArrowSelection):

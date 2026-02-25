@@ -7,24 +7,25 @@ Test Frame. Frame is the most complex widget as this interacts with menu, modifi
 its layout and contains other widgets.
 """
 
+from __future__ import annotations
+
 __all__ = ['FrameWidgetTest']
 
-from test._utils import BaseTest, MenuUtils, surface, PygameEventUtils, \
-    TEST_THEME, PYGAME_V2, WIDGET_MOUSEOVER, reset_widgets_over, THEME_NON_FIXED_TITLE
+from test._utils import (PYGAME_V2, TEST_THEME, THEME_NON_FIXED_TITLE,
+                         WIDGET_MOUSEOVER, BaseTest, MenuUtils,
+                         PygameEventUtils, reset_widgets_over, surface)
 
 import pygame
+
 import pygame_menu
 import pygame_menu.controls as ctrl
-
-from pygame_menu.locals import ORIENTATION_VERTICAL, ORIENTATION_HORIZONTAL, \
-    POSITION_SOUTHEAST
-from pygame_menu.utils import set_pygame_cursor, get_cursor
-from pygame_menu.widgets import Button
-from pygame_menu.widgets.core.widget import WidgetTransformationNotImplemented
-
 # noinspection PyProtectedMember
 from pygame_menu._scrollarea import get_scrollbars_from_position
-
+from pygame_menu.locals import (ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL,
+                                POSITION_SOUTHEAST)
+from pygame_menu.utils import get_cursor, set_pygame_cursor
+from pygame_menu.widgets import Button
+from pygame_menu.widgets.core.widget import WidgetTransformationNotImplemented
 # noinspection PyProtectedMember
 from pygame_menu.widgets.widget.frame import _FrameDoNotAcceptScrollarea
 

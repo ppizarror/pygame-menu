@@ -11,8 +11,8 @@ import sys
 sys.path.insert(0, '../')
 
 import pygame
+
 import pygame_menu
-from typing import List
 
 # Init pygame
 pygame.init()
@@ -28,7 +28,7 @@ EXAMPLE = 'BUTTON'
 
 # Create example
 menu: 'pygame_menu.Menu'
-widgets: List['pygame_menu.widgets.Widget']
+widgets: list['pygame_menu.widgets.Widget']
 
 
 def make_menu(

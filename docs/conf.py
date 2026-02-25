@@ -12,12 +12,12 @@ https://www.sphinx-doc.org/en/master/usage/configuration.html
 
 # -- Path setup ---------------------------------------------------------------
 
+import sys
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use pathlib to build absolute paths in a portable way.
 #
 from pathlib import Path
-import sys
 
 sys.path.insert(0, Path(__file__).resolve().parent.parent.as_posix())
 

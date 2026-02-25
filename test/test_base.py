@@ -6,6 +6,8 @@ TEST BASE
 Test base class.
 """
 
+from __future__ import annotations
+
 __all__ = ['BaseTest']
 
 from test._utils import BaseTest as _BaseTest

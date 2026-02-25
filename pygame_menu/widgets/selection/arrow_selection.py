@@ -6,15 +6,18 @@ LEFT ARROW CLASS
 Selector with a left arrow on the item.
 """
 
+from __future__ import annotations
+
 __all__ = ['ArrowSelection']
 
-import pygame
-import pygame_menu
+from typing import Optional
 
+import pygame
+
+import pygame_menu
+from pygame_menu._types import NumberInstance, NumberType, Tuple2IntType
 from pygame_menu.utils import assert_vector
 from pygame_menu.widgets.core import Selection
-
-from pygame_menu._types import NumberType, Tuple2IntType, Optional, NumberInstance
 
 SELECTOR_CLOCK = pygame.time.Clock()
 

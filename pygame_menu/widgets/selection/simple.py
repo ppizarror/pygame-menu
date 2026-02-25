@@ -6,11 +6,13 @@ SIMPLE
 Simple selection effect.
 """
 
+from __future__ import annotations
+
 __all__ = ['SimpleSelection']
 
 import pygame
-import pygame_menu
 
+import pygame_menu
 from pygame_menu.widgets.core import Selection
 
 

@@ -6,7 +6,10 @@ EXAMPLE - WINDOW RESIZE
 Resize the menu when the window is resized.
 """
 
+from __future__ import annotations
+
 import pygame
+
 import pygame_menu
 
 pygame.init()

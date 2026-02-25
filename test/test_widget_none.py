@@ -6,15 +6,16 @@ TEST WIDGET - NONE
 Test NoneWidget, HMargin, VFill, VMargin and MenuLink widgets.
 """
 
+from __future__ import annotations
+
 __all__ = ['NoneWidgetTest']
 
-from test._utils import MenuUtils, surface, PygameEventUtils, BaseTest
-
 import math
+from test._utils import BaseTest, MenuUtils, PygameEventUtils, surface
+
 import pygame_menu
 import pygame_menu.controls as ctrl
-
-from pygame_menu.widgets import NoneWidget, NoneSelection
+from pygame_menu.widgets import NoneSelection, NoneWidget
 from pygame_menu.widgets.core.widget import WidgetTransformationNotImplemented
 
 

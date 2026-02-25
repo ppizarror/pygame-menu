@@ -6,16 +6,19 @@ SELECTION
 Widget selection effect.
 """
 
+from __future__ import annotations
+
 __all__ = ['Selection']
 
 import copy
+from typing import Optional, Union
+
 import pygame
+
 import pygame_menu
-
+from pygame_menu._types import (ColorInputType, ColorType, NumberInstance,
+                                NumberType, Tuple2IntType, Tuple4IntType)
 from pygame_menu.utils import assert_color
-
-from pygame_menu._types import NumberType, ColorType, ColorInputType, Tuple2IntType, \
-    Tuple4IntType, NumberInstance, Optional, Union
 
 
 class Selection:

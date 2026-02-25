@@ -6,15 +6,18 @@ EXAMPLE - TIMER CLOCK
 Example file, timer clock with in-menu options.
 """
 
-__all__ = ['main']
+from __future__ import annotations
 
-import pygame
-import pygame_menu
-from pygame_menu.examples import create_example_window
+__all__ = ['main']
 
 import datetime
 from random import randrange
-from typing import List, Tuple, Optional
+from typing import Optional
+
+import pygame
+
+import pygame_menu
+from pygame_menu.examples import create_example_window
 
 # Constants and global variables
 ABOUT = [f'pygame-menu {pygame_menu.__version__}',
@@ -31,7 +34,7 @@ HELP = ['Press ESC to enable/disable Menu',
 W_SIZE = 800  # Width of window size
 
 surface: Optional['pygame.Surface'] = None
-timer: Optional[List[float]] = None
+timer: Optional[list[float]] = None
 
 
 def mainmenu_background() -> None:
@@ -62,7 +65,7 @@ class TestCallClassMethod:
         print('Update game with new settings')
 
 
-def change_color_bg(value: Tuple, c: Optional[Tuple] = None, **kwargs) -> None:
+def change_color_bg(value: tuple, c: Optional[tuple] = None, **kwargs) -> None:
     """
     Change background color.
 

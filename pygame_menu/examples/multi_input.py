@@ -6,13 +6,16 @@ EXAMPLE - MULTI-INPUT
 Shows different inputs (widgets).
 """
 
+from __future__ import annotations
+
 __all__ = ['main']
 
+from typing import Optional
+
 import pygame
+
 import pygame_menu
 from pygame_menu.examples import create_example_window
-
-from typing import Tuple, Optional
 
 # Constants and global variables
 FPS = 60
@@ -40,7 +43,7 @@ def check_name_test(value: str) -> None:
     print(f'User name: {value}')
 
 
-def update_menu_sound(value: Tuple, enabled: bool) -> None:
+def update_menu_sound(value: tuple, enabled: bool) -> None:
     """
     Update menu sound.
 
@@ -261,7 +264,7 @@ def main(test: bool = False) -> None:
         input_separator='-'
     )
 
-    def print_color(color: Tuple) -> None:
+    def print_color(color: tuple) -> None:
         """
         Test onchange/onreturn.
 

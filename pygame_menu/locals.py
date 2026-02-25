@@ -6,6 +6,8 @@ LOCALS
 Local constants.
 """
 
+from __future__ import annotations
+
 __all__ = [
 
     # Alignment

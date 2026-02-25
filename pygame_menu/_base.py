@@ -6,18 +6,21 @@ BASE
 Base object. Provides common methods used by all library objects.
 """
 
+from __future__ import annotations
+
 __all__ = ['Base']
 
-from pygame_menu.utils import uuid4
+from typing import Any, Optional
 
-from pygame_menu._types import Dict, Any, NumberInstance, NumberType, Optional
+from pygame_menu._types import NumberInstance, NumberType
+from pygame_menu.utils import uuid4
 
 
 class Base:
     """
     Base object.
     """
-    _attributes: Optional[Dict[str, Any]]
+    _attributes: Optional[dict[str, Any]]
     _class_id__repr__: bool
     _id: str
     _id__repr__: bool

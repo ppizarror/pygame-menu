@@ -6,12 +6,13 @@ EXAMPLES
 Example file directory.
 """
 
+from __future__ import annotations
+
 __all__ = ['create_example_window']
 
-import pygame
 import sys
 
-from typing import Tuple
+import pygame
 
 _PYGAME_ICON = [None]
 
@@ -19,7 +20,7 @@ _PYGAME_ICON = [None]
 # noinspection PyTypeChecker
 def create_example_window(
     title: str,
-    window_size: Tuple[int, int],
+    window_size: tuple[int, int],
     pygame_menu_icon: bool = True,
     init_pygame: bool = True,
     center_window: bool = True,
@@ -41,8 +42,9 @@ def create_example_window(
     assert isinstance(window_size[0], int), 'width must be an integer'
     assert isinstance(window_size[1], int), 'height must be an integer'
 
-    from pygame_menu.baseimage import IMAGE_EXAMPLE_PYGAME_MENU, BaseImage
     import os
+
+    from pygame_menu.baseimage import IMAGE_EXAMPLE_PYGAME_MENU, BaseImage
 
     if init_pygame:
         pygame.init()

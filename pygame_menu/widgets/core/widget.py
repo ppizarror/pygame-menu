@@ -6,6 +6,8 @@ WIDGET
 Base class for widgets.
 """
 
+from __future__ import annotations
+
 __all__ = [
 
     # Main class
@@ -33,39 +35,45 @@ __all__ = [
 
 import random
 import time
+from collections.abc import Callable
+from typing import Any, Optional, Union
 
 import pygame
-import pygame_menu
 
+import pygame_menu
 from pygame_menu._base import Base
 from pygame_menu._decorator import Decorator
+from pygame_menu._types import (CallableNoArgsType, CallbackType,
+                                ColorInputType, ColorType, CursorInputType,
+                                CursorType, EventListType, EventType,
+                                EventVectorType, NumberInstance, NumberType,
+                                PaddingType, Tuple2BoolType, Tuple2IntType,
+                                Tuple2NumberType, Tuple3IntType, Tuple4IntType,
+                                VectorInstance)
 from pygame_menu.controls import Controller
 from pygame_menu.font import FontType
-from pygame_menu.locals import POSITION_NORTHWEST, POSITION_SOUTHWEST, POSITION_WEST, \
-    POSITION_EAST, POSITION_NORTHEAST, POSITION_CENTER, POSITION_NORTH, POSITION_SOUTH, \
-    POSITION_SOUTHEAST, ALIGN_CENTER
+from pygame_menu.locals import (ALIGN_CENTER, POSITION_CENTER, POSITION_EAST,
+                                POSITION_NORTH, POSITION_NORTHEAST,
+                                POSITION_NORTHWEST, POSITION_SOUTH,
+                                POSITION_SOUTHEAST, POSITION_SOUTHWEST,
+                                POSITION_WEST)
 from pygame_menu.sound import Sound
-from pygame_menu.utils import make_surface, assert_alignment, assert_color, \
-    assert_position, assert_vector, parse_padding, uuid4, \
-    mouse_motion_current_mouse_position, PYGAME_V2, set_pygame_cursor, warn, \
-    get_cursor, ShadowGenerator
+from pygame_menu.utils import (PYGAME_V2, ShadowGenerator, assert_alignment,
+                               assert_color, assert_position, assert_vector,
+                               get_cursor, make_surface,
+                               mouse_motion_current_mouse_position,
+                               parse_padding, set_pygame_cursor, uuid4, warn)
 from pygame_menu.widgets.core.selection import Selection
-
-from pygame_menu._types import Optional, ColorType, Tuple2IntType, NumberType, \
-    PaddingType, Union, List, Tuple, Any, CallbackType, Dict, Callable, Tuple4IntType, \
-    Tuple2BoolType, Tuple3IntType, NumberInstance, ColorInputType, EventType, \
-    EventVectorType, EventListType, CursorInputType, CursorType, VectorInstance, \
-    Tuple2NumberType, CallableNoArgsType
 
 # This list stores the current widget which requested the mouseover status, and
 # the previous widget list which requested the mouseover. Each time the widget
 # changes the over status, if leaves all previous widgets that are not hovered
 # trigger mouseleave. The format of each item of the list is
 # [..., [widget, previous_cursor, [previous_widget, previous_cursor2, [....]
-WIDGET_MOUSEOVER: List[Any] = [None, []]
+WIDGET_MOUSEOVER: list[Any] = [None, []]
 
 # Stores the top cursor for validation
-WIDGET_TOP_CURSOR: List[Any] = [None]
+WIDGET_TOP_CURSOR: list[Any] = [None]
 WIDGET_TOP_CURSOR_WARNING = False
 
 WIDGET_BORDER_POSITION_NONE = 'border-none'
@@ -127,7 +135,7 @@ def _check_widget_mouseleave(
         # Unpack list
         prev_widget: 'Widget' = WIDGET_MOUSEOVER[1][0]
         prev_cursor = WIDGET_MOUSEOVER[1][1]
-        prev_list: List[Any] = WIDGET_MOUSEOVER[1][2]
+        prev_list: list[Any] = WIDGET_MOUSEOVER[1][2]
 
         assert WIDGET_MOUSEOVER[0] == prev_widget, \
             'inconsistent widget leave sublist'
@@ -163,7 +171,7 @@ def _check_widget_mouseleave(
 
     # Check sublist
     if len(WIDGET_MOUSEOVER[1]) == 3 and len(WIDGET_MOUSEOVER[1][2]) > 0 and not recursive and not force:
-        prev: List[Any] = WIDGET_MOUSEOVER[1][2]  # [widget, cursor, [widget, cursor, [...]]]
+        prev: list[Any] = WIDGET_MOUSEOVER[1][2]  # [widget, cursor, [widget, cursor, [...]]]
         while True:
             if not prev:
                 break
@@ -193,13 +201,13 @@ def _check_widget_mouseleave(
 
 # Types
 BackgroundSurfaceType = Optional[
-    List[Union['pygame.Rect', 'pygame.Surface', Optional[Union[ColorType, 'pygame_menu.BaseImage']]]]]
+    list[Union['pygame.Rect', 'pygame.Surface', Optional[Union[ColorType, 'pygame_menu.BaseImage']]]]]
 CallbackMouseType = Optional[Union[Callable[['Widget', EventType], Any], CallableNoArgsType]]
 CallbackSelectType = Optional[Union[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any], CallableNoArgsType]]
-WidgetBorderPositionType = Union[str, List[str], Tuple[str, ...]]
-WidgetBorderType = Tuple[ColorType, int, WidgetBorderPositionType, Tuple2IntType]
-WidgetShadowType = Dict[
-    str, Union[Optional['pygame.Surface'], Optional['pygame.Rect'], bool, Tuple[str, int, int, int, Tuple3IntType]]]
+WidgetBorderPositionType = Union[str, list[str], tuple[str, ...]]
+WidgetBorderType = tuple[ColorType, int, WidgetBorderPositionType, Tuple2IntType]
+WidgetShadowType = dict[
+    str, Union[Optional['pygame.Surface'], Optional['pygame.Rect'], bool, tuple[str, int, int, int, Tuple3IntType]]]
 
 
 # noinspection PyProtectedMember
@@ -222,7 +230,7 @@ class Widget(Base):
     _accept_events: bool
     _alignment: str
     _angle: NumberType
-    _args: List[Any]
+    _args: list[Any]
     _background_color: Optional[Union[ColorType, 'pygame_menu.BaseImage']]
     _background_inflate: Tuple2IntType
     _background_surface: BackgroundSurfaceType
@@ -236,7 +244,7 @@ class Widget(Base):
     _cursor: CursorType  # type: ignore
     _decorator: 'Decorator'
     _default_value: Any
-    _draw_callbacks: Dict[str, Callable[['Widget', Optional['pygame_menu.Menu']], Any]]
+    _draw_callbacks: dict[str, Callable[['Widget', Optional['pygame_menu.Menu']], Any]]
     _events: EventListType
     _flip: Tuple2BoolType
     _floating: bool
@@ -259,11 +267,11 @@ class Widget(Base):
     _joystick_enabled: bool
     _keyboard_enabled: bool
     _keyboard_ignore_nonphysical: bool
-    _kwargs: Dict[str, Any]
+    _kwargs: dict[str, Any]
     _last_render_hash: int
     _margin: Tuple2IntType
-    _max_height: List[Optional[bool]]
-    _max_width: List[Optional[bool]]
+    _max_height: list[Optional[bool]]
+    _max_width: list[Optional[bool]]
     _menu: Optional['pygame_menu.Menu']  # Menu which contains the Widget
     _menu_hook: Optional['pygame_menu.Menu']  # Menu the Widget points to (submenu)
     _mouse_enabled: bool
@@ -281,7 +289,7 @@ class Widget(Base):
     _position: Tuple2IntType
     _rect: 'pygame.Rect'
     _rect_size_delta: Tuple2IntType
-    _scale: List[Union[bool, NumberType]]
+    _scale: list[Union[bool, NumberType]]
     _scrollarea: Optional['pygame_menu._scrollarea.ScrollArea']  # Parent scrollarea
     _selected: bool
     _selection_effect: 'Selection'
@@ -295,7 +303,7 @@ class Widget(Base):
     _touchscreen_enabled: bool
     _translate: Tuple2IntType  # Translation made by user
     _translate_virtual: Tuple2IntType  # Virtual translation applied by api
-    _update_callbacks: Dict[str, Callable[[EventListType, 'Widget', 'pygame_menu.Menu'], Any]]
+    _update_callbacks: dict[str, Callable[[EventListType, 'Widget', 'pygame_menu.Menu'], Any]]
     _visible: bool
     active: bool
     configured: bool
@@ -798,7 +806,7 @@ class Widget(Base):
         """
         raise _WidgetCopyException('Widget class cannot be copied')
 
-    def __deepcopy__(self, memodict: Dict) -> 'pygame_menu.Menu':
+    def __deepcopy__(self, memodict: dict) -> 'pygame_menu.Menu':
         """
         Deep-copy method.
 
@@ -1018,7 +1026,7 @@ class Widget(Base):
         self._background_surface = None
         return self
 
-    def _get_background_inflate(self) -> Tuple[int, int]:
+    def _get_background_inflate(self) -> tuple[int, int]:
         """
         Returns the background inflate.
 
@@ -1448,7 +1456,7 @@ class Widget(Base):
         self._force_render()
         return self
 
-    def get_padding(self, transformed: bool = True) -> Tuple:
+    def get_padding(self, transformed: bool = True) -> tuple:
         """
         Return the Widget padding.
 
@@ -1895,7 +1903,7 @@ class Widget(Base):
         self._force_render()
         return self
 
-    def update_font(self, style: Dict[str, Any]) -> 'Widget':
+    def update_font(self, style: dict[str, Any]) -> 'Widget':
         """
         Updates the Widget font. This method receives a style dict (non-empty).
 
@@ -1935,7 +1943,7 @@ class Widget(Base):
             selected_color=style['selected_color']
         )
 
-    def get_font_info(self) -> Dict[str, Any]:
+    def get_font_info(self) -> dict[str, Any]:
         """
         Return a dict with the information of the Widget font.
 
@@ -1975,7 +1983,7 @@ class Widget(Base):
         """
         return self._menu
 
-    def _get_menu_widgets(self) -> List['Widget']:
+    def _get_menu_widgets(self) -> list['Widget']:
         """
         Return the menu API widgets list.
 
@@ -1989,7 +1997,7 @@ class Widget(Base):
             return self._menu._widgets
         return []
 
-    def _get_menu_update_widgets(self) -> List['Widget']:
+    def _get_menu_update_widgets(self) -> list['Widget']:
         """
         Return the menu update widgets.
 
@@ -3104,7 +3112,7 @@ class Widget(Base):
                 frame = frame._frame
         return depth
 
-    def _get_status(self) -> Tuple[Any, ...]:
+    def _get_status(self) -> tuple[Any, ...]:
         """
         Get the status of the Widget as a tuple (position, indices, values, etc.).
 
@@ -3139,7 +3147,7 @@ class Widget(Base):
         )
 
         # Starting data
-        data: List[Any] = [cls_name, geom, bool_status]
+        data: list[Any] = [cls_name, geom, bool_status]
 
         # Append inner widgets if frame and not menu
         if isinstance(self, pygame_menu.widgets.Frame):
@@ -3244,7 +3252,7 @@ class AbstractWidgetManager:
         """
         raise NotImplementedError('override is mandatory')
 
-    def _filter_widget_attributes(self, kwargs: Dict[str, Any]) -> Dict[str, Any]:
+    def _filter_widget_attributes(self, kwargs: dict[str, Any]) -> dict[str, Any]:
         """
         Return the valid widgets attributes from a dictionary.
 
@@ -3266,7 +3274,7 @@ class AbstractWidgetManager:
         raise NotImplementedError('override is mandatory')
 
     @staticmethod
-    def _check_kwargs(kwargs: Dict[str, Any]) -> None:
+    def _check_kwargs(kwargs: dict[str, Any]) -> None:
         """
         Check kwargs after widget addition. It should be empty. Raises ``ValueError``.
 

@@ -6,19 +6,21 @@ VERTICAL VILL
 Vertical fill box. Fills all available vertical space.
 """
 
+from __future__ import annotations
+
 __all__ = [
     'VFill',
     'VFillManager'
 ]
 
-import pygame
-import pygame_menu
-
 from abc import ABC
+
+import pygame
+
+import pygame_menu
+from pygame_menu._types import NumberInstance, NumberType
 from pygame_menu.widgets.core.widget import AbstractWidgetManager
 from pygame_menu.widgets.widget.none import NoneWidget
-
-from pygame_menu._types import NumberType, NumberInstance
 
 
 class VFill(NoneWidget):

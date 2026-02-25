@@ -6,6 +6,8 @@ PROGRESS BAR
 Progress bar widget.
 """
 
+from __future__ import annotations
+
 __all__ = [
 
     # Class
@@ -17,20 +19,22 @@ __all__ = [
 
 ]
 
-import pygame
-import pygame_menu
-
 from abc import ABC
-from pygame_menu.font import FontType, assert_font
-from pygame_menu.locals import ALIGN_LEFT, ALIGN_CENTER
-from pygame_menu.utils import assert_color, assert_vector, make_surface, \
-    assert_alignment, parse_padding
-from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImplemented, \
-    AbstractWidgetManager
+from collections.abc import Callable
+from typing import Any, Optional
 
-from pygame_menu._types import Any, CallbackType, Optional, ColorType, NumberType, \
-    Tuple2IntType, NumberInstance, ColorInputType, EventVectorType, Callable, \
-    PaddingType, Tuple4IntType
+import pygame
+
+import pygame_menu
+from pygame_menu._types import (CallbackType, ColorInputType, ColorType,
+                                EventVectorType, NumberInstance, NumberType,
+                                PaddingType, Tuple2IntType, Tuple4IntType)
+from pygame_menu.font import FontType, assert_font
+from pygame_menu.locals import ALIGN_CENTER, ALIGN_LEFT
+from pygame_menu.utils import (assert_alignment, assert_color, assert_vector,
+                               make_surface, parse_padding)
+from pygame_menu.widgets.core.widget import (
+    AbstractWidgetManager, Widget, WidgetTransformationNotImplemented)
 
 ProgressBarTextFormatType = Callable[[NumberType], str]
 

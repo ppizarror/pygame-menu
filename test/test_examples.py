@@ -6,20 +6,16 @@ TEST EXAMPLES
 Test example files.
 """
 
+from __future__ import annotations
+
 __all__ = ['ExamplesTest']
 
 from test._utils import BaseTest, MenuUtils, PygameEventUtils
 
 import pygame
-import pygame_menu
 
 import pygame_menu.examples.game_selector as game_selector
 import pygame_menu.examples.multi_input as multi_input
-import pygame_menu.examples.scroll_menu as scroll_menu
-import pygame_menu.examples.simple as simple
-import pygame_menu.examples.timer_clock as timer_clock
-import pygame_menu.examples.window_resize as window_resize
-
 import pygame_menu.examples.other.calculator as calculator
 import pygame_menu.examples.other.dynamic_button_append as dynamic_button
 import pygame_menu.examples.other.dynamic_widget_update as dynamic_widget
@@ -29,6 +25,11 @@ import pygame_menu.examples.other.scrollbar as scrollbar
 import pygame_menu.examples.other.scrollbar_area as scrollbar_area
 import pygame_menu.examples.other.ui_solar_system as ui_solarsystem
 import pygame_menu.examples.other.widget_positioning as widget_positioning
+import pygame_menu.examples.scroll_menu as scroll_menu
+import pygame_menu.examples.simple as simple
+import pygame_menu.examples.timer_clock as timer_clock
+import pygame_menu.examples.window_resize as window_resize
+from pygame_menu.widgets import ColorInput, DropSelect
 
 
 class ExamplesTest(BaseTest):
@@ -70,7 +71,7 @@ class ExamplesTest(BaseTest):
 
         more_settings = multi_input.main_menu.get_submenus()[1]
         # noinspection PyTypeChecker
-        hex_color_widget: 'pygame_menu.widgets.ColorInput' = more_settings.get_widget('hex_color')
+        hex_color_widget: ColorInput = more_settings.get_widget('hex_color')
         hex_color_widget.apply()
 
     @staticmethod
@@ -215,9 +216,9 @@ class ExamplesTest(BaseTest):
         self.assertFalse(app._path_found)
         app._visualize = False
         # noinspection PyTypeChecker
-        gen: 'pygame_menu.widgets.DropSelect' = app._menu.get_widget('generator')
+        gen: DropSelect = app._menu.get_widget('generator')
         # noinspection PyTypeChecker
-        sol: 'pygame_menu.widgets.DropSelect' = app._menu.get_widget('solver')
+        sol: DropSelect = app._menu.get_widget('solver')
         for i in range(4):
             gen.set_value(i)
             sol.set_value(i)

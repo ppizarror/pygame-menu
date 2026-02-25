@@ -6,24 +6,28 @@ IMAGE
 Image widget class, adds a simple image.
 """
 
+from __future__ import annotations
+
 __all__ = [
     'Image',
     'ImageManager'
 ]
 
 from abc import ABC
+from collections.abc import Callable
 from io import BytesIO
 from pathlib import Path
+from typing import Any, Optional, Union
 
 import pygame
-import pygame_menu
 
+import pygame_menu
+from pygame_menu._types import (CallbackType, EventVectorType, NumberInstance,
+                                NumberType, Tuple2NumberType,
+                                Vector2NumberType)
 from pygame_menu.baseimage import BaseImage
 from pygame_menu.utils import assert_vector
-from pygame_menu.widgets.core.widget import Widget, AbstractWidgetManager
-
-from pygame_menu._types import Union, NumberType, CallbackType, Tuple2NumberType, \
-    Optional, NumberInstance, EventVectorType, Callable, Vector2NumberType, Any
+from pygame_menu.widgets.core.widget import AbstractWidgetManager, Widget
 
 
 class Image(Widget):

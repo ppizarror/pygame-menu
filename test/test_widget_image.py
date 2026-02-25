@@ -6,11 +6,14 @@ TEST WIDGET - IMAGE
 Test Image widget.
 """
 
+from __future__ import annotations
+
 __all__ = ['ImageWidgetTest']
 
-from test._utils import MenuUtils, surface, PygameEventUtils, BaseTest
+from test._utils import BaseTest, MenuUtils, PygameEventUtils, surface
 
 import pygame
+
 import pygame_menu
 
 

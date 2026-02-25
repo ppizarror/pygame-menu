@@ -6,20 +6,23 @@ TEST WIDGETS
 Test general widget properties.
 """
 
+from __future__ import annotations
+
 __all__ = ['WidgetsTest']
 
-from test._utils import MenuUtils, surface, PygameEventUtils, test_reset_surface, \
-    TEST_THEME, PYGAME_V2, BaseTest
 import copy
+from test._utils import (PYGAME_V2, TEST_THEME, BaseTest, MenuUtils,
+                         PygameEventUtils, surface, test_reset_surface)
 
 import pygame
-import pygame_menu
 
-from pygame_menu.locals import POSITION_SOUTHEAST, POSITION_NORTH, POSITION_SOUTH, \
-    POSITION_EAST, POSITION_WEST, POSITION_CENTER, POSITION_NORTHEAST, \
-    POSITION_SOUTHWEST, POSITION_NORTHWEST
-from pygame_menu.widgets import Label, Button
-from pygame_menu.widgets.core.widget import Widget, AbstractWidgetManager
+import pygame_menu
+from pygame_menu.locals import (POSITION_CENTER, POSITION_EAST, POSITION_NORTH,
+                                POSITION_NORTHEAST, POSITION_NORTHWEST,
+                                POSITION_SOUTH, POSITION_SOUTHEAST,
+                                POSITION_SOUTHWEST, POSITION_WEST)
+from pygame_menu.widgets import Button, Label
+from pygame_menu.widgets.core.widget import AbstractWidgetManager, Widget
 
 
 class WidgetsTest(BaseTest):

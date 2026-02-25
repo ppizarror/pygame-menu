@@ -7,18 +7,19 @@ Similar to a Button that opens a Menu, MenuLink is a widget that contains a Menu
 reference. This Menu can be opened with .open() method.
 """
 
+from __future__ import annotations
+
 __all__ = [
     'MenuLink',
     'MenuLinkManager'
 ]
 
-import pygame_menu
-
 from abc import ABC
+from collections.abc import Callable
+
+import pygame_menu
 from pygame_menu.widgets.core.widget import AbstractWidgetManager
 from pygame_menu.widgets.widget.none import NoneWidget
-
-from pygame_menu._types import Callable
 
 
 class MenuLink(NoneWidget):

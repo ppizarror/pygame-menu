@@ -6,11 +6,13 @@ EXAMPLE - USE SCROLLBAR WIDGET
 Shows how the ScrollBar can be used on a surface.
 """
 
+from __future__ import annotations
+
 __all__ = ['main']
 
 import pygame
-import pygame_menu
 
+import pygame_menu
 from pygame_menu.examples import create_example_window
 from pygame_menu.utils import make_surface
 from pygame_menu.widgets import ScrollBar
