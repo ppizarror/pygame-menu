@@ -476,4 +476,3 @@ class BaseImageTest(BaseTest):
         image2 = pygame_menu.BaseImage(surf2)
         image2.set_at((0, 0), (255, 255, 0))
         self.assertEqual(surf2.get_at((0, 0)), (0, 0, 255, 255))
-

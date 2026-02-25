@@ -14,6 +14,7 @@ __all__ = [
     'Sound',
 
     # Sound types
+    'SOUND_INITIALIZED',
     'SOUND_TYPE_CLICK_MOUSE',
     'SOUND_TYPE_CLICK_TOUCH',
     'SOUND_TYPE_CLOSE_MENU',
@@ -110,6 +111,7 @@ SOUND_EXAMPLES = (
     SOUND_EXAMPLE_OPEN_MENU,
     SOUND_EXAMPLE_WIDGET_SELECTION
 )
+
 
 # Stores global reference that marks sounds as initialized
 @dataclass
@@ -393,8 +395,8 @@ class Sound(Base):
         sound_time = time.time()
 
         # If the previous sound is the same and has not ended (max 10% overlap)
-        OVERLAP_RATIO = 0.1
-        overlap_allowed = sound_time - self._last_time >= OVERLAP_RATIO * sound['length']
+        overlap_ratio: float = 0.1
+        overlap_allowed = sound_time - self._last_time >= overlap_ratio * sound['length']
         is_different_sound = sound['type'] != self._last_play
 
         if is_different_sound or overlap_allowed or self._uniquechannel:

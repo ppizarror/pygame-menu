@@ -87,11 +87,11 @@ class BaseTest(_BaseTest):
 
     def test_object_id_type_error(self) -> None:
         with self.assertRaises(TypeError):
-            Base(123)
+            Base(123)  # type: ignore
 
     def test_verbose_type_error(self) -> None:
         with self.assertRaises(TypeError):
-            Base("id", verbose="yes")
+            Base("id", verbose="yes")  # type: ignore
 
     def test_repr_conflict(self) -> None:
         obj = Base("id")
@@ -119,7 +119,7 @@ class BaseTest(_BaseTest):
     def test_attribute_key_type_error(self) -> None:
         obj = Base("")
         with self.assertRaises(TypeError):
-            obj.set_attribute(123, "value")
+            obj.set_attribute(123, "value")  # type: ignore
 
     def test_counter_non_numeric_default(self) -> None:
         obj = Base("")

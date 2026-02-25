@@ -43,7 +43,7 @@ class Label(Widget):
     :param onselect: Function when selecting the label widget
     :param wordwrap: Wraps label if newline is found on widget
     :param leading: Font leading for ``wordwrap``. If ``None`` retrieves from widget font
-    :param max_nlines: Number of maximum lines for ``wordwrap``. If ``None`` the number is dynamically computed. If exceeded, ``get_overflow_lines()`` will return the non displayed lines
+    :param max_nlines: Number of maximum lines for ``wordwrap``. If ``None`` the number is dynamically computed. If exceeded, ``get_overflow_lines()`` will return the non-displayed lines
     """
     _last_underline: list[Union[str, Optional[tuple[ColorType, int, int]]]]
     _leading: Optional[int]
@@ -400,7 +400,7 @@ class LabelManager(AbstractWidgetManager, ABC):
             - ``font_size``                     (int) – Font size of the widget
             - ``leading``                       (int) - Font leading for ``wordwrap``. If ``None`` retrieves from widget font
             - ``margin``                        (tuple, list) – Widget (left, bottom) margin in px
-            - ``max_nlines``                    (int) - Number of maximum lines for ``wordwrap``. If ``None`` the number is dynamically computed. If exceeded, ``get_overflow_lines()`` will return the non displayed lines
+            - ``max_nlines``                    (int) - Number of maximum lines for ``wordwrap``. If ``None`` the number is dynamically computed. If exceeded, ``get_overflow_lines()`` will return the non-displayed lines
             - ``padding``                       (int, float, tuple, list) – Widget padding according to CSS rules. General shape: (top, right, bottom, left)
             - ``selection_color``               (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the selected widget; only affects the font color
             - ``selection_effect``              (:py:class:`pygame_menu.widgets.core.Selection`) – Widget selection effect. Applied only if ``selectable`` is ``True``
@@ -580,7 +580,7 @@ class LabelManager(AbstractWidgetManager, ABC):
             - ``font_size``                     (int) – Font size of the widget
             - ``leading``                       (int) - Font leading for ``wordwrap``. If ``None`` retrieves from widget font
             - ``margin``                        (tuple, list) – Widget (left, bottom) margin in px
-            - ``max_nlines``                    (int) - Number of maximum lines for ``wordwrap``. If ``None`` the number is dynamically computed. If exceeded, ``get_overflow_lines()`` will return the non displayed lines
+            - ``max_nlines``                    (int) - Number of maximum lines for ``wordwrap``. If ``None`` the number is dynamically computed. If exceeded, ``get_overflow_lines()`` will return the non-displayed lines
             - ``padding``                       (int, float, tuple, list) – Widget padding according to CSS rules. General shape: (top, right, bottom, left)
             - ``selection_color``               (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the selected widget; only affects the font color
             - ``selection_effect``              (:py:class:`pygame_menu.widgets.core.Selection`) – Widget selection effect. Applied only if ``selectable`` is ``True``
@@ -610,7 +610,7 @@ class LabelManager(AbstractWidgetManager, ABC):
         :param onselect: Callback executed when selecting the widget; only executed if ``selectable`` is ``True``
         :param selectable: Label accepts user selection; useful to move along the Menu using label selection
         :param title_format: Title format which accepts ``{0}`` as the string from ``time.strftime``, for example, ``'My Clock {0}'`` can be a title format
-        :param wordwrap: Wraps label if newline is found on widget or it exceeds the maximum width from its container. If ``False`` the manager splits the string and creates a list of widgets, else, the widget itself splits and updates the height
+        :param wordwrap: Wraps label if newline is found on widget, or it exceeds the maximum width from its container. If ``False`` the manager splits the string and creates a list of widgets, else, the widget itself splits and updates the height
         :param kwargs: Optional keyword arguments
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.Label`

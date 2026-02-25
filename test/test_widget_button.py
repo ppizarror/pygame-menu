@@ -16,7 +16,6 @@ from test._utils import (PYGAME_V2, BaseTest, MenuUtils, PygameEventUtils,
 import pygame
 
 import pygame_menu
-import pygame_menu.controls as ctrl
 from pygame_menu.themes import THEME_DEFAULT
 from pygame_menu.widgets import Button
 from pygame_menu.widgets.core.widget import WIDGET_SHADOW_TYPE_ELLIPSE
@@ -308,7 +307,7 @@ class ButtonWidgetTest(BaseTest):
         self.assertEqual(test[0], 3)
 
         # Test select
-        self.assertTrue(btn.update(PygameEventUtils.joy_button(ctrl.JOY_BUTTON_SELECT)))
+        self.assertTrue(btn.update(PygameEventUtils.joy_button(pygame_menu.controls.JOY_BUTTON_SELECT)))
 
     def test_button_image(self) -> None:
         """

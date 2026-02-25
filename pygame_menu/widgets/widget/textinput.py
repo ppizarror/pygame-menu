@@ -1518,7 +1518,7 @@ class TextInput(Widget):
                 self._sound.play_event_error()
             return False
 
-        # If no special key is pressed, add unicode of key to input_string
+        # If no special key is pressed, add Unicode of key to input_string
         new_string = (
             self._input_string[:self._cursor_position]
             + keychar
@@ -1681,7 +1681,7 @@ class TextInput(Widget):
                     # Command not found, returns
                     break
 
-                # User press alt+x get the unicode char from string
+                # User press alt+x get the Unicode char from string
                 if (
                     pygame.key.get_mods() in (pygame.KMOD_ALT, pygame.KMOD_LALT) and
                     event.key == pygame.K_x and self._alt_x_enabled
@@ -1889,7 +1889,7 @@ class TextInput(Widget):
 
             # User releases a key
             elif event.type == pygame.KEYUP and self._keyboard_enabled:
-                # Because KEYUP doesn't include event.unicode, this dict is stored
+                # Because KEYUP doesn't include event.Unicode, this dict is stored
                 # in such a weird way
                 if event.key in self._keyrepeat_counters:
                     del self._keyrepeat_counters[event.key]

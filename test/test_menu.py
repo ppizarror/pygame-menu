@@ -424,7 +424,7 @@ class MenuTest(BaseTest):
             self.assertEqual(m, menu)
             m.reset(1)
 
-        # Also, set first menu onreset to test this behaviour
+        # Also, set first menu onreset to test this behavior
         reset = [False]
 
         def onreset(m: 'pygame_menu.Menu') -> None:
@@ -546,7 +546,7 @@ class MenuTest(BaseTest):
         widget_found = menu.get_widget('some_id')
         self.assertEqual(widget, widget_found)
 
-        # Add a widget to a deepest menu
+        # Add a widget to the deepest menu
         prev_menu = menu
         for i in range(11):
             menu_ = MenuUtils.generic_menu()

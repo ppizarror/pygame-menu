@@ -68,8 +68,8 @@ class WidgetManager(
     """
     Add/Remove widgets to the Menu.
 
-    :param menu: Menu reference
-    :param verbose: Enable/disable verbose mode (warnings/errors)
+    :param menu: The Menu reference
+    :param verbose: Enables/disables verbose mode (warnings/errors)
     """
 
     def __init__(self, menu: 'pygame_menu.Menu', verbose: bool = True) -> None:

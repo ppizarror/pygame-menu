@@ -175,7 +175,7 @@ def load_system_font(name: str, size: int) -> '__font.Font':
 
         system_fonts = __font.get_fonts()
 
-        # Find closest match
+        # Find the closest match
         best = max(system_fonts, key=lambda f: SequenceMatcher(None, f, name).ratio())
         suggestion = f'system font "{name}" unknown, use "{best}" instead'
 

@@ -761,7 +761,7 @@ class Frame(Widget):
 
     def get_indices(self) -> tuple[int, int]:
         """
-        Return first and last selectable indices tuple.
+        Return first and last selectable indices' tuple.
 
         :return: First, Last widget selectable indices
         """

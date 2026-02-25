@@ -523,7 +523,8 @@ class RangeSliderWidgetTest(BaseTest):
         self.assertEqual(slider_single.get_value(), 0.5)
 
         # Test with a double slider (tuple default)
-        slider_double = pygame_menu.widgets.RangeSlider('Double', default_value=(0.2, 0.7), range_values=(0, 1), increment=0.1)
+        slider_double = pygame_menu.widgets.RangeSlider('Double', default_value=(0.2, 0.7), range_values=(0, 1),
+                                                        increment=0.1)
         self.assertEqual(slider_double._default_value, (0.2, 0.7))
         self.assertEqual(slider_double.get_value(), (0.2, 0.7))
 
@@ -546,11 +547,11 @@ class RangeSliderWidgetTest(BaseTest):
 
         # Test invalid default value types for single slider
         self.assertRaises(AssertionError, lambda: slider_single.set_default_value([0.1, 0.2]))
-        self.assertRaises(AssertionError, lambda: slider_single.set_default_value('invalid'))
+        self.assertRaises(AssertionError, lambda: slider_single.set_default_value('invalid'))  # type: ignore
 
         # Test invalid default value types for double slider
         self.assertRaises(AssertionError, lambda: slider_double.set_default_value(0.5))
-        self.assertRaises(AssertionError, lambda: slider_double.set_default_value((0.1, 0.2, 0.3)))
+        self.assertRaises(AssertionError, lambda: slider_double.set_default_value((0.1, 0.2, 0.3)))  # type: ignore
 
     def test_render_invariants(self) -> None:
         menu = MenuUtils.generic_menu()
@@ -577,7 +578,7 @@ class RangeSliderWidgetTest(BaseTest):
 
     def test_value_format(self) -> None:
         menu = MenuUtils.generic_menu()
-        r = menu.add.range_slider('R', 0.5, (0, 1), 0.1, value_format=lambda x: f'{int(x*100)}%')
+        r = menu.add.range_slider('R', 0.5, (0, 1), 0.1, value_format=lambda x: f'{int(x * 100)}%')
         r.draw(surface)
         s = r._slider_text_value_surfaces[0]
         self.assertIsInstance(s, pygame.Surface)

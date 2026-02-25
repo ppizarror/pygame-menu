@@ -268,7 +268,7 @@ class TextInputWidgetTest(BaseTest):
 
     def test_unicode(self) -> None:
         """
-        Test unicode support.
+        Test Unicode support.
         """
         menu = MenuUtils.generic_menu()
         textinput = menu.add.text_input('title', input_underline='_')
@@ -295,7 +295,7 @@ class TextInputWidgetTest(BaseTest):
         textinput.update(PygameEventUtils.key(pygame.K_1, keydown=True, char='1'))
         textinput.update(PygameEventUtils.keydown_mod_alt(pygame.K_x))  # convert 215 to unicode
         self.assertEqual(textinput.get_value(), '±')
-        textinput.update(PygameEventUtils.keydown_mod_alt(pygame.K_x))  # convert same to unicode, do nothing
+        textinput.update(PygameEventUtils.keydown_mod_alt(pygame.K_x))  # convert same to Unicode, do nothing
         self.assertEqual(textinput.get_value(), '±')
 
         # Test consecutive

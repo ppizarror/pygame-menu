@@ -211,7 +211,7 @@ class MazeApp:
         self._offset = (25, 25)  # Maze offset within window
         self._width = width
 
-        # Create a 2 dimensional array (a list of lists)
+        # Create a 2-dimensional array (a list of lists)
         self._grid = []
         self._rows = rows
         self._screen_width = self._rows * (self._width + self._margin) + self._margin * 2

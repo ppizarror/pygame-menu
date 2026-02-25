@@ -104,10 +104,10 @@ class Menu(Base):
     :param onreset: Function executed when resetting the Menu. The function must be non-argument or single argument (Menu instance)
     :param overflow: Enables overflow on x/y axes. If ``False`` then scrollbars will not work and the maximum width/height of the scrollarea is the same as the Menu container. Style: (overflow_x, overflow_y). If ``False`` or ``True`` the value will be set on both axis
     :param position: Position on x-axis and y-axis. If the value is only 2 elements, the position is relative to the window width (thus, values must be 0-100%); else, the third element defines if the position is relative or not. If ``(x, y, False)`` the values of ``(x, y)`` are in px
-    :param remember_selection: Menu remembers selection when moving through submenus. By default it is false, so, when moving back the selected widget will be the first one of the Menu
+    :param remember_selection: Menu remembers selection when moving through submenus. By default, it is false, so, when moving back the selected widget will be the first one of the Menu
     :param rows: Number of rows of each column, if there's only 1 column ``None`` can be used for no-limit. Also, a tuple can be provided for defining different number of rows for each column, for example ``rows=10`` (each column can have a maximum 10 widgets), or ``rows=[2, 3, 5]`` (first column has 2 widgets, second 3, and third 5)
     :param screen_dimension: List/Tuple representing the dimensions the Menu should reference for sizing/positioning (width, height), if ``None`` pygame is queried for the display mode. This value defines the ``window_size`` of the Menu
-    :param surface: The surface that contains the Menu. By default the Menu always considers that it is drawn on a surface that uses all window width/height. However, if a sub-surface is used the ``surface`` value will be used instead to retrieve the offset. Also, if ``surface`` is provided the menu can be drawn without providing a surface object while calling ``Menu.draw()``
+    :param surface: The surface that contains the Menu. By default, the Menu always considers that it is drawn on a surface that uses all window width/height. However, if a sub-surface is used the ``surface`` value will be used instead to retrieve the offset. Also, if ``surface`` is provided the menu can be drawn without providing a surface object while calling ``Menu.draw()``
     :param theme: Menu theme
     :param touchscreen: Enable/disable touch action inside the Menu. Only available on pygame 2
     :param touchscreen_motion_selection: Select widgets using touchscreen motion. If ``True`` menu draws a ``focus`` on the selected widget
@@ -1305,7 +1305,7 @@ class Menu(Base):
                     widget.select(False)
                     invalid_selection_widgets.append(widget.get_class_id())
 
-            # If widget is frame
+            # If widget is framed
             if isinstance(widget, Frame):
                 try:
                     widget.update_position()
@@ -1918,9 +1918,9 @@ class Menu(Base):
             stored in ``_current`` pointer); for such behavior apply to
             :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
-        :param inner: If ``True`` returns the available width (menu width minus scroll if visible)
-        :param widget: If ``True`` returns the total width used by the widgets
-        :param border: If ``True`` add the mmenu border width. Only applied if both ``inner`` and ``widget`` are ``False``
+        :param inner: If ``True``, returns the available width (menu width minus scroll if visible)
+        :param widget: If ``True``, returns the total width used by the widgets
+        :param border: If ``True``, add the mmenu border width. Only applied if both ``inner`` and ``widget`` are ``False``
         :return: Width in px
         """
         if widget:

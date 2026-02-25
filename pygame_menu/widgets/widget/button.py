@@ -330,7 +330,7 @@ class ButtonManager(AbstractWidgetManager, ABC):
             - ``font_size``                     (int) – Font size of the widget
             - ``leading``                       (int) - Font leading for ``wordwrap``. If ``None`` retrieves from widget font
             - ``margin``                        (tuple, list) – Widget (left, bottom) margin in px
-            - ``max_nlines``                    (int) - Number of maximum lines for ``wordwrap``. If ``None`` the number is dynamically computed. If exceeded, ``get_overflow_lines()`` will return the non displayed lines
+            - ``max_nlines``                    (int) - Number of maximum lines for ``wordwrap``. If ``None`` the number is dynamically computed. If exceeded, ``get_overflow_lines()`` will return the non-displayed lines
             - ``onselect``                      (callable, None) – Callback executed when selecting the widget
             - ``padding``                       (int, float, tuple, list) – Widget padding according to CSS rules. General shape: (top, right, bottom, left)
             - ``readonly_color``                (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the widget if readonly mode
@@ -346,7 +346,7 @@ class ButtonManager(AbstractWidgetManager, ABC):
             - ``underline_offset``              (int) – Vertical offset in px. ``2`` by default
             - ``underline_width``               (int) – Underline width in px. ``2`` by default
             - ``underline``                     (bool) – Enables text underline, using a properly placed decoration. ``False`` by default
-            - ``wordwrap``                      (bool) – Wraps button text if newline (\n) is found on text or it exceeds the maximum width from its container. If ``False`` the manager splits the string and creates a list of widgets, else, the widget itself splits and updates the height
+            - ``wordwrap``                      (bool) – Wraps button text if newline (\n) is found on text, or it exceeds the maximum width from its container. If ``False`` the manager splits the string and creates a list of widgets, else, the widget itself splits and updates the height
 
         .. note::
 

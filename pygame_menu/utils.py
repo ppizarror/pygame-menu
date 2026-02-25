@@ -555,8 +555,8 @@ def print_menu_widget_structure(
                 v = non_menu_frame_widgets[nmi]
                 for v_wid in v:
                     try:
-                        prefix = f"{c.BRIGHT_WHITE}·   {'│   ' * v_wid.get_frame_depth()}{c.ENDC}"
-                        print(prefix + widget_terminal_title(v_wid))
+                        prefix_ = f"{c.BRIGHT_WHITE}·   {'│   ' * v_wid.get_frame_depth()}{c.ENDC}"
+                        print(prefix_ + widget_terminal_title(v_wid))
                     except UnicodeEncodeError:
                         pass
                 del non_menu_frame_widgets[nmi]
@@ -873,7 +873,7 @@ class ShadowGenerator:
         """
         Creates a single corner surface and a single edge surface for a shadow.
 
-        :param aa_amount: Amount of anti-aliasing
+        :param aa_amount: Amount of antialiasing
         :param corner_radius_param: Radius of a corner this shadow will go around
         :param corner_rect: Rectangular size of corner
         :param shadow_width_param: Width of shadow
@@ -1030,7 +1030,7 @@ class ShadowGenerator:
         :param width: The width of the shadow to create
         :param height: The height of the shadow to create
         :param shadow_width_param: The width of the shadowed edge
-        :param aa_amount: The amount of anti-aliasing to use, defaults to 4
+        :param aa_amount: The amount of antialiasing to use, defaults to 4
         :param color: Shadow color (r, g, b)
         :return: Surface with shadow
         """
