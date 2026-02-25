@@ -36,13 +36,21 @@ if mode == 'pip':
 
 elif mode == 'twine':
     if dist.is_dir():
+        import glob
+
+        files = glob.glob(str(dist / "*"))
+
+        if not files:
+            raise FileNotFoundError("No distribution files found in dist/")
+
         subprocess.run(
-            ["python", "-m", "twine", "upload", "dist/*"],
-            shell=True,   # required because of wildcard
+            ["python", "-m", "twine", "upload", *files],
             check=True
         )
     else:
-        raise FileNotFoundError('No distribution found, execute build.py pip first')
+        raise FileNotFoundError(
+            'No distribution found, execute build.py pip first'
+        )
 
 else:
     raise ValueError(f'Unknown mode {mode}')

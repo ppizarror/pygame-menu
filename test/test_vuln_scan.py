@@ -1,5 +1,6 @@
 import subprocess
 import sys
+import shutil
 from pathlib import Path
 from dataclasses import dataclass
 
@@ -12,12 +13,12 @@ class ScanResult:
     reason: str = ""
 
 
-def run_cmd(cmd: str, label: str) -> ScanResult:
+def run_cmd(cmd: list[str], label: str) -> ScanResult:
     """Run a shell command."""
     print(f"\n=== {label} ===")
     try:
         result = subprocess.run(
-            cmd, shell=True, capture_output=True, text=True
+            cmd, capture_output=True, text=True
         )
         print(result.stdout[:500])  # preview in terminal
         if result.returncode != 0:
@@ -33,13 +34,7 @@ def run_cmd(cmd: str, label: str) -> ScanResult:
 
 
 def check_tool(tool: str) -> bool:
-    """Check if a CLI tool is available on PATH."""
-    result = subprocess.run(
-        f"where {tool}" if sys.platform == "win32" else f"which {tool}",
-        shell=True,
-        capture_output=True,
-    )
-    return result.returncode == 0
+    return shutil.which(tool) is not None
 
 
 def main() -> None:
