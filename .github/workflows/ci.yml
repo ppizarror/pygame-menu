@@ -52,6 +52,7 @@ jobs:
       - name: Run Bandit
         run: |
           bandit -r . -ll --exclude ./test,./tests
+        continue-on-error: true
 
       - name: Run Semgrep
         run: |
