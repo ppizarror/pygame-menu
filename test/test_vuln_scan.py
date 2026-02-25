@@ -36,7 +36,6 @@ def run_cmd(cmd: list[str], label: str) -> ScanResult:
 def check_tool(tool: str) -> bool:
     return shutil.which(tool) is not None
 
-
 def main() -> None:
     repo_root = Path(__file__).resolve().parents[2]
 
