@@ -14,13 +14,16 @@ __all__ = [
 ]
 
 from abc import ABC
+from typing import TYPE_CHECKING
 
-import pygame
-
-import pygame_menu
 from pygame_menu._types import NumberInstance, NumberType
 from pygame_menu.widgets.core.widget import AbstractWidgetManager
 from pygame_menu.widgets.widget.none import NoneWidget
+
+if TYPE_CHECKING:
+    import pygame
+
+    import pygame_menu
 
 
 class VFill(NoneWidget):
@@ -47,7 +50,7 @@ class VFill(NoneWidget):
         super().__init__(widget_id=widget_id)
         self._min_height = min_height
 
-    def get_rect(self, *args, **kwargs) -> 'pygame.Rect':
+    def get_rect(self, *args, **kwargs) -> pygame.Rect:
         # Get all menu widgets, and for those in the same column store the total
         # size (without considering other vfills). Then, divide all available height
         # in the total vfills found
@@ -90,7 +93,7 @@ class VFillManager(AbstractWidgetManager, ABC):
         self,
         min_height: NumberType = 0,
         vfill_id: str = ''
-    ) -> 'pygame_menu.widgets.VFill':
+    ) -> pygame_menu.widgets.VFill:
         """
         Adds a vertical fill to the Menu. This widget fills all vertical space
         if available, else, it uses the min height.

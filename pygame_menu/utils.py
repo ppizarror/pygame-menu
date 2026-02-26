@@ -48,7 +48,7 @@ import sys
 import traceback
 import uuid
 import warnings
-from typing import Any, Optional, Union
+from typing import Any
 
 import pygame
 
@@ -84,7 +84,7 @@ def assert_alignment(align: str) -> None:
 
 
 def assert_color(
-    color: Union[ColorInputType, list[int]],
+    color: ColorInputType | list[int],
     warn_if_invalid: bool = True
 ) -> ColorType:
     """
@@ -124,7 +124,7 @@ def assert_cursor(cursor: CursorInputType) -> None:  # type: ignore
         'or pygame.cursors.Cursor'
 
 
-def assert_list_vector(list_vector: Union[list[Vector2NumberType], tuple[Vector2NumberType, ...]],
+def assert_list_vector(list_vector: list[Vector2NumberType] | tuple[Vector2NumberType, ...],
                        length: int) -> None:
     """
     Assert that a list fixed length vector is numeric.
@@ -164,7 +164,7 @@ def assert_position(position: str) -> None:
         f'invalid position value "{position}"'
 
 
-def assert_position_vector(position: Union[str, list[str], tuple[str, ...]]) -> None:
+def assert_position_vector(position: str | list[str] | tuple[str, ...]) -> None:
     """
     Assert that a position vector is valid.
 
@@ -238,10 +238,10 @@ def configure_alpha(state: bool) -> None:
 
 
 def fill_gradient(
-    surface: 'pygame.Surface',
+    surface: pygame.Surface,
     color: ColorInputType,
     gradient: ColorInputType,
-    rect: Optional['pygame.Rect'] = None,
+    rect: pygame.Rect | None = None,
     vertical: bool = True,
     forward: bool = True
 ) -> None:
@@ -294,9 +294,9 @@ def fill_gradient(
 
 
 def format_color(
-    color: Union[ColorInputType, Any],
+    color: ColorInputType | Any,
     warn_if_invalid: bool = True
-) -> Union[ColorType, Any]:
+) -> ColorType | Any:
     """
     Format color from string, int, or tuple to tuple type.
 
@@ -351,7 +351,7 @@ def get_cursor() -> CursorInputType:  # type: ignore
     return None
 
 
-def get_finger_pos(menu: Optional['pygame_menu.Menu'], event: EventType) -> Tuple2IntType:
+def get_finger_pos(menu: pygame_menu.Menu | None, event: EventType) -> Tuple2IntType:
     """
     Return the position from finger (or mouse) event on x-axis and y-axis (x, y).
 
@@ -381,7 +381,7 @@ def is_callable(func: Any) -> bool:
     return callable(func)
 
 
-def load_pygame_image_file(image_path: str, **kwargs) -> 'pygame.Surface':
+def load_pygame_image_file(image_path: str, **kwargs) -> pygame.Surface:
     """
     Loads an image and returns a surface.
 
@@ -430,8 +430,8 @@ def make_surface(
     width: NumberType,
     height: NumberType,
     alpha: bool = False,
-    fill_color: Optional[ColorInputType] = None
-) -> 'pygame.Surface':
+    fill_color: ColorInputType | None = None
+) -> pygame.Surface:
     """
     Creates a pygame surface object.
 
@@ -505,7 +505,7 @@ def parse_padding(padding: PaddingType) -> Tuple4IntType:
 
 
 def print_menu_widget_structure(
-    widgets: list['pygame_menu.widgets.Widget'],
+    widgets: list[pygame_menu.widgets.Widget],
     index: int
 ) -> None:
     """
@@ -542,7 +542,7 @@ def print_menu_widget_structure(
             line = f'·   {"│   " * j}└{"┄" * 3}'  # * depth_widths[j]
             print(c.BRIGHT_WHITE + line.ljust(0, '━') + c.ENDC)  # 80 also work
 
-    non_menu_frame_widgets: dict[int, list['pygame_menu.widgets.Widget']] = {}
+    non_menu_frame_widgets: dict[int, list[pygame_menu.widgets.Widget]] = {}
 
     def process_non_menu_frame(w_indx: int) -> None:
         """
@@ -649,7 +649,7 @@ def warn(message: str, print_stack: bool = True) -> None:
 
 
 def widget_terminal_title(
-    widget: 'pygame_menu.widgets.Widget',
+    widget: pygame_menu.widgets.Widget,
     widget_index: int = -1,
     current_index: int = -1
 ) -> str:
@@ -763,9 +763,9 @@ class ShadowGenerator:
     Source: https://github.com/MyreMylar/pygame_gui with many edits.
     """
 
-    _created_ellipse_shadows: dict[str, 'pygame.Surface']
-    _preloaded_shadow_corners: dict[str, dict[str, 'pygame.Surface']]
-    _short_term_rect_cache: dict[str, 'pygame.Surface']
+    _created_ellipse_shadows: dict[str, pygame.Surface]
+    _preloaded_shadow_corners: dict[str, dict[str, pygame.Surface]]
+    _short_term_rect_cache: dict[str, pygame.Surface]
 
     def __init__(self) -> None:
         self._created_ellipse_shadows = {}
@@ -791,7 +791,7 @@ class ShadowGenerator:
         corner_radius_param: int,
         color: Tuple3IntType,
         aa_amount: int = 4
-    ) -> dict[str, 'pygame.Surface']:
+    ) -> dict[str, pygame.Surface]:
         """
         Create corners for our rectangular shadows. These can be used across many
         sizes of shadow with the same shadow width and corner radius.
@@ -866,10 +866,10 @@ class ShadowGenerator:
     def _create_single_corner_and_edge(
         aa_amount: int,
         corner_radius_param: int,
-        corner_rect: 'pygame.Rect',
+        corner_rect: pygame.Rect,
         shadow_width_param: int,
         color: Tuple3IntType
-    ) -> tuple['pygame.Surface', 'pygame.Surface']:
+    ) -> tuple[pygame.Surface, pygame.Surface]:
         """
         Creates a single corner surface and a single edge surface for a shadow.
 
@@ -945,7 +945,7 @@ class ShadowGenerator:
         corner_radius_param: int,
         aa_amount: int = 4,
         color: Tuple3IntType = (0, 0, 0)
-    ) -> Optional['pygame.Surface']:
+    ) -> pygame.Surface | None:
         """
         Creates a rectangular shadow surface at the specified size and stores it for later use.
 
@@ -1023,7 +1023,7 @@ class ShadowGenerator:
         shadow_width_param: int,
         aa_amount: int = 4,
         color: Tuple3IntType = (0, 0, 0)
-    ) -> Optional['pygame.Surface']:
+    ) -> pygame.Surface | None:
         """
         Creates an ellipse shaped shadow surface at the specified size and stores it for later use.
 

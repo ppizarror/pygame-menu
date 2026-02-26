@@ -16,18 +16,21 @@ __all__ = [
 import re
 import webbrowser
 from abc import ABC
-from collections.abc import Callable
-from typing import Any, Optional, Union
+from typing import TYPE_CHECKING, Any
 
 import pygame
 
 import pygame_menu
 import pygame_menu.events as _events
-from pygame_menu._types import CallbackType, EventVectorType
 from pygame_menu.locals import CURSOR_HAND, FINGERUP
 from pygame_menu.utils import get_finger_pos, warn
 from pygame_menu.widgets.core.widget import AbstractWidgetManager, Widget
 from pygame_menu.widgets.widget.label import Label
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from pygame_menu._types import CallbackType, EventVectorType
 
 
 class Button(Label):
@@ -73,7 +76,7 @@ class Button(Label):
 
     def set_selection_callback(
         self,
-        callback: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]]
+        callback: Callable[[bool, Widget, pygame_menu.Menu], Any] | None
     ) -> None:
         """
         Update the button selection callback, once button is selected, the callback
@@ -121,12 +124,12 @@ class Button(Label):
         self._args = args or []
         self._onreturn = callback
 
-    def _draw(self, surface: 'pygame.Surface') -> None:
+    def _draw(self, surface: pygame.Surface) -> None:
         surface.blit(self._surface, self._rect.topleft)
 
     def update(self, events: EventVectorType) -> bool:
         self.apply_update_callbacks(events)
-        rect: 'pygame.Rect' = self.get_rect(to_real_position=True)
+        rect: pygame.Rect = self.get_rect(to_real_position=True)
 
         if self.readonly or not self.is_visible():
             self._readonly_check_mouseover(events, rect)
@@ -175,11 +178,11 @@ class ButtonManager(AbstractWidgetManager, ABC):
     # noinspection PyProtectedMember
     def banner(
         self,
-        image: Union['pygame_menu.BaseImage', 'pygame.Surface'],
-        action: Optional[Union['pygame_menu.Menu', '_events.MenuAction', Callable, int]] = None,
+        image: pygame_menu.BaseImage | pygame.Surface,
+        action: pygame_menu.Menu | _events.MenuAction | Callable | int | None = None,
         *args,
         **kwargs
-    ) -> 'pygame_menu.widgets.Button':
+    ) -> pygame_menu.widgets.Button:
         """
         Adds a clickeable image to the Menu with same behavior as a Button.
 
@@ -278,10 +281,10 @@ class ButtonManager(AbstractWidgetManager, ABC):
     def button(
         self,
         title: Any,
-        action: Optional[Union['pygame_menu.Menu', '_events.MenuAction', Callable, int]] = None,
+        action: pygame_menu.Menu | _events.MenuAction | Callable | int | None = None,
         *args,
         **kwargs
-    ) -> 'pygame_menu.widgets.Button':
+    ) -> pygame_menu.widgets.Button:
         """
         Adds a button to the Menu.
 
@@ -483,7 +486,7 @@ class ButtonManager(AbstractWidgetManager, ABC):
         href: str,
         title: str = '',
         **kwargs
-    ) -> 'pygame_menu.widgets.Button':
+    ) -> pygame_menu.widgets.Button:
         """
         Adds a Button url to the Menu. Clicking the widget will open the link.
         If ``title`` is defined, the link will not be written. For example:

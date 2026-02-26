@@ -10,11 +10,16 @@ from __future__ import annotations
 
 __all__ = ['LeftArrowSelection']
 
-import pygame
 
-import pygame_menu
+from typing import TYPE_CHECKING
+
 from pygame_menu._types import NumberInstance, NumberType, Tuple2IntType
 from pygame_menu.widgets.selection.arrow_selection import ArrowSelection
+
+if TYPE_CHECKING:
+    import pygame
+
+    import pygame_menu
 
 
 class LeftArrowSelection(ArrowSelection):
@@ -51,7 +56,7 @@ class LeftArrowSelection(ArrowSelection):
         self._arrow_right_margin = arrow_right_margin
 
     # noinspection PyMissingOrEmptyDocstring
-    def draw(self, surface: 'pygame.Surface', widget: 'pygame_menu.widgets.Widget') -> 'LeftArrowSelection':
+    def draw(self, surface: pygame.Surface, widget: pygame_menu.widgets.Widget) -> LeftArrowSelection:
         # A
         #   \B        widget
         # C /

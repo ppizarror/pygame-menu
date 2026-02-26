@@ -21,7 +21,7 @@ __all__ = [
 
 from abc import ABC
 from collections.abc import Callable
-from typing import Any, Optional
+from typing import Any
 
 import pygame
 
@@ -69,7 +69,7 @@ class ProgressBar(Widget):
     :param args: Optional arguments for callbacks
     :param kwargs: Optional keyword arguments
     """
-    _box: 'pygame.Surface'
+    _box: pygame.Surface
     _box_background_color: ColorType
     _box_border_color: ColorType
     _box_border_width: int
@@ -82,7 +82,7 @@ class ProgressBar(Widget):
     _progress_font: FontType
     _progress_text_align: str
     _progress_text_enabled: bool
-    _progress_text_font: Optional[FontType]
+    _progress_text_font: FontType | None
     _progress_text_font_color: ColorType
     _progress_text_font_height: int
     _progress_text_font_height_factor: float
@@ -106,7 +106,7 @@ class ProgressBar(Widget):
         box_progress_padding: PaddingType = (1, 1),
         progress_text_align: str = ALIGN_CENTER,
         progress_text_enabled: bool = True,
-        progress_text_font: Optional[FontType] = None,
+        progress_text_font: FontType | None = None,
         progress_text_font_color: ColorInputType = (0, 0, 0),
         progress_text_font_hfactor: float = 0.8,
         progress_text_format: ProgressBarTextFormatType = lambda x: str(round(x, 1)),
@@ -184,22 +184,22 @@ class ProgressBar(Widget):
         self._progress = value
         self._render()
 
-    def scale(self, *args, **kwargs) -> 'ProgressBar':
+    def scale(self, *args, **kwargs) -> ProgressBar:
         raise WidgetTransformationNotImplemented()
 
-    def resize(self, *args, **kwargs) -> 'ProgressBar':
+    def resize(self, *args, **kwargs) -> ProgressBar:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_width(self, *args, **kwargs) -> 'ProgressBar':
+    def set_max_width(self, *args, **kwargs) -> ProgressBar:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_height(self, *args, **kwargs) -> 'ProgressBar':
+    def set_max_height(self, *args, **kwargs) -> ProgressBar:
         raise WidgetTransformationNotImplemented()
 
-    def rotate(self, *args, **kwargs) -> 'ProgressBar':
+    def rotate(self, *args, **kwargs) -> ProgressBar:
         raise WidgetTransformationNotImplemented()
 
-    def flip(self, *args, **kwargs) -> 'ProgressBar':
+    def flip(self, *args, **kwargs) -> ProgressBar:
         raise WidgetTransformationNotImplemented()
 
     def get_value(self) -> NumberType:
@@ -214,7 +214,7 @@ class ProgressBar(Widget):
         )
         self._box_height = self._font_render_string('TEST').get_height()
 
-    def _draw(self, surface: 'pygame.Surface') -> None:
+    def _draw(self, surface: pygame.Surface) -> None:
         # Draw title
         surface.blit(self._surface, (self._rect.x, self._rect.y))
 
@@ -228,7 +228,7 @@ class ProgressBar(Widget):
         if self._box_border_width > 0:
             pygame.draw.rect(surface, self._box_border_color, box_rect, self._box_border_width)
 
-    def _render(self) -> Optional[bool]:
+    def _render(self) -> bool | None:
         if not hasattr(self, '_progress_font'):
             return False
 
@@ -294,7 +294,7 @@ class ProgressBarManager(AbstractWidgetManager, ABC):
         selectable: bool = False,
         width: int = 150,
         **kwargs
-    ) -> 'pygame_menu.widgets.ProgressBar':
+    ) -> pygame_menu.widgets.ProgressBar:
         """
         Add a progress bar, which offers a bar that accepts a percentage from
         ``0`` to ``100``.

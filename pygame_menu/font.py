@@ -78,7 +78,7 @@ FontType = Union[str, __font.Font, Path]
 FontInstance = (str, __font.Font, Path)
 
 # Stores font cache
-_cache: dict[tuple[FontType, int], '__font.Font'] = {}
+_cache: dict[tuple[FontType, int], __font.Font] = {}
 
 
 def assert_font(font: Any) -> None:
@@ -91,7 +91,7 @@ def assert_font(font: Any) -> None:
         raise AssertionError('value must be a font type (str, Path, pygame.Font)')
 
 
-def get_font(name: FontType, size: int) -> '__font.Font':
+def get_font(name: FontType, size: int) -> __font.Font:
     """
     Return a :py:class:`pygame.font.Font` object from a name or file.
 
@@ -123,7 +123,7 @@ def get_font(name: FontType, size: int) -> '__font.Font':
     return load_system_font(name_str, size)
 
 
-def load_font_file(path: Union[str, Path], size: int) -> '__font.Font':
+def load_font_file(path: str | Path, size: int) -> __font.Font:
     """
     Explicitly load a font from a file path.
 
@@ -151,7 +151,7 @@ def load_font_file(path: Union[str, Path], size: int) -> '__font.Font':
     return font
 
 
-def load_system_font(name: str, size: int) -> '__font.Font':
+def load_system_font(name: str, size: int) -> __font.Font:
     """
     Explicitly load a system font by name.
 

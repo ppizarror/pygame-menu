@@ -30,18 +30,21 @@ __all__ = [
 
 import math
 from abc import ABC
-from collections.abc import Callable
-from typing import Any, Optional, Union
+from typing import TYPE_CHECKING, Any
 
 import pygame
 
-import pygame_menu
 from pygame_menu._types import (CallbackType, EventVectorType, NumberInstance,
                                 NumberType, Tuple3IntType)
 from pygame_menu.locals import INPUT_TEXT
 from pygame_menu.utils import check_key_pressed_valid, make_surface
 from pygame_menu.widgets.core.widget import AbstractWidgetManager, Widget
 from pygame_menu.widgets.widget.textinput import TextInput
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    import pygame_menu
 
 # Input modes
 COLORINPUT_TYPE_HEX = 'hex'
@@ -105,7 +108,7 @@ class ColorInput(TextInput):
     _last_g: int
     _last_r: int
     _prev_margin: int
-    _previsualization_surface: Optional['pygame.Surface']
+    _previsualization_surface: pygame.Surface | None
     _separator: str
 
     def __init__(
@@ -245,7 +248,7 @@ class ColorInput(TextInput):
             super().set_value('#')
         self.change()
 
-    def set_value(self, color: Optional[Union[str, Tuple3IntType]]) -> None:
+    def set_value(self, color: str | Tuple3IntType | None) -> None:
         """
         Set the color value.
 
@@ -305,7 +308,7 @@ class ColorInput(TextInput):
             default = '#' + default
         return self.get_value(as_string=True) != default
 
-    def get_value(self, as_string: bool = False) -> Union[str, Tuple3IntType]:
+    def get_value(self, as_string: bool = False) -> str | Tuple3IntType:
         """
         Return the color value as a tuple or red blue and green channels.
 
@@ -344,7 +347,7 @@ class ColorInput(TextInput):
         r, g, b = self.get_value()
         return not (r == -1 or g == -1 or b == -1)
 
-    def _draw(self, surface: 'pygame.Surface') -> None:
+    def _draw(self, surface: pygame.Surface) -> None:
         super()._draw(surface)  # This calls _render()
 
         # Draw previsualization box
@@ -355,7 +358,7 @@ class ColorInput(TextInput):
             posy: int = self._rect.y
             surface.blit(self._previsualization_surface, (int(posx), int(posy)))
 
-    def _render(self) -> Optional[bool]:
+    def _render(self) -> bool | None:
         render_text = super()._render()
 
         # Maybe TextInput did not render, so this has to be changed
@@ -571,18 +574,18 @@ class ColorInputManager(AbstractWidgetManager, ABC):
 
     def color_input(
         self,
-        title: Union[str, Any],
+        title: str | Any,
         color_type: ColorInputColorType,
         color_id: str = '',
-        default: Union[str, Tuple3IntType] = '',
+        default: str | Tuple3IntType = '',
         hex_format: ColorInputHexFormatType = COLORINPUT_HEX_FORMAT_NONE,
         input_separator: str = ',',
         input_underline: str = '_',
         onchange: CallbackType = None,
         onreturn: CallbackType = None,
-        onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
+        onselect: Callable[[bool, Widget, pygame_menu.Menu], Any] | None = None,
         **kwargs
-    ) -> 'pygame_menu.widgets.ColorInput':
+    ) -> pygame_menu.widgets.ColorInput:
         """
         Add a color widget with RGB or HEX format to the Menu.
         Includes a preview box that renders the given color.

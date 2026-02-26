@@ -24,7 +24,7 @@ menu = pygame_menu.Menu(
 )
 
 
-def add_dynamic_button() -> 'pygame_menu.widgets.Button':
+def add_dynamic_button() -> pygame_menu.widgets.Button:
     """
     Append a button to the menu on demand.
 

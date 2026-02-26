@@ -28,7 +28,7 @@ __all__ = [
 
 ]
 
-from typing import Any, Optional
+from typing import Any
 
 import pygame
 import pygame.gfxdraw as gfxdraw
@@ -85,7 +85,7 @@ class MenuBar(Widget):
     _backbox_background_color: ColorType
     _backbox_border_width: int
     _backbox_pos: Any
-    _backbox_rect: Optional['pygame.Rect']
+    _backbox_rect: pygame.Rect | None
     _box_mode: int
     _modify_scrollarea: bool
     _offsetx: NumberType
@@ -156,31 +156,31 @@ class MenuBar(Widget):
     def _apply_font(self) -> None:
         pass
 
-    def set_padding(self, *args, **kwargs) -> 'MenuBar':
+    def set_padding(self, *args, **kwargs) -> MenuBar:
         return self
 
-    def scale(self, *args, **kwargs) -> 'MenuBar':
+    def scale(self, *args, **kwargs) -> MenuBar:
         raise WidgetTransformationNotImplemented()
 
-    def resize(self, *args, **kwargs) -> 'MenuBar':
+    def resize(self, *args, **kwargs) -> MenuBar:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_width(self, *args, **kwargs) -> 'MenuBar':
+    def set_max_width(self, *args, **kwargs) -> MenuBar:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_height(self, *args, **kwargs) -> 'MenuBar':
+    def set_max_height(self, *args, **kwargs) -> MenuBar:
         raise WidgetTransformationNotImplemented()
 
-    def rotate(self, *args, **kwargs) -> 'MenuBar':
+    def rotate(self, *args, **kwargs) -> MenuBar:
         raise WidgetTransformationNotImplemented()
 
-    def flip(self, *args, **kwargs) -> 'MenuBar':
+    def flip(self, *args, **kwargs) -> MenuBar:
         raise WidgetTransformationNotImplemented()
 
-    def set_selection_effect(self, *args, **kwargs) -> 'MenuBar':
+    def set_selection_effect(self, *args, **kwargs) -> MenuBar:
         return self
 
-    def set_border(self, *args, **kwargs) -> 'MenuBar':
+    def set_border(self, *args, **kwargs) -> MenuBar:
         return self
 
     def _check_title_color(self, background_menu: bool) -> None:
@@ -246,7 +246,7 @@ class MenuBar(Widget):
                  self._menu is not None and
                  self._menu._onclose is None)
 
-    def _draw(self, surface: 'pygame.Surface') -> None:
+    def _draw(self, surface: pygame.Surface) -> None:
         if len(self._polygon_pos) > 2:
             gfxdraw.filled_polygon(surface, self._polygon_pos, self._background_color)
 
@@ -286,7 +286,7 @@ class MenuBar(Widget):
             return self._scrollbar_deltas[3]
         return 0, (0, 0)
 
-    def _render(self) -> Optional[bool]:
+    def _render(self) -> bool | None:
         if self._menu is None:
             return None
 
@@ -485,7 +485,7 @@ class MenuBar(Widget):
                 )
         return True
 
-    def set_title(self, title: Any, offsetx: NumberType = 0, offsety: NumberType = 0) -> 'MenuBar':
+    def set_title(self, title: Any, offsetx: NumberType = 0, offsety: NumberType = 0) -> MenuBar:
         """
         Set the menubar title.
 

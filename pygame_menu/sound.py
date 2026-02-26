@@ -44,7 +44,7 @@ __all__ = [
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any
 
 from pygame import error as pygame_error
 from pygame import mixer
@@ -144,10 +144,10 @@ class Sound(Base):
     :param uniquechannel: Force the channel to be unique, this is set at the object creation moment
     :param verbose: Enable/disable verbose mode (warnings/errors)
     """
-    _channel: Optional['mixer.Channel']
+    _channel: mixer.Channel | None
     _last_play: str
     _last_time: float
-    _mixer_configs: dict[str, Union[bool, int, str]]
+    _mixer_configs: dict[str, bool | int | str]
     _sound: dict[str, dict[str, Any]]
     _uniquechannel: bool
 
@@ -195,7 +195,7 @@ class Sound(Base):
             # noinspection PyBroadException
             try:
                 # pygame < 1.9.5
-                mixer_kwargs: dict[str, Union[int, str]] = {
+                mixer_kwargs: dict[str, int | str] = {
                     'frequency': frequency,
                     'size': size,
                     'channels': channels,
@@ -239,7 +239,7 @@ class Sound(Base):
         self._last_play = ''
         self._last_time = 0
 
-    def copy(self) -> 'Sound':
+    def copy(self) -> Sound:
         """
         Return a copy of the object.
 
@@ -263,7 +263,7 @@ class Sound(Base):
                 )
         return new_sound
 
-    def __copy__(self) -> 'Sound':
+    def __copy__(self) -> Sound:
         """
         Copy method.
 
@@ -271,7 +271,7 @@ class Sound(Base):
         """
         return self.copy()
 
-    def __deepcopy__(self, memodict: dict) -> 'Sound':
+    def __deepcopy__(self, memodict: dict) -> Sound:
         """
         Deep-copy method.
 
@@ -280,7 +280,7 @@ class Sound(Base):
         """
         return self.copy()
 
-    def get_channel(self) -> 'mixer.Channel':
+    def get_channel(self) -> mixer.Channel:
         """
         Return the mixer channel used by this sound engine.
 
@@ -297,7 +297,7 @@ class Sound(Base):
     def set_sound(
         self,
         sound_type: str,
-        sound_file: Optional[Union[str, 'Path']],
+        sound_file: str | Path | None,
         volume: float = 0.5,
         loops: int = 0,
         maxtime: NumberType = 0,
@@ -364,7 +364,7 @@ class Sound(Base):
         }
         return True
 
-    def load_example_sounds(self, volume: float = 0.5) -> 'Sound':
+    def load_example_sounds(self, volume: float = 0.5) -> Sound:
         """
         Load the example sounds provided by the package.
 
@@ -376,7 +376,7 @@ class Sound(Base):
             self.set_sound(sound_type, example, volume=float(volume))
         return self
 
-    def _play_sound(self, sound: Optional[dict[str, Any]]) -> bool:
+    def _play_sound(self, sound: dict[str, Any] | None) -> bool:
         """
         Play a sound.
 
@@ -416,7 +416,7 @@ class Sound(Base):
         self._last_time = sound_time
         return True
 
-    def play_sound_type(self, sound_type: str) -> 'Sound':
+    def play_sound_type(self, sound_type: str) -> Sound:
         """
         Play a sound based on its type.
 
@@ -427,7 +427,7 @@ class Sound(Base):
             self._play_sound(self._sound[sound_type])
         return self
 
-    def play_click_mouse(self) -> 'Sound':
+    def play_click_mouse(self) -> Sound:
         """
         Play click mouse sound.
 
@@ -435,7 +435,7 @@ class Sound(Base):
         """
         return self.play_sound_type(SOUND_TYPE_CLICK_MOUSE)
 
-    def play_click_touch(self) -> 'Sound':
+    def play_click_touch(self) -> Sound:
         """
         Play click touch sound.
 
@@ -443,7 +443,7 @@ class Sound(Base):
         """
         return self.play_sound_type(SOUND_TYPE_CLICK_TOUCH)
 
-    def play_error(self) -> 'Sound':
+    def play_error(self) -> Sound:
         """
         Play error sound.
 
@@ -451,7 +451,7 @@ class Sound(Base):
         """
         return self.play_sound_type(SOUND_TYPE_ERROR)
 
-    def play_event(self) -> 'Sound':
+    def play_event(self) -> Sound:
         """
         Play event sound.
 
@@ -459,7 +459,7 @@ class Sound(Base):
         """
         return self.play_sound_type(SOUND_TYPE_EVENT)
 
-    def play_event_error(self) -> 'Sound':
+    def play_event_error(self) -> Sound:
         """
         Play event error sound.
 
@@ -467,7 +467,7 @@ class Sound(Base):
         """
         return self.play_sound_type(SOUND_TYPE_EVENT_ERROR)
 
-    def play_key_add(self) -> 'Sound':
+    def play_key_add(self) -> Sound:
         """
         Play key addition sound.
 
@@ -475,7 +475,7 @@ class Sound(Base):
         """
         return self.play_sound_type(SOUND_TYPE_KEY_ADDITION)
 
-    def play_key_del(self) -> 'Sound':
+    def play_key_del(self) -> Sound:
         """
         Play key deletion sound.
 
@@ -483,7 +483,7 @@ class Sound(Base):
         """
         return self.play_sound_type(SOUND_TYPE_KEY_DELETION)
 
-    def play_open_menu(self) -> 'Sound':
+    def play_open_menu(self) -> Sound:
         """
         Play open Menu sound.
 
@@ -491,7 +491,7 @@ class Sound(Base):
         """
         return self.play_sound_type(SOUND_TYPE_OPEN_MENU)
 
-    def play_close_menu(self) -> 'Sound':
+    def play_close_menu(self) -> Sound:
         """
         Play close Menu sound.
 
@@ -499,7 +499,7 @@ class Sound(Base):
         """
         return self.play_sound_type(SOUND_TYPE_CLOSE_MENU)
 
-    def play_widget_selection(self) -> 'Sound':
+    def play_widget_selection(self) -> Sound:
         """
         Play widget selection sound.
 
@@ -507,7 +507,7 @@ class Sound(Base):
         """
         return self.play_sound_type(SOUND_TYPE_WIDGET_SELECTION)
 
-    def stop(self) -> 'Sound':
+    def stop(self) -> Sound:
         """
         Stop the channel.
 
@@ -522,7 +522,7 @@ class Sound(Base):
             pass
         return self
 
-    def pause(self) -> 'Sound':
+    def pause(self) -> Sound:
         """
         Pause the channel.
 
@@ -537,7 +537,7 @@ class Sound(Base):
             pass
         return self
 
-    def unpause(self) -> 'Sound':
+    def unpause(self) -> Sound:
         """
         Unpause channel.
 

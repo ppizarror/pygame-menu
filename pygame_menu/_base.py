@@ -10,7 +10,7 @@ from __future__ import annotations
 
 __all__ = ['Base']
 
-from typing import Any, Optional
+from typing import Any
 
 from pygame_menu._types import NumberInstance, NumberType
 from pygame_menu.utils import uuid4
@@ -20,7 +20,7 @@ class Base:
     """
     Base object.
     """
-    _attributes: Optional[dict[str, Any]]
+    _attributes: dict[str, Any] | None
     _class_id__repr__: bool
     _id: str
     _id__repr__: bool
@@ -63,7 +63,7 @@ class Base:
 
         return sup_repr
 
-    def _update__repr___(self, obj: 'Base') -> None:
+    def _update__repr___(self, obj: Base) -> None:
         """
         Update __repr__ from other Base object.
 
@@ -72,7 +72,7 @@ class Base:
         self._class_id__repr__ = obj._class_id__repr__
         self._id__repr__ = obj._id__repr__
 
-    def set_attribute(self, key: str, value: Any = None) -> 'Base':
+    def set_attribute(self, key: str, value: Any = None) -> Base:
         """
         Set an attribute.
 
@@ -147,7 +147,7 @@ class Base:
 
         return self._attributes is not None and key in self._attributes
 
-    def remove_attribute(self, key: str) -> 'Base':
+    def remove_attribute(self, key: str) -> Base:
         """
         Removes the given attribute from the object. Throws ``IndexError`` if
         the given key does not exist.

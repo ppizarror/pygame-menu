@@ -15,15 +15,17 @@ import heapq
 import random
 import time
 from collections import deque
-from collections.abc import Generator
 from math import inf
-from typing import Any, Optional, Union
+from typing import TYPE_CHECKING, Any
 
 import pygame
 
 import pygame_menu
 import pygame_menu.utils as ut
 from pygame_menu.examples import create_example_window
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
 
 # Define some colors
 BACKGROUND = (34, 40, 44)
@@ -137,9 +139,9 @@ class Node:
 
     def update(
         self,
-        nodetype: Union[bool, str] = False,
-        is_visited: Union[bool, str] = 'unchanged',
-        is_path: Union[bool, str] = 'unchanged',
+        nodetype: bool | str = False,
+        is_visited: bool | str = 'unchanged',
+        is_path: bool | str = 'unchanged',
         colors: dict = colors,
         dmf: dict = distance_modifiers,
         nodetypes: dict = nodetypes
@@ -184,7 +186,7 @@ class MazeApp:
     _grid: _MazeType
     _height: int
     _margin: int
-    _menu: 'pygame_menu.Menu'
+    _menu: pygame_menu.Menu
     _mouse_drag: bool
     _offset: _Point2
     _rows: int
@@ -263,7 +265,7 @@ class MazeApp:
             b.is_selectable = True
             b.set_cursor(pygame_menu.locals.CURSOR_HAND)
 
-        def button_onmouseover(w: 'pygame_menu.widgets.Widget', _) -> None:
+        def button_onmouseover(w: pygame_menu.widgets.Widget, _) -> None:
             """
             Set the background color of buttons if entered.
             """
@@ -271,13 +273,13 @@ class MazeApp:
                 return
             w.set_background_color((98, 103, 106))
 
-        def button_onmouseleave(w: 'pygame_menu.widgets.Widget', _) -> None:
+        def button_onmouseleave(w: pygame_menu.widgets.Widget, _) -> None:
             """
             Set the background color of buttons if leaved.
             """
             w.set_background_color((75, 79, 81))
 
-        def button_onmouseover_clear(w: 'pygame_menu.widgets.Widget', _) -> None:
+        def button_onmouseover_clear(w: pygame_menu.widgets.Widget, _) -> None:
             """
             Set the background color of buttons if entered.
             """
@@ -285,7 +287,7 @@ class MazeApp:
                 return
             w.set_background_color((139, 0, 0))
 
-        def button_onmouseleave_clear(w: 'pygame_menu.widgets.Widget', _) -> None:
+        def button_onmouseleave_clear(w: pygame_menu.widgets.Widget, _) -> None:
             """
             Set the background color of buttons if leaved.
             """
@@ -578,7 +580,7 @@ class MazeApp:
         """
         time.sleep(ms)
 
-    def _better_prim(self, mazearray: Optional[_MazeType] = None, start_point: Optional[_Point2] = None) -> _MazeType:
+    def _better_prim(self, mazearray: _MazeType | None = None, start_point: _Point2 | None = None) -> _MazeType:
         """
         Randomized Prim's algorithm for creating random mazes.
         This version maintains the traditional "maze" look, where a route cannot
@@ -675,7 +677,7 @@ class MazeApp:
 
         return mazearray
 
-    def _prim(self, mazearray: Optional[_MazeType] = None, start_point: Optional[_Point2] = None) -> _MazeType:
+    def _prim(self, mazearray: _MazeType | None = None, start_point: _Point2 | None = None) -> _MazeType:
         """
         Randomized Prim's algorithm for creating random mazes.
 
@@ -746,7 +748,7 @@ class MazeApp:
 
     def _recursive_division(
         self,
-        chamber: Optional[tuple[int, int, int, int]] = None,
+        chamber: tuple[int, int, int, int] | None = None,
         halving=True
     ) -> None:
         """
@@ -862,7 +864,7 @@ class MazeApp:
             self._recursive_division(chamber)
             self._check_esc()
 
-    def _random_terrain(self, num_patches: Optional[int] = None) -> None:
+    def _random_terrain(self, num_patches: int | None = None) -> None:
         """
         Add random terrain to the maze.
 
@@ -942,7 +944,7 @@ class MazeApp:
                     self._grid[row][column].update(is_visited=False, is_path=False)
         self._update_gui()
 
-    def _update_path(self) -> Union[bool, _MazeType]:
+    def _update_path(self) -> bool | _MazeType:
         """
         Updates the path.
         """
@@ -969,7 +971,7 @@ class MazeApp:
     def _get_neighbours(
         self,
         node: _Point2,
-        max_width: Optional[int] = None
+        max_width: int | None = None
     ) -> Generator[tuple[_Point2, str], Any, None]:
         """
         Get the neighbors.
@@ -1042,7 +1044,7 @@ class MazeApp:
         self,
         mazearray: _MazeType,
         start_point: _Point2 = (0, 0),
-        goal_node: Optional[_Point2] = None,
+        goal_node: _Point2 | None = None,
         astar: bool = False
     ) -> bool:
         """
@@ -1449,7 +1451,7 @@ class MazeApp:
                 break
 
 
-def main(test: bool = False) -> 'MazeApp':
+def main(test: bool = False) -> MazeApp:
     """
     Main function.
 

@@ -17,8 +17,7 @@ import math
 import os
 import platform
 from abc import ABC
-from collections.abc import Callable
-from typing import Any, Optional, Union
+from typing import TYPE_CHECKING, Any
 
 import pygame
 
@@ -34,6 +33,9 @@ from pygame_menu.utils import (assert_color, assert_vector,
                                make_surface, warn)
 from pygame_menu.widgets.core.widget import (
     AbstractWidgetManager, Widget, WidgetTransformationNotImplemented)
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 try:
     # noinspection PyProtectedMember
@@ -147,7 +149,7 @@ class TextInput(Widget):
     _alt_x_enabled: bool
     _apply_widget_update_callback: bool  # Used in ColorInput
     _block_copy_paste: bool
-    _clock: 'pygame.time.Clock'
+    _clock: pygame.time.Clock
     _copy_paste_enabled: bool
     _current_underline_string: str  # Testing
     _cursor_color: ColorType
@@ -155,8 +157,8 @@ class TextInput(Widget):
     _cursor_offset: NumberType
     _cursor_position: int
     _cursor_render: bool
-    _cursor_size: Optional[Tuple2IntType]  # Size defined by user
-    _cursor_surface: Optional['pygame.Surface']
+    _cursor_size: Tuple2IntType | None  # Size defined by user
+    _cursor_surface: pygame.Surface | None
     _cursor_surface_pos: list[int]
     _cursor_switch_ms: NumberType
     _cursor_visible: bool
@@ -200,9 +202,9 @@ class TextInput(Widget):
     _selection_enabled: bool
     _selection_mouse_first_position: int
     _selection_position: list[int]
-    _selection_surface: Optional['pygame.Surface']
+    _selection_surface: pygame.Surface | None
     _title_size: NumberType
-    _valid_chars: Optional[list[str]]
+    _valid_chars: list[str] | None
 
     def __init__(
         self,
@@ -212,7 +214,7 @@ class TextInput(Widget):
         cursor_color: ColorInputType = (0, 0, 0),
         cursor_selection_color: ColorInputType = (30, 30, 30, 100),
         cursor_selection_enable: bool = True,
-        cursor_size: Optional[Tuple2IntType] = None,
+        cursor_size: Tuple2IntType | None = None,
         cursor_switch_ms: NumberType = 500,
         history: int = 50,
         input_type: str = INPUT_TEXT,
@@ -232,7 +234,7 @@ class TextInput(Widget):
         repeat_keys_interval_ms: NumberType = 50,
         repeat_mouse_interval_ms: NumberType = 400,
         text_ellipsis: str = '...',
-        valid_chars: Optional[list[str]] = None,
+        valid_chars: list[str] | None = None,
         *args,
         **kwargs
     ) -> None:
@@ -459,26 +461,26 @@ class TextInput(Widget):
                 value = 0
         return value
 
-    def scale(self, *args, **kwargs) -> 'TextInput':
+    def scale(self, *args, **kwargs) -> TextInput:
         raise WidgetTransformationNotImplemented()
 
-    def resize(self, *args, **kwargs) -> 'TextInput':
+    def resize(self, *args, **kwargs) -> TextInput:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_width(self, *args, **kwargs) -> 'TextInput':
+    def set_max_width(self, *args, **kwargs) -> TextInput:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_height(self, *args, **kwargs) -> 'TextInput':
+    def set_max_height(self, *args, **kwargs) -> TextInput:
         raise WidgetTransformationNotImplemented()
 
-    def rotate(self, *args, **kwargs) -> 'TextInput':
+    def rotate(self, *args, **kwargs) -> TextInput:
         raise WidgetTransformationNotImplemented()
 
-    def flip(self, x: bool, y: bool, render: bool = True) -> 'TextInput':  # Actually flip on x-axis is disabled
+    def flip(self, x: bool, y: bool, render: bool = True) -> TextInput:  # Actually flip on x-axis is disabled
         super().flip(False, y, render)
         return self
 
-    def _draw(self, surface: 'pygame.Surface') -> None:
+    def _draw(self, surface: pygame.Surface) -> None:
         # Draw selection surface
         if pygame.vernum[0] >= 2:  # pygame 1.9.3 don't have vernum.major
             surface.blit(self._surface, (self._rect.x, self._rect.y))  # Draw string
@@ -502,7 +504,7 @@ class TextInput(Widget):
             y = self._rect.y + self._cursor_surface_pos[1]
             surface.blit(self._cursor_surface, (x, y))
 
-    def _render(self) -> Optional[bool]:
+    def _render(self) -> bool | None:
         string = self._title + self._get_input_string()  # Render string
 
         max_cont_width = self._get_max_container_width()
@@ -632,7 +634,7 @@ class TextInput(Widget):
             max_width = frame.get_width()
         return max_width - self._padding[1] - self._padding[3]
 
-    def _render_string_underline(self, string: str, color: ColorInputType) -> 'pygame.Surface':
+    def _render_string_underline(self, string: str, color: ColorInputType) -> pygame.Surface:
         """
         Render underline string surface.
 
@@ -1968,10 +1970,10 @@ class TextInputManager(AbstractWidgetManager, ABC):
     def text_input(
         self,
         title: Any,
-        default: Union[str, int, float] = '',
+        default: str | int | float = '',
         copy_paste_enable: bool = True,
         cursor_selection_enable: bool = True,
-        cursor_size: Optional[Tuple2IntType] = None,
+        cursor_size: Tuple2IntType | None = None,
         input_type: str = INPUT_TEXT,
         input_underline: str = '',
         input_underline_len: int = 0,
@@ -1979,12 +1981,12 @@ class TextInputManager(AbstractWidgetManager, ABC):
         maxwidth: int = 0,
         onchange: CallbackType = None,
         onreturn: CallbackType = None,
-        onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
+        onselect: Callable[[bool, Widget, pygame_menu.Menu], Any] | None = None,
         password: bool = False,
         textinput_id: str = '',
-        valid_chars: Optional[list[str]] = None,
+        valid_chars: list[str] | None = None,
         **kwargs
-    ) -> 'pygame_menu.widgets.TextInput':
+    ) -> pygame_menu.widgets.TextInput:
         """
         Add a text input to the Menu: free text area and two functions that
         execute when changing the text and pressing return (apply) on the element.

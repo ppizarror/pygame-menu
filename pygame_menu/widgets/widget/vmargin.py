@@ -14,13 +14,16 @@ __all__ = [
 ]
 
 from abc import ABC
+from typing import TYPE_CHECKING
 
-import pygame
-
-import pygame_menu
 from pygame_menu._types import NumberInstance, NumberType
 from pygame_menu.widgets.core.widget import AbstractWidgetManager
 from pygame_menu.widgets.widget.none import NoneWidget
+
+if TYPE_CHECKING:
+    import pygame
+
+    import pygame_menu
 
 
 class VMargin(NoneWidget):
@@ -46,7 +49,7 @@ class VMargin(NoneWidget):
         self._rect.width = 0
         self._rect.height = int(margin)
 
-    def get_rect(self, *args, **kwargs) -> 'pygame.Rect':
+    def get_rect(self, *args, **kwargs) -> pygame.Rect:
         return self._rect.copy()
 
 
@@ -59,7 +62,7 @@ class VMarginManager(AbstractWidgetManager, ABC):
         self,
         margin: NumberType,
         margin_id: str = ''
-    ) -> 'pygame_menu.widgets.VMargin':
+    ) -> pygame_menu.widgets.VMargin:
         """
         Adds a vertical margin to the Menu.
 

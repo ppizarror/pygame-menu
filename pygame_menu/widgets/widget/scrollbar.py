@@ -10,7 +10,7 @@ from __future__ import annotations
 
 __all__ = ['ScrollBar']
 
-from typing import Literal, Optional
+from typing import Literal
 
 import pygame
 
@@ -72,7 +72,7 @@ class ScrollBar(Widget):
     _slider_hover_color: ColorType
     _slider_pad: int
     _slider_position: int
-    _slider_rect: Optional['pygame.Rect']
+    _slider_rect: pygame.Rect | None
     _values_range: list[NumberType]
     _visible_force: int  # -1: not set, 0: hidden, 1: shown
     scrolling: bool
@@ -156,31 +156,31 @@ class ScrollBar(Widget):
         self.is_selectable = False
         self.scrolling = False
 
-    def scroll_to_widget(self, *args, **kwargs) -> 'ScrollBar':
+    def scroll_to_widget(self, *args, **kwargs) -> ScrollBar:
         return self
 
     def _apply_font(self) -> None:
         pass
 
-    def set_padding(self, *args, **kwargs) -> 'ScrollBar':
+    def set_padding(self, *args, **kwargs) -> ScrollBar:
         return self
 
-    def scale(self, *args, **kwargs) -> 'ScrollBar':
+    def scale(self, *args, **kwargs) -> ScrollBar:
         raise WidgetTransformationNotImplemented()
 
-    def resize(self, *args, **kwargs) -> 'ScrollBar':
+    def resize(self, *args, **kwargs) -> ScrollBar:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_width(self, *args, **kwargs) -> 'ScrollBar':
+    def set_max_width(self, *args, **kwargs) -> ScrollBar:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_height(self, *args, **kwargs) -> 'ScrollBar':
+    def set_max_height(self, *args, **kwargs) -> ScrollBar:
         raise WidgetTransformationNotImplemented()
 
-    def rotate(self, *args, **kwargs) -> 'ScrollBar':
+    def rotate(self, *args, **kwargs) -> ScrollBar:
         raise WidgetTransformationNotImplemented()
 
-    def flip(self, *args, **kwargs) -> 'ScrollBar':
+    def flip(self, *args, **kwargs) -> ScrollBar:
         raise WidgetTransformationNotImplemented()
 
     def _apply_size_changes(self) -> None:
@@ -198,10 +198,10 @@ class ScrollBar(Widget):
     def set_shadow(
         self,
         enabled: bool = True,
-        color: Optional[ColorInputType] = None,
-        position: Optional[str] = None,
+        color: ColorInputType | None = None,
+        position: str | None = None,
         offset: int = 2
-    ) -> 'ScrollBar':
+    ) -> ScrollBar:
         """
         Set the scrollbars shadow.
 
@@ -228,7 +228,7 @@ class ScrollBar(Widget):
         self._font_shadow = False
         return self
 
-    def _draw(self, surface: 'pygame.Surface') -> None:
+    def _draw(self, surface: pygame.Surface) -> None:
         surface.blit(self._surface, self._rect.topleft)
 
     def get_minimum(self) -> int:
@@ -299,7 +299,7 @@ class ScrollBar(Widget):
         value = min(self._values_range[1], value)
         return int(value)
 
-    def _render(self) -> Optional[bool]:
+    def _render(self) -> bool | None:
         width, height = self._rect.width + self._rect_size_delta[0], self._rect.height + self._rect_size_delta[1]
         if self._slider_rect is None:
             return None
@@ -319,7 +319,7 @@ class ScrollBar(Widget):
         self._render_shadow(self._surface, slider_color)
         return True
 
-    def _scroll(self, rect: 'pygame.Rect', pixels: NumberType) -> bool:
+    def _scroll(self, rect: pygame.Rect, pixels: NumberType) -> bool:
         """
         Moves the slider based on mouse events relative to change along axis.
         The slider travel is limited to page control length.
@@ -370,7 +370,7 @@ class ScrollBar(Widget):
         """
         return self._page_ctrl_thick
 
-    def show(self, force: bool = False) -> 'ScrollBar':
+    def show(self, force: bool = False) -> ScrollBar:
         """
         Show the scrollbars. If ``force`` param is provided the scrollbars will
         be shown if them were hidden with ´´force´´ method.
@@ -386,7 +386,7 @@ class ScrollBar(Widget):
         self._visible = True
         return self
 
-    def hide(self, force: bool = False) -> 'ScrollBar':
+    def hide(self, force: bool = False) -> ScrollBar:
         """
         Hide the scrollbars. If ``force`` param is provided the scrollbars will
         be hidden if them were shown with ´´force´´ method.
@@ -405,7 +405,7 @@ class ScrollBar(Widget):
         self._visible = False
         return self
 
-    def disable_visibility_force(self) -> 'ScrollBar':
+    def disable_visibility_force(self) -> ScrollBar:
         """
         Disables visibility force. That is, .show() and .hide() will
         change the visibility status without the need for ´´force´´ param.
@@ -497,7 +497,7 @@ class ScrollBar(Widget):
 
         self._scroll(self.get_rect(), pixels - self._slider_position)
 
-    def get_slider_rect(self) -> 'pygame.Rect':
+    def get_slider_rect(self) -> pygame.Rect:
         """
         Get slider rect.
 

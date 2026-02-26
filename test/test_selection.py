@@ -89,7 +89,7 @@ class SelectionTest(BaseTest):
         self.menu.draw(surface)
 
         # noinspection PyTypeChecker
-        sel: 'HighlightSelection' = w.get_selection_effect()
+        sel: HighlightSelection = w.get_selection_effect()
         self.assertEqual(sel.get_height(), margin_y)
         self.assertEqual(sel.get_width(), margin_x)
 

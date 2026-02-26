@@ -17,15 +17,17 @@ import textwrap
 import time
 from abc import ABC
 from collections.abc import Callable
-from typing import Any, Optional, Union
+from typing import TYPE_CHECKING, Any, Optional
 
 import pygame
 
 import pygame_menu
-from pygame_menu._types import (CallbackType, ColorInputType, ColorType,
-                                EventVectorType)
 from pygame_menu.utils import assert_color, make_surface, uuid4, warn
 from pygame_menu.widgets.core.widget import AbstractWidgetManager, Widget
+
+if TYPE_CHECKING:
+    from pygame_menu._types import (CallbackType, ColorInputType, ColorType,
+                                    EventVectorType)
 
 LabelTitleGeneratorType = Optional[Callable[[], str]]
 
@@ -45,10 +47,10 @@ class Label(Widget):
     :param leading: Font leading for ``wordwrap``. If ``None`` retrieves from widget font
     :param max_nlines: Number of maximum lines for ``wordwrap``. If ``None`` the number is dynamically computed. If exceeded, ``get_overflow_lines()`` will return the non-displayed lines
     """
-    _last_underline: list[Union[str, Optional[tuple[ColorType, int, int]]]]
-    _leading: Optional[int]
+    _last_underline: list[str | tuple[ColorType, int, int] | None]
+    _leading: int | None
     _lines: list[str]
-    _max_nlines: Optional[int]
+    _max_nlines: int | None
     _overflow_lines: list[str]  # Store how many lines are overflowed
     _title_generator: LabelTitleGeneratorType
     _wordwrap: bool
@@ -59,8 +61,8 @@ class Label(Widget):
         label_id: str = '',
         onselect: CallbackType = None,
         wordwrap: bool = False,
-        leading: Optional[int] = None,
-        max_nlines: Optional[int] = None
+        leading: int | None = None,
+        max_nlines: int | None = None
     ) -> None:
         assert isinstance(leading, (type(None), int))
         assert isinstance(max_nlines, (type(None), int))
@@ -84,7 +86,7 @@ class Label(Widget):
         offset: int,
         width: int,
         force_render: bool = False
-    ) -> 'Label':
+    ) -> Label:
         """
         Adds an underline to text. This is added if widget is rendered. Underline
         is only enabled for non wordwrap mode.
@@ -104,7 +106,7 @@ class Label(Widget):
             self._force_render()
         return self
 
-    def remove_underline(self) -> 'Label':
+    def remove_underline(self) -> Label:
         """
         Remove the underline.
 
@@ -119,13 +121,13 @@ class Label(Widget):
     def _apply_font(self) -> None:
         pass
 
-    def _draw(self, surface: 'pygame.Surface') -> None:
+    def _draw(self, surface: pygame.Surface) -> None:
         # The minimal width of any surface is 1px, so the background will be a line
         if self._title == '':
             return
         surface.blit(self._surface, self._rect.topleft)
 
-    def set_title_generator(self, generator: LabelTitleGeneratorType) -> 'Label':
+    def set_title_generator(self, generator: LabelTitleGeneratorType) -> Label:
         """
         Set a title generator. This function is executed each time the label updates,
         returning a new title (string) which replaces the current label title.
@@ -147,7 +149,7 @@ class Label(Widget):
             menu_update_widgets.append(self)
         return self
 
-    def set_title(self, title: str) -> 'Label':
+    def set_title(self, title: str) -> Label:
         super().set_title(title)
         if self._title_generator is not None:
             if self._verbose:
@@ -249,7 +251,7 @@ class Label(Widget):
         assert isinstance(self._max_nlines, int), 'max_nlines must be defined'
         return self._overflow_lines
 
-    def _render(self) -> Optional[bool]:
+    def _render(self) -> bool | None:
         font_color: ColorType = self.get_font_color_status()
         if not self._render_hash_changed(self._title, font_color, self._visible, self._menu, self._font,
                                          self._last_underline[1], self._padding, self._selection_effect.get_width(),
@@ -364,11 +366,11 @@ class LabelManager(AbstractWidgetManager, ABC):
         title: Any,
         label_id: str = '',
         max_char: int = 0,
-        onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
+        onselect: Callable[[bool, Widget, pygame_menu.Menu], Any] | None = None,
         selectable: bool = False,
         wordwrap: bool = False,
         **kwargs
-    ) -> Union['pygame_menu.widgets.Label', list['pygame_menu.widgets.Label']]:
+    ) -> pygame_menu.widgets.Label | list[pygame_menu.widgets.Label]:
         """
         Add a simple text to the Menu.
 
@@ -526,12 +528,12 @@ class LabelManager(AbstractWidgetManager, ABC):
         self,
         clock_format: str = '%Y/%m/%d %H:%M:%S',
         clock_id: str = '',
-        onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
+        onselect: Callable[[bool, Widget, pygame_menu.Menu], Any] | None = None,
         selectable: bool = False,
         title_format: str = '{0}',
         wordwrap: bool = False,
         **kwargs
-    ) -> 'pygame_menu.widgets.Label':
+    ) -> pygame_menu.widgets.Label:
         """
         Add a clock label to the Menu. This creates a Label with a text generator
         that request a string from ``time.strftime`` module using ``clock_format``.

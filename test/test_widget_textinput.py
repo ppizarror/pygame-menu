@@ -795,7 +795,7 @@ class TextInputWidgetTest(BaseTest):
 
         test = ['']
 
-        def onwidgetchange(m: 'pygame_menu.Menu', w: 'pygame_menu.widgets.Widget') -> None:
+        def onwidgetchange(m: pygame_menu.Menu, w: pygame_menu.widgets.Widget) -> None:
             """
             Callback executed if widget changes.
             """

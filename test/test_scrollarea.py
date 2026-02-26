@@ -276,7 +276,7 @@ class ScrollAreaTest(BaseTest):
             buttons.append(menu.add.button(btn_title, button_id=btn_title))
         sa = menu.get_scrollarea()
 
-        def test_relative(widget: 'pygame_menu.widgets.Widget', x: float, y: float) -> None:
+        def test_relative(widget: pygame_menu.widgets.Widget, x: float, y: float) -> None:
             """
             Test relative position from widget to scroll view rect.
 

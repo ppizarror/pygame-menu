@@ -25,7 +25,7 @@ def create_example_window(
     init_pygame: bool = True,
     center_window: bool = True,
     **kwargs
-) -> 'pygame.Surface':
+) -> pygame.Surface:
     """
     Set pygame window.
 

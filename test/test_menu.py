@@ -376,7 +376,7 @@ class MenuTest(BaseTest):
         self.assertTrue(test[0])
 
         # This method takes menu as input
-        def closefun_menu(m: 'pygame_menu.Menu') -> None:
+        def closefun_menu(m: pygame_menu.Menu) -> None:
             """
             Test object is menu.
             """
@@ -417,7 +417,7 @@ class MenuTest(BaseTest):
         # Set new close callback, it receives the menu and fires reset,
         # the output should be the same, except it doesn't close
 
-        def new_close(m: 'pygame_menu.Menu') -> None:
+        def new_close(m: pygame_menu.Menu) -> None:
             """
             Reset the current menu.
             """
@@ -427,7 +427,7 @@ class MenuTest(BaseTest):
         # Also, set first menu onreset to test this behavior
         reset = [False]
 
-        def onreset(m: 'pygame_menu.Menu') -> None:
+        def onreset(m: pygame_menu.Menu) -> None:
             """
             Called in reset.
             """
@@ -1352,7 +1352,7 @@ class MenuTest(BaseTest):
         """
         test = [False, False]
 
-        def test_accept_menu(m: 'pygame_menu.Menu') -> None:
+        def test_accept_menu(m: pygame_menu.Menu) -> None:
             """
             This method accept menu as argument.
             """
@@ -1463,7 +1463,7 @@ class MenuTest(BaseTest):
         menu2 = MenuUtils.generic_menu()
         test = [False]
 
-        def onbeforeopen(menu_from: 'pygame_menu.Menu', menu_to: 'pygame_menu.Menu') -> None:
+        def onbeforeopen(menu_from: pygame_menu.Menu, menu_to: pygame_menu.Menu) -> None:
             """
             Before open callback.
             """
@@ -1477,7 +1477,7 @@ class MenuTest(BaseTest):
         self.assertTrue(test[0])
 
         # Test select widget
-        def onbeforeopen_select_widget(_from: 'pygame_menu.Menu', _to: 'pygame_menu.Menu'):
+        def onbeforeopen_select_widget(_from: pygame_menu.Menu, _to: pygame_menu.Menu):
             """
             Selects widget before opening.
             """
@@ -1753,7 +1753,7 @@ class MenuTest(BaseTest):
         # Test mouseover and mouseleave
         test: Any = [None]
 
-        def on_over(m: 'pygame_menu.Menu', e: 'pygame.event.Event') -> None:
+        def on_over(m: pygame_menu.Menu, e: pygame.event.Event) -> None:
             """
             Mouse over menu.
             """
@@ -1761,7 +1761,7 @@ class MenuTest(BaseTest):
             self.assertEqual(e.type, pygame.MOUSEMOTION)
             test[0] = True
 
-        def on_leave(m: 'pygame_menu.Menu', e: 'pygame.event.Event') -> None:
+        def on_leave(m: pygame_menu.Menu, e: pygame.event.Event) -> None:
             """
             Mouse leave menu.
             """
@@ -1803,14 +1803,14 @@ class MenuTest(BaseTest):
         # Test window mouseover and mouseleave
         test: Any = [None]
 
-        def on_over(m: 'pygame_menu.Menu') -> None:
+        def on_over(m: pygame_menu.Menu) -> None:
             """
             Mouse over window.
             """
             self.assertIsInstance(m, pygame_menu.Menu)
             test[0] = True
 
-        def on_leave(m: 'pygame_menu.Menu') -> None:
+        def on_leave(m: pygame_menu.Menu) -> None:
             """
             Mouse leave window.
             """
@@ -1901,8 +1901,8 @@ class MenuTest(BaseTest):
         btn2 = menu.add.button('2')
         btn3 = menu.add.button('3')
 
-        def test_order(button: tuple['pygame_menu.widgets.Button', ...],
-                       selected: 'pygame_menu.widgets.Button') -> None:
+        def test_order(button: tuple[pygame_menu.widgets.Button, ...],
+                       selected: pygame_menu.widgets.Button) -> None:
             """
             Test button order.
             """
@@ -2262,9 +2262,9 @@ class MenuTest(BaseTest):
             """
             Sample example which contains a selector that changes an image.
             """
-            icons: list['pygame_menu.BaseImage']
-            icon: 'pygame_menu.widgets.Image'
-            selector: 'pygame_menu.widgets.Selector'
+            icons: list[pygame_menu.BaseImage]
+            icon: pygame_menu.widgets.Image
+            selector: pygame_menu.widgets.Selector
 
             def __init__(self) -> None:
                 """

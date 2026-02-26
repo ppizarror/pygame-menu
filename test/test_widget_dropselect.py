@@ -531,7 +531,7 @@ class DropSelectWidgetTest(BaseTest):
         self.assertEqual(drop3.get_focus_rect(), pygame.Rect(108, 468, 320, 28))
 
         # Test update list
-        def remove_selection_item(select: 'pygame_menu.widgets.DropSelect'):
+        def remove_selection_item(select: pygame_menu.widgets.DropSelect):
             """
             Update list event.
             """
@@ -955,9 +955,9 @@ class DropSelectWidgetTest(BaseTest):
         # Test draw surfaces
         menu.draw(surface)
         # noinspection PyTypeChecker
-        s0: 'pygame_menu.widgets.DropSelect' = menu.get_widget('s0')
+        s0: pygame_menu.widgets.DropSelect = menu.get_widget('s0')
         # noinspection PyTypeChecker
-        s1: 'pygame_menu.widgets.DropSelect' = menu.get_widget('s1')
+        s1: pygame_menu.widgets.DropSelect = menu.get_widget('s1')
         surf = menu._widgets_surface
         self.assertTrue(s0.is_selected())
         self.assertEqual(s0.last_surface, surf)

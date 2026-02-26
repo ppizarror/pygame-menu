@@ -364,7 +364,7 @@ class NoneWidgetTest(BaseTest):
 
         # noinspection PyMissingTypeHints,PyMissingOrEmptyDocstring
         def open_link(*args) -> None:
-            link: 'pygame_menu.widgets.MenuLink' = args[-1]
+            link: pygame_menu.widgets.MenuLink = args[-1]
             self.assertIsInstance(link, pygame_menu.widgets.MenuLink)
             link.open()
 

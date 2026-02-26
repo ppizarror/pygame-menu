@@ -12,7 +12,6 @@ __all__ = ['main']
 
 import datetime
 from random import randrange
-from typing import Optional
 
 import pygame
 
@@ -33,8 +32,8 @@ HELP = ['Press ESC to enable/disable Menu',
         'Press LEFT/RIGHT to move through Selectors']
 W_SIZE = 800  # Width of window size
 
-surface: Optional['pygame.Surface'] = None
-timer: Optional[list[float]] = None
+surface: pygame.Surface | None = None
+timer: list[float] | None = None
 
 
 def mainmenu_background() -> None:
@@ -65,7 +64,7 @@ class TestCallClassMethod:
         print('Update game with new settings')
 
 
-def change_color_bg(value: tuple, c: Optional[tuple] = None, **kwargs) -> None:
+def change_color_bg(value: tuple, c: tuple | None = None, **kwargs) -> None:
     """
     Change background color.
 

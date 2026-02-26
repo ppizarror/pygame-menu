@@ -10,8 +10,6 @@ from __future__ import annotations
 
 __all__ = ['main']
 
-from typing import Optional
-
 import pygame
 
 import pygame_menu
@@ -21,9 +19,8 @@ from pygame_menu.examples import create_example_window
 FPS = 60
 WINDOW_SIZE = (640, 480)
 
-sound: Optional['pygame_menu.sound.Sound'] = None
-surface: Optional['pygame.Surface'] = None
-main_menu: Optional['pygame_menu.Menu'] = None
+surface: pygame.Surface | None = None
+main_menu: pygame_menu.Menu | None = None
 
 # Load image
 background_image = pygame_menu.BaseImage(

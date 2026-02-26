@@ -23,14 +23,14 @@ class App:
     """
     The following object creates the whole app.
     """
-    image_widget: 'pygame_menu.widgets.Image'
-    item_description_widget: 'pygame_menu.widgets.Label'
-    menu: 'pygame_menu.Menu'
+    image_widget: pygame_menu.widgets.Image
+    item_description_widget: pygame_menu.widgets.Label
+    menu: pygame_menu.Menu
     modes: dict[int, dict[str, Any]]
-    quit_button: 'pygame_menu.widgets.Button'
-    quit_button_fake: 'pygame_menu.widgets.Button'
-    selector_widget: 'pygame_menu.widgets.Selector'
-    surface: 'pygame.Surface'
+    quit_button: pygame_menu.widgets.Button
+    quit_button_fake: pygame_menu.widgets.Button
+    selector_widget: pygame_menu.widgets.Selector
+    surface: pygame.Surface
 
     def __init__(self) -> None:
         self.surface = create_example_window('Example - Dynamic Widget Update', (640, 480), flags=pygame.NOFRAME)
@@ -110,8 +110,8 @@ class App:
 
     def animate_quit_button(
         self,
-        widget: 'pygame_menu.widgets.Widget',
-        menu: 'pygame_menu.Menu'
+        widget: pygame_menu.widgets.Widget,
+        menu: pygame_menu.Menu
     ) -> None:
         """
         Animate widgets if the last option is selected.
@@ -175,7 +175,7 @@ class App:
         self.menu.mainloop(self.surface, disable_loop=test)
 
 
-def main(test: bool = False) -> 'App':
+def main(test: bool = False) -> App:
     """
     Main function.
 
