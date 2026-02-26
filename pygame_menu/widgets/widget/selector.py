@@ -202,7 +202,7 @@ class Selector(Widget):
         self.set_sformat('{0}< {1} >')
         self.set_default_value(default)
 
-    def set_sformat(self, sformat: str) -> 'Selector':
+    def set_sformat(self, sformat: str) -> Selector:
         """
         Set sformat for classic style. This receives a string which is later
         formatted with {0}: title and {1}: the current selected item.
@@ -216,7 +216,7 @@ class Selector(Widget):
         self._sformat = sformat
         return self
 
-    def set_default_value(self, index: int) -> 'Selector':
+    def set_default_value(self, index: int) -> Selector:
         self._default_value = index
         return self
 
@@ -228,7 +228,7 @@ class Selector(Widget):
                                 + self._style_fancy_borderwidth
         self._title_size = int(self._title_size)
 
-    def _draw(self, surface: 'pygame.Surface') -> None:
+    def _draw(self, surface: pygame.Surface) -> None:
         surface.blit(self._surface, self._rect.topleft)
 
     def _render(self) -> Optional[bool]:
@@ -518,11 +518,11 @@ class SelectorManager(AbstractWidgetManager, ABC):
         default: int = 0,
         onchange: CallbackType = None,
         onreturn: CallbackType = None,
-        onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
+        onselect: Optional[Callable[[bool, Widget, pygame_menu.Menu], Any]] = None,
         selector_id: str = '',
         style: SelectorStyleType = SELECTOR_STYLE_CLASSIC,
         **kwargs
-    ) -> 'pygame_menu.widgets.Selector':
+    ) -> pygame_menu.widgets.Selector:
         """
         Add a selector to the Menu: several items and two functions that are
         executed when changing the selector (left/right) and pressing return

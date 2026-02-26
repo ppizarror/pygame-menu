@@ -226,7 +226,7 @@ class PygameEventUtils:
 
     @staticmethod
     def test_widget_key_press(
-        widget: 'pygame_menu.widgets.Widget',
+        widget: pygame_menu.widgets.Widget,
         testmode: bool = True
     ) -> None:
         """
@@ -445,7 +445,7 @@ class PygameEventUtils:
         evtype: int = FINGERUP,
         rel: Tuple2IntType = (0, 0),
         normalize: bool = True,
-        menu: Union['pygame_menu.Menu', None] = None,
+        menu: Union[pygame_menu.Menu, None] = None,
         testmode: bool = True
     ) -> EventListType:
         """
@@ -483,7 +483,7 @@ class PygameEventUtils:
 
     @staticmethod
     def topleft_rect_mouse_motion(
-        rect: Union['pygame_menu.widgets.Widget', 'pygame.Rect', Tuple2NumberType],
+        rect: Union[pygame_menu.widgets.Widget, pygame.Rect, Tuple2NumberType],
         inlist: bool = True,
         delta: Tuple2IntType = (0, 0),
         testmode: bool = True,
@@ -518,7 +518,7 @@ class PygameEventUtils:
 
     @staticmethod
     def mouse_motion(
-        rect: Union['pygame_menu.widgets.Widget', 'pygame.Rect', Tuple2NumberType],
+        rect: Union[pygame_menu.widgets.Widget, pygame.Rect, Tuple2NumberType],
         inlist: bool = True,
         rel: Tuple2IntType = (0, 0),
         delta: Tuple2IntType = (0, 0),
@@ -548,8 +548,8 @@ class PygameEventUtils:
 
     @staticmethod
     def middle_rect_click(
-        rect: Union['pygame_menu.widgets.Widget', 'pygame.Rect', Tuple2NumberType],
-        menu: Optional['pygame_menu.Menu'] = None,
+        rect: Union[pygame_menu.widgets.Widget, pygame.Rect, Tuple2NumberType],
+        menu: Optional[pygame_menu.Menu] = None,
         evtype: int = pygame.MOUSEBUTTONUP,
         inlist: bool = True,
         rel: Tuple2IntType = (0, 0),
@@ -617,7 +617,7 @@ class MenuUtils:
     """
 
     @staticmethod
-    def get_font(name: str, size: int) -> 'pygame.font.Font':
+    def get_font(name: str, size: int) -> pygame.font.Font:
         """
         Returns a font.
 
@@ -638,7 +638,7 @@ class MenuUtils:
         return FONT_EXAMPLES[opt]
 
     @staticmethod
-    def load_font(font: str, size: int) -> 'pygame.font.Font':
+    def load_font(font: str, size: int) -> pygame.font.Font:
         """
         Load font from file.
 
@@ -675,12 +675,12 @@ class MenuUtils:
         position_x: NumberType = 50,
         position_y: NumberType = 50,
         rows: MenuRowsType = None,
-        theme: 'pygame_menu.themes.Theme' = pygame_menu.themes.THEME_DEFAULT,
+        theme: pygame_menu.themes.Theme = pygame_menu.themes.THEME_DEFAULT,
         title: str = '',
         width: NumberType = 600,
         *args,
         **kwargs
-    ) -> 'pygame_menu.Menu':
+    ) -> pygame_menu.Menu:
         """
         Generate a generic test menu.
 

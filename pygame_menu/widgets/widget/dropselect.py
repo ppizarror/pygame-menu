@@ -113,14 +113,14 @@ class DropSelect(Widget):
     :param kwargs: Optional keyword arguments
     """
     _close_on_apply: bool
-    _drop_frame: Optional['Frame']
+    _drop_frame: Optional[Frame]
     _index: int
     _items: Union[list[tuple[Any, ...]], list[str]]
     _open_bottom: bool
     _open_middle: bool
     _opened: bool
-    _option_buttons: list['Button']
-    _option_font: Optional['pygame.font.Font']
+    _option_buttons: list[Button]
+    _option_font: Optional[pygame.font.Font]
     _placeholder: str
     _placeholder_add_to_selection_box: bool
     _scrollbar_color: ColorType
@@ -324,7 +324,7 @@ class DropSelect(Widget):
 
         self.active = False
 
-    def set_default_value(self, index: int) -> 'DropSelect':
+    def set_default_value(self, index: int) -> DropSelect:
         self._default_value = index
         return self
 
@@ -351,7 +351,7 @@ class DropSelect(Widget):
                                             + h - h / 4
                                             + 2 * self._selection_box_border_width)
 
-    def _make_selection_drop(self) -> 'DropSelect':
+    def _make_selection_drop(self) -> DropSelect:
         """
         Make the selection drop box. This function creates the box UI and adds
         the selection options. Should be called after the widget is configured.
@@ -547,24 +547,24 @@ class DropSelect(Widget):
     def _append_to_menu(self) -> None:
         self._make_selection_drop()
 
-    def on_remove_from_menu(self) -> 'DropSelect':
+    def on_remove_from_menu(self) -> DropSelect:
         if self._drop_frame is not None:
             self._drop_frame.set_menu(None)
         return self
 
-    def hide(self) -> 'DropSelect':
+    def hide(self) -> DropSelect:
         super().hide()
         if self._drop_frame is not None:
             self._drop_frame.hide()
         return self
 
-    def show(self) -> 'DropSelect':
+    def show(self) -> DropSelect:
         super().show()
         if self.active:
             self._toggle_drop()
         return self
 
-    def scrollh(self, value: NumberType) -> 'DropSelect':
+    def scrollh(self, value: NumberType) -> DropSelect:
         """
         Scroll drop frame to horizontal value.
 
@@ -575,7 +575,7 @@ class DropSelect(Widget):
             self._drop_frame.scrollh(value)
         return self
 
-    def scrollv(self, value: NumberType) -> 'DropSelect':
+    def scrollv(self, value: NumberType) -> DropSelect:
         """
         Scroll drop frame to vertical value.
 
@@ -603,18 +603,18 @@ class DropSelect(Widget):
             return self._drop_frame.get_scroll_value_percentage(orientation)
         return -1
 
-    def set_scrollarea(self, scrollarea: 'pygame_menu._scrollarea.ScrollArea') -> None:
+    def set_scrollarea(self, scrollarea: pygame_menu._scrollarea.ScrollArea) -> None:
         super().set_scrollarea(scrollarea)
         if self._drop_frame is not None:
             self._drop_frame.set_scrollarea(scrollarea)
 
-    def set_frame(self, frame: 'pygame_menu.widgets.Frame') -> 'DropSelect':
+    def set_frame(self, frame: pygame_menu.widgets.Frame) -> DropSelect:
         super().set_frame(frame)
         if self._drop_frame is not None:
             self._drop_frame.set_frame(frame)
         return self
 
-    def _click_option(self, index: int, btn: 'Button') -> None:
+    def _click_option(self, index: int, btn: Button) -> None:
         """
         Function triggered after option has been selected or clicked.
 
@@ -631,7 +631,7 @@ class DropSelect(Widget):
                 self._drop_frame.hide()
         btn.remove_attribute('ignore_scroll_to_widget')
 
-    def set_position(self, x: NumberType, y: NumberType) -> 'DropSelect':
+    def set_position(self, x: NumberType, y: NumberType) -> DropSelect:
         super().set_position(x, y)
         if self._drop_frame is not None:
             x = self._rect.x
@@ -650,33 +650,33 @@ class DropSelect(Widget):
             for w in self._option_buttons:
                 w._set_position_relative_to_frame()
             if self._placeholder_add_to_selection_box:
-                placeholder_button: 'Button' = self._drop_frame.get_attribute('placeholder_button')
+                placeholder_button: Button = self._drop_frame.get_attribute('placeholder_button')
                 placeholder_button._set_position_relative_to_frame()
             self._drop_frame.update_position()
         return self
 
-    def scale(self, *args, **kwargs) -> 'DropSelect':
+    def scale(self, *args, **kwargs) -> DropSelect:
         raise WidgetTransformationNotImplemented()
 
-    def resize(self, *args, **kwargs) -> 'DropSelect':
+    def resize(self, *args, **kwargs) -> DropSelect:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_width(self, *args, **kwargs) -> 'DropSelect':
+    def set_max_width(self, *args, **kwargs) -> DropSelect:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_height(self, *args, **kwargs) -> 'DropSelect':
+    def set_max_height(self, *args, **kwargs) -> DropSelect:
         raise WidgetTransformationNotImplemented()
 
-    def rotate(self, *args, **kwargs) -> 'DropSelect':
+    def rotate(self, *args, **kwargs) -> DropSelect:
         raise WidgetTransformationNotImplemented()
 
-    def flip(self, *args, **kwargs) -> 'DropSelect':
+    def flip(self, *args, **kwargs) -> DropSelect:
         raise WidgetTransformationNotImplemented()
 
-    def _draw(self, surface: 'pygame.Surface') -> None:
+    def _draw(self, surface: pygame.Surface) -> None:
         surface.blit(self._surface, self._rect.topleft)
 
-    def draw_after_if_selected(self, surface: Optional['pygame.Surface']) -> 'DropSelect':
+    def draw_after_if_selected(self, surface: Optional[pygame.Surface]) -> DropSelect:
         super().draw_after_if_selected(surface)
         if self.active and self.is_visible():
             self._check_drop_made()
@@ -691,7 +691,7 @@ class DropSelect(Widget):
 
         return self
 
-    def _render_option_string(self, text: str) -> 'pygame.Surface':
+    def _render_option_string(self, text: str) -> pygame.Surface:
         """
         Render option string surface.
 
@@ -1063,7 +1063,7 @@ class DropSelect(Widget):
         y = (h - bh) / 2 + offy
         return x, y
 
-    def get_focus_rect(self) -> 'pygame.Rect':
+    def get_focus_rect(self) -> pygame.Rect:
         self._check_drop_made()
         rect = self.get_rect(apply_padding=False, to_real_position=True)
         if self.active:
@@ -1233,12 +1233,12 @@ class DropSelectManager(AbstractWidgetManager, ABC):
         dropselect_id: str = '',
         onchange: CallbackType = None,
         onreturn: CallbackType = None,
-        onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
+        onselect: Optional[Callable[[bool, Widget, pygame_menu.Menu], Any]] = None,
         open_middle: bool = False,
         placeholder: str = 'Select an option',
         placeholder_add_to_selection_box: bool = True,
         **kwargs
-    ) -> 'pygame_menu.widgets.DropSelect':
+    ) -> pygame_menu.widgets.DropSelect:
         """
         Add a dropselect to the Menu: Drop select is a selector within a Frame.
         This drops a vertical frame if requested.

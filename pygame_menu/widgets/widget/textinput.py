@@ -147,7 +147,7 @@ class TextInput(Widget):
     _alt_x_enabled: bool
     _apply_widget_update_callback: bool  # Used in ColorInput
     _block_copy_paste: bool
-    _clock: 'pygame.time.Clock'
+    _clock: pygame.time.Clock
     _copy_paste_enabled: bool
     _current_underline_string: str  # Testing
     _cursor_color: ColorType
@@ -156,7 +156,7 @@ class TextInput(Widget):
     _cursor_position: int
     _cursor_render: bool
     _cursor_size: Optional[Tuple2IntType]  # Size defined by user
-    _cursor_surface: Optional['pygame.Surface']
+    _cursor_surface: Optional[pygame.Surface]
     _cursor_surface_pos: list[int]
     _cursor_switch_ms: NumberType
     _cursor_visible: bool
@@ -200,7 +200,7 @@ class TextInput(Widget):
     _selection_enabled: bool
     _selection_mouse_first_position: int
     _selection_position: list[int]
-    _selection_surface: Optional['pygame.Surface']
+    _selection_surface: Optional[pygame.Surface]
     _title_size: NumberType
     _valid_chars: Optional[list[str]]
 
@@ -459,26 +459,26 @@ class TextInput(Widget):
                 value = 0
         return value
 
-    def scale(self, *args, **kwargs) -> 'TextInput':
+    def scale(self, *args, **kwargs) -> TextInput:
         raise WidgetTransformationNotImplemented()
 
-    def resize(self, *args, **kwargs) -> 'TextInput':
+    def resize(self, *args, **kwargs) -> TextInput:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_width(self, *args, **kwargs) -> 'TextInput':
+    def set_max_width(self, *args, **kwargs) -> TextInput:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_height(self, *args, **kwargs) -> 'TextInput':
+    def set_max_height(self, *args, **kwargs) -> TextInput:
         raise WidgetTransformationNotImplemented()
 
-    def rotate(self, *args, **kwargs) -> 'TextInput':
+    def rotate(self, *args, **kwargs) -> TextInput:
         raise WidgetTransformationNotImplemented()
 
-    def flip(self, x: bool, y: bool, render: bool = True) -> 'TextInput':  # Actually flip on x-axis is disabled
+    def flip(self, x: bool, y: bool, render: bool = True) -> TextInput:  # Actually flip on x-axis is disabled
         super().flip(False, y, render)
         return self
 
-    def _draw(self, surface: 'pygame.Surface') -> None:
+    def _draw(self, surface: pygame.Surface) -> None:
         # Draw selection surface
         if pygame.vernum[0] >= 2:  # pygame 1.9.3 don't have vernum.major
             surface.blit(self._surface, (self._rect.x, self._rect.y))  # Draw string
@@ -632,7 +632,7 @@ class TextInput(Widget):
             max_width = frame.get_width()
         return max_width - self._padding[1] - self._padding[3]
 
-    def _render_string_underline(self, string: str, color: ColorInputType) -> 'pygame.Surface':
+    def _render_string_underline(self, string: str, color: ColorInputType) -> pygame.Surface:
         """
         Render underline string surface.
 
@@ -1979,12 +1979,12 @@ class TextInputManager(AbstractWidgetManager, ABC):
         maxwidth: int = 0,
         onchange: CallbackType = None,
         onreturn: CallbackType = None,
-        onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
+        onselect: Optional[Callable[[bool, Widget, pygame_menu.Menu], Any]] = None,
         password: bool = False,
         textinput_id: str = '',
         valid_chars: Optional[list[str]] = None,
         **kwargs
-    ) -> 'pygame_menu.widgets.TextInput':
+    ) -> pygame_menu.widgets.TextInput:
         """
         Add a text input to the Menu: free text area and two functions that
         execute when changing the text and pressing return (apply) on the element.

@@ -184,7 +184,7 @@ class MazeApp:
     _grid: _MazeType
     _height: int
     _margin: int
-    _menu: 'pygame_menu.Menu'
+    _menu: pygame_menu.Menu
     _mouse_drag: bool
     _offset: _Point2
     _rows: int
@@ -263,7 +263,7 @@ class MazeApp:
             b.is_selectable = True
             b.set_cursor(pygame_menu.locals.CURSOR_HAND)
 
-        def button_onmouseover(w: 'pygame_menu.widgets.Widget', _) -> None:
+        def button_onmouseover(w: pygame_menu.widgets.Widget, _) -> None:
             """
             Set the background color of buttons if entered.
             """
@@ -271,13 +271,13 @@ class MazeApp:
                 return
             w.set_background_color((98, 103, 106))
 
-        def button_onmouseleave(w: 'pygame_menu.widgets.Widget', _) -> None:
+        def button_onmouseleave(w: pygame_menu.widgets.Widget, _) -> None:
             """
             Set the background color of buttons if leaved.
             """
             w.set_background_color((75, 79, 81))
 
-        def button_onmouseover_clear(w: 'pygame_menu.widgets.Widget', _) -> None:
+        def button_onmouseover_clear(w: pygame_menu.widgets.Widget, _) -> None:
             """
             Set the background color of buttons if entered.
             """
@@ -285,7 +285,7 @@ class MazeApp:
                 return
             w.set_background_color((139, 0, 0))
 
-        def button_onmouseleave_clear(w: 'pygame_menu.widgets.Widget', _) -> None:
+        def button_onmouseleave_clear(w: pygame_menu.widgets.Widget, _) -> None:
             """
             Set the background color of buttons if leaved.
             """
@@ -1449,7 +1449,7 @@ class MazeApp:
                 break
 
 
-def main(test: bool = False) -> 'MazeApp':
+def main(test: bool = False) -> MazeApp:
     """
     Main function.
 

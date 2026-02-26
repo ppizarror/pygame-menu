@@ -26,9 +26,9 @@ DIFFICULTY = ['EASY']
 FPS = 60
 WINDOW_SIZE = (640, 480)
 
-clock: Optional['pygame.time.Clock'] = None
-main_menu: Optional['pygame_menu.Menu'] = None
-surface: Optional['pygame.Surface'] = None
+clock: Optional[pygame.time.Clock] = None
+main_menu: Optional[pygame_menu.Menu] = None
+surface: Optional[pygame.Surface] = None
 
 
 def change_difficulty(value: tuple[Any, int], difficulty: str) -> None:
@@ -52,7 +52,7 @@ def random_color() -> tuple[int, int, int]:
     return randrange(0, 255), randrange(0, 255), randrange(0, 255)
 
 
-def play_function(difficulty: list, font: 'pygame.font.Font', test: bool = False) -> None:
+def play_function(difficulty: list, font: pygame.font.Font, test: bool = False) -> None:
     """
     Main game function.
 

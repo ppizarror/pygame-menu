@@ -21,9 +21,9 @@ from pygame_menu.examples import create_example_window
 FPS = 60
 WINDOW_SIZE = (640, 480)
 
-sound: Optional['pygame_menu.sound.Sound'] = None
-surface: Optional['pygame.Surface'] = None
-main_menu: Optional['pygame_menu.Menu'] = None
+sound: Optional[pygame_menu.sound.Sound] = None
+surface: Optional[pygame.Surface] = None
+main_menu: Optional[pygame_menu.Menu] = None
 
 
 def main_background() -> None:

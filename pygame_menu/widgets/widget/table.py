@@ -57,8 +57,8 @@ class Table(Frame):
 
     :param table_id: ID of the table
     """
-    _rows: list['Frame']
-    _update_widgets: list['Widget']
+    _rows: list[Frame]
+    _update_widgets: list[Widget]
     default_cell_align: str
     default_cell_border_color: ColorInputType
     default_cell_border_position: WidgetBorderPositionType
@@ -107,7 +107,7 @@ class Table(Frame):
     def pack(self, *args, **kwargs) -> None:
         raise RuntimeError(f'{self.get_class_id()} cannot pack external widgets')
 
-    def remove_row(self, row: 'Frame') -> None:
+    def remove_row(self, row: Frame) -> None:
         """
         Removes row from the table.
 
@@ -115,7 +115,7 @@ class Table(Frame):
         """
         self.unpack(row)
 
-    def unpack(self, row: 'Frame') -> None:
+    def unpack(self, row: Frame) -> None:
         assert row != self, 'table cannot unpack itself'
         assert len(self._widgets) > 0, 'table is empty'
         assert row in self._rows and row.get_id() in self._widgets.keys(), \
@@ -200,7 +200,7 @@ class Table(Frame):
 
     def add_row(
         self,
-        cells: Union[ColumnInputType, 'Widget'],
+        cells: Union[ColumnInputType, Widget],
         cell_align: Optional[str] = None,
         cell_border_color: Optional[ColorInputType] = None,
         cell_border_position: Optional[WidgetBorderPositionType] = None,
@@ -211,7 +211,7 @@ class Table(Frame):
         cell_padding: PaddingType = None,
         cell_vertical_position: Optional[str] = None,
         row_background_color: Optional[ColorInputType] = None
-    ) -> 'Frame':
+    ) -> Frame:
         """
         Add row to table.
 
@@ -322,8 +322,8 @@ class Table(Frame):
         # row.set_frame(self) This cannot be executed as row is packed within
 
         # Create widgets
-        row_cells: list['Widget'] = []
-        cell: 'Widget'
+        row_cells: list[Widget] = []
+        cell: Widget
         j: int = 0
 
         for c in cells:
@@ -441,14 +441,14 @@ class Table(Frame):
                 if w.get_attribute('accept_events'):
                     self._update_widgets.append(w)
 
-    def _get_column_width_row_height(self) -> tuple[dict[int, int], dict['Frame', int]]:
+    def _get_column_width_row_height(self) -> tuple[dict[int, int], dict[Frame, int]]:
         """
         Return column width and row height.
 
         :return: Column width and row height dict
         """
         column_widths: dict[int, int] = {}  # column/width
-        row_heights: dict['Frame', int] = {}  # row/height
+        row_heights: dict[Frame, int] = {}  # row/height
 
         for f in self._rows:
             col = 0  # Column
@@ -551,12 +551,12 @@ class Table(Frame):
         self.resize(total_width + self._padding[1] + self._padding[3],
                     total_height + self._padding[0] + self._padding[2])
 
-    def on_remove_from_menu(self) -> 'Frame':
+    def on_remove_from_menu(self) -> Frame:
         self.update_indices()
         return self
 
     @staticmethod
-    def get_cell_column_row(cell: 'Widget') -> tuple[int, int]:
+    def get_cell_column_row(cell: Widget) -> tuple[int, int]:
         """
         Return the column/row within table layout for the given widget.
 
@@ -567,7 +567,7 @@ class Table(Frame):
             f'{cell.get_class_id()} does not have the table attributes'
         return cell.get_attribute('column'), cell.get_attribute('row')
 
-    def _draw_cell_borders(self, surface: 'pygame.Surface') -> None:
+    def _draw_cell_borders(self, surface: pygame.Surface) -> None:
         """
         Draw cell border.
 
@@ -624,7 +624,7 @@ class Table(Frame):
 
             total_height += row_heights[row]
 
-    def get_cell(self, column: int, row: int) -> 'Widget':
+    def get_cell(self, column: int, row: int) -> Widget:
         """
         Get cell widget at column/row position.
 
@@ -673,7 +673,7 @@ class Table(Frame):
         font_size: Optional[int] = None,
         padding: Optional[PaddingType] = None,
         vertical_position: Optional[str] = None
-    ) -> Union['Widget', list['Widget']]:
+    ) -> Union[Widget, list[Widget]]:
         """
         Update cell style. If a parameter is ``None`` the default cell property
         will be used.
@@ -854,12 +854,12 @@ class Table(Frame):
         return cell
 
     # noinspection PyProtectedMember
-    def set_scrollarea(self, scrollarea: Optional['pygame_menu._scrollarea.ScrollArea']) -> None:
+    def set_scrollarea(self, scrollarea: Optional[pygame_menu._scrollarea.ScrollArea]) -> None:
         super().set_scrollarea(scrollarea)
         for f in self._rows:
             f.set_scrollarea(scrollarea)
 
-    def set_position(self, x: NumberType, y: NumberType) -> 'Table':
+    def set_position(self, x: NumberType, y: NumberType) -> Table:
         super().set_position(x, y)
         x = self._rect.x
         y = self._rect.y
@@ -870,7 +870,7 @@ class Table(Frame):
             f.update_position()
         return self
 
-    def draw(self, surface: 'pygame.Surface') -> 'Table':
+    def draw(self, surface: pygame.Surface) -> Table:
         if self.is_visible():
             super().draw(surface)
             self._draw_cell_borders(self.last_surface)
@@ -898,7 +898,7 @@ class TableManager(AbstractWidgetManager, ABC):
         self,
         table_id: str = '',
         **kwargs
-    ) -> 'pygame_menu.widgets.Table':
+    ) -> pygame_menu.widgets.Table:
         """
         Adds a Table to the Menu. A table is a frame which can pack widgets in a
         structured way.

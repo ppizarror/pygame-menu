@@ -48,7 +48,7 @@ WORLDS = {
 }
 
 
-def make_world(width: int, height: int, text: str = '') -> 'pygame.Surface':
+def make_world(width: int, height: int, text: str = '') -> pygame.Surface:
     """
     Create a test surface.
 
@@ -88,7 +88,7 @@ def make_world(width: int, height: int, text: str = '') -> 'pygame.Surface':
 
 
 # noinspection PyProtectedMember
-def iter_world(area: 'ScrollArea') -> Generator:
+def iter_world(area: ScrollArea) -> Generator:
     """
     Iterate through worlds.
 

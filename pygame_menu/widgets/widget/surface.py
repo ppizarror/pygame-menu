@@ -37,11 +37,11 @@ class SurfaceWidget(Widget):
     :param surface_id: Surface ID
     :param onselect: Function when selecting the widget
     """
-    _surface_obj: 'pygame.Surface'
+    _surface_obj: pygame.Surface
 
     def __init__(
         self,
-        surface: 'pygame.Surface',
+        surface: pygame.Surface,
         surface_id: str = '',
         onselect: CallbackType = None
     ) -> None:
@@ -54,10 +54,10 @@ class SurfaceWidget(Widget):
         )
         self._surface_obj = surface
 
-    def set_title(self, title: str) -> 'SurfaceWidget':
+    def set_title(self, title: str) -> SurfaceWidget:
         return self
 
-    def set_surface(self, surface: 'pygame.Surface') -> 'SurfaceWidget':
+    def set_surface(self, surface: pygame.Surface) -> SurfaceWidget:
         """
         Update the widget surface.
         
@@ -73,28 +73,28 @@ class SurfaceWidget(Widget):
     def _apply_font(self) -> None:
         pass
 
-    def scale(self, *args, **kwargs) -> 'SurfaceWidget':
+    def scale(self, *args, **kwargs) -> SurfaceWidget:
         raise WidgetTransformationNotImplemented()
 
-    def resize(self, *args, **kwargs) -> 'SurfaceWidget':
+    def resize(self, *args, **kwargs) -> SurfaceWidget:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_width(self, *args, **kwargs) -> 'SurfaceWidget':
+    def set_max_width(self, *args, **kwargs) -> SurfaceWidget:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_height(self, *args, **kwargs) -> 'SurfaceWidget':
+    def set_max_height(self, *args, **kwargs) -> SurfaceWidget:
         raise WidgetTransformationNotImplemented()
 
-    def rotate(self, *args, **kwargs) -> 'SurfaceWidget':
+    def rotate(self, *args, **kwargs) -> SurfaceWidget:
         raise WidgetTransformationNotImplemented()
 
-    def flip(self, *args, **kwargs) -> 'SurfaceWidget':
+    def flip(self, *args, **kwargs) -> SurfaceWidget:
         raise WidgetTransformationNotImplemented()
 
-    def _draw(self, surface: 'pygame.Surface') -> None:
+    def _draw(self, surface: pygame.Surface) -> None:
         surface.blit(self._surface_obj, self._rect.topleft)
 
-    def get_surface(self) -> 'pygame.Surface':
+    def get_surface(self) -> pygame.Surface:
         return self._surface_obj
 
     def _render(self) -> Optional[bool]:
@@ -116,12 +116,12 @@ class SurfaceWidgetManager(AbstractWidgetManager, ABC):
 
     def surface(
         self,
-        surface: 'pygame.Surface',
+        surface: pygame.Surface,
         surface_id: str = '',
-        onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
+        onselect: Optional[Callable[[bool, Widget, pygame_menu.Menu], Any]] = None,
         selectable: bool = False,
         **kwargs
-    ) -> 'pygame_menu.widgets.SurfaceWidget':
+    ) -> pygame_menu.widgets.SurfaceWidget:
         """
         Add a surface widget to the Menu.
 

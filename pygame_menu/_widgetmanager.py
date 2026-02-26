@@ -72,15 +72,15 @@ class WidgetManager(
     :param verbose: Enables/disables verbose mode (warnings/errors)
     """
 
-    def __init__(self, menu: 'pygame_menu.Menu', verbose: bool = True) -> None:
+    def __init__(self, menu: pygame_menu.Menu, verbose: bool = True) -> None:
         super().__init__(object_id=menu.get_id() + '+widget-manager', verbose=verbose)
         self._menu = menu
 
     @property
-    def _theme(self) -> 'pygame_menu.Theme':
+    def _theme(self) -> pygame_menu.Theme:
         return self._menu.get_theme()
 
-    def _add_submenu(self, menu: 'pygame_menu.Menu', hook: 'Widget') -> None:
+    def _add_submenu(self, menu: pygame_menu.Menu, hook: Widget) -> None:
         assert isinstance(menu, pygame_menu.Menu)
         assert menu != self._menu, 'submenu cannot point to menu itself'
         assert isinstance(hook, Widget)
@@ -253,7 +253,7 @@ class WidgetManager(
 
         return attributes
 
-    def _configure_widget(self, widget: 'Widget', **kwargs) -> None:
+    def _configure_widget(self, widget: Widget, **kwargs) -> None:
         assert isinstance(widget, Widget)
         widget._verbose = self._verbose
 
@@ -346,7 +346,7 @@ class WidgetManager(
         for invalid_keyword in kwargs.keys():
             raise ValueError(f'widget addition optional parameter kwargs.{invalid_keyword} is not valid')
 
-    def _append_widget(self, widget: 'Widget') -> None:
+    def _append_widget(self, widget: Widget) -> None:
         assert isinstance(widget, Widget)
         if widget.get_menu() is None:
             widget.set_menu(self._menu)
@@ -389,14 +389,14 @@ class WidgetManager(
         # Call event
         widget._append_to_menu()
 
-    def configure_defaults_widget(self, widget: 'Widget') -> None:
+    def configure_defaults_widget(self, widget: Widget) -> None:
         self._configure_widget(widget, **self._filter_widget_attributes({}))
 
     def generic_widget(
         self,
-        widget: 'Widget',
+        widget: Widget,
         configure_defaults: bool = False
-    ) -> 'Widget':
+    ) -> Widget:
         """
         Add generic widget to the Menu.
 

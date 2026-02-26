@@ -45,11 +45,11 @@ class Image(Widget):
     :param scale: Scale of the image on x-axis and y-axis (x, y) in px
     :param scale_smooth: Scale is smoothed
     """
-    _image: 'BaseImage'
+    _image: BaseImage
 
     def __init__(
         self,
-        image_path: Union[str, 'Path', 'BaseImage', 'BytesIO', pygame.Surface],
+        image_path: Union[str, Path, BaseImage, BytesIO, pygame.Surface],
         angle: NumberType = 0,
         image_id: str = '',
         onselect: CallbackType = None,
@@ -74,10 +74,10 @@ class Image(Widget):
             self._image.rotate(angle)
             self._image.scale(scale[0], scale[1], smooth=scale_smooth)
 
-    def set_title(self, title: str) -> 'Image':
+    def set_title(self, title: str) -> Image:
         return self
 
-    def get_image(self) -> 'BaseImage':
+    def get_image(self) -> BaseImage:
         """
         Gets the :py:class:`pygame_menu.baseimage.BaseImage` object from widget.
 
@@ -93,7 +93,7 @@ class Image(Widget):
         """
         return self._image.get_angle()
 
-    def set_image(self, image: 'BaseImage') -> None:
+    def set_image(self, image: BaseImage) -> None:
         """
         Set the :py:class:`pygame_menu.baseimage.BaseImage` object from widget.
 
@@ -106,7 +106,7 @@ class Image(Widget):
     def _apply_font(self) -> None:
         pass
 
-    def _update_surface(self) -> 'Image':
+    def _update_surface(self) -> Image:
         """
         Updates surface and renders.
 
@@ -116,17 +116,17 @@ class Image(Widget):
         self._render()
         return self
 
-    def scale(self, width: NumberType, height: NumberType, smooth: bool = False, render: bool = True) -> 'Image':
+    def scale(self, width: NumberType, height: NumberType, smooth: bool = False, render: bool = True) -> Image:
         self._image.scale(width, height, smooth)
         return self._update_surface()
 
-    def resize(self, width: NumberType, height: NumberType, smooth: bool = False, render: bool = True) -> 'Image':
+    def resize(self, width: NumberType, height: NumberType, smooth: bool = False, render: bool = True) -> Image:
         self._image.resize(width, height, smooth)
         self._surface = None
         return self._update_surface()
 
     def set_max_width(self, width: Optional[NumberType], scale_height: NumberType = False,
-                      smooth: bool = True, render: bool = True) -> 'Image':
+                      smooth: bool = True, render: bool = True) -> Image:
         if width is not None and self._image.get_width() > width:
             sx = width / self._image.get_width()
             height = self._image.get_height()
@@ -137,7 +137,7 @@ class Image(Widget):
         return self
 
     def set_max_height(self, height: Optional[NumberType], scale_width: NumberType = False,
-                       smooth: bool = True, render: bool = True) -> 'Image':
+                       smooth: bool = True, render: bool = True) -> Image:
         if height is not None and self._image.get_height() > height:
             sy = height / self._image.get_height()
             width = self._image.get_width()
@@ -147,11 +147,11 @@ class Image(Widget):
             return self._update_surface()
         return self
 
-    def rotate(self, angle: NumberType, render: bool = True) -> 'Image':
+    def rotate(self, angle: NumberType, render: bool = True) -> Image:
         self._image.rotate(angle)
         return self._update_surface()
 
-    def flip(self, x: bool, y: bool, render: bool = True) -> 'Image':
+    def flip(self, x: bool, y: bool, render: bool = True) -> Image:
         assert isinstance(x, bool)
         assert isinstance(y, bool)
         self._flip = (x, y)
@@ -160,7 +160,7 @@ class Image(Widget):
             return self._update_surface()
         return self
 
-    def _draw(self, surface: 'pygame.Surface') -> None:
+    def _draw(self, surface: pygame.Surface) -> None:
         surface.blit(self._surface, self._rect.topleft)
 
     def _render(self) -> Optional[bool]:
@@ -188,15 +188,15 @@ class ImageManager(AbstractWidgetManager, ABC):
 
     def image(
         self,
-        image_path: Union[str, 'Path', 'pygame_menu.BaseImage', 'BytesIO', pygame.Surface],
+        image_path: Union[str, Path, pygame_menu.BaseImage, BytesIO, pygame.Surface],
         angle: NumberType = 0,
         image_id: str = '',
-        onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
+        onselect: Optional[Callable[[bool, Widget, pygame_menu.Menu], Any]] = None,
         scale: Vector2NumberType = (1, 1),
         scale_smooth: bool = True,
         selectable: bool = False,
         **kwargs
-    ) -> 'pygame_menu.widgets.Image':
+    ) -> pygame_menu.widgets.Image:
         """
         Add a simple image to the Menu.
 

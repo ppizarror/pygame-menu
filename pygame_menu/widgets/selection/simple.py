@@ -28,5 +28,5 @@ class SimpleSelection(Selection):
         )
 
     # noinspection PyMissingOrEmptyDocstring
-    def draw(self, surface: 'pygame.Surface', widget: 'pygame_menu.widgets.Widget') -> 'SimpleSelection':
+    def draw(self, surface: pygame.Surface, widget: pygame_menu.widgets.Widget) -> SimpleSelection:
         return self

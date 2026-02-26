@@ -163,7 +163,7 @@ class DecoratorTest(BaseTest):
         # Callable
         test = [False]
 
-        def fun(surf, obj: 'pygame_menu.widgets.Button') -> None:
+        def fun(surf, obj: pygame_menu.widgets.Button) -> None:
             """
             Test callable decoration.
             """
@@ -286,7 +286,7 @@ class DecoratorTest(BaseTest):
         # Callable
         test = [False]
 
-        def fun(surf, obj: 'pygame_menu.widgets.Button') -> None:
+        def fun(surf, obj: pygame_menu.widgets.Button) -> None:
             """
             Test callable decoration.
             """

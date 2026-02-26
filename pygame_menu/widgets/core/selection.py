@@ -66,7 +66,7 @@ class Selection:
         self.margin_top = margin_top
         self.widget_apply_font_color = True  # Widgets apply "selected_color" if selected
 
-    def margin_xy(self, x: NumberType, y: NumberType) -> 'Selection':
+    def margin_xy(self, x: NumberType, y: NumberType) -> Selection:
         """
         Set margins at left-right / top-bottom.
 
@@ -82,7 +82,7 @@ class Selection:
         self.margin_bottom = y
         return self
 
-    def zero_margin(self) -> 'Selection':
+    def zero_margin(self) -> Selection:
         """
         Makes selection margin zero.
 
@@ -94,7 +94,7 @@ class Selection:
         self.margin_bottom = 0
         return self
 
-    def copy(self) -> 'Selection':
+    def copy(self) -> Selection:
         """
         Creates a deep copy of the object.
 
@@ -102,7 +102,7 @@ class Selection:
         """
         return copy.deepcopy(self)
 
-    def __copy__(self) -> 'Selection':
+    def __copy__(self) -> Selection:
         """
         Copy method.
 
@@ -110,7 +110,7 @@ class Selection:
         """
         return self.copy()
 
-    def set_color(self, color: ColorInputType) -> 'Selection':
+    def set_color(self, color: ColorInputType) -> Selection:
         """
         Set the selection effect color.
 
@@ -120,7 +120,7 @@ class Selection:
         self.color = assert_color(color)
         return self
 
-    def set_background_color(self, color: Union[ColorInputType, 'pygame_menu.BaseImage']) -> 'Selection':
+    def set_background_color(self, color: Union[ColorInputType, pygame_menu.BaseImage]) -> Selection:
         """
         Set the selection background color. It will replace the background color of the widget
         if selected.
@@ -133,7 +133,7 @@ class Selection:
             self.color_bg = assert_color(self.color_bg)
         return self
 
-    def get_background_color(self) -> Optional[Union[ColorType, 'pygame_menu.BaseImage']]:
+    def get_background_color(self) -> Optional[Union[ColorType, pygame_menu.BaseImage]]:
         """
         Return the background color.
 
@@ -177,8 +177,8 @@ class Selection:
 
     def inflate(
         self,
-        rect: 'pygame.Rect', inflate: Optional[Tuple2IntType] = None
-    ) -> 'pygame.Rect':
+        rect: pygame.Rect, inflate: Optional[Tuple2IntType] = None
+    ) -> pygame.Rect:
         """
         Grow or shrink the rectangle size according to margins.
 
@@ -196,7 +196,7 @@ class Selection:
             int(rect.height + self.margin_top + self.margin_bottom + inflate[1])
         )
 
-    def draw(self, surface: 'pygame.Surface', widget: 'pygame_menu.widgets.Widget') -> 'Selection':
+    def draw(self, surface: pygame.Surface, widget: pygame_menu.widgets.Widget) -> Selection:
         """
         Draw the selection.
 

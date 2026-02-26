@@ -116,12 +116,12 @@ class BaseImage(Base):
     _drawing_position: str
     _extension: str
     _filename: str
-    _filepath: Union[str, 'BytesIO']
+    _filepath: Union[str, BytesIO]
     _frombase64: bool
-    _last_transform: tuple[int, int, Optional['pygame.Surface']]
-    _original_surface: 'pygame.Surface'
+    _last_transform: tuple[int, int, Optional[pygame.Surface]]
+    _original_surface: pygame.Surface
     _rotated: bool
-    _surface: 'pygame.Surface'
+    _surface: pygame.Surface
     smooth_scaling: bool
 
     def __init__(
@@ -218,7 +218,7 @@ class BaseImage(Base):
         self._rotated = False
         self.smooth_scaling = True  # Default scaling mode
 
-    def __copy__(self) -> 'BaseImage':
+    def __copy__(self) -> BaseImage:
         """
         Copy method.
 
@@ -226,7 +226,7 @@ class BaseImage(Base):
         """
         return self.copy()
 
-    def __deepcopy__(self, memodict: dict) -> 'BaseImage':
+    def __deepcopy__(self, memodict: dict) -> BaseImage:
         """
         Deep-copy method.
 
@@ -256,7 +256,7 @@ class BaseImage(Base):
         self._extension = extension
         self._frombase64 = frombase64
 
-    def crop_rect(self, rect: 'pygame.Rect') -> 'BaseImage':
+    def crop_rect(self, rect: pygame.Rect) -> BaseImage:
         """
         Crop image from rect.
 
@@ -266,7 +266,7 @@ class BaseImage(Base):
         self._surface = self.get_crop_rect(rect)
         return self
 
-    def set_alpha(self, value: Optional[int], flags: int = 0) -> 'BaseImage':
+    def set_alpha(self, value: Optional[int], flags: int = 0) -> BaseImage:
         """
         Set the current alpha value for the Surface. When blitting this Surface
         onto a destination, the pixels will be drawn slightly transparent. The alpha
@@ -301,7 +301,7 @@ class BaseImage(Base):
         y: NumberType,
         width: NumberType,
         height: NumberType
-    ) -> 'BaseImage':
+    ) -> BaseImage:
         """
         Crops the image from coordinate on x-axis and y-axis (x, y).
 
@@ -314,7 +314,7 @@ class BaseImage(Base):
         self._surface = self.get_crop(x, y, width, height)
         return self
 
-    def get_crop_rect(self, rect: 'pygame.Rect') -> 'pygame.Surface':
+    def get_crop_rect(self, rect: pygame.Rect) -> pygame.Surface:
         """
         Get a crop surface of the image from rect.
 
@@ -329,7 +329,7 @@ class BaseImage(Base):
         y: NumberType,
         width: NumberType,
         height: NumberType
-    ) -> 'pygame.Surface':
+    ) -> pygame.Surface:
         """
         Get a crop of the image from coordinate on x-axis and y-axis (x, y).
 
@@ -354,7 +354,7 @@ class BaseImage(Base):
         rect = pygame.Rect(x, y, width, height)
         return self.get_crop_rect(rect)
 
-    def copy(self) -> 'BaseImage':
+    def copy(self) -> BaseImage:
         """
         Return a copy of the image.
 
@@ -402,7 +402,7 @@ class BaseImage(Base):
 
         return image
 
-    def get_path(self) -> Union[str, 'BytesIO']:
+    def get_path(self) -> Union[str, BytesIO]:
         """
         Return the image path.
 
@@ -418,7 +418,7 @@ class BaseImage(Base):
         """
         return self._drawing_mode
 
-    def set_drawing_mode(self, drawing_mode: int) -> 'BaseImage':
+    def set_drawing_mode(self, drawing_mode: int) -> BaseImage:
         """
         Set the image drawing mode.
 
@@ -438,7 +438,7 @@ class BaseImage(Base):
         """
         return self._drawing_offset
 
-    def set_drawing_offset(self, offset: Vector2NumberType) -> 'BaseImage':
+    def set_drawing_offset(self, offset: Vector2NumberType) -> BaseImage:
         """
         Set the image drawing offset.
 
@@ -449,7 +449,7 @@ class BaseImage(Base):
         self._drawing_offset = (int(offset[0]), int(offset[1]))
         return self
 
-    def set_drawing_position(self, position: str) -> 'BaseImage':
+    def set_drawing_position(self, position: str) -> BaseImage:
         """
         Set the image position.
 
@@ -480,7 +480,7 @@ class BaseImage(Base):
         """
         return int(self._surface.get_height())
 
-    def subsurface(self, rect: Union[Tuple4IntType, 'pygame.Rect']) -> 'pygame.Surface':
+    def subsurface(self, rect: Union[Tuple4IntType, pygame.Rect]) -> pygame.Surface:
         """
         Return a subsurface from a rect.
 
@@ -501,7 +501,7 @@ class BaseImage(Base):
         self,
         pos: Tuple2NumberType,
         ignore_alpha: bool = False
-    ) -> Union[Tuple3IntType, Tuple4IntType, 'pygame.Color']:
+    ) -> Union[Tuple3IntType, Tuple4IntType, pygame.Color]:
         """
         Get the color from a certain position in image on x-axis and y-axis (x, y).
 
@@ -527,7 +527,7 @@ class BaseImage(Base):
             return color[0], color[1], color[2]
         return color
 
-    def set_at(self, pos: Tuple2NumberType, color: ColorInputType) -> 'BaseImage':
+    def set_at(self, pos: Tuple2NumberType, color: ColorInputType) -> BaseImage:
         """
         Set the color of pixel on x-axis and y-axis (x, y).
 
@@ -547,7 +547,7 @@ class BaseImage(Base):
         """
         return self._surface.get_bitsize()
 
-    def get_surface(self, new: bool = True) -> 'pygame.Surface':
+    def get_surface(self, new: bool = True) -> pygame.Surface:
         """
         Return the surface object of the image.
 
@@ -574,7 +574,7 @@ class BaseImage(Base):
         """
         return self._extension
 
-    def equals(self, image: 'BaseImage') -> bool:
+    def equals(self, image: BaseImage) -> bool:
         """
         Return ``True`` if the image is the same as the object.
 
@@ -586,7 +586,7 @@ class BaseImage(Base):
         im2 = pygame.image.tostring(image._surface, 'RGBA')
         return im1 == im2
 
-    def restore(self) -> 'BaseImage':
+    def restore(self) -> BaseImage:
         """
         Restore image to the original surface.
 
@@ -595,7 +595,7 @@ class BaseImage(Base):
         self._surface = self._original_surface.copy()
         return self
 
-    def checkpoint(self) -> 'BaseImage':
+    def checkpoint(self) -> BaseImage:
         """
         Updates the original surface to the current surface.
 
@@ -607,7 +607,7 @@ class BaseImage(Base):
     def apply_image_function(
         self,
         image_function: Callable[[int, int, int, int], Tuple4IntType]
-    ) -> 'BaseImage':
+    ) -> BaseImage:
         """
         Apply a function to each pixel of the image. The function will receive the
         red, green, blue and alpha colors and must return the same values. The
@@ -633,7 +633,7 @@ class BaseImage(Base):
                 self.set_at((x, y), pygame.Color(r, g, b, a))
         return self
 
-    def to_bw(self) -> 'BaseImage':
+    def to_bw(self) -> BaseImage:
         """
         Converts the image to black and white.
 
@@ -653,7 +653,7 @@ class BaseImage(Base):
 
         return self.apply_image_function(image_function=bw)
 
-    def pick_channels(self, channels: ChannelType) -> 'BaseImage':
+    def pick_channels(self, channels: ChannelType) -> BaseImage:
         """
         Pick certain channels of the image, channels are ``"r"`` (red), ``"g"``
         (green) and ``"b"`` (blue); ``channels param`` is a list/tuple of channels
@@ -683,7 +683,7 @@ class BaseImage(Base):
                 self._surface.set_at((x, y), pygame.Color(r, g, b, a))
         return self
 
-    def flip(self, x: bool, y: bool) -> 'BaseImage':
+    def flip(self, x: bool, y: bool) -> BaseImage:
         """
         This method can flip the image either vertically, horizontally, or both.
         Flipping an image is non-destructive and does not change the dimensions.
@@ -703,7 +703,7 @@ class BaseImage(Base):
         width: NumberType,
         height: NumberType,
         smooth: bool = True
-    ) -> 'BaseImage':
+    ) -> BaseImage:
         """
         Scale the image to a desired width and height factor.
 
@@ -732,7 +732,7 @@ class BaseImage(Base):
             self._surface = pygame.transform.smoothscale(self._surface, (int(w * width), int(h * height)))
         return self
 
-    def scale2x(self) -> 'BaseImage':
+    def scale2x(self) -> BaseImage:
         """
         This will return a new image that is double the size of the original. It
         uses the AdvanceMAME Scale2X algorithm which does a "jaggy-less" scale of
@@ -747,7 +747,7 @@ class BaseImage(Base):
         self._surface = pygame.transform.scale2x(self._surface)
         return self
 
-    def scale4x(self) -> 'BaseImage':
+    def scale4x(self) -> BaseImage:
         """
         Applies a x4 scale factor using scale 2x algorithm.
 
@@ -760,7 +760,7 @@ class BaseImage(Base):
         width: NumberType,
         height: NumberType,
         smooth: bool = True
-    ) -> 'BaseImage':
+    ) -> BaseImage:
         """
         Resize the image to a desired (width, height) size in pixels.
 
@@ -779,7 +779,7 @@ class BaseImage(Base):
             return self
         return self.scale(width=float(width) / w, height=float(height) / h, smooth=smooth)
 
-    def get_rect(self) -> 'pygame.Rect':
+    def get_rect(self) -> pygame.Rect:
         """
         Return the :py:class:`pygame.Rect` object of the BaseImage.
 
@@ -791,7 +791,7 @@ class BaseImage(Base):
         """
         return self._surface.get_rect()
 
-    def rotate(self, angle: NumberType, auto_checkpoint: bool = True) -> 'BaseImage':
+    def rotate(self, angle: NumberType, auto_checkpoint: bool = True) -> BaseImage:
         """
         Unfiltered counterclockwise rotation. The angle argument represents degrees
         and can be any floating point value. Negative angle amounts will rotate
@@ -869,10 +869,10 @@ class BaseImage(Base):
 
     def draw(
         self,
-        surface: 'pygame.Surface',
-        area: Optional['pygame.Rect'] = None,
+        surface: pygame.Surface,
+        area: Optional[pygame.Rect] = None,
         position: Tuple2IntType = (0, 0)
-    ) -> 'BaseImage':
+    ) -> BaseImage:
         """
         Draw the image in a given surface.
 

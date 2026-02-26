@@ -26,9 +26,9 @@ class Planet:
     """
     Planet object.
     """
-    button: Optional['pygame_menu.widgets.Button']
+    button: Optional[pygame_menu.widgets.Button]
     fontsize: int
-    image: 'pygame_menu.BaseImage'
+    image: pygame_menu.BaseImage
     info: str
     name: str
     period: float
@@ -37,7 +37,7 @@ class Planet:
 
     def __init__(
         self,
-        image: 'pygame_menu.BaseImage',
+        image: pygame_menu.BaseImage,
         info: str,
         url: str,
         radius: float,
@@ -68,12 +68,12 @@ class SolarSystemApp:
     """
     Draws a fancy solar system.
     """
-    menu: 'pygame_menu.Menu'
-    nebulas: list['pygame_menu.BaseImage']
-    planets: dict[str, 'Planet']
+    menu: pygame_menu.Menu
+    nebulas: list[pygame_menu.BaseImage]
+    planets: dict[str, Planet]
     rotation_velocity: float
     stars: list[list[Union[int, float]]]
-    surface: 'pygame.Surface'
+    surface: pygame.Surface
 
     def __init__(self) -> None:
         self.surface = create_example_window('Example - Solar System',
@@ -246,7 +246,7 @@ class SolarSystemApp:
 
         # Configure planets and add them to the Menu
         for p in self.planets.keys():
-            planet: 'Planet' = self.planets[p]
+            planet: Planet = self.planets[p]
 
             # Configure planet
             planet.name = str(p).capitalize()
@@ -362,7 +362,7 @@ class SolarSystemApp:
         ])
 
     # noinspection PyUnusedLocal
-    def draw_universe_background(self, surface: 'pygame.Surface', *args) -> None:
+    def draw_universe_background(self, surface: pygame.Surface, *args) -> None:
         """
         Draw stars as background.
 
@@ -399,7 +399,7 @@ class SolarSystemApp:
         self.menu.force_surface_cache_update()
 
     # noinspection PyProtectedMember
-    def process_events(self, events: list['pygame.event.Event'], menu: 'pygame_menu.Menu') -> None:
+    def process_events(self, events: list[pygame.event.Event], menu: pygame_menu.Menu) -> None:
         """
         Process events from user.
 
@@ -423,7 +423,7 @@ class SolarSystemApp:
                     if not menu._disable_draw:
                         self.add_shooting_star()
 
-    def rotate_planet(self, widget: 'pygame_menu.widgets.Widget', menu: 'pygame_menu.Menu') -> None:
+    def rotate_planet(self, widget: pygame_menu.widgets.Widget, menu: pygame_menu.Menu) -> None:
         """
         Rotate a planet.
 
@@ -431,7 +431,7 @@ class SolarSystemApp:
         :param menu: Widget's menu
         """
         # Get planet from attributes
-        planet: 'Planet' = widget.get_attribute('planet')
+        planet: Planet = widget.get_attribute('planet')
 
         # Update time from attribute
         t = widget.get_attribute('t')
@@ -472,7 +472,7 @@ class SolarSystemApp:
         self.menu.mainloop(self.surface, disable_loop=test)
 
 
-def main(test: bool = False) -> 'SolarSystemApp':
+def main(test: bool = False) -> SolarSystemApp:
     """
     Main function.
 

@@ -33,7 +33,7 @@ HELP = ['Press ESC to enable/disable Menu',
         'Press LEFT/RIGHT to move through Selectors']
 W_SIZE = 800  # Width of window size
 
-surface: Optional['pygame.Surface'] = None
+surface: Optional[pygame.Surface] = None
 timer: Optional[list[float]] = None
 
 

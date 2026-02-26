@@ -53,7 +53,7 @@ class HighlightSelection(Selection):
         self._border_width = border_width
 
     # noinspection PyMissingOrEmptyDocstring
-    def draw(self, surface: 'pygame.Surface', widget: 'pygame_menu.widgets.Widget') -> 'HighlightSelection':
+    def draw(self, surface: pygame.Surface, widget: pygame_menu.widgets.Widget) -> HighlightSelection:
         if self._border_width == 0:
             return self
         pygame.draw.rect(

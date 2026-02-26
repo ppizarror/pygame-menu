@@ -254,8 +254,8 @@ class Theme:
     :type widget_url_color: tuple, list, str, int, :py:class:`pygame.Color`
     """
     _disable_validation: bool
-    background_color: Union[ColorType, 'BaseImage']
-    border_color: Union[ColorType, 'BaseImage']
+    background_color: Union[ColorType, BaseImage]
+    border_color: Union[ColorType, BaseImage]
     cursor_color: ColorType
     cursor_selection_color: ColorType
     cursor_switch_ms: NumberType
@@ -298,7 +298,7 @@ class Theme:
     title_updates_pygame_display: bool
     widget_alignment: str
     widget_alignment_ignore_scrollbar_thickness: bool
-    widget_background_color: Optional[Union[ColorType, 'BaseImage']]
+    widget_background_color: Optional[Union[ColorType, BaseImage]]
     widget_background_inflate: Tuple2IntType
     widget_background_inflate_to_selection: bool
     widget_border_color: ColorType
@@ -326,7 +326,7 @@ class Theme:
     widget_margin: Tuple2NumberType
     widget_offset: Tuple2NumberType
     widget_padding: PaddingType
-    widget_selection_effect: 'pygame_menu.widgets.core.Selection'
+    widget_selection_effect: pygame_menu.widgets.core.Selection
     widget_shadow_aa: int
     widget_shadow_color: ColorType
     widget_shadow_radius: int
@@ -519,7 +519,7 @@ class Theme:
         self._disable_validation = False
 
     # noinspection PyTypeChecker
-    def validate(self) -> 'Theme':
+    def validate(self) -> Theme:
         """
         Validate the values of the theme. If there's an invalid parameter throws an
         ``AssertionError``.
@@ -675,7 +675,7 @@ class Theme:
 
         return self
 
-    def set_background_color_opacity(self, opacity: float) -> 'Theme':
+    def set_background_color_opacity(self, opacity: float) -> Theme:
         """
         Modify the Menu background color with given opacity.
 
@@ -715,7 +715,7 @@ class Theme:
                     f'{i} element of tuple {v} is not {check_instance} instance'
         return v
 
-    def copy(self) -> 'Theme':
+    def copy(self) -> Theme:
         """
         Creates a deep copy of the object.
 
@@ -724,7 +724,7 @@ class Theme:
         self.validate()
         return copy.deepcopy(self)
 
-    def __copy__(self) -> 'Theme':
+    def __copy__(self) -> Theme:
         """
         Copy method.
 
@@ -734,9 +734,9 @@ class Theme:
 
     @staticmethod
     def _format_color_opacity(
-        color: Optional[Union[ColorInputType, 'BaseImage']],
+        color: Optional[Union[ColorInputType, BaseImage]],
         none: bool = False
-    ) -> Optional[Union[ColorType, 'BaseImage']]:
+    ) -> Optional[Union[ColorType, BaseImage]]:
         """
         Adds opacity to a 3 channel color. (R,G,B) -> (R,G,B,A) if the color
         has not an alpha channel. Also updates the opacity to a number between

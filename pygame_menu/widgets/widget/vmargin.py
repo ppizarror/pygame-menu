@@ -46,7 +46,7 @@ class VMargin(NoneWidget):
         self._rect.width = 0
         self._rect.height = int(margin)
 
-    def get_rect(self, *args, **kwargs) -> 'pygame.Rect':
+    def get_rect(self, *args, **kwargs) -> pygame.Rect:
         return self._rect.copy()
 
 
@@ -59,7 +59,7 @@ class VMarginManager(AbstractWidgetManager, ABC):
         self,
         margin: NumberType,
         margin_id: str = ''
-    ) -> 'pygame_menu.widgets.VMargin':
+    ) -> pygame_menu.widgets.VMargin:
         """
         Adds a vertical margin to the Menu.
 

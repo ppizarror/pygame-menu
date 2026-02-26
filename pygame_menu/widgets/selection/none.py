@@ -26,5 +26,5 @@ class NoneSelection(SimpleSelection):
         self.widget_apply_font_color = False
 
     # noinspection PyMissingOrEmptyDocstring
-    def draw(self, surface: 'pygame.Surface', widget: 'pygame_menu.widgets.Widget') -> 'NoneSelection':
+    def draw(self, surface: pygame.Surface, widget: pygame_menu.widgets.Widget) -> NoneSelection:
         return self

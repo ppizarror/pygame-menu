@@ -50,19 +50,19 @@ class NoneWidget(Widget):
     def _apply_font(self) -> None:
         pass
 
-    def set_padding(self, *args, **kwargs) -> 'NoneWidget':
+    def set_padding(self, *args, **kwargs) -> NoneWidget:
         return self
 
     def get_selected_time(self) -> NumberType:
         return 0
 
-    def set_title(self, *args, **kwargs) -> 'NoneWidget':
+    def set_title(self, *args, **kwargs) -> NoneWidget:
         return self
 
-    def get_rect(self, *args, **kwargs) -> 'pygame.Rect':
+    def get_rect(self, *args, **kwargs) -> pygame.Rect:
         return pygame.Rect(0, 0, 0, 0)
 
-    def set_background_color(self, *args, **kwargs) -> 'NoneWidget':
+    def set_background_color(self, *args, **kwargs) -> NoneWidget:
         return self
 
     def _draw_background_color(self, *args, **kwargs) -> None:
@@ -71,7 +71,7 @@ class NoneWidget(Widget):
     def _draw_border(self, *args, **kwargs) -> None:
         pass
 
-    def set_selection_effect(self, *args, **kwargs) -> 'NoneWidget':
+    def set_selection_effect(self, *args, **kwargs) -> NoneWidget:
         return self
 
     def apply(self, *args) -> None:
@@ -86,94 +86,94 @@ class NoneWidget(Widget):
     def _render(self, *args, **kwargs) -> Optional[bool]:
         pass
 
-    def set_margin(self, *args, **kwargs) -> 'NoneWidget':
+    def set_margin(self, *args, **kwargs) -> NoneWidget:
         return self
 
     def _apply_transforms(self, *args, **kwargs) -> None:
         pass
 
-    def set_font(self, *args, **kwargs) -> 'NoneWidget':
+    def set_font(self, *args, **kwargs) -> NoneWidget:
         return self
 
-    def update_font(self, *args, **kwargs) -> 'NoneWidget':
+    def update_font(self, *args, **kwargs) -> NoneWidget:
         return self
 
-    def set_position(self, *args, **kwargs) -> 'NoneWidget':
+    def set_position(self, *args, **kwargs) -> NoneWidget:
         return self
 
-    def scale(self, *args, **kwargs) -> 'NoneWidget':
+    def scale(self, *args, **kwargs) -> NoneWidget:
         raise WidgetTransformationNotImplemented()
 
-    def resize(self, *args, **kwargs) -> 'NoneWidget':
+    def resize(self, *args, **kwargs) -> NoneWidget:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_width(self, *args, **kwargs) -> 'NoneWidget':
+    def set_max_width(self, *args, **kwargs) -> NoneWidget:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_height(self, *args, **kwargs) -> 'NoneWidget':
+    def set_max_height(self, *args, **kwargs) -> NoneWidget:
         raise WidgetTransformationNotImplemented()
 
-    def rotate(self, *args, **kwargs) -> 'NoneWidget':
+    def rotate(self, *args, **kwargs) -> NoneWidget:
         raise WidgetTransformationNotImplemented()
 
-    def flip(self, *args, **kwargs) -> 'NoneWidget':
+    def flip(self, *args, **kwargs) -> NoneWidget:
         raise WidgetTransformationNotImplemented()
 
-    def translate(self, *args, **kwargs) -> 'NoneWidget':
+    def translate(self, *args, **kwargs) -> NoneWidget:
         raise WidgetTransformationNotImplemented()
 
-    def select(self, *args, **kwargs) -> 'NoneWidget':
+    def select(self, *args, **kwargs) -> NoneWidget:
         return self
 
-    def set_font_shadow(self, *args, **kwargs) -> 'NoneWidget':
+    def set_font_shadow(self, *args, **kwargs) -> NoneWidget:
         return self
 
-    def set_sound(self, *args, **kwargs) -> 'NoneWidget':
+    def set_sound(self, *args, **kwargs) -> NoneWidget:
         return self
 
-    def set_cursor(self, *args, **kwargs) -> 'NoneWidget':
+    def set_cursor(self, *args, **kwargs) -> NoneWidget:
         return self
 
-    def set_controls(self, *args, **kwargs) -> 'NoneWidget':
+    def set_controls(self, *args, **kwargs) -> NoneWidget:
         return self
 
-    def set_border(self, *args, **kwargs) -> 'NoneWidget':
+    def set_border(self, *args, **kwargs) -> NoneWidget:
         return self
 
     def _check_mouseover(self, *args, **kwargs) -> bool:
         self._mouseover = False
         return False
 
-    def mouseleave(self, *args, **kwargs) -> 'NoneWidget':
+    def mouseleave(self, *args, **kwargs) -> NoneWidget:
         return self
 
-    def mouseover(self, *args, **kwargs) -> 'NoneWidget':
+    def mouseover(self, *args, **kwargs) -> NoneWidget:
         return self
 
-    def set_onchange(self, *args, **kwargs) -> 'NoneWidget':
+    def set_onchange(self, *args, **kwargs) -> NoneWidget:
         self._onchange = None
         return self
 
-    def set_onreturn(self, *args, **kwargs) -> 'NoneWidget':
+    def set_onreturn(self, *args, **kwargs) -> NoneWidget:
         self._onreturn = None
         return self
 
-    def set_onmouseleave(self, *args, **kwargs) -> 'NoneWidget':
+    def set_onmouseleave(self, *args, **kwargs) -> NoneWidget:
         self._onmouseleave = None
         return self
 
-    def set_onmouseover(self, *args, **kwargs) -> 'NoneWidget':
+    def set_onmouseover(self, *args, **kwargs) -> NoneWidget:
         self._onmouseover = None
         return self
 
-    def set_onselect(self, *args, **kwargs) -> 'NoneWidget':
+    def set_onselect(self, *args, **kwargs) -> NoneWidget:
         self._onselect = None
         return self
 
-    def set_tab_size(self, *args, **kwargs) -> 'NoneWidget':
+    def set_tab_size(self, *args, **kwargs) -> NoneWidget:
         return self
 
-    def shadow(self, *args, **kwargs) -> 'NoneWidget':
+    def shadow(self, *args, **kwargs) -> NoneWidget:
         return self
 
     def update(self, events: EventVectorType) -> bool:
@@ -189,7 +189,7 @@ class NoneWidgetManager(AbstractWidgetManager, ABC):
     def none_widget(
         self,
         widget_id: str = ''
-    ) -> 'pygame_menu.widgets.NoneWidget':
+    ) -> pygame_menu.widgets.NoneWidget:
         """
         Add a none widget to the Menu.
 

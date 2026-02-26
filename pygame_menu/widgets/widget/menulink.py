@@ -35,11 +35,11 @@ class MenuLink(NoneWidget):
     :param menu_opener_handler: Callback for opening the menu object
     :param menu: Menu object
     """
-    menu: 'pygame_menu.Menu'
+    menu: pygame_menu.Menu
 
     def __init__(
         self,
-        menu: 'pygame_menu.Menu',
+        menu: pygame_menu.Menu,
         menu_opener_handler: Callable,
         link_id: str = ''
     ) -> None:
@@ -54,10 +54,10 @@ class MenuLink(NoneWidget):
         self._visible = False
         self.is_selectable = False
 
-    def hide(self) -> 'MenuLink':
+    def hide(self) -> MenuLink:
         pass
 
-    def show(self) -> 'MenuLink':
+    def show(self) -> MenuLink:
         pass
 
     def open(self) -> None:
@@ -74,9 +74,9 @@ class MenuLinkManager(AbstractWidgetManager, ABC):
 
     def menu_link(
         self,
-        menu: 'pygame_menu.Menu',
+        menu: pygame_menu.Menu,
         link_id: str = ''
-    ) -> 'pygame_menu.widgets.MenuLink':
+    ) -> pygame_menu.widgets.MenuLink:
         """
         Adds a link to another Menu. The behavior is similar to a button, but
         this widget is invisible, and cannot be selectable.

@@ -84,7 +84,7 @@ class Label(Widget):
         offset: int,
         width: int,
         force_render: bool = False
-    ) -> 'Label':
+    ) -> Label:
         """
         Adds an underline to text. This is added if widget is rendered. Underline
         is only enabled for non wordwrap mode.
@@ -104,7 +104,7 @@ class Label(Widget):
             self._force_render()
         return self
 
-    def remove_underline(self) -> 'Label':
+    def remove_underline(self) -> Label:
         """
         Remove the underline.
 
@@ -119,13 +119,13 @@ class Label(Widget):
     def _apply_font(self) -> None:
         pass
 
-    def _draw(self, surface: 'pygame.Surface') -> None:
+    def _draw(self, surface: pygame.Surface) -> None:
         # The minimal width of any surface is 1px, so the background will be a line
         if self._title == '':
             return
         surface.blit(self._surface, self._rect.topleft)
 
-    def set_title_generator(self, generator: LabelTitleGeneratorType) -> 'Label':
+    def set_title_generator(self, generator: LabelTitleGeneratorType) -> Label:
         """
         Set a title generator. This function is executed each time the label updates,
         returning a new title (string) which replaces the current label title.
@@ -147,7 +147,7 @@ class Label(Widget):
             menu_update_widgets.append(self)
         return self
 
-    def set_title(self, title: str) -> 'Label':
+    def set_title(self, title: str) -> Label:
         super().set_title(title)
         if self._title_generator is not None:
             if self._verbose:
@@ -364,11 +364,11 @@ class LabelManager(AbstractWidgetManager, ABC):
         title: Any,
         label_id: str = '',
         max_char: int = 0,
-        onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
+        onselect: Optional[Callable[[bool, Widget, pygame_menu.Menu], Any]] = None,
         selectable: bool = False,
         wordwrap: bool = False,
         **kwargs
-    ) -> Union['pygame_menu.widgets.Label', list['pygame_menu.widgets.Label']]:
+    ) -> Union[pygame_menu.widgets.Label, list[pygame_menu.widgets.Label]]:
         """
         Add a simple text to the Menu.
 
@@ -526,12 +526,12 @@ class LabelManager(AbstractWidgetManager, ABC):
         self,
         clock_format: str = '%Y/%m/%d %H:%M:%S',
         clock_id: str = '',
-        onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
+        onselect: Optional[Callable[[bool, Widget, pygame_menu.Menu], Any]] = None,
         selectable: bool = False,
         title_format: str = '{0}',
         wordwrap: bool = False,
         **kwargs
-    ) -> 'pygame_menu.widgets.Label':
+    ) -> pygame_menu.widgets.Label:
         """
         Add a clock label to the Menu. This creates a Label with a text generator
         that request a string from ``time.strftime`` module using ``clock_format``.

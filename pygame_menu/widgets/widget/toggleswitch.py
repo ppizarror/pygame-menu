@@ -78,7 +78,7 @@ class ToggleSwitch(Widget):
     _infinite: bool
     _single_click: bool
     _single_click_dir: bool
-    _slider: Optional['pygame.Surface']
+    _slider: Optional[pygame.Surface]
     _slider_color: ColorType
     _slider_height: int
     _slider_height_factor: float
@@ -87,7 +87,7 @@ class ToggleSwitch(Widget):
     _slider_vmargin: int
     _state: int
     _state_color: tuple[ColorType, ...]
-    _state_font: Optional['pygame.font.Font']
+    _state_font: Optional[pygame.font.Font]
     _state_text: tuple[str, ...]
     _state_text_font: Optional[FontType]
     _state_text_font_color: tuple[ColorType, ...]
@@ -95,10 +95,10 @@ class ToggleSwitch(Widget):
     _state_text_position: Tuple2NumberType
     _state_values: tuple[Any, ...]
     _state_width: list[int]
-    _switch: Optional['pygame.Surface']
+    _switch: Optional[pygame.Surface]
     _switch_border_color: ColorType
     _switch_border_width: int
-    _switch_font_rendered: list['pygame.Surface']
+    _switch_font_rendered: list[pygame.Surface]
     _switch_height: int
     _switch_height_factor: float
     _switch_margin: Tuple2IntType
@@ -259,22 +259,22 @@ class ToggleSwitch(Widget):
         self._state = state
         self._render()
 
-    def scale(self, *args, **kwargs) -> 'ToggleSwitch':
+    def scale(self, *args, **kwargs) -> ToggleSwitch:
         raise WidgetTransformationNotImplemented()
 
-    def resize(self, *args, **kwargs) -> 'ToggleSwitch':
+    def resize(self, *args, **kwargs) -> ToggleSwitch:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_width(self, *args, **kwargs) -> 'ToggleSwitch':
+    def set_max_width(self, *args, **kwargs) -> ToggleSwitch:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_height(self, *args, **kwargs) -> 'ToggleSwitch':
+    def set_max_height(self, *args, **kwargs) -> ToggleSwitch:
         raise WidgetTransformationNotImplemented()
 
-    def rotate(self, *args, **kwargs) -> 'ToggleSwitch':
+    def rotate(self, *args, **kwargs) -> ToggleSwitch:
         raise WidgetTransformationNotImplemented()
 
-    def flip(self, *args, **kwargs) -> 'ToggleSwitch':
+    def flip(self, *args, **kwargs) -> ToggleSwitch:
         raise WidgetTransformationNotImplemented()
 
     def get_value(self) -> Any:
@@ -297,7 +297,7 @@ class ToggleSwitch(Widget):
             f_render = self._state_font.render(self._state_text[t], True, self._state_text_font_color[t])
             self._switch_font_rendered.append(f_render)
 
-    def _draw(self, surface: 'pygame.Surface') -> None:
+    def _draw(self, surface: pygame.Surface) -> None:
         # Draw title
         surface.blit(self._surface, (self._rect.x, self._rect.y + self._switch_pos[1] - 1))
 
@@ -492,14 +492,14 @@ class ToggleSwitchManager(AbstractWidgetManager, ABC):
         title: Any,
         default: Union[int, bool] = 0,
         onchange: CallbackType = None,
-        onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
+        onselect: Optional[Callable[[bool, Widget, pygame_menu.Menu], Any]] = None,
         toggleswitch_id: str = '',
         single_click: bool = True,
         state_text: tuple[str, ...] = ('Off', 'On'),
         state_values: tuple[Any, ...] = (False, True),
         width: int = 150,
         **kwargs
-    ) -> 'pygame_menu.widgets.ToggleSwitch':
+    ) -> pygame_menu.widgets.ToggleSwitch:
         """
         Add a toggle switch to the Menu: It can switch between two states.
 

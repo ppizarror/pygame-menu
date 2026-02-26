@@ -274,7 +274,7 @@ class DropSelectMultiple(DropSelect):
         """
         return self._selected_indices.copy()
 
-    def _render_option_string(self, text: str) -> 'pygame.Surface':
+    def _render_option_string(self, text: str) -> pygame.Surface:
         color = self._selection_option_font_style['color']
         if (
             self.readonly or
@@ -285,7 +285,7 @@ class DropSelectMultiple(DropSelect):
         text = text.replace('\t', ' ' * self._tab_size)
         return self._option_font.render(text, self._font_antialias, color)
 
-    def _click_option(self, index: int, btn: 'Button') -> None:
+    def _click_option(self, index: int, btn: Button) -> None:
         btn.set_attribute('ignore_scroll_to_widget')
         self.set_value(index)
         self._process_index()
@@ -367,7 +367,7 @@ class DropSelectMultiple(DropSelect):
         """
         return len(self._selected_indices)
 
-    def set_default_value(self, default: Optional[Union[int, list[int]]]) -> 'DropSelectMultiple':
+    def set_default_value(self, default: Optional[Union[int, list[int]]]) -> DropSelectMultiple:
         if default is None or default == -1:
             default = []
         if isinstance(default, int):
@@ -418,7 +418,7 @@ class DropSelectMultiple(DropSelect):
                 self._sound.play_event_error()
         self._update_buttons()
 
-    def reset_value(self) -> 'DropSelectMultiple':
+    def reset_value(self) -> DropSelectMultiple:
         self._index = -1
         self._selected_indices = self._default_value.copy()
         self._update_buttons()
@@ -502,7 +502,7 @@ class DropSelectMultiple(DropSelect):
                     deco.disable(btn.get_attribute('deco_on'))
                     deco.enable(btn.get_attribute('deco_off'))
 
-    def _make_selection_drop(self) -> 'DropSelectMultiple':
+    def _make_selection_drop(self) -> DropSelectMultiple:
         super()._make_selection_drop()
         # Add button decorations
         for btn in self._option_buttons:
@@ -546,14 +546,14 @@ class DropSelectMultipleManager(AbstractWidgetManager, ABC):
         max_selected: int = 0,
         onchange: CallbackType = None,
         onreturn: CallbackType = None,
-        onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
+        onselect: Optional[Callable[[bool, Widget, pygame_menu.Menu], Any]] = None,
         open_middle: bool = False,
         placeholder: str = 'Select an option',
         placeholder_add_to_selection_box: bool = True,
         placeholder_selected: str = '{0} selected',
         selection_placeholder_format: DropSelectMultipleSFormatType = DROPSELECT_MULTIPLE_SFORMAT_TOTAL,
         **kwargs
-    ) -> 'pygame_menu.widgets.DropSelectMultiple':
+    ) -> pygame_menu.widgets.DropSelectMultiple:
         """
         Add a dropselect multiple to the Menu: Drop select multiple is a drop
         select which can select many options at the same time. This drops a

@@ -68,7 +68,7 @@ def change_background_color(selected_value, color, **kwargs):
     print('Change widget color to', value_tuple[0])  # selected_value format ('Color', surface, color)
     if color == (-1, -1, -1):  # Generate a random color
         color = (randrange(0, 255), randrange(0, 255), randrange(0, 255))
-    widget: 'pygame_menu.widgets.Selector' = kwargs.get('widget')
+    widget: pygame_menu.widgets.Selector = kwargs.get('widget')
     widget.update_font({'selected_color': color})
     widget.get_selection_effect().color = color
 
@@ -252,7 +252,7 @@ elif EXAMPLE == 'MENU_LINK':
         """
         Opens link.
         """
-        link: 'pygame_menu.widgets.MenuLink' = args[-1]
+        link: pygame_menu.widgets.MenuLink = args[-1]
         link.open()
 
 

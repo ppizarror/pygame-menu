@@ -105,7 +105,7 @@ class ColorInput(TextInput):
     _last_g: int
     _last_r: int
     _prev_margin: int
-    _previsualization_surface: Optional['pygame.Surface']
+    _previsualization_surface: Optional[pygame.Surface]
     _separator: str
 
     def __init__(
@@ -344,7 +344,7 @@ class ColorInput(TextInput):
         r, g, b = self.get_value()
         return not (r == -1 or g == -1 or b == -1)
 
-    def _draw(self, surface: 'pygame.Surface') -> None:
+    def _draw(self, surface: pygame.Surface) -> None:
         super()._draw(surface)  # This calls _render()
 
         # Draw previsualization box
@@ -580,9 +580,9 @@ class ColorInputManager(AbstractWidgetManager, ABC):
         input_underline: str = '_',
         onchange: CallbackType = None,
         onreturn: CallbackType = None,
-        onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
+        onselect: Optional[Callable[[bool, Widget, pygame_menu.Menu], Any]] = None,
         **kwargs
-    ) -> 'pygame_menu.widgets.ColorInput':
+    ) -> pygame_menu.widgets.ColorInput:
         """
         Add a color widget with RGB or HEX format to the Menu.
         Includes a preview box that renders the given color.
