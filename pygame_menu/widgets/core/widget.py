@@ -36,7 +36,7 @@ __all__ = [
 import random
 import time
 from collections.abc import Callable
-from typing import Any, Optional, Union
+from typing import TYPE_CHECKING, Any, Optional, Union
 
 import pygame
 
@@ -51,7 +51,6 @@ from pygame_menu._types import (CallableNoArgsType, CallbackType,
                                 Tuple2NumberType, Tuple3IntType, Tuple4IntType,
                                 VectorInstance)
 from pygame_menu.controls import Controller
-from pygame_menu.font import FontType
 from pygame_menu.locals import (ALIGN_CENTER, POSITION_CENTER, POSITION_EAST,
                                 POSITION_NORTH, POSITION_NORTHEAST,
                                 POSITION_NORTHWEST, POSITION_SOUTH,
@@ -64,6 +63,9 @@ from pygame_menu.utils import (PYGAME_V2, ShadowGenerator, assert_alignment,
                                mouse_motion_current_mouse_position,
                                parse_padding, set_pygame_cursor, uuid4, warn)
 from pygame_menu.widgets.core.selection import Selection
+
+if TYPE_CHECKING:
+    from pygame_menu.font import FontType
 
 # This list stores the current widget which requested the mouseover status, and
 # the previous widget list which requested the mouseover. Each time the widget
@@ -86,7 +88,7 @@ WIDGET_SHADOW_TYPE_ELLIPSE = 'ellipse'
 WIDGET_SHADOW_TYPE_RECTANGULAR = 'rectangular'
 
 
-def check_widget_mouseleave(event: Optional[EventType] = None, force: bool = False) -> None:
+def check_widget_mouseleave(event: EventType | None = None, force: bool = False) -> None:
     """
     Check if the active widget (WIDGET_MOUSEOVER[0]) is still over, else, execute
     previous list (WIDGET_MOUSEOVER[1]).
@@ -99,7 +101,7 @@ def check_widget_mouseleave(event: Optional[EventType] = None, force: bool = Fal
 
 # noinspection PyProtectedMember
 def _check_widget_mouseleave(
-    event: Optional[EventType] = None,
+    event: EventType | None = None,
     force: bool = False,
     recursive: bool = False
 ) -> None:
@@ -231,7 +233,7 @@ class Widget(Base):
     _alignment: str
     _angle: NumberType
     _args: list[Any]
-    _background_color: Optional[Union[ColorType, pygame_menu.BaseImage]]
+    _background_color: ColorType | pygame_menu.BaseImage | None
     _background_inflate: Tuple2IntType
     _background_surface: BackgroundSurfaceType
     _border_color: ColorType
@@ -244,14 +246,14 @@ class Widget(Base):
     _cursor: CursorType  # type: ignore
     _decorator: Decorator
     _default_value: Any
-    _draw_callbacks: dict[str, Callable[[Widget, Optional[pygame_menu.Menu]], Any]]
+    _draw_callbacks: dict[str, Callable[[Widget, pygame_menu.Menu | None], Any]]
     _events: EventListType
     _flip: Tuple2BoolType
     _floating: bool
     _floating_origin_position: bool
-    _font: Optional[pygame.font.Font]
+    _font: pygame.font.Font | None
     _font_antialias: bool
-    _font_background_color: Optional[ColorType]
+    _font_background_color: ColorType | None
     _font_color: ColorType
     _font_name: FontType
     _font_readonly_color: ColorType
@@ -263,21 +265,21 @@ class Widget(Base):
     _font_shadow_position: str
     _font_shadow_tuple: Tuple2IntType
     _font_size: int
-    _frame: Optional[pygame_menu.widgets.Frame]
+    _frame: pygame_menu.widgets.Frame | None
     _joystick_enabled: bool
     _keyboard_enabled: bool
     _keyboard_ignore_nonphysical: bool
     _kwargs: dict[str, Any]
     _last_render_hash: int
     _margin: Tuple2IntType
-    _max_height: list[Optional[bool]]
-    _max_width: list[Optional[bool]]
-    _menu: Optional[pygame_menu.Menu]  # Menu which contains the Widget
-    _menu_hook: Optional[pygame_menu.Menu]  # Menu the Widget points to (submenu)
+    _max_height: list[bool | None]
+    _max_width: list[bool | None]
+    _menu: pygame_menu.Menu | None  # Menu which contains the Widget
+    _menu_hook: pygame_menu.Menu | None  # Menu the Widget points to (submenu)
     _mouse_enabled: bool
     _mouseleave_called: bool
     _mouseover: bool  # Check if mouse is over
-    _mouseover_called: Optional[bool]  # Check if the mouseover/mouseleave callbacks were called
+    _mouseover_called: bool | None  # Check if the mouseover/mouseleave callbacks were called
     _mouseover_check_rect: Callable[[], pygame.Rect]
     _onchange: CallbackType
     _onmouseleave: CallbackMouseType
@@ -289,15 +291,15 @@ class Widget(Base):
     _position: Tuple2IntType
     _rect: pygame.Rect
     _rect_size_delta: Tuple2IntType
-    _scale: list[Union[bool, NumberType]]
-    _scrollarea: Optional[pygame_menu._scrollarea.ScrollArea]  # Parent scrollarea
+    _scale: list[bool | NumberType]
+    _scrollarea: pygame_menu._scrollarea.ScrollArea | None  # Parent scrollarea
     _selected: bool
     _selection_effect: Selection
     _selection_effect_draw_post: bool
     _selection_time: NumberType
     _shadow: WidgetShadowType
     _sound: Sound
-    _surface: Optional[pygame.Surface]
+    _surface: pygame.Surface | None
     _tab_size: int
     _title: str
     _touchscreen_enabled: bool
@@ -310,7 +312,7 @@ class Widget(Base):
     force_menu_draw_focus: bool
     is_scrollable: bool
     is_selectable: bool
-    last_surface: Optional[pygame.Surface]
+    last_surface: pygame.Surface | None
     lock_position: bool
     readonly: bool
     selection_expand_background: bool
@@ -320,10 +322,10 @@ class Widget(Base):
         title: Any = '',
         widget_id: str = '',
         onchange: CallbackType = None,
-        onmouseleave: Optional[Callable[[Widget, EventType], Any]] = None,
-        onmouseover: Optional[Callable[[Widget, EventType], Any]] = None,
+        onmouseleave: Callable[[Widget, EventType], Any] | None = None,
+        onmouseover: Callable[[Widget, EventType], Any] | None = None,
         onreturn: CallbackType = None,
-        onselect: Optional[Callable[[bool, Widget, pygame_menu.Menu], Any]] = None,
+        onselect: Callable[[bool, Widget, pygame_menu.Menu], Any] | None = None,
         args=None,
         kwargs=None
     ) -> None:
@@ -682,7 +684,7 @@ class Widget(Base):
     def _check_mouseover(
         self,
         event: EventType,
-        rect: Optional[pygame.Rect] = None,
+        rect: pygame.Rect | None = None,
         check_all_widget_mouseleave: bool = True
     ) -> bool:
         """
@@ -815,7 +817,7 @@ class Widget(Base):
         """
         raise _WidgetCopyException('Widget class cannot be deep-copied')
 
-    def _force_render(self) -> Optional[bool]:
+    def _force_render(self) -> bool | None:
         """
         Forces Widget render.
 
@@ -876,7 +878,7 @@ class Widget(Base):
             self._decorator.force_cache_update()
         return self
 
-    def render(self) -> Optional[bool]:
+    def render(self) -> bool | None:
         """
         Public rendering method.
 
@@ -896,7 +898,7 @@ class Widget(Base):
         """
         return self._force_render()
 
-    def _render(self) -> Optional[bool]:
+    def _render(self) -> bool | None:
         """
         Render the Widget surface.
 
@@ -981,8 +983,8 @@ class Widget(Base):
 
     def set_background_color(
         self,
-        color: Optional[Union[ColorInputType, pygame_menu.BaseImage]],
-        inflate: Optional[Tuple2IntType] = (0, 0)
+        color: ColorInputType | pygame_menu.BaseImage | None,
+        inflate: Tuple2IntType | None = (0, 0)
     ) -> Widget:
         """
         Set the Widget background color.
@@ -1043,7 +1045,7 @@ class Widget(Base):
     def _draw_background_color(
         self,
         surface: pygame.Surface,
-        rect: Optional[pygame.Rect] = None
+        rect: pygame.Rect | None = None
     ) -> None:
         """
         Fill a surface with the widget background color.
@@ -1085,7 +1087,7 @@ class Widget(Base):
         # Draw the background surface
         surface.blit(self._background_surface[1], rect)
 
-    def _readonly_check_mouseover(self, events: EventListType, rect: Optional[pygame.Rect] = None) -> None:
+    def _readonly_check_mouseover(self, events: EventListType, rect: pygame.Rect | None = None) -> None:
         """
         Check mouseover if readonly.
 
@@ -1152,7 +1154,7 @@ class Widget(Base):
     def set_border(
         self,
         width: int,
-        color: Optional[ColorInputType],
+        color: ColorInputType | None,
         inflate: Tuple2IntType = (0, 0),
         position: WidgetBorderPositionType = WIDGET_FULL_BORDER
     ) -> Widget:
@@ -1222,7 +1224,7 @@ class Widget(Base):
         """
         return self._selection_effect
 
-    def set_selection_effect(self, selection: Optional[Selection] = None) -> Widget:
+    def set_selection_effect(self, selection: Selection | None = None) -> Widget:
         """
         Set the selection effect handler.
 
@@ -1325,7 +1327,7 @@ class Widget(Base):
 
     def _draw_shadow(
         self,
-        surface: pygame.Surface, rect: Optional[pygame.Rect] = None
+        surface: pygame.Surface, rect: pygame.Rect | None = None
     ) -> None:
         """
         Draw the widget shadow.
@@ -1413,7 +1415,7 @@ class Widget(Base):
 
         return self
 
-    def draw_after_if_selected(self, surface: Optional[pygame.Surface]) -> Widget:
+    def draw_after_if_selected(self, surface: pygame.Surface | None) -> Widget:
         """
         Draw Widget if selected after all widgets have been drawn. This method
         should also update ``last_surface``; see
@@ -1490,7 +1492,7 @@ class Widget(Base):
         self._force_render()
         return self
 
-    def set_scrollarea(self, scrollarea: Optional[pygame_menu._scrollarea.ScrollArea]) -> None:
+    def set_scrollarea(self, scrollarea: pygame_menu._scrollarea.ScrollArea | None) -> None:
         """
         Set scrollarea reference. Mostly used for events.
 
@@ -1535,7 +1537,7 @@ class Widget(Base):
 
     def get_rect(
         self,
-        inflate: Optional[Tuple2IntType] = None,
+        inflate: Tuple2IntType | None = None,
         apply_padding: bool = True,
         use_transformed_padding: bool = True,
         to_real_position: bool = False,
@@ -1794,7 +1796,7 @@ class Widget(Base):
         selected_color: ColorInputType,
         readonly_color: ColorInputType,
         readonly_selected_color: ColorInputType,
-        background_color: Optional[ColorInputType],
+        background_color: ColorInputType | None,
         antialias: bool = True
     ) -> Widget:
         """
@@ -1846,8 +1848,8 @@ class Widget(Base):
     def set_font_shadow(
         self,
         enabled: bool = True,
-        color: Optional[ColorInputType] = None,
-        position: Optional[str] = None,
+        color: ColorInputType | None = None,
+        position: str | None = None,
         offset: int = 2
     ) -> Widget:
         """
@@ -1962,7 +1964,7 @@ class Widget(Base):
             'size': self._font_size
         }
 
-    def set_menu(self, menu: Optional[pygame_menu.Menu]) -> Widget:
+    def set_menu(self, menu: pygame_menu.Menu | None) -> Widget:
         """
         Set the Widget menu reference.
 
@@ -1977,7 +1979,7 @@ class Widget(Base):
         self._force_render()
         return self
 
-    def get_menu(self) -> Optional[pygame_menu.Menu]:
+    def get_menu(self) -> pygame_menu.Menu | None:
         """
         Return the Menu reference, ``None`` if it has not been set.
 
@@ -2169,7 +2171,7 @@ class Widget(Base):
 
     def set_max_width(
         self,
-        width: Optional[NumberType],
+        width: NumberType | None,
         scale_height: NumberType = False,
         smooth: bool = True,
         render: bool = True
@@ -2234,7 +2236,7 @@ class Widget(Base):
 
     def set_max_height(
         self,
-        height: Optional[NumberType],
+        height: NumberType | None,
         scale_width: NumberType = False,
         smooth: bool = True,
         render: bool = True
@@ -3076,7 +3078,7 @@ class Widget(Base):
         """
         return self._decorator
 
-    def get_frame(self) -> Optional[pygame_menu.widgets.Frame]:
+    def get_frame(self) -> pygame_menu.widgets.Frame | None:
         """
         Get container frame of Widget. If Widget is not within a Frame, the method
         returns ``None``.

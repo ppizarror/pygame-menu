@@ -15,11 +15,14 @@ __all__ = [
 ]
 
 from abc import ABC
-from collections.abc import Callable
+from typing import TYPE_CHECKING
 
 import pygame_menu
 from pygame_menu.widgets.core.widget import AbstractWidgetManager
 from pygame_menu.widgets.widget.none import NoneWidget
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 class MenuLink(NoneWidget):

@@ -12,9 +12,8 @@ from __future__ import annotations
 __all__ = ['Decorator']
 
 import math
-from collections.abc import Callable
 from math import pi
-from typing import Any, Optional, Union
+from typing import TYPE_CHECKING, Any
 
 import pygame
 import pygame.draw as pydraw
@@ -25,9 +24,13 @@ from pygame_menu._base import Base
 from pygame_menu._types import (CallableNoArgsType, ColorInputType,
                                 NumberInstance, NumberType, Tuple2IntType,
                                 Tuple2NumberType)
-from pygame_menu.font import FontType
 from pygame_menu.utils import (assert_color, assert_list_vector, assert_vector,
                                make_surface, uuid4, warn)
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from pygame_menu.font import FontType
 
 # Decoration constants
 DECORATION_ARC: int = 2000
@@ -62,21 +65,21 @@ class Decorator(Base):
     :param verbose: Enable/disable verbose mode (warnings/errors)
     """
     _coord_cache: dict[
-        str, tuple[int, int, Union[tuple[Tuple2NumberType, ...], Tuple2NumberType]]]  # centerx, centery, coords
+        str, tuple[int, int, tuple[Tuple2NumberType, ...] | Tuple2NumberType]]  # centerx, centery, coords
     _cache_last_status: dict[str, tuple[int, int, int, int, int, int]]
     _cache_needs_update: dict[str, bool]
-    _cache_surface: dict[str, Optional[pygame.Surface]]
+    _cache_surface: dict[str, pygame.Surface | None]
     _decor: dict[str, list[tuple[int, str, Any]]]  # type, id, data
     _decor_enabled: dict[str, bool]
     _decor_prev_id: list[str]
-    _obj: Union[pygame_menu.widgets.Widget, pygame_menu._scrollarea.ScrollArea, pygame_menu.Menu]
+    _obj: pygame_menu.widgets.Widget | pygame_menu._scrollarea.ScrollArea | pygame_menu.Menu
     _post_enabled: bool
     _prev_enabled: bool
     cache: bool
 
     def __init__(
         self,
-        obj: Union[pygame_menu.widgets.Widget, pygame_menu._scrollarea.ScrollArea, pygame_menu.Menu],
+        obj: pygame_menu.widgets.Widget | pygame_menu._scrollarea.ScrollArea | pygame_menu.Menu,
         decorator_id: str = '',
         verbose: bool = True
     ) -> None:
@@ -180,7 +183,7 @@ class Decorator(Base):
         """
         return len(self._decor[DECOR_TYPE_PREV]) + len(self._decor[DECOR_TYPE_POST])
 
-    def force_cache_update(self, prev: Optional[bool] = None) -> Decorator:
+    def force_cache_update(self, prev: bool | None = None) -> Decorator:
         """
         Forces cache update.
 
@@ -196,7 +199,7 @@ class Decorator(Base):
 
     def add_polygon(
         self,
-        coords: Union[list[Tuple2NumberType], tuple[Tuple2NumberType, ...]],
+        coords: list[Tuple2NumberType] | tuple[Tuple2NumberType, ...],
         color: ColorInputType,
         filled: bool,
         width: int = 0,
@@ -236,7 +239,7 @@ class Decorator(Base):
 
     def add_bezier(
         self,
-        coords: Union[list[Tuple2NumberType], tuple[Tuple2NumberType, ...]],
+        coords: list[Tuple2NumberType] | tuple[Tuple2NumberType, ...],
         color: ColorInputType,
         steps: int = 5,
         prev: bool = True,
@@ -639,7 +642,7 @@ class Decorator(Base):
 
     def add_callable(
         self,
-        fun: Union[Callable[[pygame.Surface, Any], Any], CallableNoArgsType],
+        fun: Callable[[pygame.Surface, Any], Any] | CallableNoArgsType,
         prev: bool = True,
         pass_args: bool = True
     ) -> str:
@@ -671,8 +674,8 @@ class Decorator(Base):
 
     def add_textured_polygon(
         self,
-        coords: Union[list[Tuple2NumberType], tuple[Tuple2NumberType, ...]],
-        texture: Union[pygame.Surface, pygame_menu.BaseImage],
+        coords: list[Tuple2NumberType] | tuple[Tuple2NumberType, ...],
+        texture: pygame.Surface | pygame_menu.BaseImage,
         tx: int = 0,
         ty: int = 0,
         prev: bool = True,
@@ -873,7 +876,7 @@ class Decorator(Base):
                     return self
         raise IndexError(f'decoration<"{decorid}"> was not found')
 
-    def remove_all(self, prev: Optional[bool] = None) -> Decorator:
+    def remove_all(self, prev: bool | None = None) -> Decorator:
         """
         Remove all decorations.
 
@@ -1080,9 +1083,9 @@ class Decorator(Base):
         self,
         rect: pygame.Rect,
         decoid: str,
-        pos: Union[Tuple2NumberType, tuple[Tuple2NumberType, ...]],  # only (x, y) or ((x1,y1), ...
+        pos: Tuple2NumberType | tuple[Tuple2NumberType, ...],  # only (x, y) or ((x1,y1), ...
         use_center_positioning=True
-    ) -> Union[tuple[Tuple2IntType, ...], Tuple2IntType]:
+    ) -> tuple[Tuple2IntType, ...] | Tuple2IntType:
         """
         Updates position list based on rect center. If position of the rect changes,
         update the coords.

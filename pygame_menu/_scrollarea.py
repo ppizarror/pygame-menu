@@ -19,7 +19,7 @@ __all__ = [
 ]
 
 from itertools import product
-from typing import Any, Optional, Union
+from typing import Any
 
 import pygame
 
@@ -46,7 +46,7 @@ from pygame_menu.widgets import ScrollBar
 
 def get_scrollbars_from_position(
     position: str
-) -> Union[str, tuple[str, str], tuple[str, str, str, str]]:
+) -> str | tuple[str, str] | tuple[str, str, str, str]:
     """
     Return the scrollbars from the given position.
 
@@ -125,32 +125,32 @@ class ScrollArea(Base):
     :param shadow_position: Position of the scrollbar shadow. See :py:mod:`pygame_menu.locals`
     :param world: Surface to draw and scroll
     """
-    _area_color: Optional[Union[ColorInputType, pygame_menu.BaseImage]]
-    _border_color: Optional[Union[ColorInputType, pygame_menu.BaseImage]]
+    _area_color: ColorInputType | pygame_menu.BaseImage | None
+    _border_color: ColorInputType | pygame_menu.BaseImage | None
     _border_tiles: list[pygame.Surface]
     _border_tiles_size: Tuple2IntType
     _border_width: int
-    _bg_surface: Optional[pygame.Surface]
+    _bg_surface: pygame.Surface | None
     _decorator: Decorator
     _extend_x: int
     _extend_y: int
-    _menu: Optional[pygame_menu.Menu]
+    _menu: pygame_menu.Menu | None
     _menubar: pygame_menu.widgets.MenuBar
     _parent_scrollarea: ScrollArea
     _rect: pygame.Rect
-    _scrollbar_positions: Union[str, tuple[str, ...]]
+    _scrollbar_positions: str | tuple[str, ...]
     _scrollbars: list[ScrollBar]
     _scrollbars_props: tuple[Any, ...]
     _translate: Tuple2IntType
     _view_rect: pygame.Rect
-    _world: Optional[pygame.Surface]
+    _world: pygame.Surface | None
 
     def __init__(
         self,
         area_width: int,
         area_height: int,
-        area_color: Optional[Union[ColorInputType, pygame_menu.BaseImage]] = None,
-        border_color: Optional[Union[ColorInputType, pygame_menu.BaseImage]] = None,
+        area_color: ColorInputType | pygame_menu.BaseImage | None = None,
+        border_color: ColorInputType | pygame_menu.BaseImage | None = None,
         border_width: int = 0,
         controls_joystick: bool = True,
         controls_keyboard: bool = True,
@@ -158,8 +158,8 @@ class ScrollArea(Base):
         controls_touchscreen: bool = True,
         extend_x: int = 0,
         extend_y: int = 0,
-        menubar: Optional[pygame_menu.widgets.MenuBar] = None,
-        parent_scrollarea: Optional[ScrollArea] = None,
+        menubar: pygame_menu.widgets.MenuBar | None = None,
+        parent_scrollarea: ScrollArea | None = None,
         scrollarea_id: str = '',
         scrollbar_color: ColorInputType = (235, 235, 235),
         scrollbar_cursor: CursorInputType = None,  # type: ignore
@@ -172,7 +172,7 @@ class ScrollArea(Base):
         shadow_color: ColorInputType = (0, 0, 0),
         shadow_offset: int = 2,
         shadow_position: str = POSITION_SOUTHEAST,
-        world: Optional[pygame.Surface] = None
+        world: pygame.Surface | None = None
     ) -> None:
         super().__init__(object_id=scrollarea_id)
 
@@ -344,7 +344,7 @@ class ScrollArea(Base):
 
     def update_area_color(
         self,
-        color: Optional[Union[ColorInputType, pygame_menu.BaseImage]]
+        color: ColorInputType | pygame_menu.BaseImage | None
     ) -> ScrollArea:
         """
         Updates area color (background).
@@ -357,7 +357,7 @@ class ScrollArea(Base):
         self._make_background_surface()
         return self
 
-    def set_parent_scrollarea(self, parent: Optional[ScrollArea]) -> ScrollArea:
+    def set_parent_scrollarea(self, parent: ScrollArea | None) -> ScrollArea:
         """
         Set parent ScrollArea.
 
@@ -368,7 +368,7 @@ class ScrollArea(Base):
         self._parent_scrollarea = parent
         return self
 
-    def get_parent(self) -> Optional[ScrollArea]:
+    def get_parent(self) -> ScrollArea | None:
         """
         Return the parent ScrollArea.
 
@@ -547,7 +547,7 @@ class ScrollArea(Base):
             top -= th
 
             # draw top and bottom tiles
-            area: Optional[tuple[int, int, int, int]]
+            area: tuple[int, int, int, int] | None
 
             for x in range(border_rect.left, border_rect.right, tw):
                 if x + tw >= border_rect.right:
@@ -1072,7 +1072,7 @@ class ScrollArea(Base):
         self._apply_size_changes()
         return self
 
-    def get_world(self) -> Optional[pygame.Surface]:
+    def get_world(self) -> pygame.Surface | None:
         """
         Return the world surface area.
 
@@ -1140,9 +1140,9 @@ class ScrollArea(Base):
 
     def to_real_position(
         self,
-        virtual: Union[pygame.Rect, Tuple2NumberType],
+        virtual: pygame.Rect | Tuple2NumberType,
         visible: bool = False
-    ) -> Union[pygame.Rect, Tuple2IntType]:
+    ) -> pygame.Rect | Tuple2IntType:
         """
         Return the real position/Rect according to the ScrollArea origin of a
         position/Rect in the world surface reference.
@@ -1174,8 +1174,8 @@ class ScrollArea(Base):
 
     def to_world_position(
         self,
-        real: Union[pygame.Rect, Tuple2NumberType]
-    ) -> Union[pygame.Rect, Tuple2IntType]:
+        real: pygame.Rect | Tuple2NumberType
+    ) -> pygame.Rect | Tuple2IntType:
         """
         Return the position/Rect in the world surface reference of a real
         position/Rect according to the ScrollArea origin.
@@ -1242,7 +1242,7 @@ class ScrollArea(Base):
             sbar.set_menu(menu)
         return self
 
-    def get_menu(self) -> Optional[pygame_menu.Menu]:
+    def get_menu(self) -> pygame_menu.Menu | None:
         """
         Return the Menu reference (if exists).
 
@@ -1252,7 +1252,7 @@ class ScrollArea(Base):
 
     def collide(
         self,
-        widget: Union[pygame_menu.widgets.Widget, pygame.Rect],
+        widget: pygame_menu.widgets.Widget | pygame.Rect,
         event: EventType
     ) -> bool:
         """
@@ -1269,7 +1269,7 @@ class ScrollArea(Base):
             widget_rect = widget
         return bool(widget_rect.collidepoint(*get_finger_pos(self._menu, event)))
 
-    def get_scrollbar(self, position: str) -> Optional[ScrollBar]:
+    def get_scrollbar(self, position: str) -> ScrollBar | None:
         """
         Returns the scrollbar at the given position, or None if not present.
         :param position: The position of the scrollbar (e.g., POSITION_NORTH, POSITION_EAST).

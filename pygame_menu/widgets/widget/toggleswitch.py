@@ -14,8 +14,7 @@ __all__ = [
 ]
 
 from abc import ABC
-from collections.abc import Callable
-from typing import Any, Optional, Union
+from typing import TYPE_CHECKING, Any
 
 import pygame
 
@@ -30,6 +29,9 @@ from pygame_menu.utils import (assert_color, assert_vector,
                                make_surface)
 from pygame_menu.widgets.core.widget import (
     AbstractWidgetManager, Widget, WidgetTransformationNotImplemented)
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 class ToggleSwitch(Widget):
@@ -78,7 +80,7 @@ class ToggleSwitch(Widget):
     _infinite: bool
     _single_click: bool
     _single_click_dir: bool
-    _slider: Optional[pygame.Surface]
+    _slider: pygame.Surface | None
     _slider_color: ColorType
     _slider_height: int
     _slider_height_factor: float
@@ -87,15 +89,15 @@ class ToggleSwitch(Widget):
     _slider_vmargin: int
     _state: int
     _state_color: tuple[ColorType, ...]
-    _state_font: Optional[pygame.font.Font]
+    _state_font: pygame.font.Font | None
     _state_text: tuple[str, ...]
-    _state_text_font: Optional[FontType]
+    _state_text_font: FontType | None
     _state_text_font_color: tuple[ColorType, ...]
-    _state_text_font_size: Optional[int]
+    _state_text_font_size: int | None
     _state_text_position: Tuple2NumberType
     _state_values: tuple[Any, ...]
     _state_width: list[int]
-    _switch: Optional[pygame.Surface]
+    _switch: pygame.Surface | None
     _switch_border_color: ColorType
     _switch_border_width: int
     _switch_font_rendered: list[pygame.Surface]
@@ -122,12 +124,12 @@ class ToggleSwitch(Widget):
         slider_vmargin: NumberType = 0,
         state_color: tuple[ColorInputType, ...] = ((178, 178, 178), (117, 185, 54)),
         state_text: tuple[str, ...] = ('Off', 'On'),
-        state_text_font: Optional[FontType] = None,
+        state_text_font: FontType | None = None,
         state_text_font_color: tuple[ColorInputType, ...] = ((255, 255, 255), (255, 255, 255)),
-        state_text_font_size: Optional[int] = None,
+        state_text_font_size: int | None = None,
         state_text_position: Tuple2NumberType = (0.5, 0.5),
         state_values: tuple[Any, ...] = (False, True),
-        state_width: Union[tuple[int, ...], int] = 150,
+        state_width: tuple[int, ...] | int = 150,
         switch_border_color: ColorInputType = (40, 40, 40),
         switch_border_width: int = 1,
         switch_height: NumberType = 1.25,
@@ -331,7 +333,7 @@ class ToggleSwitch(Widget):
         slider_y = switch_y + self._slider_pos[1] + self._switch_border_width
         surface.blit(self._slider, (slider_x, slider_y))
 
-    def _render(self) -> Optional[bool]:
+    def _render(self) -> bool | None:
         if not self._render_hash_changed(self._selected, self._title, self._visible, self.readonly, self._state):
             return True
 
@@ -490,9 +492,9 @@ class ToggleSwitchManager(AbstractWidgetManager, ABC):
     def toggle_switch(
         self,
         title: Any,
-        default: Union[int, bool] = 0,
+        default: int | bool = 0,
         onchange: CallbackType = None,
-        onselect: Optional[Callable[[bool, Widget, pygame_menu.Menu], Any]] = None,
+        onselect: Callable[[bool, Widget, pygame_menu.Menu], Any] | None = None,
         toggleswitch_id: str = '',
         single_click: bool = True,
         state_text: tuple[str, ...] = ('Off', 'On'),

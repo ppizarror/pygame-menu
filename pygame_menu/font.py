@@ -123,7 +123,7 @@ def get_font(name: FontType, size: int) -> __font.Font:
     return load_system_font(name_str, size)
 
 
-def load_font_file(path: Union[str, Path], size: int) -> __font.Font:
+def load_font_file(path: str | Path, size: int) -> __font.Font:
     """
     Explicitly load a font from a file path.
 

@@ -17,15 +17,17 @@ import textwrap
 import time
 from abc import ABC
 from collections.abc import Callable
-from typing import Any, Optional, Union
+from typing import TYPE_CHECKING, Any, Optional
 
 import pygame
 
 import pygame_menu
-from pygame_menu._types import (CallbackType, ColorInputType, ColorType,
-                                EventVectorType)
 from pygame_menu.utils import assert_color, make_surface, uuid4, warn
 from pygame_menu.widgets.core.widget import AbstractWidgetManager, Widget
+
+if TYPE_CHECKING:
+    from pygame_menu._types import (CallbackType, ColorInputType, ColorType,
+                                    EventVectorType)
 
 LabelTitleGeneratorType = Optional[Callable[[], str]]
 
@@ -45,10 +47,10 @@ class Label(Widget):
     :param leading: Font leading for ``wordwrap``. If ``None`` retrieves from widget font
     :param max_nlines: Number of maximum lines for ``wordwrap``. If ``None`` the number is dynamically computed. If exceeded, ``get_overflow_lines()`` will return the non-displayed lines
     """
-    _last_underline: list[Union[str, Optional[tuple[ColorType, int, int]]]]
-    _leading: Optional[int]
+    _last_underline: list[str | tuple[ColorType, int, int] | None]
+    _leading: int | None
     _lines: list[str]
-    _max_nlines: Optional[int]
+    _max_nlines: int | None
     _overflow_lines: list[str]  # Store how many lines are overflowed
     _title_generator: LabelTitleGeneratorType
     _wordwrap: bool
@@ -59,8 +61,8 @@ class Label(Widget):
         label_id: str = '',
         onselect: CallbackType = None,
         wordwrap: bool = False,
-        leading: Optional[int] = None,
-        max_nlines: Optional[int] = None
+        leading: int | None = None,
+        max_nlines: int | None = None
     ) -> None:
         assert isinstance(leading, (type(None), int))
         assert isinstance(max_nlines, (type(None), int))
@@ -249,7 +251,7 @@ class Label(Widget):
         assert isinstance(self._max_nlines, int), 'max_nlines must be defined'
         return self._overflow_lines
 
-    def _render(self) -> Optional[bool]:
+    def _render(self) -> bool | None:
         font_color: ColorType = self.get_font_color_status()
         if not self._render_hash_changed(self._title, font_color, self._visible, self._menu, self._font,
                                          self._last_underline[1], self._padding, self._selection_effect.get_width(),
@@ -364,11 +366,11 @@ class LabelManager(AbstractWidgetManager, ABC):
         title: Any,
         label_id: str = '',
         max_char: int = 0,
-        onselect: Optional[Callable[[bool, Widget, pygame_menu.Menu], Any]] = None,
+        onselect: Callable[[bool, Widget, pygame_menu.Menu], Any] | None = None,
         selectable: bool = False,
         wordwrap: bool = False,
         **kwargs
-    ) -> Union[pygame_menu.widgets.Label, list[pygame_menu.widgets.Label]]:
+    ) -> pygame_menu.widgets.Label | list[pygame_menu.widgets.Label]:
         """
         Add a simple text to the Menu.
 
@@ -526,7 +528,7 @@ class LabelManager(AbstractWidgetManager, ABC):
         self,
         clock_format: str = '%Y/%m/%d %H:%M:%S',
         clock_id: str = '',
-        onselect: Optional[Callable[[bool, Widget, pygame_menu.Menu], Any]] = None,
+        onselect: Callable[[bool, Widget, pygame_menu.Menu], Any] | None = None,
         selectable: bool = False,
         title_format: str = '{0}',
         wordwrap: bool = False,

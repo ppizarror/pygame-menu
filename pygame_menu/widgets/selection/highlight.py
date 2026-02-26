@@ -10,11 +10,15 @@ from __future__ import annotations
 
 __all__ = ['HighlightSelection']
 
+from typing import TYPE_CHECKING
+
 import pygame
 
-import pygame_menu
-from pygame_menu._types import NumberType
 from pygame_menu.widgets.core import Selection
+
+if TYPE_CHECKING:
+    import pygame_menu
+    from pygame_menu._types import NumberType
 
 
 class HighlightSelection(Selection):

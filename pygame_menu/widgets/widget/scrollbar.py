@@ -10,7 +10,7 @@ from __future__ import annotations
 
 __all__ = ['ScrollBar']
 
-from typing import Literal, Optional
+from typing import Literal
 
 import pygame
 
@@ -72,7 +72,7 @@ class ScrollBar(Widget):
     _slider_hover_color: ColorType
     _slider_pad: int
     _slider_position: int
-    _slider_rect: Optional[pygame.Rect]
+    _slider_rect: pygame.Rect | None
     _values_range: list[NumberType]
     _visible_force: int  # -1: not set, 0: hidden, 1: shown
     scrolling: bool
@@ -198,8 +198,8 @@ class ScrollBar(Widget):
     def set_shadow(
         self,
         enabled: bool = True,
-        color: Optional[ColorInputType] = None,
-        position: Optional[str] = None,
+        color: ColorInputType | None = None,
+        position: str | None = None,
         offset: int = 2
     ) -> ScrollBar:
         """
@@ -299,7 +299,7 @@ class ScrollBar(Widget):
         value = min(self._values_range[1], value)
         return int(value)
 
-    def _render(self) -> Optional[bool]:
+    def _render(self) -> bool | None:
         width, height = self._rect.width + self._rect_size_delta[0], self._rect.height + self._rect_size_delta[1]
         if self._slider_rect is None:
             return None

@@ -11,6 +11,7 @@ from __future__ import annotations
 __all__ = ['ExamplesTest']
 
 from test._utils import BaseTest, MenuUtils, PygameEventUtils
+from typing import TYPE_CHECKING
 
 import pygame
 
@@ -29,7 +30,9 @@ import pygame_menu.examples.scroll_menu as scroll_menu
 import pygame_menu.examples.simple as simple
 import pygame_menu.examples.timer_clock as timer_clock
 import pygame_menu.examples.window_resize as window_resize
-from pygame_menu.widgets import ColorInput, DropSelect
+
+if TYPE_CHECKING:
+    from pygame_menu.widgets import ColorInput, DropSelect
 
 
 class ExamplesTest(BaseTest):

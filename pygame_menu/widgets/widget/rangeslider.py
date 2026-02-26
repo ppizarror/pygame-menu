@@ -24,7 +24,7 @@ __all__ = [
 import math
 from abc import ABC
 from collections.abc import Callable
-from typing import Any, Optional, Union
+from typing import Any, Union
 
 import pygame
 
@@ -121,8 +121,8 @@ class RangeSlider(Widget):
     :param args: Optional arguments for callbacks
     :param kwargs: Optional keyword arguments
     """
-    _font_range_value: Optional[pygame.font.Font]
-    _font_slider_value: Optional[pygame.font.Font]
+    _font_range_value: pygame.font.Font | None
+    _font_slider_value: pygame.font.Font | None
     _increment: NumberType
     _increment_shift_factor: float
     _keyrepeat: bool
@@ -145,7 +145,7 @@ class RangeSlider(Widget):
     _range_pos: Tuple2IntType
     _range_text_value_color: ColorType
     _range_text_value_enabled: bool
-    _range_text_value_font: Optional[FontType]
+    _range_text_value_font: FontType | None
     _range_text_value_font_height: NumberType
     _range_text_value_margin: int
     _range_text_value_margin_factor: NumberType
@@ -178,7 +178,7 @@ class RangeSlider(Widget):
     _slider_text_value_bgcolor: ColorType
     _slider_text_value_color: ColorType
     _slider_text_value_enabled: bool
-    _slider_text_value_font: Optional[FontType]
+    _slider_text_value_font: FontType | None
     _slider_text_value_font_height: NumberType
     _slider_text_value_margin: int
     _slider_text_value_margin_factor: NumberType
@@ -215,7 +215,7 @@ class RangeSlider(Widget):
         range_margin: Tuple2IntType = (25, 0),
         range_text_value_color: ColorInputType = (80, 80, 80),
         range_text_value_enabled: bool = True,
-        range_text_value_font: Optional[FontType] = None,
+        range_text_value_font: FontType | None = None,
         range_text_value_font_height: NumberType = 0.4,
         range_text_value_margin_f: NumberType = 0.8,
         range_text_value_position: str = POSITION_SOUTH,
@@ -236,7 +236,7 @@ class RangeSlider(Widget):
         slider_text_value_bgcolor: ColorInputType = (140, 140, 140),
         slider_text_value_color: ColorInputType = (0, 0, 0),
         slider_text_value_enabled: bool = True,
-        slider_text_value_font: Optional[FontType] = None,
+        slider_text_value_font: FontType | None = None,
         slider_text_value_font_height: NumberType = 0.4,
         slider_text_value_margin_f: NumberType = 1,
         slider_text_value_padding: PaddingType = (0, 4),
@@ -539,7 +539,7 @@ class RangeSlider(Widget):
     def flip(self, *args, **kwargs) -> RangeSlider:
         raise WidgetTransformationNotImplemented()
 
-    def get_value(self) -> Union[NumberType, tuple[NumberType, NumberType]]:
+    def get_value(self) -> NumberType | tuple[NumberType, NumberType]:
         if self._single:
             return self._value[0]
         return self._value[0], self._value[1]
@@ -609,7 +609,7 @@ class RangeSlider(Widget):
                 self._get_slider_inflate_rect(1), self._slider_selected_highlight_thickness
             )
 
-    def draw_after_if_selected(self, surface: Optional[pygame.Surface]) -> RangeSlider:
+    def draw_after_if_selected(self, surface: pygame.Surface | None) -> RangeSlider:
         super().draw_after_if_selected(surface)
         self.last_surface = surface
 
@@ -632,7 +632,7 @@ class RangeSlider(Widget):
     def _get_slider_inflate_rect(
         self,
         pos: int,
-        inflate: Optional[Tuple2IntType] = None,
+        inflate: Tuple2IntType | None = None,
         to_real_position: bool = False,
         to_absolute_position: bool = False,
         real_position_visible: bool = True
@@ -671,7 +671,7 @@ class RangeSlider(Widget):
 
         return rect
 
-    def _render(self) -> Optional[bool]:
+    def _render(self) -> bool | None:
         if not hasattr(self, '_font_range_value'):
             return False
 
@@ -810,7 +810,7 @@ class RangeSlider(Widget):
         self.force_menu_surface_update()
         return None
 
-    def _get_pos_range(self, value: NumberType, surface: Optional[pygame.Surface] = None) -> int:
+    def _get_pos_range(self, value: NumberType, surface: pygame.Surface | None = None) -> int:
         """
         Return the position of the surface within range slider.
 
@@ -1146,10 +1146,10 @@ class RangeSliderManager(AbstractWidgetManager, ABC):
         title: str,
         default: RangeSliderValueType,
         range_values: RangeSliderRangeValueType,
-        increment: Optional[NumberType] = None,
+        increment: NumberType | None = None,
         onchange: CallbackType = None,
         onreturn: CallbackType = None,
-        onselect: Optional[Callable[[bool, Widget, pygame_menu.Menu], Any]] = None,
+        onselect: Callable[[bool, Widget, pygame_menu.Menu], Any] | None = None,
         rangeslider_id: str = '',
         value_format: RangeSliderValueFormatType = lambda x: str(round(x, 3)),
         width: int = 150,

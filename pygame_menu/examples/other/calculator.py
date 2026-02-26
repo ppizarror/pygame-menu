@@ -10,8 +10,6 @@ from __future__ import annotations
 
 __all__ = ['main']
 
-from typing import Union
-
 import pygame
 
 import pygame_menu
@@ -181,7 +179,7 @@ class CalculatorApp:
                     self._press('=')
                     self._press('=')
 
-    def _operate(self) -> Union[int, float]:
+    def _operate(self) -> int | float:
         """
         Operate current and previous values.
 
@@ -203,7 +201,7 @@ class CalculatorApp:
                 self.screen.set_title('Error')
         return int(c)
 
-    def _press(self, digit: Union[int, str]) -> None:
+    def _press(self, digit: int | str) -> None:
         """
         Press calculator digit.
 

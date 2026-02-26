@@ -14,20 +14,23 @@ __all__ = [
 ]
 
 from abc import ABC
-from collections.abc import Callable
 from io import BytesIO
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import TYPE_CHECKING, Any
 
 import pygame
 
-import pygame_menu
 from pygame_menu._types import (CallbackType, EventVectorType, NumberInstance,
                                 NumberType, Tuple2NumberType,
                                 Vector2NumberType)
 from pygame_menu.baseimage import BaseImage
 from pygame_menu.utils import assert_vector
 from pygame_menu.widgets.core.widget import AbstractWidgetManager, Widget
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    import pygame_menu
 
 
 class Image(Widget):
@@ -49,7 +52,7 @@ class Image(Widget):
 
     def __init__(
         self,
-        image_path: Union[str, Path, BaseImage, BytesIO, pygame.Surface],
+        image_path: str | Path | BaseImage | BytesIO | pygame.Surface,
         angle: NumberType = 0,
         image_id: str = '',
         onselect: CallbackType = None,
@@ -125,7 +128,7 @@ class Image(Widget):
         self._surface = None
         return self._update_surface()
 
-    def set_max_width(self, width: Optional[NumberType], scale_height: NumberType = False,
+    def set_max_width(self, width: NumberType | None, scale_height: NumberType = False,
                       smooth: bool = True, render: bool = True) -> Image:
         if width is not None and self._image.get_width() > width:
             sx = width / self._image.get_width()
@@ -136,7 +139,7 @@ class Image(Widget):
             return self._update_surface()
         return self
 
-    def set_max_height(self, height: Optional[NumberType], scale_width: NumberType = False,
+    def set_max_height(self, height: NumberType | None, scale_width: NumberType = False,
                        smooth: bool = True, render: bool = True) -> Image:
         if height is not None and self._image.get_height() > height:
             sy = height / self._image.get_height()
@@ -163,7 +166,7 @@ class Image(Widget):
     def _draw(self, surface: pygame.Surface) -> None:
         surface.blit(self._surface, self._rect.topleft)
 
-    def _render(self) -> Optional[bool]:
+    def _render(self) -> bool | None:
         if self._surface is not None:
             return True
         self._surface = self._image.get_surface(new=False)
@@ -188,10 +191,10 @@ class ImageManager(AbstractWidgetManager, ABC):
 
     def image(
         self,
-        image_path: Union[str, Path, pygame_menu.BaseImage, BytesIO, pygame.Surface],
+        image_path: str | Path | pygame_menu.BaseImage | BytesIO | pygame.Surface,
         angle: NumberType = 0,
         image_id: str = '',
-        onselect: Optional[Callable[[bool, Widget, pygame_menu.Menu], Any]] = None,
+        onselect: Callable[[bool, Widget, pygame_menu.Menu], Any] | None = None,
         scale: Vector2NumberType = (1, 1),
         scale_smooth: bool = True,
         selectable: bool = False,

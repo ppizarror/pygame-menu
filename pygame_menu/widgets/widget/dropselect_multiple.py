@@ -26,20 +26,23 @@ __all__ = [
 
 from abc import ABC
 from collections.abc import Callable
-from typing import Any, Optional, Union
+from typing import TYPE_CHECKING, Any, Union
 
-import pygame
-
-import pygame_menu
-from pygame_menu._types import (CallbackType, ColorInputType, ColorType,
-                                CursorInputType, NumberType, PaddingType,
-                                Tuple2IntType, Tuple2NumberType, Tuple3IntType)
-from pygame_menu.font import FontType
 from pygame_menu.locals import POSITION_NORTHWEST, POSITION_SOUTHEAST
 from pygame_menu.utils import assert_color, assert_vector
 from pygame_menu.widgets.core.widget import AbstractWidgetManager, Widget
-from pygame_menu.widgets.widget.button import Button
 from pygame_menu.widgets.widget.dropselect import DropSelect
+
+if TYPE_CHECKING:
+    import pygame
+
+    import pygame_menu
+    from pygame_menu._types import (CallbackType, ColorInputType, ColorType,
+                                    CursorInputType, NumberType, PaddingType,
+                                    Tuple2IntType, Tuple2NumberType,
+                                    Tuple3IntType)
+    from pygame_menu.font import FontType
+    from pygame_menu.widgets.widget.button import Button
 
 DROPSELECT_MULTIPLE_SFORMAT_LIST_COMMA = 'comma-list'
 DROPSELECT_MULTIPLE_SFORMAT_LIST_HYPHEN = 'hyphen-list'
@@ -139,9 +142,9 @@ class DropSelectMultiple(DropSelect):
     def __init__(
         self,
         title: Any,
-        items: Union[list[tuple[Any, ...]], list[str]],
+        items: list[tuple[Any, ...]] | list[str],
         dropselect_id: str = '',
-        default: Optional[Union[int, list[int]]] = None,
+        default: int | list[int] | None = None,
         max_selected: int = 0,
         onchange: CallbackType = None,
         onreturn: CallbackType = None,
@@ -177,9 +180,9 @@ class DropSelectMultiple(DropSelect):
         selection_option_border_color: ColorInputType = (220, 220, 220),
         selection_option_border_width: int = 1,
         selection_option_cursor: CursorInputType = None,  # type: ignore
-        selection_option_font: Optional[FontType] = None,
+        selection_option_font: FontType | None = None,
         selection_option_font_color: ColorInputType = (0, 0, 0),
-        selection_option_font_size: Optional[int] = None,
+        selection_option_font_size: int | None = None,
         selection_option_padding: PaddingType = 5,
         selection_option_selected_bgcolor: ColorInputType = (142, 247, 141),
         selection_option_selected_box: bool = True,
@@ -353,7 +356,7 @@ class DropSelectMultiple(DropSelect):
             sel_items.append(self._items[i][0])
         return sel_items
 
-    def get_value(self) -> tuple[list[Union[tuple[Any, ...], str]], list[int]]:
+    def get_value(self) -> tuple[list[tuple[Any, ...] | str], list[int]]:
         selected_items = []
         for j in self._selected_indices:
             selected_items.append(self._items[j])
@@ -367,7 +370,7 @@ class DropSelectMultiple(DropSelect):
         """
         return len(self._selected_indices)
 
-    def set_default_value(self, default: Optional[Union[int, list[int]]]) -> DropSelectMultiple:
+    def set_default_value(self, default: int | list[int] | None) -> DropSelectMultiple:
         if default is None or default == -1:
             default = []
         if isinstance(default, int):
@@ -385,7 +388,7 @@ class DropSelectMultiple(DropSelect):
         self.render()
         return self
 
-    def update_items(self, items: Union[list[tuple[Any, ...]], list[str]]) -> None:
+    def update_items(self, items: list[tuple[Any, ...]] | list[str]) -> None:
         """
         Update drop select multiple items. This method updates the current index,
         but removes the selected indices.
@@ -433,7 +436,7 @@ class DropSelectMultiple(DropSelect):
                 return True
         return False
 
-    def set_value(self, item: Union[str, int], process_index: bool = False) -> None:
+    def set_value(self, item: str | int, process_index: bool = False) -> None:
         """
         Set the current value of the widget, selecting the item that matches
         the text if ``item`` is a string, or the index if ``item`` is an integer.
@@ -540,13 +543,13 @@ class DropSelectMultipleManager(AbstractWidgetManager, ABC):
     def dropselect_multiple(
         self,
         title: Any,
-        items: Union[list[tuple[Any, ...]], list[str]],
-        default: Optional[Union[int, list[int]]] = None,
+        items: list[tuple[Any, ...]] | list[str],
+        default: int | list[int] | None = None,
         dropselect_multiple_id: str = '',
         max_selected: int = 0,
         onchange: CallbackType = None,
         onreturn: CallbackType = None,
-        onselect: Optional[Callable[[bool, Widget, pygame_menu.Menu], Any]] = None,
+        onselect: Callable[[bool, Widget, pygame_menu.Menu], Any] | None = None,
         open_middle: bool = False,
         placeholder: str = 'Select an option',
         placeholder_add_to_selection_box: bool = True,

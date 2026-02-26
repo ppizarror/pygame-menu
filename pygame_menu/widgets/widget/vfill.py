@@ -14,13 +14,16 @@ __all__ = [
 ]
 
 from abc import ABC
+from typing import TYPE_CHECKING
 
-import pygame
-
-import pygame_menu
 from pygame_menu._types import NumberInstance, NumberType
 from pygame_menu.widgets.core.widget import AbstractWidgetManager
 from pygame_menu.widgets.widget.none import NoneWidget
+
+if TYPE_CHECKING:
+    import pygame
+
+    import pygame_menu
 
 
 class VFill(NoneWidget):

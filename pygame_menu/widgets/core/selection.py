@@ -11,7 +11,6 @@ from __future__ import annotations
 __all__ = ['Selection']
 
 import copy
-from typing import Optional, Union
 
 import pygame
 
@@ -35,7 +34,7 @@ class Selection:
     :param margin_bottom: Bottom margin
     """
     color: ColorType
-    color_bg: Optional[ColorType]
+    color_bg: ColorType | None
     margin_bottom: NumberType
     margin_left: NumberType
     margin_right: NumberType
@@ -120,7 +119,7 @@ class Selection:
         self.color = assert_color(color)
         return self
 
-    def set_background_color(self, color: Union[ColorInputType, pygame_menu.BaseImage]) -> Selection:
+    def set_background_color(self, color: ColorInputType | pygame_menu.BaseImage) -> Selection:
         """
         Set the selection background color. It will replace the background color of the widget
         if selected.
@@ -133,7 +132,7 @@ class Selection:
             self.color_bg = assert_color(self.color_bg)
         return self
 
-    def get_background_color(self) -> Optional[Union[ColorType, pygame_menu.BaseImage]]:
+    def get_background_color(self) -> ColorType | pygame_menu.BaseImage | None:
         """
         Return the background color.
 
@@ -177,7 +176,7 @@ class Selection:
 
     def inflate(
         self,
-        rect: pygame.Rect, inflate: Optional[Tuple2IntType] = None
+        rect: pygame.Rect, inflate: Tuple2IntType | None = None
     ) -> pygame.Rect:
         """
         Grow or shrink the rectangle size according to margins.

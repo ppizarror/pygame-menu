@@ -14,15 +14,17 @@ __all__ = [
 ]
 
 from abc import ABC
-from typing import Optional
+from typing import TYPE_CHECKING
 
 import pygame
 
-import pygame_menu
-from pygame_menu._types import EventVectorType, NumberType
 from pygame_menu.utils import make_surface
 from pygame_menu.widgets.core.widget import (
     AbstractWidgetManager, Widget, WidgetTransformationNotImplemented)
+
+if TYPE_CHECKING:
+    import pygame_menu
+    from pygame_menu._types import EventVectorType, NumberType
 
 
 class NoneWidget(Widget):
@@ -83,7 +85,7 @@ class NoneWidget(Widget):
     def _draw(self, *args, **kwargs) -> None:
         pass
 
-    def _render(self, *args, **kwargs) -> Optional[bool]:
+    def _render(self, *args, **kwargs) -> bool | None:
         pass
 
     def set_margin(self, *args, **kwargs) -> NoneWidget:

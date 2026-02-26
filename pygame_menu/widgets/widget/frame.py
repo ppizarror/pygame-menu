@@ -27,12 +27,11 @@ __all__ = [
 ]
 
 from abc import ABC
-from typing import Any, Optional, Union
+from typing import TYPE_CHECKING, Any, Optional
 
 import pygame
 
 import pygame_menu
-from pygame_menu._decorator import Decorator
 from pygame_menu._types import (CallbackType, ColorInputGradientType,
                                 ColorInputType, CursorInputType,
                                 EventVectorType, NumberInstance, NumberType,
@@ -54,6 +53,9 @@ from pygame_menu.widgets.core.widget import (
     check_widget_mouseleave)
 from pygame_menu.widgets.widget.button import Button
 from pygame_menu.widgets.widget.label import Label
+
+if TYPE_CHECKING:
+    from pygame_menu._decorator import Decorator
 
 # Constants
 FRAME_DEFAULT_TITLE_BACKGROUND_COLOR = ((10, 36, 106), (166, 202, 240), False, True)
@@ -105,12 +107,12 @@ class Frame(Widget):
     """
     _accepts_scrollarea: bool
     _accepts_title: bool
-    _control_widget: Optional[Widget]
-    _control_widget_last_pos: Optional[Vector2NumberType]
+    _control_widget: Widget | None
+    _control_widget_last_pos: Vector2NumberType | None
     _draggable: bool
-    _frame_scrollarea: Optional[pygame_menu._scrollarea.ScrollArea]
+    _frame_scrollarea: pygame_menu._scrollarea.ScrollArea | None
     _frame_size: Tuple2IntType
-    _frame_title: Optional[Frame]
+    _frame_title: Frame | None
     _has_frames: bool  # True if frame has packed other frames
     _has_title: bool
     _height: int
@@ -185,9 +187,9 @@ class Frame(Widget):
         padding_outer: PaddingType = 0,
         title_alignment: str = ALIGN_LEFT,
         title_buttons_alignment: str = ALIGN_RIGHT,
-        title_font: Optional[FontType] = None,
-        title_font_color: Optional[ColorInputType] = None,
-        title_font_size: Optional[int] = None
+        title_font: FontType | None = None,
+        title_font_color: ColorInputType | None = None,
+        title_font_size: int | None = None
     ) -> Frame:
         """
         Add a title to the frame.
@@ -584,7 +586,7 @@ class Frame(Widget):
         self.update_indices()
         return self
 
-    def set_menu(self, menu: Optional[pygame_menu.Menu]) -> Frame:
+    def set_menu(self, menu: pygame_menu.Menu | None) -> Frame:
         # If menu is set, remove from previous scrollable if enabled
         self._remove_menu_update_frame(self)
 
@@ -620,9 +622,9 @@ class Frame(Widget):
 
     def make_scrollarea(
         self,
-        max_width: Optional[NumberType],
-        max_height: Optional[NumberType],
-        scrollarea_color: Optional[Union[ColorInputType, pygame_menu.BaseImage]],
+        max_width: NumberType | None,
+        max_height: NumberType | None,
+        scrollarea_color: ColorInputType | pygame_menu.BaseImage | None,
         scrollbar_color: ColorInputType,
         scrollbar_cursor: CursorInputType,  # type: ignore
         scrollbar_shadow: bool,
@@ -633,7 +635,7 @@ class Frame(Widget):
         scrollbar_slider_hover_color: ColorInputType,
         scrollbar_slider_pad: NumberType,
         scrollbar_thick: NumberType,
-        scrollbars: Union[str, tuple[str, ...]]
+        scrollbars: str | tuple[str, ...]
     ) -> Frame:
         """
         Make the scrollarea of the frame.
@@ -859,7 +861,7 @@ class Frame(Widget):
         if not self.is_visible():
             return self
 
-        selected_widget: Optional[Widget] = None
+        selected_widget: Widget | None = None
 
         # Simple case, no scrollarea
         if not self.is_scrollable:
@@ -1128,7 +1130,7 @@ class Frame(Widget):
             wtp.reverse()
         return tuple(wtp)
 
-    def clear(self) -> Union[Widget, tuple[Widget, ...]]:
+    def clear(self) -> Widget | tuple[Widget, ...]:
         """
         Unpack all widgets within frame.
 
@@ -1144,8 +1146,8 @@ class Frame(Widget):
         self,
         width: NumberType,
         height: NumberType,
-        max_width: Optional[NumberType] = None,
-        max_height: Optional[NumberType] = None
+        max_width: NumberType | None = None,
+        max_height: NumberType | None = None
     ) -> Frame:
         """
         Resize the Frame.
@@ -1267,7 +1269,7 @@ class Frame(Widget):
             self._menu.scroll_to_widget(None)
         return self
 
-    def get_scrollarea(self, inner: bool = False) -> Optional[pygame_menu._scrollarea.ScrollArea]:
+    def get_scrollarea(self, inner: bool = False) -> pygame_menu._scrollarea.ScrollArea | None:
         """
         Return the scrollarea object.
 
@@ -1286,7 +1288,7 @@ class Frame(Widget):
             self._frame_title.set_frame(frame)
         return self
 
-    def set_scrollarea(self, scrollarea: Optional[pygame_menu._scrollarea.ScrollArea]) -> None:
+    def set_scrollarea(self, scrollarea: pygame_menu._scrollarea.ScrollArea | None) -> None:
         if scrollarea is not None:
             assert scrollarea != self._frame_scrollarea, \
                 f'scrollarea cannot be {self.get_class_id()}._frame_scrollarea {scrollarea.get_class_id()}'
@@ -1424,11 +1426,11 @@ class Frame(Widget):
 
     def pack(
         self,
-        widget: Union[Widget, list[Widget], tuple[Widget, ...]],
+        widget: Widget | list[Widget] | tuple[Widget, ...],
         align: str = ALIGN_LEFT,
         vertical_position: str = POSITION_NORTH,
         margin: Vector2NumberType = (0, 0)
-    ) -> Union[Widget, list[Widget], tuple[Widget, ...], Any]:
+    ) -> Widget | list[Widget] | tuple[Widget, ...] | Any:
         """
         Packs widget in the frame line. To pack a widget it has to be already
         appended to Menu, and the Menu must be the same as the frame.

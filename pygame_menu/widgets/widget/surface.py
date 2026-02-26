@@ -14,15 +14,18 @@ __all__ = [
 ]
 
 from abc import ABC
-from collections.abc import Callable
-from typing import Any, Optional
+from typing import TYPE_CHECKING, Any
 
 import pygame
 
-import pygame_menu
-from pygame_menu._types import CallbackType, EventVectorType
 from pygame_menu.widgets.core.widget import (
     AbstractWidgetManager, Widget, WidgetTransformationNotImplemented)
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    import pygame_menu
+    from pygame_menu._types import CallbackType, EventVectorType
 
 
 class SurfaceWidget(Widget):
@@ -97,7 +100,7 @@ class SurfaceWidget(Widget):
     def get_surface(self) -> pygame.Surface:
         return self._surface_obj
 
-    def _render(self) -> Optional[bool]:
+    def _render(self) -> bool | None:
         self._rect.width, self._rect.height = self._surface_obj.get_size()
         return None
 
@@ -118,7 +121,7 @@ class SurfaceWidgetManager(AbstractWidgetManager, ABC):
         self,
         surface: pygame.Surface,
         surface_id: str = '',
-        onselect: Optional[Callable[[bool, Widget, pygame_menu.Menu], Any]] = None,
+        onselect: Callable[[bool, Widget, pygame_menu.Menu], Any] | None = None,
         selectable: bool = False,
         **kwargs
     ) -> pygame_menu.widgets.SurfaceWidget:

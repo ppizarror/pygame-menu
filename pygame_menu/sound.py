@@ -44,7 +44,7 @@ __all__ = [
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any
 
 from pygame import error as pygame_error
 from pygame import mixer
@@ -144,10 +144,10 @@ class Sound(Base):
     :param uniquechannel: Force the channel to be unique, this is set at the object creation moment
     :param verbose: Enable/disable verbose mode (warnings/errors)
     """
-    _channel: Optional[mixer.Channel]
+    _channel: mixer.Channel | None
     _last_play: str
     _last_time: float
-    _mixer_configs: dict[str, Union[bool, int, str]]
+    _mixer_configs: dict[str, bool | int | str]
     _sound: dict[str, dict[str, Any]]
     _uniquechannel: bool
 
@@ -195,7 +195,7 @@ class Sound(Base):
             # noinspection PyBroadException
             try:
                 # pygame < 1.9.5
-                mixer_kwargs: dict[str, Union[int, str]] = {
+                mixer_kwargs: dict[str, int | str] = {
                     'frequency': frequency,
                     'size': size,
                     'channels': channels,
@@ -297,7 +297,7 @@ class Sound(Base):
     def set_sound(
         self,
         sound_type: str,
-        sound_file: Optional[Union[str, Path]],
+        sound_file: str | Path | None,
         volume: float = 0.5,
         loops: int = 0,
         maxtime: NumberType = 0,
@@ -376,7 +376,7 @@ class Sound(Base):
             self.set_sound(sound_type, example, volume=float(volume))
         return self
 
-    def _play_sound(self, sound: Optional[dict[str, Any]]) -> bool:
+    def _play_sound(self, sound: dict[str, Any] | None) -> bool:
         """
         Play a sound.
 

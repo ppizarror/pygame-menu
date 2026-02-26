@@ -12,7 +12,6 @@ __all__ = ['main']
 
 import math
 import random
-from typing import Optional, Union
 
 import pygame
 import pygame.gfxdraw as gfxdraw
@@ -26,7 +25,7 @@ class Planet:
     """
     Planet object.
     """
-    button: Optional[pygame_menu.widgets.Button]
+    button: pygame_menu.widgets.Button | None
     fontsize: int
     image: pygame_menu.BaseImage
     info: str
@@ -42,7 +41,7 @@ class Planet:
         url: str,
         radius: float,
         period: float,
-        fontsize: Union[int, float]
+        fontsize: int | float
     ) -> None:
         """
         Create a planet.
@@ -72,7 +71,7 @@ class SolarSystemApp:
     nebulas: list[pygame_menu.BaseImage]
     planets: dict[str, Planet]
     rotation_velocity: float
-    stars: list[list[Union[int, float]]]
+    stars: list[list[int | float]]
     surface: pygame.Surface
 
     def __init__(self) -> None:

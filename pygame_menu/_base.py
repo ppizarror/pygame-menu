@@ -10,7 +10,7 @@ from __future__ import annotations
 
 __all__ = ['Base']
 
-from typing import Any, Optional
+from typing import Any
 
 from pygame_menu._types import NumberInstance, NumberType
 from pygame_menu.utils import uuid4
@@ -20,7 +20,7 @@ class Base:
     """
     Base object.
     """
-    _attributes: Optional[dict[str, Any]]
+    _attributes: dict[str, Any] | None
     _class_id__repr__: bool
     _id: str
     _id__repr__: bool

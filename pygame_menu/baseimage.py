@@ -37,10 +37,9 @@ __all__ = [
 import base64
 import math
 import os.path as path
-from collections.abc import Callable
 from io import BytesIO
 from pathlib import Path
-from typing import Literal, Optional, Union
+from typing import TYPE_CHECKING, Literal, Union
 
 import pygame
 
@@ -55,6 +54,9 @@ from pygame_menu.locals import (POSITION_CENTER, POSITION_EAST, POSITION_NORTH,
                                 POSITION_SOUTHWEST, POSITION_WEST)
 from pygame_menu.utils import (assert_color, assert_position, assert_vector,
                                load_pygame_image_file)
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 # Example image paths
 __images_path__ = (Path(__file__).resolve().parent / 'resources' / 'images' / '{0}').as_posix()
@@ -116,9 +118,9 @@ class BaseImage(Base):
     _drawing_position: str
     _extension: str
     _filename: str
-    _filepath: Union[str, BytesIO]
+    _filepath: str | BytesIO
     _frombase64: bool
-    _last_transform: tuple[int, int, Optional[pygame.Surface]]
+    _last_transform: tuple[int, int, pygame.Surface | None]
     _original_surface: pygame.Surface
     _rotated: bool
     _surface: pygame.Surface
@@ -126,7 +128,7 @@ class BaseImage(Base):
 
     def __init__(
         self,
-        image_path: Union[str, Path, BytesIO, pygame.Surface],
+        image_path: str | Path | BytesIO | pygame.Surface,
         drawing_mode: int = IMAGE_MODE_FILL,
         drawing_offset: Vector2NumberType = (0, 0),
         drawing_position: str = POSITION_NORTHWEST,
@@ -237,7 +239,7 @@ class BaseImage(Base):
 
     def _set_source_info(
         self,
-        filepath: Union[str, BytesIO],
+        filepath: str | BytesIO,
         extension: str,
         frombase64: bool
     ) -> None:
@@ -266,7 +268,7 @@ class BaseImage(Base):
         self._surface = self.get_crop_rect(rect)
         return self
 
-    def set_alpha(self, value: Optional[int], flags: int = 0) -> BaseImage:
+    def set_alpha(self, value: int | None, flags: int = 0) -> BaseImage:
         """
         Set the current alpha value for the Surface. When blitting this Surface
         onto a destination, the pixels will be drawn slightly transparent. The alpha
@@ -402,7 +404,7 @@ class BaseImage(Base):
 
         return image
 
-    def get_path(self) -> Union[str, BytesIO]:
+    def get_path(self) -> str | BytesIO:
         """
         Return the image path.
 
@@ -480,7 +482,7 @@ class BaseImage(Base):
         """
         return int(self._surface.get_height())
 
-    def subsurface(self, rect: Union[Tuple4IntType, pygame.Rect]) -> pygame.Surface:
+    def subsurface(self, rect: Tuple4IntType | pygame.Rect) -> pygame.Surface:
         """
         Return a subsurface from a rect.
 
@@ -501,7 +503,7 @@ class BaseImage(Base):
         self,
         pos: Tuple2NumberType,
         ignore_alpha: bool = False
-    ) -> Union[Tuple3IntType, Tuple4IntType, pygame.Color]:
+    ) -> Tuple3IntType | Tuple4IntType | pygame.Color:
         """
         Get the color from a certain position in image on x-axis and y-axis (x, y).
 
@@ -870,7 +872,7 @@ class BaseImage(Base):
     def draw(
         self,
         surface: pygame.Surface,
-        area: Optional[pygame.Rect] = None,
+        area: pygame.Rect | None = None,
         position: Tuple2IntType = (0, 0)
     ) -> BaseImage:
         """

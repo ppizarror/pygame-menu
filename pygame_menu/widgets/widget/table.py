@@ -14,11 +14,10 @@ __all__ = [
 ]
 
 from abc import ABC
-from typing import Optional, Union
+from typing import TYPE_CHECKING, Union
 
 import pygame
 
-import pygame_menu
 from pygame_menu._types import (ColorInputType, EventVectorType, NumberType,
                                 PaddingType, Vector2IntType, VectorInstance)
 from pygame_menu.baseimage import BaseImage
@@ -38,6 +37,9 @@ from pygame_menu.widgets.widget.frame import Frame
 from pygame_menu.widgets.widget.image import Image
 from pygame_menu.widgets.widget.label import Label
 from pygame_menu.widgets.widget.surface import SurfaceWidget
+
+if TYPE_CHECKING:
+    import pygame_menu
 
 CellType = Union['Widget', str, int, float, bool, 'BaseImage', 'pygame.Surface']
 ColumnInputType = Union[tuple[CellType, ...], list[CellType]]
@@ -65,7 +67,7 @@ class Table(Frame):
     default_cell_border_width: int
     default_cell_padding: PaddingType
     default_cell_vertical_position: str
-    default_row_background_color: Optional[ColorInputType]
+    default_row_background_color: ColorInputType | None
 
     def __init__(
         self,
@@ -200,17 +202,17 @@ class Table(Frame):
 
     def add_row(
         self,
-        cells: Union[ColumnInputType, Widget],
-        cell_align: Optional[str] = None,
-        cell_border_color: Optional[ColorInputType] = None,
-        cell_border_position: Optional[WidgetBorderPositionType] = None,
-        cell_border_width: Optional[int] = None,
-        cell_font: Optional[FontType] = None,
-        cell_font_color: Optional[ColorInputType] = None,
-        cell_font_size: Optional[int] = None,
+        cells: ColumnInputType | Widget,
+        cell_align: str | None = None,
+        cell_border_color: ColorInputType | None = None,
+        cell_border_position: WidgetBorderPositionType | None = None,
+        cell_border_width: int | None = None,
+        cell_font: FontType | None = None,
+        cell_font_color: ColorInputType | None = None,
+        cell_font_size: int | None = None,
         cell_padding: PaddingType = None,
-        cell_vertical_position: Optional[str] = None,
-        row_background_color: Optional[ColorInputType] = None
+        cell_vertical_position: str | None = None,
+        row_background_color: ColorInputType | None = None
     ) -> Frame:
         """
         Add row to table.
@@ -661,19 +663,19 @@ class Table(Frame):
 
     def update_cell_style(
         self,
-        column: Union[int, Vector2IntType],
-        row: Union[int, Vector2IntType],
-        align: Optional[str] = None,
-        background_color: Optional[ColorInputType] = None,
-        border_color: Optional[ColorInputType] = None,
-        border_position: Optional[WidgetBorderPositionType] = None,
-        border_width: Optional[int] = None,
-        font: Optional[FontType] = None,
-        font_color: Optional[ColorInputType] = None,
-        font_size: Optional[int] = None,
-        padding: Optional[PaddingType] = None,
-        vertical_position: Optional[str] = None
-    ) -> Union[Widget, list[Widget]]:
+        column: int | Vector2IntType,
+        row: int | Vector2IntType,
+        align: str | None = None,
+        background_color: ColorInputType | None = None,
+        border_color: ColorInputType | None = None,
+        border_position: WidgetBorderPositionType | None = None,
+        border_width: int | None = None,
+        font: FontType | None = None,
+        font_color: ColorInputType | None = None,
+        font_size: int | None = None,
+        padding: PaddingType | None = None,
+        vertical_position: str | None = None
+    ) -> Widget | list[Widget]:
         """
         Update cell style. If a parameter is ``None`` the default cell property
         will be used.
@@ -854,7 +856,7 @@ class Table(Frame):
         return cell
 
     # noinspection PyProtectedMember
-    def set_scrollarea(self, scrollarea: Optional[pygame_menu._scrollarea.ScrollArea]) -> None:
+    def set_scrollarea(self, scrollarea: pygame_menu._scrollarea.ScrollArea | None) -> None:
         super().set_scrollarea(scrollarea)
         for f in self._rows:
             f.set_scrollarea(scrollarea)

@@ -11,7 +11,7 @@ from __future__ import annotations
 __all__ = ['main']
 
 import itertools
-from collections.abc import Generator
+from typing import TYPE_CHECKING
 
 import pygame
 
@@ -19,6 +19,9 @@ from pygame_menu import locals
 from pygame_menu._scrollarea import ScrollArea
 from pygame_menu.examples import create_example_window
 from pygame_menu.utils import make_surface
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
 
 FPS = 30
 W_SIZE = 800  # Width of window size

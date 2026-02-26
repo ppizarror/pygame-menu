@@ -28,7 +28,7 @@ __all__ = [
 
 ]
 
-from typing import Any, Optional
+from typing import Any
 
 import pygame
 import pygame.gfxdraw as gfxdraw
@@ -85,7 +85,7 @@ class MenuBar(Widget):
     _backbox_background_color: ColorType
     _backbox_border_width: int
     _backbox_pos: Any
-    _backbox_rect: Optional[pygame.Rect]
+    _backbox_rect: pygame.Rect | None
     _box_mode: int
     _modify_scrollarea: bool
     _offsetx: NumberType
@@ -286,7 +286,7 @@ class MenuBar(Widget):
             return self._scrollbar_deltas[3]
         return 0, (0, 0)
 
-    def _render(self) -> Optional[bool]:
+    def _render(self) -> bool | None:
         if self._menu is None:
             return None
 

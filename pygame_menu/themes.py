@@ -27,9 +27,8 @@ __all__ = [
 ]
 
 import copy
-from typing import Any, Optional, Union
+from typing import TYPE_CHECKING, Any
 
-import pygame_menu
 from pygame_menu._scrollarea import get_scrollbars_from_position
 from pygame_menu._types import (ColorInputType, ColorType, CursorType,
                                 NumberInstance, NumberType, PaddingInstance,
@@ -54,6 +53,9 @@ from pygame_menu.widgets.core.widget import (WIDGET_FULL_BORDER,
                                              WIDGET_SHADOW_TYPE_ELLIPSE,
                                              WIDGET_SHADOW_TYPE_RECTANGULAR,
                                              WidgetBorderPositionType)
+
+if TYPE_CHECKING:
+    import pygame_menu
 
 TRANSPARENT_COLOR: ColorType = (0, 0, 0, 0)
 
@@ -254,8 +256,8 @@ class Theme:
     :type widget_url_color: tuple, list, str, int, :py:class:`pygame.Color`
     """
     _disable_validation: bool
-    background_color: Union[ColorType, BaseImage]
-    border_color: Union[ColorType, BaseImage]
+    background_color: ColorType | BaseImage
+    border_color: ColorType | BaseImage
     cursor_color: ColorType
     cursor_selection_color: ColorType
     cursor_switch_ms: NumberType
@@ -298,7 +300,7 @@ class Theme:
     title_updates_pygame_display: bool
     widget_alignment: str
     widget_alignment_ignore_scrollbar_thickness: bool
-    widget_background_color: Optional[Union[ColorType, BaseImage]]
+    widget_background_color: ColorType | BaseImage | None
     widget_background_inflate: Tuple2IntType
     widget_background_inflate_to_selection: bool
     widget_border_color: ColorType
@@ -315,7 +317,7 @@ class Theme:
     widget_cursor: CursorType  # type: ignore
     widget_font: FontType
     widget_font_antialias: str
-    widget_font_background_color: Optional[ColorType]
+    widget_font_background_color: ColorType | None
     widget_font_background_color_from_menu: bool
     widget_font_color: ColorType
     widget_font_shadow: bool
@@ -690,7 +692,7 @@ class Theme:
         return self
 
     @staticmethod
-    def _vec_to_tuple(obj: Union[tuple, list], check_length: int = 0, check_instance: type = Any) -> tuple:
+    def _vec_to_tuple(obj: tuple | list, check_length: int = 0, check_instance: type = Any) -> tuple:
         """
         Return a tuple from a list or tuple object.
 
@@ -734,9 +736,9 @@ class Theme:
 
     @staticmethod
     def _format_color_opacity(
-        color: Optional[Union[ColorInputType, BaseImage]],
+        color: ColorInputType | BaseImage | None,
         none: bool = False
-    ) -> Optional[Union[ColorType, BaseImage]]:
+    ) -> ColorType | BaseImage | None:
         """
         Adds opacity to a 3 channel color. (R,G,B) -> (R,G,B,A) if the color
         has not an alpha channel. Also updates the opacity to a number between
@@ -770,7 +772,7 @@ class Theme:
 
     @staticmethod
     def _get(params: dict[str, Any], key: str,
-             allowed_types: Optional[Union[type, str, list[type], tuple[type, ...]]] = None,
+             allowed_types: type | str | list[type] | tuple[type, ...] | None = None,
              default: Any = None) -> Any:
         """
         Return a value from a dictionary.

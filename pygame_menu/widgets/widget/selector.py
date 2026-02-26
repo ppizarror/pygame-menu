@@ -28,20 +28,23 @@ __all__ = [
 ]
 
 from abc import ABC
-from collections.abc import Callable
-from typing import Any, Optional, Union
+from typing import TYPE_CHECKING, Any
 
 import pygame
 
-import pygame_menu
-from pygame_menu._types import (CallbackType, ColorInputType, ColorType,
-                                EventVectorType, Tuple2IntType,
-                                Tuple2NumberType, Tuple3IntType)
 from pygame_menu.locals import FINGERUP
 from pygame_menu.utils import (assert_color, assert_vector,
                                check_key_pressed_valid, get_finger_pos,
                                make_surface)
 from pygame_menu.widgets.core.widget import AbstractWidgetManager, Widget
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    import pygame_menu
+    from pygame_menu._types import (CallbackType, ColorInputType, ColorType,
+                                    EventVectorType, Tuple2IntType,
+                                    Tuple2NumberType, Tuple3IntType)
 
 SELECTOR_STYLE_CLASSIC = 'classic'
 SELECTOR_STYLE_FANCY = 'fancy'
@@ -49,7 +52,7 @@ SELECTOR_STYLE_FANCY = 'fancy'
 SelectorStyleType = str
 
 
-def check_selector_items(items: Union[tuple, list]) -> None:
+def check_selector_items(items: tuple | list) -> None:
     """
     Check the items list.
 
@@ -109,7 +112,7 @@ class Selector(Widget):
     :param kwargs: Optional keyword arguments
     """
     _index: int
-    _items: Union[list[tuple[Any, ...]], list[str]]
+    _items: list[tuple[Any, ...]] | list[str]
     _sformat: str
     _style: SelectorStyleType
     _style_fancy_arrow_color: ColorType
@@ -124,7 +127,7 @@ class Selector(Widget):
     def __init__(
         self,
         title: Any,
-        items: Union[list[tuple[Any, ...]], list[str]],
+        items: list[tuple[Any, ...]] | list[str],
         selector_id: str = '',
         default: int = 0,
         onchange: CallbackType = None,
@@ -231,7 +234,7 @@ class Selector(Widget):
     def _draw(self, surface: pygame.Surface) -> None:
         surface.blit(self._surface, self._rect.topleft)
 
-    def _render(self) -> Optional[bool]:
+    def _render(self) -> bool | None:
         current_selected = self.get_value()[0][0]
         if not self._render_hash_changed(current_selected, self._selected, self._visible, self._index, self.readonly):
             return True
@@ -335,7 +338,7 @@ class Selector(Widget):
         """
         return self._index
 
-    def get_items(self) -> Union[list[tuple[Any, ...]], list[str]]:
+    def get_items(self) -> list[tuple[Any, ...]] | list[str]:
         """
         Return a copy of the select items.
 
@@ -343,7 +346,7 @@ class Selector(Widget):
         """
         return self._items.copy()
 
-    def get_value(self) -> tuple[Union[tuple[Any, ...], str], int]:
+    def get_value(self) -> tuple[tuple[Any, ...] | str, int]:
         """
         Return the current value of the selected index.
 
@@ -374,7 +377,7 @@ class Selector(Widget):
         self.change(*self._items[self._index][1:])
         self._sound.play_key_add()
 
-    def set_value(self, item: Union[str, int]) -> None:
+    def set_value(self, item: str | int) -> None:
         """
         Set the current value of the widget, selecting the item that matches
         the text if ``item`` is a string, or the index if ``item`` is an integer.
@@ -408,7 +411,7 @@ class Selector(Widget):
             self._index = item
         self._render()
 
-    def update_items(self, items: Union[list[tuple[Any, ...]], list[str]]) -> None:
+    def update_items(self, items: list[tuple[Any, ...]] | list[str]) -> None:
         """
         Update selector items.
 
@@ -514,11 +517,11 @@ class SelectorManager(AbstractWidgetManager, ABC):
     def selector(
         self,
         title: Any,
-        items: Union[list[tuple[Any, ...]], list[str]],
+        items: list[tuple[Any, ...]] | list[str],
         default: int = 0,
         onchange: CallbackType = None,
         onreturn: CallbackType = None,
-        onselect: Optional[Callable[[bool, Widget, pygame_menu.Menu], Any]] = None,
+        onselect: Callable[[bool, Widget, pygame_menu.Menu], Any] | None = None,
         selector_id: str = '',
         style: SelectorStyleType = SELECTOR_STYLE_CLASSIC,
         **kwargs
