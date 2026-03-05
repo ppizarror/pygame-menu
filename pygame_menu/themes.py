@@ -60,7 +60,7 @@ def _check_menubar_style(style: int) -> bool:
                      MENUBAR_STYLE_UNDERLINE, MENUBAR_STYLE_UNDERLINE_TITLE)
 
 
-class Theme(object):
+class Theme:
     """
     Class defining the visual rendering of menus and widgets.
 

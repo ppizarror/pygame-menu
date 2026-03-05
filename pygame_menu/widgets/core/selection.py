@@ -18,7 +18,7 @@ from pygame_menu._types import NumberType, ColorType, ColorInputType, Tuple2IntT
     Tuple4IntType, NumberInstance, Optional, Union
 
 
-class Selection(object):
+class Selection:
     """
     Widget selection effect class.
 

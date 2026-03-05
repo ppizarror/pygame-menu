@@ -19,7 +19,7 @@ import random
 from typing import Dict, Union, Optional, List
 
 
-class Planet(object):
+class Planet:
     """
     Planet object.
     """
@@ -62,7 +62,7 @@ class Planet(object):
 
 
 # noinspection SpellCheckingInspection
-class SolarSystemApp(object):
+class SolarSystemApp:
     """
     Draws a fancy solar system.
     """

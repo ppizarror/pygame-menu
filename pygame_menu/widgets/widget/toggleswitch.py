@@ -130,7 +130,7 @@ class ToggleSwitch(Widget):
         *args,
         **kwargs
     ) -> None:
-        super(ToggleSwitch, self).__init__(
+        super().__init__(
             args=args,
             kwargs=kwargs,
             onchange=onchange,

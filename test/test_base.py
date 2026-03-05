@@ -74,3 +74,65 @@ class BaseTest(_BaseTest):
         obj = Base('id2')
         obj._class_id__repr__ = True
         self.assertEqual(str(obj), 'Base<"id2">')
+
+    def test_object_id_zero_string(self):
+        obj = Base("0")
+        self.assertEqual(obj.get_id(), "0")
+
+    def test_object_id_whitespace(self) -> None:
+        obj = Base("   ")
+        self.assertEqual(obj.get_id(), "   ")
+
+    def test_object_id_type_error(self) -> None:
+        with self.assertRaises(TypeError):
+            Base(123)
+
+    def test_verbose_type_error(self) -> None:
+        with self.assertRaises(TypeError):
+            Base("id", verbose="yes")
+
+    def test_repr_conflict(self) -> None:
+        obj = Base("id")
+        obj._class_id__repr__ = True
+        obj._id__repr__ = True
+        with self.assertRaises(AssertionError):
+            repr(obj)
+
+    def test_repr_default(self) -> None:
+        obj = Base("id")
+        r = repr(obj)
+        self.assertIn("object at", r)
+        self.assertNotIn("id", r)
+
+    def test_attribute_overwrite(self) -> None:
+        obj = Base("")
+        obj.set_attribute("x", 1)
+        obj.set_attribute("x", "hello")
+        self.assertEqual(obj.get_attribute("x"), "hello")
+
+    def test_get_attribute_no_attributes(self) -> None:
+        obj = Base("")
+        self.assertEqual(obj.get_attribute("missing", 99), 99)
+
+    def test_attribute_key_type_error(self) -> None:
+        obj = Base("")
+        with self.assertRaises(TypeError):
+            obj.set_attribute(123, "value")
+
+    def test_counter_non_numeric_default(self) -> None:
+        obj = Base("")
+        with self.assertRaises(ValueError):
+            obj.get_counter_attribute("c", 1, "not_a_number")
+
+    def test_counter_non_numeric_incr(self) -> None:
+        obj = Base("")
+        self.assertEqual(obj.get_counter_attribute("c", "5"), 5.0)
+
+    def test_update_repr_flags(self) -> None:
+        a = Base("a")
+        b = Base("b")
+        b._class_id__repr__ = True
+        b._id__repr__ = True
+        a._update__repr___(b)
+        self.assertTrue(a._class_id__repr__)
+        self.assertTrue(a._id__repr__)

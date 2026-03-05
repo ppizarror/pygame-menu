@@ -365,3 +365,84 @@ class ScrollAreaTest(BaseTest):
         sf = sa._bg_surface
         self.assertEqual(sa.update_area_color('red'), sa)
         self.assertNotEqual(sf, sa._bg_surface)
+
+    def test_get_scrollbar_default_config_returns_south(self) -> None:
+        """
+        Test get_scrollbar returns the South scrollbar for default config (SOUTH_EAST).
+        """
+        menu = MenuUtils.generic_menu()
+        sa = menu.get_scrollarea()
+        south_scrollbar = sa.get_scrollbar(POSITION_SOUTH)
+        self.assertIsNotNone(south_scrollbar)
+        self.assertEqual(south_scrollbar.get_orientation(), ORIENTATION_HORIZONTAL)
+
+    def test_get_scrollbar_default_config_returns_east(self) -> None:
+        """
+        Test get_scrollbar returns the East scrollbar for default config (SOUTH_EAST).
+        """
+        menu = MenuUtils.generic_menu()
+        sa = menu.get_scrollarea()
+        east_scrollbar = sa.get_scrollbar(POSITION_EAST)
+        self.assertIsNotNone(east_scrollbar)
+        self.assertEqual(east_scrollbar.get_orientation(), ORIENTATION_VERTICAL)
+
+    def test_get_scrollbar_default_config_returns_none_for_north(self) -> None:
+        """
+        Test get_scrollbar returns None for North scrollbar on default config.
+        """
+        menu = MenuUtils.generic_menu()
+        sa = menu.get_scrollarea()
+        self.assertIsNone(sa.get_scrollbar(POSITION_NORTH))
+
+    def test_get_scrollbar_default_config_returns_none_for_west(self) -> None:
+        """
+        Test get_scrollbar returns None for West scrollbar on default config.
+        """
+        menu = MenuUtils.generic_menu()
+        sa = menu.get_scrollarea()
+        self.assertIsNone(sa.get_scrollbar(POSITION_WEST))
+
+    def test_get_scrollbar_returns_none_for_center_position(self) -> None:
+        """
+        Test get_scrollbar returns None for POSITION_CENTER (not a scrollbar position).
+        """
+        menu = MenuUtils.generic_menu()
+        sa = menu.get_scrollarea()
+        # POSITION_CENTER is a valid position string but not a scrollbar position
+        self.assertIsNone(sa.get_scrollbar(POSITION_CENTER))
+
+    def test_get_scrollbar_full_config_returns_all_scrollbars(self) -> None:
+        """
+        Test get_scrollbar returns all scrollbars for SCROLLAREA_POSITION_FULL config.
+        """
+        theme_full = TEST_THEME.copy()
+        theme_full.scrollarea_position = SCROLLAREA_POSITION_FULL
+        menu_full = MenuUtils.generic_menu(theme=theme_full)
+        sa_full = menu_full.get_scrollarea()
+
+        self.assertIsNotNone(sa_full.get_scrollbar(POSITION_NORTH))
+        self.assertIsNotNone(sa_full.get_scrollbar(POSITION_SOUTH))
+        self.assertIsNotNone(sa_full.get_scrollbar(POSITION_EAST))
+        self.assertIsNotNone(sa_full.get_scrollbar(POSITION_WEST))
+
+    def test_get_scrollbar_none_config_returns_no_scrollbars(self) -> None:
+        """
+        Test get_scrollbar returns None for all positions when SCROLLAREA_POSITION_NONE.
+        """
+        theme_none = TEST_THEME.copy()
+        theme_none.scrollarea_position = SCROLLAREA_POSITION_NONE
+        menu_none = MenuUtils.generic_menu(theme=theme_none)
+        sa_none = menu_none.get_scrollarea()
+
+        self.assertIsNone(sa_none.get_scrollbar(POSITION_NORTH))
+        self.assertIsNone(sa_none.get_scrollbar(POSITION_EAST))
+        self.assertIsNone(sa_none.get_scrollbar(POSITION_SOUTH))
+        self.assertIsNone(sa_none.get_scrollbar(POSITION_WEST))
+
+    def test_get_scrollbar_raises_value_error_for_invalid_string(self) -> None:
+        """
+        Test get_scrollbar raises ValueError for a genuinely invalid position string.
+        """
+        menu = MenuUtils.generic_menu()
+        sa = menu.get_scrollarea()
+        self.assertRaises(AssertionError, lambda: sa.get_scrollbar("INVALID_POSITION_STRING"))

@@ -9,6 +9,8 @@ Test Image widget.
 __all__ = ['ImageWidgetTest']
 
 from test._utils import MenuUtils, surface, PygameEventUtils, BaseTest
+
+import pygame
 import pygame_menu
 
 
@@ -79,3 +81,41 @@ class ImageWidgetTest(BaseTest):
         self.assertRaises(ValueError, lambda: image.set_value('value'))
         self.assertFalse(image.value_changed())
         image.reset_value()
+
+    def test_image_from_surface(self) -> None:
+        """
+        Test that Image accepts a pygame.Surface and wraps it correctly.
+        """
+        menu = MenuUtils.generic_menu()
+        surf = pygame.Surface((120, 80))
+        img = menu.add.image(surf)
+        img.set_padding(0)
+        self.assertIsInstance(img.get_image(), pygame_menu.baseimage.BaseImage)
+        self.assertEqual(img.get_size(), (120, 80))
+
+    def test_image_surface_transformations(self) -> None:
+        """
+        Test transformations on an Image created from a pygame.Surface.
+        """
+        menu = MenuUtils.generic_menu()
+        surf = pygame.Surface((100, 50))
+        img = menu.add.image(surf)
+        img.set_padding(0)
+        img.scale(2, 2)
+        self.assertEqual(img.get_size(), (200, 100))
+        img.resize(300, 150)
+        self.assertEqual(img.get_size(), (300, 150))
+        img.rotate(45)
+        self.assertEqual(img.get_angle(), 45)
+
+    def test_image_surface_widget_behavior(self) -> None:
+        """
+        Ensure Surface-based Image behaves like a normal widget.
+        """
+        menu = MenuUtils.generic_menu()
+        surf = pygame.Surface((60, 60))
+        img = menu.add.image(surf)
+        img.set_padding(10)
+        self.assertEqual(img.get_size(), (80, 80))
+        img.update(PygameEventUtils.mouse_motion(img))
+        self.assertTrue(img._mouseover)

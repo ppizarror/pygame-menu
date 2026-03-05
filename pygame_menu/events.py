@@ -56,7 +56,7 @@ from typing import Any
 import pygame.locals as __locals
 
 
-class MenuAction(object):
+class MenuAction:
     """
     Pygame-menu events.
 

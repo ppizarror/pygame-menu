@@ -16,7 +16,7 @@ import math
 from typing import Dict, Any
 
 
-class App(object):
+class App:
     """
     The following object creates the whole app.
     """

@@ -106,7 +106,7 @@ class BaseTest(unittest.TestCase):
         test_reset_surface()
 
 
-class PygameEventUtils(object):
+class PygameEventUtils:
     """
     Event utils.
     """
@@ -608,7 +608,7 @@ class PygameEventUtils(object):
         )
 
 
-class MenuUtils(object):
+class MenuUtils:
     """
     Static class for utility pygame-menu methods.
     """

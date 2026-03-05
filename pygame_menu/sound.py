@@ -38,6 +38,7 @@ __all__ = [
 
 ]
 
+from dataclasses import dataclass
 from pathlib import Path
 import os.path as path
 import time
@@ -82,7 +83,7 @@ SOUND_TYPES = (
 )
 
 # Sound example paths
-__sounds_path__ = path.join(path.dirname(path.abspath(__file__)), 'resources', 'sounds', '{0}')
+__sounds_path__ = (Path(__file__).resolve().parent / 'resources' / 'sounds' / '{0}').as_posix()
 
 SOUND_EXAMPLE_CLICK_MOUSE = __sounds_path__.format('click_mouse.ogg')
 SOUND_EXAMPLE_CLICK_TOUCH = SOUND_EXAMPLE_CLICK_MOUSE
@@ -109,7 +110,19 @@ SOUND_EXAMPLES = (
 )
 
 # Stores global reference that marks sounds as initialized
-SOUND_INITIALIZED = [False, True]
+@dataclass
+class SoundInitState:
+    """
+    Global mixer initialization state.
+
+    attempted: True once mixer.init() has been called at least once.
+    available: False if pygame mixer module is missing.
+    """
+    attempted: bool = False
+    available: bool = True
+
+
+SOUND_INITIALIZED = SoundInitState()
 
 
 class Sound(Base):
@@ -147,7 +160,7 @@ class Sound(Base):
         uniquechannel: bool = True,
         verbose: bool = True
     ) -> None:
-        super(Sound, self).__init__(object_id=sound_id, verbose=verbose)
+        super().__init__(object_id=sound_id, verbose=verbose)
 
         assert isinstance(allowedchanges, int)
         assert isinstance(buffer, int)
@@ -168,15 +181,12 @@ class Sound(Base):
             if self._verbose:
                 warn('pygame mixer module could not be found, NotImplementedError'
                      'has been raised. Sound support is disabled')
-            SOUND_INITIALIZED[1] = False
+            SOUND_INITIALIZED.available = False
 
         # Initialize sounds if not initialized
-        if not mixer_missing and ((mixer.get_init() is None and not SOUND_INITIALIZED[0]) or force_init):
+        if not mixer_missing and ((mixer.get_init() is None and not SOUND_INITIALIZED.attempted) or force_init):
             # Set sound as initialized globally
-            SOUND_INITIALIZED[0] = True
-
-            # Check pygame version
-            version_major, _, version_minor = pygame_version
+            SOUND_INITIALIZED.attempted = True
 
             # noinspection PyBroadException
             try:
@@ -188,12 +198,10 @@ class Sound(Base):
                     'buffer': buffer
                 }
 
-                # pygame >= 1.9.5
-                if (version_major == 1 and version_minor > 4) or version_major > 1:
+                if pygame_version >= (1, 9, 5):
                     mixer_kwargs['devicename'] = devicename
 
-                # pygame >= 2.0.0
-                if version_major > 1:
+                if pygame_version >= (2, 0, 0):
                     mixer_kwargs['allowedchanges'] = allowedchanges
 
                 # Call to mixer
@@ -221,9 +229,7 @@ class Sound(Base):
         self._uniquechannel = uniquechannel
 
         # Sound dict
-        self._sound = {}
-        for sound in SOUND_TYPES:
-            self._sound[sound] = {}
+        self._sound = {sound_type: {} for sound_type in SOUND_TYPES}
 
         # Last played song
         self._last_play = ''
@@ -237,11 +243,12 @@ class Sound(Base):
         """
         new_sound = Sound(uniquechannel=self._uniquechannel)
         new_sound._channel = self._channel
-        for key in self._mixer_configs:
-            new_sound._mixer_configs[key] = self._mixer_configs[key]
+        new_sound._mixer_configs = dict(self._mixer_configs)
+        new_sound._last_play = self._last_play
+        new_sound._last_time = self._last_time
         for sound_type in self._sound.keys():
             s = self._sound[sound_type]
-            if len(s) != 0:
+            if s:
                 new_sound.set_sound(
                     sound_type=sound_type,
                     sound_file=s['path'],
@@ -271,16 +278,16 @@ class Sound(Base):
 
     def get_channel(self) -> 'mixer.Channel':
         """
-        Return the channel of the sound engine.
+        Return the mixer channel used by this sound engine.
 
-        :return: Sound engine channel
+        Note: ``mixer.find_channel()`` requires pygame 2.x for reliable behavior.
         """
-        channel = mixer.find_channel()  # force only available on pygame v2
-        if self._uniquechannel:  # If the channel is unique
-            if self._channel is None:  # If the channel has not been set
+        channel = mixer.find_channel()
+        if self._uniquechannel:
+            if self._channel is None:
                 self._channel = channel
         else:
-            self._channel = channel  # Store the available channel
+            self._channel = channel
         return self._channel
 
     def set_sound(
@@ -319,18 +326,18 @@ class Sound(Base):
             raise ValueError('sound type not valid, check the manual')
 
         # If file is none disable the sound
-        if sound_file is None or not SOUND_INITIALIZED[1]:
+        if sound_file is None or not SOUND_INITIALIZED.available:
             self._sound[sound_type] = {}
             return False
 
         # Check the file exists
-        sound_file = str(sound_file)
-        if not path.isfile(sound_file):
-            raise IOError(f'sound file "{sound_file}" does not exist')
+        sound_path = Path(sound_file)
+        if not sound_path.is_file():
+            raise OSError(f'sound file \"{sound_path}\" does not exist')
 
         # Load the sound
         try:
-            sound_data = mixer.Sound(file=sound_file)
+            sound_data = mixer.Sound(file=str(sound_path))
         except pygame_error:
             if self._verbose:
                 warn(f'the sound file "{sound_file}" could not be loaded, it has been disabled')
@@ -361,8 +368,8 @@ class Sound(Base):
         :return: Self reference
         """
         assert isinstance(volume, NumberInstance) and 0 <= volume <= 1
-        for sound in range(len(SOUND_TYPES)):
-            self.set_sound(SOUND_TYPES[sound], SOUND_EXAMPLES[sound], volume=float(volume))
+        for sound_type, example in zip(SOUND_TYPES, SOUND_EXAMPLES):
+            self.set_sound(sound_type, example, volume=float(volume))
         return self
 
     def _play_sound(self, sound: Optional[Dict[str, Any]]) -> bool:
@@ -384,11 +391,11 @@ class Sound(Base):
         sound_time = time.time()
 
         # If the previous sound is the same and has not ended (max 10% overlap)
-        if (
-            sound['type'] != self._last_play or
-            sound_time - self._last_time >= 0.1 * sound['length'] or
-            self._uniquechannel
-        ):
+        OVERLAP_RATIO = 0.1
+        overlap_allowed = sound_time - self._last_time >= OVERLAP_RATIO * sound['length']
+        is_different_sound = sound['type'] != self._last_play
+
+        if is_different_sound or overlap_allowed or self._uniquechannel:
             try:
                 if self._uniquechannel:  # Stop the current channel if it's unique
                     channel.stop()
@@ -550,7 +557,13 @@ class Sound(Base):
         channel = self.get_channel()
         data = {}
         if channel is None:  # The sound can't be played because all channels are busy
-            return data
+            return {
+                'busy': None,
+                'endevent': None,
+                'queue': None,
+                'sound': None,
+                'volume': None
+            }
         data['busy'] = channel.get_busy()
         data['endevent'] = channel.get_endevent()
         data['queue'] = channel.get_queue()
@@ -566,6 +579,8 @@ class Sound(Base):
         :param volume: Volume of the sound, from ``0.0`` to ``1.0``
         :return: ``True`` if the volume was set, ``False`` otherwise
         """
+        if not 0.0 <= volume <= 1.0:
+            return False
         if sound_type not in SOUND_TYPES:
             return False
         sound_data = self._sound.get(sound_type)

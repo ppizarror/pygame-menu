@@ -188,7 +188,7 @@ class DropSelectMultiple(DropSelect):
         *args,
         **kwargs
     ) -> None:
-        super(DropSelectMultiple, self).__init__(
+        super().__init__(
             dropselect_id=dropselect_id,
             items=items,
             onchange=onchange,
@@ -274,7 +274,7 @@ class DropSelectMultiple(DropSelect):
         color = self._selection_option_font_style['color']
         if (
             self.readonly or
-            len(self._selected_indices) == 0 or
+            not self._selected_indices or
             self._max_selected != 0 and len(self._selected_indices) == self._max_selected
         ):
             color = self._font_readonly_color
@@ -295,7 +295,7 @@ class DropSelectMultiple(DropSelect):
 
     def _apply_font(self) -> None:
         prev_selection_box_width = self._selection_box_width
-        super(DropSelectMultiple, self)._apply_font()
+        super()._apply_font()
         if prev_selection_box_width == 0:
             f1 = self._render_option_string(self._placeholder)
             f2 = self._render_option_string(self._placeholder_selected.format(999))
@@ -307,7 +307,7 @@ class DropSelectMultiple(DropSelect):
                                             + 2 * self._selection_box_border_width)
 
     def _get_current_selected_text(self) -> str:
-        if len(self._selected_indices) == 0:
+        if not self._selected_indices:
             return self._placeholder
 
         # Apply selected format
@@ -394,7 +394,7 @@ class DropSelectMultiple(DropSelect):
 
         :param items: New drop select items; format ``[('Item1', a, b, c...), ('Item2', d, e, f...)]``
         """
-        super(DropSelectMultiple, self).update_items(items)
+        super().update_items(items)
         self._default_value = []
         self._selected_indices = []
 
@@ -499,7 +499,7 @@ class DropSelectMultiple(DropSelect):
                     deco.enable(btn.get_attribute('deco_off'))
 
     def _make_selection_drop(self) -> 'DropSelectMultiple':
-        super(DropSelectMultiple, self)._make_selection_drop()
+        super()._make_selection_drop()
         # Add button decorations
         for btn in self._option_buttons:
             deco = btn.get_decorator()
@@ -522,10 +522,10 @@ class DropSelectMultiple(DropSelect):
 
     def apply(self, *args) -> Any:
         self._process_index()
-        super(DropSelectMultiple, self).apply()
+        super().apply()
 
     def change(self, *args) -> Any:
-        super(DropSelectMultiple, self).change()
+        super().change()
 
 
 class DropSelectMultipleManager(AbstractWidgetManager, ABC):

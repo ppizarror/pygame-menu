@@ -72,7 +72,7 @@ class WidgetManager(
     """
 
     def __init__(self, menu: 'pygame_menu.Menu', verbose: bool = True) -> None:
-        super(WidgetManager, self).__init__(object_id=menu.get_id() + '+widget-manager', verbose=verbose)
+        super().__init__(object_id=menu.get_id() + '+widget-manager', verbose=verbose)
         self._menu = menu
 
     @property

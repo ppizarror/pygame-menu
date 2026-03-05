@@ -49,7 +49,7 @@ class ArrowSelection(Selection):
         arrow_vertical_offset: NumberType = 0,
         blink_ms: NumberType = 0
     ) -> None:
-        super(ArrowSelection, self).__init__(
+        super().__init__(
             margin_left=margin_left,
             margin_right=margin_right,
             margin_top=margin_top,

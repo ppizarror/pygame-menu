@@ -102,30 +102,26 @@ def make_long_menu() -> 'pygame_menu.Menu':
     menu.add.button('Pygame-menu contributors', menu_contributors)
     menu.add.vertical_margin(20)  # Adds margin
 
-    label1 = 'Button n°{}'
-    label2 = 'Text n°{}: '
     for i in range(1, 20):
         if i % 2 == 0:
-            menu.add.button(label1.format(i),
+            menu.add.button(f'Button n°{i}',
                             on_button_click,
                             f'Button n°{i}')
         else:
-            menu.add.text_input(label2.format(i),
+            menu.add.text_input(f'Text n°{i}: ',
                                 onchange=on_button_click,
                                 text=f'Text n°{i}')
     menu.add.button('Exit', pygame_menu.events.EXIT)
 
-    label = 'Button n°{}'
     for i in range(1, 11):
         # Test large button
         if i == 5:
             txt = 'This is a very long button!'
         else:
-            txt = label.format(100 * i)
+            txt = f'Button n°{100 * i}'
         menu_sub.add.button(txt, on_button_click, 100 * i)
     menu_sub.add.button('Back', pygame_menu.events.BACK)
 
-    # noinspection SpellCheckingInspection
     menu_text.add.label(
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod '
         'tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim '

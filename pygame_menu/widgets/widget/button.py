@@ -57,7 +57,7 @@ class Button(Label):
         *args,
         **kwargs
     ) -> None:
-        super(Button, self).__init__(
+        super().__init__(
             title=title,
             label_id=button_id
         )
@@ -171,7 +171,7 @@ class ButtonManager(AbstractWidgetManager, ABC):
     # noinspection PyProtectedMember
     def banner(
         self,
-        image: 'pygame_menu.BaseImage',
+        image: Union['pygame_menu.BaseImage', 'pygame.Surface'],
         action: Optional[Union['pygame_menu.Menu', '_events.MenuAction', Callable, int]] = None,
         *args,
         **kwargs
@@ -241,15 +241,34 @@ class ButtonManager(AbstractWidgetManager, ABC):
             Be careful with kwargs collision. Consider that all optional documented
             kwargs keys are removed from the object.
 
-        :param image: Image of the clickeable button
+        :param image: Image or surface to display as the clickable banner.
         :param action: Action of the button, can be a Menu, an event, or a function
         :param args: Additional arguments used by a function
         :param kwargs: Optional keyword arguments
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.Button`
         """
+        if isinstance(image, pygame.Surface):
+            image = pygame_menu.BaseImage(image)
+
+        # We use setdefault so we don't overwrite the user
+        # but WE provide the values for the filter to "pop"
+        kwargs.setdefault('padding', 0)
+       
+        # This prevents the theme selection effect from overwriting the banner
+        if 'selection_effect' not in kwargs:
+            kwargs['selection_effect'] = pygame_menu.widgets.NoneSelection()
+           
+        # Ensure the selection color doesn't show up on the ' ' character
+        kwargs.setdefault('selection_color', (0, 0, 0, 0))
+
+        # Set image as background
         kwargs['background_color'] = image
-        return self.button(' ', action, *args, **kwargs).resize(*image.get_size())
+       
+        # Call button - this will now "pop" our custom padding and selection_effect
+        btn = self.button(' ', action, *args, **kwargs)
+       
+        return btn.resize(*image.get_size())
 
     # noinspection PyProtectedMember
     def button(

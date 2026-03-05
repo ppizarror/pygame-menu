@@ -61,7 +61,7 @@ class Label(Widget):
         assert isinstance(leading, (type(None), int))
         assert isinstance(max_nlines, (type(None), int))
         assert isinstance(wordwrap, bool)
-        super(Label, self).__init__(
+        super().__init__(
             title=title,
             onselect=onselect,
             widget_id=label_id
@@ -144,7 +144,7 @@ class Label(Widget):
         return self
 
     def set_title(self, title: str) -> 'Label':
-        super(Label, self).set_title(title)
+        super().set_title(title)
         if self._title_generator is not None:
             if self._verbose:
                 warn(
@@ -436,8 +436,7 @@ class LabelManager(AbstractWidgetManager, ABC):
         assert max_char >= -1
 
         title = str(title)
-        if len(label_id) == 0:
-            label_id = uuid4()
+        label_id = label_id or uuid4()
 
         # If newline detected, split in two new lines
         if '\n' in title and not wordwrap:

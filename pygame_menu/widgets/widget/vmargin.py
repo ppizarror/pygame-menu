@@ -40,7 +40,7 @@ class VMargin(NoneWidget):
     ) -> None:
         assert isinstance(margin, NumberInstance)
         assert margin > 0, 'negative or zero margin is not valid'
-        super(VMargin, self).__init__(widget_id=widget_id)
+        super().__init__(widget_id=widget_id)
         self._rect.width = 0
         self._rect.height = int(margin)
 

@@ -45,7 +45,7 @@ class MenuLink(NoneWidget):
         assert isinstance(menu, pygame_menu.Menu)
         assert callable(menu_opener_handler), \
             'menu opener handler must be callable (a function)'
-        super(MenuLink, self).__init__(
+        super().__init__(
             widget_id=link_id
         )
         self.menu = menu

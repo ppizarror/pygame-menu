@@ -503,3 +503,160 @@ class RangeSliderWidgetTest(BaseTest):
             slider_off.update([])
         self.assertGreater(slider_on.get_value(), 0.1)
         self.assertEqual(slider_off.get_value(), 0.1)
+
+    def test_set_default_value(self) -> None:
+        """
+        Test set_default_value method for RangeSlider.
+        This specifically checks the fix for ensuring _default_value is always a tuple/list.
+        """
+        # Test with a single slider (float default)
+        slider_single = pygame_menu.widgets.RangeSlider('Single', default_value=0.5, range_values=(0, 1), increment=0.1)
+        self.assertEqual(slider_single._default_value, (0.5, 0))
+        self.assertEqual(slider_single.get_value(), 0.5)
+
+        # Change value and reset
+        slider_single.set_value(0.8)
+        self.assertEqual(slider_single.get_value(), 0.8)
+        slider_single.reset_value()
+        self.assertEqual(slider_single.get_value(), 0.5)
+
+        # Test with a double slider (tuple default)
+        slider_double = pygame_menu.widgets.RangeSlider('Double', default_value=(0.2, 0.7), range_values=(0, 1), increment=0.1)
+        self.assertEqual(slider_double._default_value, (0.2, 0.7))
+        self.assertEqual(slider_double.get_value(), (0.2, 0.7))
+
+        # Change values and reset
+        slider_double.set_value((0.3, 0.9))
+        self.assertEqual(slider_double.get_value(), (0.3, 0.9))
+        slider_double.reset_value()
+        self.assertEqual(slider_double.get_value(), (0.2, 0.7))
+
+        # Test setting a new default value after initialization
+        slider_single.set_default_value(0.3)
+        self.assertEqual(slider_single._default_value, (0.3, 0))
+        slider_single.reset_value()
+        self.assertEqual(slider_single.get_value(), 0.3)
+
+        slider_double.set_default_value((0.1, 0.4))
+        self.assertEqual(slider_double._default_value, (0.1, 0.4))
+        slider_double.reset_value()
+        self.assertEqual(slider_double.get_value(), (0.1, 0.4))
+
+        # Test invalid default value types for single slider
+        self.assertRaises(AssertionError, lambda: slider_single.set_default_value([0.1, 0.2]))
+        self.assertRaises(AssertionError, lambda: slider_single.set_default_value('invalid'))
+
+        # Test invalid default value types for double slider
+        self.assertRaises(AssertionError, lambda: slider_double.set_default_value(0.5))
+        self.assertRaises(AssertionError, lambda: slider_double.set_default_value((0.1, 0.2, 0.3)))
+
+    def test_render_invariants(self) -> None:
+        menu = MenuUtils.generic_menu()
+        r = menu.add.range_slider('R', 0.5, (0, 1), 0.1)
+        r.draw(surface)
+        self.assertGreater(r._slider_height, 0)
+        self.assertGreater(r._range_box_height, 0)
+        self.assertEqual(r._range_line.get_width(), r._range_width)
+        self.assertEqual(r._slider[0].get_height(), r._slider_height)
+
+    def test_tick_generation(self) -> None:
+        menu = MenuUtils.generic_menu()
+        r = menu.add.range_slider('R', 0.5, (0, 1), 0.1, range_text_value_tick_number=5)
+        r.draw(surface)
+        self.assertEqual(len(r._range_text_value_tick_surfaces), 5)
+        xs = [p[0] for p in r._range_text_value_tick_surfaces_pos]
+        self.assertEqual(xs, sorted(xs))
+
+    def test_tick_disabled(self) -> None:
+        menu = MenuUtils.generic_menu()
+        r = menu.add.range_slider('R', 0.5, (0, 1), 0.1, range_text_value_tick_enabled=False)
+        r.draw(surface)
+        self.assertGreater(len(r._range_text_value_tick_surfaces), 0)
+
+    def test_value_format(self) -> None:
+        menu = MenuUtils.generic_menu()
+        r = menu.add.range_slider('R', 0.5, (0, 1), 0.1, value_format=lambda x: f'{int(x*100)}%')
+        r.draw(surface)
+        s = r._slider_text_value_surfaces[0]
+        self.assertIsInstance(s, pygame.Surface)
+
+    def test_value_format_double(self) -> None:
+        menu = MenuUtils.generic_menu()
+        r = menu.add.range_slider('R', (0.2, 0.8), (0, 1), 0.1, value_format=lambda x: f'{x:.2f}')
+        r.draw(surface)
+        self.assertEqual(len(r._slider_text_value_surfaces), 2)
+        self.assertIsInstance(r._slider_text_value_surfaces[0], pygame.Surface)
+        self.assertIsInstance(r._slider_text_value_surfaces[1], pygame.Surface)
+
+    def test_readonly_render(self) -> None:
+        menu = MenuUtils.generic_menu()
+        r = menu.add.range_slider('R', 0.5, (0, 1), 0.1)
+        r.readonly = True
+        r.draw(surface)
+        r.draw_after_if_selected(surface)
+        self.assertTrue(r._slider_selected_highlight_enabled)
+        self.assertTrue(r.is_selected())
+
+    def test_overlap_selection(self) -> None:
+        menu = MenuUtils.generic_menu()
+        r = menu.add.range_slider('R', (0.5, 0.50000001), (0, 1), 0.1)
+        r.draw(surface)
+        rect = r._get_slider_inflate_rect(1, to_real_position=True)
+        self.assertFalse(r.update(PygameEventUtils.middle_rect_click(rect, evtype=pygame.MOUSEBUTTONDOWN)))
+
+    def test_discrete_drag_snapping(self) -> None:
+        menu = MenuUtils.generic_menu()
+        rv = [0, 1, 2, 3, 4]
+        r = menu.add.range_slider('R', 2, rv)
+        r.draw(surface)
+        rect = r._get_slider_inflate_rect(0, to_real_position=True)
+        r.update(PygameEventUtils.middle_rect_click(rect, evtype=pygame.MOUSEBUTTONDOWN))
+        pos = r._test_get_pos_value(2.7)
+        r.update(PygameEventUtils.mouse_motion(rect, rel=(pos[0], pos[1]), update_mouse=True))
+        self.assertIn(r.get_value(), rv)
+
+    def test_shift_increment(self) -> None:
+        menu = MenuUtils.generic_menu()
+        r = menu.add.range_slider('R', 0.5, (0, 1), 0.1)
+        v = r.get_value()
+        r.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
+        self.assertEqual(r.get_value(), v + 0.1)
+
+    def test_range_box_disabled(self) -> None:
+        menu = MenuUtils.generic_menu()
+        r = menu.add.range_slider('R', (0.2, 0.8), (0, 1), 0.1, range_box_enabled=False)
+        r.draw(surface)
+        self.assertFalse(hasattr(r, '_range_box') and r._range_box_enabled)
+
+    def test_padding_effect(self) -> None:
+        menu = MenuUtils.generic_menu()
+        r = menu.add.range_slider('R', 0.5, (0, 1), 0.1, slider_text_value_padding=(10, 20))
+        r.draw(surface)
+        s = r._slider_text_value_surfaces[0]
+        self.assertGreater(s.get_width(), 0)
+
+    def test_margin_effect(self) -> None:
+        menu = MenuUtils.generic_menu()
+        r = menu.add.range_slider('R', 0.5, (0, 1), 0.1, range_margin=(50, 0))
+        r.draw(surface)
+        self.assertEqual(r._range_margin, (50, 0))
+
+    def test_repeated_set_value(self) -> None:
+        menu = MenuUtils.generic_menu()
+        r = menu.add.range_slider('R', 0.5, (0, 1), 0.1)
+        r.set_value(0.5)
+        r.set_value(0.5)
+        self.assertEqual(r.get_value(), 0.5)
+
+    def test_repeated_reset(self) -> None:
+        menu = MenuUtils.generic_menu()
+        r = menu.add.range_slider('R', 0.5, (0, 1), 0.1)
+        r.reset_value()
+        r.reset_value()
+        self.assertEqual(r.get_value(), 0.5)
+
+    def test_small_increment(self) -> None:
+        menu = MenuUtils.generic_menu()
+        r = menu.add.range_slider('R', 0.5, (0, 1), 1e-9)
+        r.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
+        self.assertEqual(r.get_value(), 0.500000001)

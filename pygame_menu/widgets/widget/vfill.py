@@ -42,7 +42,7 @@ class VFill(NoneWidget):
     ) -> None:
         assert isinstance(min_height, NumberInstance)
         assert min_height >= 0, 'negative min height is not valid'
-        super(VFill, self).__init__(widget_id=widget_id)
+        super().__init__(widget_id=widget_id)
         self._min_height = min_height
 
     def get_rect(self, *args, **kwargs) -> 'pygame.Rect':

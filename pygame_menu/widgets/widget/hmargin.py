@@ -41,7 +41,7 @@ class HMargin(NoneWidget):
         assert isinstance(margin, NumberInstance)
         assert margin > 0, \
             'zero margin is not valid, prefer adding a NoneWidget menu.add.none_widget()'
-        super(HMargin, self).__init__(widget_id=widget_id)
+        super().__init__(widget_id=widget_id)
         self._rect.width = int(margin)
         self._rect.height = 0
 

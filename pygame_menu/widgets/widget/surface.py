@@ -45,7 +45,7 @@ class SurfaceWidget(Widget):
         assert isinstance(surface, pygame.Surface)
         assert isinstance(surface_id, str)
 
-        super(SurfaceWidget, self).__init__(
+        super().__init__(
             onselect=onselect,
             widget_id=surface_id
         )

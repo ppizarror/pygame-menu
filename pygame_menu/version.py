@@ -26,7 +26,7 @@ class Version(tuple):
         return f'{str(self.__class__.__name__)}({", ".join(fields)})'
 
     def __str__(self) -> str:
-        return '{}.{}.{}'.format(*self)
+        return ".".join(str(x) for x in self)
 
     major = property(lambda self: self[0])
     minor = property(lambda self: self[1])

@@ -548,8 +548,8 @@ def print_menu_widget_structure(
                 v = non_menu_frame_widgets[nmi]
                 for v_wid in v:
                     try:
-                        print(c.BRIGHT_WHITE + '·   ' + '│   ' * v_wid.get_frame_depth()
-                              + c.ENDC + widget_terminal_title(v_wid))
+                        prefix = f"{c.BRIGHT_WHITE}·   {'│   ' * v_wid.get_frame_depth()}{c.ENDC}"
+                        print(prefix + widget_terminal_title(v_wid))
                     except UnicodeEncodeError:
                         pass
                 del non_menu_frame_widgets[nmi]
@@ -559,11 +559,8 @@ def print_menu_widget_structure(
         close_frames(w.get_frame_depth())
         title = widget_terminal_title(w, indx, index)
         try:
-            print('{0}{1}{2}'.format(
-                str(indx).ljust(3),
-                ' ' + c.BRIGHT_WHITE + '│   ' * w_depth + c.ENDC,
-                title
-            ))
+            prefix = f"{str(indx).ljust(3)} {c.BRIGHT_WHITE}{'│   ' * w_depth}{c.ENDC}"
+            print(prefix + title)
         except UnicodeEncodeError:
             pass
         if w_depth not in depth_widths.keys():
@@ -613,7 +610,8 @@ def uuid4(short: bool = False) -> str:
     :param short: If ``True`` only returns the first 8 chars of the uuid, else, 18
     :return: UUID of 18 chars
     """
-    return str(uuid.uuid4())[:18 if not short else 8]
+    uid = uuid.uuid4().hex
+    return uid[:8] if short else uid[:18]
 
 
 def warn(message: str, print_stack: bool = True) -> None:
@@ -658,64 +656,76 @@ def widget_terminal_title(
     :param current_index: Menu index
     :return: Widget title
     """
-    w_class_id = TerminalColors.BOLD + widget.get_class_id() + TerminalColors.ENDC
+    w_class_id = f"{TerminalColors.BOLD}{widget.get_class_id()}{TerminalColors.ENDC}"
+
+    # Frame widget
     if isinstance(widget, pygame_menu.widgets.Frame):
-        w_title = TerminalColors.BRIGHT_WHITE + '┌━' + TerminalColors.ENDC
-        w_title += f'{0} - {3}[{1},{2},'.format(w_class_id, *widget.get_indices(), TerminalColors.LGREEN)
-        if widget.horizontal:
-            w_title += 'H] '
-        else:
-            w_title += 'V] '
+        w_title = f"{TerminalColors.BRIGHT_WHITE}┌━{TerminalColors.ENDC}"
+
+        i0, i1 = widget.get_indices()
+        w_title += (
+            f"{w_class_id} - "
+            f"{TerminalColors.LGREEN}[{i0},{i1},{TerminalColors.ENDC}"
+        )
+
+        # Orientation
+        w_title += "H] " if widget.horizontal else "V] "
+
+        # Scrollable info
         if widget.is_scrollable:
             wsz = widget.get_inner_size()
             wsm = widget.get_max_size()
-            wsh = wsm[0] if wsm[0] == wsz[0] else f'{wsm[0]}→{wsz[0]}'
-            wsv = wsm[1] if wsm[1] == wsz[1] else f'{wsm[1]}→{wsz[1]}'
-            w_title += f'∑ [{wsh},{wsv}] '
+
+            wsh = wsm[0] if wsm[0] == wsz[0] else f"{wsm[0]}→{wsz[0]}"
+            wsv = wsm[1] if wsm[1] == wsz[1] else f"{wsm[1]}→{wsz[1]}"
+
+            w_title += f"∑ [{wsh},{wsv}] "
+
         w_title += TerminalColors.ENDC
+
+    # Non-frame widget
     else:
-        if widget.get_title() != '':
-            title_f = TerminalColors.UNDERLINE + widget.get_title() + TerminalColors.ENDC
-            w_title = f'{w_class_id} - {title_f} - '
+        if widget.get_title():
+            title_f = f"{TerminalColors.UNDERLINE}{widget.get_title()}{TerminalColors.ENDC}"
+            w_title = f"{w_class_id} - {title_f} - "
         else:
-            w_title = w_class_id + ' - '
+            w_title = f"{w_class_id} - "
 
-    # Column/Row position
-    w_title += TerminalColors.INDIGO
+    # Column/Row
     cr = widget.get_col_row_index()
-    w_title += '{' + str(cr[0]) + ',' + str(cr[1]) + '}'
-    w_title += TerminalColors.ENDC
+    col, row = cr[0], cr[1]
+    w_title += f"{TerminalColors.INDIGO}{{{col},{row}}}{TerminalColors.ENDC}"
 
-    # Add position
-    w_title += TerminalColors.MAGENTA
-    w_title += ' ({0},{1})'.format(*widget.get_position())
-    w_title += TerminalColors.ENDC
+    # Position
+    px, py = widget.get_position()
+    w_title += f"{TerminalColors.MAGENTA} ({px},{py}){TerminalColors.ENDC}"
 
-    # Add size
-    w_title += TerminalColors.BLUE
-    w_title += ' ({0},{1})'.format(*widget.get_size())
-    w_title += TerminalColors.ENDC
+    # Size
+    sx, sy = widget.get_size()
+    w_title += f"{TerminalColors.BLUE} ({sx},{sy}){TerminalColors.ENDC}"
 
-    # Add mods
+    # Modifiers
     w_title += TerminalColors.CYAN
+
     if widget.is_floating():
-        w_title += ' Φ'
+        w_title += " Φ"
     if not widget.is_visible():
-        w_title += ' ╳'
+        w_title += " ╳"
     if not widget.is_selectable:
-        w_title += ' β'
+        w_title += " β"
     if widget.is_selected():
-        w_title += TerminalColors.BOLD + ' ⟵'
+        w_title += f"{TerminalColors.BOLD} ⟵"
         if current_index != -1 and current_index != widget_index:
-            w_title += f'! [{widget_index}->{current_index}]'
+            w_title += f"! [{widget_index}->{current_index}]"
     if widget.get_menu() is None:
-        w_title += ' !▲'
+        w_title += " !▲"
+
     w_title += TerminalColors.ENDC
 
     return w_title
 
 
-class TerminalColors(object):
+class TerminalColors:
     """
     Terminal colors.
 
@@ -735,7 +745,7 @@ class TerminalColors(object):
     UNDERLINE = '\033[4m'
 
 
-class ShadowGenerator(object):
+class ShadowGenerator:
     """
     A class to generate surfaces that work as a 'shadow' for rectangular UI elements. Base shadow
     surface are generated with an algorithm, then when one is requested at a specific size the

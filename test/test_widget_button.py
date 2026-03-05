@@ -311,21 +311,52 @@ class ButtonWidgetTest(BaseTest):
         Test button with an image.
         """
         menu = MenuUtils.generic_menu()
-        apply_test = [False]
 
-        def test() -> None:
-            print('clicked')
-            apply_test[0] = True
-
+        # Test existing BaseImage support
         image = pygame_menu.BaseImage(
             image_path=pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU
         ).scale(0.25, 0.25)
-        btn = menu.add.banner(image, test)
-        self.assertLessEqual(abs(btn.get_size()[0] - image.get_size()[0]), 1)
-        self.assertLessEqual(abs(btn.get_size()[1] - image.get_size()[1]), 1)
-        self.assertFalse(apply_test[0])
-        btn.apply()
-        self.assertTrue(apply_test[0])
+
+        btn = menu.add.banner(image)
+
+        # Size must match the BaseImage
+        self.assertEqual(btn.get_width(), image.get_width())
+        self.assertEqual(btn.get_height(), image.get_height())
+
+        # Banner text is always a single space
+        self.assertEqual(btn.get_title(), ' ')
+
+        # Padding override (default = 0)
+        self.assertEqual(btn._padding, (0, 0, 0, 0))
+
+        # Selection color override (transparent)
+        self.assertEqual(btn._selection_effect.color, (0, 0, 0, 0))
+
+        # Test pygame.Surface support
+        surf_size = (120, 60)
+        raw_surf = pygame.Surface(surf_size)
+        btn_from_surf = menu.add.banner(raw_surf)
+
+        # Size must match the raw surface
+        self.assertEqual(btn_from_surf.get_width(), surf_size[0])
+        self.assertEqual(btn_from_surf.get_height(), surf_size[1])
+
+        # Internally converted to BaseImage
+        self.assertIsInstance(btn_from_surf._background_color, pygame_menu.BaseImage)
+
+        # Padding override still applies
+        self.assertEqual(btn_from_surf._padding, (0, 0, 0, 0))
+
+        # Transparent selection color still applies
+        self.assertEqual(btn_from_surf._selection_effect.color, (0, 0, 0, 0))
+
+        # Verify Selection Fix (NoneSelection)
+        from pygame_menu.widgets import NoneSelection
+        self.assertIsInstance(btn_from_surf.get_selection_effect(), NoneSelection)
+
+        # Ensure theme selection effect did NOT leak through
+        theme_effect_type = type(menu.get_theme().widget_selection_effect)
+        self.assertNotEqual(type(btn_from_surf.get_selection_effect()), theme_effect_type)
 
     def test_multiline(self) -> None:
         """
@@ -350,3 +381,58 @@ class ButtonWidgetTest(BaseTest):
         # Taking button out from Frame must restore its container and reassemble wrap
         f1.unpack(button)
         self.assertEqual(button.get_overflow_lines(), ['important nice a test is required'])
+
+    def test_banner_respects_user_padding(self):
+        menu = MenuUtils.generic_menu()
+        surf = pygame.Surface((40, 40))
+        btn = menu.add.banner(surf, padding=(5, 10, 5, 10))
+        self.assertEqual(btn._padding, (5, 10, 5, 10))
+
+    def test_banner_respects_user_selection_effect(self):
+        menu = MenuUtils.generic_menu()
+        from pygame_menu.widgets import HighlightSelection
+        custom = HighlightSelection()
+        image = pygame.Surface((50, 50))
+        btn = menu.add.banner(image, selection_effect=custom)
+        # User override must win → same TYPE, not same INSTANCE
+        self.assertIsInstance(btn._selection_effect, HighlightSelection)
+
+    def test_banner_inside_frame(self):
+        menu = MenuUtils.generic_menu()
+        frame = menu.add.frame_h(200, 200)
+        surf = pygame.Surface((80, 30))
+        btn = menu.add.banner(surf)
+        frame.pack(btn)
+        # Width must not exceed frame width
+        self.assertLessEqual(btn.get_width(), frame.get_width())
+
+    def test_banner_height_not_affected_by_text(self):
+        menu = MenuUtils.generic_menu()
+        surf = pygame.Surface((100, 40))
+        btn = menu.add.banner(surf)
+        self.assertEqual(btn.get_height(), 40)
+
+    def test_banner_apply_via_event(self):
+        menu = MenuUtils.generic_menu()
+        applied = [False]
+
+        def cb():
+            applied[0] = True
+
+        surf = pygame.Surface((60, 60))
+        menu.add.banner(surf, cb)
+        events = PygameEventUtils.keydown(pygame_menu.controls.KEY_APPLY)
+        menu.update(events)
+        self.assertTrue(applied[0])
+
+    def test_banner_respects_user_cursor(self):
+        menu = MenuUtils.generic_menu()
+        surf = pygame.Surface((50, 50))
+        btn = menu.add.banner(surf, cursor=pygame.SYSTEM_CURSOR_CROSSHAIR)
+        self.assertEqual(btn._cursor, pygame.SYSTEM_CURSOR_CROSSHAIR)
+
+    def test_banner_float_behavior(self):
+        menu = MenuUtils.generic_menu()
+        surf = pygame.Surface((30, 30))
+        btn = menu.add.banner(surf, float=True)
+        self.assertTrue(btn.is_floating())

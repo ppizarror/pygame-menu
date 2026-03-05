@@ -160,7 +160,7 @@ class ThemeTest(BaseTest):
         t = pygame_menu.themes.THEME_DEFAULT
         img = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
 
-        class Test(object):
+        class Test:
             """
             Class to test.
             """

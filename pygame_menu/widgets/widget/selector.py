@@ -162,7 +162,7 @@ class Selector(Widget):
         assert style_fancy_box_inflate[0] >= 0 and style_fancy_box_inflate[1] >= 0, \
             'box inflate must be equal or greater than zero on both axis'
 
-        super(Selector, self).__init__(
+        super().__init__(
             onchange=onchange,
             onreturn=onreturn,
             onselect=onselect,

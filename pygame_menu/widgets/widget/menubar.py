@@ -117,7 +117,7 @@ class MenuBar(Widget):
         back_box_background_color = assert_color(back_box_background_color)
 
         # MenuBar has no ID
-        super(MenuBar, self).__init__(
+        super().__init__(
             args=args,
             kwargs=kwargs,
             onreturn=onreturn,
@@ -195,14 +195,12 @@ class MenuBar(Widget):
         c_dif_2 = abs(c_back[1] - self._font_color[1])
         c_dif_3 = abs(c_back[2] - self._font_color[2])
         if self._verbose and c_dif_1 < tol and c_dif_2 < tol and c_dif_3 < tol:
+            status = "equal" if c_dif_1 == c_dif_2 == c_dif_3 == 0 else "similar"
+            bg_type = "menu" if background_menu else "title"
+
             warn(
-                'title font color {0} is {3} to the {1} background color {2}, '
-                'consider editing your Theme'.format(
-                    self._font_color,
-                    'menu' if background_menu else 'title',
-                    c_back,
-                    'equal' if c_dif_1 == c_dif_2 == c_dif_3 == 0 else 'similar'
-                )
+                f"title font color {self._font_color} is {status} to the {bg_type} "
+                f"background color {c_back}, consider editing your Theme"
             )
 
     def get_title_offset(self) -> Tuple2IntType:
@@ -504,7 +502,7 @@ class MenuBar(Widget):
     def get_height(self, apply_padding: bool = True, apply_selection: bool = False) -> int:
         if self._floating or not self.is_visible():
             return 0
-        return super(MenuBar, self).get_height(apply_padding, apply_selection)
+        return super().get_height(apply_padding, apply_selection)
 
     def update(self, events: EventVectorType) -> bool:
         self.apply_update_callbacks(events)
