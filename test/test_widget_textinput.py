@@ -10,14 +10,20 @@ from __future__ import annotations
 
 __all__ = ['TextInputWidgetTest']
 
-from test._utils import (PYGAME_V2, TEST_THEME, BaseTest, MenuUtils,
-                         PygameEventUtils, sleep, surface)
-
 import pygame
 
 import pygame_menu
 import pygame_menu.controls as ctrl
 from pygame_menu.widgets.core.widget import WidgetTransformationNotImplemented
+from test._utils import (
+    PYGAME_V2,
+    TEST_THEME,
+    BaseTest,
+    MenuUtils,
+    PygameEventUtils,
+    sleep,
+    surface,
+)
 
 
 class TextInputWidgetTest(BaseTest):
@@ -795,7 +801,7 @@ class TextInputWidgetTest(BaseTest):
 
         test = ['']
 
-        def onwidgetchange(m: 'pygame_menu.Menu', w: 'pygame_menu.widgets.Widget') -> None:
+        def onwidgetchange(m: pygame_menu.Menu, w: pygame_menu.widgets.Widget) -> None:
             """
             Callback executed if widget changes.
             """

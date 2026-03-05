@@ -10,8 +10,6 @@ from __future__ import annotations
 
 __all__ = ['main']
 
-from typing import Union
-
 import pygame
 
 import pygame_menu
@@ -25,9 +23,9 @@ class CalculatorApp:
     op: str  # Operation
     prev: str  # Prev value
     curr: str  # Current value
-    menu: 'pygame_menu.Menu'
-    screen: 'pygame_menu.widgets.Label'
-    surface: 'pygame.Surface'
+    menu: pygame_menu.Menu
+    screen: pygame_menu.widgets.Label
+    surface: pygame.Surface
 
     # noinspection PyArgumentEqualDefault
     def __init__(self) -> None:
@@ -120,7 +118,7 @@ class CalculatorApp:
             w_deco.disable(on_layer)
             widget.set_attribute('on_layer', on_layer)
 
-            def widget_select(sel: bool, wid: 'pygame_menu.widgets.Widget', _):
+            def widget_select(sel: bool, wid: pygame_menu.widgets.Widget, _):
                 """
                 Function triggered if widget is selected
                 """
@@ -141,7 +139,7 @@ class CalculatorApp:
         self.menu.set_onupdate(self.process_events)
         self.menu.set_onwindowmouseleave(lambda m: self.screen.select(update_menu=True))
 
-    def process_events(self, events: list['pygame.event.Event'], _=None) -> None:
+    def process_events(self, events: list[pygame.event.Event], _=None) -> None:
         """
         Process events from user.
         """
@@ -181,7 +179,7 @@ class CalculatorApp:
                     self._press('=')
                     self._press('=')
 
-    def _operate(self) -> Union[int, float]:
+    def _operate(self) -> int | float:
         """
         Operate current and previous values.
 
@@ -203,7 +201,7 @@ class CalculatorApp:
                 self.screen.set_title('Error')
         return int(c)
 
-    def _press(self, digit: Union[int, str]) -> None:
+    def _press(self, digit: int | str) -> None:
         """
         Press calculator digit.
 
@@ -274,7 +272,7 @@ class CalculatorApp:
         self.menu.mainloop(self.surface, disable_loop=test)
 
 
-def main(test: bool = False) -> 'CalculatorApp':
+def main(test: bool = False) -> CalculatorApp:
     """
     Main function.
 

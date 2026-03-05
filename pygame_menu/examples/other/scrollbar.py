@@ -18,7 +18,7 @@ from pygame_menu.utils import make_surface
 from pygame_menu.widgets import ScrollBar
 
 
-def make_world(width: int, height: int) -> 'pygame.Surface':
+def make_world(width: int, height: int) -> pygame.Surface:
     """
     Create a test surface.
 

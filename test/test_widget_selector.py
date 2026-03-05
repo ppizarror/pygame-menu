@@ -10,10 +10,9 @@ from __future__ import annotations
 
 __all__ = ['SelectorWidgetTest']
 
-from test._utils import BaseTest, MenuUtils, PygameEventUtils, surface
-
 import pygame_menu
 import pygame_menu.controls as ctrl
+from test._utils import BaseTest, MenuUtils, PygameEventUtils, surface
 
 
 class SelectorWidgetTest(BaseTest):

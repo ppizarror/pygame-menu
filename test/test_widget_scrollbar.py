@@ -10,15 +10,16 @@ from __future__ import annotations
 
 __all__ = ['ScrollBarWidgetTest']
 
-from test._utils import (WINDOW_SIZE, BaseTest, MenuUtils, PygameEventUtils,
-                         surface)
-
 import pygame
 
-from pygame_menu.locals import (ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL,
-                                POSITION_SOUTHEAST)
+from pygame_menu.locals import (
+    ORIENTATION_HORIZONTAL,
+    ORIENTATION_VERTICAL,
+    POSITION_SOUTHEAST,
+)
 from pygame_menu.widgets import ScrollBar
 from pygame_menu.widgets.core.widget import WidgetTransformationNotImplemented
+from test._utils import WINDOW_SIZE, BaseTest, MenuUtils, PygameEventUtils, surface
 
 
 class ScrollBarWidgetTest(BaseTest):

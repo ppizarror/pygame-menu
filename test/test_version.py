@@ -10,9 +10,8 @@ from __future__ import annotations
 
 __all__ = ['VersionTest']
 
-from test._utils import BaseTest
-
 import pygame_menu
+from test._utils import BaseTest
 
 
 class VersionTest(BaseTest):

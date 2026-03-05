@@ -14,15 +14,20 @@ import base64
 import copy
 import io
 from pathlib import Path
-from test._utils import PYGAME_V2, BaseTest, surface
 
 import pygame
 
 import pygame_menu
-from pygame_menu.baseimage import (IMAGE_MODE_CENTER, IMAGE_MODE_FILL,
-                                   IMAGE_MODE_REPEAT_X, IMAGE_MODE_REPEAT_XY,
-                                   IMAGE_MODE_REPEAT_Y, IMAGE_MODE_SIMPLE)
+from pygame_menu.baseimage import (
+    IMAGE_MODE_CENTER,
+    IMAGE_MODE_FILL,
+    IMAGE_MODE_REPEAT_X,
+    IMAGE_MODE_REPEAT_XY,
+    IMAGE_MODE_REPEAT_Y,
+    IMAGE_MODE_SIMPLE,
+)
 from pygame_menu.utils import load_pygame_image_file
+from test._utils import PYGAME_V2, BaseTest, surface
 
 
 class BaseImageTest(BaseTest):

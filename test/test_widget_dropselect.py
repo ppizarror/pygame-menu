@@ -10,18 +10,25 @@ from __future__ import annotations
 
 __all__ = ['DropSelectWidgetTest']
 
-from test._utils import (PYGAME_V2, THEME_NON_FIXED_TITLE, BaseTest, MenuUtils,
-                         PygameEventUtils, surface)
-
 import pygame
 
 import pygame_menu
 import pygame_menu.controls as ctrl
 from pygame_menu.locals import FINGERDOWN, ORIENTATION_VERTICAL
-from pygame_menu.widgets import (DROPSELECT_MULTIPLE_SFORMAT_LIST_COMMA,
-                                 DROPSELECT_MULTIPLE_SFORMAT_LIST_HYPHEN,
-                                 DROPSELECT_MULTIPLE_SFORMAT_TOTAL)
+from pygame_menu.widgets import (
+    DROPSELECT_MULTIPLE_SFORMAT_LIST_COMMA,
+    DROPSELECT_MULTIPLE_SFORMAT_LIST_HYPHEN,
+    DROPSELECT_MULTIPLE_SFORMAT_TOTAL,
+)
 from pygame_menu.widgets.core.widget import WidgetTransformationNotImplemented
+from test._utils import (
+    PYGAME_V2,
+    THEME_NON_FIXED_TITLE,
+    BaseTest,
+    MenuUtils,
+    PygameEventUtils,
+    surface,
+)
 
 
 class DropSelectWidgetTest(BaseTest):
@@ -531,7 +538,7 @@ class DropSelectWidgetTest(BaseTest):
         self.assertEqual(drop3.get_focus_rect(), pygame.Rect(108, 468, 320, 28))
 
         # Test update list
-        def remove_selection_item(select: 'pygame_menu.widgets.DropSelect'):
+        def remove_selection_item(select: pygame_menu.widgets.DropSelect):
             """
             Update list event.
             """
@@ -955,9 +962,9 @@ class DropSelectWidgetTest(BaseTest):
         # Test draw surfaces
         menu.draw(surface)
         # noinspection PyTypeChecker
-        s0: 'pygame_menu.widgets.DropSelect' = menu.get_widget('s0')
+        s0: pygame_menu.widgets.DropSelect = menu.get_widget('s0')
         # noinspection PyTypeChecker
-        s1: 'pygame_menu.widgets.DropSelect' = menu.get_widget('s1')
+        s1: pygame_menu.widgets.DropSelect = menu.get_widget('s1')
         surf = menu._widgets_surface
         self.assertTrue(s0.is_selected())
         self.assertEqual(s0.last_surface, surf)

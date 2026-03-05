@@ -10,10 +10,15 @@ from __future__ import annotations
 
 __all__ = ['SimpleSelection']
 
-import pygame
 
-import pygame_menu
+from typing import TYPE_CHECKING
+
 from pygame_menu.widgets.core import Selection
+
+if TYPE_CHECKING:
+    import pygame
+
+    import pygame_menu
 
 
 class SimpleSelection(Selection):
@@ -28,5 +33,5 @@ class SimpleSelection(Selection):
         )
 
     # noinspection PyMissingOrEmptyDocstring
-    def draw(self, surface: 'pygame.Surface', widget: 'pygame_menu.widgets.Widget') -> 'SimpleSelection':
+    def draw(self, surface: pygame.Surface, widget: pygame_menu.widgets.Widget) -> SimpleSelection:
         return self

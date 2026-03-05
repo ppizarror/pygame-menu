@@ -10,13 +10,12 @@ from __future__ import annotations
 
 __all__ = ['RangeSliderWidgetTest']
 
-from test._utils import BaseTest, MenuUtils, PygameEventUtils, sleep, surface
-
 import pygame
 
 import pygame_menu
 import pygame_menu.controls as ctrl
 from pygame_menu.widgets.core.widget import WidgetTransformationNotImplemented
+from test._utils import BaseTest, MenuUtils, PygameEventUtils, sleep, surface
 
 
 class RangeSliderWidgetTest(BaseTest):

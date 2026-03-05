@@ -27,10 +27,6 @@ run_gource.bat
 # Tox
 tox.ini
 
-# Pyproject
-pyproject_update.py
-pyproject.toml
-
 # Lock file
 *.lock
 

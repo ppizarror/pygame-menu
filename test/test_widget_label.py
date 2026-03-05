@@ -10,10 +10,9 @@ from __future__ import annotations
 
 __all__ = ['LabelWidgetTest']
 
-from test._utils import PYGAME_V2, BaseTest, MenuUtils, surface
-
 from pygame_menu.locals import ALIGN_LEFT
 from pygame_menu.widgets import Label
+from test._utils import PYGAME_V2, BaseTest, MenuUtils, surface
 
 
 class LabelWidgetTest(BaseTest):

@@ -10,10 +10,9 @@ from __future__ import annotations
 
 __all__ = ['ProgressBarWidgetTest']
 
-from test._utils import PYGAME_V2, BaseTest, MenuUtils, surface
-
 import pygame_menu
 from pygame_menu.widgets.core.widget import WidgetTransformationNotImplemented
+from test._utils import PYGAME_V2, BaseTest, MenuUtils, surface
 
 
 class ProgressBarWidgetTest(BaseTest):

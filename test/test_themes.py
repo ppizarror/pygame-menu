@@ -11,9 +11,9 @@ from __future__ import annotations
 __all__ = ['ThemeTest']
 
 from pathlib import Path
-from test._utils import BaseTest, MenuUtils
 
 import pygame_menu
+from test._utils import BaseTest, MenuUtils
 
 
 class ThemeTest(BaseTest):

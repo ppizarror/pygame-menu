@@ -11,24 +11,39 @@ from __future__ import annotations
 __all__ = ['ScrollAreaTest']
 
 import copy
-from test._utils import (PYGAME_V2, TEST_THEME, BaseTest, MenuUtils,
-                         PygameEventUtils, surface)
 
 import pygame
 
 import pygame_menu
+
 # noinspection PyProtectedMember
 from pygame_menu._scrollarea import get_scrollbars_from_position
-from pygame_menu.locals import (INPUT_TEXT, ORIENTATION_HORIZONTAL,
-                                ORIENTATION_VERTICAL, POSITION_CENTER,
-                                POSITION_EAST, POSITION_NORTH,
-                                POSITION_NORTHEAST, POSITION_NORTHWEST,
-                                POSITION_SOUTH, POSITION_SOUTHEAST,
-                                POSITION_SOUTHWEST, POSITION_WEST,
-                                SCROLLAREA_POSITION_BOTH_HORIZONTAL,
-                                SCROLLAREA_POSITION_BOTH_VERTICAL,
-                                SCROLLAREA_POSITION_FULL,
-                                SCROLLAREA_POSITION_NONE)
+from pygame_menu.locals import (
+    INPUT_TEXT,
+    ORIENTATION_HORIZONTAL,
+    ORIENTATION_VERTICAL,
+    POSITION_CENTER,
+    POSITION_EAST,
+    POSITION_NORTH,
+    POSITION_NORTHEAST,
+    POSITION_NORTHWEST,
+    POSITION_SOUTH,
+    POSITION_SOUTHEAST,
+    POSITION_SOUTHWEST,
+    POSITION_WEST,
+    SCROLLAREA_POSITION_BOTH_HORIZONTAL,
+    SCROLLAREA_POSITION_BOTH_VERTICAL,
+    SCROLLAREA_POSITION_FULL,
+    SCROLLAREA_POSITION_NONE,
+)
+from test._utils import (
+    PYGAME_V2,
+    TEST_THEME,
+    BaseTest,
+    MenuUtils,
+    PygameEventUtils,
+    surface,
+)
 
 
 class ScrollAreaTest(BaseTest):
@@ -276,7 +291,7 @@ class ScrollAreaTest(BaseTest):
             buttons.append(menu.add.button(btn_title, button_id=btn_title))
         sa = menu.get_scrollarea()
 
-        def test_relative(widget: 'pygame_menu.widgets.Widget', x: float, y: float) -> None:
+        def test_relative(widget: pygame_menu.widgets.Widget, x: float, y: float) -> None:
             """
             Test relative position from widget to scroll view rect.
 
