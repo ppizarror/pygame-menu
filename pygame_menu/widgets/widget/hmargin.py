@@ -14,13 +14,16 @@ __all__ = [
 ]
 
 from abc import ABC
+from typing import TYPE_CHECKING
 
-import pygame
-
-import pygame_menu
 from pygame_menu._types import NumberInstance, NumberType
 from pygame_menu.widgets.core.widget import AbstractWidgetManager
 from pygame_menu.widgets.widget.none import NoneWidget
+
+if TYPE_CHECKING:
+    import pygame
+
+    import pygame_menu
 
 
 class HMargin(NoneWidget):
@@ -47,7 +50,7 @@ class HMargin(NoneWidget):
         self._rect.width = int(margin)
         self._rect.height = 0
 
-    def get_rect(self, *args, **kwargs) -> 'pygame.Rect':
+    def get_rect(self, *args, **kwargs) -> pygame.Rect:
         return self._rect.copy()
 
 
@@ -60,7 +63,7 @@ class HMarginManager(AbstractWidgetManager, ABC):
         self,
         margin: NumberType,
         margin_id: str = ''
-    ) -> 'pygame_menu.widgets.HMargin':
+    ) -> pygame_menu.widgets.HMargin:
         """
         Adds a horizontal margin to the Menu. Only useful in frames.
 

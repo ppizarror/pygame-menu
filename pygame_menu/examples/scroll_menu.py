@@ -35,7 +35,7 @@ def on_button_click(value: str, text: Any = None) -> None:
         print(f'Hello from {text} with {value}')
 
 
-def paint_background(surface: 'pygame.Surface') -> None:
+def paint_background(surface: pygame.Surface) -> None:
     """
     Paints a given surface with background color.
 
@@ -44,7 +44,7 @@ def paint_background(surface: 'pygame.Surface') -> None:
     surface.fill((128, 230, 198))
 
 
-def make_long_menu() -> 'pygame_menu.Menu':
+def make_long_menu() -> pygame_menu.Menu:
     """
     Create a long scrolling menu.
 

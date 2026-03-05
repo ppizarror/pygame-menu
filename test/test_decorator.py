@@ -12,11 +12,11 @@ __all__ = ['DecoratorTest']
 
 import copy
 import timeit
-from test._utils import TEST_THEME, BaseTest, MenuUtils, surface
 
 import pygame
 
 import pygame_menu
+from test._utils import TEST_THEME, BaseTest, MenuUtils, surface
 
 # Configure the tests
 TEST_TIME_DRAW = False
@@ -163,7 +163,7 @@ class DecoratorTest(BaseTest):
         # Callable
         test = [False]
 
-        def fun(surf, obj: 'pygame_menu.widgets.Button') -> None:
+        def fun(surf, obj: pygame_menu.widgets.Button) -> None:
             """
             Test callable decoration.
             """
@@ -286,7 +286,7 @@ class DecoratorTest(BaseTest):
         # Callable
         test = [False]
 
-        def fun(surf, obj: 'pygame_menu.widgets.Button') -> None:
+        def fun(surf, obj: pygame_menu.widgets.Button) -> None:
             """
             Test callable decoration.
             """

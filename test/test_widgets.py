@@ -11,18 +11,32 @@ from __future__ import annotations
 __all__ = ['WidgetsTest']
 
 import copy
-from test._utils import (PYGAME_V2, TEST_THEME, BaseTest, MenuUtils,
-                         PygameEventUtils, surface, test_reset_surface)
 
 import pygame
 
 import pygame_menu
-from pygame_menu.locals import (POSITION_CENTER, POSITION_EAST, POSITION_NORTH,
-                                POSITION_NORTHEAST, POSITION_NORTHWEST,
-                                POSITION_SOUTH, POSITION_SOUTHEAST,
-                                POSITION_SOUTHWEST, POSITION_WEST)
+from pygame_menu.locals import (
+    POSITION_CENTER,
+    POSITION_EAST,
+    POSITION_NORTH,
+    POSITION_NORTHEAST,
+    POSITION_NORTHWEST,
+    POSITION_SOUTH,
+    POSITION_SOUTHEAST,
+    POSITION_SOUTHWEST,
+    POSITION_WEST,
+)
 from pygame_menu.widgets import Button, Label
 from pygame_menu.widgets.core.widget import AbstractWidgetManager, Widget
+from test._utils import (
+    PYGAME_V2,
+    TEST_THEME,
+    BaseTest,
+    MenuUtils,
+    PygameEventUtils,
+    surface,
+    test_reset_surface,
+)
 
 
 class WidgetsTest(BaseTest):

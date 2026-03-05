@@ -36,17 +36,25 @@ import random
 import sys
 import unittest
 from time import sleep
-from typing import Any, Optional, Union
+from typing import Any, Union
 
 import pygame
 
 import pygame_menu
+
 # noinspection PyProtectedMember
-from pygame_menu._types import (EventType, MenuColumnMaxWidthType,
-                                MenuColumnMinWidthType, MenuRowsType,
-                                NumberInstance, NumberType, Tuple2IntType,
-                                Tuple2NumberType, VectorInstance,
-                                VectorIntType)
+from pygame_menu._types import (
+    EventType,
+    MenuColumnMaxWidthType,
+    MenuColumnMinWidthType,
+    MenuRowsType,
+    NumberInstance,
+    NumberType,
+    Tuple2IntType,
+    Tuple2NumberType,
+    VectorInstance,
+    VectorIntType,
+)
 from pygame_menu.font import FONT_EXAMPLES
 from pygame_menu.locals import FINGERDOWN, FINGERMOTION, FINGERUP
 from pygame_menu.utils import PYGAME_V2, assert_vector
@@ -226,7 +234,7 @@ class PygameEventUtils:
 
     @staticmethod
     def test_widget_key_press(
-        widget: 'pygame_menu.widgets.Widget',
+        widget: pygame_menu.widgets.Widget,
         testmode: bool = True
     ) -> None:
         """
@@ -302,7 +310,7 @@ class PygameEventUtils:
 
     @staticmethod
     def keydown(
-        key: Union[int, VectorIntType],
+        key: int | VectorIntType,
         testmode: bool = True,
         inlist: bool = True
     ) -> EventListType:
@@ -445,7 +453,7 @@ class PygameEventUtils:
         evtype: int = FINGERUP,
         rel: Tuple2IntType = (0, 0),
         normalize: bool = True,
-        menu: Union['pygame_menu.Menu', None] = None,
+        menu: pygame_menu.Menu | None = None,
         testmode: bool = True
     ) -> EventListType:
         """
@@ -483,7 +491,7 @@ class PygameEventUtils:
 
     @staticmethod
     def topleft_rect_mouse_motion(
-        rect: Union['pygame_menu.widgets.Widget', 'pygame.Rect', Tuple2NumberType],
+        rect: pygame_menu.widgets.Widget | pygame.Rect | Tuple2NumberType,
         inlist: bool = True,
         delta: Tuple2IntType = (0, 0),
         testmode: bool = True,
@@ -518,7 +526,7 @@ class PygameEventUtils:
 
     @staticmethod
     def mouse_motion(
-        rect: Union['pygame_menu.widgets.Widget', 'pygame.Rect', Tuple2NumberType],
+        rect: pygame_menu.widgets.Widget | pygame.Rect | Tuple2NumberType,
         inlist: bool = True,
         rel: Tuple2IntType = (0, 0),
         delta: Tuple2IntType = (0, 0),
@@ -548,8 +556,8 @@ class PygameEventUtils:
 
     @staticmethod
     def middle_rect_click(
-        rect: Union['pygame_menu.widgets.Widget', 'pygame.Rect', Tuple2NumberType],
-        menu: Optional['pygame_menu.Menu'] = None,
+        rect: pygame_menu.widgets.Widget | pygame.Rect | Tuple2NumberType,
+        menu: pygame_menu.Menu | None = None,
         evtype: int = pygame.MOUSEBUTTONUP,
         inlist: bool = True,
         rel: Tuple2IntType = (0, 0),
@@ -617,7 +625,7 @@ class MenuUtils:
     """
 
     @staticmethod
-    def get_font(name: str, size: int) -> 'pygame.font.Font':
+    def get_font(name: str, size: int) -> pygame.font.Font:
         """
         Returns a font.
 
@@ -638,7 +646,7 @@ class MenuUtils:
         return FONT_EXAMPLES[opt]
 
     @staticmethod
-    def load_font(font: str, size: int) -> 'pygame.font.Font':
+    def load_font(font: str, size: int) -> pygame.font.Font:
         """
         Load font from file.
 
@@ -675,12 +683,12 @@ class MenuUtils:
         position_x: NumberType = 50,
         position_y: NumberType = 50,
         rows: MenuRowsType = None,
-        theme: 'pygame_menu.themes.Theme' = pygame_menu.themes.THEME_DEFAULT,
+        theme: pygame_menu.themes.Theme = pygame_menu.themes.THEME_DEFAULT,
         title: str = '',
         width: NumberType = 600,
         *args,
         **kwargs
-    ) -> 'pygame_menu.Menu':
+    ) -> pygame_menu.Menu:
         """
         Generate a generic test menu.
 

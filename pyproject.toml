@@ -1,0 +1,18 @@
+[tool.ruff]
+target-version = "py39"
+line-length = 88
+exclude = [".git", ".venv", "build", "dist", "__pycache__"]
+
+[tool.ruff.lint]
+select = [
+    "UP",   # pyupgrade
+    "TCH",  # type-checking imports
+    "I",    # import sorting
+]
+ignore = []
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+force-single-line = false
+section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]
+known-first-party = ["pygame_menu"]

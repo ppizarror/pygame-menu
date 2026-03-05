@@ -10,11 +10,10 @@ from __future__ import annotations
 
 __all__ = ['ImageWidgetTest']
 
-from test._utils import BaseTest, MenuUtils, PygameEventUtils, surface
-
 import pygame
 
 import pygame_menu
+from test._utils import BaseTest, MenuUtils, PygameEventUtils, surface
 
 
 class ImageWidgetTest(BaseTest):

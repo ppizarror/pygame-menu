@@ -11,9 +11,10 @@ from __future__ import annotations
 __all__ = ['ControlsTest']
 
 import os
-from test._utils import BaseTest, MenuUtils, PygameEventUtils
 
 import pygame
+
+from test._utils import BaseTest, MenuUtils, PygameEventUtils
 
 
 # Fix pyautogui tests

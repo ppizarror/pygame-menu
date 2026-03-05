@@ -37,13 +37,15 @@ __all__ = [
 
 ]
 
-from typing import Union
+from typing import TYPE_CHECKING, Union
 
 # Imports
 import pygame.locals as _locals
-from pygame.event import Event as EventType
 
-from pygame_menu._types import Tuple2IntType
+if TYPE_CHECKING:
+    from pygame.event import Event as EventType
+
+    from pygame_menu._types import Tuple2IntType
 
 WidgetType = Union['pygame_menu.Menu', 'pygame_menu.widgets.Widget']  # type: ignore
 

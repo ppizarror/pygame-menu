@@ -10,11 +10,10 @@ from __future__ import annotations
 
 __all__ = ['TableWidgetTest']
 
-from test._utils import PYGAME_V2, BaseTest, MenuUtils, surface
-
 import pygame
 
 import pygame_menu
+from test._utils import PYGAME_V2, BaseTest, MenuUtils, surface
 
 
 class TableWidgetTest(BaseTest):

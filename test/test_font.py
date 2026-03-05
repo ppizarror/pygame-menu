@@ -11,11 +11,11 @@ from __future__ import annotations
 __all__ = ['FontTest']
 
 from pathlib import Path
-from test._utils import BaseTest, MenuUtils
 
 import pygame
 
 import pygame_menu
+from test._utils import BaseTest, MenuUtils
 
 
 class FontTest(BaseTest):

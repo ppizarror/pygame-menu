@@ -43,6 +43,7 @@ def _append_to_datas(file_path: str, target_folder: str, base_target_folder: Pat
 
 
 from pygame_menu.baseimage import IMAGE_EXAMPLES
+
 # Append data
 from pygame_menu.font import FONT_EXAMPLES
 from pygame_menu.sound import SOUND_EXAMPLES

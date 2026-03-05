@@ -11,15 +11,18 @@ from __future__ import annotations
 __all__ = ['SelectionTest']
 
 import copy
-from test._utils import BaseTest, MenuUtils, surface
 
 from pygame_menu.widgets import Button
 from pygame_menu.widgets.core.selection import Selection
-from pygame_menu.widgets.selection import (HighlightSelection,
-                                           LeftArrowSelection, NoneSelection,
-                                           RightArrowSelection,
-                                           SimpleSelection)
+from pygame_menu.widgets.selection import (
+    HighlightSelection,
+    LeftArrowSelection,
+    NoneSelection,
+    RightArrowSelection,
+    SimpleSelection,
+)
 from pygame_menu.widgets.selection.arrow_selection import ArrowSelection
+from test._utils import BaseTest, MenuUtils, surface
 
 
 class SelectionTest(BaseTest):
@@ -89,7 +92,7 @@ class SelectionTest(BaseTest):
         self.menu.draw(surface)
 
         # noinspection PyTypeChecker
-        sel: 'HighlightSelection' = w.get_selection_effect()
+        sel: HighlightSelection = w.get_selection_effect()
         self.assertEqual(sel.get_height(), margin_y)
         self.assertEqual(sel.get_width(), margin_x)
 

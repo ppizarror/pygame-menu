@@ -10,11 +10,10 @@ from __future__ import annotations
 
 __all__ = ['UtilsTest']
 
-from test._utils import BaseTest
-
 import pygame_menu
 import pygame_menu.utils as ut
 from pygame_menu.locals import POSITION_NORTHWEST
+from test._utils import BaseTest
 
 
 class UtilsTest(BaseTest):

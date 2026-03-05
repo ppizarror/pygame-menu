@@ -11,12 +11,12 @@ from __future__ import annotations
 __all__ = ['NoneWidgetTest']
 
 import math
-from test._utils import BaseTest, MenuUtils, PygameEventUtils, surface
 
 import pygame_menu
 import pygame_menu.controls as ctrl
 from pygame_menu.widgets import NoneSelection, NoneWidget
 from pygame_menu.widgets.core.widget import WidgetTransformationNotImplemented
+from test._utils import BaseTest, MenuUtils, PygameEventUtils, surface
 
 
 class NoneWidgetTest(BaseTest):
@@ -364,7 +364,7 @@ class NoneWidgetTest(BaseTest):
 
         # noinspection PyMissingTypeHints,PyMissingOrEmptyDocstring
         def open_link(*args) -> None:
-            link: 'pygame_menu.widgets.MenuLink' = args[-1]
+            link: pygame_menu.widgets.MenuLink = args[-1]
             self.assertIsInstance(link, pygame_menu.widgets.MenuLink)
             link.open()
 

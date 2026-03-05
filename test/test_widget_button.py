@@ -10,15 +10,13 @@ from __future__ import annotations
 
 __all__ = ['ButtonWidgetTest']
 
-from test._utils import (PYGAME_V2, BaseTest, MenuUtils, PygameEventUtils,
-                         surface)
-
 import pygame
 
 import pygame_menu
 from pygame_menu.themes import THEME_DEFAULT
 from pygame_menu.widgets import Button
 from pygame_menu.widgets.core.widget import WIDGET_SHADOW_TYPE_ELLIPSE
+from test._utils import PYGAME_V2, BaseTest, MenuUtils, PygameEventUtils, surface
 
 
 class ButtonWidgetTest(BaseTest):
