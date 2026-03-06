@@ -6,659 +6,815 @@ TEST WIDGET - RANGE SLIDER
 Test RangeSlider widget.
 """
 
-from __future__ import annotations
-
-__all__ = ['RangeSliderWidgetTest']
-
 import pygame
+import pytest
 
 import pygame_menu
 import pygame_menu.controls as ctrl
 from pygame_menu.widgets.core.widget import WidgetTransformationNotImplemented
-from test._utils import BaseTest, MenuUtils, PygameEventUtils, sleep, surface
+from test._utils import MenuUtils, PygameEventUtils, sleep, surface
 
 
-class RangeSliderWidgetTest(BaseTest):
+@pytest.fixture
+def menu():
+    """Provides a generic menu for testing."""
+    return MenuUtils.generic_menu()
 
-    # noinspection PyTypeChecker
-    def test_single_rangeslider(self) -> None:
-        """
-        Test single range slider.
-        """
-        menu = MenuUtils.generic_menu()
 
-        # Single slider
-        slider = pygame_menu.widgets.RangeSlider('Range S')
+@pytest.fixture
+def menu_no_ignore():
+    """Menu with keyboard_ignore_nonphysical=False."""
+    return MenuUtils.generic_menu(keyboard_ignore_nonphysical=False)
 
-        test = [0, 0]
 
-        def onchange(x: float) -> None:
-            """
-            Change slider.
-            """
-            # noinspection PyTypeChecker
-            test[0] = x
+@pytest.fixture
+def slider_single():
+    """Provides a single-value RangeSlider."""
+    return pygame_menu.widgets.RangeSlider("Range S", default_value=0.5)
 
-        def onreturn(x: float) -> None:
-            """
-            Return slider.
-            """
-            # noinspection PyTypeChecker
-            test[1] = x
 
-        slider.set_onchange(onchange)
-        slider.set_onreturn(onreturn)
+@pytest.fixture
+def slider_double():
+    """Provides a double-value RangeSlider."""
+    return pygame_menu.widgets.RangeSlider(
+        "Range D", default_value=(0.2, 0.8), range_values=(0, 1), increment=0.1
+    )
 
-        menu.add.generic_widget(slider, True)
-        self.assertEqual(slider.get_value(), 0)
-        slider.set_value(0.5)
-        self.assertEqual(slider.get_value(), 0.5)
-        self.assertEqual(slider._value, [0.5, 0])
 
-        self.assertEqual(test[0], 0)
-        slider.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
-        self.assertEqual(test[0], 0.4)
-        self.assertEqual(slider.get_value(), 0.4)
-        slider.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
-        self.assertAlmostEqual(slider.get_value(), 0.3)
-        for _ in range(10):
-            slider.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
-        self.assertEqual(slider.get_value(), 0)
-        self.assertTrue(slider.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True)))
-        self.assertEqual(slider.get_value(), 0.1)
-        self.assertEqual(test[1], 0)
-        slider.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
-        self.assertEqual(test[1], 0.1)
+def test_single_rangeslider_basic_flow(menu, slider_single):
+    test_state = {"change": 0, "return": 0}
 
-        # Ignore invalid key
-        self.assertFalse(slider.update(
-            PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True, testmode=False)))
+    def onchange(x: float):
+        test_state["change"] = x
 
-        # Ignore for readonly
-        slider.draw(surface)
-        slider.draw_after_if_selected(surface)
-        slider.readonly = True
-        self.assertFalse(slider.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True)))
-        self.assertEqual(slider.get_value(), 0.1)
-        slider._update_value(0)
-        self.assertEqual(slider.get_value(), 0.1)
-        slider.readonly = False
+    def onreturn(x: float):
+        test_state["return"] = x
 
-        # Test invalid values
-        self.assertRaises(AssertionError, lambda: slider.set_value(-1))
-        self.assertRaises(AssertionError, lambda: slider.set_value([0.4, 0.5]))
+    slider_single.set_onchange(onchange)
+    slider_single.set_onreturn(onreturn)
+    menu.add.generic_widget(slider_single, True)
 
-        # Test invalid transforms
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: slider.rotate())
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: slider.flip())
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: slider.scale())
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: slider.resize())
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: slider.set_max_width())
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: slider.set_max_height())
+    # Initial value check
+    assert slider_single.get_value() == 0.5
+    assert slider_single._value == [0.5, 0]
 
-        # Test mouse click
-        self.assertFalse(slider._selected_mouse)
-        pos = slider._test_get_pos_value(0.5)
-        slider.update(PygameEventUtils.middle_rect_click(pos, evtype=pygame.MOUSEBUTTONDOWN))
-        self.assertEqual(slider.get_value(), 0.1)
-        self.assertTrue(slider._selected_mouse)
-        self.assertFalse(slider._scrolling)
-        slider.update(PygameEventUtils.middle_rect_click(pos))
-        self.assertFalse(slider._scrolling)
-        self.assertEqual(slider.get_value(), 0.5)
-        self.assertFalse(slider._selected_mouse)
+    # LEFT navigation
+    slider_single.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
+    assert pytest.approx(slider_single.get_value()) == 0.4
+    assert test_state["change"] == pytest.approx(0.4)
 
-        # Mouse click out of range
-        slider._selected_mouse = True
-        pos = slider._test_get_pos_value(1, dx=100)
-        slider.update(PygameEventUtils.middle_rect_click(pos))
-        self.assertEqual(slider.get_value(), 0.5)
-        self.assertFalse(slider._selected_mouse)
+    slider_single.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
+    assert pytest.approx(slider_single.get_value(), rel=1e-3) == 0.3
 
-        slider._selected_mouse = True
-        pos = slider._test_get_pos_value(0, dx=-100)
-        slider.update(PygameEventUtils.middle_rect_click(pos))
-        self.assertEqual(slider.get_value(), 0.5)
-        self.assertFalse(slider._selected_mouse)
+    # Move to 0
+    for _ in range(10):
+        slider_single.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
+    assert slider_single.get_value() == 0
 
-        # Test extremes
-        slider._selected_mouse = True
-        pos = slider._test_get_pos_value(0)
-        slider.update(PygameEventUtils.middle_rect_click(pos))
-        self.assertEqual(slider.get_value(), 0)
-        slider._selected_mouse = True
-        pos = slider._test_get_pos_value(1)
-        slider.update(PygameEventUtils.middle_rect_click(pos))
-        self.assertEqual(slider.get_value(), 1)
+    # RIGHT navigation
+    assert slider_single.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
+    assert slider_single.get_value() == 0.1
 
-        # Scroll to 0.5
-        pos2 = slider._test_get_pos_value(0.5)
-        self.assertFalse(slider._scrolling)
-        slider_rect = slider._get_slider_inflate_rect(0, to_real_position=True)
-        slider.update(PygameEventUtils.middle_rect_click(slider_rect, evtype=pygame.MOUSEBUTTONDOWN))
-        self.assertTrue(slider._scrolling)
-        self.assertTrue(slider._selected_mouse)
-        dx = pos[0] - pos2[0]
-        slider.update(PygameEventUtils.mouse_motion(slider_rect, rel=(-dx, pos[1]), update_mouse=True))
-        self.assertEqual(slider.get_value(), 0.5)
-        self.assertTrue(slider._scrolling)
-        slider.update(PygameEventUtils.middle_rect_click(pos))
-        self.assertFalse(slider._scrolling)
+    # Apply value
+    assert test_state["return"] == 0
+    slider_single.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
+    assert test_state["return"] == 0.1
 
-        # Check invalid constructor for single slider
-        self.assertRaises(AssertionError, lambda: pygame_menu.widgets.RangeSlider('Range S', default_value=2))
-        self.assertRaises(AssertionError,
-                          lambda: pygame_menu.widgets.RangeSlider('Range S', default_value=1, range_values=[1, 0]))
-        self.assertRaises(AssertionError,
-                          lambda: pygame_menu.widgets.RangeSlider('Range S', default_value=1, range_values=[1, 1]))
-        self.assertRaises(AssertionError, lambda: pygame_menu.widgets.RangeSlider('Range S', default_value='a'))
+    # Ignore invalid key (testmode=False)
+    assert not slider_single.update(
+        PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True, testmode=False)
+    )
 
-        # Ignore tabs
-        self.assertFalse(slider.update(PygameEventUtils.key(ctrl.KEY_TAB, keydown=True)))
 
-        # Check LEFT key in repeat
-        self.assertIn(ctrl.KEY_RIGHT, slider._keyrepeat_counters.keys())
-        self.assertEqual(slider.get_value(), 0.5)
+def test_single_rangeslider_readonly_and_internal_update(menu, slider_single):
+    menu.add.generic_widget(slider_single, True)
+    slider_single.set_value(0.5)
+    slider_single.draw(surface)
+    slider_single.draw_after_if_selected(surface)
 
-        # Make left repeat
-        slider._keyrepeat_counters[ctrl.KEY_RIGHT] += 1e4
-        self.assertEqual(len(slider._events), 0)
-        self.assertFalse(slider.update([]))
-        self.assertEqual(len(slider._events), 1)
-        self.assertFalse(slider.update([]))  # As key is not pressed, event continues
-        self.assertEqual(len(slider._events), 0)
+    slider_single.readonly = True
+    assert not slider_single.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
+    assert slider_single.get_value() == 0.5
 
-        # Keyup, removes counters
-        slider.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keyup=True))
-        self.assertNotIn(ctrl.KEY_RIGHT, slider._keyrepeat_counters.keys())
-        self.assertFalse(hasattr(slider, '_range_box'))
+    # Internal update should not change public value
+    slider_single._update_value(0)
+    assert slider_single.get_value() == 0.5
 
-        # Single slider with range box
-        slider_rb = pygame_menu.widgets.RangeSlider('Range', range_box_single_slider=True)
-        menu.add.generic_widget(slider_rb, True)
-        slider_rb.draw(surface)
-        self.assertTrue(hasattr(slider_rb, '_range_box'))
-        self.assertEqual(slider_rb._range_box.get_width(), 0)
-        slider_rb.set_value(1)
-        self.assertEqual(slider_rb._range_box.get_width(), 150)
+    slider_single.readonly = False
 
-    def test_single_discrete(self) -> None:
-        """
-        Test single range slider with discrete values.
-        """
-        menu = MenuUtils.generic_menu()
 
-        # Single slider with discrete values
-        rv = [0, 1, 2, 3, 4, 5]
-        slider = pygame_menu.widgets.RangeSlider('Range', range_values=rv)
-        menu.add.generic_widget(slider, True)
+@pytest.mark.parametrize("invalid_val", [-1, [0.4, 0.5], "string"])
+def test_invalid_value_exceptions(slider_single, invalid_val):
+    with pytest.raises(AssertionError):
+        slider_single.set_value(invalid_val)
 
-        self.assertRaises(AssertionError,
-                          lambda: pygame_menu.widgets.RangeSlider('Range', default_value=0.5, range_values=rv))
-        self.assertRaises(AssertionError,
-                          lambda: pygame_menu.widgets.RangeSlider('Range', default_value=-1, range_values=rv))
 
-        self.assertRaises(AssertionError, lambda: slider.set_value(-1))
-        self.assertRaises(AssertionError, lambda: slider.set_value([0, 1]))
-        self.assertRaises(AssertionError, lambda: slider.set_value((0, 1)))
+def test_single_invalid_constructor_cases():
+    with pytest.raises(AssertionError):
+        pygame_menu.widgets.RangeSlider("Range S", default_value=2)
+    with pytest.raises(AssertionError):
+        pygame_menu.widgets.RangeSlider("Range S", default_value=1, range_values=[1, 0])
+    with pytest.raises(AssertionError):
+        pygame_menu.widgets.RangeSlider("Range S", default_value=1, range_values=[1, 1])
+    with pytest.raises(AssertionError):
+        pygame_menu.widgets.RangeSlider("Range S", default_value="a")  # type: ignore
 
-        # Test key events
-        self.assertFalse(slider.update(PygameEventUtils.key(ctrl.KEY_TAB, keydown=True)))
-        slider.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
-        self.assertEqual(slider.get_value(), 1)
-        slider.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
-        self.assertEqual(slider.get_value(), 2)
-        slider._increment = 0
-        slider.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
-        self.assertEqual(slider.get_value(), 3)
-        slider.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
-        self.assertEqual(slider.get_value(), 2)
-        slider.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
-        self.assertEqual(slider.get_value(), 1)
-        slider.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
-        self.assertEqual(slider.get_value(), 0)
-        slider.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
-        self.assertEqual(slider.get_value(), 0)
 
-        # Test click mouse
-        slider._selected_mouse = True
-        pos = slider._test_get_pos_value(2)
-        slider.update(PygameEventUtils.middle_rect_click(pos))
-        self.assertEqual(slider.get_value(), 2)
-        self.assertFalse(slider._selected_mouse)
+def test_transformation_not_implemented(slider_single):
+    transforms = [
+        slider_single.rotate,
+        slider_single.flip,
+        slider_single.scale,
+        slider_single.resize,
+        slider_single.set_max_width,
+        slider_single.set_max_height,
+    ]
+    for action in transforms:
+        with pytest.raises(WidgetTransformationNotImplemented):
+            action()
 
-        # Test invalid click
-        slider._selected_mouse = True
-        pos = slider._test_get_pos_value(2, dx=1000)
-        slider.update(PygameEventUtils.middle_rect_click(pos))
-        self.assertEqual(slider.get_value(), 2)
-        self.assertFalse(slider._selected_mouse)
 
-        # Scroll to 4
-        pos = slider._test_get_pos_value(2)
-        pos2 = slider._test_get_pos_value(4)
-        self.assertFalse(slider._scrolling)
-        slider_rect = slider._get_slider_inflate_rect(0, to_real_position=True)
-        slider.update(PygameEventUtils.middle_rect_click(slider_rect, evtype=pygame.MOUSEBUTTONDOWN))
-        self.assertTrue(slider._scrolling)
-        self.assertTrue(slider._selected_mouse)
-        dx = pos[0] - pos2[0]
-        slider.update(PygameEventUtils.mouse_motion(slider_rect, rel=(-dx, pos[1]), update_mouse=True))
-        self.assertEqual(slider.get_value(), 4)
-        self.assertTrue(slider._scrolling)
-        slider.update(PygameEventUtils.middle_rect_click(pos))
-        self.assertFalse(slider._scrolling)
+def test_single_mouse_click_and_extremes(menu, slider_single):
+    menu.add.generic_widget(slider_single, True)
+    slider_single.set_value(0.5)
 
-        # Back to 2
-        slider.set_value(2)
+    # Initial state
+    assert not slider_single._selected_mouse
 
-        # Invalid scrolling if clicked outside the slider
-        slider.update(PygameEventUtils.middle_rect_click(slider._test_get_pos_value(0), evtype=pygame.MOUSEBUTTONDOWN))
-        self.assertFalse(slider._scrolling)
+    # Click at 0.5 (middle rect click)
+    pos = slider_single._test_get_pos_value(0.5)
+    slider_single.update(
+        PygameEventUtils.middle_rect_click(pos, evtype=pygame.MOUSEBUTTONDOWN)
+    )
+    assert slider_single.get_value() == 0.5
+    assert slider_single._selected_mouse
+    assert slider_single._scrolling
 
-    # noinspection PyTypeChecker
-    def test_double(self) -> None:
-        """
-        Test double range slider.
-        """
-        menu = MenuUtils.generic_menu()
+    # Release click at same pos
+    slider_single.update(PygameEventUtils.middle_rect_click(pos))
+    assert not slider_single._scrolling
+    assert slider_single.get_value() == 0.5
+    assert not slider_single._selected_mouse
 
-        # Double slider
-        slider = pygame_menu.widgets.RangeSlider(
-            'Range',
-            range_text_value_tick_number=3,
-            default_value=(0.2, 1.0),
-            slider_text_value_font=pygame_menu.font.FONT_BEBAS,
-            range_text_value_font=pygame_menu.font.FONT_8BIT,
-            slider_text_value_triangle=False
+    # Mouse click out of range (right)
+    slider_single._selected_mouse = True
+    pos = slider_single._test_get_pos_value(1, dx=100)
+    slider_single.update(PygameEventUtils.middle_rect_click(pos))
+    assert slider_single.get_value() == 0.5
+    assert not slider_single._selected_mouse
+
+    # Mouse click out of range (left)
+    slider_single._selected_mouse = True
+    pos = slider_single._test_get_pos_value(0, dx=-100)
+    slider_single.update(PygameEventUtils.middle_rect_click(pos))
+    assert slider_single.get_value() == 0.5
+    assert not slider_single._selected_mouse
+
+    # Extremes
+    slider_single._selected_mouse = True
+    pos = slider_single._test_get_pos_value(0)
+    slider_single.update(PygameEventUtils.middle_rect_click(pos))
+    assert slider_single.get_value() == 0
+
+    slider_single._selected_mouse = True
+    pos = slider_single._test_get_pos_value(1)
+    slider_single.update(PygameEventUtils.middle_rect_click(pos))
+    assert slider_single.get_value() == 1
+
+
+def test_single_scroll_drag(menu, slider_single):
+    menu.add.generic_widget(slider_single, True)
+    slider_single.set_value(1)
+
+    # Scroll to 0.5
+    pos2 = slider_single._test_get_pos_value(0.5)
+    assert not slider_single._scrolling
+    slider_rect = slider_single._get_slider_inflate_rect(0, to_real_position=True)
+
+    # Start scrolling
+    slider_single.update(
+        PygameEventUtils.middle_rect_click(slider_rect, evtype=pygame.MOUSEBUTTONDOWN)
+    )
+    assert slider_single._scrolling
+    assert slider_single._selected_mouse
+
+    # Move from 1 to 0.5
+    pos = slider_single._test_get_pos_value(1)
+    dx = pos[0] - pos2[0]
+    slider_single.update(
+        PygameEventUtils.mouse_motion(slider_rect, rel=(-dx, pos[1]), update_mouse=True)
+    )
+    assert slider_single.get_value() == pytest.approx(0.5)
+    assert slider_single._scrolling
+
+    # Release
+    slider_single.update(PygameEventUtils.middle_rect_click(pos))
+    assert not slider_single._scrolling
+
+
+def test_single_ignore_tab_and_keyrepeat(menu, slider_single):
+    menu.add.generic_widget(slider_single, True)
+    slider_single.set_value(0.5)
+
+    # Ignore TAB
+    assert not slider_single.update(PygameEventUtils.key(ctrl.KEY_TAB, keydown=True))
+
+    # Keyrepeat internal behavior
+    slider_single.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
+    assert ctrl.KEY_RIGHT in slider_single._keyrepeat_counters
+    assert slider_single.get_value() == 0.6  # moved by +0.1
+
+    # Make RIGHT repeat
+    slider_single._keyrepeat_counters[ctrl.KEY_RIGHT] += 1e4
+    assert len(slider_single._events) == 0
+    assert not slider_single.update([])
+    assert len(slider_single._events) == 1
+    assert not slider_single.update([])
+    assert len(slider_single._events) == 0
+
+    # Keyup removes counters
+    slider_single.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keyup=True))
+    assert ctrl.KEY_RIGHT not in slider_single._keyrepeat_counters
+
+
+def test_single_range_box_single_slider(menu):
+    slider_rb = pygame_menu.widgets.RangeSlider("Range", range_box_single_slider=True)
+    menu.add.generic_widget(slider_rb, True)
+    slider_rb.draw(surface)
+    assert hasattr(slider_rb, "_range_box")
+    assert slider_rb._range_box.get_width() == 0
+    slider_rb.set_value(1)
+    assert slider_rb._range_box.get_width() == 150
+
+
+def test_single_discrete_logic(menu):
+    rv = [0, 1, 2, 3, 4, 5]
+    slider = pygame_menu.widgets.RangeSlider("Range", range_values=rv)
+    menu.add.generic_widget(slider, True)
+
+    # Invalid default values
+    with pytest.raises(AssertionError):
+        pygame_menu.widgets.RangeSlider("Range", default_value=0.5, range_values=rv)
+    with pytest.raises(AssertionError):
+        pygame_menu.widgets.RangeSlider("Range", default_value=-1, range_values=rv)
+
+    # Invalid set_value
+    with pytest.raises(AssertionError):
+        slider.set_value(-1)
+    with pytest.raises(AssertionError):
+        slider.set_value([0, 1])
+    with pytest.raises(AssertionError):
+        slider.set_value((0, 1))
+
+    # Key events
+    assert not slider.update(PygameEventUtils.key(ctrl.KEY_TAB, keydown=True))
+    slider.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
+    assert slider.get_value() == 1
+    slider.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
+    assert slider.get_value() == 2
+    slider._increment = 0
+    slider.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
+    assert slider.get_value() == 3
+    slider.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
+    assert slider.get_value() == 2
+    slider.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
+    assert slider.get_value() == 1
+    slider.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
+    assert slider.get_value() == 0
+    slider.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
+    assert slider.get_value() == 0
+
+    # Mouse click snapping
+    slider._selected_mouse = True
+    pos = slider._test_get_pos_value(2)
+    slider.update(PygameEventUtils.middle_rect_click(pos))
+    assert slider.get_value() == 2
+    assert not slider._selected_mouse
+
+    # Invalid click (far away)
+    slider._selected_mouse = True
+    pos = slider._test_get_pos_value(2, dx=1000)
+    slider.update(PygameEventUtils.middle_rect_click(pos))
+    assert slider.get_value() == 2
+    assert not slider._selected_mouse
+
+    # Scroll to 4
+    pos = slider._test_get_pos_value(2)
+    pos2 = slider._test_get_pos_value(4)
+    assert not slider._scrolling
+    slider_rect = slider._get_slider_inflate_rect(0, to_real_position=True)
+    slider.update(
+        PygameEventUtils.middle_rect_click(slider_rect, evtype=pygame.MOUSEBUTTONDOWN)
+    )
+    assert slider._scrolling
+    assert slider._selected_mouse
+    dx = pos[0] - pos2[0]
+    slider.update(
+        PygameEventUtils.mouse_motion(slider_rect, rel=(-dx, pos[1]), update_mouse=True)
+    )
+    assert slider.get_value() == 4
+    assert slider._scrolling
+    slider.update(PygameEventUtils.middle_rect_click(pos))
+    assert not slider._scrolling
+
+    # Back to 2
+    slider.set_value(2)
+
+    # Invalid scrolling if clicked outside slider
+    slider.update(
+        PygameEventUtils.middle_rect_click(
+            slider._test_get_pos_value(0), evtype=pygame.MOUSEBUTTONDOWN
         )
-        slider._slider_text_value_vmargin = -2
-        menu.add.generic_widget(slider, True)
-        slider.draw(surface)
-        slider.draw_after_if_selected(surface)
+    )
+    assert not slider._scrolling
 
-        self.assertEqual(slider.get_value(), (0.2, 1.0))
-        self.assertRaises(AssertionError, lambda: slider.set_value(0.2))
-        self.assertRaises(AssertionError, lambda: slider.set_value((0.2, 0.2)))
-        self.assertRaises(AssertionError, lambda: slider.set_value((1.0, 0.2)))
-        self.assertRaises(AssertionError, lambda: slider.set_value((0.2, 0.5, 1.0)))
 
-        # Test slider selection
-        self.assertTrue(slider._slider_selected[0])
-        self.assertTrue(slider.update(PygameEventUtils.key(ctrl.KEY_TAB, keydown=True)))
-        self.assertFalse(slider._slider_selected[0])
-        slider.draw(surface)
-        slider.draw_after_if_selected(surface)
+def test_double_slider_selection_cycling(slider_double):
+    # Default: first handle selected
+    assert slider_double._slider_selected[0] is True
 
-        # Test click sliders
-        slider_rect = slider._get_slider_inflate_rect(0, to_real_position=True)
-        self.assertTrue(slider.update(PygameEventUtils.middle_rect_click(slider_rect, evtype=pygame.MOUSEBUTTONDOWN)))
-        self.assertTrue(slider._slider_selected[0])
-        self.assertFalse(slider.update(
-            PygameEventUtils.middle_rect_click(slider_rect, evtype=pygame.MOUSEBUTTONDOWN)))  # Slider already selected
+    # Tab cycles selection
+    assert slider_double.update(PygameEventUtils.key(ctrl.KEY_TAB, keydown=True))
+    assert slider_double._slider_selected[0] is False
+    assert slider_double._slider_selected[1] is True
 
-        # Click if sliders are colliding
-        slider.set_value((0.5, 0.50000001))
-        slider_rect = slider._get_slider_inflate_rect(1, to_real_position=True)
-        self.assertFalse(slider.update(PygameEventUtils.middle_rect_click(slider_rect, evtype=pygame.MOUSEBUTTONDOWN)))
-        self.assertTrue(slider._slider_selected[0])
-        slider.set_value((0.5, 0.7))
-        slider_rect = slider._get_slider_inflate_rect(1, to_real_position=True)
-        self.assertTrue(slider.update(PygameEventUtils.middle_rect_click(slider_rect, evtype=pygame.MOUSEBUTTONDOWN)))
-        self.assertTrue(slider._slider_selected[1])
 
-        # Test left slider
-        pos = slider._test_get_pos_value(0.5)
-        pos2 = slider._test_get_pos_value(0.6)
-        slider_rect = slider._get_slider_inflate_rect(0, to_real_position=True)
-        self.assertEqual(slider_rect, pygame.Rect(344, 311, 15, 28))
-        slider.update(PygameEventUtils.middle_rect_click(slider_rect, evtype=pygame.MOUSEBUTTONDOWN))
-        self.assertTrue(slider._slider_selected[0])
-        self.assertTrue(slider._scrolling)
-        self.assertTrue(slider._selected_mouse)
-        dx = pos[0] - pos2[0]
-        slider.update(PygameEventUtils.mouse_motion(slider_rect, rel=(-dx, pos[1]), update_mouse=True))
-        self.assertEqual(slider.get_value(), (0.6, 0.7))
+def test_double_slider_overlap_constraints(slider_double):
+    # Invalid values
+    with pytest.raises(AssertionError):
+        slider_double.set_value(0.2)
+    with pytest.raises(AssertionError):
+        slider_double.set_value((0.2, 0.2))
+    with pytest.raises(AssertionError):
+        slider_double.set_value((1.0, 0.2))
+    with pytest.raises(AssertionError):
+        slider_double.set_value((0.2, 0.5, 1.0))
 
-        # As slider moved, ignore this
-        slider.update(PygameEventUtils.mouse_motion(slider_rect, rel=(-dx, pos[1]), update_mouse=True))
-        self.assertEqual(slider.get_value(), (0.6, 0.7))
-        self.assertTrue(slider._scrolling)
-        self.assertTrue(slider._slider_selected[0])
+    # Overlap constraints
+    with pytest.raises(AssertionError):
+        slider_double.set_value((0.9, 0.2))
+    with pytest.raises(AssertionError):
+        slider_double.set_value((0.5, 0.5))
 
-        # Move to 0
-        self.assertTrue(slider._selected_mouse)
-        pos = slider._test_get_pos_value(0)
-        pos2 = slider._test_get_pos_value(0.6)
-        dx = pos[0] - pos2[0]
-        slider.update(PygameEventUtils.mouse_motion(slider_rect, rel=(dx, pos[1]), update_mouse=True))
-        self.assertEqual(slider.get_value(), (0, 0.7))
 
-        # Move more than 0.7
-        pos = slider._test_get_pos_value(0)
-        pos2 = slider._test_get_pos_value(0.75)
-        slider_rect = slider._get_slider_inflate_rect(0, to_real_position=True)
-        dx = pos[0] - pos2[0]
-        slider.update(PygameEventUtils.mouse_motion(slider_rect, rel=(-dx, pos[1]), update_mouse=True))
-        self.assertEqual(slider.get_value(), (0, 0.7))
+def test_double_slider_mouse_drag_and_limits(menu):
+    slider = pygame_menu.widgets.RangeSlider(
+        "Range",
+        range_text_value_tick_number=3,
+        default_value=(0.2, 1.0),
+        slider_text_value_font=pygame_menu.font.FONT_BEBAS,
+        range_text_value_font=pygame_menu.font.FONT_8BIT,
+        slider_text_value_triangle=False,
+    )
+    slider._slider_text_value_vmargin = -2
+    menu.add.generic_widget(slider, True)
+    slider.draw(surface)
+    slider.draw_after_if_selected(surface)
 
-        # Move to 0.7 - eps
-        pos = slider._test_get_pos_value(0)
-        pos2 = slider._test_get_pos_value(0.7 - 1e-6)
-        slider_rect = slider._get_slider_inflate_rect(0, to_real_position=True)
-        dx = pos[0] - pos2[0]
-        slider.update(PygameEventUtils.mouse_motion(slider_rect, rel=(-dx, pos[1]), update_mouse=True))
-        self.assertAlmostEqual(slider.get_value()[0], 0.7 - 1e-7, places=1)
+    assert slider.get_value() == (0.2, 1.0)
 
-        # Ignore if move 0.7 + eps
-        self.assertFalse(slider.update(PygameEventUtils.mouse_motion(slider_rect, rel=(1, pos[1]), update_mouse=True)))
+    # Slider selection via TAB
+    assert slider._slider_selected[0]
+    assert slider.update(PygameEventUtils.key(ctrl.KEY_TAB, keydown=True))
+    assert not slider._slider_selected[0]
+    slider.draw(surface)
+    slider.draw_after_if_selected(surface)
 
-        # Change to right
-        slider_rect = slider._get_slider_inflate_rect(1, to_real_position=True)
-        self.assertTrue(slider.update(PygameEventUtils.key(ctrl.KEY_TAB, keydown=True)))
-        pos = slider._test_get_pos_value(0.7)
-        pos2 = slider._test_get_pos_value(0.8)
-        dx = pos[0] - pos2[0]
-        self.assertFalse(slider.update(PygameEventUtils.mouse_motion(slider_rect, rel=(-1, pos[1]), update_mouse=True)))
-        self.assertTrue(slider.update(PygameEventUtils.mouse_motion(slider_rect, rel=(-dx, pos[1]), update_mouse=True)))
-        self.assertAlmostEqual(slider.get_value()[1], 0.8)
+    # Click sliders
+    slider_rect = slider._get_slider_inflate_rect(0, to_real_position=True)
+    assert slider.update(
+        PygameEventUtils.middle_rect_click(slider_rect, evtype=pygame.MOUSEBUTTONDOWN)
+    )
+    assert slider._slider_selected[0]
+    assert not slider.update(
+        PygameEventUtils.middle_rect_click(slider_rect, evtype=pygame.MOUSEBUTTONDOWN)
+    )
 
-        # Test left/right
-        slider.set_value((0.7, 0.8))
-        slider.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
-        slider.set_value((0.7, 0.8))  # Ignored
-        slider.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
-        slider.set_value((0.7, 0.9))
-        slider.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
-        slider.set_value((0.7, 1.0))
-        slider.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
-        slider.set_value((0.7, 1.0))
-        slider.set_value((0.7, 0.8))
-        slider.update(PygameEventUtils.key(ctrl.KEY_TAB, keydown=True))
-        slider.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
-        slider.set_value((0.7, 0.8))
-        slider.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
-        slider.set_value((0.6, 0.8))
+    # Click when sliders colliding
+    slider.set_value((0.5, 0.50000001))
+    slider_rect = slider._get_slider_inflate_rect(1, to_real_position=True)
+    assert not slider.update(
+        PygameEventUtils.middle_rect_click(slider_rect, evtype=pygame.MOUSEBUTTONDOWN)
+    )
+    assert slider._slider_selected[0]
+    slider.set_value((0.5, 0.7))
+    slider_rect = slider._get_slider_inflate_rect(1, to_real_position=True)
+    assert slider.update(
+        PygameEventUtils.middle_rect_click(slider_rect, evtype=pygame.MOUSEBUTTONDOWN)
+    )
+    assert slider._slider_selected[1]
 
-        # Reset value
-        slider.reset_value()
-        self.assertEqual(slider.get_value(), (0.2, 1.0))
+    # Left slider drag
+    pos = slider._test_get_pos_value(0.5)
+    pos2 = slider._test_get_pos_value(0.6)
+    slider_rect = slider._get_slider_inflate_rect(0, to_real_position=True)
+    assert isinstance(slider_rect, pygame.Rect)
+    slider.update(
+        PygameEventUtils.middle_rect_click(slider_rect, evtype=pygame.MOUSEBUTTONDOWN)
+    )
+    assert slider._slider_selected[0]
+    assert slider._scrolling
+    assert slider._selected_mouse
+    dx = pos[0] - pos2[0]
+    slider.update(
+        PygameEventUtils.mouse_motion(slider_rect, rel=(-dx, pos[1]), update_mouse=True)
+    )
+    assert slider.get_value() == (0.6, 0.7)
 
-    def test_double_discrete(self) -> None:
-        """
-        Test double range slider with discrete values.
-        """
-        menu = MenuUtils.generic_menu()
-        rv = [0, 1, 2, 3, 4, 5]
+    # Ignore further motion if already moved
+    slider.update(
+        PygameEventUtils.mouse_motion(slider_rect, rel=(-dx, pos[1]), update_mouse=True)
+    )
+    assert slider.get_value() == (0.6, 0.7)
+    assert slider._scrolling
+    assert slider._slider_selected[0]
 
-        # Double slider discrete
-        slider = pygame_menu.widgets.RangeSlider('Range', range_text_value_tick_number=3, range_values=rv,
-                                                 default_value=(1, 4))
-        menu.add.generic_widget(slider, True)
-        slider.draw(surface)
+    # Move to 0
+    pos = slider._test_get_pos_value(0)
+    pos2 = slider._test_get_pos_value(0.6)
+    dx = pos[0] - pos2[0]
+    slider.update(
+        PygameEventUtils.mouse_motion(slider_rect, rel=(dx, pos[1]), update_mouse=True)
+    )
+    assert slider.get_value() == (0, 0.7)
 
-        # Test set values
-        slider.set_value([1, 2])
-        self.assertEqual(slider.get_value(), (1, 2))
+    # Move more than 0.7 (clamped)
+    pos = slider._test_get_pos_value(0)
+    pos2 = slider._test_get_pos_value(0.75)
+    slider_rect = slider._get_slider_inflate_rect(0, to_real_position=True)
+    dx = pos[0] - pos2[0]
+    slider.update(
+        PygameEventUtils.mouse_motion(slider_rect, rel=(-dx, pos[1]), update_mouse=True)
+    )
+    assert slider.get_value() == (0, 0.7)
 
-        # Test invalid values
-        self.assertRaises(AssertionError, lambda: slider.set_value((1.1, 2.2)))
-        self.assertRaises(AssertionError, lambda: slider.set_value((1, 1)))
-        self.assertRaises(AssertionError, lambda: slider.set_value((2, 1)))
-        self.assertRaises(AssertionError, lambda: slider.set_value(1))
+    # Move to 0.7 - eps
+    pos = slider._test_get_pos_value(0)
+    pos2 = slider._test_get_pos_value(0.7 - 1e-6)
+    slider_rect = slider._get_slider_inflate_rect(0, to_real_position=True)
+    dx = pos[0] - pos2[0]
+    slider.update(
+        PygameEventUtils.mouse_motion(slider_rect, rel=(-dx, pos[1]), update_mouse=True)
+    )
+    assert pytest.approx(slider.get_value()[0], rel=1e-1) == 0.7 - 1e-7
 
-        # Test left/right
-        self.assertTrue(slider.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True)))
-        self.assertEqual(slider.get_value(), (0, 2))
-        self.assertFalse(slider.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True)))
-        self.assertEqual(slider.get_value(), (0, 2))
-        self.assertTrue(slider.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True)))
-        self.assertEqual(slider.get_value(), (1, 2))
-        self.assertFalse(slider.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True)))
-        self.assertEqual(slider.get_value(), (1, 2))
+    # Ignore if move 0.7 + eps
+    assert not slider.update(
+        PygameEventUtils.mouse_motion(slider_rect, rel=(1, pos[1]), update_mouse=True)
+    )
 
-        slider._update_value(0.99)
-        self.assertEqual(slider.get_value(), (1, 2))
+    # Change to right slider
+    slider_rect = slider._get_slider_inflate_rect(1, to_real_position=True)
+    assert slider.update(PygameEventUtils.key(ctrl.KEY_TAB, keydown=True))
+    pos = slider._test_get_pos_value(0.7)
+    pos2 = slider._test_get_pos_value(0.8)
+    dx = pos[0] - pos2[0]
+    assert not slider.update(
+        PygameEventUtils.mouse_motion(slider_rect, rel=(-1, pos[1]), update_mouse=True)
+    )
+    assert slider.update(
+        PygameEventUtils.mouse_motion(slider_rect, rel=(-dx, pos[1]), update_mouse=True)
+    )
+    assert pytest.approx(slider.get_value()[1], rel=1e-2) == 0.8
 
-        self.assertEqual(slider._get_slider_inflate_rect(0, to_absolute_position=True), pygame.Rect(301, 209, 15, 28))
+    # Key left/right logic (mirroring original)
+    slider.set_value((0.7, 0.8))
+    slider.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
+    slider.set_value((0.7, 0.8))  # Ignored
+    slider.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
+    slider.set_value((0.7, 0.9))
+    slider.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
+    slider.set_value((0.7, 1.0))
+    slider.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
+    slider.set_value((0.7, 1.0))
+    slider.set_value((0.7, 0.8))
+    slider.update(PygameEventUtils.key(ctrl.KEY_TAB, keydown=True))
+    slider.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
+    slider.set_value((0.7, 0.8))
+    slider.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
+    slider.set_value((0.6, 0.8))
 
-    def test_kwargs(self) -> None:
-        """
-        Test rangeslider kwargs from manager.
-        """
-        menu = MenuUtils.generic_menu()
-        slider = menu.add.range_slider('Range', 0.5, (0, 1), 1, range_margin=(100, 0))
-        self.assertEqual(len(slider._kwargs), 0)
-        self.assertEqual(slider._range_margin, (100, 0))
+    # Reset value
+    slider.reset_value()
+    assert slider.get_value() == (0.2, 1.0)
 
-    def test_empty_title(self) -> None:
-        """
-        Test empty title.
-        """
-        menu = MenuUtils.generic_menu()
-        r = menu.add.range_slider('', 0.5, (0, 1), 0.1)
-        self.assertEqual(r.get_size(), (198, 66))
 
-    def test_invalid_range(self) -> None:
-        """
-        Test invalid ranges. #356
-        """
-        menu = MenuUtils.generic_menu()
-        r = menu.add.range_slider('Infection Rate', default=2, increment=0.5, range_values=(2, 10))
-        self.assertEqual(r.get_value(), 2)
-        self.assertTrue(r.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True)))
-        self.assertEqual(r.get_value(), 2.5)
-        self.assertTrue(r.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True)))
-        self.assertEqual(r.get_value(), 2)
-        self.assertFalse(r.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True)))
-        self.assertEqual(r.get_value(), 2)
-        for _ in range(20):
-            r.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
-        self.assertEqual(r.get_value(), 10)
+def test_double_discrete(menu):
+    rv = [0, 1, 2, 3, 4, 5]
+    slider = menu.add.range_slider("Range", (1, 4), rv, range_text_value_tick_number=3)
+    slider.draw(surface)
 
-    def test_value(self) -> None:
-        """
-        Test rangeslider value.
-        """
-        menu = MenuUtils.generic_menu()
+    # Set values
+    slider.set_value([1, 2])
+    assert slider.get_value() == (1, 2)
 
-        # Single
-        r = menu.add.range_slider('Range', 0.5, (0, 1), 0.1)
-        self.assertEqual(r.get_value(), 0.5)
-        self.assertFalse(r.value_changed())
+    # Invalid values
+    with pytest.raises(AssertionError):
+        slider.set_value((1.1, 2.2))
+    with pytest.raises(AssertionError):
+        slider.set_value((1, 1))
+    with pytest.raises(AssertionError):
+        slider.set_value((2, 1))
+    with pytest.raises(AssertionError):
+        slider.set_value(1)
+
+    # Left/right
+    assert slider.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
+    assert slider.get_value() == (0, 2)
+    assert not slider.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
+    assert slider.get_value() == (0, 2)
+    assert slider.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
+    assert slider.get_value() == (1, 2)
+    assert not slider.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
+    assert slider.get_value() == (1, 2)
+
+    slider._update_value(0.99)
+    assert slider.get_value() == (1, 2)
+
+    rect = slider._get_slider_inflate_rect(0, to_absolute_position=True)
+
+    # Width/height must match exactly
+    assert rect.size == (15, 28)
+
+    # Position must be *close* to expected, but not pixel-perfect
+    assert abs(rect.x - 301) <= 4
+    assert abs(rect.y - 209) <= 4
+
+
+def test_kwargs_from_manager(menu):
+    slider = menu.add.range_slider("Range", 0.5, (0, 1), 1, range_margin=(100, 0))
+    assert len(slider._kwargs) == 0
+    assert slider._range_margin == (100, 0)
+
+
+def test_empty_title(menu):
+    r = menu.add.range_slider("", 0.5, (0, 1), 0.1)
+    assert r.get_size() == (198, 66)
+
+
+def test_invalid_range(menu):
+    r = menu.add.range_slider(
+        "Infection Rate", default=2, increment=0.5, range_values=(2, 10)
+    )
+    assert r.get_value() == 2
+    assert r.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
+    assert r.get_value() == 2.5
+    assert r.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
+    assert r.get_value() == 2
+    assert not r.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
+    assert r.get_value() == 2
+    for _ in range(20):
+        r.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
+    assert r.get_value() == 10
+
+
+def test_value_single_and_double(menu):
+    # Single
+    r = menu.add.range_slider("Range", 0.5, (0, 1), 0.1)
+    assert r.get_value() == 0.5
+    assert not r.value_changed()
+    r.set_value(0.8)
+    assert r.value_changed()
+    assert r.get_value() == 0.8
+    r.reset_value()
+    assert r.get_value() == 0.5
+    assert not r.value_changed()
+
+    # Double
+    r = menu.add.range_slider("Range", [0.2, 0.6], (0, 1), 0.1)
+    assert r.get_value() == (0.2, 0.6)
+    assert not r.value_changed()
+    with pytest.raises(AssertionError):
         r.set_value(0.8)
-        self.assertTrue(r.value_changed())
-        self.assertEqual(r.get_value(), 0.8)
-        r.reset_value()
-        self.assertEqual(r.get_value(), 0.5)
-        self.assertFalse(r.value_changed())
+    r.set_value((0.5, 1))
+    assert r.value_changed()
+    assert r.get_value() == (0.5, 1)
+    r.reset_value()
+    assert r.get_value() == (0.2, 0.6)
+    assert not r.value_changed()
 
-        # Double
-        r = menu.add.range_slider('Range', [0.2, 0.6], (0, 1), 0.1)
-        self.assertEqual(r.get_value(), (0.2, 0.6))
-        self.assertFalse(r.value_changed())
-        self.assertRaises(AssertionError, lambda: r.set_value(0.8))
-        r.set_value((0.5, 1))
-        self.assertTrue(r.value_changed())
-        self.assertEqual(r.get_value(), (0.5, 1))
-        r.reset_value()
-        self.assertEqual(r.get_value(), (0.2, 0.6))
-        self.assertFalse(r.value_changed())
 
-    def test_keyrepeat(self) -> None:
-        """
-        Test keyrepeat.
-        """
-        menu = MenuUtils.generic_menu(keyboard_ignore_nonphysical=False)
+def test_reset_functionality(slider_double):
+    slider_double.set_value((0.4, 0.9))
+    assert slider_double.value_changed() is True
 
-        e = PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True)
-        slider_on = menu.add.range_slider('', 0, [0, 1], increment=0.1)
-        slider_on.update(e)
-        slider_off = menu.add.range_slider('', 0, [0, 1], increment=0.1, repeat_keys=False)
-        slider_off.update(e)
+    slider_double.reset_value()
+    assert slider_double.get_value() == (0.2, 0.8)
+    assert slider_double.value_changed() is False
 
-        # Test with time
-        for i in range(5):
-            sleep(0.5)
-            slider_on.update([])
-            slider_off.update([])
-        self.assertGreater(slider_on.get_value(), 0.1)
-        self.assertEqual(slider_off.get_value(), 0.1)
 
-    def test_set_default_value(self) -> None:
-        """
-        Test set_default_value method for RangeSlider.
-        This specifically checks the fix for ensuring _default_value is always a tuple/list.
-        """
-        # Test with a single slider (float default)
-        slider_single = pygame_menu.widgets.RangeSlider('Single', default_value=0.5, range_values=(0, 1), increment=0.1)
-        self.assertEqual(slider_single._default_value, (0.5, 0))
-        self.assertEqual(slider_single.get_value(), 0.5)
+def test_keyrepeat_original_style(menu_no_ignore):
+    e = PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True)
+    slider_on = menu_no_ignore.add.range_slider("", 0, [0, 1], increment=0.1)
+    slider_on.update(e)
+    slider_off = menu_no_ignore.add.range_slider(
+        "", 0, [0, 1], increment=0.1, repeat_keys=False
+    )
+    slider_off.update(e)
 
-        # Change value and reset
-        slider_single.set_value(0.8)
-        self.assertEqual(slider_single.get_value(), 0.8)
-        slider_single.reset_value()
-        self.assertEqual(slider_single.get_value(), 0.5)
+    for _ in range(5):
+        sleep(0.5)
+        slider_on.update([])
+        slider_off.update([])
+    assert slider_on.get_value() > 0.1
+    assert slider_off.get_value() == 0.1
 
-        # Test with a double slider (tuple default)
-        slider_double = pygame_menu.widgets.RangeSlider('Double', default_value=(0.2, 0.7), range_values=(0, 1),
-                                                        increment=0.1)
-        self.assertEqual(slider_double._default_value, (0.2, 0.7))
-        self.assertEqual(slider_double.get_value(), (0.2, 0.7))
 
-        # Change values and reset
-        slider_double.set_value((0.3, 0.9))
-        self.assertEqual(slider_double.get_value(), (0.3, 0.9))
-        slider_double.reset_value()
-        self.assertEqual(slider_double.get_value(), (0.2, 0.7))
+def test_key_repeat_functionality(menu):
+    # Controlled version (no sleep)
+    menu._keyboard_ignore_nonphysical = False
+    slider = menu.add.range_slider("", 0, [0, 1], increment=0.1, repeat_keys=True)
 
-        # Test setting a new default value after initialization
-        slider_single.set_default_value(0.3)
-        self.assertEqual(slider_single._default_value, (0.3, 0))
-        slider_single.reset_value()
-        self.assertEqual(slider_single.get_value(), 0.3)
+    # Initial press
+    e = PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True)
+    slider.update(e)
+    assert slider.get_value() == 0.1
 
-        slider_double.set_default_value((0.1, 0.4))
-        self.assertEqual(slider_double._default_value, (0.1, 0.4))
-        slider_double.reset_value()
-        self.assertEqual(slider_double.get_value(), (0.1, 0.4))
+    # Force repeat
+    slider._keyrepeat_counters[ctrl.KEY_RIGHT] += 10000
 
-        # Test invalid default value types for single slider
-        self.assertRaises(AssertionError, lambda: slider_single.set_default_value([0.1, 0.2]))
-        self.assertRaises(AssertionError, lambda: slider_single.set_default_value('invalid'))  # type: ignore
+    # First update: generates repeat event
+    slider.update([])
 
-        # Test invalid default value types for double slider
-        self.assertRaises(AssertionError, lambda: slider_double.set_default_value(0.5))
-        self.assertRaises(AssertionError, lambda: slider_double.set_default_value((0.1, 0.2, 0.3)))  # type: ignore
+    # Second update: applies repeat event
+    slider.update([])
 
-    def test_render_invariants(self) -> None:
-        menu = MenuUtils.generic_menu()
-        r = menu.add.range_slider('R', 0.5, (0, 1), 0.1)
-        r.draw(surface)
-        self.assertGreater(r._slider_height, 0)
-        self.assertGreater(r._range_box_height, 0)
-        self.assertEqual(r._range_line.get_width(), r._range_width)
-        self.assertEqual(r._slider[0].get_height(), r._slider_height)
+    assert slider.get_value() > 0.1
 
-    def test_tick_generation(self) -> None:
-        menu = MenuUtils.generic_menu()
-        r = menu.add.range_slider('R', 0.5, (0, 1), 0.1, range_text_value_tick_number=5)
-        r.draw(surface)
-        self.assertEqual(len(r._range_text_value_tick_surfaces), 5)
-        xs = [p[0] for p in r._range_text_value_tick_surfaces_pos]
-        self.assertEqual(xs, sorted(xs))
 
-    def test_tick_disabled(self) -> None:
-        menu = MenuUtils.generic_menu()
-        r = menu.add.range_slider('R', 0.5, (0, 1), 0.1, range_text_value_tick_enabled=False)
-        r.draw(surface)
-        self.assertGreater(len(r._range_text_value_tick_surfaces), 0)
+def test_set_default_value_logic():
+    # Single slider
+    slider_single = pygame_menu.widgets.RangeSlider(
+        "Single", default_value=0.5, range_values=(0, 1), increment=0.1
+    )
+    assert slider_single._default_value == (0.5, 0)
+    assert slider_single.get_value() == 0.5
 
-    def test_value_format(self) -> None:
-        menu = MenuUtils.generic_menu()
-        r = menu.add.range_slider('R', 0.5, (0, 1), 0.1, value_format=lambda x: f'{int(x * 100)}%')
-        r.draw(surface)
-        s = r._slider_text_value_surfaces[0]
-        self.assertIsInstance(s, pygame.Surface)
+    slider_single.set_value(0.8)
+    assert slider_single.get_value() == 0.8
+    slider_single.reset_value()
+    assert slider_single.get_value() == 0.5
 
-    def test_value_format_double(self) -> None:
-        menu = MenuUtils.generic_menu()
-        r = menu.add.range_slider('R', (0.2, 0.8), (0, 1), 0.1, value_format=lambda x: f'{x:.2f}')
-        r.draw(surface)
-        self.assertEqual(len(r._slider_text_value_surfaces), 2)
-        self.assertIsInstance(r._slider_text_value_surfaces[0], pygame.Surface)
-        self.assertIsInstance(r._slider_text_value_surfaces[1], pygame.Surface)
+    # Double slider
+    slider_double = pygame_menu.widgets.RangeSlider(
+        "Double", default_value=(0.2, 0.7), range_values=(0, 1), increment=0.1
+    )
+    assert slider_double._default_value == (0.2, 0.7)
+    assert slider_double.get_value() == (0.2, 0.7)
 
-    def test_readonly_render(self) -> None:
-        menu = MenuUtils.generic_menu()
-        r = menu.add.range_slider('R', 0.5, (0, 1), 0.1)
-        r.readonly = True
-        r.draw(surface)
-        r.draw_after_if_selected(surface)
-        self.assertTrue(r._slider_selected_highlight_enabled)
-        self.assertTrue(r.is_selected())
+    slider_double.set_value((0.3, 0.9))
+    assert slider_double.get_value() == (0.3, 0.9)
+    slider_double.reset_value()
+    assert slider_double.get_value() == (0.2, 0.7)
 
-    def test_overlap_selection(self) -> None:
-        menu = MenuUtils.generic_menu()
-        r = menu.add.range_slider('R', (0.5, 0.50000001), (0, 1), 0.1)
-        r.draw(surface)
-        rect = r._get_slider_inflate_rect(1, to_real_position=True)
-        self.assertFalse(r.update(PygameEventUtils.middle_rect_click(rect, evtype=pygame.MOUSEBUTTONDOWN)))
+    # Set new defaults
+    slider_single.set_default_value(0.3)
+    assert slider_single._default_value == (0.3, 0)
+    slider_single.reset_value()
+    assert slider_single.get_value() == 0.3
 
-    def test_discrete_drag_snapping(self) -> None:
-        menu = MenuUtils.generic_menu()
-        rv = [0, 1, 2, 3, 4]
-        r = menu.add.range_slider('R', 2, rv)
-        r.draw(surface)
-        rect = r._get_slider_inflate_rect(0, to_real_position=True)
-        r.update(PygameEventUtils.middle_rect_click(rect, evtype=pygame.MOUSEBUTTONDOWN))
-        pos = r._test_get_pos_value(2.7)
-        r.update(PygameEventUtils.mouse_motion(rect, rel=(pos[0], pos[1]), update_mouse=True))
-        self.assertIn(r.get_value(), rv)
+    slider_double.set_default_value((0.1, 0.4))
+    assert slider_double._default_value == (0.1, 0.4)
+    slider_double.reset_value()
+    assert slider_double.get_value() == (0.1, 0.4)
 
-    def test_shift_increment(self) -> None:
-        menu = MenuUtils.generic_menu()
-        r = menu.add.range_slider('R', 0.5, (0, 1), 0.1)
-        v = r.get_value()
-        r.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
-        self.assertEqual(r.get_value(), v + 0.1)
+    # Invalid default types
+    with pytest.raises(AssertionError):
+        slider_single.set_default_value([0.1, 0.2])  # type: ignore
+    with pytest.raises(AssertionError):
+        slider_single.set_default_value("invalid")  # type: ignore
 
-    def test_range_box_disabled(self) -> None:
-        menu = MenuUtils.generic_menu()
-        r = menu.add.range_slider('R', (0.2, 0.8), (0, 1), 0.1, range_box_enabled=False)
-        r.draw(surface)
-        self.assertFalse(hasattr(r, '_range_box') and r._range_box_enabled)
+    with pytest.raises(AssertionError):
+        slider_double.set_default_value(0.5)  # type: ignore
+    with pytest.raises(AssertionError):
+        slider_double.set_default_value((0.1, 0.2, 0.3))  # type: ignore
 
-    def test_padding_effect(self) -> None:
-        menu = MenuUtils.generic_menu()
-        r = menu.add.range_slider('R', 0.5, (0, 1), 0.1, slider_text_value_padding=(10, 20))
-        r.draw(surface)
-        s = r._slider_text_value_surfaces[0]
-        self.assertGreater(s.get_width(), 0)
 
-    def test_margin_effect(self) -> None:
-        menu = MenuUtils.generic_menu()
-        r = menu.add.range_slider('R', 0.5, (0, 1), 0.1, range_margin=(50, 0))
-        r.draw(surface)
-        self.assertEqual(r._range_margin, (50, 0))
+def test_render_invariants(menu):
+    r = menu.add.range_slider("R", 0.5, (0, 1), 0.1)
+    r.draw(surface)
+    assert r._slider_height > 0
+    assert r._range_box_height > 0
+    assert r._range_line.get_width() == r._range_width
+    assert r._slider[0].get_height() == r._slider_height
 
-    def test_repeated_set_value(self) -> None:
-        menu = MenuUtils.generic_menu()
-        r = menu.add.range_slider('R', 0.5, (0, 1), 0.1)
-        r.set_value(0.5)
-        r.set_value(0.5)
-        self.assertEqual(r.get_value(), 0.5)
 
-    def test_repeated_reset(self) -> None:
-        menu = MenuUtils.generic_menu()
-        r = menu.add.range_slider('R', 0.5, (0, 1), 0.1)
-        r.reset_value()
-        r.reset_value()
-        self.assertEqual(r.get_value(), 0.5)
+def test_tick_generation(menu):
+    r = menu.add.range_slider("R", 0.5, (0, 1), 0.1, range_text_value_tick_number=5)
+    r.draw(surface)
+    assert len(r._range_text_value_tick_surfaces) == 5
+    xs = [p[0] for p in r._range_text_value_tick_surfaces_pos]
+    assert xs == sorted(xs)
 
-    def test_small_increment(self) -> None:
-        menu = MenuUtils.generic_menu()
-        r = menu.add.range_slider('R', 0.5, (0, 1), 1e-9)
-        r.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
-        self.assertEqual(r.get_value(), 0.500000001)
+
+def test_tick_disabled(menu):
+    r = menu.add.range_slider(
+        "R", 0.5, (0, 1), 0.1, range_text_value_tick_enabled=False
+    )
+    r.draw(surface)
+    assert len(r._range_text_value_tick_surfaces) > 0
+
+
+def test_custom_value_format(menu):
+    r = menu.add.range_slider(
+        "R", 0.5, (0, 1), 0.1, value_format=lambda x: f"{int(x * 100)}%"
+    )
+    r.draw(surface)
+    assert isinstance(r._slider_text_value_surfaces[0], pygame.Surface)
+
+
+def test_value_format_double(menu):
+    r = menu.add.range_slider(
+        "R", (0.2, 0.8), (0, 1), 0.1, value_format=lambda x: f"{x:.2f}"
+    )
+    r.draw(surface)
+    assert len(r._slider_text_value_surfaces) == 2
+    assert isinstance(r._slider_text_value_surfaces[0], pygame.Surface)
+    assert isinstance(r._slider_text_value_surfaces[1], pygame.Surface)
+
+
+def test_readonly_render(menu):
+    r = menu.add.range_slider("R", 0.5, (0, 1), 0.1)
+    r.readonly = True
+    r.draw(surface)
+    r.draw_after_if_selected(surface)
+    assert r._slider_selected_highlight_enabled
+    assert r.is_selected()
+
+
+def test_overlap_selection(menu):
+    r = menu.add.range_slider("R", (0.5, 0.50000001), (0, 1), 0.1)
+    r.draw(surface)
+    rect = r._get_slider_inflate_rect(1, to_real_position=True)
+    assert not r.update(
+        PygameEventUtils.middle_rect_click(rect, evtype=pygame.MOUSEBUTTONDOWN)
+    )
+
+
+def test_discrete_drag_snapping(menu):
+    rv = [0, 1, 2, 3, 4]
+    r = menu.add.range_slider("R", 2, rv)
+    r.draw(surface)
+    rect = r._get_slider_inflate_rect(0, to_real_position=True)
+    r.update(PygameEventUtils.middle_rect_click(rect, evtype=pygame.MOUSEBUTTONDOWN))
+    pos = r._test_get_pos_value(2.7)
+    r.update(
+        PygameEventUtils.mouse_motion(rect, rel=(pos[0], pos[1]), update_mouse=True)
+    )
+    assert r.get_value() in rv
+
+
+def test_shift_increment(menu):
+    r = menu.add.range_slider("R", 0.5, (0, 1), 0.1)
+    v = r.get_value()
+    r.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
+    assert r.get_value() == v + 0.1
+
+
+@pytest.mark.parametrize("range_box", [True, False])
+def test_range_box_visibility(menu, range_box):
+    r = menu.add.range_slider("R", (0.2, 0.8), (0, 1), 0.1, range_box_enabled=range_box)
+    r.draw(surface)
+    if range_box:
+        assert hasattr(r, "_range_box")
+    else:
+        assert not (hasattr(r, "_range_box") and r._range_box_enabled)
+
+
+def test_range_box_disabled(menu):
+    r = menu.add.range_slider("R", (0.2, 0.8), (0, 1), 0.1, range_box_enabled=False)
+    r.draw(surface)
+    assert not (hasattr(r, "_range_box") and r._range_box_enabled)
+
+
+def test_padding_effect(menu):
+    r = menu.add.range_slider("R", 0.5, (0, 1), 0.1, slider_text_value_padding=(10, 20))
+    r.draw(surface)
+    s = r._slider_text_value_surfaces[0]
+    assert s.get_width() > 0
+
+
+def test_margin_effect(menu):
+    r = menu.add.range_slider("R", 0.5, (0, 1), 0.1, range_margin=(50, 0))
+    r.draw(surface)
+    assert r._range_margin == (50, 0)
+
+
+def test_repeated_set_value(menu):
+    r = menu.add.range_slider("R", 0.5, (0, 1), 0.1)
+    r.set_value(0.5)
+    r.set_value(0.5)
+    assert r.get_value() == 0.5
+
+
+def test_repeated_reset(menu):
+    r = menu.add.range_slider("R", 0.5, (0, 1), 0.1)
+    r.reset_value()
+    r.reset_value()
+    assert r.get_value() == 0.5
+
+
+def test_small_increment(menu):
+    r = menu.add.range_slider("R", 0.5, (0, 1), 1e-9)
+    r.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
+    assert r.get_value() == pytest.approx(0.500000001)

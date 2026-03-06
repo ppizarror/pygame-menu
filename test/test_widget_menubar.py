@@ -6,11 +6,8 @@ TEST WIDGET - MENUBAR
 Test MenuBar widget.
 """
 
-from __future__ import annotations
-
-__all__ = ['MenuBarWidgetTest']
-
 import pygame
+import pytest
 
 import pygame_menu
 import pygame_menu.controls as ctrl
@@ -32,156 +29,206 @@ from pygame_menu.widgets import (
     MenuBar,
 )
 from pygame_menu.widgets.core.widget import WidgetTransformationNotImplemented
-from test._utils import BaseTest, MenuUtils, PygameEventUtils, surface
+from test._utils import MenuUtils, PygameEventUtils, surface
 
 
-class MenuBarWidgetTest(BaseTest):
+@pytest.fixture
+def menu():
+    return MenuUtils.generic_menu()
 
-    # noinspection PyTypeChecker,PyArgumentEqualDefault
-    def test_menubar(self) -> None:
-        """
-        Test menubar widget.
-        """
-        menu = MenuUtils.generic_menu()
-        for mode in (MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_NONE, MENUBAR_STYLE_SIMPLE,
-                     MENUBAR_STYLE_UNDERLINE, MENUBAR_STYLE_UNDERLINE_TITLE,
-                     MENUBAR_STYLE_TITLE_ONLY, MENUBAR_STYLE_TITLE_ONLY_DIAGONAL):
-            mb = MenuBar('Menu', 500, (0, 0, 0), back_box=True, mode=mode)
-            menu.add.generic_widget(mb)
-        mb = MenuBar('Menu', 500, (0, 0, 0), back_box=True)
-        mb.set_backbox_border_width(2)
-        self.assertRaises(AssertionError, lambda: mb.set_backbox_border_width(1.5))
-        self.assertRaises(AssertionError, lambda: mb.set_backbox_border_width(0))
-        self.assertRaises(AssertionError, lambda: mb.set_backbox_border_width(-1))
-        self.assertEqual(mb._backbox_border_width, 2)
-        menu.draw(surface)
-        menu.disable()
 
-        # Test unknown mode
-        mb = MenuBar('Menu', 500, (0, 0, 0), back_box=True, mode='unknown')
-        self.assertRaises(ValueError, lambda: mb.set_menu(menu))
+@pytest.mark.parametrize(
+    "mode",
+    [
+        MENUBAR_STYLE_ADAPTIVE,
+        MENUBAR_STYLE_NONE,
+        MENUBAR_STYLE_SIMPLE,
+        MENUBAR_STYLE_UNDERLINE,
+        MENUBAR_STYLE_UNDERLINE_TITLE,
+        MENUBAR_STYLE_TITLE_ONLY,
+        MENUBAR_STYLE_TITLE_ONLY_DIAGONAL,
+    ],
+)
+def test_menubar_modes(menu, mode):
+    mb = MenuBar("Menu", 500, (0, 0, 0), back_box=True, mode=mode)
+    menu.add.generic_widget(mb)
+    menu.draw(surface)
 
-        # Check margins
-        mb = MenuBar('Menu', 500, (0, 0, 0), back_box=True, mode=MENUBAR_STYLE_ADAPTIVE)
-        self.assertEqual(mb.get_scrollbar_style_change(POSITION_SOUTH), (0, (0, 0)))
-        self.assertEqual(mb.get_scrollbar_style_change(POSITION_EAST), (0, (0, 0)))
-        self.assertEqual(mb.get_scrollbar_style_change(POSITION_WEST), (0, (0, 0)))
-        self.assertEqual(mb.get_scrollbar_style_change(POSITION_NORTH), (0, (0, 0)))
+
+def test_menubar_backbox_border_width(menu):
+    mb = MenuBar("Menu", 500, (0, 0, 0), back_box=True)
+    mb.set_backbox_border_width(2)
+
+    with pytest.raises(AssertionError):
+        mb.set_backbox_border_width(1.5)
+    with pytest.raises(AssertionError):
+        mb.set_backbox_border_width(0)
+    with pytest.raises(AssertionError):
+        mb.set_backbox_border_width(-1)
+
+    assert mb._backbox_border_width == 2
+
+
+def test_menubar_unknown_mode(menu):
+    mb = MenuBar("Menu", 500, (0, 0, 0), back_box=True, mode="unknown")
+    with pytest.raises(ValueError):
         mb.set_menu(menu)
-        mb._render()
-        self.assertEqual(mb.get_scrollbar_style_change(POSITION_SOUTHWEST), (0, (0, 0)))
 
-        # Test displacements
-        theme = pygame_menu.themes.THEME_DEFAULT.copy()
-        theme.title_bar_style = MENUBAR_STYLE_TITLE_ONLY
-        menu = MenuUtils.generic_menu(theme=theme, title='my title')
-        mb = menu.get_menubar()
-        self.assertEqual(mb.get_scrollbar_style_change(POSITION_SOUTH), (0, (0, 0)))
-        self.assertEqual(mb.get_scrollbar_style_change(POSITION_EAST), (0, (0, 0)))
-        self.assertEqual(mb.get_scrollbar_style_change(POSITION_WEST), (-55, (0, 55)))
-        self.assertEqual(mb.get_scrollbar_style_change(POSITION_NORTH), (0, (0, 55)))
 
-        # Test with close button
-        menu = MenuUtils.generic_menu(theme=theme, title='my title',
-                                      onclose=pygame_menu.events.CLOSE,
-                                      touchscreen=True)
-        theme.widget_border_inflate = 0
-        mb = menu.get_menubar()
-        self.assertEqual(mb.get_scrollbar_style_change(POSITION_SOUTH), (0, (0, 0)))
-        self.assertEqual(mb.get_scrollbar_style_change(POSITION_EAST), (-33, (0, 33)))
-        self.assertEqual(mb.get_scrollbar_style_change(POSITION_WEST), (-55, (0, 55)))
-        self.assertEqual(mb.get_scrollbar_style_change(POSITION_NORTH), (0, (0, 55)))
+def test_menubar_scrollbar_displacements(menu):
+    mb = MenuBar("Menu", 500, (0, 0, 0), back_box=True, mode=MENUBAR_STYLE_ADAPTIVE)
 
-        # Hide the title, and check
-        mb.hide()
-        self.assertEqual(mb.get_scrollbar_style_change(POSITION_SOUTH), (0, (0, 0)))
-        self.assertEqual(mb.get_scrollbar_style_change(POSITION_EAST), (0, (0, 0)))
-        self.assertEqual(mb.get_scrollbar_style_change(POSITION_WEST), (0, (0, 0)))
-        self.assertEqual(mb.get_scrollbar_style_change(POSITION_NORTH), (0, (0, 0)))
+    assert mb.get_scrollbar_style_change(POSITION_SOUTH) == (0, (0, 0))
+    assert mb.get_scrollbar_style_change(POSITION_EAST) == (0, (0, 0))
+    assert mb.get_scrollbar_style_change(POSITION_WEST) == (0, (0, 0))
+    assert mb.get_scrollbar_style_change(POSITION_NORTH) == (0, (0, 0))
 
-        mb.show()
-        self.assertEqual(mb.get_scrollbar_style_change(POSITION_SOUTH), (0, (0, 0)))
-        self.assertEqual(mb.get_scrollbar_style_change(POSITION_EAST), (-33, (0, 33)))
-        self.assertEqual(mb.get_scrollbar_style_change(POSITION_WEST), (-55, (0, 55)))
-        self.assertEqual(mb.get_scrollbar_style_change(POSITION_NORTH), (0, (0, 55)))
+    mb.set_menu(menu)
+    mb._render()
 
-        # Floating
-        mb.set_float(True)
-        self.assertEqual(mb.get_scrollbar_style_change(POSITION_SOUTH), (0, (0, 0)))
-        self.assertEqual(mb.get_scrollbar_style_change(POSITION_EAST), (0, (0, 0)))
-        self.assertEqual(mb.get_scrollbar_style_change(POSITION_WEST), (0, (0, 0)))
-        self.assertEqual(mb.get_scrollbar_style_change(POSITION_NORTH), (0, (0, 0)))
+    assert mb.get_scrollbar_style_change(POSITION_SOUTHWEST) == (0, (0, 0))
 
-        mb.set_float(False)
-        self.assertEqual(mb.get_scrollbar_style_change(POSITION_SOUTH), (0, (0, 0)))
-        self.assertEqual(mb.get_scrollbar_style_change(POSITION_EAST), (-33, (0, 33)))
-        self.assertEqual(mb.get_scrollbar_style_change(POSITION_WEST), (-55, (0, 55)))
-        self.assertEqual(mb.get_scrollbar_style_change(POSITION_NORTH), (0, (0, 55)))
 
-        # Fixed
-        mb.fixed = False
-        self.assertEqual(mb.get_scrollbar_style_change(POSITION_SOUTH), (0, (0, 0)))
-        self.assertEqual(mb.get_scrollbar_style_change(POSITION_EAST), (0, (0, 0)))
-        self.assertEqual(mb.get_scrollbar_style_change(POSITION_WEST), (0, (0, 0)))
-        self.assertEqual(mb.get_scrollbar_style_change(POSITION_NORTH), (0, (0, 0)))
+def test_menubar_displacements_with_title_only():
+    theme = pygame_menu.themes.THEME_DEFAULT.copy()
+    theme.title_bar_style = MENUBAR_STYLE_TITLE_ONLY
 
-        # Test menubar
-        self.assertFalse(mb.update(PygameEventUtils.middle_rect_click(mb._rect)))
-        self.assertTrue(mb.update(PygameEventUtils.middle_rect_click(mb._backbox_rect)))
-        self.assertTrue(mb.update(PygameEventUtils.middle_rect_click(
-            mb._backbox_rect, evtype=pygame.FINGERUP, menu=menu)))
-        self.assertFalse(mb.update(PygameEventUtils.middle_rect_click(
-            mb._backbox_rect, evtype=pygame.MOUSEBUTTONDOWN)))
-        self.assertTrue(mb.update(PygameEventUtils.joy_button(ctrl.JOY_BUTTON_BACK)))
-        mb.readonly = True
-        self.assertFalse(mb.update(PygameEventUtils.joy_button(ctrl.JOY_BUTTON_BACK)))
-        mb.readonly = False
+    menu = MenuUtils.generic_menu(theme=theme, title="my title")
+    mb = menu.get_menubar()
 
-        # Test none methods
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: mb.rotate(10))
-        self.assertEqual(mb._angle, 0)
+    assert mb.get_scrollbar_style_change(POSITION_SOUTH) == (0, (0, 0))
+    assert mb.get_scrollbar_style_change(POSITION_EAST) == (0, (0, 0))
+    assert mb.get_scrollbar_style_change(POSITION_WEST) == (-55, (0, 55))
+    assert mb.get_scrollbar_style_change(POSITION_NORTH) == (0, (0, 55))
 
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: mb.resize(10, 10))
-        self.assertFalse(mb._scale[0])
-        self.assertEqual(mb._scale[1], 1)
-        self.assertEqual(mb._scale[2], 1)
 
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: mb.scale(100, 100))
-        self.assertFalse(mb._scale[0])
-        self.assertEqual(mb._scale[1], 1)
-        self.assertEqual(mb._scale[2], 1)
+def test_menubar_displacements_with_close_button():
+    theme = pygame_menu.themes.THEME_DEFAULT.copy()
+    theme.title_bar_style = MENUBAR_STYLE_TITLE_ONLY
+    theme.widget_border_inflate = (0, 0)
 
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: mb.flip(True, True))
-        self.assertFalse(mb._flip[0])
-        self.assertFalse(mb._flip[1])
+    menu = MenuUtils.generic_menu(
+        theme=theme,
+        title="my title",
+        onclose=pygame_menu.events.CLOSE,
+        touchscreen=True,
+    )
 
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: mb.set_max_width(100))
-        self.assertIsNone(mb._max_width[0])
+    mb = menu.get_menubar()
 
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: mb.set_max_height(100))
-        self.assertIsNone(mb._max_height[0])
+    assert mb.get_scrollbar_style_change(POSITION_SOUTH) == (0, (0, 0))
+    assert mb.get_scrollbar_style_change(POSITION_EAST) == (-33, (0, 33))
+    assert mb.get_scrollbar_style_change(POSITION_WEST) == (-55, (0, 55))
+    assert mb.get_scrollbar_style_change(POSITION_NORTH) == (0, (0, 55))
 
-        # Ignore others
-        mb.set_padding()
-        mb.set_border()
-        mb.set_selection_effect()
-        menu.add.button('nice')
+    mb.hide()
+    assert mb.get_scrollbar_style_change(POSITION_EAST) == (0, (0, 0))
 
-    def test_empty_title(self) -> None:
-        """
-        Test empty title.
-        """
-        title = MenuBar('', 500, (0, 0, 0), back_box=True)
-        p = title._padding
-        self.assertEqual(title.get_width(), p[1] + p[3])
-        self.assertEqual(title.get_height(), p[0] + p[2])
+    mb.show()
+    assert mb.get_scrollbar_style_change(POSITION_EAST) == (-33, (0, 33))
 
-    def test_value(self) -> None:
-        """
-        Test menubar value.
-        """
-        mb = MenuBar('Menu', 500, (0, 0, 0), back_box=True)
-        self.assertRaises(ValueError, lambda: mb.get_value())
-        self.assertRaises(ValueError, lambda: mb.set_value('value'))
-        self.assertFalse(mb.value_changed())
-        mb.reset_value()
+    mb.set_float(True)
+    assert mb.get_scrollbar_style_change(POSITION_EAST) == (0, (0, 0))
+
+    mb.set_float(False)
+    assert mb.get_scrollbar_style_change(POSITION_EAST) == (-33, (0, 33))
+
+    mb.fixed = False
+    assert mb.get_scrollbar_style_change(POSITION_EAST) == (0, (0, 0))
+
+
+def test_menubar_events(menu):
+    theme = pygame_menu.themes.THEME_DEFAULT.copy()
+    theme.title_bar_style = MENUBAR_STYLE_TITLE_ONLY
+    menu = MenuUtils.generic_menu(theme=theme, title="my title")
+    menu.enable()
+    mb = menu.get_menubar()
+
+    assert not mb.update(PygameEventUtils.middle_rect_click(mb._rect))
+
+    assert not mb.update(PygameEventUtils.middle_rect_click(mb._backbox_rect))
+
+    assert not mb.update(
+        PygameEventUtils.middle_rect_click(
+            mb._backbox_rect, evtype=pygame.FINGERUP, menu=menu
+        )
+    )
+
+    assert not mb.update(
+        PygameEventUtils.middle_rect_click(
+            mb._backbox_rect, evtype=pygame.MOUSEBUTTONDOWN
+        )
+    )
+
+    assert mb.update(PygameEventUtils.joy_button(ctrl.JOY_BUTTON_BACK))
+
+    mb.readonly = True
+    assert not mb.update(PygameEventUtils.joy_button(ctrl.JOY_BUTTON_BACK))
+    mb.readonly = False
+
+
+@pytest.mark.parametrize(
+    "method,args",
+    [
+        ("rotate", (10,)),
+        ("resize", (10, 10)),
+        ("scale", (100, 100)),
+        ("flip", (True, True)),
+        ("set_max_width", (100,)),
+        ("set_max_height", (100,)),
+    ],
+)
+def test_menubar_invalid_transforms(method, args):
+    mb = MenuBar("Menu", 500, (0, 0, 0), back_box=True)
+
+    with pytest.raises(WidgetTransformationNotImplemented):
+        getattr(mb, method)(*args)
+
+
+def test_menubar_transform_state():
+    mb = MenuBar("Menu", 500, (0, 0, 0), back_box=True)
+
+    with pytest.raises(WidgetTransformationNotImplemented):
+        mb.rotate(10)
+    assert mb._angle == 0
+
+    with pytest.raises(WidgetTransformationNotImplemented):
+        mb.resize(10, 10)
+    assert mb._scale[:3] == [False, 1, 1]
+
+    with pytest.raises(WidgetTransformationNotImplemented):
+        mb.scale(100, 100)
+    assert mb._scale[:3] == [False, 1, 1]
+
+    with pytest.raises(WidgetTransformationNotImplemented):
+        mb.flip(True, True)
+    assert mb._flip == (False, False)
+
+    with pytest.raises(WidgetTransformationNotImplemented):
+        mb.set_max_width(100)
+    assert mb._max_width[0] is None
+
+    with pytest.raises(WidgetTransformationNotImplemented):
+        mb.set_max_height(100)
+    assert mb._max_height[0] is None
+
+
+def test_menubar_empty_title():
+    mb = MenuBar("", 500, (0, 0, 0), back_box=True)
+    p = mb._padding
+
+    assert mb.get_width() == p[1] + p[3]
+    assert mb.get_height() == p[0] + p[2]
+
+
+def test_menubar_value_api():
+    mb = MenuBar("Menu", 500, (0, 0, 0), back_box=True)
+
+    with pytest.raises(ValueError):
+        mb.get_value()
+
+    with pytest.raises(ValueError):
+        mb.set_value("value")
+
+    assert not mb.value_changed()
+    mb.reset_value()
