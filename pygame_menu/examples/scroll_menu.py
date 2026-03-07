@@ -8,7 +8,7 @@ Shows scrolling in menu.
 
 from __future__ import annotations
 
-__all__ = ['main']
+__all__ = ["main"]
 
 from functools import partial
 from typing import Any
@@ -30,9 +30,9 @@ def on_button_click(value: str, text: Any = None) -> None:
     :param text: Button text
     """
     if not text:
-        print(f'Hello from {value}')
+        print(f"Hello from {value}")
     else:
-        print(f'Hello from {text} with {value}')
+        print(f"Hello from {text} with {value}")
 
 
 def paint_background(surface: pygame.Surface) -> None:
@@ -58,8 +58,8 @@ def make_long_menu() -> pygame_menu.Menu:
         height=400,
         onclose=pygame_menu.events.EXIT,
         theme=theme_menu,
-        title='Main Menu',
-        width=600
+        title="Main Menu",
+        width=600,
     )
 
     menu_sub = pygame_menu.Menu(
@@ -68,74 +68,77 @@ def make_long_menu() -> pygame_menu.Menu:
         onclose=pygame_menu.events.EXIT,
         rows=3,
         theme=pygame_menu.themes.THEME_GREEN,
-        title='Menu with columns',
-        width=600
+        title="Menu with columns",
+        width=600,
     )
 
     menu_contributors = pygame_menu.Menu(
         height=400,
         onclose=pygame_menu.events.EXIT,
         theme=pygame_menu.themes.THEME_SOLARIZED,
-        title='Contributors',
-        width=600
+        title="Contributors",
+        width=600,
     )
 
     # Add table to contributors
     table_contrib = menu_contributors.add.table()
     table_contrib.default_cell_padding = 5
-    table_contrib.default_row_background_color = 'white'
+    table_contrib.default_row_background_color = "white"
     bold_font = pygame_menu.font.FONT_OPEN_SANS_BOLD
-    table_contrib.add_row(['N°', 'Github User'], cell_font=bold_font)
+    table_contrib.add_row(["N°", "Github User"], cell_font=bold_font)
     for i in range(len(pygame_menu.__contributors__)):
-        table_contrib.add_row([i + 1, pygame_menu.__contributors__[i]], cell_font=bold_font if i == 0 else None)
+        table_contrib.add_row(
+            [i + 1, pygame_menu.__contributors__[i]],
+            cell_font=bold_font if i == 0 else None,
+        )
 
     table_contrib.update_cell_style(-1, -1, font_size=15)  # Update all column/row
-    table_contrib.update_cell_style(1, [2, -1], font=pygame_menu.font.FONT_OPEN_SANS_ITALIC)
+    table_contrib.update_cell_style(
+        1, [2, -1], font=pygame_menu.font.FONT_OPEN_SANS_ITALIC
+    )
 
     menu_text = pygame_menu.Menu(
         height=400,
         onclose=pygame_menu.events.EXIT,
         theme=pygame_menu.themes.THEME_DARK,
-        title='Text with scroll',
-        width=600
+        title="Text with scroll",
+        width=600,
     )
 
-    menu.add.button('Rows and Columns', menu_sub)
-    menu.add.button('Text scrolled', menu_text)
-    menu.add.button('Pygame-menu contributors', menu_contributors)
+    menu.add.button("Rows and Columns", menu_sub)
+    menu.add.button("Text scrolled", menu_text)
+    menu.add.button("Pygame-menu contributors", menu_contributors)
     menu.add.vertical_margin(20)  # Adds margin
 
     for i in range(1, 20):
         if i % 2 == 0:
-            menu.add.button(f'Button n°{i}',
-                            on_button_click,
-                            f'Button n°{i}')
+            menu.add.button(f"Button n°{i}", on_button_click, f"Button n°{i}")
         else:
-            menu.add.text_input(f'Text n°{i}: ',
-                                onchange=on_button_click,
-                                text=f'Text n°{i}')
-    menu.add.button('Exit', pygame_menu.events.EXIT)
+            menu.add.text_input(
+                f"Text n°{i}: ", onchange=on_button_click, text=f"Text n°{i}"
+            )
+    menu.add.button("Exit", pygame_menu.events.EXIT)
 
     for i in range(1, 11):
         # Test large button
         if i == 5:
-            txt = 'This is a very long button!'
+            txt = "This is a very long button!"
         else:
-            txt = f'Button n°{100 * i}'
+            txt = f"Button n°{100 * i}"
         menu_sub.add.button(txt, on_button_click, 100 * i)
-    menu_sub.add.button('Back', pygame_menu.events.BACK)
+    menu_sub.add.button("Back", pygame_menu.events.BACK)
 
     menu_text.add.label(
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod '
-        'tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim '
-        'veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea '
-        'commodo consequat. Duis aute irure dolor in reprehenderit in voluptate '
-        'velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat '
-        'cupidatat non proident, sunt in culpa qui officia deserunt mollit anim '
-        'id est laborum.',
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod "
+        "tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim "
+        "veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea "
+        "commodo consequat. Duis aute irure dolor in reprehenderit in voluptate "
+        "velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat "
+        "cupidatat non proident, sunt in culpa qui officia deserunt mollit anim "
+        "id est laborum.",
         max_char=33,
         align=pygame_menu.locals.ALIGN_LEFT,
-        margin=(0, -1)
+        margin=(0, -1),
     )
     return menu
 
@@ -146,7 +149,7 @@ def main(test: bool = False) -> None:
 
     :param test: Indicate function is being tested
     """
-    screen = create_example_window('Example - Scrolling Menu', WINDOW_SIZE)
+    screen = create_example_window("Example - Scrolling Menu", WINDOW_SIZE)
 
     clock = pygame.time.Clock()
     menu = make_long_menu()
@@ -155,7 +158,6 @@ def main(test: bool = False) -> None:
     # Main loop
     # -------------------------------------------------------------------------
     while True:
-
         # Tick
         clock.tick(FPS)
 
@@ -167,7 +169,7 @@ def main(test: bool = False) -> None:
             surface=screen,
             bgfun=partial(paint_background, screen),
             disable_loop=test,
-            fps_limit=FPS
+            fps_limit=FPS,
         )
 
         # Update surface
@@ -178,5 +180,5 @@ def main(test: bool = False) -> None:
             break
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -10,21 +10,16 @@ Selector class, contains several items that can be changed in a horizontal way
 from __future__ import annotations
 
 __all__ = [
-
     # Main class
-    'Selector',
-    'SelectorManager',
-
+    "Selector",
+    "SelectorManager",
     # Constants
-    'SELECTOR_STYLE_CLASSIC',
-    'SELECTOR_STYLE_FANCY',
-
+    "SELECTOR_STYLE_CLASSIC",
+    "SELECTOR_STYLE_FANCY",
     # Utils
-    'check_selector_items',
-
+    "check_selector_items",
     # Types
-    'SelectorStyleType'
-
+    "SelectorStyleType",
 ]
 
 from abc import ABC
@@ -56,8 +51,8 @@ if TYPE_CHECKING:
         Tuple3IntType,
     )
 
-SELECTOR_STYLE_CLASSIC = 'classic'
-SELECTOR_STYLE_FANCY = 'fancy'
+SELECTOR_STYLE_CLASSIC = "classic"
+SELECTOR_STYLE_FANCY = "fancy"
 
 SelectorStyleType = str
 
@@ -68,14 +63,16 @@ def check_selector_items(items: tuple | list) -> None:
 
     :param items: Items list
     """
-    assert len(items) > 0, 'item list cannot be empty'
+    assert len(items) > 0, "item list cannot be empty"
     for e in items:
-        assert len(e) >= 1, \
-            'length of each item on item list must be equal or greater than 1 ' \
-            '(i.e. cannot be empty)'
-        assert isinstance(e[0], (str, bytes)), \
-            f'first element of each item on list must be a string ' \
+        assert len(e) >= 1, (
+            "length of each item on item list must be equal or greater than 1 "
+            "(i.e. cannot be empty)"
+        )
+        assert isinstance(e[0], (str, bytes)), (
+            f"first element of each item on list must be a string "
             f'(the title of each item), but received "{e[0]}"'
+        )
 
 
 class Selector(Widget):
@@ -121,6 +118,7 @@ class Selector(Widget):
     :param style_fancy_box_margin: Box margin on x-axis and y-axis (x, y) in fancy style from title in px
     :param kwargs: Optional keyword arguments
     """
+
     _index: int
     _items: list[tuple[Any, ...]] | list[str]
     _sformat: str
@@ -138,7 +136,7 @@ class Selector(Widget):
         self,
         title: Any,
         items: list[tuple[Any, ...]] | list[str],
-        selector_id: str = '',
+        selector_id: str = "",
         default: int = 0,
         onchange: CallbackType = None,
         onreturn: CallbackType = None,
@@ -152,22 +150,23 @@ class Selector(Widget):
         style_fancy_box_inflate: Tuple2IntType = (0, 0),
         style_fancy_box_margin: Tuple2NumberType = (25, 0),
         *args,
-        **kwargs
+        **kwargs,
     ) -> None:
         assert isinstance(items, list)
         assert isinstance(selector_id, str)
         assert isinstance(default, int)
-        assert style in (SELECTOR_STYLE_CLASSIC, SELECTOR_STYLE_FANCY), \
-            'invalid selector style'
+        assert style in (SELECTOR_STYLE_CLASSIC, SELECTOR_STYLE_FANCY), (
+            "invalid selector style"
+        )
 
         # Check items list
         check_selector_items(items)
-        assert default >= 0, \
-            'default position must be equal or greater than zero'
-        assert default < len(items), \
-            'default position should be lower than number of values'
-        assert isinstance(selector_id, str), 'id must be a string'
-        assert isinstance(default, int), 'default must be an integer'
+        assert default >= 0, "default position must be equal or greater than zero"
+        assert default < len(items), (
+            "default position should be lower than number of values"
+        )
+        assert isinstance(selector_id, str), "id must be a string"
+        assert isinstance(default, int), "default must be an integer"
 
         # Check fancy style
         style_fancy_arrow_color = assert_color(style_fancy_arrow_color)
@@ -177,8 +176,9 @@ class Selector(Widget):
         style_fancy_bordercolor = assert_color(style_fancy_bordercolor)
         assert isinstance(style_fancy_borderwidth, int) and style_fancy_borderwidth >= 0
         assert_vector(style_fancy_box_inflate, 2, int)
-        assert style_fancy_box_inflate[0] >= 0 and style_fancy_box_inflate[1] >= 0, \
-            'box inflate must be equal or greater than zero on both axis'
+        assert style_fancy_box_inflate[0] >= 0 and style_fancy_box_inflate[1] >= 0, (
+            "box inflate must be equal or greater than zero on both axis"
+        )
 
         super().__init__(
             onchange=onchange,
@@ -187,13 +187,13 @@ class Selector(Widget):
             title=title,
             widget_id=selector_id,
             args=args,
-            kwargs=kwargs
+            kwargs=kwargs,
         )
 
         self._accept_events = True
         self._index = 0
         self._items = items.copy()
-        self._sformat = ''
+        self._sformat = ""
         self._style = style
         self._title_size = 0
 
@@ -204,7 +204,10 @@ class Selector(Widget):
         self._style_fancy_bordercolor = style_fancy_bordercolor
         self._style_fancy_borderwidth = style_fancy_borderwidth
         self._style_fancy_box_inflate = style_fancy_box_inflate
-        self._style_fancy_box_margin = (int(style_fancy_box_margin[0]), int(style_fancy_box_margin[1]))
+        self._style_fancy_box_margin = (
+            int(style_fancy_box_margin[0]),
+            int(style_fancy_box_margin[1]),
+        )
 
         # Apply default item
         default %= len(self._items)
@@ -212,7 +215,7 @@ class Selector(Widget):
             self._right()
 
         # Last configs
-        self.set_sformat('{0}< {1} >')
+        self.set_sformat("{0}< {1} >")
         self.set_default_value(default)
 
     def set_sformat(self, sformat: str) -> Selector:
@@ -224,8 +227,9 @@ class Selector(Widget):
         :return: Self reference
         """
         assert isinstance(sformat, str)
-        assert '{0}' in sformat and '{1}' in sformat and '{2}' not in sformat, \
-            'sformat must contain {0} and {1}'
+        assert "{0}" in sformat and "{1}" in sformat and "{2}" not in sformat, (
+            "sformat must contain {0} and {1}"
+        )
         self._sformat = sformat
         return self
 
@@ -236,9 +240,11 @@ class Selector(Widget):
     def _apply_font(self) -> None:
         self._title_size = self._font.size(self._title)[0]
         if self._style == SELECTOR_STYLE_FANCY:
-            self._title_size += self._style_fancy_box_margin[0] \
-                                - self._style_fancy_box_inflate[0] / 2 \
-                                + self._style_fancy_borderwidth
+            self._title_size += (
+                self._style_fancy_box_margin[0]
+                - self._style_fancy_box_inflate[0] / 2
+                + self._style_fancy_borderwidth
+            )
         self._title_size = int(self._title_size)
 
     def _draw(self, surface: pygame.Surface) -> None:
@@ -246,7 +252,9 @@ class Selector(Widget):
 
     def _render(self) -> bool | None:
         current_selected = self.get_value()[0][0]
-        if not self._render_hash_changed(current_selected, self._selected, self._visible, self._index, self.readonly):
+        if not self._render_hash_changed(
+            current_selected, self._selected, self._visible, self._index, self.readonly
+        ):
             return True
 
         color = self.get_font_color_status()
@@ -264,10 +272,17 @@ class Selector(Widget):
 
             # Create arrows
             arrow_left = pygame.Rect(
-                int(title.get_width() + self._style_fancy_arrow_margin[0] + self._style_fancy_box_margin[0]),
-                int(self._style_fancy_arrow_margin[2] + self._style_fancy_box_inflate[1] / 2),
+                int(
+                    title.get_width()
+                    + self._style_fancy_arrow_margin[0]
+                    + self._style_fancy_box_margin[0]
+                ),
+                int(
+                    self._style_fancy_arrow_margin[2]
+                    + self._style_fancy_box_inflate[1] / 2
+                ),
                 title.get_height(),
-                title.get_height()
+                title.get_height(),
             )
             arrow_left_pos = (
                 (arrow_left.left + 5, arrow_left.centery),
@@ -277,30 +292,40 @@ class Selector(Widget):
                 (arrow_left.right - 5, arrow_left.centery + 2),
                 (arrow_left.centerx, arrow_left.centery + 2),
                 (arrow_left.centerx, arrow_left.bottom - 5),
-                (arrow_left.left + 5, arrow_left.centery)
+                (arrow_left.left + 5, arrow_left.centery),
             )
 
             arrow_right = pygame.Rect(
-                int(title.get_width()
+                int(
+                    title.get_width()
                     + 2 * self._style_fancy_arrow_margin[0]
                     + self._style_fancy_box_margin[0]
-                    + self._style_fancy_arrow_margin[1] + current.get_width()
-                    ),
-                int(self._style_fancy_arrow_margin[2]
+                    + self._style_fancy_arrow_margin[1]
+                    + current.get_width()
+                ),
+                int(
+                    self._style_fancy_arrow_margin[2]
                     + self._style_fancy_box_inflate[1] / 2
-                    + self._style_fancy_box_margin[1]),
+                    + self._style_fancy_box_margin[1]
+                ),
                 title.get_height(),
-                title.get_height()
+                title.get_height(),
             )
             arrow_right_pos = (
                 (2 * arrow_right.right - (arrow_right.left + 5), arrow_right.centery),
                 (2 * arrow_right.right - arrow_right.centerx, arrow_right.top + 5),
                 (2 * arrow_right.right - arrow_right.centerx, arrow_right.centery - 2),
-                (2 * arrow_right.right - (arrow_right.right - 5), arrow_right.centery - 2),
-                (2 * arrow_right.right - (arrow_right.right - 5), arrow_right.centery + 2),
+                (
+                    2 * arrow_right.right - (arrow_right.right - 5),
+                    arrow_right.centery - 2,
+                ),
+                (
+                    2 * arrow_right.right - (arrow_right.right - 5),
+                    arrow_right.centery + 2,
+                ),
                 (2 * arrow_right.right - arrow_right.centerx, arrow_right.centery + 2),
                 (2 * arrow_right.right - arrow_right.centerx, arrow_right.bottom - 5),
-                (2 * arrow_right.right - (arrow_right.left + 5), arrow_right.centery)
+                (2 * arrow_right.right - (arrow_right.left + 5), arrow_right.centery),
             )
 
             self._surface = make_surface(
@@ -312,28 +337,49 @@ class Selector(Widget):
                 + 2 * arrow_left.width
                 + self._style_fancy_borderwidth
                 + self._style_fancy_box_inflate[0] / 2,
-                title.get_height() + self._style_fancy_box_inflate[1])
+                title.get_height() + self._style_fancy_box_inflate[1],
+            )
             self._surface.blit(title, (0, int(self._style_fancy_box_inflate[1] / 2)))
             current_rect_bg = current.get_rect()
             current_rect_bg.x += title.get_width() + self._style_fancy_box_margin[0]
-            current_rect_bg.y += int(self._style_fancy_box_inflate[1] / 2 + self._style_fancy_box_margin[1])
-            current_rect_bg.width += 2 * (self._style_fancy_arrow_margin[0]
-                                          + self._style_fancy_arrow_margin[1]
-                                          + arrow_left.width)
+            current_rect_bg.y += int(
+                self._style_fancy_box_inflate[1] / 2 + self._style_fancy_box_margin[1]
+            )
+            current_rect_bg.width += 2 * (
+                self._style_fancy_arrow_margin[0]
+                + self._style_fancy_arrow_margin[1]
+                + arrow_left.width
+            )
             current_rect_bg = current_rect_bg.inflate(self._style_fancy_box_inflate)
             pygame.draw.rect(self._surface, self._style_fancy_bgcolor, current_rect_bg)
-            pygame.draw.rect(self._surface, self._style_fancy_bordercolor, current_rect_bg,
-                             self._style_fancy_borderwidth)
+            pygame.draw.rect(
+                self._surface,
+                self._style_fancy_bordercolor,
+                current_rect_bg,
+                self._style_fancy_borderwidth,
+            )
             self._surface.blit(
-                current, (int(title.get_width()
-                              + arrow_left.width
-                              + self._style_fancy_arrow_margin[0]
-                              + self._style_fancy_arrow_margin[1]
-                              + self._style_fancy_box_margin[0]),
-                          int(self._style_fancy_box_inflate[1] / 2
-                              + self._style_fancy_box_margin[1])))
-            pygame.draw.polygon(self._surface, self._style_fancy_arrow_color, arrow_left_pos)
-            pygame.draw.polygon(self._surface, self._style_fancy_arrow_color, arrow_right_pos)
+                current,
+                (
+                    int(
+                        title.get_width()
+                        + arrow_left.width
+                        + self._style_fancy_arrow_margin[0]
+                        + self._style_fancy_arrow_margin[1]
+                        + self._style_fancy_box_margin[0]
+                    ),
+                    int(
+                        self._style_fancy_box_inflate[1] / 2
+                        + self._style_fancy_box_margin[1]
+                    ),
+                ),
+            )
+            pygame.draw.polygon(
+                self._surface, self._style_fancy_arrow_color, arrow_left_pos
+            )
+            pygame.draw.polygon(
+                self._surface, self._style_fancy_arrow_color, arrow_right_pos
+            )
 
         self._apply_transforms()
         self._rect.width, self._rect.height = self._surface.get_size()
@@ -404,7 +450,7 @@ class Selector(Widget):
 
         :param item: Item to select, can be a string or an integer
         """
-        assert isinstance(item, (str, int)), 'item must be a string or an integer'
+        assert isinstance(item, (str, int)), "item must be a string or an integer"
         if isinstance(item, str):
             found = False
             for i in self._items:
@@ -415,9 +461,10 @@ class Selector(Widget):
             if not found:
                 raise ValueError(f'no value "{item}" found in selector')
         elif isinstance(item, int):
-            assert 0 <= item < len(self._items), \
-                'item index must be greater than zero and lower than the number ' \
-                'of items on the selector'
+            assert 0 <= item < len(self._items), (
+                "item index must be greater than zero and lower than the number "
+                "of items on the selector"
+            )
             self._index = item
         self._render()
 
@@ -450,9 +497,10 @@ class Selector(Widget):
             return False
 
         for event in events:
-
             if event.type == pygame.KEYDOWN:  # Check key is valid
-                if self._ignores_keyboard_nonphysical() and not check_key_pressed_valid(event):
+                if self._ignores_keyboard_nonphysical() and not check_key_pressed_valid(
+                    event
+                ):
                     continue
 
             # Check mouse over
@@ -461,31 +509,43 @@ class Selector(Widget):
             # Events
             keydown = self._keyboard_enabled and event.type == pygame.KEYDOWN
             joy_hatmotion = self._joystick_enabled and event.type == pygame.JOYHATMOTION
-            joy_axismotion = self._joystick_enabled and event.type == pygame.JOYAXISMOTION
-            joy_button_down = self._joystick_enabled and event.type == pygame.JOYBUTTONDOWN
+            joy_axismotion = (
+                self._joystick_enabled and event.type == pygame.JOYAXISMOTION
+            )
+            joy_button_down = (
+                self._joystick_enabled and event.type == pygame.JOYBUTTONDOWN
+            )
 
             # Left button
             if (
-                keydown and self._ctrl.left(event, self) or
-                joy_hatmotion and self._ctrl.joy_left(event, self) or
-                joy_axismotion and self._ctrl.joy_axis_x_left(event, self)
+                keydown
+                and self._ctrl.left(event, self)
+                or joy_hatmotion
+                and self._ctrl.joy_left(event, self)
+                or joy_axismotion
+                and self._ctrl.joy_axis_x_left(event, self)
             ):
                 self._left()
                 return True
 
             # Right button
             elif (
-                keydown and self._ctrl.right(event, self) or
-                joy_hatmotion and self._ctrl.joy_right(event, self) or
-                joy_axismotion and self._ctrl.joy_axis_x_right(event, self)
+                keydown
+                and self._ctrl.right(event, self)
+                or joy_hatmotion
+                and self._ctrl.joy_right(event, self)
+                or joy_axismotion
+                and self._ctrl.joy_axis_x_right(event, self)
             ):
                 self._right()
                 return True
 
             # Press enter
             elif (
-                keydown and self._ctrl.apply(event, self) or
-                joy_button_down and self._ctrl.joy_select(event, self)
+                keydown
+                and self._ctrl.apply(event, self)
+                or joy_button_down
+                and self._ctrl.joy_select(event, self)
             ):
                 self._sound.play_key_add()
                 self.apply(*self._items[self._index][1:])
@@ -493,8 +553,12 @@ class Selector(Widget):
 
             # Click on selector; don't consider the mouse wheel (button 4 & 5)
             elif (
-                event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and event.button in (1, 2, 3) or
-                event.type == FINGERUP and self._touchscreen_enabled and self._menu is not None
+                event.type == pygame.MOUSEBUTTONUP
+                and self._mouse_enabled
+                and event.button in (1, 2, 3)
+                or event.type == FINGERUP
+                and self._touchscreen_enabled
+                and self._menu is not None
             ):
                 event_pos = get_finger_pos(self._menu, event)
 
@@ -532,9 +596,9 @@ class SelectorManager(AbstractWidgetManager, ABC):
         onchange: CallbackType = None,
         onreturn: CallbackType = None,
         onselect: Callable[[bool, Widget, pygame_menu.Menu], Any] | None = None,
-        selector_id: str = '',
+        selector_id: str = "",
         style: SelectorStyleType = SELECTOR_STYLE_CLASSIC,
-        **kwargs
+        **kwargs,
     ) -> pygame_menu.widgets.Selector:
         """
         Add a selector to the Menu: several items and two functions that are
@@ -635,13 +699,27 @@ class SelectorManager(AbstractWidgetManager, ABC):
         attributes = self._filter_widget_attributes(kwargs)
 
         # Get fancy style attributes
-        style_fancy_arrow_color = kwargs.pop('style_fancy_arrow_color', self._theme.widget_box_arrow_color)
-        style_fancy_arrow_margin = kwargs.pop('style_fancy_arrow_margin', self._theme.widget_box_arrow_margin)
-        style_fancy_bgcolor = kwargs.pop('style_fancy_bgcolor', self._theme.widget_box_background_color)
-        style_fancy_bordercolor = kwargs.pop('style_fancy_bordercolor', self._theme.widget_box_border_color)
-        style_fancy_borderwidth = kwargs.pop('style_fancy_borderwidth', self._theme.widget_box_border_width)
-        style_fancy_box_inflate = kwargs.pop('style_fancy_box_inflate', self._theme.widget_box_inflate)
-        style_fancy_box_margin = kwargs.pop('style_fancy_box_margin', self._theme.widget_box_margin)
+        style_fancy_arrow_color = kwargs.pop(
+            "style_fancy_arrow_color", self._theme.widget_box_arrow_color
+        )
+        style_fancy_arrow_margin = kwargs.pop(
+            "style_fancy_arrow_margin", self._theme.widget_box_arrow_margin
+        )
+        style_fancy_bgcolor = kwargs.pop(
+            "style_fancy_bgcolor", self._theme.widget_box_background_color
+        )
+        style_fancy_bordercolor = kwargs.pop(
+            "style_fancy_bordercolor", self._theme.widget_box_border_color
+        )
+        style_fancy_borderwidth = kwargs.pop(
+            "style_fancy_borderwidth", self._theme.widget_box_border_width
+        )
+        style_fancy_box_inflate = kwargs.pop(
+            "style_fancy_box_inflate", self._theme.widget_box_inflate
+        )
+        style_fancy_box_margin = kwargs.pop(
+            "style_fancy_box_margin", self._theme.widget_box_margin
+        )
 
         widget = Selector(
             default=default,
@@ -659,7 +737,7 @@ class SelectorManager(AbstractWidgetManager, ABC):
             style_fancy_box_inflate=style_fancy_box_inflate,
             style_fancy_box_margin=style_fancy_box_margin,
             title=title,
-            **kwargs
+            **kwargs,
         )
 
         self._configure_widget(widget=widget, **attributes)

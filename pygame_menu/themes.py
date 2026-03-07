@@ -9,21 +9,17 @@ Theme class and predefined themes.
 from __future__ import annotations
 
 __all__ = [
-
     # Main class
-    'Theme',
-
+    "Theme",
     # Custom themes
-    'THEME_BLUE',
-    'THEME_DARK',
-    'THEME_DEFAULT',
-    'THEME_GREEN',
-    'THEME_ORANGE',
-    'THEME_SOLARIZED',
-
+    "THEME_BLUE",
+    "THEME_DARK",
+    "THEME_DEFAULT",
+    "THEME_GREEN",
+    "THEME_ORANGE",
+    "THEME_SOLARIZED",
     # Colors
-    'TRANSPARENT_COLOR'
-
+    "TRANSPARENT_COLOR",
 ]
 
 import copy
@@ -92,9 +88,15 @@ def _check_menubar_style(style: int) -> bool:
     :param style: Style
     :return: ``True`` if correct
     """
-    return style in (MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_SIMPLE, MENUBAR_STYLE_TITLE_ONLY,
-                     MENUBAR_STYLE_TITLE_ONLY_DIAGONAL, MENUBAR_STYLE_NONE,
-                     MENUBAR_STYLE_UNDERLINE, MENUBAR_STYLE_UNDERLINE_TITLE)
+    return style in (
+        MENUBAR_STYLE_ADAPTIVE,
+        MENUBAR_STYLE_SIMPLE,
+        MENUBAR_STYLE_TITLE_ONLY,
+        MENUBAR_STYLE_TITLE_ONLY_DIAGONAL,
+        MENUBAR_STYLE_NONE,
+        MENUBAR_STYLE_UNDERLINE,
+        MENUBAR_STYLE_UNDERLINE_TITLE,
+    )
 
 
 class Theme:
@@ -280,6 +282,7 @@ class Theme:
     :param widget_url_color: Color of url text links
     :type widget_url_color: tuple, list, str, int, :py:class:`pygame.Color`
     """
+
     _disable_validation: bool
     background_color: ColorType | BaseImage
     border_color: ColorType | BaseImage
@@ -366,181 +369,215 @@ class Theme:
 
         # Menu general
         self.background_color = self._get(
-            kwargs, 'background_color', 'color_image', (220, 220, 220))
-        self.border_color = self._get(
-            kwargs, 'border_color', 'color_image_none')
-        self.border_width = self._get(
-            kwargs, 'border_width', int, 0)
+            kwargs, "background_color", "color_image", (220, 220, 220)
+        )
+        self.border_color = self._get(kwargs, "border_color", "color_image_none")
+        self.border_width = self._get(kwargs, "border_width", int, 0)
         self.focus_background_color = self._get(
-            kwargs, 'focus_background_color', 'color', (0, 0, 0, 180))
-        self.fps = self._get(
-            kwargs, 'fps', NumberInstance, 30)
+            kwargs, "focus_background_color", "color", (0, 0, 0, 180)
+        )
+        self.fps = self._get(kwargs, "fps", NumberInstance, 30)
         self.readonly_color = self._get(
-            kwargs, 'readonly_color', 'color', (120, 120, 120))
+            kwargs, "readonly_color", "color", (120, 120, 120)
+        )
         self.readonly_selected_color = self._get(
-            kwargs, 'readonly_selected_color', 'color', (190, 190, 190))
+            kwargs, "readonly_selected_color", "color", (190, 190, 190)
+        )
         self.selection_color = self._get(
-            kwargs, 'selection_color', 'color', (255, 255, 255))
+            kwargs, "selection_color", "color", (255, 255, 255)
+        )
         self.surface_clear_color = self._get(
-            kwargs, 'surface_clear_color', 'color', (0, 0, 0))
+            kwargs, "surface_clear_color", "color", (0, 0, 0)
+        )
 
         # Cursor/Text gathering
-        self.cursor_color = self._get(
-            kwargs, 'cursor_color', 'color', (0, 0, 0))
+        self.cursor_color = self._get(kwargs, "cursor_color", "color", (0, 0, 0))
         self.cursor_selection_color = self._get(
-            kwargs, 'cursor_selection_color', 'color', (30, 30, 30, 120))
+            kwargs, "cursor_selection_color", "color", (30, 30, 30, 120)
+        )
         self.cursor_switch_ms = self._get(
-            kwargs, 'cursor_switch_ms', NumberInstance, 750)
+            kwargs, "cursor_switch_ms", NumberInstance, 750
+        )
 
         # Menubar/Title
-        self.title = self._get(
-            kwargs, 'title', bool, True)
+        self.title = self._get(kwargs, "title", bool, True)
         self.title_background_color = self._get(
-            kwargs, 'title_background_color', 'color', (70, 70, 70))
+            kwargs, "title_background_color", "color", (70, 70, 70)
+        )
         self.title_bar_modify_scrollarea = self._get(
-            kwargs, 'title_bar_modify_scrollarea', bool, True)
+            kwargs, "title_bar_modify_scrollarea", bool, True
+        )
         self.title_bar_style = self._get(
-            kwargs, 'title_bar_style', int, MENUBAR_STYLE_ADAPTIVE)
-        self.title_close_button = self._get(
-            kwargs, 'title_close_button', bool, True)
+            kwargs, "title_bar_style", int, MENUBAR_STYLE_ADAPTIVE
+        )
+        self.title_close_button = self._get(kwargs, "title_close_button", bool, True)
         self.title_close_button_background_color = self._get(
-            kwargs, 'title_close_button_background_color', 'color', (255, 255, 255))
+            kwargs, "title_close_button_background_color", "color", (255, 255, 255)
+        )
         self.title_close_button_cursor = self._get(
-            kwargs, 'title_close_button_cursor', 'cursor')
-        self.title_fixed = self._get(
-            kwargs, 'title_fixed', bool, True)
-        self.title_floating = self._get(
-            kwargs, 'title_floating', bool, False)
-        self.title_font = self._get(
-            kwargs, 'title_font', 'font', FONT_OPEN_SANS)
+            kwargs, "title_close_button_cursor", "cursor"
+        )
+        self.title_fixed = self._get(kwargs, "title_fixed", bool, True)
+        self.title_floating = self._get(kwargs, "title_floating", bool, False)
+        self.title_font = self._get(kwargs, "title_font", "font", FONT_OPEN_SANS)
         self.title_font_antialias = self._get(
-            kwargs, 'title_font_antialias', bool, True)
+            kwargs, "title_font_antialias", bool, True
+        )
         self.title_font_color = self._get(
-            kwargs, 'title_font_color', 'color', (220, 220, 220))
-        self.title_font_shadow = self._get(
-            kwargs, 'title_font_shadow', bool, False)
+            kwargs, "title_font_color", "color", (220, 220, 220)
+        )
+        self.title_font_shadow = self._get(kwargs, "title_font_shadow", bool, False)
         self.title_font_shadow_color = self._get(
-            kwargs, 'title_font_shadow_color', 'color', (0, 0, 0))
+            kwargs, "title_font_shadow_color", "color", (0, 0, 0)
+        )
         self.title_font_shadow_offset = self._get(
-            kwargs, 'title_font_shadow_offset', int, 2)
+            kwargs, "title_font_shadow_offset", int, 2
+        )
         self.title_font_shadow_position = self._get(
-            kwargs, 'title_font_shadow_position', 'position', POSITION_NORTHWEST)
-        self.title_font_size = self._get(
-            kwargs, 'title_font_size', int, 40)
-        self.title_offset = self._get(
-            kwargs, 'title_offset', 'tuple2', (5, -1))
+            kwargs, "title_font_shadow_position", "position", POSITION_NORTHWEST
+        )
+        self.title_font_size = self._get(kwargs, "title_font_size", int, 40)
+        self.title_offset = self._get(kwargs, "title_offset", "tuple2", (5, -1))
         self.title_updates_pygame_display = self._get(
-            kwargs, 'title_updates_pygame_display', bool, False)
+            kwargs, "title_updates_pygame_display", bool, False
+        )
 
         # ScrollArea
         self.scrollarea_outer_margin = self._get(
-            kwargs, 'scrollarea_outer_margin', 'tuple2', (0, 0))
+            kwargs, "scrollarea_outer_margin", "tuple2", (0, 0)
+        )
         self.scrollarea_position = self._get(
-            kwargs, 'scrollarea_position', str, POSITION_SOUTHEAST)
+            kwargs, "scrollarea_position", str, POSITION_SOUTHEAST
+        )
 
         # ScrollBar
         self.scrollbar_color = self._get(
-            kwargs, 'scrollbar_color', 'color', (235, 235, 235))
-        self.scrollbar_cursor = self._get(
-            kwargs, 'scrollbar_cursor', 'cursor')
-        self.scrollbar_shadow = self._get(
-            kwargs, 'scrollbar_shadow', bool, False)
+            kwargs, "scrollbar_color", "color", (235, 235, 235)
+        )
+        self.scrollbar_cursor = self._get(kwargs, "scrollbar_cursor", "cursor")
+        self.scrollbar_shadow = self._get(kwargs, "scrollbar_shadow", bool, False)
         self.scrollbar_shadow_color = self._get(
-            kwargs, 'scrollbar_shadow_color', 'color', (0, 0, 0))
+            kwargs, "scrollbar_shadow_color", "color", (0, 0, 0)
+        )
         self.scrollbar_shadow_offset = self._get(
-            kwargs, 'scrollbar_shadow_offset', int, 2)
+            kwargs, "scrollbar_shadow_offset", int, 2
+        )
         self.scrollbar_shadow_position = self._get(
-            kwargs, 'scrollbar_shadow_position', 'position', POSITION_NORTHWEST)
+            kwargs, "scrollbar_shadow_position", "position", POSITION_NORTHWEST
+        )
         self.scrollbar_slider_color = self._get(
-            kwargs, 'scrollbar_slider_color', 'color', (200, 200, 200))
+            kwargs, "scrollbar_slider_color", "color", (200, 200, 200)
+        )
         self.scrollbar_slider_hover_color = self._get(
-            kwargs, 'scrollbar_slider_hover_color', 'color', (170, 170, 170))
+            kwargs, "scrollbar_slider_hover_color", "color", (170, 170, 170)
+        )
         self.scrollbar_slider_pad = self._get(
-            kwargs, 'scrollbar_slider_pad', NumberInstance, 0)
-        self.scrollbar_thick = self._get(
-            kwargs, 'scrollbar_thick', int, 20)
+            kwargs, "scrollbar_slider_pad", NumberInstance, 0
+        )
+        self.scrollbar_thick = self._get(kwargs, "scrollbar_thick", int, 20)
 
         # Generic widget themes
         self.widget_alignment = self._get(
-            kwargs, 'widget_alignment', 'alignment', ALIGN_CENTER)
+            kwargs, "widget_alignment", "alignment", ALIGN_CENTER
+        )
         self.widget_alignment_ignore_scrollbar_thickness = self._get(
-            kwargs, 'widget_alignment_ignore_scrollbar_thickness', bool, False)
+            kwargs, "widget_alignment_ignore_scrollbar_thickness", bool, False
+        )
         self.widget_background_color = self._get(
-            kwargs, 'widget_background_color', 'color_image_none')
+            kwargs, "widget_background_color", "color_image_none"
+        )
         self.widget_background_inflate = self._get(
-            kwargs, 'background_inflate', 'tuple2int', (0, 0))
+            kwargs, "background_inflate", "tuple2int", (0, 0)
+        )
         self.widget_background_inflate_to_selection = self._get(
-            kwargs, 'widget_background_inflate_to_selection', bool, False)
+            kwargs, "widget_background_inflate_to_selection", bool, False
+        )
         self.widget_border_color = self._get(
-            kwargs, 'widget_border_color', 'color', (0, 0, 0))
+            kwargs, "widget_border_color", "color", (0, 0, 0)
+        )
         self.widget_border_inflate = self._get(
-            kwargs, 'widget_border_inflate', 'tuple2int', (0, 0))
+            kwargs, "widget_border_inflate", "tuple2int", (0, 0)
+        )
         self.widget_border_position = self._get(
-            kwargs, 'widget_border_position', 'position_vector', WIDGET_FULL_BORDER)
-        self.widget_border_width = self._get(
-            kwargs, 'widget_border_width', int, 0)
+            kwargs, "widget_border_position", "position_vector", WIDGET_FULL_BORDER
+        )
+        self.widget_border_width = self._get(kwargs, "widget_border_width", int, 0)
         self.widget_box_arrow_color = self._get(
-            kwargs, 'widget_box_arrow_color', 'color', (150, 150, 150))
+            kwargs, "widget_box_arrow_color", "color", (150, 150, 150)
+        )
         self.widget_box_arrow_margin = self._get(
-            kwargs, 'widget_box_arrow_margin', 'tuple3int', (5, 5, 0))
+            kwargs, "widget_box_arrow_margin", "tuple3int", (5, 5, 0)
+        )
         self.widget_box_background_color = self._get(
-            kwargs, 'widget_box_background_color', 'color', (255, 255, 255))
+            kwargs, "widget_box_background_color", "color", (255, 255, 255)
+        )
         self.widget_box_border_color = self._get(
-            kwargs, 'widget_box_border_color', 'color', (0, 0, 0))
+            kwargs, "widget_box_border_color", "color", (0, 0, 0)
+        )
         self.widget_box_border_width = self._get(
-            kwargs, 'widget_box_border_width', int, 1)
+            kwargs, "widget_box_border_width", int, 1
+        )
         self.widget_box_inflate = self._get(
-            kwargs, 'widget_box_inflate', 'tuple2int', (0, 0))
+            kwargs, "widget_box_inflate", "tuple2int", (0, 0)
+        )
         self.widget_box_margin = self._get(
-            kwargs, 'widget_box_margin', 'tuple2', (25, 0))
-        self.widget_cursor = self._get(
-            kwargs, 'widget_cursor', 'cursor', CURSOR_ARROW)
-        self.widget_font = self._get(
-            kwargs, 'widget_font', 'font', FONT_OPEN_SANS)
+            kwargs, "widget_box_margin", "tuple2", (25, 0)
+        )
+        self.widget_cursor = self._get(kwargs, "widget_cursor", "cursor", CURSOR_ARROW)
+        self.widget_font = self._get(kwargs, "widget_font", "font", FONT_OPEN_SANS)
         self.widget_font_antialias = self._get(
-            kwargs, 'widget_font_antialias', bool, True)
+            kwargs, "widget_font_antialias", bool, True
+        )
         self.widget_font_background_color = self._get(
-            kwargs, 'widget_font_background_color', 'color_none', )
+            kwargs,
+            "widget_font_background_color",
+            "color_none",
+        )
         self.widget_font_background_color_from_menu = self._get(
-            kwargs, 'widget_font_background_color_from_menu', bool, False)
+            kwargs, "widget_font_background_color_from_menu", bool, False
+        )
         self.widget_font_color = self._get(
-            kwargs, 'widget_font_color', 'color', (70, 70, 70))
-        self.widget_font_shadow = self._get(
-            kwargs, 'widget_font_shadow', bool, False)
+            kwargs, "widget_font_color", "color", (70, 70, 70)
+        )
+        self.widget_font_shadow = self._get(kwargs, "widget_font_shadow", bool, False)
         self.widget_font_shadow_color = self._get(
-            kwargs, 'widget_font_shadow_color', 'color', (0, 0, 0))
+            kwargs, "widget_font_shadow_color", "color", (0, 0, 0)
+        )
         self.widget_font_shadow_offset = self._get(
-            kwargs, 'widget_font_shadow_offset', int, 2)
+            kwargs, "widget_font_shadow_offset", int, 2
+        )
         self.widget_font_shadow_position = self._get(
-            kwargs, 'widget_font_shadow_position', 'position', POSITION_NORTHWEST)
-        self.widget_font_size = self._get(
-            kwargs, 'widget_font_size', int, 30)
-        self.widget_margin = self._get(
-            kwargs, 'widget_margin', 'tuple2', (0, 0))
-        self.widget_offset = self._get(
-            kwargs, 'widget_offset', 'tuple2', (0, 0))
+            kwargs, "widget_font_shadow_position", "position", POSITION_NORTHWEST
+        )
+        self.widget_font_size = self._get(kwargs, "widget_font_size", int, 30)
+        self.widget_margin = self._get(kwargs, "widget_margin", "tuple2", (0, 0))
+        self.widget_offset = self._get(kwargs, "widget_offset", "tuple2", (0, 0))
         self.widget_padding = self._get(
-            kwargs, 'widget_padding', PaddingInstance, (4, 8))
+            kwargs, "widget_padding", PaddingInstance, (4, 8)
+        )
         self.widget_selection_effect = self._get(
-            kwargs, 'widget_selection_effect', Selection, HighlightSelection(margin_x=0, margin_y=0))
-        self.widget_shadow_aa = self._get(
-            kwargs, 'widget_shadow_aa', int, 4)
+            kwargs,
+            "widget_selection_effect",
+            Selection,
+            HighlightSelection(margin_x=0, margin_y=0),
+        )
+        self.widget_shadow_aa = self._get(kwargs, "widget_shadow_aa", int, 4)
         self.widget_shadow_color = self._get(
-            kwargs, 'widget_shadow_color', 'color', (0, 0, 0))
-        self.widget_shadow_radius = self._get(
-            kwargs, 'widget_shadow_radius', int, 0)
+            kwargs, "widget_shadow_color", "color", (0, 0, 0)
+        )
+        self.widget_shadow_radius = self._get(kwargs, "widget_shadow_radius", int, 0)
         self.widget_shadow_type = self._get(
-            kwargs, 'widget_shadow_type', str, WIDGET_SHADOW_TYPE_RECTANGULAR)
-        self.widget_shadow_width = self._get(
-            kwargs, 'widget_shadow_width', int, 0)
-        self.widget_tab_size = self._get(
-            kwargs, 'widget_tab_size', int, 4)
+            kwargs, "widget_shadow_type", str, WIDGET_SHADOW_TYPE_RECTANGULAR
+        )
+        self.widget_shadow_width = self._get(kwargs, "widget_shadow_width", int, 0)
+        self.widget_tab_size = self._get(kwargs, "widget_tab_size", int, 4)
         self.widget_url_color = self._get(
-            kwargs, 'widget_url_color', 'color', (6, 69, 173))
+            kwargs, "widget_url_color", "color", (6, 69, 173)
+        )
 
         # Upon this, no more kwargs should exist, raise exception if there's more
         for invalid_keyword in kwargs.keys():
-            raise ValueError(f'parameter Theme.{invalid_keyword} does not exist')
+            raise ValueError(f"parameter Theme.{invalid_keyword} does not exist")
 
         # Test purpose only, if True disables any validation
         self._disable_validation = False
@@ -617,88 +654,154 @@ class Theme:
         self.background_color = self._format_color_opacity(self.background_color)
         self.border_color = self._format_color_opacity(self.border_color, none=True)
         self.cursor_color = self._format_color_opacity(self.cursor_color)
-        self.cursor_selection_color = self._format_color_opacity(self.cursor_selection_color)
-        self.focus_background_color = self._format_color_opacity(self.focus_background_color)
+        self.cursor_selection_color = self._format_color_opacity(
+            self.cursor_selection_color
+        )
+        self.focus_background_color = self._format_color_opacity(
+            self.focus_background_color
+        )
         self.readonly_color = self._format_color_opacity(self.readonly_color)
-        self.readonly_selected_color = self._format_color_opacity(self.readonly_selected_color)
+        self.readonly_selected_color = self._format_color_opacity(
+            self.readonly_selected_color
+        )
         self.scrollbar_color = self._format_color_opacity(self.scrollbar_color)
-        self.scrollbar_shadow_color = self._format_color_opacity(self.scrollbar_shadow_color)
-        self.scrollbar_slider_color = self._format_color_opacity(self.scrollbar_slider_color)
-        self.scrollbar_slider_hover_color = self._format_color_opacity(self.scrollbar_slider_hover_color)
+        self.scrollbar_shadow_color = self._format_color_opacity(
+            self.scrollbar_shadow_color
+        )
+        self.scrollbar_slider_color = self._format_color_opacity(
+            self.scrollbar_slider_color
+        )
+        self.scrollbar_slider_hover_color = self._format_color_opacity(
+            self.scrollbar_slider_hover_color
+        )
         self.selection_color = self._format_color_opacity(self.selection_color)
         self.surface_clear_color = self._format_color_opacity(self.surface_clear_color)
-        self.title_background_color = self._format_color_opacity(self.title_background_color)
-        self.title_close_button_background_color = self._format_color_opacity(self.title_close_button_background_color)
+        self.title_background_color = self._format_color_opacity(
+            self.title_background_color
+        )
+        self.title_close_button_background_color = self._format_color_opacity(
+            self.title_close_button_background_color
+        )
         self.title_font_color = self._format_color_opacity(self.title_font_color)
-        self.title_font_shadow_color = self._format_color_opacity(self.title_font_shadow_color)
-        self.widget_background_color = self._format_color_opacity(self.widget_background_color, none=True)
+        self.title_font_shadow_color = self._format_color_opacity(
+            self.title_font_shadow_color
+        )
+        self.widget_background_color = self._format_color_opacity(
+            self.widget_background_color, none=True
+        )
         self.widget_border_color = self._format_color_opacity(self.widget_border_color)
-        self.widget_box_arrow_color = self._format_color_opacity(self.widget_box_arrow_color)
-        self.widget_box_background_color = self._format_color_opacity(self.widget_box_background_color)
-        self.widget_box_border_color = self._format_color_opacity(self.widget_box_border_color)
-        self.widget_font_background_color = self._format_color_opacity(self.widget_font_background_color, none=True)
+        self.widget_box_arrow_color = self._format_color_opacity(
+            self.widget_box_arrow_color
+        )
+        self.widget_box_background_color = self._format_color_opacity(
+            self.widget_box_background_color
+        )
+        self.widget_box_border_color = self._format_color_opacity(
+            self.widget_box_border_color
+        )
+        self.widget_font_background_color = self._format_color_opacity(
+            self.widget_font_background_color, none=True
+        )
         self.widget_font_color = self._format_color_opacity(self.widget_font_color)
-        self.widget_font_shadow_color = self._format_color_opacity(self.widget_font_shadow_color)
+        self.widget_font_shadow_color = self._format_color_opacity(
+            self.widget_font_shadow_color
+        )
         self.widget_shadow_color = self._format_color_opacity(self.widget_shadow_color)
         self.widget_url_color = self._format_color_opacity(self.widget_url_color)
 
         # List to tuple
-        self.scrollarea_outer_margin = self._vec_to_tuple(self.scrollarea_outer_margin, 2, NumberInstance)
+        self.scrollarea_outer_margin = self._vec_to_tuple(
+            self.scrollarea_outer_margin, 2, NumberInstance
+        )
         self.title_offset = self._vec_to_tuple(self.title_offset, 2, NumberInstance)
-        self.widget_background_inflate = self._vec_to_tuple(self.widget_background_inflate, 2, int)
-        self.widget_border_inflate = self._vec_to_tuple(self.widget_border_inflate, 2, int)
-        self.widget_box_arrow_margin = self._vec_to_tuple(self.widget_box_arrow_margin, 3, int)
+        self.widget_background_inflate = self._vec_to_tuple(
+            self.widget_background_inflate, 2, int
+        )
+        self.widget_border_inflate = self._vec_to_tuple(
+            self.widget_border_inflate, 2, int
+        )
+        self.widget_box_arrow_margin = self._vec_to_tuple(
+            self.widget_box_arrow_margin, 3, int
+        )
         self.widget_box_inflate = self._vec_to_tuple(self.widget_box_inflate, 2, int)
-        self.widget_box_margin = self._vec_to_tuple(self.widget_box_margin, 2, NumberInstance)
+        self.widget_box_margin = self._vec_to_tuple(
+            self.widget_box_margin, 2, NumberInstance
+        )
         self.widget_margin = self._vec_to_tuple(self.widget_margin, 2, NumberInstance)
         if isinstance(self.widget_padding, VectorInstance):
             self.widget_padding = self._vec_to_tuple(self.widget_padding)
-            assert 2 <= len(self.widget_padding) <= 4, \
-                'widget padding tuple length must be 2, 3 or 4'
+            assert 2 <= len(self.widget_padding) <= 4, (
+                "widget padding tuple length must be 2, 3 or 4"
+            )
             for p in self.widget_padding:
-                assert isinstance(p, NumberInstance), \
-                    'each padding element must be numeric (integer or float)'
-                assert p >= 0, \
-                    'all padding elements must be equal or greater than zero'
+                assert isinstance(p, NumberInstance), (
+                    "each padding element must be numeric (integer or float)"
+                )
+                assert p >= 0, "all padding elements must be equal or greater than zero"
         else:
-            assert self.widget_padding >= 0, 'padding cannot be a negative number'
+            assert self.widget_padding >= 0, "padding cannot be a negative number"
         self.widget_offset = self._vec_to_tuple(self.widget_offset, 2, NumberInstance)
 
         # Check sizes
-        assert self.border_width >= 0, 'border width must be equal or greater than zero'
-        assert self.scrollarea_outer_margin[0] >= 0 and self.scrollarea_outer_margin[1] >= 0, \
-            'scroll area outer margin must be equal or greater than zero on both axis'
-        assert self.widget_offset[0] >= 0 and self.widget_offset[1] >= 0, \
-            'widget offset must be equal or greater than zero'
-        assert self.widget_background_inflate[0] >= 0 and self.widget_background_inflate[1] >= 0, \
-            'widget background inflate must be equal or greater than zero on both axis'
-        assert self.widget_border_inflate[0] >= 0 and self.widget_border_inflate[1] >= 0, \
-            'widget border inflate must be equal or greater than zero on both axis'
-        assert self.widget_box_inflate[0] >= 0 and self.widget_box_inflate[1] >= 0, \
-            'widget box inflate inflate must be equal or greater than zero on both axis'
-        assert self.widget_shadow_width >= 0 and self.widget_shadow_radius >= 0, \
-            'widget shadow width and radius must be equal or greater than zero'
+        assert self.border_width >= 0, "border width must be equal or greater than zero"
+        assert (
+            self.scrollarea_outer_margin[0] >= 0
+            and self.scrollarea_outer_margin[1] >= 0
+        ), "scroll area outer margin must be equal or greater than zero on both axis"
+        assert self.widget_offset[0] >= 0 and self.widget_offset[1] >= 0, (
+            "widget offset must be equal or greater than zero"
+        )
+        assert (
+            self.widget_background_inflate[0] >= 0
+            and self.widget_background_inflate[1] >= 0
+        ), "widget background inflate must be equal or greater than zero on both axis"
+        assert (
+            self.widget_border_inflate[0] >= 0 and self.widget_border_inflate[1] >= 0
+        ), "widget border inflate must be equal or greater than zero on both axis"
+        assert self.widget_box_inflate[0] >= 0 and self.widget_box_inflate[1] >= 0, (
+            "widget box inflate inflate must be equal or greater than zero on both axis"
+        )
+        assert self.widget_shadow_width >= 0 and self.widget_shadow_radius >= 0, (
+            "widget shadow width and radius must be equal or greater than zero"
+        )
 
         # Check shadow type
-        assert self.widget_shadow_type in (WIDGET_SHADOW_TYPE_ELLIPSE, WIDGET_SHADOW_TYPE_RECTANGULAR), \
-            'widget shadow type must be ellipse or rectangular'
+        assert self.widget_shadow_type in (
+            WIDGET_SHADOW_TYPE_ELLIPSE,
+            WIDGET_SHADOW_TYPE_RECTANGULAR,
+        ), "widget shadow type must be ellipse or rectangular"
 
-        assert self.cursor_switch_ms > 0, 'cursor switch ms must be greater than zero'
-        assert self.fps >= 0, 'fps must be equal or greater than zero'
-        assert self.scrollbar_shadow_offset > 0, 'scrollbar shadow offset must be greater than zero'
-        assert self.scrollbar_slider_pad >= 0, 'slider pad must be equal or greater than zero'
-        assert self.scrollbar_thick > 0, 'scrollbar thickness must be greater than zero'
-        assert self.title_font_size > 0, 'title font size must be greater than zero'
-        assert self.widget_border_width >= 0, 'widget border width must be equal or greater than zero'
-        assert self.widget_box_border_width >= 0, 'widget border box width must be equal or greater than zero'
-        assert self.widget_font_shadow_offset > 0, 'widget font shadow offset must be greater than zero'
-        assert self.widget_font_size > 0, 'widget font size must be greater than zero'
-        assert self.widget_shadow_aa >= 1, 'widget shadow antialiasing must be equal or greater than one'
-        assert self.widget_tab_size >= 0, 'widget tab size must be equal or greater than zero'
+        assert self.cursor_switch_ms > 0, "cursor switch ms must be greater than zero"
+        assert self.fps >= 0, "fps must be equal or greater than zero"
+        assert self.scrollbar_shadow_offset > 0, (
+            "scrollbar shadow offset must be greater than zero"
+        )
+        assert self.scrollbar_slider_pad >= 0, (
+            "slider pad must be equal or greater than zero"
+        )
+        assert self.scrollbar_thick > 0, "scrollbar thickness must be greater than zero"
+        assert self.title_font_size > 0, "title font size must be greater than zero"
+        assert self.widget_border_width >= 0, (
+            "widget border width must be equal or greater than zero"
+        )
+        assert self.widget_box_border_width >= 0, (
+            "widget border box width must be equal or greater than zero"
+        )
+        assert self.widget_font_shadow_offset > 0, (
+            "widget font shadow offset must be greater than zero"
+        )
+        assert self.widget_font_size > 0, "widget font size must be greater than zero"
+        assert self.widget_shadow_aa >= 1, (
+            "widget shadow antialiasing must be equal or greater than one"
+        )
+        assert self.widget_tab_size >= 0, (
+            "widget tab size must be equal or greater than zero"
+        )
 
         # Color asserts
-        assert self.focus_background_color[3] != 0, \
-            'focus background color cannot be fully transparent, suggested opacity between 1 and 255'
+        assert self.focus_background_color[3] != 0, (
+            "focus background color cannot be fully transparent, suggested opacity between 1 and 255"
+        )
 
         return self
 
@@ -711,13 +814,21 @@ class Theme:
         """
         self.background_color = assert_color(self.background_color)
         assert isinstance(opacity, NumberInstance)
-        assert 0 <= opacity <= 1, 'opacity must be a number between 0 (transparent) and 1 (opaque)'
-        self.background_color = (self.background_color[0], self.background_color[1],
-                                 self.background_color[2], int(float(opacity) * 255))
+        assert 0 <= opacity <= 1, (
+            "opacity must be a number between 0 (transparent) and 1 (opaque)"
+        )
+        self.background_color = (
+            self.background_color[0],
+            self.background_color[1],
+            self.background_color[2],
+            int(float(opacity) * 255),
+        )
         return self
 
     @staticmethod
-    def _vec_to_tuple(obj: tuple | list, check_length: int = 0, check_instance: type = Any) -> tuple:
+    def _vec_to_tuple(
+        obj: tuple | list, check_length: int = 0, check_instance: type = Any
+    ) -> tuple:
         """
         Return a tuple from a list or tuple object.
 
@@ -731,15 +842,16 @@ class Theme:
             v = tuple(obj)
         else:
             if check_length == 0:
-                raise ValueError('object is not a vector')
-            raise ValueError(f'object is not a vector of length {check_length}')
+                raise ValueError("object is not a vector")
+            raise ValueError(f"object is not a vector of length {check_length}")
         if check_length > 0:
             if len(v) != check_length:
-                raise ValueError(f'object is not a vector of length {check_length}')
+                raise ValueError(f"object is not a vector of length {check_length}")
         if check_instance is not Any:
             for i in v:
-                assert isinstance(i, check_instance), \
-                    f'{i} element of tuple {v} is not {check_instance} instance'
+                assert isinstance(i, check_instance), (
+                    f"{i} element of tuple {v} is not {check_instance} instance"
+                )
         return v
 
     def copy(self) -> Theme:
@@ -761,8 +873,7 @@ class Theme:
 
     @staticmethod
     def _format_color_opacity(
-        color: ColorInputType | BaseImage | None,
-        none: bool = False
+        color: ColorInputType | BaseImage | None, none: bool = False
     ) -> ColorType | BaseImage | None:
         """
         Adds opacity to a 3 channel color. (R,G,B) -> (R,G,B,A) if the color
@@ -792,13 +903,18 @@ class Theme:
             elif len(color) == 3:
                 color = color[0], color[1], color[2], 255
         else:
-            raise ValueError(f'invalid color type {color}, only tuple or list are valid')
+            raise ValueError(
+                f"invalid color type {color}, only tuple or list are valid"
+            )
         return color
 
     @staticmethod
-    def _get(params: dict[str, Any], key: str,
-             allowed_types: type | str | list[type] | tuple[type, ...] | None = None,
-             default: Any = None) -> Any:
+    def _get(
+        params: dict[str, Any],
+        key: str,
+        allowed_types: type | str | list[type] | tuple[type, ...] | None = None,
+        default: Any = None,
+    ) -> Any:
         """
         Return a value from a dictionary.
 
@@ -833,74 +949,76 @@ class Theme:
             if not isinstance(allowed_types, VectorInstance):
                 allowed_types = (allowed_types,)
             for val_type in allowed_types:
-
-                if val_type == 'alignment':
+                if val_type == "alignment":
                     assert_alignment(value)
 
-                elif val_type == callable or val_type == 'function' or val_type == 'callable':
-                    assert callable(value), \
-                        'value must be callable type'
+                elif (
+                    val_type == callable
+                    or val_type == "function"
+                    or val_type == "callable"
+                ):
+                    assert callable(value), "value must be callable type"
 
-                elif val_type == 'color':
+                elif val_type == "color":
                     value = assert_color(value)
 
-                elif val_type == 'color_image':
+                elif val_type == "color_image":
                     if not isinstance(value, BaseImage):
                         value = assert_color(value)
 
-                elif val_type == 'color_image_none':
+                elif val_type == "color_image_none":
                     if not (value is None or isinstance(value, BaseImage)):
                         value = assert_color(value)
 
-                elif val_type == 'color_none':
+                elif val_type == "color_none":
                     if value is not None:
                         value = assert_color(value)
 
-                elif val_type == 'cursor':
+                elif val_type == "cursor":
                     assert_cursor(value)
 
-                elif val_type == 'font':
+                elif val_type == "font":
                     assert_font(value)
 
-                elif val_type == 'image':
-                    assert isinstance(value, BaseImage), \
-                        'value must be BaseImage type'
+                elif val_type == "image":
+                    assert isinstance(value, BaseImage), "value must be BaseImage type"
 
-                elif val_type == 'none':
+                elif val_type == "none":
                     assert value is None
 
-                elif val_type == 'position':
+                elif val_type == "position":
                     assert_position(value)
 
-                elif val_type == 'position_vector':
+                elif val_type == "position_vector":
                     assert_position_vector(value)
 
-                elif val_type == 'type':
-                    assert isinstance(value, type), \
-                        'value is not type-class'
+                elif val_type == "type":
+                    assert isinstance(value, type), "value is not type-class"
 
-                elif val_type == 'tuple2':
+                elif val_type == "tuple2":
                     assert_vector(value, 2)
 
-                elif val_type == 'tuple2int':
+                elif val_type == "tuple2int":
                     assert_vector(value, 2, int)
 
-                elif val_type == 'tuple3':
+                elif val_type == "tuple3":
                     assert_vector(value, 3)
 
-                elif val_type == 'tuple3int':
+                elif val_type == "tuple3int":
                     assert_vector(value, 3, int)
 
                 else:  # Unknown type
-                    assert isinstance(val_type, type), \
+                    assert isinstance(val_type, type), (
                         f'allowed type "{val_type}" is not a type-class'
+                    )
                     other_types.append(val_type)
 
             # Check other types
             if len(other_types) > 0:
                 others = tuple(other_types)
-                assert isinstance(value, others), \
-                    f'Theme.{key} type shall be in {others} types (got {type(value)})'
+                assert isinstance(value, others), (
+                    f"Theme.{key} type shall be in {others} types (got {type(value)})"
+                )
 
         return value
 
@@ -917,7 +1035,7 @@ THEME_DARK = Theme(
     selection_color=(255, 255, 255),
     title_background_color=(47, 48, 51),
     title_font_color=(215, 215, 215),
-    widget_font_color=(200, 200, 200)
+    widget_font_color=(200, 200, 200),
 )
 
 THEME_BLUE = Theme(
@@ -930,7 +1048,7 @@ THEME_BLUE = Theme(
     title_background_color=(62, 149, 195),
     title_font_color=(228, 230, 246),
     title_font_shadow=True,
-    widget_font_color=(61, 170, 220)
+    widget_font_color=(61, 170, 220),
 )
 
 THEME_GREEN = Theme(
@@ -941,7 +1059,7 @@ THEME_GREEN = Theme(
     selection_color=(125, 121, 114),
     title_background_color=(125, 121, 114),
     title_font_color=(228, 230, 246),
-    widget_font_color=(255, 255, 255)
+    widget_font_color=(255, 255, 255),
 )
 
 THEME_ORANGE = Theme(
@@ -949,7 +1067,7 @@ THEME_ORANGE = Theme(
     selection_color=(255, 255, 255),
     title_background_color=(170, 65, 50),
     widget_font_color=(0, 0, 0),
-    widget_font_size=30
+    widget_font_size=30,
 )
 
 THEME_SOLARIZED = Theme(
@@ -959,5 +1077,5 @@ THEME_SOLARIZED = Theme(
     selection_color=(207, 62, 132),
     title_background_color=(4, 47, 58),
     title_font_color=(38, 158, 151),
-    widget_font_color=(102, 122, 130)
+    widget_font_color=(102, 122, 130),
 )

@@ -8,7 +8,7 @@ Simple calculator app.
 
 from __future__ import annotations
 
-__all__ = ['main']
+__all__ = ["main"]
 
 import pygame
 
@@ -20,6 +20,7 @@ class CalculatorApp:
     """
     Simple calculator app.
     """
+
     op: str  # Operation
     prev: str  # Prev value
     curr: str  # Current value
@@ -29,7 +30,7 @@ class CalculatorApp:
 
     # noinspection PyArgumentEqualDefault
     def __init__(self) -> None:
-        self.surface = create_example_window('Example - Calculator', (320, 480))
+        self.surface = create_example_window("Example - Calculator", (320, 480))
 
         # Configure theme
         theme = pygame_menu.Theme()
@@ -45,69 +46,118 @@ class CalculatorApp:
         theme.widget_font_color = (255, 255, 255)
         theme.widget_font_size = 40
         theme.widget_padding = 0
-        theme.widget_selection_effect = \
-            pygame_menu.widgets.HighlightSelection(1, 0, 0).set_color((120, 120, 120))
+        theme.widget_selection_effect = pygame_menu.widgets.HighlightSelection(
+            1, 0, 0
+        ).set_color((120, 120, 120))
 
-        self.menu = pygame_menu.Menu('', 320, 480,
-                                     center_content=False,
-                                     mouse_motion_selection=True,
-                                     onclose=pygame_menu.events.EXIT,
-                                     overflow=False,
-                                     theme=theme,
-                                     )
+        self.menu = pygame_menu.Menu(
+            "",
+            320,
+            480,
+            center_content=False,
+            mouse_motion_selection=True,
+            onclose=pygame_menu.events.EXIT,
+            overflow=False,
+            theme=theme,
+        )
         menu_deco = self.menu.get_scrollarea().get_decorator()
 
         # Add the layout
         self.menu.add.vertical_margin(40)
-        menu_deco.add_rectangle(10, 88, 300, 55, (60, 63, 65), use_center_positioning=False)
-        self.screen = self.menu.add.label('0', background_color=None, margin=(10, 0),
-                                          selectable=True, selection_effect=None)
+        menu_deco.add_rectangle(
+            10, 88, 300, 55, (60, 63, 65), use_center_positioning=False
+        )
+        self.screen = self.menu.add.label(
+            "0",
+            background_color=None,
+            margin=(10, 0),
+            selectable=True,
+            selection_effect=None,
+        )
         self.menu.add.vertical_margin(20)
 
         cursor = pygame_menu.locals.CURSOR_HAND
 
         # Add horizontal frames
         f1 = self.menu.add.frame_h(299, 54, margin=(10, 0))
-        b1 = f1.pack(self.menu.add.button('1', lambda: self._press(1), cursor=cursor))
-        b2 = f1.pack(self.menu.add.button('2', lambda: self._press(2), cursor=cursor),
-                     align=pygame_menu.locals.ALIGN_CENTER)
-        b3 = f1.pack(self.menu.add.button('3', lambda: self._press(3), cursor=cursor),
-                     align=pygame_menu.locals.ALIGN_RIGHT)
+        b1 = f1.pack(self.menu.add.button("1", lambda: self._press(1), cursor=cursor))
+        b2 = f1.pack(
+            self.menu.add.button("2", lambda: self._press(2), cursor=cursor),
+            align=pygame_menu.locals.ALIGN_CENTER,
+        )
+        b3 = f1.pack(
+            self.menu.add.button("3", lambda: self._press(3), cursor=cursor),
+            align=pygame_menu.locals.ALIGN_RIGHT,
+        )
         self.menu.add.vertical_margin(10)
 
         f2 = self.menu.add.frame_h(299, 54, margin=(10, 0))
-        b4 = f2.pack(self.menu.add.button('4', lambda: self._press(4), cursor=cursor))
-        b5 = f2.pack(self.menu.add.button('5', lambda: self._press(5), cursor=cursor),
-                     align=pygame_menu.locals.ALIGN_CENTER)
-        b6 = f2.pack(self.menu.add.button('6', lambda: self._press(6), cursor=cursor),
-                     align=pygame_menu.locals.ALIGN_RIGHT)
+        b4 = f2.pack(self.menu.add.button("4", lambda: self._press(4), cursor=cursor))
+        b5 = f2.pack(
+            self.menu.add.button("5", lambda: self._press(5), cursor=cursor),
+            align=pygame_menu.locals.ALIGN_CENTER,
+        )
+        b6 = f2.pack(
+            self.menu.add.button("6", lambda: self._press(6), cursor=cursor),
+            align=pygame_menu.locals.ALIGN_RIGHT,
+        )
         self.menu.add.vertical_margin(10)
 
         f3 = self.menu.add.frame_h(299, 54, margin=(10, 0))
-        b7 = f3.pack(self.menu.add.button('7', lambda: self._press(7), cursor=cursor))
-        b8 = f3.pack(self.menu.add.button('8', lambda: self._press(8), cursor=cursor),
-                     align=pygame_menu.locals.ALIGN_CENTER)
-        b9 = f3.pack(self.menu.add.button('9', lambda: self._press(9), cursor=cursor),
-                     align=pygame_menu.locals.ALIGN_RIGHT)
+        b7 = f3.pack(self.menu.add.button("7", lambda: self._press(7), cursor=cursor))
+        b8 = f3.pack(
+            self.menu.add.button("8", lambda: self._press(8), cursor=cursor),
+            align=pygame_menu.locals.ALIGN_CENTER,
+        )
+        b9 = f3.pack(
+            self.menu.add.button("9", lambda: self._press(9), cursor=cursor),
+            align=pygame_menu.locals.ALIGN_RIGHT,
+        )
         self.menu.add.vertical_margin(10)
 
         f4 = self.menu.add.frame_h(299, 54, margin=(10, 0))
-        b0 = f4.pack(self.menu.add.button('0', lambda: self._press(0), cursor=cursor))
-        b_plus = f4.pack(self.menu.add.button('+', lambda: self._press('+'), cursor=cursor),
-                         align=pygame_menu.locals.ALIGN_CENTER)
-        b_minus = f4.pack(self.menu.add.button('-', lambda: self._press('-'), cursor=cursor),
-                          align=pygame_menu.locals.ALIGN_RIGHT)
+        b0 = f4.pack(self.menu.add.button("0", lambda: self._press(0), cursor=cursor))
+        b_plus = f4.pack(
+            self.menu.add.button("+", lambda: self._press("+"), cursor=cursor),
+            align=pygame_menu.locals.ALIGN_CENTER,
+        )
+        b_minus = f4.pack(
+            self.menu.add.button("-", lambda: self._press("-"), cursor=cursor),
+            align=pygame_menu.locals.ALIGN_RIGHT,
+        )
         self.menu.add.vertical_margin(10)
 
         f5 = self.menu.add.frame_h(299, 54, margin=(10, 0))
-        b_times = f5.pack(self.menu.add.button('x', lambda: self._press('x'), cursor=cursor))
-        b_div = f5.pack(self.menu.add.button('/', lambda: self._press('/'), cursor=cursor),
-                        align=pygame_menu.locals.ALIGN_CENTER)
-        beq = f5.pack(self.menu.add.button('=', lambda: self._press('='), cursor=cursor),
-                      align=pygame_menu.locals.ALIGN_RIGHT)
+        b_times = f5.pack(
+            self.menu.add.button("x", lambda: self._press("x"), cursor=cursor)
+        )
+        b_div = f5.pack(
+            self.menu.add.button("/", lambda: self._press("/"), cursor=cursor),
+            align=pygame_menu.locals.ALIGN_CENTER,
+        )
+        beq = f5.pack(
+            self.menu.add.button("=", lambda: self._press("="), cursor=cursor),
+            align=pygame_menu.locals.ALIGN_RIGHT,
+        )
 
         # Add decorator for each object
-        for widget in (b1, b2, b3, b4, b5, b6, b7, b8, b9, b0, beq, b_plus, b_minus, b_times, b_div):
+        for widget in (
+            b1,
+            b2,
+            b3,
+            b4,
+            b5,
+            b6,
+            b7,
+            b8,
+            b9,
+            b0,
+            beq,
+            b_plus,
+            b_minus,
+            b_times,
+            b_div,
+        ):
             w_deco = widget.get_decorator()
             if widget != beq:
                 w_deco.add_rectangle(-37, -27, 74, 54, (15, 15, 15))
@@ -116,13 +166,13 @@ class CalculatorApp:
                 w_deco.add_rectangle(-37, -27, 74, 54, (38, 96, 103))
                 on_layer = w_deco.add_rectangle(-37, -27, 74, 54, (40, 171, 187))
             w_deco.disable(on_layer)
-            widget.set_attribute('on_layer', on_layer)
+            widget.set_attribute("on_layer", on_layer)
 
             def widget_select(sel: bool, wid: pygame_menu.widgets.Widget, _):
                 """
                 Function triggered if widget is selected
                 """
-                lay = wid.get_attribute('on_layer')
+                lay = wid.get_attribute("on_layer")
                 if sel:
                     wid.get_decorator().enable(lay)
                 else:
@@ -132,9 +182,9 @@ class CalculatorApp:
             widget.set_padding((2, 19, 0, 23))
             widget._keyboard_enabled = False
 
-        self.prev = ''
-        self.curr = ''
-        self.op = ''
+        self.prev = ""
+        self.curr = ""
+        self.op = ""
 
         self.menu.set_onupdate(self.process_events)
         self.menu.set_onwindowmouseleave(lambda m: self.screen.select(update_menu=True))
@@ -166,18 +216,20 @@ class CalculatorApp:
                 elif event.key == pygame.K_9:
                     self._press(9)
                 elif event.key == pygame.K_PLUS:
-                    self._press('+')
+                    self._press("+")
                 elif event.key == pygame.K_MINUS:
-                    self._press('-')
-                elif event.key == pygame.K_SLASH or (hasattr(pygame, 'K_PERCENT') and event.key == pygame.K_PERCENT):
-                    self._press('/')
+                    self._press("-")
+                elif event.key == pygame.K_SLASH or (
+                    hasattr(pygame, "K_PERCENT") and event.key == pygame.K_PERCENT
+                ):
+                    self._press("/")
                 elif event.key == pygame.K_ASTERISK or event.key == pygame.K_x:
-                    self._press('x')
+                    self._press("x")
                 elif event.key == pygame.K_EQUALS or event.key == pygame.K_RETURN:
-                    self._press('=')
+                    self._press("=")
                 elif event.key == pygame.K_BACKSPACE:
-                    self._press('=')
-                    self._press('=')
+                    self._press("=")
+                    self._press("=")
 
     def _operate(self) -> int | float:
         """
@@ -185,20 +237,20 @@ class CalculatorApp:
 
         :return: Operation result
         """
-        a = 0 if self.curr == '' else float(self.curr)
-        b = 0 if self.prev == '' else float(self.prev)
+        a = 0 if self.curr == "" else float(self.curr)
+        b = 0 if self.prev == "" else float(self.prev)
         c = 0
-        if self.op == '+':
+        if self.op == "+":
             c = a + b
-        elif self.op == '-':
+        elif self.op == "-":
             c = b - a
-        elif self.op == 'x':
+        elif self.op == "x":
             c = a * b
-        elif self.op == '/':
+        elif self.op == "/":
             if a != 0:
                 c = b / a
             else:
-                self.screen.set_title('Error')
+                self.screen.set_title("Error")
         return int(c)
 
     def _press(self, digit: int | str) -> None:
@@ -207,33 +259,33 @@ class CalculatorApp:
 
         :param digit: Number or symbol
         """
-        if digit in ('+', '-', 'x', '/'):
-            if self.curr != '':
-                if self.op != '':
+        if digit in ("+", "-", "x", "/"):
+            if self.curr != "":
+                if self.op != "":
                     self.prev = str(self._operate())
                 else:
                     self.prev = self.curr
-                self.curr = ''
+                self.curr = ""
             self.op = digit
             if len(self.prev) <= 8:
                 self.screen.set_title(self.prev + self.op)
             else:
-                self.screen.set_title('Ans' + self.op)
-        elif digit == '=':
-            if self.prev == '':
-                self.curr = ''
-                self.screen.set_title('0')
+                self.screen.set_title("Ans" + self.op)
+        elif digit == "=":
+            if self.prev == "":
+                self.curr = ""
+                self.screen.set_title("0")
                 return
             c = self._operate()
             self.screen.set_title(str(c))
             if len(str(c)) > 8:
                 c = 0
-                self.screen.set_title('Overflow')
-            self.prev = ''
+                self.screen.set_title("Overflow")
+            self.prev = ""
             self.curr = str(c)
-            self.op = ''
+            self.op = ""
         else:
-            if self.op == '':
+            if self.op == "":
                 if len(self.prev) <= 7:
                     self.prev += str(digit)
                     self.prev = self._format(self.prev)
@@ -284,5 +336,5 @@ def main(test: bool = False) -> CalculatorApp:
     return app
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

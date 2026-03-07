@@ -8,7 +8,7 @@ Selector with a left arrow on the item.
 
 from __future__ import annotations
 
-__all__ = ['ArrowSelection']
+__all__ = ["ArrowSelection"]
 
 from typing import TYPE_CHECKING
 
@@ -37,6 +37,7 @@ class ArrowSelection(Selection):
     :param arrow_vertical_offset: Vertical offset of the arrow (px)
     :param blink_ms: Milliseconds between each blink; if ``0`` blinking is disabled
     """
+
     _arrow_vertical_offset: int
     _arrow_size: Tuple2IntType
     _blink_ms: NumberType
@@ -52,20 +53,24 @@ class ArrowSelection(Selection):
         margin_bottom: NumberType,
         arrow_size: Tuple2IntType = (10, 15),
         arrow_vertical_offset: NumberType = 0,
-        blink_ms: NumberType = 0
+        blink_ms: NumberType = 0,
     ) -> None:
         super().__init__(
             margin_left=margin_left,
             margin_right=margin_right,
             margin_top=margin_top,
-            margin_bottom=margin_bottom
+            margin_bottom=margin_bottom,
         )
 
         assert_vector(arrow_size, 2, int)
         assert isinstance(arrow_vertical_offset, NumberInstance)
         assert isinstance(blink_ms, int)
-        assert arrow_size[0] > 0 and arrow_size[1] > 0, 'arrow size must be greater than zero'
-        assert blink_ms >= 0, 'blinking milliseconds must be greater than or equal to zero'
+        assert arrow_size[0] > 0 and arrow_size[1] > 0, (
+            "arrow size must be greater than zero"
+        )
+        assert blink_ms >= 0, (
+            "blinking milliseconds must be greater than or equal to zero"
+        )
 
         self._arrow_vertical_offset = int(arrow_vertical_offset)
         self._arrow_size = (arrow_size[0], arrow_size[1])
@@ -75,8 +80,10 @@ class ArrowSelection(Selection):
         self._last_widget = None
 
     # noinspection PyMissingOrEmptyDocstring
-    def draw(self, surface: pygame.Surface, widget: pygame_menu.widgets.Widget) -> ArrowSelection:
-        raise NotImplementedError('override is mandatory')
+    def draw(
+        self, surface: pygame.Surface, widget: pygame_menu.widgets.Widget
+    ) -> ArrowSelection:
+        raise NotImplementedError("override is mandatory")
 
     def _draw_arrow(
         self,
@@ -84,7 +91,7 @@ class ArrowSelection(Selection):
         widget: pygame_menu.widgets.Widget,
         a: Tuple2IntType,
         b: Tuple2IntType,
-        c: Tuple2IntType
+        c: Tuple2IntType,
     ) -> None:
         """
         Draw the selection arrow.
@@ -99,7 +106,9 @@ class ArrowSelection(Selection):
         self._blink_time += SELECTOR_CLOCK.get_time()
 
         # Switch the blinking if the time exceeded or the widget has changed
-        if self._blink_ms != 0 and (self._blink_time > self._blink_ms or self._last_widget != widget):
+        if self._blink_ms != 0 and (
+            self._blink_time > self._blink_ms or self._last_widget != widget
+        ):
             self._blink_status = not self._blink_status or self._last_widget != widget
             self._blink_time = 0
             self._last_widget = widget

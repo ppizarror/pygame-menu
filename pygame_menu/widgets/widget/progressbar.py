@@ -9,14 +9,11 @@ Progress bar widget.
 from __future__ import annotations
 
 __all__ = [
-
     # Class
-    'ProgressBar',
-    'ProgressBarManager',
-
+    "ProgressBar",
+    "ProgressBarManager",
     # Types
-    'ProgressBarTextFormatType'
-
+    "ProgressBarTextFormatType",
 ]
 
 from abc import ABC
@@ -85,6 +82,7 @@ class ProgressBar(Widget):
     :param args: Optional arguments for callbacks
     :param kwargs: Optional keyword arguments
     """
+
     _box: pygame.Surface
     _box_background_color: ColorType
     _box_border_color: ColorType
@@ -110,7 +108,7 @@ class ProgressBar(Widget):
     def __init__(
         self,
         title: Any,
-        progressbar_id: str = '',
+        progressbar_id: str = "",
         default: NumberType = 0,
         width: int = 150,
         onselect: CallbackType = None,
@@ -127,28 +125,29 @@ class ProgressBar(Widget):
         progress_text_font_hfactor: float = 0.8,
         progress_text_format: ProgressBarTextFormatType = lambda x: str(round(x, 1)),
         progress_text_margin: Tuple2IntType = (0, 0),
-        progress_text_placeholder: str = '{0} %',
+        progress_text_placeholder: str = "{0} %",
         *args,
-        **kwargs
+        **kwargs,
     ) -> None:
         super().__init__(
             args=args,
             kwargs=kwargs,
             onselect=onselect,
             title=title,
-            widget_id=progressbar_id
+            widget_id=progressbar_id,
         )
 
         # Check the value
         assert isinstance(default, NumberInstance)
-        assert 0 <= default <= 100, 'default value must range from 0 to 100'
+        assert 0 <= default <= 100, "default value must range from 0 to 100"
 
         # Check fonts
         if progress_text_font is not None:
             assert_font(progress_text_font)
         assert isinstance(progress_text_font_hfactor, NumberInstance)
-        assert progress_text_font_hfactor > 0, \
-            'progress text font height factor must be greater than zero'
+        assert progress_text_font_hfactor > 0, (
+            "progress text font height factor must be greater than zero"
+        )
 
         # Check colors
         box_background_color = assert_color(box_background_color)
@@ -158,13 +157,13 @@ class ProgressBar(Widget):
 
         # Check dimensions and sizes
         assert isinstance(box_border_width, int)
-        assert box_border_width >= 0, \
-            'box border width must be equal or greater than zero'
+        assert box_border_width >= 0, (
+            "box border width must be equal or greater than zero"
+        )
         assert_vector(box_margin, 2, int)
         assert_vector(progress_text_margin, 2, int)
         assert isinstance(width, int)
-        assert width > 0, \
-            'width must be greater than zero'
+        assert width > 0, "width must be greater than zero"
         box_progress_padding = parse_padding(box_progress_padding)
         self._box_progress_padding = box_progress_padding
 
@@ -195,8 +194,8 @@ class ProgressBar(Widget):
         self._width = width
 
     def set_value(self, value: NumberType) -> None:
-        assert isinstance(value, NumberInstance), 'progress value must be numeric'
-        assert 0 <= value <= 100, 'value must be between 0 and 100'
+        assert isinstance(value, NumberInstance), "progress value must be numeric"
+        assert 0 <= value <= 100, "value must be between 0 and 100"
         self._progress = value
         self._render()
 
@@ -224,11 +223,13 @@ class ProgressBar(Widget):
     def _apply_font(self) -> None:
         if self._progress_text_font is None:
             self._progress_text_font = self._font_name
-        self._progress_text_font_height = int(self._font_size * self._progress_text_font_height_factor)
+        self._progress_text_font_height = int(
+            self._font_size * self._progress_text_font_height_factor
+        )
         self._progress_font = pygame_menu.font.get_font(
             self._progress_text_font, self._progress_text_font_height
         )
-        self._box_height = self._font_render_string('TEST').get_height()
+        self._box_height = self._font_render_string("TEST").get_height()
 
     def _draw(self, surface: pygame.Surface) -> None:
         # Draw title
@@ -242,13 +243,17 @@ class ProgressBar(Widget):
 
         # Draw box border
         if self._box_border_width > 0:
-            pygame.draw.rect(surface, self._box_border_color, box_rect, self._box_border_width)
+            pygame.draw.rect(
+                surface, self._box_border_color, box_rect, self._box_border_width
+            )
 
     def _render(self) -> bool | None:
-        if not hasattr(self, '_progress_font'):
+        if not hasattr(self, "_progress_font"):
             return False
 
-        elif not self._render_hash_changed(self._selected, self._title, self._visible, self.readonly, self._progress):
+        elif not self._render_hash_changed(
+            self._selected, self._title, self._visible, self.readonly, self._progress
+        ):
             return True
 
         # Create basic title
@@ -256,18 +261,28 @@ class ProgressBar(Widget):
         self._rect.width, self._rect.height = self._surface.get_size()
 
         # Create box
-        self._box = make_surface(self._width, self._box_height, fill_color=self._box_background_color)
-        box_progress = make_surface(int(self._width * self._progress / 100),
-                                    self._box_height - self._box_progress_padding[0] - self._box_progress_padding[2],
-                                    fill_color=self._box_progress_color)
-        self._box.blit(box_progress, (self._box_progress_padding[1], self._box_progress_padding[0]))
+        self._box = make_surface(
+            self._width, self._box_height, fill_color=self._box_background_color
+        )
+        box_progress = make_surface(
+            int(self._width * self._progress / 100),
+            self._box_height
+            - self._box_progress_padding[0]
+            - self._box_progress_padding[2],
+            fill_color=self._box_progress_color,
+        )
+        self._box.blit(
+            box_progress, (self._box_progress_padding[1], self._box_progress_padding[0])
+        )
         self._box_pos = self._rect.width
 
         # Create progress text
         text = self._progress_font.render(
-            self._progress_text_placeholder.format(self._progress_text_format(self._progress)),
+            self._progress_text_placeholder.format(
+                self._progress_text_format(self._progress)
+            ),
             self._font_antialias,
-            self._progress_text_font_color
+            self._progress_text_font_color,
         )
         text_y = int((self._box_height - text.get_height()) / 2)
         if self._progress_text_align == ALIGN_LEFT:
@@ -305,11 +320,11 @@ class ProgressBarManager(AbstractWidgetManager, ABC):
         title: Any,
         default: NumberType = 0,
         onselect: CallbackType = None,
-        progressbar_id: str = '',
+        progressbar_id: str = "",
         progress_text_format: ProgressBarTextFormatType = lambda x: str(round(x, 1)),
         selectable: bool = False,
         width: int = 150,
-        **kwargs
+        **kwargs,
     ) -> pygame_menu.widgets.ProgressBar:
         """
         Add a progress bar, which offers a bar that accepts a percentage from
@@ -398,12 +413,20 @@ class ProgressBarManager(AbstractWidgetManager, ABC):
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
 
-        box_background_color = kwargs.pop('box_background_color', self._theme.widget_box_background_color)
-        box_border_color = kwargs.pop('box_border_color', self._theme.widget_box_border_color)
-        box_border_width = kwargs.pop('box_border_width', self._theme.widget_box_border_width)
-        box_margin = kwargs.pop('box_margin', self._theme.widget_box_margin)
-        box_progress_color = kwargs.pop('box_progress_color', (53, 172, 78))
-        progress_text_font_color = kwargs.pop('progress_text_font_color', self._theme.widget_font_color)
+        box_background_color = kwargs.pop(
+            "box_background_color", self._theme.widget_box_background_color
+        )
+        box_border_color = kwargs.pop(
+            "box_border_color", self._theme.widget_box_border_color
+        )
+        box_border_width = kwargs.pop(
+            "box_border_width", self._theme.widget_box_border_width
+        )
+        box_margin = kwargs.pop("box_margin", self._theme.widget_box_margin)
+        box_progress_color = kwargs.pop("box_progress_color", (53, 172, 78))
+        progress_text_font_color = kwargs.pop(
+            "progress_text_font_color", self._theme.widget_font_color
+        )
 
         widget = pygame_menu.widgets.ProgressBar(
             title=title,
@@ -418,7 +441,7 @@ class ProgressBarManager(AbstractWidgetManager, ABC):
             box_progress_color=box_progress_color,
             progress_text_font_color=progress_text_font_color,
             progress_text_format=progress_text_format,
-            **kwargs
+            **kwargs,
         )
         widget.is_selectable = selectable
 

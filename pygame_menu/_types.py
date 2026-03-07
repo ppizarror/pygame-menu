@@ -58,7 +58,15 @@ MenuColumnMinWidthType = Union[int, float, VectorType]
 MenuRowsType = Optional[Union[int, VectorIntType]]
 
 # Other
-PaddingType = Optional[Union[NumberType, list[NumberType], tuple[NumberType], Tuple2NumberType, Tuple4NumberType]]
+PaddingType = Optional[
+    Union[
+        NumberType,
+        list[NumberType],
+        tuple[NumberType],
+        Tuple2NumberType,
+        Tuple4NumberType,
+    ]
+]
 StringVector = Union[str, tuple[str, ...], list[str]]
 
 # Instances

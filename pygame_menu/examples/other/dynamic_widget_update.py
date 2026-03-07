@@ -8,7 +8,7 @@ Dynamically updates the widgets based on user events.
 
 from __future__ import annotations
 
-__all__ = ['main']
+__all__ = ["main"]
 
 import math
 from typing import Any
@@ -23,6 +23,7 @@ class App:
     """
     The following object creates the whole app.
     """
+
     image_widget: pygame_menu.widgets.Image
     item_description_widget: pygame_menu.widgets.Label
     menu: pygame_menu.Menu
@@ -33,7 +34,9 @@ class App:
     surface: pygame.Surface
 
     def __init__(self) -> None:
-        self.surface = create_example_window('Example - Dynamic Widget Update', (640, 480), flags=pygame.NOFRAME)
+        self.surface = create_example_window(
+            "Example - Dynamic Widget Update", (640, 480), flags=pygame.NOFRAME
+        )
 
         # Load image
         default_image = pygame_menu.BaseImage(
@@ -49,29 +52,25 @@ class App:
         # This dict stores the values of the widgets to be changed dynamically
         self.modes = {
             1: {
-                'image': default_image.copy(),
-                'label': {
-                    'color': theme.widget_font_color,
-                    'size': theme.widget_font_size,
-                    'text': 'The first one is very epic'
-                }
+                "image": default_image.copy(),
+                "label": {
+                    "color": theme.widget_font_color,
+                    "size": theme.widget_font_size,
+                    "text": "The first one is very epic",
+                },
             },
             2: {
-                'image': default_image.copy().to_bw(),
-                'label': {
-                    'color': (0, 0, 0),
-                    'size': 20,
-                    'text': 'This other one is also epic, but fancy'
-                }
+                "image": default_image.copy().to_bw(),
+                "label": {
+                    "color": (0, 0, 0),
+                    "size": 20,
+                    "text": "This other one is also epic, but fancy",
+                },
             },
             3: {
-                'image': default_image.copy().flip(False, True).pick_channels('r'),
-                'label': {
-                    'color': (255, 0, 0),
-                    'size': 45,
-                    'text': 'YOU D I E D'
-                }
-            }
+                "image": default_image.copy().flip(False, True).pick_channels("r"),
+                "label": {"color": (255, 0, 0), "size": 45, "text": "YOU D I E D"},
+            },
         }
 
         # Create menus
@@ -79,28 +78,28 @@ class App:
             height=480,
             onclose=pygame_menu.events.CLOSE,
             theme=theme,
-            title='Everything is dynamic now',
-            width=640
+            title="Everything is dynamic now",
+            width=640,
         )
 
         self.selector_widget = self.menu.add.selector(
-            title='Pick one option: ',
-            items=[('The first', 1),
-                   ('The second', 2),
-                   ('The final mode', 3)],
-            onchange=self._on_selector_change
+            title="Pick one option: ",
+            items=[("The first", 1), ("The second", 2), ("The final mode", 3)],
+            onchange=self._on_selector_change,
         )
 
         self.image_widget = self.menu.add.image(
-            image_path=self.modes[1]['image'],
-            padding=(25, 0, 0, 0)  # top, right, bottom, left
+            image_path=self.modes[1]["image"],
+            padding=(25, 0, 0, 0),  # top, right, bottom, left
         )
 
-        self.item_description_widget = self.menu.add.label(title='')
+        self.item_description_widget = self.menu.add.label(title="")
 
-        self.quit_button = self.menu.add.button('Quit', pygame_menu.events.EXIT)
+        self.quit_button = self.menu.add.button("Quit", pygame_menu.events.EXIT)
 
-        self.quit_button_fake = self.menu.add.button('You cannot quit', self.fake_quit, font_color=(255, 255, 255))
+        self.quit_button_fake = self.menu.add.button(
+            "You cannot quit", self.fake_quit, font_color=(255, 255, 255)
+        )
         self.quit_button_fake.add_draw_callback(self.animate_quit_button)
 
         # Update the widgets based on selected value from selector get_value
@@ -109,9 +108,7 @@ class App:
         self._update_from_selection(int(self.selector_widget.get_value()[0][1]))
 
     def animate_quit_button(
-        self,
-        widget: pygame_menu.widgets.Widget,
-        menu: pygame_menu.Menu
+        self, widget: pygame_menu.widgets.Widget, menu: pygame_menu.Menu
     ) -> None:
         """
         Animate widgets if the last option is selected.
@@ -120,11 +117,13 @@ class App:
         :param menu: Menu
         """
         if self.current == 3:
-            t = widget.get_counter_attribute('t', menu.get_clock().get_time() * 0.0075, math.pi)
+            t = widget.get_counter_attribute(
+                "t", menu.get_clock().get_time() * 0.0075, math.pi
+            )
             widget.set_padding(10 * (1 + math.sin(t)))  # Oscillating padding
             widget.set_background_color((int(125 * (1 + math.sin(t))), 0, 0), None)
             c = int(127 * (1 + math.cos(t)))
-            widget.update_font({'color': (c, c, c)})  # Widget font now is in grayscale
+            widget.update_font({"color": (c, c, c)})  # Widget font now is in grayscale
             # widget.translate(10 * math.cos(t), 10 * math.sin(t))
             widget.rotate(5 * t)
 
@@ -133,7 +132,7 @@ class App:
         """
         Function executed by fake quit button.
         """
-        print('I said that you cannot quit')
+        print("I said that you cannot quit")
 
     def _update_from_selection(self, index: int) -> None:
         """
@@ -142,11 +141,13 @@ class App:
         :param index: Index
         """
         self.current = index
-        self.image_widget.set_image(self.modes[index]['image'])
-        self.item_description_widget.set_title(self.modes[index]['label']['text'])
+        self.image_widget.set_image(self.modes[index]["image"])
+        self.item_description_widget.set_title(self.modes[index]["label"]["text"])
         self.item_description_widget.update_font(
-            {'color': self.modes[index]['label']['color'],
-             'size': self.modes[index]['label']['size']}
+            {
+                "color": self.modes[index]["label"]["color"],
+                "size": self.modes[index]["label"]["size"],
+            }
         )
         # Swap buttons using hide/show
         if index == 3:
@@ -163,7 +164,7 @@ class App:
         :param selected: Selector data containing text and index
         :param value: Value from the selected option
         """
-        print('Selected data:', selected)
+        print("Selected data:", selected)
         self._update_from_selection(value)
 
     def mainloop(self, test: bool) -> None:
@@ -187,5 +188,5 @@ def main(test: bool = False) -> App:
     return app
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
