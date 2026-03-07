@@ -8,7 +8,7 @@ Widget selection effect.
 
 from __future__ import annotations
 
-__all__ = ['Selection']
+__all__ = ["Selection"]
 
 import copy
 
@@ -39,6 +39,7 @@ class Selection:
     :param margin_top: Top margin
     :param margin_bottom: Bottom margin
     """
+
     color: ColorType
     color_bg: ColorType | None
     margin_bottom: NumberType
@@ -52,16 +53,18 @@ class Selection:
         margin_left: NumberType,
         margin_right: NumberType,
         margin_top: NumberType,
-        margin_bottom: NumberType
+        margin_bottom: NumberType,
     ) -> None:
         assert isinstance(margin_left, NumberInstance)
         assert isinstance(margin_right, NumberInstance)
         assert isinstance(margin_top, NumberInstance)
         assert isinstance(margin_bottom, NumberInstance)
-        assert margin_left >= 0, 'left margin of widget selection cannot be negative'
-        assert margin_right >= 0, 'right margin of widget selection cannot be negative'
-        assert margin_top >= 0, 'top margin of widget selection cannot be negative'
-        assert margin_bottom >= 0, 'bottom margin of widget selection cannot be negative'
+        assert margin_left >= 0, "left margin of widget selection cannot be negative"
+        assert margin_right >= 0, "right margin of widget selection cannot be negative"
+        assert margin_top >= 0, "top margin of widget selection cannot be negative"
+        assert margin_bottom >= 0, (
+            "bottom margin of widget selection cannot be negative"
+        )
 
         self.color = (0, 0, 0)  # Main color of the selection effect
         self.color_bg = None
@@ -69,7 +72,9 @@ class Selection:
         self.margin_left = margin_left
         self.margin_right = margin_right
         self.margin_top = margin_top
-        self.widget_apply_font_color = True  # Widgets apply "selected_color" if selected
+        self.widget_apply_font_color = (
+            True  # Widgets apply "selected_color" if selected
+        )
 
     def margin_xy(self, x: NumberType, y: NumberType) -> Selection:
         """
@@ -125,7 +130,9 @@ class Selection:
         self.color = assert_color(color)
         return self
 
-    def set_background_color(self, color: ColorInputType | pygame_menu.BaseImage) -> Selection:
+    def set_background_color(
+        self, color: ColorInputType | pygame_menu.BaseImage
+    ) -> Selection:
         """
         Set the selection background color. It will replace the background color of the widget
         if selected.
@@ -152,7 +159,12 @@ class Selection:
 
         :return: Tuple of (top, left, bottom, right) margins in px
         """
-        return int(self.margin_top), int(self.margin_left), int(self.margin_bottom), int(self.margin_right)
+        return (
+            int(self.margin_top),
+            int(self.margin_left),
+            int(self.margin_bottom),
+            int(self.margin_right),
+        )
 
     def get_xy_margin(self) -> Tuple2IntType:
         """
@@ -160,7 +172,9 @@ class Selection:
 
         :return: Margin tuple on x-axis and y-axis (x, y) in px
         """
-        return int(self.margin_left + self.margin_right), int(self.margin_top + self.margin_bottom)
+        return int(self.margin_left + self.margin_right), int(
+            self.margin_top + self.margin_bottom
+        )
 
     def get_width(self) -> int:
         """
@@ -181,8 +195,7 @@ class Selection:
         return t + b
 
     def inflate(
-        self,
-        rect: pygame.Rect, inflate: Tuple2IntType | None = None
+        self, rect: pygame.Rect, inflate: Tuple2IntType | None = None
     ) -> pygame.Rect:
         """
         Grow or shrink the rectangle size according to margins.
@@ -198,10 +211,12 @@ class Selection:
             int(rect.x - self.margin_left - inflate[0] / 2),
             int(rect.y - self.margin_top - inflate[1] / 2),
             int(rect.width + self.margin_left + self.margin_right + inflate[0]),
-            int(rect.height + self.margin_top + self.margin_bottom + inflate[1])
+            int(rect.height + self.margin_top + self.margin_bottom + inflate[1]),
         )
 
-    def draw(self, surface: pygame.Surface, widget: pygame_menu.widgets.Widget) -> Selection:
+    def draw(
+        self, surface: pygame.Surface, widget: pygame_menu.widgets.Widget
+    ) -> Selection:
         """
         Draw the selection.
 
@@ -209,4 +224,4 @@ class Selection:
         :param widget: Widget object
         :return: Self reference
         """
-        raise NotImplementedError('override is mandatory')
+        raise NotImplementedError("override is mandatory")

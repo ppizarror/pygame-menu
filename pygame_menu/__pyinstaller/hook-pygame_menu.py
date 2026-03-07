@@ -19,8 +19,9 @@ datas = []
 
 
 # A helper to append the relative path of a resource to hook variable - datas
-def _append_to_datas(file_path: str, target_folder: str, base_target_folder: Path,
-                     relative: bool = True) -> None:
+def _append_to_datas(
+    file_path: str, target_folder: str, base_target_folder: Path, relative: bool = True
+) -> None:
     """
     Add path to datas.
 
@@ -34,12 +35,10 @@ def _append_to_datas(file_path: str, target_folder: str, base_target_folder: Pat
         res_path = pygame_menu_folder / file_path
     else:
         res_path = Path(file_path)
-    if target_folder == '':
+    if target_folder == "":
         target_folder = res_path.parent.name
     if res_path.exists():
-        datas.append(
-            (str(res_path), str(base_target_folder / target_folder))
-        )
+        datas.append((str(res_path), str(base_target_folder / target_folder)))
 
 
 from pygame_menu.baseimage import IMAGE_EXAMPLES
@@ -48,10 +47,10 @@ from pygame_menu.baseimage import IMAGE_EXAMPLES
 from pygame_menu.font import FONT_EXAMPLES
 from pygame_menu.sound import SOUND_EXAMPLES
 
-pygame_menu_resources = Path('pygame_menu') / 'resources'
+pygame_menu_resources = Path("pygame_menu") / "resources"
 for f in FONT_EXAMPLES:
-    _append_to_datas(f, target_folder='', base_target_folder=pygame_menu_resources)
+    _append_to_datas(f, target_folder="", base_target_folder=pygame_menu_resources)
 for f in IMAGE_EXAMPLES:
-    _append_to_datas(f, target_folder='', base_target_folder=pygame_menu_resources)
+    _append_to_datas(f, target_folder="", base_target_folder=pygame_menu_resources)
 for f in SOUND_EXAMPLES:
-    _append_to_datas(f, target_folder='', base_target_folder=pygame_menu_resources)
+    _append_to_datas(f, target_folder="", base_target_folder=pygame_menu_resources)

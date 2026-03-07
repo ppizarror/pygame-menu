@@ -8,19 +8,16 @@ Menu with dynamic buttons.
 
 from __future__ import annotations
 
-__all__ = ['main']
+__all__ = ["main"]
 
 from random import randrange
 
 import pygame_menu
 from pygame_menu.examples import create_example_window
 
-surface = create_example_window('Example - Dynamic Button Append', (600, 400))
+surface = create_example_window("Example - Dynamic Button Append", (600, 400))
 menu = pygame_menu.Menu(
-    height=300,
-    theme=pygame_menu.themes.THEME_BLUE,
-    title='Welcome',
-    width=400
+    height=300, theme=pygame_menu.themes.THEME_BLUE, title="Welcome", width=400
 )
 
 
@@ -30,20 +27,20 @@ def add_dynamic_button() -> pygame_menu.widgets.Button:
 
     :return: Appended button
     """
-    print(f'Adding a button dynamically, total: {len(menu.get_widgets()) - 2}')
+    print(f"Adding a button dynamically, total: {len(menu.get_widgets()) - 2}")
     btn = menu.add.button(randrange(0, 10))
 
     def _update_button() -> None:
-        count = btn.get_counter_attribute('count', 1, btn.get_title())
+        count = btn.get_counter_attribute("count", 1, btn.get_title())
         btn.set_title(str(count))
 
     btn.update_callback(_update_button)
     return btn
 
 
-menu.add.text_input('Name: ', default='John Doe')
-menu.add.button('Play', add_dynamic_button)
-menu.add.button('Quit', pygame_menu.events.EXIT)
+menu.add.text_input("Name: ", default="John Doe")
+menu.add.button("Play", add_dynamic_button)
+menu.add.button("Quit", pygame_menu.events.EXIT)
 
 
 def main(test: bool = False) -> None:
@@ -55,5 +52,5 @@ def main(test: bool = False) -> None:
     menu.mainloop(surface, disable_loop=test)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

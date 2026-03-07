@@ -8,7 +8,7 @@ Widget selection highlight box effect.
 
 from __future__ import annotations
 
-__all__ = ['HighlightSelection']
+__all__ = ["HighlightSelection"]
 
 from typing import TYPE_CHECKING
 
@@ -33,13 +33,11 @@ class HighlightSelection(Selection):
     :param margin_x: X margin of selected highlight box (px)
     :param margin_y: Y margin of selected highlight box (px)
     """
+
     _border_width: int
 
     def __init__(
-        self,
-        border_width: int = 1,
-        margin_x: NumberType = 16,
-        margin_y: NumberType = 8
+        self, border_width: int = 1, margin_x: NumberType = 16, margin_y: NumberType = 8
     ) -> None:
         assert isinstance(border_width, int)
         assert margin_x >= 0 and margin_y >= 0
@@ -51,19 +49,18 @@ class HighlightSelection(Selection):
             margin_left=margin_x / 2,
             margin_right=margin_x / 2,
             margin_top=margin_y / 2,
-            margin_bottom=margin_y / 2
+            margin_bottom=margin_y / 2,
         )
 
         self._border_width = border_width
 
     # noinspection PyMissingOrEmptyDocstring
-    def draw(self, surface: pygame.Surface, widget: pygame_menu.widgets.Widget) -> HighlightSelection:
+    def draw(
+        self, surface: pygame.Surface, widget: pygame_menu.widgets.Widget
+    ) -> HighlightSelection:
         if self._border_width == 0:
             return self
         pygame.draw.rect(
-            surface,
-            self.color,
-            self.inflate(widget.get_rect()),
-            self._border_width
+            surface, self.color, self.inflate(widget.get_rect()), self._border_width
         )
         return self

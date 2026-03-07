@@ -8,10 +8,7 @@ Button widget. Basically, a label with callback function and enhanced events.
 
 from __future__ import annotations
 
-__all__ = [
-    'Button',
-    'ButtonManager'
-]
+__all__ = ["Button", "ButtonManager"]
 
 import re
 import webbrowser
@@ -54,20 +51,18 @@ class Button(Label):
     :param args: Optional arguments for callbacks
     :param kwargs: Optional keyword arguments
     """
+
     to_menu: bool
 
     def __init__(
         self,
         title: Any,
-        button_id: str = '',
+        button_id: str = "",
         onreturn: CallbackType = None,
         *args,
-        **kwargs
+        **kwargs,
     ) -> None:
-        super().__init__(
-            title=title,
-            label_id=button_id
-        )
+        super().__init__(title=title, label_id=button_id)
         self._accept_events = True
         self._args = list(args)
         self._kwargs = kwargs
@@ -75,8 +70,7 @@ class Button(Label):
         self.to_menu = False  # True if button opens a new Menu
 
     def set_selection_callback(
-        self,
-        callback: Callable[[bool, Widget, pygame_menu.Menu], Any] | None
+        self, callback: Callable[[bool, Widget, pygame_menu.Menu], Any] | None
     ) -> None:
         """
         Update the button selection callback, once button is selected, the callback
@@ -89,8 +83,9 @@ class Button(Label):
         :param callback: Callback when selecting the widget, executed in :py:meth:`pygame_menu.widgets.core.widget.Widget.set_selected`
         """
         if callback is not None:
-            assert callable(callback), \
-                'callback must be callable (function-type) or None'
+            assert callable(callback), (
+                "callback must be callable (function-type) or None"
+            )
         self._onselect = callback
 
     def update_callback(self, callback: Callable, *args) -> None:
@@ -107,18 +102,19 @@ class Button(Label):
         :param callback: Function
         :param args: Arguments used by the function once triggered
         """
-        assert callable(callback), \
-            'only callable (function-type) are allowed'
+        assert callable(callback), "only callable (function-type) are allowed"
 
         # If return is a Menu object, remove it from submenus list
         if self._menu is not None and self._onreturn is not None and self.to_menu:
             assert len(self._args) == 1
             submenu = self._args[0]  # Menu
-            assert self._menu.in_submenu(submenu), \
-                'pointed menu is not in submenu list of parent container'
+            assert self._menu.in_submenu(submenu), (
+                "pointed menu is not in submenu list of parent container"
+            )
             # noinspection PyProtectedMember
-            assert self._menu._remove_submenu(submenu, self), \
-                'submenu could not be removed'
+            assert self._menu._remove_submenu(submenu, self), (
+                "submenu could not be removed"
+            )
             self.to_menu = False
 
         self._args = args or []
@@ -136,14 +132,17 @@ class Button(Label):
             return False
 
         for event in events:
-
             # Check mouse over
             self._check_mouseover(event, rect)
 
             # User applies with key
             if (
-                event.type == pygame.KEYDOWN and self._keyboard_enabled and self._ctrl.apply(event, self) or
-                event.type == pygame.JOYBUTTONDOWN and self._joystick_enabled and self._ctrl.joy_select(event, self)
+                event.type == pygame.KEYDOWN
+                and self._keyboard_enabled
+                and self._ctrl.apply(event, self)
+                or event.type == pygame.JOYBUTTONDOWN
+                and self._joystick_enabled
+                and self._ctrl.joy_select(event, self)
             ):
                 if self.to_menu:
                     self._sound.play_open_menu()
@@ -154,8 +153,12 @@ class Button(Label):
 
             # User clicks the button; don't consider the mouse wheel (button 4 & 5)
             elif (
-                event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and event.button in (1, 2, 3) or
-                event.type == FINGERUP and self._touchscreen_enabled and self._menu is not None
+                event.type == pygame.MOUSEBUTTONUP
+                and self._mouse_enabled
+                and event.button in (1, 2, 3)
+                or event.type == FINGERUP
+                and self._touchscreen_enabled
+                and self._menu is not None
             ):
                 if event.type == pygame.MOUSEBUTTONUP:
                     self._sound.play_click_mouse()
@@ -181,7 +184,7 @@ class ButtonManager(AbstractWidgetManager, ABC):
         image: pygame_menu.BaseImage | pygame.Surface,
         action: pygame_menu.Menu | _events.MenuAction | Callable | int | None = None,
         *args,
-        **kwargs
+        **kwargs,
     ) -> pygame_menu.widgets.Button:
         """
         Adds a clickeable image to the Menu with same behavior as a Button.
@@ -260,20 +263,20 @@ class ButtonManager(AbstractWidgetManager, ABC):
 
         # We use setdefault so we don't overwrite the user
         # but WE provide the values for the filter to "pop"
-        kwargs.setdefault('padding', 0)
+        kwargs.setdefault("padding", 0)
 
         # This prevents the theme selection effect from overwriting the banner
-        if 'selection_effect' not in kwargs:
-            kwargs['selection_effect'] = pygame_menu.widgets.NoneSelection()
+        if "selection_effect" not in kwargs:
+            kwargs["selection_effect"] = pygame_menu.widgets.NoneSelection()
 
         # Ensure the selection color doesn't show up on the ' ' character
-        kwargs.setdefault('selection_color', (0, 0, 0, 0))
+        kwargs.setdefault("selection_color", (0, 0, 0, 0))
 
         # Set image as background
-        kwargs['background_color'] = image
+        kwargs["background_color"] = image
 
         # Call button - this will now "pop" our custom padding and selection_effect
-        btn = self.button(' ', action, *args, **kwargs)
+        btn = self.button(" ", action, *args, **kwargs)
 
         return btn.resize(*image.get_size())
 
@@ -283,7 +286,7 @@ class ButtonManager(AbstractWidgetManager, ABC):
         title: Any,
         action: pygame_menu.Menu | _events.MenuAction | Callable | int | None = None,
         *args,
-        **kwargs
+        **kwargs,
     ) -> pygame_menu.widgets.Button:
         """
         Adds a button to the Menu.
@@ -377,35 +380,35 @@ class ButtonManager(AbstractWidgetManager, ABC):
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.Button`
         """
-        total_back = kwargs.pop('back_count', 1)
+        total_back = kwargs.pop("back_count", 1)
         assert isinstance(total_back, int) and 1 <= total_back
 
         # Get ID
-        button_id = kwargs.pop('button_id', '')
-        assert isinstance(button_id, str), 'id must be a string'
+        button_id = kwargs.pop("button_id", "")
+        assert isinstance(button_id, str), "id must be a string"
 
         # Accept kwargs
-        accept_kwargs = kwargs.pop('accept_kwargs', False)
+        accept_kwargs = kwargs.pop("accept_kwargs", False)
         assert isinstance(accept_kwargs, bool)
 
         # Onselect callback
-        onselect = kwargs.pop('onselect', None)
+        onselect = kwargs.pop("onselect", None)
 
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
 
         # Button underline
-        underline = kwargs.pop('underline', False)
-        underline_color = kwargs.pop('underline_color', attributes['font_color'])
-        underline_offset = kwargs.pop('underline_offset', 1)
-        underline_width = kwargs.pop('underline_width', 1)
+        underline = kwargs.pop("underline", False)
+        underline_color = kwargs.pop("underline_color", attributes["font_color"])
+        underline_offset = kwargs.pop("underline_offset", 1)
+        underline_width = kwargs.pop("underline_width", 1)
 
         # Wordwrap
-        wordwrap = kwargs.pop('wordwrap', False)
+        wordwrap = kwargs.pop("wordwrap", False)
         assert isinstance(wordwrap, bool)
-        leading = kwargs.pop('leading', None)
+        leading = kwargs.pop("leading", None)
         assert isinstance(leading, (type(None), int))
-        max_nlines = kwargs.pop('max_nlines', None)
+        max_nlines = kwargs.pop("max_nlines", None)
         assert isinstance(max_nlines, (type(None), int))
 
         # Change action if certain events
@@ -420,10 +423,10 @@ class ButtonManager(AbstractWidgetManager, ABC):
             if action == self._menu or action.in_submenu(self._menu, recursive=True):
                 raise ValueError(
                     f'{action.get_class_id()} title "{action.get_title()}" is '
-                    f'already on submenu structure, recursive menus lead to '
-                    f'unexpected behaviours. For returning to previous menu'
-                    f'use pygame_menu.events.BACK event defining an optional '
-                    f'back_count number of menus to return from, default is 1'
+                    f"already on submenu structure, recursive menus lead to "
+                    f"unexpected behaviours. For returning to previous menu"
+                    f"use pygame_menu.events.BACK event defining an optional "
+                    f"back_count number of menus to return from, default is 1"
                 )
 
             widget = Button(title, button_id, self._menu._open, action)
@@ -453,8 +456,10 @@ class ButtonManager(AbstractWidgetManager, ABC):
                 widget = Button(title, button_id, action, *args, **kwargs)
 
         else:
-            raise ValueError('action must be a Menu, a MenuAction (event), a '
-                             'function (callable), or None')
+            raise ValueError(
+                "action must be a Menu, a MenuAction (event), a "
+                "function (callable), or None"
+            )
 
         # Configure and add the button
         if not accept_kwargs:
@@ -462,8 +467,10 @@ class ButtonManager(AbstractWidgetManager, ABC):
                 self._check_kwargs(kwargs)
             except ValueError:
                 if self._menu._verbose:
-                    warn('button cannot accept kwargs. If you want to use kwargs '
-                         'options set accept_kwargs=True')
+                    warn(
+                        "button cannot accept kwargs. If you want to use kwargs "
+                        "options set accept_kwargs=True"
+                    )
                 raise
 
         self._configure_widget(widget=widget, **attributes)
@@ -481,12 +488,7 @@ class ButtonManager(AbstractWidgetManager, ABC):
 
         return widget
 
-    def url(
-        self,
-        href: str,
-        title: str = '',
-        **kwargs
-    ) -> pygame_menu.widgets.Button:
+    def url(self, href: str, title: str = "", **kwargs) -> pygame_menu.widgets.Button:
         """
         Adds a Button url to the Menu. Clicking the widget will open the link.
         If ``title`` is defined, the link will not be written. For example:
@@ -551,25 +553,29 @@ class ButtonManager(AbstractWidgetManager, ABC):
         assert isinstance(href, str) and len(href) > 0
 
         regex = re.compile(
-            r'^(?:http|ftp)s?://'  # http:// or https://
-            r'(?:(?:[A-Z\d](?:[A-Z\d-]{0,61}[A-Z\d])?\.)+(?:[A-Z]{2,6}\.?|[A-Z\d-]{2,}\.?)|'  # domain...
-            r'localhost|'  # localhost...
-            r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'  # ...or ip
-            r'(?::\d+)?'  # optional port
-            r'(?:/?|[/?]\S+)$', re.IGNORECASE)
-        assert re.match(regex, href) is not None, 'invalid link format'
+            r"^(?:http|ftp)s?://"  # http:// or https://
+            r"(?:(?:[A-Z\d](?:[A-Z\d-]{0,61}[A-Z\d])?\.)+(?:[A-Z]{2,6}\.?|[A-Z\d-]{2,}\.?)|"  # domain...
+            r"localhost|"  # localhost...
+            r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})"  # ...or ip
+            r"(?::\d+)?"  # optional port
+            r"(?:/?|[/?]\S+)$",
+            re.IGNORECASE,
+        )
+        assert re.match(regex, href) is not None, "invalid link format"
 
         # Configure kwargs
-        if 'cursor' not in kwargs.keys():
-            kwargs['cursor'] = CURSOR_HAND
-        if 'font_color' not in kwargs.keys():
-            kwargs['font_color'] = self._theme.widget_url_color
-        if 'selection_color' not in kwargs.keys():
-            kwargs['selection_color'] = self._theme.widget_url_color
-        if 'selection_effect' not in kwargs.keys():
-            kwargs['selection_effect'] = pygame_menu.widgets.NoneSelection()
-        if 'underline' not in kwargs.keys():
-            kwargs['underline'] = True
+        if "cursor" not in kwargs.keys():
+            kwargs["cursor"] = CURSOR_HAND
+        if "font_color" not in kwargs.keys():
+            kwargs["font_color"] = self._theme.widget_url_color
+        if "selection_color" not in kwargs.keys():
+            kwargs["selection_color"] = self._theme.widget_url_color
+        if "selection_effect" not in kwargs.keys():
+            kwargs["selection_effect"] = pygame_menu.widgets.NoneSelection()
+        if "underline" not in kwargs.keys():
+            kwargs["underline"] = True
 
         # Return new button
-        return self.button(title if title != '' else href, lambda: webbrowser.open(href), **kwargs)
+        return self.button(
+            title if title != "" else href, lambda: webbrowser.open(href), **kwargs
+        )

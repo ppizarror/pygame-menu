@@ -5,6 +5,7 @@ https://github.com/ppizarror/pygame-menu
 SELECTION
 This module contains the widget highlight effects.
 """
+
 from __future__ import annotations
 
 from pygame_menu.widgets.selection.highlight import HighlightSelection

@@ -10,28 +10,24 @@ Provides a class to perform basic image loading and manipulation with pygame.
 from __future__ import annotations
 
 __all__ = [
-
     # Base class
-    'BaseImage',
-
+    "BaseImage",
     # Image paths
-    'IMAGE_EXAMPLE_CARBON_FIBER',
-    'IMAGE_EXAMPLE_GRAY_LINES',
-    'IMAGE_EXAMPLE_METAL',
-    'IMAGE_EXAMPLE_PYGAME_MENU',
-    'IMAGE_EXAMPLE_PYTHON',
-    'IMAGE_EXAMPLE_TILED_BORDER',
-    'IMAGE_EXAMPLE_WALLPAPER',
-    'IMAGE_EXAMPLES',
-
+    "IMAGE_EXAMPLE_CARBON_FIBER",
+    "IMAGE_EXAMPLE_GRAY_LINES",
+    "IMAGE_EXAMPLE_METAL",
+    "IMAGE_EXAMPLE_PYGAME_MENU",
+    "IMAGE_EXAMPLE_PYTHON",
+    "IMAGE_EXAMPLE_TILED_BORDER",
+    "IMAGE_EXAMPLE_WALLPAPER",
+    "IMAGE_EXAMPLES",
     # Drawing modes
-    'IMAGE_MODE_CENTER',
-    'IMAGE_MODE_FILL',
-    'IMAGE_MODE_REPEAT_X',
-    'IMAGE_MODE_REPEAT_XY',
-    'IMAGE_MODE_REPEAT_Y',
-    'IMAGE_MODE_SIMPLE'
-
+    "IMAGE_MODE_CENTER",
+    "IMAGE_MODE_FILL",
+    "IMAGE_MODE_REPEAT_X",
+    "IMAGE_MODE_REPEAT_XY",
+    "IMAGE_MODE_REPEAT_Y",
+    "IMAGE_MODE_SIMPLE",
 ]
 
 import base64
@@ -77,19 +73,27 @@ if TYPE_CHECKING:
     from collections.abc import Callable
 
 # Example image paths
-__images_path__ = (Path(__file__).resolve().parent / 'resources' / 'images' / '{0}').as_posix()
+__images_path__ = (
+    Path(__file__).resolve().parent / "resources" / "images" / "{0}"
+).as_posix()
 
-IMAGE_EXAMPLE_CARBON_FIBER = __images_path__.format('carbon_fiber.png')
-IMAGE_EXAMPLE_GRAY_LINES = __images_path__.format('gray_lines.png')
-IMAGE_EXAMPLE_METAL = __images_path__.format('metal.png')
-IMAGE_EXAMPLE_PYGAME_MENU = __images_path__.format('pygame_menu.png')
-IMAGE_EXAMPLE_PYTHON = __images_path__.format('python.svg')
-IMAGE_EXAMPLE_TILED_BORDER = __images_path__.format('tiled_border.png')
-IMAGE_EXAMPLE_WALLPAPER = __images_path__.format('wallpaper.jpg')
+IMAGE_EXAMPLE_CARBON_FIBER = __images_path__.format("carbon_fiber.png")
+IMAGE_EXAMPLE_GRAY_LINES = __images_path__.format("gray_lines.png")
+IMAGE_EXAMPLE_METAL = __images_path__.format("metal.png")
+IMAGE_EXAMPLE_PYGAME_MENU = __images_path__.format("pygame_menu.png")
+IMAGE_EXAMPLE_PYTHON = __images_path__.format("python.svg")
+IMAGE_EXAMPLE_TILED_BORDER = __images_path__.format("tiled_border.png")
+IMAGE_EXAMPLE_WALLPAPER = __images_path__.format("wallpaper.jpg")
 
-IMAGE_EXAMPLES = (IMAGE_EXAMPLE_CARBON_FIBER, IMAGE_EXAMPLE_GRAY_LINES,
-                  IMAGE_EXAMPLE_METAL, IMAGE_EXAMPLE_PYGAME_MENU, IMAGE_EXAMPLE_PYTHON,
-                  IMAGE_EXAMPLE_TILED_BORDER, IMAGE_EXAMPLE_WALLPAPER)
+IMAGE_EXAMPLES = (
+    IMAGE_EXAMPLE_CARBON_FIBER,
+    IMAGE_EXAMPLE_GRAY_LINES,
+    IMAGE_EXAMPLE_METAL,
+    IMAGE_EXAMPLE_PYGAME_MENU,
+    IMAGE_EXAMPLE_PYTHON,
+    IMAGE_EXAMPLE_TILED_BORDER,
+    IMAGE_EXAMPLE_WALLPAPER,
+)
 
 # Drawing modes
 IMAGE_MODE_CENTER = 100
@@ -99,22 +103,45 @@ IMAGE_MODE_REPEAT_XY = 103
 IMAGE_MODE_REPEAT_Y = 104
 IMAGE_MODE_SIMPLE = 105  # Just draw the image without any effect
 
-_VALID_IMAGE_MODES = (IMAGE_MODE_CENTER, IMAGE_MODE_FILL, IMAGE_MODE_REPEAT_X,
-                      IMAGE_MODE_REPEAT_XY, IMAGE_MODE_REPEAT_Y, IMAGE_MODE_SIMPLE)
+_VALID_IMAGE_MODES = (
+    IMAGE_MODE_CENTER,
+    IMAGE_MODE_FILL,
+    IMAGE_MODE_REPEAT_X,
+    IMAGE_MODE_REPEAT_XY,
+    IMAGE_MODE_REPEAT_Y,
+    IMAGE_MODE_SIMPLE,
+)
 
 # Other constants
-_EXTENSION_SURFACE = '<surface>'
+_EXTENSION_SURFACE = "<surface>"
 
 _VALID_IMAGE_FORMATS = [
-    '.jpg', '.png', '.gif', '.bmp', '.pcx', '.tga', '.tif',
-    '.lbm', '.pbm', '.pgm', '.ppm', '.xpm', '.svg',
-    'BytesIO', 'base64', _EXTENSION_SURFACE
+    ".jpg",
+    ".png",
+    ".gif",
+    ".bmp",
+    ".pcx",
+    ".tga",
+    ".tif",
+    ".lbm",
+    ".pbm",
+    ".pgm",
+    ".ppm",
+    ".xpm",
+    ".svg",
+    "BytesIO",
+    "base64",
+    _EXTENSION_SURFACE,
 ]
 
 # Custom types
-ColorChannelType = Literal['r', 'g', 'b']
-ChannelType = Union[ColorChannelType, tuple[ColorChannelType, ColorChannelType], tuple[
-    ColorChannelType, ColorChannelType, ColorChannelType], list[ColorChannelType]]
+ColorChannelType = Literal["r", "g", "b"]
+ChannelType = Union[
+    ColorChannelType,
+    tuple[ColorChannelType, ColorChannelType],
+    tuple[ColorChannelType, ColorChannelType, ColorChannelType],
+    list[ColorChannelType],
+]
 
 
 class BaseImage(Base):
@@ -130,6 +157,7 @@ class BaseImage(Base):
     :param frombase64: If ``True`` consider ``image_path`` as base64 string
     :param image_id: str
     """
+
     _angle: NumberType
     _drawing_mode: int
     _drawing_offset: Tuple2IntType
@@ -152,7 +180,7 @@ class BaseImage(Base):
         drawing_position: str = POSITION_NORTHWEST,
         load_from_file: bool = True,
         frombase64: bool = False,
-        image_id: str = ''
+        image_id: str = "",
     ) -> None:
         super().__init__(object_id=image_id)
 
@@ -172,15 +200,16 @@ class BaseImage(Base):
                 else image_path.copy()
             )
             self._set_source_info(_EXTENSION_SURFACE, _EXTENSION_SURFACE, False)
-            self._filename = ''
+            self._filename = ""
             self._surface = surf
             self._original_surface = surf.copy()
             self._load_from_file = False
 
         # Handle path / BytesIO / base64 inputs
         else:
-            assert isinstance(image_path, (str, Path, BytesIO)), \
-                'path must be string, Path, BytesIO, or pygame.Surface'
+            assert isinstance(image_path, (str, Path, BytesIO)), (
+                "path must be string, Path, BytesIO, or pygame.Surface"
+            )
 
             original_path = image_path
 
@@ -190,16 +219,18 @@ class BaseImage(Base):
                 if not frombase64:
                     _, ext = path.splitext(image_path)
                     ext = ext.lower()
-                    assert path.isfile(image_path), \
-                        f'file {image_path} does not exist or could not be found'
+                    assert path.isfile(image_path), (
+                        f"file {image_path} does not exist or could not be found"
+                    )
                 else:
-                    ext = 'base64'
+                    ext = "base64"
             else:
-                ext = 'BytesIO'
+                ext = "BytesIO"
 
             # Validate extension
-            assert ext in _VALID_IMAGE_FORMATS, \
-                f'file extension {ext} not valid, please use: {", ".join(_VALID_IMAGE_FORMATS)}'
+            assert ext in _VALID_IMAGE_FORMATS, (
+                f"file extension {ext} not valid, please use: {', '.join(_VALID_IMAGE_FORMATS)}"
+            )
 
             # Store source info
             if isinstance(original_path, BytesIO):
@@ -211,11 +242,11 @@ class BaseImage(Base):
             if isinstance(original_path, str) and not frombase64:
                 self._filename = path.splitext(path.basename(original_path))[0]
             else:
-                self._filename = ''
+                self._filename = ""
 
             # Decode base64 → BytesIO
             if frombase64 and isinstance(original_path, str):
-                data = original_path.split('base64,', 1)[-1]
+                data = original_path.split("base64,", 1)[-1]
                 image_path = BytesIO(base64.b64decode(data))
 
             # Load from file if requested
@@ -226,7 +257,7 @@ class BaseImage(Base):
         # Drawing configuration
         self._drawing_mode = 0
         self._drawing_offset = (0, 0)
-        self._drawing_position = ''
+        self._drawing_position = ""
 
         self.set_drawing_mode(drawing_mode)
         self.set_drawing_offset(drawing_offset)
@@ -256,10 +287,7 @@ class BaseImage(Base):
         return self.copy()
 
     def _set_source_info(
-        self,
-        filepath: str | BytesIO,
-        extension: str,
-        frombase64: bool
+        self, filepath: str | BytesIO, extension: str, frombase64: bool
     ) -> None:
         """
         Set the internal source information for the image.
@@ -311,16 +339,12 @@ class BaseImage(Base):
             self._surface.set_alpha(None)
             return self
         assert isinstance(value, int)
-        assert 0 <= value <= 255, 'alpha value must be an integer between 0 and 255'
+        assert 0 <= value <= 255, "alpha value must be an integer between 0 and 255"
         self._surface.set_alpha(value, flags)
         return self
 
     def crop(
-        self,
-        x: NumberType,
-        y: NumberType,
-        width: NumberType,
-        height: NumberType
+        self, x: NumberType, y: NumberType, width: NumberType, height: NumberType
     ) -> BaseImage:
         """
         Crops the image from coordinate on x-axis and y-axis (x, y).
@@ -344,11 +368,7 @@ class BaseImage(Base):
         return self._surface.subsurface(rect)
 
     def get_crop(
-        self,
-        x: NumberType,
-        y: NumberType,
-        width: NumberType,
-        height: NumberType
+        self, x: NumberType, y: NumberType, width: NumberType, height: NumberType
     ) -> pygame.Surface:
         """
         Get a crop of the image from coordinate on x-axis and y-axis (x, y).
@@ -359,18 +379,20 @@ class BaseImage(Base):
         :param height: Crop height in px
         :return: Cropped surface
         """
-        assert 0 <= x < self.get_width(), \
-            'X position must be between 0 and the image width'
-        assert 0 <= y < self.get_height(), \
-            'Y position must be between 0 and the image width'
-        assert 0 < width <= self.get_width(), \
-            'Width must be greater than zero and less than the image width'
-        assert 0 < height <= self.get_height(), \
-            'Height must be greater than zero and less than the image height'
-        assert (x + width) <= self.get_width(), \
-            'Crop box cannot exceed image width'
-        assert (y + height) <= self.get_height(), \
-            'Crop box cannot exceed image height'
+        assert 0 <= x < self.get_width(), (
+            "X position must be between 0 and the image width"
+        )
+        assert 0 <= y < self.get_height(), (
+            "Y position must be between 0 and the image width"
+        )
+        assert 0 < width <= self.get_width(), (
+            "Width must be greater than zero and less than the image width"
+        )
+        assert 0 < height <= self.get_height(), (
+            "Height must be greater than zero and less than the image height"
+        )
+        assert (x + width) <= self.get_width(), "Crop box cannot exceed image width"
+        assert (y + height) <= self.get_height(), "Crop box cannot exceed image height"
         rect = pygame.Rect(x, y, width, height)
         return self.get_crop_rect(rect)
 
@@ -406,7 +428,7 @@ class BaseImage(Base):
             drawing_mode=self._drawing_mode,
             drawing_offset=self._drawing_offset,
             load_from_file=load_from_file,
-            frombase64=frombase64
+            frombase64=frombase64,
         )
 
         # Copy internal state
@@ -446,7 +468,7 @@ class BaseImage(Base):
         :return: Self reference
         """
         assert isinstance(drawing_mode, int)
-        assert drawing_mode in _VALID_IMAGE_MODES, 'unknown image drawing mode'
+        assert drawing_mode in _VALID_IMAGE_MODES, "unknown image drawing mode"
         self._drawing_mode = drawing_mode
         return self
 
@@ -518,9 +540,7 @@ class BaseImage(Base):
         return self.get_width(), self.get_height()
 
     def get_at(
-        self,
-        pos: Tuple2NumberType,
-        ignore_alpha: bool = False
+        self, pos: Tuple2NumberType, ignore_alpha: bool = False
     ) -> Tuple3IntType | Tuple4IntType | pygame.Color:
         """
         Get the color from a certain position in image on x-axis and y-axis (x, y).
@@ -602,8 +622,8 @@ class BaseImage(Base):
         :return: ``True`` if the image is the same (note, the surface)
         """
         assert isinstance(image, BaseImage)
-        im1 = pygame.image.tostring(self._surface, 'RGBA')
-        im2 = pygame.image.tostring(image._surface, 'RGBA')
+        im1 = pygame.image.tostring(self._surface, "RGBA")
+        im2 = pygame.image.tostring(image._surface, "RGBA")
         return im1 == im2
 
     def restore(self) -> BaseImage:
@@ -625,8 +645,7 @@ class BaseImage(Base):
         return self
 
     def apply_image_function(
-        self,
-        image_function: Callable[[int, int, int, int], Tuple4IntType]
+        self, image_function: Callable[[int, int, int, int], Tuple4IntType]
     ) -> BaseImage:
         """
         Apply a function to each pixel of the image. The function will receive the
@@ -688,17 +707,17 @@ class BaseImage(Base):
         if isinstance(channels, str):
             channels = [channels]
         assert isinstance(channels, VectorInstance)
-        assert 1 <= len(channels) <= 3, 'maximum size of channels can be 3'
+        assert 1 <= len(channels) <= 3, "maximum size of channels can be 3"
 
         w, h = self._surface.get_size()
         for x in range(w):
             for y in range(h):
                 r, g, b, a = self._surface.get_at((x, y))
-                if 'r' not in channels:
+                if "r" not in channels:
                     r = 0
-                if 'g' not in channels:
+                if "g" not in channels:
                     g = 0
-                if 'b' not in channels:
+                if "b" not in channels:
                     b = 0
                 self._surface.set_at((x, y), pygame.Color(r, g, b, a))
         return self
@@ -714,15 +733,12 @@ class BaseImage(Base):
         """
         assert isinstance(x, bool)
         assert isinstance(y, bool)
-        assert (x or y), 'at least one axis should be True'
+        assert x or y, "at least one axis should be True"
         self._surface = pygame.transform.flip(self._surface, x, y)
         return self
 
     def scale(
-        self,
-        width: NumberType,
-        height: NumberType,
-        smooth: bool = True
+        self, width: NumberType, height: NumberType, smooth: bool = True
     ) -> BaseImage:
         """
         Scale the image to a desired width and height factor.
@@ -741,15 +757,18 @@ class BaseImage(Base):
         assert isinstance(width, NumberInstance)
         assert isinstance(height, NumberInstance)
         assert isinstance(smooth, bool)
-        assert width > 0 and height > 0, \
-            'width and height must be greater than zero'
+        assert width > 0 and height > 0, "width and height must be greater than zero"
         w, h = self.get_size()
         if width == 1 and height == 1:
             return self
         elif not smooth or self._surface.get_bitsize() < 24:
-            self._surface = pygame.transform.scale(self._surface, (int(w * width), int(h * height)))
+            self._surface = pygame.transform.scale(
+                self._surface, (int(w * width), int(h * height))
+            )
         else:  # image bitsize less than 24 bits raises ValueError
-            self._surface = pygame.transform.smoothscale(self._surface, (int(w * width), int(h * height)))
+            self._surface = pygame.transform.smoothscale(
+                self._surface, (int(w * width), int(h * height))
+            )
         return self
 
     def scale2x(self) -> BaseImage:
@@ -776,10 +795,7 @@ class BaseImage(Base):
         return self.scale2x().scale2x()
 
     def resize(
-        self,
-        width: NumberType,
-        height: NumberType,
-        smooth: bool = True
+        self, width: NumberType, height: NumberType, smooth: bool = True
     ) -> BaseImage:
         """
         Resize the image to a desired (width, height) size in pixels.
@@ -792,12 +808,13 @@ class BaseImage(Base):
         assert isinstance(width, NumberInstance)
         assert isinstance(height, NumberInstance)
         assert isinstance(smooth, bool)
-        assert width > 0 and height > 0, \
-            'width and height must be greater than zero'
+        assert width > 0 and height > 0, "width and height must be greater than zero"
         w, h = self.get_size()
         if w == width and h == height:
             return self
-        return self.scale(width=float(width) / w, height=float(height) / h, smooth=smooth)
+        return self.scale(
+            width=float(width) / w, height=float(height) / h, smooth=smooth
+        )
 
     def get_rect(self) -> pygame.Rect:
         """
@@ -891,7 +908,7 @@ class BaseImage(Base):
         self,
         surface: pygame.Surface,
         area: pygame.Rect | None = None,
-        position: Tuple2IntType = (0, 0)
+        position: Tuple2IntType = (0, 0),
     ) -> BaseImage:
         """
         Draw the image in a given surface.
@@ -920,70 +937,59 @@ class BaseImage(Base):
         if self._drawing_mode == IMAGE_MODE_FILL:
             # Check if exists the transformed surface
             if (
-                area.width == self._last_transform[0] and
-                area.height == self._last_transform[1] and
-                self._last_transform[2] is not None
+                area.width == self._last_transform[0]
+                and area.height == self._last_transform[1]
+                and self._last_transform[2] is not None
             ):
                 surf = self._last_transform[2]
             else:  # Transform scale
                 if self.smooth_scaling and self._surface.get_bitsize() > 8:
-                    surf = pygame.transform.smoothscale(self._surface, (area.width, area.height))
+                    surf = pygame.transform.smoothscale(
+                        self._surface, (area.width, area.height)
+                    )
                 else:
-                    surf = pygame.transform.scale(self._surface, (area.width, area.height))
+                    surf = pygame.transform.scale(
+                        self._surface, (area.width, area.height)
+                    )
                 self._last_transform = (area.width, area.height, surf)
 
-            surface.blit(
-                surf,
-                (
-                    offx + position[0],
-                    offy + position[1]
-                ))
+            surface.blit(surf, (offx + position[0], offy + position[1]))
 
         elif self._drawing_mode == IMAGE_MODE_REPEAT_X:
             w = self._surface.get_width()
             times = int(math.ceil(float(area.width) / w))
-            assert times > 0, \
-                'invalid size, width must be greater than zero'
+            assert times > 0, "invalid size, width must be greater than zero"
             for x in range(times):
                 surface.blit(
                     self._surface,
-                    (
-                        x * w + offx + position[0],
-                        offy + position[1]
-                    ),
-                    area
+                    (x * w + offx + position[0], offy + position[1]),
+                    area,
                 )
 
         elif self._drawing_mode == IMAGE_MODE_REPEAT_Y:
             h = self._surface.get_height()
             times = int(math.ceil(float(area.height) / h))
-            assert times > 0, \
-                'invalid size, height must be greater than zero'
+            assert times > 0, "invalid size, height must be greater than zero"
             for y in range(times):
                 surface.blit(
                     self._surface,
-                    (
-                        0 + offx + position[0],
-                        y * h + offy + position[1]
-                    ),
-                    area
+                    (0 + offx + position[0], y * h + offy + position[1]),
+                    area,
                 )
 
         elif self._drawing_mode == IMAGE_MODE_REPEAT_XY:
             w, h = self._surface.get_size()
             timesx = int(math.ceil(float(area.width) / w))
             timesy = int(math.ceil(float(area.height) / h))
-            assert timesx > 0 and timesy > 0, \
-                'invalid size, width and height must be greater than zero'
+            assert timesx > 0 and timesy > 0, (
+                "invalid size, width and height must be greater than zero"
+            )
             for x in range(timesx):
                 for y in range(timesy):
                     surface.blit(
                         self._surface,
-                        (
-                            x * w + offx + position[0],
-                            y * h + offy + position[1]
-                        ),
-                        area
+                        (x * w + offx + position[0], y * h + offy + position[1]),
+                        area,
                     )
 
         elif self._drawing_mode == IMAGE_MODE_CENTER:
@@ -993,19 +999,12 @@ class BaseImage(Base):
                 self._surface,
                 (
                     int(float(sw - w) / 2 + offx + position[0]),
-                    int(float(hw - h) / 2 + offy + position[1])
+                    int(float(hw - h) / 2 + offy + position[1]),
                 ),
-                area
+                area,
             )
 
         elif self._drawing_mode == IMAGE_MODE_SIMPLE:
-            surface.blit(
-                self._surface,
-                (
-                    offx + position[0],
-                    offy + position[1]
-                ),
-                area
-            )
+            surface.blit(self._surface, (offx + position[0], offy + position[1]), area)
 
         return self
