@@ -8,10 +8,7 @@ None widget definition.
 
 from __future__ import annotations
 
-__all__ = [
-    'NoneWidget',
-    'NoneWidgetManager'
-]
+__all__ = ["NoneWidget", "NoneWidgetManager"]
 
 from abc import ABC
 from typing import TYPE_CHECKING
@@ -44,10 +41,7 @@ class NoneWidget(Widget):
     :param widget_id: ID of the widget
     """
 
-    def __init__(
-        self,
-        widget_id: str = ''
-    ) -> None:
+    def __init__(self, widget_id: str = "") -> None:
         super().__init__(widget_id=widget_id)
         self.is_selectable = False
         self._surface = make_surface(0, 0, alpha=True)
@@ -191,10 +185,7 @@ class NoneWidgetManager(AbstractWidgetManager, ABC):
     NoneWidget manager.
     """
 
-    def none_widget(
-        self,
-        widget_id: str = ''
-    ) -> pygame_menu.widgets.NoneWidget:
+    def none_widget(self, widget_id: str = "") -> pygame_menu.widgets.NoneWidget:
         """
         Add a none widget to the Menu.
 

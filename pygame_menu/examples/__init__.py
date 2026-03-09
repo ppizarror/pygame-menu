@@ -8,7 +8,7 @@ Example file directory.
 
 from __future__ import annotations
 
-__all__ = ['create_example_window']
+__all__ = ["create_example_window"]
 
 import sys
 
@@ -24,7 +24,7 @@ def create_example_window(
     pygame_menu_icon: bool = True,
     init_pygame: bool = True,
     center_window: bool = True,
-    **kwargs
+    **kwargs,
 ) -> pygame.Surface:
     """
     Set pygame window.
@@ -37,10 +37,10 @@ def create_example_window(
     :param kwargs: Optional keyword arguments received by display set_mode
     :return: Pygame surface from created display
     """
-    assert len(title) > 0, 'title cannot be empty'
-    assert len(window_size) == 2, 'window size shape must be (width, height)'
-    assert isinstance(window_size[0], int), 'width must be an integer'
-    assert isinstance(window_size[1], int), 'height must be an integer'
+    assert len(title) > 0, "title cannot be empty"
+    assert len(window_size) == 2, "window size shape must be (width, height)"
+    assert isinstance(window_size[0], int), "width must be an integer"
+    assert isinstance(window_size[1], int), "height must be an integer"
 
     import os
 
@@ -49,10 +49,10 @@ def create_example_window(
     if init_pygame:
         pygame.init()
     if center_window:
-        os.environ['SDL_VIDEO_CENTERED'] = '1'
+        os.environ["SDL_VIDEO_CENTERED"] = "1"
 
     # Create pygame screen and objects
-    if sys.platform == 'darwin':
+    if sys.platform == "darwin":
         kwargs = {}
 
     try:

@@ -8,7 +8,7 @@ ScrollBar class, manage the selection in a range of values.
 
 from __future__ import annotations
 
-__all__ = ['ScrollBar']
+__all__ = ["ScrollBar"]
 
 from typing import Literal
 
@@ -69,6 +69,7 @@ class ScrollBar(Widget):
     :param page_ctrl_color: Page control color
     :param onchange: Callback when pressing and moving the scroll
     """
+
     _at_bottom: bool
     _at_top: bool
     _clicked: bool
@@ -97,7 +98,7 @@ class ScrollBar(Widget):
         self,
         length: NumberType,
         values_range: VectorIntType,
-        scrollbar_id: str = '',
+        scrollbar_id: str = "",
         orientation: str = ORIENTATION_HORIZONTAL,
         slider_pad: NumberType = 0,
         slider_color: ColorInputType = (200, 200, 200),
@@ -106,24 +107,21 @@ class ScrollBar(Widget):
         page_ctrl_color: ColorInputType = (235, 235, 235),
         onchange: CallbackType = None,
         *args,
-        **kwargs
+        **kwargs,
     ) -> None:
         assert isinstance(length, NumberInstance)
         assert isinstance(values_range, VectorInstance)
-        assert values_range[1] > values_range[0], 'minimum value first is expected'
+        assert values_range[1] > values_range[0], "minimum value first is expected"
         assert isinstance(slider_pad, NumberInstance)
         assert isinstance(page_ctrl_thick, int)
-        assert page_ctrl_thick - 2 * slider_pad >= 2, 'slider shall be visible'
+        assert page_ctrl_thick - 2 * slider_pad >= 2, "slider shall be visible"
 
         page_ctrl_color = assert_color(page_ctrl_color)
         slider_color = assert_color(slider_color)
         slider_hover_color = assert_color(slider_hover_color)
 
         super().__init__(
-            widget_id=scrollbar_id,
-            onchange=onchange,
-            args=args,
-            kwargs=kwargs
+            widget_id=scrollbar_id, onchange=onchange, args=args, kwargs=kwargs
         )
 
         self._check_mouseleave_call_render = True
@@ -203,12 +201,16 @@ class ScrollBar(Widget):
         """
         Apply scrollbar changes.
         """
-        opp_orientation: int = 1 if self._orientation == 0 else 0  # Opposite of orientation
-        dims: tuple[str, str] = ('width', 'height')
+        opp_orientation: int = (
+            1 if self._orientation == 0 else 0
+        )  # Opposite of orientation
+        dims: tuple[str, str] = ("width", "height")
         setattr(self._rect, dims[self._orientation], int(self._page_ctrl_length))
         setattr(self._rect, dims[opp_orientation], self._page_ctrl_thick)
         if self._slider_rect is None:
-            self._slider_rect = pygame.Rect(0, 0, int(self._rect.width), int(self._rect.height))
+            self._slider_rect = pygame.Rect(
+                0, 0, int(self._rect.width), int(self._rect.height)
+            )
         self._update_slider_rect()
 
     def set_shadow(
@@ -216,7 +218,7 @@ class ScrollBar(Widget):
         enabled: bool = True,
         color: ColorInputType | None = None,
         position: str | None = None,
-        offset: int = 2
+        offset: int = 2,
     ) -> ScrollBar:
         """
         Set the scrollbars shadow.
@@ -288,7 +290,11 @@ class ScrollBar(Widget):
 
         :return: Page step
         """
-        p_step = self._page_step * (self._values_range[1] - self._values_range[0]) / self._page_ctrl_length
+        p_step = (
+            self._page_step
+            * (self._values_range[1] - self._values_range[0])
+            / self._page_ctrl_length
+        )
         return int(p_step)
 
     def get_value_percentage(self) -> float:
@@ -307,8 +313,9 @@ class ScrollBar(Widget):
 
         :return: Position in px
         """
-        value = self._values_range[0] + self._slider_position * \
-                (self._values_range[1] - self._values_range[0]) / (self._page_ctrl_length - self._page_step)
+        value = self._values_range[0] + self._slider_position * (
+            self._values_range[1] - self._values_range[0]
+        ) / (self._page_ctrl_length - self._page_step)
 
         # Correction due to value scaling
         value = max(self._values_range[0], value)
@@ -316,20 +323,34 @@ class ScrollBar(Widget):
         return int(value)
 
     def _render(self) -> bool | None:
-        width, height = self._rect.width + self._rect_size_delta[0], self._rect.height + self._rect_size_delta[1]
+        width, height = (
+            self._rect.width + self._rect_size_delta[0],
+            self._rect.height + self._rect_size_delta[1],
+        )
         if self._slider_rect is None:
             return None
 
-        elif not self._render_hash_changed(width, height, self._slider_rect.x, self._slider_rect.y,
-                                           self.readonly, self._slider_rect.width, self._slider_rect.height,
-                                           self.scrolling, self._mouseover, self._clicked):
+        elif not self._render_hash_changed(
+            width,
+            height,
+            self._slider_rect.x,
+            self._slider_rect.y,
+            self.readonly,
+            self._slider_rect.width,
+            self._slider_rect.height,
+            self.scrolling,
+            self._mouseover,
+            self._clicked,
+        ):
             return True
 
         self._surface = make_surface(width, height)
         self._surface.fill(self._page_ctrl_color)
 
         # Render slider
-        slider_color = self._slider_color if not self.readonly else self._font_readonly_color
+        slider_color = (
+            self._slider_color if not self.readonly else self._font_readonly_color
+        )
         mouse_hover = (self.scrolling and self._clicked) or self._mouseover
         slider_color = self._slider_hover_color if mouse_hover else slider_color
         self._render_shadow(self._surface, slider_color)
@@ -349,11 +370,17 @@ class ScrollBar(Widget):
             return False
 
         axis = self._orientation
-        space_before: int = (rect.topleft[axis] + self._slider_pad
-                             - self._slider_rect.move(*rect.topleft).topleft[axis])
+        space_before: int = (
+            rect.topleft[axis]
+            + self._slider_pad
+            - self._slider_rect.move(*rect.topleft).topleft[axis]
+        )
         move: int = max(round(pixels), space_before)
-        space_after: int = (rect.bottomright[axis] - self._slider_pad
-                            - self._slider_rect.move(*rect.topleft).bottomright[axis])
+        space_after: int = (
+            rect.bottomright[axis]
+            - self._slider_pad
+            - self._slider_rect.move(*rect.topleft).bottomright[axis]
+        )
         move = min(move, space_after)
 
         if not move:
@@ -375,7 +402,9 @@ class ScrollBar(Widget):
         assert isinstance(value, NumberInstance)
         assert 0 < value
         self._page_ctrl_length = value
-        self._slider_position = min(self._slider_position, self._page_ctrl_length - self._page_step)
+        self._slider_position = min(
+            self._slider_position, self._page_ctrl_length - self._page_step
+        )
         self._apply_size_changes()
 
     def get_thickness(self) -> int:
@@ -438,8 +467,9 @@ class ScrollBar(Widget):
         :param value: Maximum value
         """
         assert isinstance(value, NumberInstance)
-        assert value > self._values_range[0], \
-            f'maximum value shall greater than {self._values_range[0]}'
+        assert value > self._values_range[0], (
+            f"maximum value shall greater than {self._values_range[0]}"
+        )
         self._values_range[1] = value
 
     def set_minimum(self, value: NumberType) -> None:
@@ -449,8 +479,9 @@ class ScrollBar(Widget):
         :param value: Minimum value
         """
         assert isinstance(value, NumberInstance)
-        assert 0 <= value < self._values_range[1], \
-            f'minimum value shall lower than {self._values_range[1]}'
+        assert 0 <= value < self._values_range[1], (
+            f"minimum value shall lower than {self._values_range[1]}"
+        )
         self._values_range[0] = value
 
     def set_orientation(self, orientation: str) -> None:
@@ -483,13 +514,19 @@ class ScrollBar(Widget):
         :param value: Page step
         """
         assert isinstance(value, NumberInstance)
-        assert 0 < value, 'page step shall be > 0'
+        assert 0 < value, "page step shall be > 0"
 
         # Slider length shall represent the same ratio
-        self._page_step = self._page_ctrl_length * value / (self._values_range[1] - self._values_range[0])
+        self._page_step = (
+            self._page_ctrl_length
+            * value
+            / (self._values_range[1] - self._values_range[0])
+        )
 
         if self._single_step >= self._page_step:
-            self._single_step = self._page_step // 2  # Arbitrary to be lower than page step
+            self._single_step = (
+                self._page_step // 2
+            )  # Arbitrary to be lower than page step
 
         self._apply_size_changes()
 
@@ -500,12 +537,14 @@ class ScrollBar(Widget):
         :param position_value: Position
         """
         assert isinstance(position_value, NumberInstance)
-        assert self._values_range[0] <= position_value <= self._values_range[1], \
-            f'{self._values_range[0]} < {position_value} < {self._values_range[1]}'
+        assert self._values_range[0] <= position_value <= self._values_range[1], (
+            f"{self._values_range[0]} < {position_value} < {self._values_range[1]}"
+        )
 
-        pixels = (position_value - self._values_range[0]) * \
-                 (self._page_ctrl_length - self._page_step)
-        pixels /= (self._values_range[1] - self._values_range[0])
+        pixels = (position_value - self._values_range[0]) * (
+            self._page_ctrl_length - self._page_step
+        )
+        pixels /= self._values_range[1] - self._values_range[0]
 
         # Correction due to value scaling
         pixels = max(0, pixels)
@@ -533,14 +572,18 @@ class ScrollBar(Widget):
         """
         Updates the slider rect based on position and size.
         """
-        opp_orientation: int = 1 if self._orientation == 0 else 0  # Opposite of orientation
-        dims: tuple[str, str] = ('width', 'height')
+        opp_orientation: int = (
+            1 if self._orientation == 0 else 0
+        )  # Opposite of orientation
+        dims: tuple[str, str] = ("width", "height")
         setattr(self._slider_rect, dims[self._orientation], int(self._page_step))
         setattr(self._slider_rect, dims[opp_orientation], self._page_ctrl_thick)
         # Update slider position according to the current one
-        pos = ('x', 'y')
+        pos = ("x", "y")
         setattr(self._slider_rect, pos[self._orientation], int(self._slider_position))
-        self._slider_rect = self._slider_rect.inflate(-2 * self._slider_pad, -2 * self._slider_pad)
+        self._slider_rect = self._slider_rect.inflate(
+            -2 * self._slider_pad, -2 * self._slider_pad
+        )
 
     def _set_slider_position(self, position: int) -> None:
         """
@@ -591,8 +634,10 @@ class ScrollBar(Widget):
         """
         # Vertical bar: scroll down (4) or up (5). Mouse must be placed
         # over the area to enable this feature
-        if event.button in (4, 5) and self._orientation == 1 and (
-            self._scrollarea is None or self._scrollarea.mouse_is_over()
+        if (
+            event.button in (4, 5)
+            and self._orientation == 1
+            and (self._scrollarea is None or self._scrollarea.mouse_is_over())
         ):
             direction = -1 if event.button == 4 else 1
             if self._scroll(rect, direction * self._single_step):
@@ -609,8 +654,12 @@ class ScrollBar(Widget):
             elif rect.collidepoint(*event.pos):
                 # Moves towards the click by one "page" (= slider length without pad)
                 s_rect = self.get_slider_rect()
-                direction = 1 if event.pos[self._orientation] > (
-                    s_rect.x if self._orientation == 0 else s_rect.y) else -1
+                direction = (
+                    1
+                    if event.pos[self._orientation]
+                    > (s_rect.x if self._orientation == 0 else s_rect.y)
+                    else -1
+                )
                 if self._scroll(rect, direction * self._page_step):
                     self.change()
                     return True
@@ -634,7 +683,12 @@ class ScrollBar(Widget):
         elif rect.collidepoint(*pos):
             # Moves towards the click by one "page" (= slider length without pad)
             s_rect = self.get_slider_rect()
-            direction = 1 if pos[self._orientation] > (s_rect.x if self._orientation == 0 else s_rect.y) else -1
+            direction = (
+                1
+                if pos[self._orientation]
+                > (s_rect.x if self._orientation == 0 else s_rect.y)
+                else -1
+            )
             if self._scroll(rect, direction * self._page_step):
                 self.change()
                 return True
@@ -649,9 +703,13 @@ class ScrollBar(Widget):
         """
         if self._shadow_enabled:
             lit_rect = pygame.Rect(self._slider_rect)
-            slider_rect = lit_rect.inflate(-self._shadow_offset * 2, -self._shadow_offset * 2)
+            slider_rect = lit_rect.inflate(
+                -self._shadow_offset * 2, -self._shadow_offset * 2
+            )
             shadow_rect = lit_rect.inflate(-self._shadow_offset, -self._shadow_offset)
-            shadow_rect = shadow_rect.move(int(self._shadow_tuple[0] / 2), int(self._shadow_tuple[1] / 2))
+            shadow_rect = shadow_rect.move(
+                int(self._shadow_tuple[0] / 2), int(self._shadow_tuple[1] / 2)
+            )
             pygame.draw.rect(surface, self._font_selected_color, lit_rect)
             pygame.draw.rect(surface, self._shadow_color, shadow_rect)
             pygame.draw.rect(surface, slider_color, slider_rect)
@@ -668,17 +726,16 @@ class ScrollBar(Widget):
         rect = self.get_rect(to_absolute_position=True)
 
         for event in events:
-
             # Check mouse over
             self._check_mouseover(event)
 
             # User press PAGEUP or PAGEDOWN
             if (
-                event.type == pygame.KEYDOWN and
-                event.key in (pygame.K_PAGEUP, pygame.K_PAGEDOWN) and
-                self._keyboard_enabled and
-                self._orientation == 1 and
-                not self.scrolling
+                event.type == pygame.KEYDOWN
+                and event.key in (pygame.K_PAGEUP, pygame.K_PAGEDOWN)
+                and self._keyboard_enabled
+                and self._orientation == 1
+                and not self.scrolling
             ):
                 direction = 1 if event.key == pygame.K_PAGEDOWN else -1
                 keys_pressed = pygame.key.get_pressed()
@@ -692,25 +749,37 @@ class ScrollBar(Widget):
 
             # User moves mouse while scrolling
             elif self.scrolling and (
-                event.type == pygame.MOUSEMOTION and self._mouse_enabled and hasattr(event, 'rel') or
-                event.type == FINGERMOTION and self._touchscreen_enabled and self._menu is not None
+                event.type == pygame.MOUSEMOTION
+                and self._mouse_enabled
+                and hasattr(event, "rel")
+                or event.type == FINGERMOTION
+                and self._touchscreen_enabled
+                and self._menu is not None
             ):
                 # Get relative movement
                 h = self.get_orientation() == ORIENTATION_HORIZONTAL
-                rel = event.rel[self._orientation] if event.type == pygame.MOUSEMOTION else \
-                    self._menu is not None and (
-                        event.dx * 2 * self._menu.get_window_size()[0] if h else
-                        event.dy * 2 * self._menu.get_window_size()[1]
+                rel = (
+                    event.rel[self._orientation]
+                    if event.type == pygame.MOUSEMOTION
+                    else self._menu is not None
+                    and (
+                        event.dx * 2 * self._menu.get_window_size()[0]
+                        if h
+                        else event.dy * 2 * self._menu.get_window_size()[1]
                     )
+                )
 
                 # If mouse outside region and scroll is on limits, ignore
-                mx, my = event.pos if event.type == pygame.MOUSEMOTION else \
-                    get_finger_pos(self._menu, event)
+                mx, my = (
+                    event.pos
+                    if event.type == pygame.MOUSEMOTION
+                    else get_finger_pos(self._menu, event)
+                )
                 if (
-                    self.get_value_percentage() in (0, 1) and
-                    self.get_scrollarea() is not None and
-                    self.get_scrollarea().get_parent() is not None and
-                    self._slider_rect is not None
+                    self.get_value_percentage() in (0, 1)
+                    and self.get_scrollarea() is not None
+                    and self.get_scrollarea().get_parent() is not None
+                    and self._slider_rect is not None
                 ):
                     if self._orientation == 1:  # Vertical
                         h = self._slider_rect.height / 2
@@ -729,7 +798,7 @@ class ScrollBar(Widget):
                     return True
 
             # Mouse enters or leaves the window
-            elif event.type == pygame.ACTIVEEVENT and hasattr(event, 'gain'):
+            elif event.type == pygame.ACTIVEEVENT and hasattr(event, "gain"):
                 mx, my = pygame.mouse.get_pos()
                 if event.gain != 1:  # Leave
                     self._last_mouse_pos = (mx, my)
@@ -748,13 +817,21 @@ class ScrollBar(Widget):
             elif event.type == pygame.MOUSEBUTTONDOWN and self._mouse_enabled:
                 if self._handle_mouse_event(event, rect):
                     return True
-            elif event.type == FINGERDOWN and self._touchscreen_enabled and self._menu is not None:
+            elif (
+                event.type == FINGERDOWN
+                and self._touchscreen_enabled
+                and self._menu is not None
+            ):
                 if self._handle_touch_event(event, rect):
                     return True
 
             # User releases mouse button if scrolling
-            elif (event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled or
-                  event.type == FINGERUP and self._touchscreen_enabled) and self.scrolling:
+            elif (
+                event.type == pygame.MOUSEBUTTONUP
+                and self._mouse_enabled
+                or event.type == FINGERUP
+                and self._touchscreen_enabled
+            ) and self.scrolling:
                 self._clicked = False
                 self.scrolling = False
                 self._render()

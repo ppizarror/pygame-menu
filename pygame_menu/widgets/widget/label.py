@@ -8,10 +8,7 @@ Label class, adds a simple text to the Menu.
 
 from __future__ import annotations
 
-__all__ = [
-    'Label',
-    'LabelManager'
-]
+__all__ = ["Label", "LabelManager"]
 
 import textwrap
 import time
@@ -51,6 +48,7 @@ class Label(Widget):
     :param leading: Font leading for ``wordwrap``. If ``None`` retrieves from widget font
     :param max_nlines: Number of maximum lines for ``wordwrap``. If ``None`` the number is dynamically computed. If exceeded, ``get_overflow_lines()`` will return the non-displayed lines
     """
+
     _last_underline: list[str | tuple[ColorType, int, int] | None]
     _leading: int | None
     _lines: list[str]
@@ -62,21 +60,17 @@ class Label(Widget):
     def __init__(
         self,
         title: Any,
-        label_id: str = '',
+        label_id: str = "",
         onselect: CallbackType = None,
         wordwrap: bool = False,
         leading: int | None = None,
-        max_nlines: int | None = None
+        max_nlines: int | None = None,
     ) -> None:
         assert isinstance(leading, (type(None), int))
         assert isinstance(max_nlines, (type(None), int))
         assert isinstance(wordwrap, bool)
-        super().__init__(
-            title=title,
-            onselect=onselect,
-            widget_id=label_id
-        )
-        self._last_underline = ['', None]  # deco id, (color, offset, width)
+        super().__init__(title=title, onselect=onselect, widget_id=label_id)
+        self._last_underline = ["", None]  # deco id, (color, offset, width)
         self._leading = leading
         self._lines = []  # Lines of text displayed
         self._max_nlines = max_nlines
@@ -85,11 +79,7 @@ class Label(Widget):
         self._wordwrap = wordwrap
 
     def add_underline(
-        self,
-        color: ColorInputType,
-        offset: int,
-        width: int,
-        force_render: bool = False
+        self, color: ColorInputType, offset: int, width: int, force_render: bool = False
     ) -> Label:
         """
         Adds an underline to text. This is added if widget is rendered. Underline
@@ -101,7 +91,7 @@ class Label(Widget):
         :param force_render: If ``True`` force widget render after addition
         :return: Self reference
         """
-        assert not self._wordwrap, 'underline is not enabled for wordwrap is active'
+        assert not self._wordwrap, "underline is not enabled for wordwrap is active"
         color = assert_color(color)
         assert isinstance(offset, int)
         assert isinstance(width, int) and width > 0
@@ -116,10 +106,10 @@ class Label(Widget):
 
         :return: Self reference
         """
-        assert not self._wordwrap, 'underline is not enabled for wordwrap is active'
-        if self._last_underline[0] != '':
+        assert not self._wordwrap, "underline is not enabled for wordwrap is active"
+        if self._last_underline[0] != "":
             self._decorator.remove(self._last_underline[0])
-            self._last_underline[0] = ''
+            self._last_underline[0] = ""
         return self
 
     def _apply_font(self) -> None:
@@ -127,7 +117,7 @@ class Label(Widget):
 
     def _draw(self, surface: pygame.Surface) -> None:
         # The minimal width of any surface is 1px, so the background will be a line
-        if self._title == '':
+        if self._title == "":
             return
         surface.blit(self._surface, self._rect.topleft)
 
@@ -158,7 +148,7 @@ class Label(Widget):
         if self._title_generator is not None:
             if self._verbose:
                 warn(
-                    f'{self.get_class_id()} title generator is not None, thus, the new'
+                    f"{self.get_class_id()} title generator is not None, thus, the new"
                     f' title "{title}" will be overridden after next update'
                 )
         return self
@@ -170,11 +160,7 @@ class Label(Widget):
         :return: Leading
         """
         assert self._font
-        return (
-            self._font.get_linesize()
-            if self._leading is None
-            else self._leading
-        )
+        return self._font.get_linesize() if self._leading is None else self._leading
 
     def get_lines(self) -> list[str]:
         """
@@ -201,14 +187,14 @@ class Label(Widget):
         :return: List of strings
         """
         final_lines: list[str] = []
-        words: list[str] = line.split(' ')
+        words: list[str] = line.split(" ")
 
         while True:
             split_line: bool = False
-            current_line: str = ''
+            current_line: str = ""
             i: int = 0
             for i, _ in enumerate(words):
-                current_line = ' '.join(words[:i + 1]).replace('\t', ' ' * tab_size)
+                current_line = " ".join(words[: i + 1]).replace("\t", " " * tab_size)
                 current_line_size = font.size(current_line)
                 if current_line_size[0] > max_width:
                     split_line = True
@@ -216,7 +202,7 @@ class Label(Widget):
 
             if split_line:
                 i = i if i > 0 else 1
-                final_lines.append(' '.join(words[:i]))
+                final_lines.append(" ".join(words[:i]))
                 words = words[i:]
             else:
                 final_lines.append(current_line)
@@ -243,7 +229,12 @@ class Label(Widget):
                 max_width = menu._column_widths[self.get_col_row_index()[0]]
             except IndexError:
                 max_width = menu.get_width(inner=True)
-        return max_width - self._padding[1] - self._padding[3] - self._selection_effect.get_width()
+        return (
+            max_width
+            - self._padding[1]
+            - self._padding[3]
+            - self._selection_effect.get_width()
+        )
 
     def get_overflow_lines(self) -> list[str]:
         """
@@ -251,15 +242,24 @@ class Label(Widget):
 
         :return: Non displayed lines
         """
-        assert self._wordwrap, 'wordwrap must be enabled'
-        assert isinstance(self._max_nlines, int), 'max_nlines must be defined'
+        assert self._wordwrap, "wordwrap must be enabled"
+        assert isinstance(self._max_nlines, int), "max_nlines must be defined"
         return self._overflow_lines
 
     def _render(self) -> bool | None:
         font_color: ColorType = self.get_font_color_status()
-        if not self._render_hash_changed(self._title, font_color, self._visible, self._menu, self._font,
-                                         self._last_underline[1], self._padding, self._selection_effect.get_width(),
-                                         self.readonly, self._frame):
+        if not self._render_hash_changed(
+            self._title,
+            font_color,
+            self._visible,
+            self._menu,
+            self._font,
+            self._last_underline[1],
+            self._padding,
+            self._selection_effect.get_width(),
+            self.readonly,
+            self._frame,
+        ):
             return True
         self._lines.clear()
 
@@ -281,11 +281,11 @@ class Label(Widget):
                             line=line,
                             font=self._font,
                             max_width=max_width,
-                            tab_size=self._tab_size
+                            tab_size=self._tab_size,
                         )
-                        for line in self._title.split('\n')
+                        for line in self._title.split("\n")
                     ),
-                    []
+                    [],
                 )
                 num_lines = len(lines)
                 if isinstance(self._max_nlines, int):
@@ -297,7 +297,7 @@ class Label(Widget):
                 self._surface = make_surface(
                     max(self._font.size(line)[0] for line in lines),
                     num_lines * self._get_leading(),
-                    alpha=True
+                    alpha=True,
                 )
 
                 for n_line, line in enumerate(lines):
@@ -308,8 +308,8 @@ class Label(Widget):
                             0,
                             n_line * self._get_leading(),
                             self._rect.width,
-                            self._rect.height
-                        )
+                            self._rect.height,
+                        ),
                     )
                     self._lines.append(line)
                     if n_line + 1 == num_lines:
@@ -338,7 +338,7 @@ class Label(Widget):
                         pos1=(-w / 2, h / 2 + offset),
                         pos2=(w / 2, h / 2 + offset),
                         color=color,
-                        width=width
+                        width=width,
                     )
 
         self.force_menu_surface_update()
@@ -348,8 +348,9 @@ class Label(Widget):
         # If generator is not None
         if self._title_generator is not None:
             gen_title = self._title_generator()
-            assert isinstance(gen_title, str), \
-                f'object generated by the title generator ({gen_title}) is not string-type'
+            assert isinstance(gen_title, str), (
+                f"object generated by the title generator ({gen_title}) is not string-type"
+            )
             self._title = gen_title
             self._render()
         self.apply_update_callbacks(events)
@@ -368,12 +369,12 @@ class LabelManager(AbstractWidgetManager, ABC):
     def label(
         self,
         title: Any,
-        label_id: str = '',
+        label_id: str = "",
         max_char: int = 0,
         onselect: Callable[[bool, Widget, pygame_menu.Menu], Any] | None = None,
         selectable: bool = False,
         wordwrap: bool = False,
-        **kwargs
+        **kwargs,
     ) -> pygame_menu.widgets.Label | list[pygame_menu.widgets.Label]:
         """
         Add a simple text to the Menu.
@@ -449,17 +450,17 @@ class LabelManager(AbstractWidgetManager, ABC):
         label_id = label_id or uuid4()
 
         # If newline detected, split in two new lines
-        if '\n' in title and not wordwrap:
-            title = title.split('\n')
+        if "\n" in title and not wordwrap:
+            title = title.split("\n")
             widgets = []
             for t in title:
                 wig = self.label(
                     title=t,
-                    label_id=label_id + '+' + str(len(widgets) + 1),
+                    label_id=label_id + "+" + str(len(widgets) + 1),
                     max_char=max_char,
                     onselect=onselect,
                     selectable=selectable,
-                    **kwargs
+                    **kwargs,
                 )
                 if isinstance(wig, list):
                     for w in wig:
@@ -474,22 +475,27 @@ class LabelManager(AbstractWidgetManager, ABC):
                 dummy_attrs = self._filter_widget_attributes(kwargs.copy())
                 dummy = pygame_menu.widgets.Label(title=title)
                 self._configure_widget(dummy, **dummy_attrs)
-                max_char = int(1.0 * self._menu.get_width(inner=True) * len(title) / dummy.get_width())
+                max_char = int(
+                    1.0
+                    * self._menu.get_width(inner=True)
+                    * len(title)
+                    / dummy.get_width()
+                )
             else:
                 max_char = 0
 
-        leading = kwargs.pop('leading', None)
-        max_nlines = kwargs.pop('max_nlines', None)
+        leading = kwargs.pop("leading", None)
+        max_nlines = kwargs.pop("max_nlines", None)
 
         # If no overflow
         if len(title) <= max_char or max_char == 0 or wordwrap:
             attributes = self._filter_widget_attributes(kwargs)
 
             # Filter additional parameters
-            underline = kwargs.pop('underline', False)
-            underline_color = kwargs.pop('underline_color', attributes['font_color'])
-            underline_offset = kwargs.pop('underline_offset', 1)
-            underline_width = kwargs.pop('underline_width', 1)
+            underline = kwargs.pop("underline", False)
+            underline_color = kwargs.pop("underline_color", attributes["font_color"])
+            underline_offset = kwargs.pop("underline_offset", 1)
+            underline_width = kwargs.pop("underline_width", 1)
 
             widget = Label(
                 label_id=label_id,
@@ -497,7 +503,7 @@ class LabelManager(AbstractWidgetManager, ABC):
                 title=title,
                 wordwrap=wordwrap and not underline,
                 leading=leading,
-                max_nlines=max_nlines
+                max_nlines=max_nlines,
             )
             widget.is_selectable = selectable
             self._check_kwargs(kwargs)
@@ -515,14 +521,14 @@ class LabelManager(AbstractWidgetManager, ABC):
                 widget.append(
                     self.label(
                         title=line,
-                        label_id=label_id + '+' + str(len(widget) + 1),
+                        label_id=label_id + "+" + str(len(widget) + 1),
                         max_char=max_char,
                         onselect=onselect,
                         selectable=selectable,
                         wordwrap=wordwrap,
                         leading=leading,
                         max_nlines=max_nlines,
-                        **kwargs
+                        **kwargs,
                     )
                 )
 
@@ -530,13 +536,13 @@ class LabelManager(AbstractWidgetManager, ABC):
 
     def clock(
         self,
-        clock_format: str = '%Y/%m/%d %H:%M:%S',
-        clock_id: str = '',
+        clock_format: str = "%Y/%m/%d %H:%M:%S",
+        clock_id: str = "",
         onselect: Callable[[bool, Widget, pygame_menu.Menu], Any] | None = None,
         selectable: bool = False,
-        title_format: str = '{0}',
+        title_format: str = "{0}",
         wordwrap: bool = False,
-        **kwargs
+        **kwargs,
     ) -> pygame_menu.widgets.Label:
         """
         Add a clock label to the Menu. This creates a Label with a text generator
@@ -622,17 +628,19 @@ class LabelManager(AbstractWidgetManager, ABC):
         :rtype: :py:class:`pygame_menu.widgets.Label`
         """
         label = self.label(
-            title='',
+            title="",
             label_id=clock_id,
             onselect=onselect,
             selectable=selectable,
             wordwrap=wordwrap,
-            **kwargs
+            **kwargs,
         )
 
-        assert isinstance(title_format, str) and '{0}' in title_format
+        assert isinstance(title_format, str) and "{0}" in title_format
         assert not isinstance(label, list)
-        label.set_title_generator(lambda: title_format.format(time.strftime(clock_format)))
+        label.set_title_generator(
+            lambda: title_format.format(time.strftime(clock_format))
+        )
         label.update([])
 
         return label

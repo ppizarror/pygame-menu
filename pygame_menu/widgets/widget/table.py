@@ -8,10 +8,7 @@ The table widget is a Frame which packs widgets in a structured way.
 
 from __future__ import annotations
 
-__all__ = [
-    'Table',
-    'TableManager'
-]
+__all__ = ["Table", "TableManager"]
 
 from abc import ABC
 from typing import TYPE_CHECKING, Union
@@ -65,7 +62,7 @@ from pygame_menu.widgets.widget.surface import SurfaceWidget
 if TYPE_CHECKING:
     import pygame_menu
 
-CellType = Union['Widget', str, int, float, bool, 'BaseImage', 'pygame.Surface']
+CellType = Union["Widget", str, int, float, bool, "BaseImage", "pygame.Surface"]
 ColumnInputType = Union[tuple[CellType, ...], list[CellType]]
 
 
@@ -83,6 +80,7 @@ class Table(Frame):
 
     :param table_id: ID of the table
     """
+
     _rows: list[Frame]
     _update_widgets: list[Widget]
     default_cell_align: str
@@ -93,15 +91,9 @@ class Table(Frame):
     default_cell_vertical_position: str
     default_row_background_color: ColorInputType | None
 
-    def __init__(
-        self,
-        table_id: str = ''
-    ) -> None:
+    def __init__(self, table_id: str = "") -> None:
         super().__init__(
-            width=1,
-            height=1,
-            orientation=ORIENTATION_VERTICAL,
-            frame_id=table_id
+            width=1, height=1, orientation=ORIENTATION_VERTICAL, frame_id=table_id
         )
 
         # Internals
@@ -131,7 +123,7 @@ class Table(Frame):
         self.relax()
 
     def pack(self, *args, **kwargs) -> None:
-        raise RuntimeError(f'{self.get_class_id()} cannot pack external widgets')
+        raise RuntimeError(f"{self.get_class_id()} cannot pack external widgets")
 
     def remove_row(self, row: Frame) -> None:
         """
@@ -142,12 +134,13 @@ class Table(Frame):
         self.unpack(row)
 
     def unpack(self, row: Frame) -> None:
-        assert row != self, 'table cannot unpack itself'
-        assert len(self._widgets) > 0, 'table is empty'
-        assert row in self._rows and row.get_id() in self._widgets.keys(), \
-            f'row {row.get_class_id()} does not exist on {self.get_class_id()}'
+        assert row != self, "table cannot unpack itself"
+        assert len(self._widgets) > 0, "table is empty"
+        assert row in self._rows and row.get_id() in self._widgets.keys(), (
+            f"row {row.get_class_id()} does not exist on {self.get_class_id()}"
+        )
         wid = row.get_id()
-        assert row._frame == self, 'widget frame differs from current'
+        assert row._frame == self, "widget frame differs from current"
         row._frame = None
         row._translate_virtual = (0, 0)
         del self._widgets[wid]
@@ -180,7 +173,7 @@ class Table(Frame):
         border_position: WidgetBorderPositionType,
         border_width: int,
         padding: PaddingType,
-        vertical_position: str
+        vertical_position: str,
     ) -> None:
         """
         Assert cell style.
@@ -205,8 +198,9 @@ class Table(Frame):
 
         # Vertical position
         assert_position(vertical_position)
-        assert vertical_position in (POSITION_NORTH, POSITION_CENTER, POSITION_SOUTH), \
-            'cell vertical position must be NORTH, CENTER, or SOUTH'
+        assert vertical_position in (POSITION_NORTH, POSITION_CENTER, POSITION_SOUTH), (
+            "cell vertical position must be NORTH, CENTER, or SOUTH"
+        )
 
         # Border color
         assert isinstance(border_width, int) and border_width >= 0
@@ -220,9 +214,15 @@ class Table(Frame):
 
         # Border positioning
         for pos in border_position:
-            assert pos in (POSITION_NORTH, POSITION_SOUTH, POSITION_EAST, POSITION_WEST), \
-                f'only north, south, east, and west border positions are valid, ' \
+            assert pos in (
+                POSITION_NORTH,
+                POSITION_SOUTH,
+                POSITION_EAST,
+                POSITION_WEST,
+            ), (
+                f"only north, south, east, and west border positions are valid, "
                 f'but received "{pos}"'
+            )
 
     def add_row(
         self,
@@ -236,7 +236,7 @@ class Table(Frame):
         cell_font_size: int | None = None,
         cell_padding: PaddingType = None,
         cell_vertical_position: str | None = None,
-        row_background_color: ColorInputType | None = None
+        row_background_color: ColorInputType | None = None,
     ) -> Frame:
         """
         Add row to table.
@@ -270,7 +270,7 @@ class Table(Frame):
         :param row_background_color: Row background color
         :return:
         """
-        assert self.configured, 'table must be configured before adding rows'
+        assert self.configured, "table must be configured before adding rows"
 
         # Use defaults
         if cell_align is None:
@@ -295,7 +295,7 @@ class Table(Frame):
             row_background_color = self.default_row_background_color
 
         # If cells is a previous table row
-        if isinstance(cells, Frame) and cells.has_attribute('is_row'):
+        if isinstance(cells, Frame) and cells.has_attribute("is_row"):
             _row_cells = list(cells.get_widgets(unpack_subframes=False))
             cells.clear()
             cells = _row_cells
@@ -312,7 +312,7 @@ class Table(Frame):
             border_position=cell_border_position,
             border_width=cell_border_width,
             padding=cell_padding,
-            vertical_position=cell_vertical_position
+            vertical_position=cell_vertical_position,
         )
         cell_padding = parse_padding(cell_padding)
         if cell_border_color is not None:
@@ -328,7 +328,12 @@ class Table(Frame):
             row_background_color = assert_color(row_background_color)
 
         # Create frame row
-        row = Frame(1, 1, ORIENTATION_HORIZONTAL, frame_id=self._id + '+cell-row-' + uuid4(short=True))
+        row = Frame(
+            1,
+            1,
+            ORIENTATION_HORIZONTAL,
+            frame_id=self._id + "+cell-row-" + uuid4(short=True),
+        )
         row._accepts_scrollarea = False
         row._accepts_title = False
         row._menu_can_be_none_pack = True
@@ -338,12 +343,12 @@ class Table(Frame):
         row.set_background_color(row_background_color)
         row.set_menu(self._menu)
         row.set_scrollarea(self._scrollarea)
-        row.set_attribute('is_row')
+        row.set_attribute("is_row")
         row.set_controls(
             joystick=self._joystick_enabled,
             mouse=self._mouse_enabled,
             touchscreen=self._touchscreen_enabled,
-            keyboard=self._keyboard_enabled
+            keyboard=self._keyboard_enabled,
         )
         # row.set_frame(self) This cannot be executed as row is packed within
 
@@ -356,7 +361,7 @@ class Table(Frame):
             cell_widget_type = False
 
             if isinstance(c, (str, int, float, bool)):
-                cell = Label(c, label_id=self._id + '+cell-label-' + uuid4(short=True))
+                cell = Label(c, label_id=self._id + "+cell-label-" + uuid4(short=True))
                 cell.set_font(
                     antialias=self._font_antialias,
                     background_color=None,
@@ -365,58 +370,59 @@ class Table(Frame):
                     font_size=cell_font_size,
                     readonly_color=self._font_readonly_color,
                     readonly_selected_color=self._font_readonly_selected_color,
-                    selected_color=self._font_selected_color
+                    selected_color=self._font_selected_color,
                 )
                 cell.set_padding(0)
                 cell.set_tab_size(self._tab_size)
 
             elif isinstance(c, BaseImage):
-                cell = Image(
-                    c, image_id=self._id + '+cell-image-' + uuid4(short=True)
-                )
+                cell = Image(c, image_id=self._id + "+cell-image-" + uuid4(short=True))
 
             elif isinstance(c, pygame.Surface):
                 cell = SurfaceWidget(
-                    c, surface_id=self._id + '+cell-surface-' + uuid4(short=True)
+                    c, surface_id=self._id + "+cell-surface-" + uuid4(short=True)
                 )
 
             else:
                 assert isinstance(c, Widget)
-                assert c != self, f'{self.get_class_id()} cannot be appended to itself'
+                assert c != self, f"{self.get_class_id()} cannot be appended to itself"
 
                 # Check if Frame not recursive
                 if isinstance(c, Frame):
-                    assert self not in c.get_widgets(unpack_subframes_include_frame=True), \
-                        f'{self.get_class_id()} cannot be packed within {c.get_class_id()},' \
-                        f' recursive packing is not allowed (Table is within Frame' \
-                        f' to be inserted as row cell)'
+                    assert self not in c.get_widgets(
+                        unpack_subframes_include_frame=True
+                    ), (
+                        f"{self.get_class_id()} cannot be packed within {c.get_class_id()},"
+                        f" recursive packing is not allowed (Table is within Frame"
+                        f" to be inserted as row cell)"
+                    )
 
                 cell = c
                 if c._accept_events:
                     cell_widget_type = True
                     if self._verbose:
                         warn(
-                            f'{self.get_class_id()} does not accept events in current'
-                            f' pygame-menu v{ver}; thus appended cell row widget '
-                            f'{c.get_class_id()} (pos {j}) would not work properly, '
-                            f'as it will ignore all inputs. Also, widgets within Tables'
-                            f' cannot be selected. Consider Tables as visual-only'
+                            f"{self.get_class_id()} does not accept events in current"
+                            f" pygame-menu v{ver}; thus appended cell row widget "
+                            f"{c.get_class_id()} (pos {j}) would not work properly, "
+                            f"as it will ignore all inputs. Also, widgets within Tables"
+                            f" cannot be selected. Consider Tables as visual-only"
                         )
                 # self._append_menu_update_frame(self)
 
             # Configure cell
-            cell.set_attribute('accept_events', cell_widget_type)
-            cell.set_attribute('align', cell_align)
-            cell.set_attribute('background_color', row_background_color)
-            cell.set_attribute('border_color', cell_border_color)
-            cell.set_attribute('border_position', cell_border_position)
-            cell.set_attribute('border_width', cell_border_width)
-            cell.set_attribute('column', j + 1)
-            cell.set_attribute('padding', cell_padding)
-            cell.set_attribute('row', len(self._rows) + 1)
-            cell.set_attribute('row_frame', row)
-            cell.set_attribute('table', self)
-            cell.set_attribute('vertical_position', cell_vertical_position)
+            cell.set_attribute("accept_events", cell_widget_type)
+            cell.set_attribute("align", cell_align)
+            cell.set_attribute("background_color", row_background_color)
+            cell.set_attribute("border_color", cell_border_color)
+            cell.set_attribute("border_position", cell_border_position)
+            cell.set_attribute("border_width", cell_border_width)
+            cell.set_attribute("column", j + 1)
+            cell.set_attribute("padding", cell_padding)
+            cell.set_attribute("row", len(self._rows) + 1)
+            cell.set_attribute("row_frame", row)
+            cell.set_attribute("table", self)
+            cell.set_attribute("vertical_position", cell_vertical_position)
             cell.set_float(False)
             cell._update__repr___(self)
             cell.configured = True
@@ -429,11 +435,13 @@ class Table(Frame):
                     pass
 
             # Check the cell frame is None
-            assert cell.get_frame() != self, \
-                f'{cell.get_class_id()} cannot be added as it already exists in table'
-            assert cell.get_frame() is None, \
-                f'{cell.get_class_id()} is already packed in ' \
-                f'{cell.get_frame().get_class_id()}, it cannot be added to {self.get_class_id()}'
+            assert cell.get_frame() != self, (
+                f"{cell.get_class_id()} cannot be added as it already exists in table"
+            )
+            assert cell.get_frame() is None, (
+                f"{cell.get_class_id()} is already packed in "
+                f"{cell.get_frame().get_class_id()}, it cannot be added to {self.get_class_id()}"
+            )
 
             # If cell is frame and scrollable
             if isinstance(cell, Frame):
@@ -464,7 +472,7 @@ class Table(Frame):
         self._update_widgets = []
         for r in self._rows:
             for w in r.get_widgets():
-                if w.get_attribute('accept_events'):
+                if w.get_attribute("accept_events"):
                     self._update_widgets.append(w)
 
     def _get_column_width_row_height(self) -> tuple[dict[int, int], dict[Frame, int]]:
@@ -482,7 +490,7 @@ class Table(Frame):
             for w in f.get_widgets(unpack_subframes=False):
                 width = w.get_width(apply_padding=False)
                 # Add inner padding
-                pad = w.get_attribute('padding')  # top, right, bottom, left
+                pad = w.get_attribute("padding")  # top, right, bottom, left
                 width += pad[1] + pad[3]
                 if col not in column_widths.keys():
                     column_widths[col] = width
@@ -517,9 +525,9 @@ class Table(Frame):
             for w in f.get_widgets(unpack_subframes=False):
                 w_w = w.get_width(apply_padding=False)
                 w_h = w.get_height(apply_padding=False)
-                w_pad = w.get_attribute('padding')  # top, right, bottom, left
-                w_align = w.get_attribute('align')
-                w_vpos = w.get_attribute('vertical_position')
+                w_pad = w.get_attribute("padding")  # top, right, bottom, left
+                w_align = w.get_attribute("align")
+                w_vpos = w.get_attribute("vertical_position")
                 w_total_height = row_heights[f]
                 w_total_width = column_widths[col]
 
@@ -530,12 +538,12 @@ class Table(Frame):
                 pad_left = w_pad[3]
 
                 # Subtract padding to max width/height
-                w_total_height -= (pad_top + pad_bottom)
-                w_total_width -= (pad_left + pad_right)
+                w_total_height -= pad_top + pad_bottom
+                w_total_width -= pad_left + pad_right
 
                 # Compute horizontal align
                 delta_w = w_total_width - w_w
-                assert delta_w >= 0, 'delta width cannot be negative'
+                assert delta_w >= 0, "delta width cannot be negative"
                 if w_align == ALIGN_LEFT:
                     pad_right += delta_w
                 elif w_align == ALIGN_CENTER:
@@ -546,7 +554,7 @@ class Table(Frame):
 
                 # Compute vertical position
                 delta_h = w_total_height - w_h
-                assert delta_h >= 0, 'delta height cannot be negative'
+                assert delta_h >= 0, "delta height cannot be negative"
                 if w_vpos == POSITION_NORTH:
                     pad_bottom += delta_h
                 elif w_vpos == POSITION_CENTER:
@@ -564,18 +572,20 @@ class Table(Frame):
                 if dx == 1:
                     pad_left += 1
                 if dx >= 2:
-                    pad_right += (dx - 1)
+                    pad_right += dx - 1
                 if dy == 1:
                     pad_top += 1
                 if dy >= 2:
-                    pad_bottom += (dy - 1)
+                    pad_bottom += dy - 1
                 w.set_padding((pad_top, pad_right, pad_bottom, pad_left))
 
                 col += 1
 
         # Update current rect
-        self.resize(total_width + self._padding[1] + self._padding[3],
-                    total_height + self._padding[0] + self._padding[2])
+        self.resize(
+            total_width + self._padding[1] + self._padding[3],
+            total_height + self._padding[0] + self._padding[2],
+        )
 
     def on_remove_from_menu(self) -> Frame:
         self.update_indices()
@@ -589,9 +599,10 @@ class Table(Frame):
         :param cell: Widget (cell) to get the column/row position
         :return: Column/Row
         """
-        assert cell.has_attribute('column') and cell.has_attribute('row'), \
-            f'{cell.get_class_id()} does not have the table attributes'
-        return cell.get_attribute('column'), cell.get_attribute('row')
+        assert cell.has_attribute("column") and cell.has_attribute("row"), (
+            f"{cell.get_class_id()} does not have the table attributes"
+        )
+        return cell.get_attribute("column"), cell.get_attribute("row")
 
     def _draw_cell_borders(self, surface: pygame.Surface) -> None:
         """
@@ -613,16 +624,18 @@ class Table(Frame):
             col = 0
             total_width = 0
             for w in row.get_widgets(unpack_subframes=False):
-                border_color = w.get_attribute('border_color')
-                border_position = w.get_attribute('border_position')
-                border_width = w.get_attribute('border_width')
+                border_color = w.get_attribute("border_color")
+                border_position = w.get_attribute("border_position")
+                border_width = w.get_attribute("border_width")
 
                 # Create drawing rect
                 subtract_border = (-border_width) if r == len(self._rows) else 0
-                rect = pygame.Rect(total_width + x,
-                                   total_height + y,
-                                   column_widths[col],
-                                   row_heights[row] + subtract_border)
+                rect = pygame.Rect(
+                    total_width + x,
+                    total_height + y,
+                    column_widths[col],
+                    row_heights[row] + subtract_border,
+                )
                 total_width += column_widths[col]
                 col += 1
 
@@ -640,13 +653,7 @@ class Table(Frame):
                         start, end = rect.topleft, rect.bottomleft
                     else:
                         raise RuntimeError(f'invalid border position "{pos}"')
-                    pygame.draw.line(
-                        surface,
-                        border_color,
-                        start,
-                        end,
-                        border_width
-                    )
+                    pygame.draw.line(surface, border_color, start, end, border_width)
 
             total_height += row_heights[row]
 
@@ -658,16 +665,20 @@ class Table(Frame):
         :param row: Cell row position (counting from 1)
         :return: Cell widget object
         """
-        assert isinstance(row, int) and row >= 1, \
-            'row index must be an integer equal or greater than 1'
-        assert isinstance(column, int) and column >= 1, \
-            'column index must be an integer equal or greater than 1'
-        assert row <= len(self._rows), \
-            f'row index ({row}) cannot exceed the number of rows ({len(self._rows)})'
+        assert isinstance(row, int) and row >= 1, (
+            "row index must be an integer equal or greater than 1"
+        )
+        assert isinstance(column, int) and column >= 1, (
+            "column index must be an integer equal or greater than 1"
+        )
+        assert row <= len(self._rows), (
+            f"row index ({row}) cannot exceed the number of rows ({len(self._rows)})"
+        )
         f = self._rows[row - 1]
         w = f.get_widgets(unpack_subframes=False)
-        assert column <= len(w), \
-            f'column index ({column}) cannot exceed the number of columns ({len(w)}) of row {row}'
+        assert column <= len(w), (
+            f"column index ({column}) cannot exceed the number of columns ({len(w)}) of row {row}"
+        )
         return w[column - 1]
 
     def is_rectangular(self) -> bool:
@@ -698,7 +709,7 @@ class Table(Frame):
         font_color: ColorInputType | None = None,
         font_size: int | None = None,
         padding: PaddingType | None = None,
-        vertical_position: str | None = None
+        vertical_position: str | None = None,
     ) -> Widget | list[Widget]:
         """
         Update cell style. If a parameter is ``None`` the default cell property
@@ -729,16 +740,18 @@ class Table(Frame):
                 row_k = list(row)
                 if row_k[1] == -1:
                     row_k[1] = len(self._rows)
-                assert 1 <= row_k[0] <= row_k[1] <= max_rows, \
-                    f'(from, to) of rows vector must be increasing and between 1-{max_rows}'
+                assert 1 <= row_k[0] <= row_k[1] <= max_rows, (
+                    f"(from, to) of rows vector must be increasing and between 1-{max_rows}"
+                )
                 row = [row_k[0]]
                 for i in range(row_k[1] - row_k[0]):
                     row.append(row_k[0] + (i + 1))
             if isinstance(column, VectorInstance) and column != [1, -1]:
-                assert self.is_rectangular(), \
-                    f'only rectangular tables (same number of columns for each row) ' \
-                    f'accept a variable column different than -1 or [1, -1], but ' \
+                assert self.is_rectangular(), (
+                    f"only rectangular tables (same number of columns for each row) "
+                    f"accept a variable column different than -1 or [1, -1], but "
                     f'received "{column}"'
+                )
             updated_wid = []
             for i in row:
                 w = self.update_cell_style(
@@ -753,7 +766,7 @@ class Table(Frame):
                     font_color=font_color,
                     font_size=font_size,
                     padding=padding,
-                    vertical_position=vertical_position
+                    vertical_position=vertical_position,
                 )
                 if not isinstance(w, list):
                     w = [w]
@@ -761,8 +774,9 @@ class Table(Frame):
                     updated_wid.append(k)
             return updated_wid
         if column == -1 or isinstance(column, VectorInstance):
-            assert isinstance(row, int) and 1 <= row <= len(self._rows), \
-                f'row index ({row}) cannot exceed the number of rows ({len(self._rows)})'
+            assert isinstance(row, int) and 1 <= row <= len(self._rows), (
+                f"row index ({row}) cannot exceed the number of rows ({len(self._rows)})"
+            )
             max_columns = self._rows[row - 1].get_total_packed()
             if column == -1:
                 column = []
@@ -773,8 +787,9 @@ class Table(Frame):
                 column_k = list(column)
                 if column_k[1] == -1:
                     column_k[1] = max_columns
-                assert 1 <= column_k[0] <= column_k[1] <= max_columns, \
-                    f'(from, to) of column vector must be increasing and between 1-{max_columns} for row {row}'
+                assert 1 <= column_k[0] <= column_k[1] <= max_columns, (
+                    f"(from, to) of column vector must be increasing and between 1-{max_columns} for row {row}"
+                )
                 column = [column_k[0]]
                 for i in range(column_k[1] - column_k[0]):
                     column.append(column_k[0] + (i + 1))
@@ -792,7 +807,7 @@ class Table(Frame):
                     font_color=font_color,
                     font_size=font_size,
                     padding=padding,
-                    vertical_position=vertical_position
+                    vertical_position=vertical_position,
                 )
                 if not isinstance(w, list):
                     w = [w]
@@ -803,19 +818,19 @@ class Table(Frame):
         r = self._rows[row - 1]
 
         if align is None:
-            align = cell.get_attribute('align')
+            align = cell.get_attribute("align")
         if background_color is None:
-            background_color = cell.get_attribute('background_color')
+            background_color = cell.get_attribute("background_color")
         if border_color is None:
-            border_color = cell.get_attribute('border_color')
+            border_color = cell.get_attribute("border_color")
         if border_position is None:
-            border_position = cell.get_attribute('border_position')
+            border_position = cell.get_attribute("border_position")
         if border_width is None:
-            border_width = cell.get_attribute('border_width')
+            border_width = cell.get_attribute("border_width")
         if padding is None:
-            padding = cell.get_attribute('padding')
+            padding = cell.get_attribute("padding")
         if vertical_position is None:
-            vertical_position = cell.get_attribute('vertical_position')
+            vertical_position = cell.get_attribute("vertical_position")
 
         self._check_cell_style(
             align=align,
@@ -824,7 +839,7 @@ class Table(Frame):
             border_position=border_position,
             border_width=border_width,
             padding=padding,
-            vertical_position=vertical_position
+            vertical_position=vertical_position,
         )
         if background_color is not None:
             background_color = assert_color(background_color)
@@ -849,16 +864,13 @@ class Table(Frame):
             font_size = cell._font_size
 
         try:
-            cell.update_font({
-                'color': font_color,
-                'name': font
-            })
+            cell.update_font({"color": font_color, "name": font})
         except AssertionError:
             pass
 
         try:
             if isinstance(font_size, int) and font_size > 0:
-                cell.update_font({'size': font_size})
+                cell.update_font({"size": font_size})
         except AssertionError:
             pass
 
@@ -866,13 +878,13 @@ class Table(Frame):
             border_position = [border_position]
 
         # Update cell
-        cell.set_attribute('align', align)
-        cell.set_attribute('background_color', background_color)
-        cell.set_attribute('border_color', border_color)
-        cell.set_attribute('border_position', border_position)
-        cell.set_attribute('border_width', border_width)
-        cell.set_attribute('padding', padding)
-        cell.set_attribute('vertical_position', vertical_position)
+        cell.set_attribute("align", align)
+        cell.set_attribute("background_color", background_color)
+        cell.set_attribute("border_color", border_color)
+        cell.set_attribute("border_position", border_position)
+        cell.set_attribute("border_width", border_width)
+        cell.set_attribute("padding", padding)
+        cell.set_attribute("vertical_position", vertical_position)
 
         self._update_row_sizing()
         self._render()
@@ -880,7 +892,9 @@ class Table(Frame):
         return cell
 
     # noinspection PyProtectedMember
-    def set_scrollarea(self, scrollarea: pygame_menu._scrollarea.ScrollArea | None) -> None:
+    def set_scrollarea(
+        self, scrollarea: pygame_menu._scrollarea.ScrollArea | None
+    ) -> None:
         super().set_scrollarea(scrollarea)
         for f in self._rows:
             f.set_scrollarea(scrollarea)
@@ -920,11 +934,7 @@ class TableManager(AbstractWidgetManager, ABC):
     Table manager.
     """
 
-    def table(
-        self,
-        table_id: str = '',
-        **kwargs
-    ) -> pygame_menu.widgets.Table:
+    def table(self, table_id: str = "", **kwargs) -> pygame_menu.widgets.Table:
         """
         Adds a Table to the Menu. A table is a frame which can pack widgets in a
         structured way.
@@ -975,9 +985,7 @@ class TableManager(AbstractWidgetManager, ABC):
         """
         attributes = self._filter_widget_attributes(kwargs)
 
-        widget = Table(
-            table_id=table_id
-        )
+        widget = Table(table_id=table_id)
 
         self._configure_widget(widget=widget, **attributes)
         self._append_widget(widget)

@@ -8,7 +8,7 @@ Shows ScrollArea widget usage.
 
 from __future__ import annotations
 
-__all__ = ['main']
+__all__ = ["main"]
 
 import itertools
 from typing import TYPE_CHECKING
@@ -27,31 +27,35 @@ FPS = 30
 W_SIZE = 800  # Width of window size
 H_SIZE = 600  # Height of window size
 COLOR_BACKGROUND = (128, 230, 198)
-LEGEND = 'Area {}x{}\nWorld {}x{}\nPress [ESC] to change'
+LEGEND = "Area {}x{}\nWorld {}x{}\nPress [ESC] to change"
 
 WORLDS = {
-    '1': {'pos': (0, 0),
-          'win': (W_SIZE, H_SIZE),
-          'size': (W_SIZE * 2, H_SIZE * 3)},
-    '2': {'pos': (200, 100),
-          'win': (W_SIZE // 2, H_SIZE // 2),
-          'size': (W_SIZE * 2, H_SIZE * 3)},
-    '3': {'pos': (50, 250),
-          'win': (W_SIZE // 2, H_SIZE // 2),
-          'size': (200, 200)},
-    '4': {'pos': (350, 250),
-          'win': (W_SIZE // 2, H_SIZE // 2),
-          'size': (W_SIZE // 2, H_SIZE // 2)},
-    '5': {'pos': (200, 200),
-          'win': (W_SIZE // 2, H_SIZE // 2),
-          'size': (W_SIZE // 2, H_SIZE // 2 + 10)},
-    '6': {'pos': (10, 10),
-          'win': (W_SIZE - 300, H_SIZE // 2),
-          'size': (W_SIZE - 200, H_SIZE // 2 - 10)}
+    "1": {"pos": (0, 0), "win": (W_SIZE, H_SIZE), "size": (W_SIZE * 2, H_SIZE * 3)},
+    "2": {
+        "pos": (200, 100),
+        "win": (W_SIZE // 2, H_SIZE // 2),
+        "size": (W_SIZE * 2, H_SIZE * 3),
+    },
+    "3": {"pos": (50, 250), "win": (W_SIZE // 2, H_SIZE // 2), "size": (200, 200)},
+    "4": {
+        "pos": (350, 250),
+        "win": (W_SIZE // 2, H_SIZE // 2),
+        "size": (W_SIZE // 2, H_SIZE // 2),
+    },
+    "5": {
+        "pos": (200, 200),
+        "win": (W_SIZE // 2, H_SIZE // 2),
+        "size": (W_SIZE // 2, H_SIZE // 2 + 10),
+    },
+    "6": {
+        "pos": (10, 10),
+        "win": (W_SIZE - 300, H_SIZE // 2),
+        "size": (W_SIZE - 200, H_SIZE // 2 - 10),
+    },
 }
 
 
-def make_world(width: int, height: int, text: str = '') -> pygame.Surface:
+def make_world(width: int, height: int, text: str = "") -> pygame.Surface:
     """
     Create a test surface.
 
@@ -62,7 +66,7 @@ def make_world(width: int, height: int, text: str = '') -> pygame.Surface:
     """
     world = make_surface(width, height)
     world.fill((210, 210, 210))
-    font = pygame.font.SysFont('arial', 20)
+    font = pygame.font.SysFont("arial", 20)
 
     posy = 60
     for line in text.splitlines():
@@ -99,11 +103,13 @@ def iter_world(area: ScrollArea) -> Generator:
     """
     for name in itertools.cycle(WORLDS):
         params = WORLDS[name]
-        area._rect.width = params['win'][0]
-        area._rect.height = params['win'][1]
-        text = LEGEND.format(params['win'][0], params['win'][1], params['size'][0], params['size'][1])
-        area.set_world(make_world(params['size'][0], params['size'][1], text))
-        area.set_position(*params['pos'])
+        area._rect.width = params["win"][0]
+        area._rect.height = params["win"][1]
+        text = LEGEND.format(
+            params["win"][0], params["win"][1], params["size"][0], params["size"][1]
+        )
+        area.set_world(make_world(params["size"][0], params["size"][1], text))
+        area.set_position(*params["pos"])
         yield params
 
 
@@ -113,17 +119,18 @@ def main(test: bool = False) -> None:
 
     :param test: Indicate function is being tested
     """
-    screen = create_example_window('Example - Scrolling Area', (W_SIZE, H_SIZE))
+    screen = create_example_window("Example - Scrolling Area", (W_SIZE, H_SIZE))
     clock = pygame.time.Clock()
 
     area = ScrollArea(
-        W_SIZE, H_SIZE,
+        W_SIZE,
+        H_SIZE,
         scrollbars=(
             locals.POSITION_SOUTH,
             locals.POSITION_EAST,
             locals.POSITION_WEST,
-            locals.POSITION_NORTH
-        )
+            locals.POSITION_NORTH,
+        ),
     )
 
     worlds = iter_world(area)
@@ -133,7 +140,6 @@ def main(test: bool = False) -> None:
     # Main loop
     # -------------------------------------------------------------------------
     while True:
-
         # Tick
         clock.tick(FPS)
 
@@ -143,7 +149,9 @@ def main(test: bool = False) -> None:
         pygame.draw.rect(
             screen,
             (20, 89, 20),
-            area.get_rect().inflate(20, 20)  # Inflate to see area overflow in case of bug
+            area.get_rect().inflate(
+                20, 20
+            ),  # Inflate to see area overflow in case of bug
         )
 
         # Application events
@@ -166,5 +174,5 @@ def main(test: bool = False) -> None:
             break
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
