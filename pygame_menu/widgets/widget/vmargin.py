@@ -8,10 +8,7 @@ Vertical box margin.
 
 from __future__ import annotations
 
-__all__ = [
-    'VMargin',
-    'VMarginManager'
-]
+__all__ = ["VMargin", "VMarginManager"]
 
 from abc import ABC
 from typing import TYPE_CHECKING
@@ -38,13 +35,9 @@ class VMargin(NoneWidget):
     :param widget_id: ID of the widget
     """
 
-    def __init__(
-        self,
-        margin: NumberType,
-        widget_id: str = ''
-    ) -> None:
+    def __init__(self, margin: NumberType, widget_id: str = "") -> None:
         assert isinstance(margin, NumberInstance)
-        assert margin > 0, 'negative or zero margin is not valid'
+        assert margin > 0, "negative or zero margin is not valid"
         super().__init__(widget_id=widget_id)
         self._rect.width = 0
         self._rect.height = int(margin)
@@ -59,9 +52,7 @@ class VMarginManager(AbstractWidgetManager, ABC):
     """
 
     def vertical_margin(
-        self,
-        margin: NumberType,
-        margin_id: str = ''
+        self, margin: NumberType, margin_id: str = ""
     ) -> pygame_menu.widgets.VMargin:
         """
         Adds a vertical margin to the Menu.

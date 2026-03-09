@@ -9,13 +9,11 @@ A menu for pygame. Simple, and easy to use.
 from __future__ import annotations
 
 __all__ = [
-
     # Common classes
-    'BaseImage',
-    'Menu',
-    'Sound',
-    'Theme'
-
+    "BaseImage",
+    "Menu",
+    "Sound",
+    "Theme",
 ]
 
 # Check if pygame exists, if not maybe the module is being used by setup.py
@@ -90,56 +88,59 @@ import pygame_menu.version
 """
 Metadata: Information about the project
 """
-__author__ = 'Pablo Pizarro R.'
+__author__ = "Pablo Pizarro R."
 __contributors__ = [
-
     # Author
-    'ppizarror',
-
+    "ppizarror",
     # Contributors
-    'anxuae',
-    'apuly',
-    'arpruss',
-    'asierrayk',
-    'DA820',
-    'eforgacs',
-    'i96751414',
-    'ironsmile',
-    'jwllee',
-    'maditnerd',
-    'MayuSakurai',
-    'mrkprdo',
-    'neilsimp1',
-    'notrurs',
-    'NullP01nt',
-    'PandaRoux8',
-    'Rifqi31',
-    'ThePeeps191',
-    'thisIsMikeKane',
-    'vnmabus',
-    'werdeil',
-    'zPaw'
-
+    "anxuae",
+    "apuly",
+    "arpruss",
+    "asierrayk",
+    "DA820",
+    "eforgacs",
+    "i96751414",
+    "ironsmile",
+    "jwllee",
+    "maditnerd",
+    "MayuSakurai",
+    "mrkprdo",
+    "neilsimp1",
+    "notrurs",
+    "NullP01nt",
+    "PandaRoux8",
+    "Rifqi31",
+    "ThePeeps191",
+    "thisIsMikeKane",
+    "vnmabus",
+    "werdeil",
+    "zPaw",
 ]
-__copyright__ = 'Copyright 2017 Pablo Pizarro R. @ppizarror'
-__description__ = 'A menu for pygame. Simple, and easy to use'
-__email__ = 'pablo@ppizarror.com'
-__keywords__ = 'pygame menu menus gui widget input button pygame-menu image sound ui'
-__license__ = 'MIT'
-__module_name__ = 'pygame-menu'
-__url__ = 'https://pygame-menu.readthedocs.io'
-__url_bug_tracker__ = 'https://github.com/ppizarror/pygame-menu/issues'
-__url_documentation__ = 'https://pygame-menu.readthedocs.io'
-__url_source_code__ = 'https://github.com/ppizarror/pygame-menu'
+__copyright__ = "Copyright 2017 Pablo Pizarro R. @ppizarror"
+__description__ = "A menu for pygame. Simple, and easy to use"
+__email__ = "pablo@ppizarror.com"
+__keywords__ = "pygame menu menus gui widget input button pygame-menu image sound ui"
+__license__ = "MIT"
+__module_name__ = "pygame-menu"
+__url__ = "https://pygame-menu.readthedocs.io"
+__url_bug_tracker__ = "https://github.com/ppizarror/pygame-menu/issues"
+__url_documentation__ = "https://pygame-menu.readthedocs.io"
+__url_source_code__ = "https://github.com/ppizarror/pygame-menu"
 __version__ = pygame_menu.version.ver
 
 """
 Print pygame-menu version.
 """
+import logging
 import os
 
-if 'PYGAME_MENU_HIDE_VERSION' not in os.environ and 'PYGAME_HIDE_SUPPORT_PROMPT' not in os.environ:
-    print(f'{__module_name__} {__version__}')
+logger = logging.getLogger(__name__)
+
+if (
+    "PYGAME_MENU_HIDE_VERSION" not in os.environ
+    and "PYGAME_HIDE_SUPPORT_PROMPT" not in os.environ
+):
+    logger.info(f"{__module_name__} {__version__}")
 
 # Cleanup namespace
 del os

@@ -9,10 +9,7 @@ reference. This Menu can be opened with .open() method.
 
 from __future__ import annotations
 
-__all__ = [
-    'MenuLink',
-    'MenuLinkManager'
-]
+__all__ = ["MenuLink", "MenuLinkManager"]
 
 from abc import ABC
 from typing import TYPE_CHECKING
@@ -38,20 +35,17 @@ class MenuLink(NoneWidget):
     :param menu_opener_handler: Callback for opening the menu object
     :param menu: Menu object
     """
+
     menu: pygame_menu.Menu
 
     def __init__(
-        self,
-        menu: pygame_menu.Menu,
-        menu_opener_handler: Callable,
-        link_id: str = ''
+        self, menu: pygame_menu.Menu, menu_opener_handler: Callable, link_id: str = ""
     ) -> None:
         assert isinstance(menu, pygame_menu.Menu)
-        assert callable(menu_opener_handler), \
-            'menu opener handler must be callable (a function)'
-        super().__init__(
-            widget_id=link_id
+        assert callable(menu_opener_handler), (
+            "menu opener handler must be callable (a function)"
         )
+        super().__init__(widget_id=link_id)
         self.menu = menu
         self._onreturn = menu_opener_handler
         self._visible = False
@@ -76,9 +70,7 @@ class MenuLinkManager(AbstractWidgetManager, ABC):
     """
 
     def menu_link(
-        self,
-        menu: pygame_menu.Menu,
-        link_id: str = ''
+        self, menu: pygame_menu.Menu, link_id: str = ""
     ) -> pygame_menu.widgets.MenuLink:
         """
         Adds a link to another Menu. The behavior is similar to a button, but
@@ -103,20 +95,18 @@ class MenuLinkManager(AbstractWidgetManager, ABC):
             if menu == self._menu or menu.in_submenu(self._menu, recursive=True):
                 raise ValueError(
                     f'Menu "{menu.get_title()}" is already on submenu structure,'
-                    f' recursive menus lead to unexpected behaviours. For '
-                    f'returning to previous menu use pygame_menu.events.BACK '
-                    f'event defining an optional back_count number of menus to '
-                    f'return from, default is 1'
+                    f" recursive menus lead to unexpected behaviours. For "
+                    f"returning to previous menu use pygame_menu.events.BACK "
+                    f"event defining an optional back_count number of menus to "
+                    f"return from, default is 1"
                 )
 
         else:
-            raise ValueError('menu object is not a pygame_menu.Menu class')
+            raise ValueError("menu object is not a pygame_menu.Menu class")
 
         # noinspection PyProtectedMember
         widget = MenuLink(
-            menu=menu,
-            menu_opener_handler=self._menu._open,
-            link_id=link_id
+            menu=menu, menu_opener_handler=self._menu._open, link_id=link_id
         )
         self.configure_defaults_widget(widget)
         self._append_widget(widget)

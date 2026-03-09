@@ -34,11 +34,11 @@ from setuptools import find_packages, setup
 import pygame_menu
 
 # Load readme
-with open('README.rst') as f:
+with open("README.rst") as f:
     long_description = f.read()
 
 # Load requirements
-with open('requirements.txt') as f:
+with open("requirements.txt") as f:
     requirements = []
     for line in f:
         requirements.append(line.strip())
@@ -53,43 +53,41 @@ setup(
     long_description=long_description,
     url=pygame_menu.__url__,
     project_urls={
-        'Bug Tracker': pygame_menu.__url_bug_tracker__,
-        'Documentation': pygame_menu.__url_documentation__,
-        'Source Code': pygame_menu.__url_source_code__
+        "Bug Tracker": pygame_menu.__url_bug_tracker__,
+        "Documentation": pygame_menu.__url_documentation__,
+        "Source Code": pygame_menu.__url_source_code__,
     },
     license=pygame_menu.__license__,
-    platforms=['any'],
+    platforms=["any"],
     keywords=pygame_menu.__keywords__,
     classifiers=[
-        'License :: OSI Approved :: MIT License',
-        'Natural Language :: English',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python :: 3.9',
-        'Programming Language :: Python :: 3.10',
-        'Programming Language :: Python :: 3.11',
-        'Programming Language :: Python :: 3.12',
-        'Programming Language :: Python :: 3.13',
-        'Programming Language :: Python',
-        'Topic :: Games/Entertainment',
-        'Topic :: Multimedia',
-        'Topic :: Software Development :: Libraries :: pygame',
-        'Topic :: Text Processing'
+        "License :: OSI Approved :: MIT License",
+        "Natural Language :: English",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
+        "Programming Language :: Python",
+        "Topic :: Games/Entertainment",
+        "Topic :: Multimedia",
+        "Topic :: Software Development :: Libraries :: pygame",
+        "Topic :: Text Processing",
     ],
     include_package_data=True,
-    packages=find_packages(exclude=['test']),
-    python_requires='>=3.9, <4',
+    packages=find_packages(exclude=["test"]),
+    python_requires=">=3.9, <4",
     install_requires=requirements,
     extras_require={
-        'docs': ['sphinx<7', 'sphinx-autodoc-typehints>=1.2.0', 'sphinx-rtd-theme'],
-        'test': ['nose2[coverage_plugin]', 'pytest']
+        "docs": ["sphinx<7", "sphinx-autodoc-typehints>=1.2.0", "sphinx-rtd-theme"],
+        "test": ["nose2[coverage_plugin]", "pytest"],
     },
     setup_requires=[
-        'setuptools',
+        "setuptools",
     ],
-    options={
-        'bdist_wheel': {'universal': False}
-    },
+    options={"bdist_wheel": {"universal": False}},
     entry_points={
-        'pyinstaller40': ['hook-dirs = pygame_menu.__pyinstaller:get_hook_dirs']
-    }
+        "pyinstaller40": ["hook-dirs = pygame_menu.__pyinstaller:get_hook_dirs"]
+    },
 )

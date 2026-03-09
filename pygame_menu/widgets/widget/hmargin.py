@@ -8,10 +8,7 @@ Horizontal box margin.
 
 from __future__ import annotations
 
-__all__ = [
-    'HMargin',
-    'HMarginManager'
-]
+__all__ = ["HMargin", "HMarginManager"]
 
 from abc import ABC
 from typing import TYPE_CHECKING
@@ -38,14 +35,11 @@ class HMargin(NoneWidget):
     :param widget_id: ID of the widget
     """
 
-    def __init__(
-        self,
-        margin: NumberType,
-        widget_id: str = ''
-    ) -> None:
+    def __init__(self, margin: NumberType, widget_id: str = "") -> None:
         assert isinstance(margin, NumberInstance)
-        assert margin > 0, \
-            'zero margin is not valid, prefer adding a NoneWidget menu.add.none_widget()'
+        assert margin > 0, (
+            "zero margin is not valid, prefer adding a NoneWidget menu.add.none_widget()"
+        )
         super().__init__(widget_id=widget_id)
         self._rect.width = int(margin)
         self._rect.height = 0
@@ -60,9 +54,7 @@ class HMarginManager(AbstractWidgetManager, ABC):
     """
 
     def horizontal_margin(
-        self,
-        margin: NumberType,
-        margin_id: str = ''
+        self, margin: NumberType, margin_id: str = ""
     ) -> pygame_menu.widgets.HMargin:
         """
         Adds a horizontal margin to the Menu. Only useful in frames.

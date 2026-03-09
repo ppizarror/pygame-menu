@@ -8,7 +8,7 @@ Simple selection effect.
 
 from __future__ import annotations
 
-__all__ = ['SimpleSelection']
+__all__ = ["SimpleSelection"]
 
 
 from typing import TYPE_CHECKING
@@ -27,11 +27,17 @@ class SimpleSelection(Selection):
     selected.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, widget_apply_font_color: bool = True) -> None:
         super().__init__(
-            margin_left=0, margin_right=0, margin_top=0, margin_bottom=0
+            margin_left=0,
+            margin_right=0,
+            margin_top=0,
+            margin_bottom=0,
+            widget_apply_font_color=widget_apply_font_color,
         )
 
     # noinspection PyMissingOrEmptyDocstring
-    def draw(self, surface: pygame.Surface, widget: pygame_menu.widgets.Widget) -> SimpleSelection:
+    def draw(
+        self, surface: pygame.Surface, widget: pygame_menu.widgets.Widget
+    ) -> SimpleSelection:
         return self
