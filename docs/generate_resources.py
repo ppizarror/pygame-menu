@@ -6,7 +6,7 @@ GENERATE RESOURCES
 Generate resources for docs.
 """
 
-__all__ = ['save_font_image', 'generate_fonts_doc']
+__all__ = ["save_font_image", "generate_fonts_doc"]
 
 import pygame
 
@@ -20,7 +20,7 @@ def save_font_image(
     text: str,
     filename: str,
     font_size: int = 50,
-    image_height: int = 26
+    image_height: int = 26,
 ) -> None:
     """
     Generate a font image and save as a png.
@@ -46,25 +46,43 @@ def generate_fonts_doc() -> None:
     """
     Generate images for all fonts.
     """
-    text = 'pygame menu'
-    save_font_image(pygame_menu.font.FONT_8BIT, text, '_static/font_8bit.png')
-    save_font_image(pygame_menu.font.FONT_BEBAS, text, '_static/font_bebas.png')
-    save_font_image(pygame_menu.font.FONT_COMIC_NEUE, text, '_static/font_comic_neue.png')
-    save_font_image(pygame_menu.font.FONT_DIGITAL, text, '_static/font_digital.png')
-    save_font_image(pygame_menu.font.FONT_FIRACODE, text, '_static/font_firacode.png')
-    save_font_image(pygame_menu.font.FONT_FIRACODE_BOLD, text, '_static/font_firacode_bold.png')
-    save_font_image(pygame_menu.font.FONT_FIRACODE_BOLD_ITALIC, text, '_static/font_firacode_bold_italic.png')
-    save_font_image(pygame_menu.font.FONT_FIRACODE_ITALIC, text, '_static/font_firacode_italic.png')
-    save_font_image(pygame_menu.font.FONT_FRANCHISE, text, '_static/font_franchise.png')
-    save_font_image(pygame_menu.font.FONT_HELVETICA, text, '_static/font_helvetica.png')
-    save_font_image(pygame_menu.font.FONT_MUNRO, text, '_static/font_munro.png')
-    save_font_image(pygame_menu.font.FONT_NEVIS, text, '_static/font_nevis.png')
-    save_font_image(pygame_menu.font.FONT_OPEN_SANS, text, '_static/font_open_sans.png')
-    save_font_image(pygame_menu.font.FONT_OPEN_SANS_BOLD, text, '_static/font_open_sans_bold.png')
-    save_font_image(pygame_menu.font.FONT_OPEN_SANS_ITALIC, text, '_static/font_open_sans_italic.png')
-    save_font_image(pygame_menu.font.FONT_OPEN_SANS_LIGHT, text, '_static/font_open_sans_light.png')
-    save_font_image(pygame_menu.font.FONT_PT_SERIF, text, '_static/font_pt_serif.png')
+    text = "pygame menu"
+    save_font_image(pygame_menu.font.FONT_8BIT, text, "_static/font_8bit.png")
+    save_font_image(pygame_menu.font.FONT_BEBAS, text, "_static/font_bebas.png")
+    save_font_image(
+        pygame_menu.font.FONT_COMIC_NEUE, text, "_static/font_comic_neue.png"
+    )
+    save_font_image(pygame_menu.font.FONT_DIGITAL, text, "_static/font_digital.png")
+    save_font_image(pygame_menu.font.FONT_FIRACODE, text, "_static/font_firacode.png")
+    save_font_image(
+        pygame_menu.font.FONT_FIRACODE_BOLD, text, "_static/font_firacode_bold.png"
+    )
+    save_font_image(
+        pygame_menu.font.FONT_FIRACODE_BOLD_ITALIC,
+        text,
+        "_static/font_firacode_bold_italic.png",
+    )
+    save_font_image(
+        pygame_menu.font.FONT_FIRACODE_ITALIC, text, "_static/font_firacode_italic.png"
+    )
+    save_font_image(pygame_menu.font.FONT_FRANCHISE, text, "_static/font_franchise.png")
+    save_font_image(pygame_menu.font.FONT_HELVETICA, text, "_static/font_helvetica.png")
+    save_font_image(pygame_menu.font.FONT_MUNRO, text, "_static/font_munro.png")
+    save_font_image(pygame_menu.font.FONT_NEVIS, text, "_static/font_nevis.png")
+    save_font_image(pygame_menu.font.FONT_OPEN_SANS, text, "_static/font_open_sans.png")
+    save_font_image(
+        pygame_menu.font.FONT_OPEN_SANS_BOLD, text, "_static/font_open_sans_bold.png"
+    )
+    save_font_image(
+        pygame_menu.font.FONT_OPEN_SANS_ITALIC,
+        text,
+        "_static/font_open_sans_italic.png",
+    )
+    save_font_image(
+        pygame_menu.font.FONT_OPEN_SANS_LIGHT, text, "_static/font_open_sans_light.png"
+    )
+    save_font_image(pygame_menu.font.FONT_PT_SERIF, text, "_static/font_pt_serif.png")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     generate_fonts_doc()

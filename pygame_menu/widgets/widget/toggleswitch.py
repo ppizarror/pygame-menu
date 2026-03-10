@@ -8,10 +8,7 @@ Switch between several states.
 
 from __future__ import annotations
 
-__all__ = [
-    'ToggleSwitch',
-    'ToggleSwitchManager'
-]
+__all__ = ["ToggleSwitch", "ToggleSwitchManager"]
 
 from abc import ABC
 from typing import TYPE_CHECKING, Any
@@ -91,6 +88,7 @@ class ToggleSwitch(Widget):
     :param args: Optional arguments for callbacks
     :param kwargs: Optional keyword arguments
     """
+
     _infinite: bool
     _single_click: bool
     _single_click_dir: bool
@@ -125,7 +123,7 @@ class ToggleSwitch(Widget):
     def __init__(
         self,
         title: Any,
-        toggleswitch_id: str = '',
+        toggleswitch_id: str = "",
         default_state: int = 0,
         infinite: bool = False,
         onchange: CallbackType = None,
@@ -137,9 +135,12 @@ class ToggleSwitch(Widget):
         slider_thickness: int = 25,
         slider_vmargin: NumberType = 0,
         state_color: tuple[ColorInputType, ...] = ((178, 178, 178), (117, 185, 54)),
-        state_text: tuple[str, ...] = ('Off', 'On'),
+        state_text: tuple[str, ...] = ("Off", "On"),
         state_text_font: FontType | None = None,
-        state_text_font_color: tuple[ColorInputType, ...] = ((255, 255, 255), (255, 255, 255)),
+        state_text_font_color: tuple[ColorInputType, ...] = (
+            (255, 255, 255),
+            (255, 255, 255),
+        ),
         state_text_font_size: int | None = None,
         state_text_position: Tuple2NumberType = (0.5, 0.5),
         state_values: tuple[Any, ...] = (False, True),
@@ -149,7 +150,7 @@ class ToggleSwitch(Widget):
         switch_height: NumberType = 1.25,
         switch_margin: Tuple2IntType = (25, 0),
         *args,
-        **kwargs
+        **kwargs,
     ) -> None:
         super().__init__(
             args=args,
@@ -157,7 +158,7 @@ class ToggleSwitch(Widget):
             onchange=onchange,
             onselect=onselect,
             title=title,
-            widget_id=toggleswitch_id
+            widget_id=toggleswitch_id,
         )
 
         # Asserts
@@ -169,31 +170,34 @@ class ToggleSwitch(Widget):
 
         # Check the number of states
         self._total_states = len(state_values)
-        assert 2 <= self._total_states, 'the minimum number of states is 2'
-        assert 0 <= default_state < self._total_states, 'invalid default state value'
+        assert 2 <= self._total_states, "the minimum number of states is 2"
+        assert 0 <= default_state < self._total_states, "invalid default state value"
 
         # Check fonts
         if state_text_font is not None:
             assert_font(state_text_font)
         assert isinstance(state_text_font_size, (int, type(None)))
         if state_text_font_size is not None:
-            assert state_text_font_size > 0, \
-                'state text font size must be equal or greater than zero'
+            assert state_text_font_size > 0, (
+                "state text font size must be equal or greater than zero"
+            )
 
         # Check colors
         assert_vector(state_text_position, 2)
         switch_border_color = assert_color(switch_border_color)
-        assert isinstance(switch_border_width, int) and switch_border_width >= 0, \
-            'border width must be equal or greater than zero'
+        assert isinstance(switch_border_width, int) and switch_border_width >= 0, (
+            "border width must be equal or greater than zero"
+        )
         slider_color = assert_color(slider_color)
 
         # Check dimensions and sizes
-        assert slider_height_factor > 0, 'slider height factor cannot be negative'
-        assert slider_thickness >= 0, 'slider thickness cannot be negative'
+        assert slider_height_factor > 0, "slider height factor cannot be negative"
+        assert slider_thickness >= 0, "slider thickness cannot be negative"
         assert isinstance(slider_vmargin, NumberInstance)
         assert_vector(switch_margin, 2, int)
-        assert isinstance(switch_height, NumberInstance) and switch_height > 0, \
-            'switch height factor cannot be zero or negative'
+        assert isinstance(switch_height, NumberInstance) and switch_height > 0, (
+            "switch height factor cannot be zero or negative"
+        )
         assert isinstance(state_color, tuple) and len(state_color) == self._total_states
 
         # Create state color
@@ -205,9 +209,11 @@ class ToggleSwitch(Widget):
         # Create state texts
         assert isinstance(state_text, tuple) and len(state_text) == self._total_states
         for c in state_text:
-            assert isinstance(c, str), 'all states text must be string-type'
-        assert isinstance(state_text_font_color, tuple) and \
-               len(state_text_font_color) == self._total_states
+            assert isinstance(c, str), "all states text must be string-type"
+        assert (
+            isinstance(state_text_font_color, tuple)
+            and len(state_text_font_color) == self._total_states
+        )
 
         new_state_text_font_color = []
         for c in state_text_font_color:
@@ -221,8 +227,10 @@ class ToggleSwitch(Widget):
         assert_vector(state_width, self._total_states - 1, int)
 
         for i in range(len(state_width)):
-            assert isinstance(state_width[i], int), 'each state width must be an integer'
-            assert state_width[i] > 0, 'each state width must be greater than zero'
+            assert isinstance(state_width[i], int), (
+                "each state width must be an integer"
+            )
+            assert state_width[i] > 0, "each state width must be greater than zero"
             self._switch_width += state_width[i]
 
         # Finals
@@ -270,8 +278,8 @@ class ToggleSwitch(Widget):
         self._switch_pos = (0, 0)  # horizontal pos, and delta to title
 
     def set_value(self, state: int) -> None:
-        assert isinstance(state, int), 'state value can only be an integer'
-        assert 0 <= state < self._total_states, 'state value exceeds the total states'
+        assert isinstance(state, int), "state value can only be an integer"
+        assert 0 <= state < self._total_states, "state value exceeds the total states"
         self._state = state
         self._render()
 
@@ -299,23 +307,32 @@ class ToggleSwitch(Widget):
     def _apply_font(self) -> None:
         self._state_font = pygame_menu.font.get_font(
             self._font_name if self._state_text_font is None else self._state_text_font,
-            self._font_size if self._state_text_font_size is None else self._state_text_font_size
+            self._font_size
+            if self._state_text_font_size is None
+            else self._state_text_font_size,
         )
 
         # Compute the height
-        height = self._font_render_string('TEST').get_height()
+        height = self._font_render_string("TEST").get_height()
         self._switch_height = int(height * self._switch_height_factor)
-        self._slider_height = int(self._switch_height * self._slider_height_factor) - 2 * self._switch_border_width
+        self._slider_height = (
+            int(self._switch_height * self._slider_height_factor)
+            - 2 * self._switch_border_width
+        )
 
         # Render the state texts
         self._switch_font_rendered.clear()
         for t in range(self._total_states):
-            f_render = self._state_font.render(self._state_text[t], True, self._state_text_font_color[t])
+            f_render = self._state_font.render(
+                self._state_text[t], True, self._state_text_font_color[t]
+            )
             self._switch_font_rendered.append(f_render)
 
     def _draw(self, surface: pygame.Surface) -> None:
         # Draw title
-        surface.blit(self._surface, (self._rect.x, self._rect.y + self._switch_pos[1] - 1))
+        surface.blit(
+            self._surface, (self._rect.x, self._rect.y + self._switch_pos[1] - 1)
+        )
 
         # Draw switch
         switch_x = self._rect.x + self._switch_margin[0] + self._switch_pos[0]
@@ -331,16 +348,27 @@ class ToggleSwitch(Widget):
                 surface,
                 self._switch_border_color,
                 switch_rect,
-                self._switch_border_width
+                self._switch_border_width,
             )
 
         # Draw switch font render
-        if self._state_text[self._state] != '':
+        if self._state_text[self._state] != "":
             text = self._switch_font_rendered[self._state]
-            surface.blit(text, (
-                int(switch_x + (self._switch_width - text.get_width()) * self._state_text_position[0]),
-                int(switch_y + (self._switch_height - text.get_height()) * self._state_text_position[1])
-            ))
+            surface.blit(
+                text,
+                (
+                    int(
+                        switch_x
+                        + (self._switch_width - text.get_width())
+                        * self._state_text_position[0]
+                    ),
+                    int(
+                        switch_y
+                        + (self._switch_height - text.get_height())
+                        * self._state_text_position[1]
+                    ),
+                ),
+            )
 
         # Draw slider
         slider_x = switch_x + self._slider_pos[0] + self._switch_border_width
@@ -348,7 +376,9 @@ class ToggleSwitch(Widget):
         surface.blit(self._slider, (slider_x, slider_y))
 
     def _render(self) -> bool | None:
-        if not self._render_hash_changed(self._selected, self._title, self._visible, self.readonly, self._state):
+        if not self._render_hash_changed(
+            self._selected, self._title, self._visible, self.readonly, self._state
+        ):
             return True
 
         # Create basic title
@@ -356,16 +386,29 @@ class ToggleSwitch(Widget):
         self._rect.width, self._rect.height = self._surface.get_size()
 
         # Create slider
-        self._slider = make_surface(self._slider_thickness, self._slider_height, fill_color=self._slider_color)
-        self._slider_pos = (self._state_width_accum[self._state],
-                            self._slider_vmargin * self._switch_height)
+        self._slider = make_surface(
+            self._slider_thickness, self._slider_height, fill_color=self._slider_color
+        )
+        self._slider_pos = (
+            self._state_width_accum[self._state],
+            self._slider_vmargin * self._switch_height,
+        )
 
         # Create the switch surface
-        self._switch = make_surface(self._switch_width, self._switch_height, fill_color=self._state_color[self._state])
-        self._switch_pos = (self._rect.width, int((self._switch_height - self._rect.height) / 2))
+        self._switch = make_surface(
+            self._switch_width,
+            self._switch_height,
+            fill_color=self._state_color[self._state],
+        )
+        self._switch_pos = (
+            self._rect.width,
+            int((self._switch_height - self._rect.height) / 2),
+        )
 
         # Update maximum rect height
-        self._rect.height = max(self._rect.height, self._switch_height, self._slider_height)
+        self._rect.height = max(
+            self._rect.height, self._switch_height, self._slider_height
+        )
         self._rect.width += self._switch_margin[0] + self._switch_width
 
         # Finals
@@ -410,9 +453,10 @@ class ToggleSwitch(Widget):
             return False
 
         for event in events:
-
             if event.type == pygame.KEYDOWN:  # Check key is valid
-                if self._ignores_keyboard_nonphysical() and not check_key_pressed_valid(event):
+                if self._ignores_keyboard_nonphysical() and not check_key_pressed_valid(
+                    event
+                ):
                     continue
 
             # Check mouse over
@@ -421,31 +465,42 @@ class ToggleSwitch(Widget):
             # Events
             keydown = self._keyboard_enabled and event.type == pygame.KEYDOWN
             joy_hatmotion = self._joystick_enabled and event.type == pygame.JOYHATMOTION
-            joy_axismotion = self._joystick_enabled and event.type == pygame.JOYAXISMOTION
+            joy_axismotion = (
+                self._joystick_enabled and event.type == pygame.JOYAXISMOTION
+            )
 
             # Left button
             if (
-                keydown and self._ctrl.left(event, self) or
-                joy_hatmotion and self._ctrl.joy_left(event, self) or
-                joy_axismotion and self._ctrl.joy_axis_x_left(event, self)
+                keydown
+                and self._ctrl.left(event, self)
+                or joy_hatmotion
+                and self._ctrl.joy_left(event, self)
+                or joy_axismotion
+                and self._ctrl.joy_axis_x_left(event, self)
             ):
                 self._left()
                 return True
 
             # Right button
             elif (
-                keydown and self._ctrl.right(event, self) or
-                joy_hatmotion and self._ctrl.joy_right(event, self) or
-                joy_axismotion and self._ctrl.joy_axis_x_right(event, self)
+                keydown
+                and self._ctrl.right(event, self)
+                or joy_hatmotion
+                and self._ctrl.joy_right(event, self)
+                or joy_axismotion
+                and self._ctrl.joy_axis_x_right(event, self)
             ):
                 self._right()
                 return True
 
             # Press enter
             elif (
-                (keydown and self._ctrl.apply(event, self) and self._total_states == 2) or
-                (event.type == pygame.JOYBUTTONDOWN and self._joystick_enabled and
-                 self._ctrl.joy_select(event, self) and self._total_states == 2)
+                keydown and self._ctrl.apply(event, self) and self._total_states == 2
+            ) or (
+                event.type == pygame.JOYBUTTONDOWN
+                and self._joystick_enabled
+                and self._ctrl.joy_select(event, self)
+                and self._total_states == 2
             ):
                 self._sound.play_key_add()
                 self._state = int(not self._state)
@@ -455,8 +510,12 @@ class ToggleSwitch(Widget):
 
             # Click on switch; don't consider the mouse wheel (button 4 & 5)
             elif (
-                event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and event.button in (1, 2, 3) or
-                event.type == FINGERUP and self._touchscreen_enabled and self._menu is not None
+                event.type == pygame.MOUSEBUTTONUP
+                and self._mouse_enabled
+                and event.button in (1, 2, 3)
+                or event.type == FINGERUP
+                and self._touchscreen_enabled
+                and self._menu is not None
             ):
                 event_pos = get_finger_pos(self._menu, event)
 
@@ -469,7 +528,9 @@ class ToggleSwitch(Widget):
                     topleft, _ = rect.topleft
 
                     # Distance from title
-                    dist = mouse_x - (topleft + self._switch_margin[0] + self._switch_pos[0])
+                    dist = mouse_x - (
+                        topleft + self._switch_margin[0] + self._switch_pos[0]
+                    )
 
                     if dist > 0:  # User clicked the options, not title
                         # Toggle with only 1 click
@@ -509,12 +570,12 @@ class ToggleSwitchManager(AbstractWidgetManager, ABC):
         default: int | bool = 0,
         onchange: CallbackType = None,
         onselect: Callable[[bool, Widget, pygame_menu.Menu], Any] | None = None,
-        toggleswitch_id: str = '',
+        toggleswitch_id: str = "",
         single_click: bool = True,
-        state_text: tuple[str, ...] = ('Off', 'On'),
+        state_text: tuple[str, ...] = ("Off", "On"),
         state_values: tuple[Any, ...] = (False, True),
         width: int = 150,
-        **kwargs
+        **kwargs,
     ) -> pygame_menu.widgets.ToggleSwitch:
         """
         Add a toggle switch to the Menu: It can switch between two states.
@@ -614,27 +675,38 @@ class ToggleSwitchManager(AbstractWidgetManager, ABC):
         :rtype: :py:class:`pygame_menu.widgets.ToggleSwitch`
         """
         if isinstance(default, (int, bool)):
-            assert 0 <= default <= 1, 'default value can be 0 or 1'
+            assert 0 <= default <= 1, "default value can be 0 or 1"
         else:
             raise ValueError(
-                f'invalid value type, default can be 0, False, 1, or True, but'
+                f"invalid value type, default can be 0, False, 1, or True, but"
                 f'received "{default}"'
             )
 
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
-        default_state_text_fcolor = (self._theme.widget_box_background_color, self._theme.widget_box_background_color)
+        default_state_text_fcolor = (
+            self._theme.widget_box_background_color,
+            self._theme.widget_box_background_color,
+        )
 
-        infinite = kwargs.pop('infinite', False)
-        slider_color = kwargs.pop('slider_color', self._theme.widget_box_background_color)
-        slider_thickness = kwargs.pop('slider_thickness', self._theme.scrollbar_thick)
-        state_color = kwargs.pop('state_color', ((178, 178, 178), (117, 185, 54)))
-        state_text_font_color = kwargs.pop('state_text_font_color', default_state_text_fcolor)
-        state_text_font_size = kwargs.pop('state_text_font_size', None)
-        switch_border_color = kwargs.pop('switch_border_color', self._theme.widget_box_border_color)
-        switch_border_width = kwargs.pop('switch_border_width', self._theme.widget_box_border_width)
-        switch_height = kwargs.pop('switch_height', 1)
-        switch_margin = kwargs.pop('switch_margin', self._theme.widget_box_margin)
+        infinite = kwargs.pop("infinite", False)
+        slider_color = kwargs.pop(
+            "slider_color", self._theme.widget_box_background_color
+        )
+        slider_thickness = kwargs.pop("slider_thickness", self._theme.scrollbar_thick)
+        state_color = kwargs.pop("state_color", ((178, 178, 178), (117, 185, 54)))
+        state_text_font_color = kwargs.pop(
+            "state_text_font_color", default_state_text_fcolor
+        )
+        state_text_font_size = kwargs.pop("state_text_font_size", None)
+        switch_border_color = kwargs.pop(
+            "switch_border_color", self._theme.widget_box_border_color
+        )
+        switch_border_width = kwargs.pop(
+            "switch_border_width", self._theme.widget_box_border_width
+        )
+        switch_height = kwargs.pop("switch_height", 1)
+        switch_margin = kwargs.pop("switch_margin", self._theme.widget_box_margin)
 
         widget = ToggleSwitch(
             default_state=default,
@@ -642,7 +714,7 @@ class ToggleSwitchManager(AbstractWidgetManager, ABC):
             onchange=onchange,
             onselect=onselect,
             single_click=single_click,
-            single_click_dir=kwargs.pop('single_click_dir', True),
+            single_click_dir=kwargs.pop("single_click_dir", True),
             slider_color=slider_color,
             slider_thickness=slider_thickness,
             state_color=state_color,
@@ -657,7 +729,7 @@ class ToggleSwitchManager(AbstractWidgetManager, ABC):
             title=title,
             state_width=int(width),
             toggleswitch_id=toggleswitch_id,
-            **kwargs
+            **kwargs,
         )
         self._configure_widget(widget=widget, **attributes)
         self._append_widget(widget)

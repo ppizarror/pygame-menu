@@ -9,21 +9,17 @@ Widget container.
 from __future__ import annotations
 
 __all__ = [
-
     # Main class
-    'Frame',
-    'FrameManager',
-
+    "Frame",
+    "FrameManager",
     # Types
-    'FrameTitleBackgroundColorType',
-    'FrameTitleButtonType',
-
+    "FrameTitleBackgroundColorType",
+    "FrameTitleButtonType",
     # Constants
-    'FRAME_DEFAULT_TITLE_BACKGROUND_COLOR',
-    'FRAME_TITLE_BUTTON_CLOSE',
-    'FRAME_TITLE_BUTTON_MAXIMIZE',
-    'FRAME_TITLE_BUTTON_MINIMIZE'
-
+    "FRAME_DEFAULT_TITLE_BACKGROUND_COLOR",
+    "FRAME_TITLE_BUTTON_CLOSE",
+    "FRAME_TITLE_BUTTON_MAXIMIZE",
+    "FRAME_TITLE_BUTTON_MINIMIZE",
 ]
 
 from abc import ABC
@@ -87,9 +83,9 @@ if TYPE_CHECKING:
 
 # Constants
 FRAME_DEFAULT_TITLE_BACKGROUND_COLOR = ((10, 36, 106), (166, 202, 240), False, True)
-FRAME_TITLE_BUTTON_CLOSE = 'close'
-FRAME_TITLE_BUTTON_MAXIMIZE = 'maximize'
-FRAME_TITLE_BUTTON_MINIMIZE = 'minimize'
+FRAME_TITLE_BUTTON_CLOSE = "close"
+FRAME_TITLE_BUTTON_MAXIMIZE = "maximize"
+FRAME_TITLE_BUTTON_MINIMIZE = "minimize"
 S_FINGER_FACTOR = 0.25, 0.25
 
 # Types
@@ -133,6 +129,7 @@ class Frame(Widget):
     :param orientation: Frame orientation (horizontal or vertical). See :py:mod:`pygame_menu.locals`
     :param frame_id: ID of the frame
     """
+
     _accepts_scrollarea: bool
     _accepts_title: bool
     _control_widget: Widget | None
@@ -162,22 +159,22 @@ class Frame(Widget):
         width: NumberType,
         height: NumberType,
         orientation: str,
-        frame_id: str = ''
+        frame_id: str = "",
     ) -> None:
         super().__init__(widget_id=frame_id)
         assert isinstance(width, NumberInstance)
         assert isinstance(height, NumberInstance)
-        assert width > 0, \
-            f'width must be greater than zero ({width} received)'
-        assert height > 0, \
-            f'height must be greater than zero ({height} received)'
+        assert width > 0, f"width must be greater than zero ({width} received)"
+        assert height > 0, f"height must be greater than zero ({height} received)"
         assert_orientation(orientation)
 
         # Internals
         self._accepts_scrollarea = True
         self._accepts_title = True
         self._control_widget = None
-        self._control_widget_last_pos = None  # This checks if menu has updated widget position
+        self._control_widget_last_pos = (
+            None  # This checks if menu has updated widget position
+        )
         self._draggable = False
         self._frame_scrollarea = None
         self._frame_size = (width, height)  # Size of the frame, set in make_scrollarea
@@ -185,7 +182,9 @@ class Frame(Widget):
         self._height = int(height)
         self._menu_can_be_none_pack = False
         self._orientation = orientation
-        self._pack_margin_warning = True  # Set to False for hiding the pack margin warning
+        self._pack_margin_warning = (
+            True  # Set to False for hiding the pack margin warning
+        )
         self._pos = {}
         self._real_rect = pygame.Rect(0, 0, width, height)
         self._recursive_render = 0
@@ -217,7 +216,7 @@ class Frame(Widget):
         title_buttons_alignment: str = ALIGN_RIGHT,
         title_font: FontType | None = None,
         title_font_color: ColorInputType | None = None,
-        title_font_size: int | None = None
+        title_font_size: int | None = None,
     ) -> Frame:
         """
         Add a title to the frame.
@@ -235,10 +234,13 @@ class Frame(Widget):
         :param title_font_size: Title font size in px. If ``None`` uses the same as the Frame
         :return: Title frame object
         """
-        assert self.configured, \
-            f'{self.get_class_id()} must be configured before setting a title'
+        assert self.configured, (
+            f"{self.get_class_id()} must be configured before setting a title"
+        )
         if not self._accepts_title:
-            raise _FrameDoNotAcceptTitle(f'{self.get_class_id()} does not accept a title')
+            raise _FrameDoNotAcceptTitle(
+                f"{self.get_class_id()} does not accept a title"
+            )
         self._title = title
 
         # If it has previous title
@@ -261,13 +263,13 @@ class Frame(Widget):
         assert_alignment(title_buttons_alignment)
 
         # Check alignment are different
-        assert title_alignment != title_buttons_alignment, \
-            'title alignment and buttons alignment must be different'
+        assert title_alignment != title_buttons_alignment, (
+            "title alignment and buttons alignment must be different"
+        )
 
         # Create title widget
         title_label = Label(
-            title=title,
-            label_id=self._id + '+title+label-' + uuid4(short=True)
+            title=title, label_id=self._id + "+title+label-" + uuid4(short=True)
         )
         title_label.set_font(
             antialias=self._font_antialias,
@@ -277,7 +279,7 @@ class Frame(Widget):
             font_size=title_font_size,
             readonly_color=self._font_readonly_color,
             readonly_selected_color=self._font_readonly_selected_color,
-            selected_color=self._font_selected_color
+            selected_color=self._font_selected_color,
         )
         title_label.set_tab_size(self._tab_size)
         title_label.configured = True
@@ -288,26 +290,29 @@ class Frame(Widget):
         pad_outer = parse_padding(padding_outer)  # top, right, bottom, left
         pad_inner = parse_padding(padding_inner)
         self._frame_title = Frame(
-            width=self.get_width() - (pad_outer[1] + pad_outer[3] + pad_inner[1] + pad_inner[3]),
+            width=self.get_width()
+            - (pad_outer[1] + pad_outer[3] + pad_inner[1] + pad_inner[3]),
             height=title_label.get_height(),
             orientation=ORIENTATION_HORIZONTAL,
-            frame_id=self._id + '+title-' + uuid4(short=True)
+            frame_id=self._id + "+title-" + uuid4(short=True),
         )
         self._frame_title._accepts_scrollarea = False
         self._frame_title._accepts_title = False
         self._frame_title._menu_can_be_none_pack = True
         self._frame_title._menu = self._menu
-        self._frame_title.set_attribute('buttons_alignment', title_buttons_alignment)
-        self._frame_title.set_attribute('pbottom', pad_outer[2] - pad_inner[2])
+        self._frame_title.set_attribute("buttons_alignment", title_buttons_alignment)
+        self._frame_title.set_attribute("pbottom", pad_outer[2] - pad_inner[2])
         self._frame_title.set_cursor(cursor if cursor is not None else self._cursor)
         self._frame_title.set_padding(padding_inner)
         self._frame_title.set_scrollarea(self._scrollarea)
-        self._frame_title.translate(pad_outer[3] + pad_inner[3], pad_outer[0] + pad_inner[0])
+        self._frame_title.translate(
+            pad_outer[3] + pad_inner[3], pad_outer[0] + pad_inner[0]
+        )
         self._frame_title.set_controls(
             joystick=self._joystick_enabled,
             mouse=self._mouse_enabled,
             touchscreen=self._touchscreen_enabled,
-            keyboard=self._keyboard_enabled
+            keyboard=self._keyboard_enabled,
         )
         if self._frame is not None:
             self._frame_title.set_frame(self._frame)
@@ -315,25 +320,30 @@ class Frame(Widget):
 
         # Store constructor
         self._frame_title.set_attribute(
-            'constructor', {
-                'title': title,
-                'cursor': cursor,
-                'background_color': background_color,
-                'draggable': draggable,
-                'padding_inner': padding_inner,
-                'padding_outer': padding_outer,
-                'title_alignment': title_alignment,
-                'title_buttons_alignment': title_buttons_alignment,
-                'title_font': title_font,
-                'title_font_color': title_font_color,
-                'title_font_size': title_font_size
-            }
+            "constructor",
+            {
+                "title": title,
+                "cursor": cursor,
+                "background_color": background_color,
+                "draggable": draggable,
+                "padding_inner": padding_inner,
+                "padding_outer": padding_outer,
+                "title_alignment": title_alignment,
+                "title_buttons_alignment": title_buttons_alignment,
+                "title_font": title_font,
+                "title_font_color": title_font_color,
+                "title_font_size": title_font_size,
+            },
         )
 
         # Create frame title background rect
         title_bg = make_surface(
             self.get_width(),
-            title_label.get_height() + pad_outer[0] + pad_outer[2] + pad_inner[0] + pad_inner[2]
+            title_label.get_height()
+            + pad_outer[0]
+            + pad_outer[2]
+            + pad_inner[0]
+            + pad_inner[2],
         )
 
         # Blit frame bgrect if scrollable
@@ -344,7 +354,8 @@ class Frame(Widget):
             elif area_color is not None:
                 title_bg.fill(area_color, rect=title_bg.get_rect())
         self._frame_title.get_decorator().add_surface(
-            -title_bg.get_width() / 2, -title_bg.get_height() / 2 + 1, title_bg)
+            -title_bg.get_width() / 2, -title_bg.get_height() / 2 + 1, title_bg
+        )
 
         # Set background
         is_color = True
@@ -356,9 +367,10 @@ class Frame(Widget):
             self._frame_title.set_background_color(background_color)
         else:  # Is gradient
             assert isinstance(background_color, tuple)
-            assert len(background_color) == 4, \
-                'gradient color type must has 4 components (from color, to color, ' \
-                'vertical, forward)'
+            assert len(background_color) == 4, (
+                "gradient color type must has 4 components (from color, to color, "
+                "vertical, forward)"
+            )
             w, h = self._frame_title.get_size()
             new_surface = make_surface(w, h)
             fill_gradient(
@@ -366,9 +378,11 @@ class Frame(Widget):
                 color=background_color[0],
                 gradient=background_color[1],
                 vertical=background_color[2],
-                forward=background_color[3]
+                forward=background_color[3],
             )
-            self._frame_title.get_decorator().add_surface(-w / 2, -h / 2 + 1, new_surface)
+            self._frame_title.get_decorator().add_surface(
+                -w / 2, -h / 2 + 1, new_surface
+            )
 
         # Pack title
         self._frame_title.pack(title_label, align=title_alignment)
@@ -390,7 +404,9 @@ class Frame(Widget):
         :return: Self reference
         """
         if not self._accepts_title:
-            raise _FrameDoNotAcceptTitle(f'{self.get_class_id()} does not accept a title')
+            raise _FrameDoNotAcceptTitle(
+                f"{self.get_class_id()} does not accept a title"
+            )
         if self._has_title:
             self._frame_title = None
             self._has_title = False
@@ -402,9 +418,7 @@ class Frame(Widget):
         return self
 
     def add_title_generic_button(
-        self,
-        button: Button,
-        margin: Vector2NumberType = (0, 0)
+        self, button: Button, margin: Vector2NumberType = (0, 0)
     ) -> Frame:
         """
         Add button to title. Button kwargs receive the ``button`` reference and
@@ -419,35 +433,44 @@ class Frame(Widget):
         :return: Self reference
         """
         if not self._accepts_title:
-            raise _FrameDoNotAcceptTitle(f'{self.get_class_id()} does not accept a title')
-        assert self._has_title, \
-            f'{self.get_class_id()} does not have any title, call set_title(...) beforehand'
+            raise _FrameDoNotAcceptTitle(
+                f"{self.get_class_id()} does not accept a title"
+            )
+        assert self._has_title, (
+            f"{self.get_class_id()} does not have any title, call set_title(...) beforehand"
+        )
         assert isinstance(button, Button)
-        assert button.get_menu() is None, \
-            f'{button.get_class_id()} menu reference must be None'
-        assert button.configured, \
-            f'{button.get_class_id()} must be configured before addition to title'
-        assert button.get_frame() is None, \
-            f'{button.get_class_id()} frame must be None'
+        assert button.get_menu() is None, (
+            f"{button.get_class_id()} menu reference must be None"
+        )
+        assert button.configured, (
+            f"{button.get_class_id()} must be configured before addition to title"
+        )
+        assert button.get_frame() is None, f"{button.get_class_id()} frame must be None"
 
         # Check sizing
         total_title_height = self._frame_title.get_height(apply_padding=False)
-        assert button.get_height() <= total_title_height, \
-            f'{button.get_class_id()} height ({button.get_height()}) must be lower' \
-            f' than frame title height ({total_title_height})'
+        assert button.get_height() <= total_title_height, (
+            f"{button.get_class_id()} height ({button.get_height()}) must be lower"
+            f" than frame title height ({total_title_height})"
+        )
 
         # Add frame to button kwargs
-        if 'frame' in button._kwargs.keys():
-            raise ValueError(f'{button.get_class_id()} already has "frame" kwargs option')
-        button._kwargs['frame'] = self
-        if 'button' in button._kwargs.keys():
-            raise ValueError(f'{button.get_class_id()} already has "button" kwargs option')
-        button._kwargs['button'] = button
+        if "frame" in button._kwargs.keys():
+            raise ValueError(
+                f'{button.get_class_id()} already has "frame" kwargs option'
+            )
+        button._kwargs["frame"] = self
+        if "button" in button._kwargs.keys():
+            raise ValueError(
+                f'{button.get_class_id()} already has "button" kwargs option'
+            )
+        button._kwargs["button"] = button
 
         # Pack
-        align = self._frame_title.get_attribute('buttons_alignment')
-        button.set_attribute('align', align)
-        button.set_attribute('margin', margin)
+        align = self._frame_title.get_attribute("buttons_alignment")
+        button.set_attribute("align", align)
+        button.set_attribute("margin", margin)
         self._frame_title.pack(button, align=align, margin=margin)
         self._frame_title.update_position()
 
@@ -462,7 +485,7 @@ class Frame(Widget):
         margin: Vector2NumberType = (4, 0),
         symbol_color: ColorInputType = (0, 0, 0),
         symbol_height: NumberType = 0.75,
-        symbol_margin: int = 4
+        symbol_margin: int = 4,
     ) -> Button:
         """
         Add predefined button to title. The button kwargs receive the ``button``
@@ -483,9 +506,12 @@ class Frame(Widget):
         :return: Added button
         """
         if not self._accepts_title:
-            raise _FrameDoNotAcceptTitle(f'{self.get_class_id()} does not accept a title')
-        assert self._has_title, \
-            f'{self.get_class_id()} does not have any title, call set_title(...) beforehand'
+            raise _FrameDoNotAcceptTitle(
+                f"{self.get_class_id()} does not accept a title"
+            )
+        assert self._has_title, (
+            f"{self.get_class_id()} does not have any title, call set_title(...) beforehand"
+        )
         assert isinstance(symbol_height, NumberInstance) and 0 <= symbol_height <= 1
         assert isinstance(symbol_margin, int) and 0 <= symbol_margin
         h = self._frame_title.get_height(apply_padding=False) * symbol_height
@@ -495,8 +521,11 @@ class Frame(Widget):
             dh += 1
 
         # Create button
-        btn = Button('', onreturn=callback,
-                     button_id=self._frame_title._id + '+button-' + uuid4(short=True))
+        btn = Button(
+            "",
+            onreturn=callback,
+            button_id=self._frame_title._id + "+button-" + uuid4(short=True),
+        )
         btn.set_padding(h / 2)
         btn.translate(0, dh / 2)
         btn.set_cursor(cursor)
@@ -521,7 +550,7 @@ class Frame(Widget):
                 (btn_rect.centerx, btn_rect.centery),
                 (btn_rect.left + t, btn_rect.bottom - t),
                 (btn_rect.centerx, btn_rect.centery),
-                (btn_rect.left + t, btn_rect.top + t)
+                (btn_rect.left + t, btn_rect.top + t),
             )
             border = 0
 
@@ -530,13 +559,13 @@ class Frame(Widget):
                 (btn_rect.left + t, btn_rect.bottom - t),
                 (btn_rect.right - t, btn_rect.bottom - t),
                 (btn_rect.right - t, btn_rect.top + t),
-                (btn_rect.left + t, btn_rect.top + t)
+                (btn_rect.left + t, btn_rect.top + t),
             )
 
         elif style == FRAME_TITLE_BUTTON_MINIMIZE:
             style_pos = (
                 (btn_rect.left + t, btn_rect.centery + border),
-                (btn_rect.right - t, btn_rect.centery + border)
+                (btn_rect.right - t, btn_rect.centery + border),
             )
 
         else:
@@ -553,7 +582,7 @@ class Frame(Widget):
     def get_title(self) -> str:
         if not self._has_title:
             # raise ValueError(f'{self.get_class_id()} does not have any title')
-            return ''
+            return ""
         return self._title
 
     def get_inner_size(self) -> Tuple2IntType:
@@ -663,7 +692,7 @@ class Frame(Widget):
         scrollbar_slider_hover_color: ColorInputType,
         scrollbar_slider_pad: NumberType,
         scrollbar_thick: NumberType,
-        scrollbars: str | tuple[str, ...]
+        scrollbars: str | tuple[str, ...],
     ) -> Frame:
         """
         Make the scrollarea of the frame.
@@ -685,19 +714,25 @@ class Frame(Widget):
         :return: Self reference
         """
         if not self._accepts_scrollarea:
-            raise _FrameDoNotAcceptScrollarea(f'{self.get_class_id()} does not accept a scrollarea')
-        assert not self._widgets, 'frame widgets must be empty if creating the scrollarea'
-        assert self.configured, 'frame must be configured before adding the scrollarea'
+            raise _FrameDoNotAcceptScrollarea(
+                f"{self.get_class_id()} does not accept a scrollarea"
+            )
+        assert not self._widgets, (
+            "frame widgets must be empty if creating the scrollarea"
+        )
+        assert self.configured, "frame must be configured before adding the scrollarea"
         if max_width is None:
             max_width = self._width
         if max_height is None:
             max_height = self._height
         assert isinstance(max_width, NumberInstance)
         assert isinstance(max_height, NumberInstance)
-        assert 0 < max_width <= self._width, \
-            f'scroll area width ({max_width}) cannot exceed frame width ({self._width})'
-        assert 0 < max_height <= self._height, \
-            f'scroll area height ({max_height}) cannot exceed frame height ({self._height})'
+        assert 0 < max_width <= self._width, (
+            f"scroll area width ({max_width}) cannot exceed frame width ({self._width})"
+        )
+        assert 0 < max_height <= self._height, (
+            f"scroll area height ({max_height}) cannot exceed frame height ({self._height})"
+        )
         # if not self._relax:
         #     pass
         # else:
@@ -742,26 +777,26 @@ class Frame(Widget):
             shadow=scrollbar_shadow,
             shadow_color=scrollbar_shadow_color,
             shadow_offset=scrollbar_shadow_offset,
-            shadow_position=scrollbar_shadow_position
+            shadow_position=scrollbar_shadow_position,
         )
 
         # Store constructor data
         self._frame_scrollarea.set_attribute(
-            'constructor',
+            "constructor",
             {
-                'scrollarea_color': scrollarea_color,
-                'scrollbar_color': scrollbar_color,
-                'scrollbar_cursor': scrollbar_cursor,
-                'scrollbar_shadow': scrollbar_shadow,
-                'scrollbar_shadow_color': scrollbar_shadow_color,
-                'scrollbar_shadow_offset': scrollbar_shadow_offset,
-                'scrollbar_shadow_position': scrollbar_shadow_position,
-                'scrollbar_slider_color': scrollbar_slider_color,
-                'scrollbar_slider_hover_color': scrollbar_slider_hover_color,
-                'scrollbar_slider_pad': scrollbar_slider_pad,
-                'scrollbar_thick': scrollbar_thick,
-                'scrollbars': scrollbars
-            }
+                "scrollarea_color": scrollarea_color,
+                "scrollbar_color": scrollbar_color,
+                "scrollbar_cursor": scrollbar_cursor,
+                "scrollbar_shadow": scrollbar_shadow,
+                "scrollbar_shadow_color": scrollbar_shadow_color,
+                "scrollbar_shadow_offset": scrollbar_shadow_offset,
+                "scrollbar_shadow_position": scrollbar_shadow_position,
+                "scrollbar_slider_color": scrollbar_slider_color,
+                "scrollbar_slider_hover_color": scrollbar_slider_hover_color,
+                "scrollbar_slider_pad": scrollbar_slider_pad,
+                "scrollbar_thick": scrollbar_thick,
+                "scrollbars": scrollbars,
+            },
         )
 
         if self._width == max_width:
@@ -784,7 +819,7 @@ class Frame(Widget):
         # If it has title
         if self._has_title:
             if self._verbose:
-                warn(f'previous {self.get_class_id()} title has been removed')
+                warn(f"previous {self.get_class_id()} title has been removed")
             self.remove_title()
 
         return self
@@ -824,7 +859,7 @@ class Frame(Widget):
             return 0
         h = self._frame_title.get_height()
         h += self._frame_title.get_translate()[1]
-        h += self._frame_title.get_attribute('pbottom')  # Bottom padding
+        h += self._frame_title.get_attribute("pbottom")  # Bottom padding
         return h
 
     def _render(self) -> None:
@@ -871,7 +906,9 @@ class Frame(Widget):
         try:
             return w.index(widget)
         except ValueError:
-            raise IndexError(f'{widget.get_class_id()} widget does not exist on {self.get_class_id()}')
+            raise IndexError(
+                f"{widget.get_class_id()} widget does not exist on {self.get_class_id()}"
+            )
 
     def set_position(self, x: NumberType, y: NumberType) -> Frame:
         if self._has_title:
@@ -882,7 +919,9 @@ class Frame(Widget):
                 w._set_position_relative_to_frame()
         super().set_position(x, y)
         if self.is_scrollable:
-            self._frame_scrollarea.set_position(self._rect.x, self._rect.y + self._title_height())
+            self._frame_scrollarea.set_position(
+                self._rect.x, self._rect.y + self._title_height()
+            )
         return self
 
     def draw(self, surface: pygame.Surface) -> Frame:
@@ -944,9 +983,9 @@ class Frame(Widget):
         # Some systems introduce 1px margin
         if w > (self._width + 1) and not self._relax:
             raise _FrameSizeException(
-                f'{widget.get_class_id()} width ({w}) is greater than {self.get_class_id()}'
-                f' width ({self._width}), try using widget.set_max_width(...) for '
-                f'avoiding this issue, or set the widget as floating'
+                f"{widget.get_class_id()} width ({w}) is greater than {self.get_class_id()}"
+                f" width ({self._width}), try using widget.set_max_width(...) for "
+                f"avoiding this issue, or set the widget as floating"
             )
         if a == ALIGN_CENTER:
             return int((self._width - w) / 2)
@@ -965,9 +1004,9 @@ class Frame(Widget):
         h = widget.get_height()
         if h > (self._height + 1) and not self._relax:
             raise _FrameSizeException(
-                f'{widget.get_class_id()} height ({h}) is greater than {self.get_class_id()}'
-                f' height ({self._height}), try using widget.set_max_height(...) '
-                f'for avoiding this issue, or set the widget as floating'
+                f"{widget.get_class_id()} height ({h}) is greater than {self.get_class_id()}"
+                f" height ({self._height}), try using widget.set_max_height(...) "
+                f"for avoiding this issue, or set the widget as floating"
             )
         if v == POSITION_CENTER:
             return int((self._height - h) / 2)
@@ -992,25 +1031,31 @@ class Frame(Widget):
                 continue
             elif align == ALIGN_LEFT:
                 x_left += w.get_margin()[0]
-                self._pos[w.get_id()] = (x_left, self._get_vt(w, v_pos) + w.get_margin()[1])
+                self._pos[w.get_id()] = (
+                    x_left,
+                    self._get_vt(w, v_pos) + w.get_margin()[1],
+                )
                 x_left += w.get_width()
             elif align == ALIGN_RIGHT:
-                x_right -= (w.get_width() + w.get_margin()[0])
-                self._pos[w.get_id()] = (self._width + x_right, self._get_vt(w, v_pos) + w.get_margin()[1])
+                x_right -= w.get_width() + w.get_margin()[0]
+                self._pos[w.get_id()] = (
+                    self._width + x_right,
+                    self._get_vt(w, v_pos) + w.get_margin()[1],
+                )
             dw = x_left - x_right
             if dw > self._width and not self._relax:
                 raise _FrameSizeException(
-                    f'{w.get_class_id()} width ({dw}) exceeds {self.get_class_id()}'
-                    f' width ({self._width}). Set frame._relax=True to ignore this Exception'
+                    f"{w.get_class_id()} width ({dw}) exceeds {self.get_class_id()}"
+                    f" width ({self._width}). Set frame._relax=True to ignore this Exception"
                 )
 
         # Now center widgets
         available = self._width - (x_left - x_right)
         if w_center > available and not self._relax:
             raise _FrameSizeException(
-                f'cannot place center widgets as required width ({w_center}) is '
-                f'greater than available ({available}) in {self.get_class_id()}.'
-                f' Set frame._relax=True to ignore this Exception'
+                f"cannot place center widgets as required width ({w_center}) is "
+                f"greater than available ({available}) in {self.get_class_id()}."
+                f" Set frame._relax=True to ignore this Exception"
             )
         x_center = int(self._width / 2 - w_center / 2)
         for w in self._widgets.values():
@@ -1019,7 +1064,10 @@ class Frame(Widget):
                 continue
             elif align == ALIGN_CENTER:
                 x_center += w.get_margin()[0]
-                self._pos[w.get_id()] = (x_center, self._get_vt(w, v_pos) + w.get_margin()[1])
+                self._pos[w.get_id()] = (
+                    x_center,
+                    self._get_vt(w, v_pos) + w.get_margin()[1],
+                )
                 x_center += w.get_width()
 
     def _update_position_vertical(self) -> None:
@@ -1038,26 +1086,32 @@ class Frame(Widget):
                 continue
             elif v_pos == POSITION_NORTH:
                 y_top += w.get_margin()[1]
-                self._pos[w.get_id()] = (self._get_ht(w, align) + w.get_margin()[0], y_top)
+                self._pos[w.get_id()] = (
+                    self._get_ht(w, align) + w.get_margin()[0],
+                    y_top,
+                )
                 y_top += w.get_height()
             elif v_pos == POSITION_SOUTH:
-                y_bottom -= (w.get_height() + w.get_margin()[1])
-                self._pos[w.get_id()] = (self._get_ht(w, align) + w.get_margin()[0], self._height + y_bottom)
+                y_bottom -= w.get_height() + w.get_margin()[1]
+                self._pos[w.get_id()] = (
+                    self._get_ht(w, align) + w.get_margin()[0],
+                    self._height + y_bottom,
+                )
             dh = y_top - y_bottom
             if dh > self._height and not self._relax:
                 raise _FrameSizeException(
-                    f'{w.get_class_id()} height ({dh}) exceeds {self.get_class_id()}'
-                    f' height ({self._height}). Set frame._relax=True to ignore '
-                    f'this Exception'
+                    f"{w.get_class_id()} height ({dh}) exceeds {self.get_class_id()}"
+                    f" height ({self._height}). Set frame._relax=True to ignore "
+                    f"this Exception"
                 )
 
         # Now center widgets
         available = self._height - (y_top - y_bottom)
         if w_center > available and not self._relax:
             raise _FrameSizeException(
-                f'cannot place center widgets as required height ({w_center}) is'
-                f' greater than available ({available}) in {self.get_class_id()}.'
-                f' Set frame._relax=True to ignore this Exception'
+                f"cannot place center widgets as required height ({w_center}) is"
+                f" greater than available ({available}) in {self.get_class_id()}."
+                f" Set frame._relax=True to ignore this Exception"
             )
         y_center = int(self._height / 2 - w_center / 2)
         for w in self._widgets.values():
@@ -1066,7 +1120,10 @@ class Frame(Widget):
                 continue
             elif v_pos == POSITION_CENTER:
                 y_center += w.get_margin()[1]
-                self._pos[w.get_id()] = (self._get_ht(w, align) + w.get_margin()[0], y_center)
+                self._pos[w.get_id()] = (
+                    self._get_ht(w, align) + w.get_margin()[0],
+                    y_center,
+                )
                 y_center += w.get_height()
 
     def update_position(self) -> Frame:
@@ -1101,7 +1158,11 @@ class Frame(Widget):
                 margin = widget.get_margin()
                 padding = widget.get_padding()
                 widget.set_position(fx + margin[0] + padding[3], fy + padding[0])
-            if self.is_scrollable and isinstance(widget, Frame) and widget.is_scrollable:
+            if (
+                self.is_scrollable
+                and isinstance(widget, Frame)
+                and widget.is_scrollable
+            ):
                 widget.get_scrollarea(inner=True).set_position(tx, ty)
             # If scrollarea, subtract this position to each widget
             if self._frame_scrollarea is not None:
@@ -1131,7 +1192,7 @@ class Frame(Widget):
         self,
         unpack_subframes: bool = True,
         unpack_subframes_include_frame: bool = False,
-        reverse: bool = False
+        reverse: bool = False,
     ) -> tuple[Widget, ...]:
         """
         Get widgets as a tuple.
@@ -1148,7 +1209,7 @@ class Frame(Widget):
                     wtp.append(widget)
                 ww = widget.get_widgets(
                     unpack_subframes=unpack_subframes,
-                    unpack_subframes_include_frame=unpack_subframes_include_frame
+                    unpack_subframes_include_frame=unpack_subframes_include_frame,
                 )
                 for i in ww:
                     wtp.append(i)
@@ -1175,7 +1236,7 @@ class Frame(Widget):
         width: NumberType,
         height: NumberType,
         max_width: NumberType | None = None,
-        max_height: NumberType | None = None
+        max_height: NumberType | None = None,
     ) -> Frame:
         """
         Resize the Frame.
@@ -1197,7 +1258,9 @@ class Frame(Widget):
         height -= pad_v
 
         # Check size
-        assert width > 0 and height > 0, 'new width and height must be greater than zero'
+        assert width > 0 and height > 0, (
+            "new width and height must be greater than zero"
+        )
 
         # Update width/height
         if width < self._width or height < self._height:
@@ -1210,16 +1273,19 @@ class Frame(Widget):
         # Get previous buttons if it has title
         prev_has_title = self._has_title
         prev_title_frame = self._frame_title
-        prev_title_buttons = list(self._frame_title.get_widgets()) if self._has_title else []
+        prev_title_buttons = (
+            list(self._frame_title.get_widgets()) if self._has_title else []
+        )
         if len(prev_title_buttons) >= 1:  # Pop label
             prev_title_buttons.pop(0)
 
         # Make scrollable if scrollable
         if self.is_scrollable:
-            assert self._frame_scrollarea.has_attribute('constructor'), \
-                'frame scrollarea does not have the "constructor" attribute. Make ' \
-                'sure the scrollarea has been created using make_scrollarea() method'
-            kwargs: dict[str, Any] = self._frame_scrollarea.get_attribute('constructor')
+            assert self._frame_scrollarea.has_attribute("constructor"), (
+                'frame scrollarea does not have the "constructor" attribute. Make '
+                "sure the scrollarea has been created using make_scrollarea() method"
+            )
+            kwargs: dict[str, Any] = self._frame_scrollarea.get_attribute("constructor")
             if max_width is None:
                 max_width = width
             if max_height is None:
@@ -1227,23 +1293,24 @@ class Frame(Widget):
             self.make_scrollarea(
                 max_height=max_height,
                 max_width=max_width,
-                scrollarea_color=kwargs['scrollarea_color'],
-                scrollbar_color=kwargs['scrollbar_color'],
-                scrollbar_cursor=kwargs['scrollbar_cursor'],
-                scrollbar_shadow=kwargs['scrollbar_shadow'],
-                scrollbar_shadow_color=kwargs['scrollbar_shadow_color'],
-                scrollbar_shadow_offset=kwargs['scrollbar_shadow_offset'],
-                scrollbar_shadow_position=kwargs['scrollbar_shadow_position'],
-                scrollbar_slider_color=kwargs['scrollbar_slider_color'],
-                scrollbar_slider_hover_color=kwargs['scrollbar_slider_hover_color'],
-                scrollbar_slider_pad=kwargs['scrollbar_slider_pad'],
-                scrollbar_thick=kwargs['scrollbar_thick'],
-                scrollbars=kwargs['scrollbars']
+                scrollarea_color=kwargs["scrollarea_color"],
+                scrollbar_color=kwargs["scrollbar_color"],
+                scrollbar_cursor=kwargs["scrollbar_cursor"],
+                scrollbar_shadow=kwargs["scrollbar_shadow"],
+                scrollbar_shadow_color=kwargs["scrollbar_shadow_color"],
+                scrollbar_shadow_offset=kwargs["scrollbar_shadow_offset"],
+                scrollbar_shadow_position=kwargs["scrollbar_shadow_position"],
+                scrollbar_slider_color=kwargs["scrollbar_slider_color"],
+                scrollbar_slider_hover_color=kwargs["scrollbar_slider_hover_color"],
+                scrollbar_slider_pad=kwargs["scrollbar_slider_pad"],
+                scrollbar_thick=kwargs["scrollbar_thick"],
+                scrollbars=kwargs["scrollbars"],
             )
         else:
-            assert max_width is None and max_height is None, \
-                'if previous Frame is not scrollable (make_scrollarea has been ' \
-                'called) max_width and max_height must be None'
+            assert max_width is None and max_height is None, (
+                "if previous Frame is not scrollable (make_scrollarea has been "
+                "called) max_width and max_height must be None"
+            )
 
         # If had title, remove and create a new one
         if self._has_title:
@@ -1253,29 +1320,30 @@ class Frame(Widget):
                 prev_title_frame.unpack(btn)
                 btn.set_margin(0, 0)
                 btn.set_float(False)
-            assert prev_title_frame.has_attribute('constructor'), \
-                'frame title does not have the attribute "constructor". Make sure ' \
-                'the frame title has been created through set_title() method.'
-            kwargs = prev_title_frame.get_attribute('constructor')
+            assert prev_title_frame.has_attribute("constructor"), (
+                'frame title does not have the attribute "constructor". Make sure '
+                "the frame title has been created through set_title() method."
+            )
+            kwargs = prev_title_frame.get_attribute("constructor")
             new_title_frame = self.set_title(
-                title=kwargs['title'],
-                cursor=kwargs['cursor'],
-                background_color=kwargs['background_color'],
-                draggable=kwargs['draggable'],
-                padding_inner=kwargs['padding_inner'],
-                padding_outer=kwargs['padding_outer'],
-                title_alignment=kwargs['title_alignment'],
-                title_buttons_alignment=kwargs['title_buttons_alignment'],
-                title_font=kwargs['title_font'],
-                title_font_color=kwargs['title_font_color'],
-                title_font_size=kwargs['title_font_size']
+                title=kwargs["title"],
+                cursor=kwargs["cursor"],
+                background_color=kwargs["background_color"],
+                draggable=kwargs["draggable"],
+                padding_inner=kwargs["padding_inner"],
+                padding_outer=kwargs["padding_outer"],
+                title_alignment=kwargs["title_alignment"],
+                title_buttons_alignment=kwargs["title_buttons_alignment"],
+                title_font=kwargs["title_font"],
+                title_font_color=kwargs["title_font_color"],
+                title_font_size=kwargs["title_font_size"],
             )
 
             # Pack previous buttons
             # prev_title_buttons.reverse()
             for btn in prev_title_buttons:
-                align = btn.get_attribute('align', kwargs['title_buttons_alignment'])
-                margin = btn.get_attribute('margin', (0, 0))
+                align = btn.get_attribute("align", kwargs["title_buttons_alignment"])
+                margin = btn.get_attribute("margin", (0, 0))
                 new_title_frame.pack(btn, align=align, margin=margin)
 
         # Force render
@@ -1297,7 +1365,9 @@ class Frame(Widget):
             self._menu.scroll_to_widget(None)
         return self
 
-    def get_scrollarea(self, inner: bool = False) -> pygame_menu._scrollarea.ScrollArea | None:
+    def get_scrollarea(
+        self, inner: bool = False
+    ) -> pygame_menu._scrollarea.ScrollArea | None:
         """
         Return the scrollarea object.
 
@@ -1309,17 +1379,19 @@ class Frame(Widget):
         return self._scrollarea
 
     def set_frame(self, frame: pygame_menu.widgets.Frame) -> Frame:
-        assert self != frame, \
-            f'{frame.get_class_id()} cannot set itself as a frame'
+        assert self != frame, f"{frame.get_class_id()} cannot set itself as a frame"
         super().set_frame(frame)
         if self._frame_title is not None:
             self._frame_title.set_frame(frame)
         return self
 
-    def set_scrollarea(self, scrollarea: pygame_menu._scrollarea.ScrollArea | None) -> None:
+    def set_scrollarea(
+        self, scrollarea: pygame_menu._scrollarea.ScrollArea | None
+    ) -> None:
         if scrollarea is not None:
-            assert scrollarea != self._frame_scrollarea, \
-                f'scrollarea cannot be {self.get_class_id()}._frame_scrollarea {scrollarea.get_class_id()}'
+            assert scrollarea != self._frame_scrollarea, (
+                f"scrollarea cannot be {self.get_class_id()}._frame_scrollarea {scrollarea.get_class_id()}"
+            )
         self._scrollarea = scrollarea
         if self._frame_scrollarea is not None:
             self._frame_scrollarea.set_parent_scrollarea(scrollarea)
@@ -1377,12 +1449,14 @@ class Frame(Widget):
         :param widget: Widget to unpack
         :return: Unpacked widget
         """
-        assert widget != self, 'frame cannot unpack itself'
-        assert len(self._widgets) > 0, 'frame is empty'
+        assert widget != self, "frame cannot unpack itself"
+        assert len(self._widgets) > 0, "frame is empty"
         wid = widget.get_id()
         if wid not in self._widgets.keys():
-            raise ValueError(f'{widget.get_class_id()} does not exist in {self.get_class_id()}')
-        assert widget._frame == self, 'widget frame differs from current'
+            raise ValueError(
+                f"{widget.get_class_id()} does not exist in {self.get_class_id()}"
+            )
+        assert widget._frame == self, "widget frame differs from current"
         widget.set_float()
         if self._menu is not None:
             widget.set_scrollarea(self._menu.get_scrollarea())
@@ -1457,7 +1531,7 @@ class Frame(Widget):
         widget: Widget | list[Widget] | tuple[Widget, ...],
         align: str = ALIGN_LEFT,
         vertical_position: str = POSITION_NORTH,
-        margin: Vector2NumberType = (0, 0)
+        margin: Vector2NumberType = (0, 0),
     ) -> Widget | list[Widget] | tuple[Widget, ...] | Any:
         """
         Packs widget in the frame line. To pack a widget it has to be already
@@ -1530,37 +1604,44 @@ class Frame(Widget):
         :param margin: (left, top) margin of added widget in px. It overrides the previous widget margin
         :return: Added widget references
         """
-        assert self._menu is not None or self._menu_can_be_none_pack, \
-            f'{self.get_class_id()} menu must be set before packing widgets'
+        assert self._menu is not None or self._menu_can_be_none_pack, (
+            f"{self.get_class_id()} menu must be set before packing widgets"
+        )
         if isinstance(widget, VectorInstance):
             for w in widget:
                 self.pack(widget=w, align=align, vertical_position=vertical_position)
             return widget
         assert isinstance(widget, Widget)
         if isinstance(widget, Frame):
-            assert widget.get_menu() is not None or self._menu_can_be_none_pack, \
-                f'{widget.get_class_id()} menu cannot be None'
-        assert widget.get_id() not in self._widgets.keys(), \
-            f'{widget.get_class_id()} already exists in {self.get_class_id()}'
-        assert widget.get_menu() == self._menu or widget.get_menu() is None, \
-            'widget menu to be added to frame must be in same menu as frame, or ' \
-            'it can have any Menu instance'
-        assert widget.get_frame() is None, \
-            f'{widget.get_class_id()} is already packed in {widget.get_frame().get_class_id()}'
+            assert widget.get_menu() is not None or self._menu_can_be_none_pack, (
+                f"{widget.get_class_id()} menu cannot be None"
+            )
+        assert widget.get_id() not in self._widgets.keys(), (
+            f"{widget.get_class_id()} already exists in {self.get_class_id()}"
+        )
+        assert widget.get_menu() == self._menu or widget.get_menu() is None, (
+            "widget menu to be added to frame must be in same menu as frame, or "
+            "it can have any Menu instance"
+        )
+        assert widget.get_frame() is None, (
+            f"{widget.get_class_id()} is already packed in {widget.get_frame().get_class_id()}"
+        )
         assert_alignment(align)
-        assert vertical_position in (POSITION_NORTH, POSITION_CENTER, POSITION_SOUTH), \
-            'vertical position must be NORTH, CENTER, or SOUTH'
+        assert vertical_position in (POSITION_NORTH, POSITION_CENTER, POSITION_SOUTH), (
+            "vertical position must be NORTH, CENTER, or SOUTH"
+        )
         assert_vector(margin, 2)
-        assert widget.configured, \
-            f'{widget.get_class_id()} must be configured before packing'
+        assert widget.configured, (
+            f"{widget.get_class_id()} must be configured before packing"
+        )
 
         if widget.get_margin() != (0, 0) and self._pack_margin_warning:
             if self._verbose:
                 warn(
-                    f'{widget.get_class_id()} margin should be (0, 0) if packed, but'
-                    f' received {widget.get_margin()}; {self.get_class_id()}.pack() '
-                    f'does not consider previous widget margin. Set '
-                    f'frame._pack_margin_warning=False to hide this warning'
+                    f"{widget.get_class_id()} margin should be (0, 0) if packed, but"
+                    f" received {widget.get_margin()}; {self.get_class_id()}.pack() "
+                    f"does not consider previous widget margin. Set "
+                    f"frame._pack_margin_warning=False to hide this warning"
                 )
 
         if isinstance(widget, Frame):
@@ -1594,7 +1675,9 @@ class Frame(Widget):
 
                 # Check for last if w_last is frame
                 while True:
-                    last_nonframe: bool = not (isinstance(w_last, Frame) and w_last.get_indices() != (-1, -1))
+                    last_nonframe: bool = not (
+                        isinstance(w_last, Frame) and w_last.get_indices() != (-1, -1)
+                    )
                     if last_nonframe or w_last.get_menu() is None:
                         break
                     w_last = menu_widgets[w_last.last_index]
@@ -1606,7 +1689,9 @@ class Frame(Widget):
             self._menu.move_widget_index(widget, self, render=False)
             if isinstance(widget, Frame):
                 reverse = menu_widgets.index(widget) == len(menu_widgets) - 1
-                widgs = widget.get_widgets(unpack_subframes_include_frame=True, reverse=reverse)
+                widgs = widget.get_widgets(
+                    unpack_subframes_include_frame=True, reverse=reverse
+                )
 
                 first_moved_widget = None
                 last_moved_widget = None
@@ -1674,8 +1759,10 @@ class Frame(Widget):
         super().hide()
         if self._has_title:
             self._frame_title.hide()
-        # sub-widgets cannot be hidden because some widgets compute sizing even
-        # if the frame itself is hidden
+        # Note:
+        # Sub-widgets are intentionally not hidden. The following code is left as
+        # reference only, because hiding sub-widgets breaks size computation:
+        #
         # for w in self.get_widgets(unpack_subframes=False):
         #     w.hide()
         return self
@@ -1707,7 +1794,9 @@ class Frame(Widget):
         self.first_index = -1
         self.last_index = -1
         for widget in self.get_widgets(unpack_subframes=False):
-            if (widget.is_selectable or isinstance(widget, Frame)) and widget.get_menu() is not None:
+            if (
+                widget.is_selectable or isinstance(widget, Frame)
+            ) and widget.get_menu() is not None:
                 if isinstance(widget, Frame) and widget.get_indices() == (-1, -1):
                     continue  # Frames with not selectable indices are not counted
                 windex = widget.get_col_row_index()[2]
@@ -1736,28 +1825,36 @@ class Frame(Widget):
 
             # Check if clicked the title for drag
             for event in events:
-
                 # Check mouseover
                 self._frame_title._check_mouseover(event)
 
                 # If clicked in title
                 if self._draggable and (
-                    event.type == pygame.MOUSEBUTTONDOWN and self._mouse_enabled and event.button in (1, 2, 3) or
-                    event.type == FINGERDOWN and self._touchscreen_enabled and self._menu is not None
+                    event.type == pygame.MOUSEBUTTONDOWN
+                    and self._mouse_enabled
+                    and event.button in (1, 2, 3)
+                    or event.type == FINGERDOWN
+                    and self._touchscreen_enabled
+                    and self._menu is not None
                 ):
                     event_pos = get_finger_pos(self._menu, event)
 
-                    if self._frame_title.get_rect(to_real_position=True).collidepoint(*event_pos):
-                        if not self._frame_title.get_attribute('drag', False):
-                            self._frame_title.set_attribute('drag', True)
+                    if self._frame_title.get_rect(to_real_position=True).collidepoint(
+                        *event_pos
+                    ):
+                        if not self._frame_title.get_attribute("drag", False):
+                            self._frame_title.set_attribute("drag", True)
                             updated = True
 
                 # User releases the button
                 elif (
-                    event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and event.button in (1, 2, 3) or
-                    event.type == FINGERUP and self._touchscreen_enabled
+                    event.type == pygame.MOUSEBUTTONUP
+                    and self._mouse_enabled
+                    and event.button in (1, 2, 3)
+                    or event.type == FINGERUP
+                    and self._touchscreen_enabled
                 ):
-                    self._frame_title.set_attribute('drag', False)
+                    self._frame_title.set_attribute("drag", False)
 
                 # Mouse out from window
                 # elif event.type == pygame.ACTIVEEVENT:
@@ -1767,16 +1864,31 @@ class Frame(Widget):
 
                 # User moves the mouse while drag
                 elif (
-                    event.type == pygame.MOUSEMOTION and hasattr(event, 'rel') or
-                    event.type == FINGERMOTION and self._touchscreen_enabled and self._menu is not None
+                    event.type == pygame.MOUSEMOTION
+                    and hasattr(event, "rel")
+                    or event.type == FINGERMOTION
+                    and self._touchscreen_enabled
+                    and self._menu is not None
                 ):
-
-                    if self._frame_title.get_attribute('drag', False) and self._draggable:
+                    if (
+                        self._frame_title.get_attribute("drag", False)
+                        and self._draggable
+                    ):
                         # Get relative movement
-                        rx = event.rel[0] if event.type == pygame.MOUSEMOTION else \
-                            event.dx * self._menu.get_window_size()[0] * S_FINGER_FACTOR[0]
-                        ry = event.rel[1] if event.type == pygame.MOUSEMOTION else \
-                            event.dy * self._menu.get_window_size()[1] * S_FINGER_FACTOR[1]
+                        rx = (
+                            event.rel[0]
+                            if event.type == pygame.MOUSEMOTION
+                            else event.dx
+                            * self._menu.get_window_size()[0]
+                            * S_FINGER_FACTOR[0]
+                        )
+                        ry = (
+                            event.rel[1]
+                            if event.type == pygame.MOUSEMOTION
+                            else event.dy
+                            * self._menu.get_window_size()[1]
+                            * S_FINGER_FACTOR[1]
+                        )
 
                         event_pos = get_finger_pos(self._menu, event)
                         tx, ty = self.get_translate()
@@ -1791,7 +1903,10 @@ class Frame(Widget):
                                 continue
 
                         elif self.get_scrollarea() is not None:
-                            max_v = self.get_scrollarea().get_world_size()[1] - self._title_height()
+                            max_v = (
+                                self.get_scrollarea().get_world_size()[1]
+                                - self._title_height()
+                            )
                             if self._rect.y >= max_v:
                                 if not title_rect.collidepoint(*event_pos):
                                     if ry < 0:
@@ -1825,6 +1940,7 @@ class _FrameSizeException(Exception):
     """
     If widget size is greater than frame raises exception.
     """
+
     pass
 
 
@@ -1832,6 +1948,7 @@ class _FrameDoNotAcceptScrollarea(Exception):
     """
     Raised if the frame does not accept a scrollarea.
     """
+
     pass
 
 
@@ -1839,6 +1956,7 @@ class _FrameDoNotAcceptTitle(Exception):
     """
     Raised if the frame does not accept a title.
     """
+
     pass
 
 
@@ -1852,8 +1970,8 @@ class FrameManager(AbstractWidgetManager, ABC):
         width: NumberType,
         height: NumberType,
         orientation: str,
-        frame_id: str = '',
-        **kwargs
+        frame_id: str = "",
+        **kwargs,
     ) -> pygame_menu.widgets.Frame:
         """
         Adds a frame to the Menu.
@@ -1870,52 +1988,90 @@ class FrameManager(AbstractWidgetManager, ABC):
 
         # Remove invalid keys from kwargs
         for key in list(kwargs.keys()):
-            if key not in ('align', 'background_color', 'background_inflate',
-                           'border_color', 'border_inflate', 'border_width',
-                           'cursor', 'margin', 'padding', 'max_height', 'max_width',
-                           'scrollbar_color', 'scrollbar_cursor',
-                           'scrollbar_shadow_color', 'scrollbar_shadow_offset',
-                           'scrollbar_shadow_position', 'scrollbar_shadow',
-                           'scrollbar_slider_color', 'scrollbar_slider_pad',
-                           'scrollbar_thick', 'scrollbars', 'scrollarea_color',
-                           'border_position', 'scrollbar_slider_hover_color',
-                           'tab_size', 'float', 'float_origin_position'):
+            if key not in (
+                "align",
+                "background_color",
+                "background_inflate",
+                "border_color",
+                "border_inflate",
+                "border_width",
+                "cursor",
+                "margin",
+                "padding",
+                "max_height",
+                "max_width",
+                "scrollbar_color",
+                "scrollbar_cursor",
+                "scrollbar_shadow_color",
+                "scrollbar_shadow_offset",
+                "scrollbar_shadow_position",
+                "scrollbar_shadow",
+                "scrollbar_slider_color",
+                "scrollbar_slider_pad",
+                "scrollbar_thick",
+                "scrollbars",
+                "scrollarea_color",
+                "border_position",
+                "scrollbar_slider_hover_color",
+                "tab_size",
+                "float",
+                "float_origin_position",
+            ):
                 kwargs.pop(key, None)
 
         attributes = self._filter_widget_attributes(kwargs)
-        pad = parse_padding(attributes['padding'])  # top, right, bottom, left
+        pad = parse_padding(attributes["padding"])  # top, right, bottom, left
         pad_h = pad[1] + pad[3]
         pad_v = pad[0] + pad[2]
 
-        assert width > pad_h, \
-            f'frame width ({width}) cannot be lower than horizontal padding size ({pad_h})'
-        assert height > pad_v, \
-            f'frame height ({height}) cannot be lower than vertical padding size ({pad_v})'
+        assert width > pad_h, (
+            f"frame width ({width}) cannot be lower than horizontal padding size ({pad_h})"
+        )
+        assert height > pad_v, (
+            f"frame height ({height}) cannot be lower than vertical padding size ({pad_v})"
+        )
 
         widget = Frame(
             width=width - pad_h,
             height=height - pad_v,
             orientation=orientation,
-            frame_id=frame_id
+            frame_id=frame_id,
         )
         self._configure_widget(widget=widget, **attributes)
 
         widget.make_scrollarea(
-            max_height=kwargs.pop('max_height', height) - pad_v,
-            max_width=kwargs.pop('max_width', width) - pad_h,
-            scrollarea_color=kwargs.pop('scrollarea_color', None),
-            scrollbar_color=kwargs.pop('scrollbar_color', self._theme.scrollbar_color),
-            scrollbar_cursor=kwargs.pop('scrollbar_cursor', self._theme.scrollbar_cursor),
-            scrollbar_shadow=kwargs.pop('scrollbar_shadow', self._theme.scrollbar_shadow),
-            scrollbar_shadow_color=kwargs.pop('scrollbar_shadow_color', self._theme.scrollbar_shadow_color),
-            scrollbar_shadow_offset=kwargs.pop('scrollbar_shadow_offset', self._theme.scrollbar_shadow_offset),
-            scrollbar_shadow_position=kwargs.pop('scrollbar_shadow_position', self._theme.scrollbar_shadow_position),
-            scrollbar_slider_color=kwargs.pop('scrollbar_slider_color', self._theme.scrollbar_slider_color),
-            scrollbar_slider_hover_color=kwargs.pop('scrollbar_slider_hover_color',
-                                                    self._theme.scrollbar_slider_hover_color),
-            scrollbar_slider_pad=kwargs.pop('scrollbar_slider_pad', self._theme.scrollbar_slider_pad),
-            scrollbar_thick=kwargs.pop('scrollbar_thick', self._theme.scrollbar_thick),
-            scrollbars=get_scrollbars_from_position(kwargs.pop('scrollbars', self._theme.scrollarea_position))
+            max_height=kwargs.pop("max_height", height) - pad_v,
+            max_width=kwargs.pop("max_width", width) - pad_h,
+            scrollarea_color=kwargs.pop("scrollarea_color", None),
+            scrollbar_color=kwargs.pop("scrollbar_color", self._theme.scrollbar_color),
+            scrollbar_cursor=kwargs.pop(
+                "scrollbar_cursor", self._theme.scrollbar_cursor
+            ),
+            scrollbar_shadow=kwargs.pop(
+                "scrollbar_shadow", self._theme.scrollbar_shadow
+            ),
+            scrollbar_shadow_color=kwargs.pop(
+                "scrollbar_shadow_color", self._theme.scrollbar_shadow_color
+            ),
+            scrollbar_shadow_offset=kwargs.pop(
+                "scrollbar_shadow_offset", self._theme.scrollbar_shadow_offset
+            ),
+            scrollbar_shadow_position=kwargs.pop(
+                "scrollbar_shadow_position", self._theme.scrollbar_shadow_position
+            ),
+            scrollbar_slider_color=kwargs.pop(
+                "scrollbar_slider_color", self._theme.scrollbar_slider_color
+            ),
+            scrollbar_slider_hover_color=kwargs.pop(
+                "scrollbar_slider_hover_color", self._theme.scrollbar_slider_hover_color
+            ),
+            scrollbar_slider_pad=kwargs.pop(
+                "scrollbar_slider_pad", self._theme.scrollbar_slider_pad
+            ),
+            scrollbar_thick=kwargs.pop("scrollbar_thick", self._theme.scrollbar_thick),
+            scrollbars=get_scrollbars_from_position(
+                kwargs.pop("scrollbars", self._theme.scrollarea_position)
+            ),
         )
 
         self._append_widget(widget)
@@ -1924,11 +2080,7 @@ class FrameManager(AbstractWidgetManager, ABC):
         return widget
 
     def frame_h(
-        self,
-        width: NumberType,
-        height: NumberType,
-        frame_id: str = '',
-        **kwargs
+        self, width: NumberType, height: NumberType, frame_id: str = "", **kwargs
     ) -> pygame_menu.widgets.Frame:
         """
         Adds a horizontal frame to the Menu. Frame is a widget container that
@@ -2022,11 +2174,7 @@ class FrameManager(AbstractWidgetManager, ABC):
         return self._frame(width, height, ORIENTATION_HORIZONTAL, frame_id, **kwargs)
 
     def frame_v(
-        self,
-        width: NumberType,
-        height: NumberType,
-        frame_id: str = '',
-        **kwargs
+        self, width: NumberType, height: NumberType, frame_id: str = "", **kwargs
     ) -> pygame_menu.widgets.Frame:
         """
         Adds a vertical frame to the Menu. Frame is a widget container that packs

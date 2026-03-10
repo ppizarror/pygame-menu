@@ -9,32 +9,28 @@ Default controls of Menu object and key definition.
 from __future__ import annotations
 
 __all__ = [
-
     # Joy pad
-    'JOY_AXIS_X',
-    'JOY_AXIS_Y',
-    'JOY_BUTTON_BACK',
-    'JOY_BUTTON_SELECT',
-    'JOY_DEADZONE',
-    'JOY_DELAY',
-    'JOY_DOWN',
-    'JOY_LEFT',
-    'JOY_REPEAT',
-    'JOY_RIGHT',
-    'JOY_UP',
-
+    "JOY_AXIS_X",
+    "JOY_AXIS_Y",
+    "JOY_BUTTON_BACK",
+    "JOY_BUTTON_SELECT",
+    "JOY_DEADZONE",
+    "JOY_DELAY",
+    "JOY_DOWN",
+    "JOY_LEFT",
+    "JOY_REPEAT",
+    "JOY_RIGHT",
+    "JOY_UP",
     # Keyboard events
-    'KEY_APPLY',
-    'KEY_BACK',
-    'KEY_CLOSE_MENU',
-    'KEY_LEFT',
-    'KEY_MOVE_DOWN',
-    'KEY_MOVE_UP',
-    'KEY_RIGHT',
-
+    "KEY_APPLY",
+    "KEY_BACK",
+    "KEY_CLOSE_MENU",
+    "KEY_LEFT",
+    "KEY_MOVE_DOWN",
+    "KEY_MOVE_UP",
+    "KEY_RIGHT",
     # Controller object
-    'Controller'
-
+    "Controller",
 ]
 
 from typing import TYPE_CHECKING, Union
@@ -47,7 +43,7 @@ if TYPE_CHECKING:
 
     from pygame_menu._types import Tuple2IntType
 
-WidgetType = Union['pygame_menu.Menu', 'pygame_menu.widgets.Widget']  # type: ignore
+WidgetType = Union["pygame_menu.Menu", "pygame_menu.widgets.Widget"]  # type: ignore
 
 # Joy pad
 JOY_AXIS_X: int = 0
@@ -79,6 +75,7 @@ class Controller:
     Controller class. Accepts any object and provides functions to handle each
     event.
     """
+
     joy_delay: int
     joy_repeat: int
 

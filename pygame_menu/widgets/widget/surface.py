@@ -8,10 +8,7 @@ Surface widget. This widget contains an external surface.
 
 from __future__ import annotations
 
-__all__ = [
-    'SurfaceWidget',
-    'SurfaceWidgetManager'
-]
+__all__ = ["SurfaceWidget", "SurfaceWidgetManager"]
 
 from abc import ABC
 from typing import TYPE_CHECKING, Any
@@ -43,21 +40,19 @@ class SurfaceWidget(Widget):
     :param surface_id: Surface ID
     :param onselect: Function when selecting the widget
     """
+
     _surface_obj: pygame.Surface
 
     def __init__(
         self,
         surface: pygame.Surface,
-        surface_id: str = '',
-        onselect: CallbackType = None
+        surface_id: str = "",
+        onselect: CallbackType = None,
     ) -> None:
         assert isinstance(surface, pygame.Surface)
         assert isinstance(surface_id, str)
 
-        super().__init__(
-            onselect=onselect,
-            widget_id=surface_id
-        )
+        super().__init__(onselect=onselect, widget_id=surface_id)
         self._surface_obj = surface
 
     def set_title(self, title: str) -> SurfaceWidget:
@@ -66,7 +61,7 @@ class SurfaceWidget(Widget):
     def set_surface(self, surface: pygame.Surface) -> SurfaceWidget:
         """
         Update the widget surface.
-        
+
         :param surface: New surface
         :return: Self reference
         """
@@ -123,10 +118,10 @@ class SurfaceWidgetManager(AbstractWidgetManager, ABC):
     def surface(
         self,
         surface: pygame.Surface,
-        surface_id: str = '',
+        surface_id: str = "",
         onselect: Callable[[bool, Widget, pygame_menu.Menu], Any] | None = None,
         selectable: bool = False,
-        **kwargs
+        **kwargs,
     ) -> pygame_menu.widgets.SurfaceWidget:
         """
         Add a surface widget to the Menu.
@@ -181,21 +176,33 @@ class SurfaceWidgetManager(AbstractWidgetManager, ABC):
 
         # Remove invalid keys from kwargs
         for key in list(kwargs.keys()):
-            if key not in ('align', 'background_color', 'background_inflate',
-                           'border_color', 'border_inflate', 'border_width',
-                           'cursor', 'margin', 'padding', 'selection_color',
-                           'selection_effect', 'border_position', 'float',
-                           'float_origin_position', 'shadow_color', 'shadow_radius',
-                           'shadow_type', 'shadow_width'):
+            if key not in (
+                "align",
+                "background_color",
+                "background_inflate",
+                "border_color",
+                "border_inflate",
+                "border_width",
+                "cursor",
+                "margin",
+                "padding",
+                "selection_color",
+                "selection_effect",
+                "border_position",
+                "float",
+                "float_origin_position",
+                "shadow_color",
+                "shadow_radius",
+                "shadow_type",
+                "shadow_width",
+            ):
                 kwargs.pop(key, None)
 
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
 
         widget = SurfaceWidget(
-            surface=surface,
-            surface_id=surface_id,
-            onselect=onselect
+            surface=surface, surface_id=surface_id, onselect=onselect
         )
         widget.is_selectable = selectable
 

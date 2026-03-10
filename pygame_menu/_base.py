@@ -8,7 +8,7 @@ Base object. Provides common methods used by all library objects.
 
 from __future__ import annotations
 
-__all__ = ['Base']
+__all__ = ["Base"]
 
 from typing import Any
 
@@ -20,6 +20,7 @@ class Base:
     """
     Base object.
     """
+
     _attributes: dict[str, Any] | None
     _class_id__repr__: bool
     _id: str
@@ -52,14 +53,15 @@ class Base:
         """
         sup_repr = super().__repr__()
 
-        assert not (self._class_id__repr__ and self._id__repr__), \
-            'class id and id __repr__ cannot be True at the same time'
+        assert not (self._class_id__repr__ and self._id__repr__), (
+            "class id and id __repr__ cannot be True at the same time"
+        )
 
         if self._class_id__repr__:
             return self.get_class_id()
 
         if self._id__repr__:
-            return sup_repr.replace(' object at ', f'["{self.get_id()}"] object at ')
+            return sup_repr.replace(" object at ", f'["{self.get_id()}"] object at ')
 
         return sup_repr
 
@@ -89,7 +91,9 @@ class Base:
         self._attributes[key] = value
         return self
 
-    def get_counter_attribute(self, key: str, incr: Any = 0, default: Any = 0) -> NumberType:
+    def get_counter_attribute(
+        self, key: str, incr: Any = 0, default: Any = 0
+    ) -> NumberType:
         """
         Get counter attribute.
 

@@ -8,7 +8,7 @@ Module for pyinstaller.
 
 from __future__ import annotations
 
-__all__ = ['get_hook_dirs']
+__all__ = ["get_hook_dirs"]
 
 from pathlib import Path
 
