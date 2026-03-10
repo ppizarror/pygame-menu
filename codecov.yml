@@ -1,4 +1,5 @@
 ignore:
+  - "build_package.py"
   - "docs/*.py"
   - "pygame_menu/__pyinstaller/*py"
   - "pygame_menu/examples/*.py"
