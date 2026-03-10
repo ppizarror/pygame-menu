@@ -41,15 +41,12 @@ class MenuLink(NoneWidget):
     def __init__(
         self, menu: pygame_menu.Menu, menu_opener_handler: Callable, link_id: str = ""
     ) -> None:
-        assert isinstance(menu, pygame_menu.Menu)
         assert callable(menu_opener_handler), (
             "menu opener handler must be callable (a function)"
         )
-        super().__init__(widget_id=link_id)
+        super().__init__(widget_id=link_id, visible=False)
         self.menu = menu
         self._onreturn = menu_opener_handler
-        self._visible = False
-        self.is_selectable = False
 
     def hide(self) -> MenuLink:
         pass

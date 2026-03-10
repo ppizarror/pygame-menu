@@ -223,6 +223,7 @@ class DropSelect(Widget):
         selection_option_font: FontType | None = None,
         selection_option_font_color: ColorInputType = (0, 0, 0),
         selection_option_font_size: int | None = None,
+        selection_option_left_space: bool = False,
         selection_option_left_space_height_factor: float = 1.0,
         selection_option_padding: PaddingType = 5,
         selection_option_selected_bgcolor: ColorInputType = (188, 227, 244),
@@ -328,7 +329,7 @@ class DropSelect(Widget):
 
         # If True adds a space equals to the height of the option at left, used for
         # drawing some options (for example, ticks, boxes, etc.)
-        self._selection_option_left_space = False
+        self._selection_option_left_space = selection_option_left_space
         self._selection_option_left_space_height_factor = (
             selection_option_left_space_height_factor
         )

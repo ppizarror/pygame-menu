@@ -236,6 +236,7 @@ class DropSelectMultiple(DropSelect):
             selection_option_font=selection_option_font,
             selection_option_font_color=selection_option_font_color,
             selection_option_font_size=selection_option_font_size,
+            selection_option_left_space=True,
             selection_option_left_space_height_factor=selection_option_selected_box_height,
             selection_option_padding=selection_option_padding,
             selection_option_selected_bgcolor=selection_option_selected_bgcolor,
@@ -262,7 +263,6 @@ class DropSelectMultiple(DropSelect):
         self._args = args or []
         self._close_on_apply = False
         self._max_selected = max_selected
-        self._selection_option_left_space = True
         self._selection_option_left_space_margin = selection_option_selected_box_margin
 
         # Set style
