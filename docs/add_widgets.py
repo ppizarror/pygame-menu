@@ -118,7 +118,7 @@ elif EXAMPLE == "BUTTON_BANNER":
 elif EXAMPLE == "CLOCK":
     menu = make_menu(pygame_menu.themes.THEME_DARK, "Clock")
 
-    clock = menu.add.clock(font_size=25, font_name=pygame_menu.font.FONT_DIGITAL)
+    menu.add.clock(font_size=25, font_name=pygame_menu.font.FONT_DIGITAL)
 
 elif EXAMPLE == "COLORINPUT":
     menu = make_menu(pygame_menu.themes.THEME_DARK, "Color Entry")
@@ -145,13 +145,13 @@ elif EXAMPLE == "COLORINPUT":
 elif EXAMPLE == "DROPSELECT":
     menu = make_menu(pygame_menu.themes.THEME_DEFAULT, "Drop Select")
 
-    selector_epic = menu.add.dropselect(
+    menu.add.dropselect(
         title="Is pygame-menu epic?",
         items=[("Yes", 0), ("Absolutely Yes", 1)],
         font_size=16,
         selection_option_font_size=20,
     )
-    selector_sum = menu.add.dropselect(
+    menu.add.dropselect(
         title="What is the value of π?",
         items=[
             ("3 (Engineer)", 0),
@@ -164,7 +164,7 @@ elif EXAMPLE == "DROPSELECT":
         selection_option_padding=(0, 5),
         selection_option_font_size=20,
     )
-    selector_country = menu.add.dropselect(
+    menu.add.dropselect(
         title="Pick a country",
         items=[
             ("Argentina", "ar"),
@@ -196,7 +196,7 @@ elif EXAMPLE == "DROPSELECT_MULTIPLE":
     )
     menu.add.vertical_margin(75)
 
-    selector = menu.add.dropselect_multiple(
+    menu.add.dropselect_multiple(
         title="Pick 3 colors",
         items=[
             ("Black", (0, 0, 0)),
@@ -382,7 +382,7 @@ elif EXAMPLE == "SELECTOR":
         onchange=change_background_color,  # User changes value with left/right keys
     )
     selector.add_self_to_kwargs()  # Callbacks will receive widget as parameter
-    selector2 = menu.add.selector(
+    menu.add.selector(
         title="New color:", items=items, style=pygame_menu.widgets.SELECTOR_STYLE_FANCY
     )
 

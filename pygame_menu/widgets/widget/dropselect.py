@@ -1089,7 +1089,7 @@ class DropSelect(Widget):
         self._sound.play_key_add()
         return None
 
-    def set_value(self, item: str | int) -> None:
+    def set_value(self, item: str | int, process_index: bool = False) -> None:
         """
         Set the current value of the widget, selecting the item that matches the
         text if ``item`` is a string, or the index if ``item`` is an integer.
@@ -1104,10 +1104,9 @@ class DropSelect(Widget):
 
             This method does not trigger any event (change).
 
-        :param item: Item to select, can be a string or an integer
+        :param item: The item to select, either a string or an integer index.
+        :param process_index: Ignored in this class; used by subclasses.
         """
-        assert isinstance(item, (str, int)), "item must be a string or an integer"
-
         if isinstance(item, str):
             found = False
             for i in self._items:
@@ -1117,12 +1116,16 @@ class DropSelect(Widget):
                     break
             if not found:
                 raise ValueError(f'no value "{item}" found in drop select')
+
         elif isinstance(item, int):
             assert -1 <= item < len(self._items), (
                 "item index must be greater than zero and lower than the number "
                 "of items on the drop select"
             )
             self._index = item
+
+        # Base class ignores process_index
+        # (DropSelectMultiple overrides and uses it)
 
         # Update options background selection
         for b_ind_x in range(len(self._option_buttons)):
