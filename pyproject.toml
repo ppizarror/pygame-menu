@@ -1,3 +1,53 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pygame-menu"
+dynamic = ["version"]
+description = "A menu for pygame. Simple, and easy to use"
+readme = "README.rst"
+requires-python = ">=3.9, <4"
+license = {text = "MIT"}
+authors = [{name = "Pablo Pizarro R.", email = "pablo@ppizarror.com"}]
+keywords = ["pygame", "menu", "menus", "gui", "widget", "input", "button", "image", "sound", "ui"]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Games/Entertainment",
+    "Topic :: Multimedia",
+    "Topic :: Software Development :: Libraries :: pygame",
+]
+dependencies = ["pygame>=2.0.0"]
+
+[project.urls]
+"Bug Tracker" = "https://github.com/ppizarror/pygame-menu/issues"
+"Documentation" = "https://pygame-menu.readthedocs.io"
+"Source Code" = "https://github.com/ppizarror/pygame-menu"
+
+[project.optional-dependencies]
+docs = ["sphinx<7", "sphinx-autodoc-typehints>=1.2.0", "sphinx-rtd-theme"]
+test = ["nose2[coverage_plugin]", "pytest"]
+
+[project.entry-points."pyinstaller40"]
+hook-dirs = "pygame_menu.__pyinstaller:get_hook_dirs"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.dynamic]
+version = {attr = "pygame_menu.version.ver"}
+
+[tool.setuptools.packages.find]
+where = ["."]
+exclude = ["test*"]
+
 [tool.ruff]
 target-version = "py39"
 line-length = 88
