@@ -9,39 +9,35 @@ Utility functions.
 from __future__ import annotations
 
 __all__ = [
-
     # Methods
-    'assert_alignment',
-    'assert_color',
-    'assert_cursor',
-    'assert_list_vector',
-    'assert_orientation',
-    'assert_position',
-    'assert_position_vector',
-    'assert_vector',
-    'check_key_pressed_valid',
-    'configure_alpha',
-    'fill_gradient',
-    'format_color',
-    'get_cursor',
-    'get_finger_pos',
-    'load_pygame_image_file',
-    'make_surface',
-    'mouse_motion_current_mouse_position',
-    'parse_padding',
-    'print_menu_widget_structure',
-    'set_pygame_cursor',
-    'uuid4',
-    'warn',
-    'widget_terminal_title',
-
+    "assert_alignment",
+    "assert_color",
+    "assert_cursor",
+    "assert_list_vector",
+    "assert_orientation",
+    "assert_position",
+    "assert_position_vector",
+    "assert_vector",
+    "check_key_pressed_valid",
+    "configure_alpha",
+    "fill_gradient",
+    "format_color",
+    "get_cursor",
+    "get_finger_pos",
+    "load_pygame_image_file",
+    "make_surface",
+    "mouse_motion_current_mouse_position",
+    "parse_padding",
+    "print_menu_widget_structure",
+    "set_pygame_cursor",
+    "uuid4",
+    "warn",
+    "widget_terminal_title",
     # Constants
-    'PYGAME_V2',
-
+    "PYGAME_V2",
     # Classes
-    'ShadowGenerator',
-    'TerminalColors'
-
+    "ShadowGenerator",
+    "TerminalColors",
 ]
 
 import sys
@@ -103,13 +99,13 @@ def assert_alignment(align: str) -> None:
     :param align: Align value
     """
     assert isinstance(align, str), f'alignment "{align}" must be a string'
-    assert align in (ALIGN_LEFT, ALIGN_CENTER, ALIGN_RIGHT), \
+    assert align in (ALIGN_LEFT, ALIGN_CENTER, ALIGN_RIGHT), (
         f'incorrect alignment value "{align}"'
+    )
 
 
 def assert_color(
-    color: ColorInputType | list[int],
-    warn_if_invalid: bool = True
+    color: ColorInputType | list[int], warn_if_invalid: bool = True
 ) -> ColorType:
     """
     Assert that a certain color is valid.
@@ -119,21 +115,25 @@ def assert_color(
     :return: Formatted color if valid, else, throws an ``AssertionError`` exception
     """
     color = format_color(color, warn_if_invalid=warn_if_invalid)
-    assert isinstance(color, VectorInstance), \
+    assert isinstance(color, VectorInstance), (
         f'color must be a tuple or list, not type "{type(color)}"'
-    assert 4 >= len(color) >= 3, \
-        'color must be a tuple or list of 3 or 4 numbers'
+    )
+    assert 4 >= len(color) >= 3, "color must be a tuple or list of 3 or 4 numbers"
     for i in range(3):
-        assert isinstance(color[i], int), \
+        assert isinstance(color[i], int), (
             f'"{color[i]}" in element color {color} must be an integer, not type "{type(color)}"'
-        assert 0 <= color[i] <= 255, \
+        )
+        assert 0 <= color[i] <= 255, (
             f'"{color[i]}" in element color {color} must be an integer between 0 and 255'
+        )
     if len(color) == 4:
-        assert isinstance(color[3], int), \
+        assert isinstance(color[3], int), (
             f'alpha channel must be an integer between 0 and 255, not type "{type(color)}"'
-        assert 0 <= color[3] <= 255, \
-            f'opacity of color {color} must be an integer between 0 and 255; ' \
-            f'where 0 is fully-transparent and 255 is fully-opaque'
+        )
+        assert 0 <= color[3] <= 255, (
+            f"opacity of color {color} must be an integer between 0 and 255; "
+            f"where 0 is fully-transparent and 255 is fully-opaque"
+        )
     return color
 
 
@@ -143,21 +143,23 @@ def assert_cursor(cursor: CursorInputType) -> None:  # type: ignore
 
     :param cursor: Cursor object
     """
-    assert isinstance(cursor, CursorInputInstance), \
-        'cursor instance invalid, it can be None, an integer, ' \
-        'or pygame.cursors.Cursor'
+    assert isinstance(cursor, CursorInputInstance), (
+        "cursor instance invalid, it can be None, an integer, or pygame.cursors.Cursor"
+    )
 
 
-def assert_list_vector(list_vector: list[Vector2NumberType] | tuple[Vector2NumberType, ...],
-                       length: int) -> None:
+def assert_list_vector(
+    list_vector: list[Vector2NumberType] | tuple[Vector2NumberType, ...], length: int
+) -> None:
     """
     Assert that a list fixed length vector is numeric.
 
     :param list_vector: Numeric list vector
     :param length: Length of the required vector. If ``0`` don't check the length
     """
-    assert isinstance(list_vector, VectorInstance), \
+    assert isinstance(list_vector, VectorInstance), (
         f'list_vector "{list_vector}" must be a tuple or list'
+    )
     for v in list_vector:
         assert_vector(v, length)
 
@@ -168,10 +170,10 @@ def assert_orientation(orientation: str) -> None:
 
     :param orientation: Object orientation
     """
-    assert isinstance(orientation, str), \
-        f'orientation "{orientation}" must be a string'
-    assert orientation in (ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL), \
+    assert isinstance(orientation, str), f'orientation "{orientation}" must be a string'
+    assert orientation in (ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL), (
         f'invalid orientation value "{orientation}"'
+    )
 
 
 def assert_position(position: str) -> None:
@@ -180,12 +182,18 @@ def assert_position(position: str) -> None:
 
     :param position: Object position
     """
-    assert isinstance(position, str), \
-        f'position "{position}" must be a string'
-    assert position in (POSITION_WEST, POSITION_SOUTHWEST, POSITION_SOUTH,
-                        POSITION_SOUTHEAST, POSITION_EAST, POSITION_NORTH,
-                        POSITION_NORTHWEST, POSITION_NORTHEAST, POSITION_CENTER), \
-        f'invalid position value "{position}"'
+    assert isinstance(position, str), f'position "{position}" must be a string'
+    assert position in (
+        POSITION_WEST,
+        POSITION_SOUTHWEST,
+        POSITION_SOUTH,
+        POSITION_SOUTHEAST,
+        POSITION_EAST,
+        POSITION_NORTH,
+        POSITION_NORTHWEST,
+        POSITION_NORTHEAST,
+        POSITION_CENTER,
+    ), f'invalid position value "{position}"'
 
 
 def assert_position_vector(position: str | list[str] | tuple[str, ...]) -> None:
@@ -203,13 +211,11 @@ def assert_position_vector(position: str | list[str] | tuple[str, ...]) -> None:
             assert_position(pos)
             if pos not in unique:
                 unique.append(pos)
-        assert len(unique) == len(position), 'there cannot be repeated positions'
+        assert len(unique) == len(position), "there cannot be repeated positions"
 
 
 def assert_vector(
-    num_vector: VectorType,
-    length: int,
-    instance: type = NumberInstance
+    num_vector: VectorType, length: int, instance: type = NumberInstance
 ) -> None:
     """
     Assert that a fixed length vector is numeric.
@@ -218,18 +224,21 @@ def assert_vector(
     :param length: Length of the required vector. If ``0`` don't check the length
     :param instance: Instance of each item of the vector
     """
-    assert isinstance(num_vector, VectorInstance), \
+    assert isinstance(num_vector, VectorInstance), (
         f'vector "{num_vector}" must be a list or tuple of {length} items if type {instance}'
+    )
     if length != 0:
-        assert len(num_vector) == length, \
-            f'vector "{num_vector}" must contain {length} numbers only, ' \
-            f'but {num_vector} were given'
+        assert len(num_vector) == length, (
+            f'vector "{num_vector}" must contain {length} numbers only, '
+            f"but {num_vector} were given"
+        )
     for i in range(len(num_vector)):
         num = num_vector[i]
         if instance == int and isinstance(num, float) and int(num) == num:
             num = int(num)
-        assert isinstance(num, instance), \
+        assert isinstance(num, instance), (
             f'item {num} of vector must be {instance}, not type "{type(num)}"'
+        )
 
 
 def check_key_pressed_valid(event: EventType) -> bool:
@@ -244,9 +253,9 @@ def check_key_pressed_valid(event: EventType) -> bool:
     # flag
     bad_event = not (True in pygame.key.get_pressed())
     if bad_event:
-        if 'test' in event.dict and event.dict['test']:
+        if "test" in event.dict and event.dict["test"]:
             return True
-        ev = pygame.event.Event(pygame.KEYUP, {'key': event.key})
+        ev = pygame.event.Event(pygame.KEYUP, {"key": event.key})
         pygame.event.post(ev)
     return not bad_event
 
@@ -267,7 +276,7 @@ def fill_gradient(
     gradient: ColorInputType,
     rect: pygame.Rect | None = None,
     vertical: bool = True,
-    forward: bool = True
+    forward: bool = True,
 ) -> None:
     """
     Fill a surface with a gradient pattern.
@@ -293,18 +302,14 @@ def fill_gradient(
         a, b = color, gradient
     else:
         b, a = color, gradient
-    rate = (
-        float(b[0] - a[0]) / h,
-        float(b[1] - a[1]) / h,
-        float(b[2] - a[2]) / h
-    )
+    rate = (float(b[0] - a[0]) / h, float(b[1] - a[1]) / h, float(b[2] - a[2]) / h)
     fn_line = pygame.draw.line
     if vertical:
         for line in range(y1, y2):
             color = (
                 int(min(max(a[0] + (rate[0] * (line - y1)), 0), 255)),
                 int(min(max(a[1] + (rate[1] * (line - y1)), 0), 255)),
-                int(min(max(a[2] + (rate[2] * (line - y1)), 0), 255))
+                int(min(max(a[2] + (rate[2] * (line - y1)), 0), 255)),
             )
             fn_line(surface, color, (x1, line), (x2, line))
     else:
@@ -312,14 +317,13 @@ def fill_gradient(
             color = (
                 int(min(max(a[0] + (rate[0] * (col - x1)), 0), 255)),
                 int(min(max(a[1] + (rate[1] * (col - x1)), 0), 255)),
-                int(min(max(a[2] + (rate[2] * (col - x1)), 0), 255))
+                int(min(max(a[2] + (rate[2] * (col - x1)), 0), 255)),
             )
             fn_line(surface, color, (col, y1), (col, y2))
 
 
 def format_color(
-    color: ColorInputType | Any,
-    warn_if_invalid: bool = True
+    color: ColorInputType | Any, warn_if_invalid: bool = True
 ) -> ColorType | Any:
     """
     Format color from string, int, or tuple to tuple type.
@@ -339,15 +343,17 @@ def format_color(
         return color
     elif not isinstance(color, pygame.Color):
         if isinstance(color, str):
-            if len(color) == 4 and color[0] == '#':
+            if len(color) == 4 and color[0] == "#":
                 r, g, b = color[1], color[2], color[3]
-                color = f'#{r * 2}{g * 2}{b * 2}'
+                color = f"#{r * 2}{g * 2}{b * 2}"
         try:
             if isinstance(color, VectorInstance) and 3 <= len(color) <= 4:
                 if PYGAME_V2:
                     for j in color:
                         if not isinstance(j, int):
-                            raise ValueError('color cannot contain floating point values')
+                            raise ValueError(
+                                "color cannot contain floating point values"
+                            )
                 c = pygame.Color(*color)
             else:
                 c = pygame.Color(color)
@@ -384,8 +390,9 @@ def get_finger_pos(menu: pygame_menu.Menu | None, event: EventType) -> Tuple2Int
     :return: Position on x-axis and y-axis (x, y) in px
     """
     if event.type in (FINGERDOWN, FINGERMOTION, FINGERUP):
-        assert menu is not None, \
-            'menu reference cannot be none while using finger position'
+        assert menu is not None, (
+            "menu reference cannot be none while using finger position"
+        )
         display_size = menu.get_window_size()
         finger_pos = (int(event.x * display_size[0]), int(event.y * display_size[1]))
         return finger_pos
@@ -399,8 +406,10 @@ def is_callable(func: Any) -> bool:
     :param func: Function object
     :return: ``True`` if function
     """
-    e = 'is_callable(func) method will be removed in v5, consider using built-in' \
-        ' callable(func) method instead'
+    e = (
+        "is_callable(func) method will be removed in v5, consider using built-in"
+        " callable(func) method instead"
+    )
     warnings.warn(e, DeprecationWarning)
     return callable(func)
 
@@ -415,30 +424,35 @@ def load_pygame_image_file(image_path: str, **kwargs) -> pygame.Surface:
     """
     # Try to load the image
     try:
-        if 'test' in kwargs.keys():
-            raise pygame.error('File is not a Windows BMP file')
+        if "test" in kwargs.keys():
+            raise pygame.error("File is not a Windows BMP file")
 
         surface = pygame.image.load(image_path)
 
     except pygame.error as exc:
         # Check if file is not a Windows file
-        if str(exc) == 'File is not a Windows BMP file':
+        if str(exc) == "File is not a Windows BMP file":
             pil_invalid_exception = Exception
 
             # Check if Pillow exists
             try:
                 from PIL import Image, UnidentifiedImageError  # type: ignore
+
                 pil_invalid_exception = UnidentifiedImageError
                 img_pil = Image.open(image_path)
                 if pygame.version.vernum >= (2, 3, 0):
                     surface = pygame.image.frombytes(
-                        img_pil.tobytes(), img_pil.size, img_pil.mode).convert()
+                        img_pil.tobytes(), img_pil.size, img_pil.mode
+                    ).convert()
                 else:
                     surface = pygame.image.fromstring(
-                        img_pil.tobytes(), img_pil.size, img_pil.mode).convert()
+                        img_pil.tobytes(), img_pil.size, img_pil.mode
+                    ).convert()
             except (ModuleNotFoundError, ImportError):
-                warn(f'Image file "{image_path}" could not be loaded, as pygame.error '
-                     f'is raised. To avoid this issue install the Pillow library')
+                warn(
+                    f'Image file "{image_path}" could not be loaded, as pygame.error '
+                    f"is raised. To avoid this issue install the Pillow library"
+                )
                 raise
             except pil_invalid_exception:
                 warn(f'The image "{image_path}" could not be loaded using Pillow')
@@ -454,7 +468,7 @@ def make_surface(
     width: NumberType,
     height: NumberType,
     alpha: bool = False,
-    fill_color: ColorInputType | None = None
+    fill_color: ColorInputType | None = None,
 ) -> pygame.Surface:
     """
     Creates a pygame surface object.
@@ -468,8 +482,9 @@ def make_surface(
     assert isinstance(width, NumberInstance)
     assert isinstance(height, NumberInstance)
     assert isinstance(alpha, bool)
-    assert width >= 0 and height >= 0, \
-        'surface width and height must be equal or greater than zero'
+    assert width >= 0 and height >= 0, (
+        "surface width and height must be equal or greater than zero"
+    )
     surface = pygame.Surface((int(width), int(height)), pygame.SRCALPHA, 32)
     if alpha and _ALPHA_CHANNEL[0]:
         surface = pygame.Surface.convert_alpha(surface)
@@ -486,7 +501,7 @@ def mouse_motion_current_mouse_position() -> EventType:
     :return: Event
     """
     x, y = pygame.mouse.get_pos()
-    return pygame.event.Event(pygame.MOUSEMOTION, {'pos': (int(x), int(y))})
+    return pygame.event.Event(pygame.MOUSEMOTION, {"pos": (int(x), int(y))})
 
 
 def parse_padding(padding: PaddingType) -> Tuple4IntType:
@@ -510,15 +525,17 @@ def parse_padding(padding: PaddingType) -> Tuple4IntType:
     assert isinstance(padding, PaddingInstance)
 
     if isinstance(padding, NumberInstance):
-        assert padding >= 0, 'padding cannot be a negative number'
+        assert padding >= 0, "padding cannot be a negative number"
         return int(padding), int(padding), int(padding), int(padding)
     else:
-        assert 1 <= len(padding) <= 4, 'padding must be a tuple of 2, 3 or 4 elements'
+        assert 1 <= len(padding) <= 4, "padding must be a tuple of 2, 3 or 4 elements"
         for i in range(len(padding)):
-            assert isinstance(padding[i], NumberInstance), \
-                'all padding elements must be integers or floats'
-            assert padding[i] >= 0, \
-                'all padding elements must be equal or greater than zero'
+            assert isinstance(padding[i], NumberInstance), (
+                "all padding elements must be integers or floats"
+            )
+            assert padding[i] >= 0, (
+                "all padding elements must be equal or greater than zero"
+            )
         if len(padding) == 1:
             return int(padding[0]), int(padding[0]), int(padding[0]), int(padding[0])
         elif len(padding) == 2:
@@ -529,8 +546,7 @@ def parse_padding(padding: PaddingType) -> Tuple4IntType:
 
 
 def print_menu_widget_structure(
-    widgets: list[pygame_menu.widgets.Widget],
-    index: int
+    widgets: list[pygame_menu.widgets.Widget], index: int
 ) -> None:
     """
     Test printing widgets order.
@@ -563,8 +579,8 @@ def print_menu_widget_structure(
         d = current_depth - depth
         for i in range(d):
             j = depth + d - (i + 1)  # Current depth
-            line = f'·   {"│   " * j}└{"┄" * 3}'  # * depth_widths[j]
-            print(c.BRIGHT_WHITE + line.ljust(0, '━') + c.ENDC)  # 80 also work
+            line = f"·   {'│   ' * j}└{'┄' * 3}"  # * depth_widths[j]
+            print(c.BRIGHT_WHITE + line.ljust(0, "━") + c.ENDC)  # 80 also work
 
     non_menu_frame_widgets: dict[int, list[pygame_menu.widgets.Widget]] = {}
 
@@ -602,7 +618,9 @@ def print_menu_widget_structure(
         process_non_menu_frame(indx)
         jw = widgets[0]
         try:
-            if isinstance(w, pygame_menu.widgets.Frame):  # Print ordered non-menu widgets
+            if isinstance(
+                w, pygame_menu.widgets.Frame
+            ):  # Print ordered non-menu widgets
                 current_depth += 1
                 prev_indx = indx
                 for jw in w.get_widgets(unpack_subframes=False):
@@ -613,7 +631,7 @@ def print_menu_widget_structure(
                     else:
                         prev_indx = widgets.index(jw)
         except ValueError as e:
-            print(f'[ERROR] while requesting widget {jw.get_class_id()}')
+            print(f"[ERROR] while requesting widget {jw.get_class_id()}")
             warn(str(e))
         indx += 1
     process_non_menu_frame(indx)
@@ -631,7 +649,7 @@ def set_pygame_cursor(cursor: CursorInputType) -> None:  # type: ignore
             pygame.mouse.set_cursor(cursor)
     except (pygame.error, TypeError):
         if PYGAME_V2:
-            warn(f'could not establish widget cursor, invalid value {cursor}')
+            warn(f"could not establish widget cursor, invalid value {cursor}")
 
 
 def uuid4(short: bool = False) -> str:
@@ -673,9 +691,7 @@ def warn(message: str, print_stack: bool = True) -> None:
 
 
 def widget_terminal_title(
-    widget: pygame_menu.widgets.Widget,
-    widget_index: int = -1,
-    current_index: int = -1
+    widget: pygame_menu.widgets.Widget, widget_index: int = -1, current_index: int = -1
 ) -> str:
     """
     Return widget title to be printed on terminals.
@@ -693,8 +709,7 @@ def widget_terminal_title(
 
         i0, i1 = widget.get_indices()
         w_title += (
-            f"{w_class_id} - "
-            f"{TerminalColors.LGREEN}[{i0},{i1},{TerminalColors.ENDC}"
+            f"{w_class_id} - {TerminalColors.LGREEN}[{i0},{i1},{TerminalColors.ENDC}"
         )
 
         # Orientation
@@ -715,7 +730,9 @@ def widget_terminal_title(
     # Non-frame widget
     else:
         if widget.get_title():
-            title_f = f"{TerminalColors.UNDERLINE}{widget.get_title()}{TerminalColors.ENDC}"
+            title_f = (
+                f"{TerminalColors.UNDERLINE}{widget.get_title()}{TerminalColors.ENDC}"
+            )
             w_title = f"{w_class_id} - {title_f} - "
         else:
             w_title = f"{w_class_id} - "
@@ -760,18 +777,19 @@ class TerminalColors:
 
     See https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html.
     """
-    BLUE = '\u001b[38;5;27m'
-    BOLD = '\033[1m'
-    BRIGHT_MAGENTA = '\u001b[35;1m'
-    BRIGHT_WHITE = '\u001b[37;1m'
-    CYAN = '\u001b[36m'
-    ENDC = '\u001b[0m'
-    GRAY = '\u001b[30;1m'
-    INDIGO = '\u001b[38;5;129m'
-    LGREEN = '\u001b[38;5;150m'
-    MAGENTA = '\u001b[35m'
-    RED = '\u001b[31m'
-    UNDERLINE = '\033[4m'
+
+    BLUE = "\u001b[38;5;27m"
+    BOLD = "\033[1m"
+    BRIGHT_MAGENTA = "\u001b[35;1m"
+    BRIGHT_WHITE = "\u001b[37;1m"
+    CYAN = "\u001b[36m"
+    ENDC = "\u001b[0m"
+    GRAY = "\u001b[30;1m"
+    INDIGO = "\u001b[38;5;129m"
+    LGREEN = "\u001b[38;5;150m"
+    MAGENTA = "\u001b[35m"
+    RED = "\u001b[31m"
+    UNDERLINE = "\033[4m"
 
 
 class ShadowGenerator:
@@ -802,8 +820,11 @@ class ShadowGenerator:
 
         :param force: Force clear
         """
-        t = len(self._created_ellipse_shadows) + len(self._preloaded_shadow_corners) + \
-            len(self._short_term_rect_cache)
+        t = (
+            len(self._created_ellipse_shadows)
+            + len(self._preloaded_shadow_corners)
+            + len(self._short_term_rect_cache)
+        )
         if t >= 100 or force:
             self._created_ellipse_shadows.clear()
             self._preloaded_shadow_corners.clear()
@@ -814,7 +835,7 @@ class ShadowGenerator:
         shadow_width_param: int,
         corner_radius_param: int,
         color: Tuple3IntType,
-        aa_amount: int = 4
+        aa_amount: int = 4,
     ) -> dict[str, pygame.Surface]:
         """
         Create corners for our rectangular shadows. These can be used across many
@@ -829,9 +850,7 @@ class ShadowGenerator:
         shadow_width_param = max(1, shadow_width_param)
 
         corner_rect = pygame.Rect(
-            0, 0,
-            corner_radius_param * aa_amount,
-            corner_radius_param * aa_amount
+            0, 0, corner_radius_param * aa_amount, corner_radius_param * aa_amount
         )
 
         corner_surface, edge_surface = self._create_single_corner_and_edge(
@@ -839,50 +858,53 @@ class ShadowGenerator:
             corner_radius_param=corner_radius_param,
             corner_rect=corner_rect,
             shadow_width_param=shadow_width_param,
-            color=color
+            color=color,
         )
 
-        sub_radius = ((corner_radius_param - shadow_width_param) * aa_amount)
-        top_edge = pygame.transform.smoothscale(edge_surface,
-                                                (shadow_width_param, shadow_width_param))
+        sub_radius = (corner_radius_param - shadow_width_param) * aa_amount
+        top_edge = pygame.transform.smoothscale(
+            edge_surface, (shadow_width_param, shadow_width_param)
+        )
         left_edge = pygame.transform.rotate(top_edge, 90)
 
-        tl_corner = pygame.transform.smoothscale(corner_surface,
-                                                 (corner_radius_param,
-                                                  corner_radius_param))
+        tl_corner = pygame.transform.smoothscale(
+            corner_surface, (corner_radius_param, corner_radius_param)
+        )
 
         if sub_radius > 0:
-            corner_sub_surface = pygame.surface.Surface(corner_rect.size,
-                                                        flags=pygame.SRCALPHA,
-                                                        depth=32)
-            corner_sub_surface.fill(pygame.Color('#00000000'))
+            corner_sub_surface = pygame.surface.Surface(
+                corner_rect.size, flags=pygame.SRCALPHA, depth=32
+            )
+            corner_sub_surface.fill(pygame.Color("#00000000"))
 
-            pygame.draw.circle(corner_sub_surface,
-                               pygame.Color('#FFFFFFFF'),
-                               corner_rect.size,
-                               sub_radius)
+            pygame.draw.circle(
+                corner_sub_surface,
+                pygame.Color("#FFFFFFFF"),
+                corner_rect.size,
+                sub_radius,
+            )
 
-            corner_small_sub_surface = pygame.transform.smoothscale(corner_sub_surface,
-                                                                    (corner_radius_param,
-                                                                     corner_radius_param))
+            corner_small_sub_surface = pygame.transform.smoothscale(
+                corner_sub_surface, (corner_radius_param, corner_radius_param)
+            )
 
-            tl_corner.blit(corner_small_sub_surface,
-                           (0, 0),
-                           special_flags=pygame.BLEND_RGBA_SUB)
+            tl_corner.blit(
+                corner_small_sub_surface, (0, 0), special_flags=pygame.BLEND_RGBA_SUB
+            )
 
         corners_and_edges = {
-            'bottom': pygame.transform.flip(top_edge, False, True),
-            'bottom_left': pygame.transform.flip(tl_corner, False, True),
-            'bottom_right': pygame.transform.flip(tl_corner, True, True),
-            'left': left_edge,
-            'right': pygame.transform.flip(left_edge, True, False),
-            'top': top_edge,
-            'top_left': tl_corner,
-            'top_right': pygame.transform.flip(tl_corner, True, False)
+            "bottom": pygame.transform.flip(top_edge, False, True),
+            "bottom_left": pygame.transform.flip(tl_corner, False, True),
+            "bottom_right": pygame.transform.flip(tl_corner, True, True),
+            "left": left_edge,
+            "right": pygame.transform.flip(left_edge, True, False),
+            "top": top_edge,
+            "top_left": tl_corner,
+            "top_right": pygame.transform.flip(tl_corner, True, False),
         }
-        self._preloaded_shadow_corners[(str(shadow_width_param) +
-                                        'x' +
-                                        str(corner_radius_param))] = corners_and_edges
+        self._preloaded_shadow_corners[
+            (str(shadow_width_param) + "x" + str(corner_radius_param))
+        ] = corners_and_edges
 
         return corners_and_edges
 
@@ -892,7 +914,7 @@ class ShadowGenerator:
         corner_radius_param: int,
         corner_rect: pygame.Rect,
         shadow_width_param: int,
-        color: Tuple3IntType
+        color: Tuple3IntType,
     ) -> tuple[pygame.Surface, pygame.Surface]:
         """
         Creates a single corner surface and a single edge surface for a shadow.
@@ -905,55 +927,64 @@ class ShadowGenerator:
         :return: A tuple of the corner surface and the edge surface
         """
         aa_amount = max(1, aa_amount)
-        final_corner_surface = pygame.surface.Surface((corner_radius_param * aa_amount,
-                                                       corner_radius_param * aa_amount),
-                                                      flags=pygame.SRCALPHA, depth=32)
-        final_corner_surface.fill(pygame.Color('#00000000'))
-        final_edge_surface = pygame.surface.Surface((shadow_width_param * aa_amount,
-                                                     shadow_width_param * aa_amount),
-                                                    flags=pygame.SRCALPHA, depth=32)
-        final_edge_surface.fill(pygame.Color('#00000000'))
+        final_corner_surface = pygame.surface.Surface(
+            (corner_radius_param * aa_amount, corner_radius_param * aa_amount),
+            flags=pygame.SRCALPHA,
+            depth=32,
+        )
+        final_corner_surface.fill(pygame.Color("#00000000"))
+        final_edge_surface = pygame.surface.Surface(
+            (shadow_width_param * aa_amount, shadow_width_param * aa_amount),
+            flags=pygame.SRCALPHA,
+            depth=32,
+        )
+        final_edge_surface.fill(pygame.Color("#00000000"))
         corner_radius = corner_radius_param * aa_amount
         corner_centre = (corner_radius, corner_radius)
-        edge_rect = pygame.Rect(0, 0,
-                                shadow_width_param * aa_amount,
-                                shadow_width_param * aa_amount)
+        edge_rect = pygame.Rect(
+            0, 0, shadow_width_param * aa_amount, shadow_width_param * aa_amount
+        )
         edge_shadow_fade_height = edge_rect.width
 
-        alpha_increment = 20.0 / (shadow_width_param ** 1.5)
+        alpha_increment = 20.0 / (shadow_width_param**1.5)
         shadow_alpha = alpha_increment
         r, g, b = color
         for _ in range(shadow_width_param):
             if corner_rect.width > 0 and corner_rect.height > 0 and corner_radius > 0:
                 # Edge
                 edge_shadow_surface = pygame.surface.Surface(
-                    edge_rect.size,
-                    flags=pygame.SRCALPHA,
-                    depth=32)
-                edge_shadow_surface.fill(pygame.Color('#00000000'))
-                edge_shadow_surface.fill(pygame.Color(r, g, b, int(shadow_alpha)),
-                                         pygame.Rect(0,
-                                                     edge_rect.height - edge_shadow_fade_height,
-                                                     edge_rect.width,
-                                                     edge_shadow_fade_height))
+                    edge_rect.size, flags=pygame.SRCALPHA, depth=32
+                )
+                edge_shadow_surface.fill(pygame.Color("#00000000"))
+                edge_shadow_surface.fill(
+                    pygame.Color(r, g, b, int(shadow_alpha)),
+                    pygame.Rect(
+                        0,
+                        edge_rect.height - edge_shadow_fade_height,
+                        edge_rect.width,
+                        edge_shadow_fade_height,
+                    ),
+                )
 
-                final_edge_surface.blit(edge_shadow_surface,
-                                        (0, 0),
-                                        special_flags=pygame.BLEND_RGBA_ADD)
+                final_edge_surface.blit(
+                    edge_shadow_surface, (0, 0), special_flags=pygame.BLEND_RGBA_ADD
+                )
 
                 # Corner
-                corner_shadow_surface = pygame.surface.Surface(corner_rect.size,
-                                                               flags=pygame.SRCALPHA,
-                                                               depth=32)
-                corner_shadow_surface.fill(pygame.Color('#00000000'))
-                pygame.draw.circle(corner_shadow_surface,
-                                   pygame.Color(r, g, b, int(shadow_alpha)),
-                                   corner_centre,
-                                   corner_radius)
+                corner_shadow_surface = pygame.surface.Surface(
+                    corner_rect.size, flags=pygame.SRCALPHA, depth=32
+                )
+                corner_shadow_surface.fill(pygame.Color("#00000000"))
+                pygame.draw.circle(
+                    corner_shadow_surface,
+                    pygame.Color(r, g, b, int(shadow_alpha)),
+                    corner_centre,
+                    corner_radius,
+                )
 
-                final_corner_surface.blit(corner_shadow_surface,
-                                          (0, 0),
-                                          special_flags=pygame.BLEND_RGBA_ADD)
+                final_corner_surface.blit(
+                    corner_shadow_surface, (0, 0), special_flags=pygame.BLEND_RGBA_ADD
+                )
 
                 # increments/decrements
                 shadow_alpha += alpha_increment
@@ -968,7 +999,7 @@ class ShadowGenerator:
         shadow_width_param: int,
         corner_radius_param: int,
         aa_amount: int = 4,
-        color: Tuple3IntType = (0, 0, 0)
+        color: Tuple3IntType = (0, 0, 0),
     ) -> pygame.Surface | None:
         """
         Creates a rectangular shadow surface at the specified size and stores it for later use.
@@ -984,19 +1015,37 @@ class ShadowGenerator:
         assert isinstance(width, int)
         assert isinstance(height, int)
         assert_vector(color, 3, int)
-        shadow_width_param, corner_radius_param, aa_amount = int(shadow_width_param), \
-            int(corner_radius_param), int(aa_amount)
-        if width < corner_radius_param or height < corner_radius_param or shadow_width_param == 0:
+        shadow_width_param, corner_radius_param, aa_amount = (
+            int(shadow_width_param),
+            int(corner_radius_param),
+            int(aa_amount),
+        )
+        if (
+            width < corner_radius_param
+            or height < corner_radius_param
+            or shadow_width_param == 0
+        ):
             return None
         r, g, b = color
-        params = [width, height, shadow_width_param, corner_radius_param, aa_amount, r, g, b]
-        shadow_id = '_'.join(str(param) for param in params)
+        params = [
+            width,
+            height,
+            shadow_width_param,
+            corner_radius_param,
+            aa_amount,
+            r,
+            g,
+            b,
+        ]
+        shadow_id = "_".join(str(param) for param in params)
         if shadow_id in self._short_term_rect_cache:
             return self._short_term_rect_cache[shadow_id]
-        final_surface = pygame.surface.Surface((width, height), flags=pygame.SRCALPHA, depth=32)
-        final_surface.fill(pygame.Color('#00000000'))
+        final_surface = pygame.surface.Surface(
+            (width, height), flags=pygame.SRCALPHA, depth=32
+        )
+        final_surface.fill(pygame.Color("#00000000"))
 
-        corner_index_id = str(shadow_width_param) + 'x' + str(corner_radius_param)
+        corner_index_id = str(shadow_width_param) + "x" + str(corner_radius_param)
         if corner_index_id in self._preloaded_shadow_corners:
             edges_and_corners = self._preloaded_shadow_corners[corner_index_id]
         else:
@@ -1004,38 +1053,50 @@ class ShadowGenerator:
                 shadow_width_param=shadow_width_param,
                 corner_radius_param=corner_radius_param,
                 color=color,
-                aa_amount=aa_amount
+                aa_amount=aa_amount,
             )
 
-        final_surface.blit(edges_and_corners['top_left'], (0, 0))
-        final_surface.blit(edges_and_corners['top_right'], (width - corner_radius_param, 0))
+        final_surface.blit(edges_and_corners["top_left"], (0, 0))
+        final_surface.blit(
+            edges_and_corners["top_right"], (width - corner_radius_param, 0)
+        )
 
-        final_surface.blit(edges_and_corners['bottom_left'],
-                           (0, height - corner_radius_param))
-        final_surface.blit(edges_and_corners['bottom_right'],
-                           (width - corner_radius_param, height - corner_radius_param))
+        final_surface.blit(
+            edges_and_corners["bottom_left"], (0, height - corner_radius_param)
+        )
+        final_surface.blit(
+            edges_and_corners["bottom_right"],
+            (width - corner_radius_param, height - corner_radius_param),
+        )
 
         if width - (2 * corner_radius_param) > 0:
-            top_edge = pygame.transform.scale(edges_and_corners['top'],
-                                              (width - (2 * corner_radius_param),
-                                               shadow_width_param))
-            bottom_edge = pygame.transform.scale(edges_and_corners['bottom'],
-                                                 (width - (2 * corner_radius_param),
-                                                  shadow_width_param))
+            top_edge = pygame.transform.scale(
+                edges_and_corners["top"],
+                (width - (2 * corner_radius_param), shadow_width_param),
+            )
+            bottom_edge = pygame.transform.scale(
+                edges_and_corners["bottom"],
+                (width - (2 * corner_radius_param), shadow_width_param),
+            )
             final_surface.blit(top_edge, (corner_radius_param, 0))
-            final_surface.blit(bottom_edge, (corner_radius_param, height - shadow_width_param))
+            final_surface.blit(
+                bottom_edge, (corner_radius_param, height - shadow_width_param)
+            )
 
         if height - (2 * corner_radius_param) > 0:
-            left_edge = pygame.transform.scale(edges_and_corners['left'],
-                                               (shadow_width_param,
-                                                height - (2 * corner_radius_param)))
-            right_edge = pygame.transform.scale(edges_and_corners['right'],
-                                                (shadow_width_param,
-                                                 height - (2 * corner_radius_param)))
+            left_edge = pygame.transform.scale(
+                edges_and_corners["left"],
+                (shadow_width_param, height - (2 * corner_radius_param)),
+            )
+            right_edge = pygame.transform.scale(
+                edges_and_corners["right"],
+                (shadow_width_param, height - (2 * corner_radius_param)),
+            )
 
             final_surface.blit(left_edge, (0, corner_radius_param))
-            final_surface.blit(right_edge, (width - shadow_width_param,
-                                            corner_radius_param))
+            final_surface.blit(
+                right_edge, (width - shadow_width_param, corner_radius_param)
+            )
 
         self._short_term_rect_cache[shadow_id] = final_surface
         return final_surface
@@ -1046,7 +1107,7 @@ class ShadowGenerator:
         height: int,
         shadow_width_param: int,
         aa_amount: int = 4,
-        color: Tuple3IntType = (0, 0, 0)
+        color: Tuple3IntType = (0, 0, 0),
     ) -> pygame.Surface | None:
         """
         Creates an ellipse shaped shadow surface at the specified size and stores it for later use.
@@ -1064,11 +1125,12 @@ class ShadowGenerator:
         shadow_width_param, aa_amount = int(shadow_width_param), int(aa_amount)
         if shadow_width_param == 0:
             return None
-        shadow_surface = pygame.surface.Surface((width * aa_amount, height * aa_amount),
-                                                flags=pygame.SRCALPHA, depth=32)
-        shadow_surface.fill(pygame.Color('#00000000'))
+        shadow_surface = pygame.surface.Surface(
+            (width * aa_amount, height * aa_amount), flags=pygame.SRCALPHA, depth=32
+        )
+        shadow_surface.fill(pygame.Color("#00000000"))
         r, g, b = color
-        ellipse_id = str(width) + 'x' + str(height) + 'x' + str(shadow_width_param)
+        ellipse_id = str(width) + "x" + str(height) + "x" + str(shadow_width_param)
         if ellipse_id in self._created_ellipse_shadows:
             return self._created_ellipse_shadows[ellipse_id]
 
@@ -1078,14 +1140,14 @@ class ShadowGenerator:
         shadow_height = height * aa_amount
         for i in range(shadow_width_param):
             if shadow_width > 0 and shadow_height > 0:
-                shadow_rect = pygame.Rect(i * aa_amount,
-                                          i * aa_amount,
-                                          shadow_width,
-                                          shadow_height)
-                pygame.draw.ellipse(shadow_surface,
-                                    pygame.Color(r, g, b, shadow_alpha), shadow_rect)
-                shadow_width -= (2 * aa_amount)
-                shadow_height -= (2 * aa_amount)
+                shadow_rect = pygame.Rect(
+                    i * aa_amount, i * aa_amount, shadow_width, shadow_height
+                )
+                pygame.draw.ellipse(
+                    shadow_surface, pygame.Color(r, g, b, shadow_alpha), shadow_rect
+                )
+                shadow_width -= 2 * aa_amount
+                shadow_height -= 2 * aa_amount
                 shadow_alpha += alpha_increment
 
         final_surface = pygame.transform.smoothscale(shadow_surface, (width, height))

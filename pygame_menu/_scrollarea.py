@@ -9,13 +9,10 @@ ScrollArea class to manage scrolling in Menu.
 from __future__ import annotations
 
 __all__ = [
-
     # Main class
-    'ScrollArea',
-
+    "ScrollArea",
     # Utils
-    'get_scrollbars_from_position'
-
+    "get_scrollbars_from_position",
 ]
 
 from itertools import product
@@ -66,7 +63,7 @@ from pygame_menu.widgets import ScrollBar
 
 
 def get_scrollbars_from_position(
-    position: str
+    position: str,
 ) -> str | tuple[str, str] | tuple[str, str, str, str]:
     """
     Return the scrollbars from the given position.
@@ -93,10 +90,10 @@ def get_scrollbars_from_position(
     elif position == SCROLLAREA_POSITION_BOTH_VERTICAL:
         return POSITION_EAST, POSITION_WEST
     elif position == SCROLLAREA_POSITION_NONE:
-        return ''
+        return ""
     elif position == POSITION_CENTER:
-        raise ValueError('cannot init scrollbars from center position')
-    raise ValueError('unknown ScrollArea position')
+        raise ValueError("cannot init scrollbars from center position")
+    raise ValueError("unknown ScrollArea position")
 
 
 DEFAULT_SCROLLBARS = get_scrollbars_from_position(POSITION_SOUTHEAST)
@@ -146,6 +143,7 @@ class ScrollArea(Base):
     :param shadow_position: Position of the scrollbar shadow. See :py:mod:`pygame_menu.locals`
     :param world: Surface to draw and scroll
     """
+
     _area_color: ColorInputType | pygame_menu.BaseImage | None
     _border_color: ColorInputType | pygame_menu.BaseImage | None
     _border_tiles: list[pygame.Surface]
@@ -181,7 +179,7 @@ class ScrollArea(Base):
         extend_y: int = 0,
         menubar: pygame_menu.widgets.MenuBar | None = None,
         parent_scrollarea: ScrollArea | None = None,
-        scrollarea_id: str = '',
+        scrollarea_id: str = "",
         scrollbar_color: ColorInputType = (235, 235, 235),
         scrollbar_cursor: CursorInputType = None,  # type: ignore
         scrollbar_slider_color: ColorInputType = (200, 200, 200),
@@ -193,7 +191,7 @@ class ScrollArea(Base):
         shadow_color: ColorInputType = (0, 0, 0),
         shadow_offset: int = 2,
         shadow_position: str = POSITION_SOUTHEAST,
-        world: pygame.Surface | None = None
+        world: pygame.Surface | None = None,
     ) -> None:
         super().__init__(object_id=scrollarea_id)
 
@@ -214,7 +212,9 @@ class ScrollArea(Base):
 
         if area_color is not None and not isinstance(area_color, pygame_menu.BaseImage):
             area_color = assert_color(area_color)
-        if border_color is not None and not isinstance(border_color, pygame_menu.BaseImage):
+        if border_color is not None and not isinstance(
+            border_color, pygame_menu.BaseImage
+        ):
             border_color = assert_color(border_color)
 
         # Create tiles
@@ -233,7 +233,7 @@ class ScrollArea(Base):
 
         assert_position(shadow_position)
 
-        assert area_width > 0 and area_height > 0, 'area size must be greater than zero'
+        assert area_width > 0 and area_height > 0, "area size must be greater than zero"
 
         assert isinstance(scrollbars, (str, VectorInstance))
         unique_scrolls: list[str] = []
@@ -245,8 +245,8 @@ class ScrollArea(Base):
                     unique_scrolls.append(s)
 
         # Remove none position
-        if '' in unique_scrolls:
-            unique_scrolls.pop(unique_scrolls.index(''))
+        if "" in unique_scrolls:
+            unique_scrolls.pop(unique_scrolls.index(""))
 
         self._area_color = area_color
         self._border_color = border_color
@@ -261,11 +261,22 @@ class ScrollArea(Base):
         self._extend_y = extend_y
         self._menubar = menubar
 
-        self._scrollbars_props = (scrollbar_color, scrollbar_thick, scrollbar_slider_color,
-                                  scrollbar_slider_hover_color, scrollbar_slider_pad,
-                                  scrollbar_cursor, shadow, shadow_color, shadow_position,
-                                  shadow_offset, controls_joystick, controls_mouse,
-                                  controls_touchscreen, controls_keyboard)
+        self._scrollbars_props = (
+            scrollbar_color,
+            scrollbar_thick,
+            scrollbar_slider_color,
+            scrollbar_slider_hover_color,
+            scrollbar_slider_pad,
+            scrollbar_cursor,
+            shadow,
+            shadow_color,
+            shadow_position,
+            shadow_offset,
+            controls_joystick,
+            controls_mouse,
+            controls_touchscreen,
+            controls_keyboard,
+        )
         self.set_parent_scrollarea(parent_scrollarea)
         self.create_rect(area_width, area_height)
 
@@ -286,11 +297,22 @@ class ScrollArea(Base):
         self._view_rect = self.get_view_rect()
 
         # Unpack properties
-        (scrollbar_color, scrollbar_thick, scrollbar_slider_color,
-         scrollbar_slider_hover_color, scrollbar_slider_pad,
-         scrollbar_cursor, shadow, shadow_color, shadow_position,
-         shadow_offset, controls_joystick, controls_mouse, controls_touchscreen,
-         controls_keyboard) = self._scrollbars_props
+        (
+            scrollbar_color,
+            scrollbar_thick,
+            scrollbar_slider_color,
+            scrollbar_slider_hover_color,
+            scrollbar_slider_pad,
+            scrollbar_cursor,
+            shadow,
+            shadow_color,
+            shadow_position,
+            shadow_offset,
+            controls_joystick,
+            controls_mouse,
+            controls_touchscreen,
+            controls_keyboard,
+        ) = self._scrollbars_props
 
         for pos in self._scrollbar_positions:
             assert_position(pos)
@@ -305,7 +327,7 @@ class ScrollArea(Base):
                     slider_color=scrollbar_slider_color,
                     slider_hover_color=scrollbar_slider_hover_color,
                     slider_pad=scrollbar_slider_pad,
-                    values_range=(0, max(1, self.get_hidden_height()))
+                    values_range=(0, max(1, self.get_hidden_height())),
                 )
 
             else:
@@ -317,20 +339,20 @@ class ScrollArea(Base):
                     slider_color=scrollbar_slider_color,
                     slider_hover_color=scrollbar_slider_hover_color,
                     slider_pad=scrollbar_slider_pad,
-                    values_range=(0, max(1, self.get_hidden_width()))
+                    values_range=(0, max(1, self.get_hidden_width())),
                 )
 
             sbar.set_shadow(
                 enabled=shadow,
                 color=shadow_color,
                 position=shadow_position,
-                offset=shadow_offset
+                offset=shadow_offset,
             )
             sbar.set_controls(
                 joystick=controls_joystick,
                 mouse=controls_mouse,
                 touchscreen=controls_touchscreen,
-                keyboard=controls_keyboard
+                keyboard=controls_keyboard,
             )
             sbar.set_cursor(cursor=scrollbar_cursor)
             sbar.set_scrollarea(self)
@@ -347,15 +369,17 @@ class ScrollArea(Base):
         """
         # If bg surface is created, and it's the same size
         if (
-            self._bg_surface is not None and
-            self._bg_surface.get_width() == self._rect.width and
-            self._bg_surface.get_height() == self._rect.height
+            self._bg_surface is not None
+            and self._bg_surface.get_width() == self._rect.width
+            and self._bg_surface.get_height() == self._rect.height
         ):
             return
 
         # Make surface
-        self._bg_surface = make_surface(width=self._rect.width + self._extend_x,
-                                        height=self._rect.height + self._extend_y)
+        self._bg_surface = make_surface(
+            width=self._rect.width + self._extend_x,
+            height=self._rect.height + self._extend_y,
+        )
         rect = self._bg_surface.get_rect()
         if self._area_color is not None:
             if isinstance(self._area_color, pygame_menu.BaseImage):
@@ -364,8 +388,7 @@ class ScrollArea(Base):
                 self._bg_surface.fill(assert_color(self._area_color))
 
     def update_area_color(
-        self,
-        color: ColorInputType | pygame_menu.BaseImage | None
+        self, color: ColorInputType | pygame_menu.BaseImage | None
     ) -> ScrollArea:
         """
         Updates area color (background).
@@ -385,7 +408,7 @@ class ScrollArea(Base):
         :param parent: Parent ScrollArea
         """
         assert isinstance(parent, (ScrollArea, type(None)))
-        assert parent != self, 'parent scrollarea cannot be set as itself'
+        assert parent != self, "parent scrollarea cannot be set as itself"
         self._parent_scrollarea = parent
         return self
 
@@ -419,7 +442,7 @@ class ScrollArea(Base):
 
         :return: Raises copy exception
         """
-        raise _ScrollAreaCopyException('ScrollArea class cannot be copied')
+        raise _ScrollAreaCopyException("ScrollArea class cannot be copied")
 
     def __deepcopy__(self, memodict: dict) -> ScrollArea:
         """
@@ -428,7 +451,7 @@ class ScrollArea(Base):
         :param memodict: Memo dict
         :return: Raises copy exception
         """
-        raise _ScrollAreaCopyException('ScrollArea class cannot be copied')
+        raise _ScrollAreaCopyException("ScrollArea class cannot be copied")
 
     def force_menu_surface_update(self) -> ScrollArea:
         """
@@ -478,23 +501,37 @@ class ScrollArea(Base):
                 d_size, (dx, dy) = self._menubar.get_scrollbar_style_change(pos)
 
             if pos == POSITION_WEST:
-                sbar.set_position(x=self._view_rect.left - sbar.get_thickness() + dx, y=self._view_rect.top + dy)
+                sbar.set_position(
+                    x=self._view_rect.left - sbar.get_thickness() + dx,
+                    y=self._view_rect.top + dy,
+                )
             elif pos == POSITION_EAST:
-                sbar.set_position(x=self._view_rect.right + dx, y=self._view_rect.top + dy)
+                sbar.set_position(
+                    x=self._view_rect.right + dx, y=self._view_rect.top + dy
+                )
             elif pos == POSITION_NORTH:
-                sbar.set_position(x=self._view_rect.left + dx, y=self._view_rect.top - sbar.get_thickness() + dy)
+                sbar.set_position(
+                    x=self._view_rect.left + dx,
+                    y=self._view_rect.top - sbar.get_thickness() + dy,
+                )
             elif pos == POSITION_SOUTH:  # South
-                sbar.set_position(x=self._view_rect.left + dx, y=self._view_rect.bottom + dy)
+                sbar.set_position(
+                    x=self._view_rect.left + dx, y=self._view_rect.bottom + dy
+                )
             else:
-                raise ValueError('unknown position, only west, east, north, and'
-                                 'south are allowed')
+                raise ValueError(
+                    "unknown position, only west, east, north, andsouth are allowed"
+                )
 
             if pos in (POSITION_NORTH, POSITION_SOUTH):
                 if self.get_hidden_width() != 0:
                     sbar.set_length(self._view_rect.width + d_size)
                     sbar.set_maximum(self.get_hidden_width())
-                    sbar.set_page_step(self._view_rect.width * self.get_hidden_width() /
-                                       (self._view_rect.width + self.get_hidden_width()))
+                    sbar.set_page_step(
+                        self._view_rect.width
+                        * self.get_hidden_width()
+                        / (self._view_rect.width + self.get_hidden_width())
+                    )
                     sbar.show()
                 else:
                     sbar.hide()
@@ -503,8 +540,11 @@ class ScrollArea(Base):
                 if self.get_hidden_height() != 0:
                     sbar.set_length(self._view_rect.height + d_size)
                     sbar.set_maximum(self.get_hidden_height())
-                    sbar.set_page_step(self._view_rect.height * self.get_hidden_height() /
-                                       (self._view_rect.height + self.get_hidden_height()))
+                    sbar.set_page_step(
+                        self._view_rect.height
+                        * self.get_hidden_height()
+                        / (self._view_rect.height + self.get_hidden_height())
+                    )
                     sbar.show()
                 else:
                     sbar.hide()
@@ -522,10 +562,17 @@ class ScrollArea(Base):
         # Background surface already has previous decorators
         if self._area_color is not None:
             self._make_background_surface()
-            surface.blit(self._bg_surface, (self._rect.x - self._extend_x, self._rect.y - self._extend_y))
+            surface.blit(
+                self._bg_surface,
+                (self._rect.x - self._extend_x, self._rect.y - self._extend_y),
+            )
 
         # Draw world surface
-        surface.blit(self._world, self._view_rect.topleft, (self.get_offsets(), self._view_rect.size))
+        surface.blit(
+            self._world,
+            self._view_rect.topleft,
+            (self.get_offsets(), self._view_rect.size),
+        )
 
         # Then draw scrollbars
         for sbar in self._scrollbars:
@@ -548,7 +595,7 @@ class ScrollArea(Base):
                 int(self._rect.x - tw),
                 int(self._rect.y - th),
                 int(self._rect.width + 2 * tw),
-                int(self._rect.height + 2 * th)
+                int(self._rect.height + 2 * th),
             )
 
             surface_blit = surface.blit
@@ -600,13 +647,10 @@ class ScrollArea(Base):
                 int(self._rect.x - self._border_width),
                 int(self._rect.y - self._border_width),
                 int(self._rect.width + 2 * self._border_width),
-                int(self._rect.height + 2 * self._border_width)
+                int(self._rect.height + 2 * self._border_width),
             )
             pygame.draw.rect(
-                surface,
-                self._border_color,
-                border_rect,
-                self._border_width
+                surface, self._border_color, border_rect, self._border_width
             )
 
         return self
@@ -658,7 +702,9 @@ class ScrollArea(Base):
                 continue
             elif sbar.get_orientation() == ORIENTATION_HORIZONTAL:
                 if self.get_hidden_width():
-                    offsets[0] = sbar.get_value()  # Cannot add as each scrollbar can only affect 1 axis only
+                    offsets[0] = (
+                        sbar.get_value()
+                    )  # Cannot add as each scrollbar can only affect 1 axis only
             else:
                 if self.get_hidden_height():
                     offsets[1] = sbar.get_value()
@@ -723,12 +769,17 @@ class ScrollArea(Base):
         rect = pygame.Rect(self._rect)
 
         # No scrollbar: area is large enough to display world
-        if not self._world or (self._world.get_width() <= self._rect.width
-                               and self._world.get_height() <= self._rect.height):
+        if not self._world or (
+            self._world.get_width() <= self._rect.width
+            and self._world.get_height() <= self._rect.height
+        ):
             return rect
 
         # All scrollbars: the world is too large
-        elif self._world.get_height() > self._rect.height and self._world.get_width() > self._rect.width:
+        elif (
+            self._world.get_height() > self._rect.height
+            and self._world.get_width() > self._rect.width
+        ):
             for sbar in self._scrollbars:
                 if not sbar.is_visible():
                     continue
@@ -860,7 +911,9 @@ class ScrollArea(Base):
         :return: ``True`` if the mouse is over the object
         """
         rect = self._view_rect if view else self._rect
-        return bool(self.to_absolute_position(rect).collidepoint(*pygame.mouse.get_pos()))
+        return bool(
+            self.to_absolute_position(rect).collidepoint(*pygame.mouse.get_pos())
+        )
 
     def _on_horizontal_scroll(self, value: NumberType) -> None:
         """
@@ -871,9 +924,9 @@ class ScrollArea(Base):
         """
         for sbar in self._scrollbars:
             if (
-                sbar.get_orientation() == ORIENTATION_HORIZONTAL and
-                self.get_hidden_width() != 0 and
-                sbar.get_value() != value
+                sbar.get_orientation() == ORIENTATION_HORIZONTAL
+                and self.get_hidden_width() != 0
+                and sbar.get_value() != value
             ):
                 sbar.set_value(value)
 
@@ -886,9 +939,9 @@ class ScrollArea(Base):
         """
         for sbar in self._scrollbars:
             if (
-                sbar.get_orientation() == ORIENTATION_VERTICAL and
-                self.get_hidden_height() != 0 and
-                sbar.get_value() != value
+                sbar.get_orientation() == ORIENTATION_VERTICAL
+                and self.get_hidden_height() != 0
+                and sbar.get_value() != value
             ):
                 sbar.set_value(value)
 
@@ -955,7 +1008,7 @@ class ScrollArea(Base):
         self,
         rect: pygame.Rect,
         margin: Tuple2NumberType = (0, 0),
-        scroll_parent: bool = True
+        scroll_parent: bool = True,
     ) -> bool:
         """
         Ensure that the given rect is in the viewable area.
@@ -966,10 +1019,17 @@ class ScrollArea(Base):
         :return: Scrollarea scrolled to rect. If ``False`` the rect was already inside the visible area
         """
         # Check if visible
-        if (self.to_real_position(rect, visible=True).height == 0 and
-            self._parent_scrollarea is not None and scroll_parent):
-            self._parent_scrollarea.scroll_to_rect(self._parent_scrollarea.get_rect(), margin, scroll_parent)
-            self._parent_scrollarea.scroll_to_rect(self.get_rect(), margin, scroll_parent)
+        if (
+            self.to_real_position(rect, visible=True).height == 0
+            and self._parent_scrollarea is not None
+            and scroll_parent
+        ):
+            self._parent_scrollarea.scroll_to_rect(
+                self._parent_scrollarea.get_rect(), margin, scroll_parent
+            )
+            self._parent_scrollarea.scroll_to_rect(
+                self.get_rect(), margin, scroll_parent
+            )
 
         real_rect = self.to_real_position(rect)
 
@@ -982,23 +1042,37 @@ class ScrollArea(Base):
         sy = self.get_scrollbar_thickness(ORIENTATION_HORIZONTAL)
         view_rect = self.get_absolute_view_rect()
         if (
-            view_rect.topleft[0] <= real_rect.topleft[0] + sx and
-            view_rect.topleft[1] <= real_rect.topleft[1] + sy and
-            view_rect.bottomright[0] + sx >= real_rect.bottomright[0] and
-            view_rect.bottomright[1] + sy >= real_rect.bottomright[1]
+            view_rect.topleft[0] <= real_rect.topleft[0] + sx
+            and view_rect.topleft[1] <= real_rect.topleft[1] + sy
+            and view_rect.bottomright[0] + sx >= real_rect.bottomright[0]
+            and view_rect.bottomright[1] + sy >= real_rect.bottomright[1]
         ):
             return False
 
         for sbar in self._scrollbars:
             if not sbar.is_visible():
                 continue
-            elif sbar.get_orientation() == ORIENTATION_HORIZONTAL and self.get_hidden_width():
-                shortest_move = min(real_rect.left - view_rect.left, real_rect.right - view_rect.right, key=abs)
+            elif (
+                sbar.get_orientation() == ORIENTATION_HORIZONTAL
+                and self.get_hidden_width()
+            ):
+                shortest_move = min(
+                    real_rect.left - view_rect.left,
+                    real_rect.right - view_rect.right,
+                    key=abs,
+                )
                 value = min(sbar.get_maximum(), sbar.get_value() + shortest_move)
                 value = max(sbar.get_minimum(), value)
                 sbar.set_value(value)
-            if sbar.get_orientation() == ORIENTATION_VERTICAL and self.get_hidden_height():
-                shortest_move = min(real_rect.bottom - view_rect.bottom, real_rect.top - view_rect.top, key=abs)
+            if (
+                sbar.get_orientation() == ORIENTATION_VERTICAL
+                and self.get_hidden_height()
+            ):
+                shortest_move = min(
+                    real_rect.bottom - view_rect.bottom,
+                    real_rect.top - view_rect.top,
+                    key=abs,
+                )
                 value = min(sbar.get_maximum(), sbar.get_value() + shortest_move)
                 value = max(sbar.get_minimum(), value)
                 sbar.set_value(value)
@@ -1030,8 +1104,7 @@ class ScrollArea(Base):
         return self._rect.x, self._rect.y
 
     def get_widget_position_relative_to_view_rect(
-        self,
-        widget: pygame_menu.widgets.Widget
+        self, widget: pygame_menu.widgets.Widget
     ) -> Tuple2NumberType:
         """
         Get widget position relative to view rect on x-axis and y-axis. On each axis,
@@ -1155,14 +1228,14 @@ class ScrollArea(Base):
                 while True:  # Recursive
                     if parent is None:
                         break
-                    view_rect_absolute = parent.get_absolute_view_rect().clip(view_rect_absolute)
+                    view_rect_absolute = parent.get_absolute_view_rect().clip(
+                        view_rect_absolute
+                    )
                     parent = parent._parent_scrollarea
         return view_rect_absolute
 
     def to_real_position(
-        self,
-        virtual: pygame.Rect | Tuple2NumberType,
-        visible: bool = False
+        self, virtual: pygame.Rect | Tuple2NumberType, visible: bool = False
     ) -> pygame.Rect | Tuple2IntType:
         """
         Return the real position/Rect according to the ScrollArea origin of a
@@ -1186,7 +1259,9 @@ class ScrollArea(Base):
             rect.x = virtual.x + self._rect.x - offsets[0] + parent_position[0]
             rect.y = virtual.y + self._rect.y - offsets[1] + parent_position[1]
             if visible:
-                return self.get_absolute_view_rect().clip(rect)  # Visible width and height
+                return self.get_absolute_view_rect().clip(
+                    rect
+                )  # Visible width and height
             return rect
 
         x_coord = self._rect.x + virtual[0] - offsets[0] + parent_position[0]
@@ -1194,8 +1269,7 @@ class ScrollArea(Base):
         return int(x_coord), int(y_coord)
 
     def to_world_position(
-        self,
-        real: pygame.Rect | Tuple2NumberType
+        self, real: pygame.Rect | Tuple2NumberType
     ) -> pygame.Rect | Tuple2IntType:
         """
         Return the position/Rect in the world surface reference of a real
@@ -1245,9 +1319,17 @@ class ScrollArea(Base):
         for sbar in self._scrollbars:
             if not sbar.is_visible():
                 continue
-            elif self.get_hidden_width() and not updated[0] and sbar.get_orientation() == ORIENTATION_HORIZONTAL:
+            elif (
+                self.get_hidden_width()
+                and not updated[0]
+                and sbar.get_orientation() == ORIENTATION_HORIZONTAL
+            ):
                 updated[0] = sbar.update(events)
-            elif self.get_hidden_height() and not updated[1] and sbar.get_orientation() == ORIENTATION_VERTICAL:
+            elif (
+                self.get_hidden_height()
+                and not updated[1]
+                and sbar.get_orientation() == ORIENTATION_VERTICAL
+            ):
                 updated[1] = sbar.update(events)
         return updated[0] or updated[1]
 
@@ -1272,9 +1354,7 @@ class ScrollArea(Base):
         return self._menu
 
     def collide(
-        self,
-        widget: pygame_menu.widgets.Widget | pygame.Rect,
-        event: EventType
+        self, widget: pygame_menu.widgets.Widget | pygame.Rect, event: EventType
     ) -> bool:
         """
         If user event collides a widget within the ScrollArea respect to the
@@ -1327,4 +1407,5 @@ class _ScrollAreaCopyException(Exception):
     """
     If user tries to copy a ScrollArea.
     """
+
     pass

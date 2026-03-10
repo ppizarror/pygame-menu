@@ -8,7 +8,7 @@ Example file, timer clock with in-menu options.
 
 from __future__ import annotations
 
-__all__ = ['main']
+__all__ = ["main"]
 
 import datetime
 from random import randrange
@@ -19,17 +19,21 @@ import pygame_menu
 from pygame_menu.examples import create_example_window
 
 # Constants and global variables
-ABOUT = [f'pygame-menu {pygame_menu.__version__}',
-         f'Author: {pygame_menu.__author__}',
-         '',
-         f'Email: {pygame_menu.__email__}']
+ABOUT = [
+    f"pygame-menu {pygame_menu.__version__}",
+    f"Author: {pygame_menu.__author__}",
+    "",
+    f"Email: {pygame_menu.__email__}",
+]
 COLOR_BACKGROUND = [128, 0, 128]
 FPS = 60
 H_SIZE = 600  # Height of window size
-HELP = ['Press ESC to enable/disable Menu',
-        'Press ENTER to access a Sub-Menu or use an option',
-        'Press UP/DOWN to move through Menu',
-        'Press LEFT/RIGHT to move through Selectors']
+HELP = [
+    "Press ESC to enable/disable Menu",
+    "Press ENTER to access a Sub-Menu or use an option",
+    "Press UP/DOWN to move through Menu",
+    "Press LEFT/RIGHT to move through Selectors",
+]
 W_SIZE = 800  # Width of window size
 
 surface: pygame.Surface | None = None
@@ -61,7 +65,7 @@ class TestCallClassMethod:
         """
         Class method.
         """
-        print('Update game with new settings')
+        print("Update game with new settings")
 
 
 def change_color_bg(value: tuple, c: tuple | None = None, **kwargs) -> None:
@@ -74,7 +78,7 @@ def change_color_bg(value: tuple, c: tuple | None = None, **kwargs) -> None:
     color, _ = value
     if c == (-1, -1, -1):  # If random color
         c = (randrange(0, 255), randrange(0, 255), randrange(0, 255))
-    if kwargs['write_on_console']:
+    if kwargs["write_on_console"]:
         r, g, b = c
         print(f"New background color: {color[0]} ({r},{g},{b})")
     COLOR_BACKGROUND[0] = c[0]
@@ -98,7 +102,7 @@ def main(test: bool = False) -> None:
 
     # Create window
     global surface
-    surface = create_example_window('Example - Timer Clock', (W_SIZE, H_SIZE))
+    surface = create_example_window("Example - Timer Clock", (W_SIZE, H_SIZE))
 
     # Main timer and game clock
     clock = pygame.time.Clock()
@@ -120,29 +124,33 @@ def main(test: bool = False) -> None:
         height=400,
         onclose=pygame_menu.events.RESET,
         theme=timer_theme,
-        title='Timer Menu',
-        width=600
+        title="Timer Menu",
+        width=600,
     )
 
     # Add widgets
-    timer_menu.add.button('Reset timer', reset_timer)
+    timer_menu.add.button("Reset timer", reset_timer)
 
     # Adds a selector (element that can handle functions)
     timer_menu.add.selector(
-        title='Change color ',
-        items=[('Random', (-1, -1, -1)),  # Values of selector, call to change_color_bg
-               ('Default', (128, 0, 128)),
-               ('Black', (0, 0, 0)),
-               ('Blue', (12, 12, 200))],
+        title="Change color ",
+        items=[
+            ("Random", (-1, -1, -1)),  # Values of selector, call to change_color_bg
+            ("Default", (128, 0, 128)),
+            ("Black", (0, 0, 0)),
+            ("Blue", (12, 12, 200)),
+        ],
         default=1,  # Optional parameter that sets default item of selector
         onchange=change_color_bg,  # Action when changing element with left/right
         onreturn=change_color_bg,  # Action when pressing return on an element
         # All the following kwargs are passed to change_color_bg function
-        write_on_console=True
+        write_on_console=True,
     )
-    timer_menu.add.button('Update game object', TestCallClassMethod().update_game_settings)
-    timer_menu.add.button('Return to Menu', pygame_menu.events.BACK)
-    timer_menu.add.button('Close Menu', pygame_menu.events.CLOSE)
+    timer_menu.add.button(
+        "Update game object", TestCallClassMethod().update_game_settings
+    )
+    timer_menu.add.button("Return to Menu", pygame_menu.events.BACK)
+    timer_menu.add.button("Close Menu", pygame_menu.events.CLOSE)
 
     # -------------------------------------------------------------------------
     # Create menus: Help
@@ -156,19 +164,19 @@ def main(test: bool = False) -> None:
         widget_font_color=(170, 170, 170),
         widget_font_shadow=True,
         widget_font_shadow_position=pygame_menu.locals.POSITION_SOUTHEAST,
-        widget_font_size=45
+        widget_font_size=45,
     )
 
     help_menu = pygame_menu.Menu(
         height=600,  # Fullscreen
         theme=help_theme,
-        title='Help',
-        width=800
+        title="Help",
+        width=800,
     )
     for m in HELP:
         help_menu.add.label(m, align=pygame_menu.locals.ALIGN_CENTER)
     help_menu.add.vertical_margin(25)
-    help_menu.add.button('Return to Menu', pygame_menu.events.BACK)
+    help_menu.add.button("Return to Menu", pygame_menu.events.BACK)
 
     # -------------------------------------------------------------------------
     # Create menus: About
@@ -184,13 +192,13 @@ def main(test: bool = False) -> None:
         height=400,
         mouse_visible=False,
         theme=about_theme,
-        title='About',
-        width=600
+        title="About",
+        width=600,
     )
     for m in ABOUT:
         about_menu.add.label(m, margin=(0, 0))
-    about_menu.add.label('')
-    about_menu.add.button('Return to Menu', pygame_menu.events.BACK)
+    about_menu.add.label("")
+    about_menu.add.button("Return to Menu", pygame_menu.events.BACK)
 
     # -------------------------------------------------------------------------
     # Create menus: Main menu
@@ -199,20 +207,19 @@ def main(test: bool = False) -> None:
         enabled=False,
         height=400,
         theme=pygame_menu.themes.THEME_DARK,
-        title='Main Menu',
-        width=600
+        title="Main Menu",
+        width=600,
     )
 
     main_menu.add.button(timer_menu.get_title(), timer_menu)  # Add timer submenu
     main_menu.add.button(help_menu.get_title(), help_menu)  # Add help submenu
     main_menu.add.button(about_menu.get_title(), about_menu)  # Add about submenu
-    main_menu.add.button('Exit', pygame_menu.events.EXIT)  # Add exit function
+    main_menu.add.button("Exit", pygame_menu.events.EXIT)  # Add exit function
 
     # -------------------------------------------------------------------------
     # Main loop
     # -------------------------------------------------------------------------
     while True:
-
         # Tick clock
         clock.tick(FPS)
         timer[0] += dt
@@ -221,13 +228,19 @@ def main(test: bool = False) -> None:
         # Title is evaluated at current level as the title of the base pointer
         # object (main_menu) can change if user opens submenus
         current_menu = main_menu.get_current()
-        if current_menu.get_title() != 'Main Menu' or not main_menu.is_enabled():
+        if current_menu.get_title() != "Main Menu" or not main_menu.is_enabled():
             # Draw timer
             surface.fill(COLOR_BACKGROUND)
             time_string = str(datetime.timedelta(seconds=int(timer[0])))
             time_blit = timer_font.render(time_string, True, (255, 255, 255))
             time_blit_size = time_blit.get_size()
-            surface.blit(time_blit, (int(W_SIZE / 2 - time_blit_size[0] / 2), int(H_SIZE / 2 - time_blit_size[1] / 2)))
+            surface.blit(
+                time_blit,
+                (
+                    int(W_SIZE / 2 - time_blit_size[0] / 2),
+                    int(H_SIZE / 2 - time_blit_size[1] / 2),
+                ),
+            )
         else:
             # Background color if the menu is enabled and timer is hidden
             surface.fill((40, 0, 40))
@@ -238,7 +251,10 @@ def main(test: bool = False) -> None:
             if event.type == pygame.QUIT:
                 exit()
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE and current_menu.get_title() == 'Main Menu':
+                if (
+                    event.key == pygame.K_ESCAPE
+                    and current_menu.get_title() == "Main Menu"
+                ):
                     main_menu.toggle()
 
         if main_menu.is_enabled():
@@ -253,5 +269,5 @@ def main(test: bool = False) -> None:
             break
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

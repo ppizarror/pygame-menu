@@ -8,7 +8,7 @@ Shows how the ScrollBar can be used on a surface.
 
 from __future__ import annotations
 
-__all__ = ['main']
+__all__ = ["main"]
 
 import pygame
 
@@ -57,14 +57,14 @@ def h_changed(value: int) -> None:
     """
     :param value: Value data
     """
-    print('Horizontal position changed:', value)
+    print("Horizontal position changed:", value)
 
 
 def v_changed(value: int) -> None:
     """
     :param value: Value data
     """
-    print('Vertical position changed:', value)
+    print("Vertical position changed:", value)
 
 
 def main(test: bool = False) -> None:
@@ -74,7 +74,7 @@ def main(test: bool = False) -> None:
     :param test: Indicate function is being tested
     """
     scr_size = (480, 480)
-    screen = create_example_window('Example - Scrollbar', scr_size)
+    screen = create_example_window("Example - Scrollbar", scr_size)
     world = make_world(int(scr_size[0] * 4), scr_size[1] * 3)
     screen.fill((120, 90, 130))
 
@@ -87,12 +87,9 @@ def main(test: bool = False) -> None:
         values_range=(50, world.get_width() - scr_size[0] + thick_v),
         slider_pad=2,
         page_ctrl_thick=thick_h,
-        onchange=h_changed
+        onchange=h_changed,
     )
-    sb_h.set_shadow(
-        color=(0, 0, 0),
-        position=pygame_menu.locals.POSITION_SOUTHEAST
-    )
+    sb_h.set_shadow(color=(0, 0, 0), position=pygame_menu.locals.POSITION_SOUTHEAST)
     sb_h.set_controls(False)
     sb_h.set_position(0, scr_size[1] - thick_h)
     sb_h.set_page_step(scr_size[0] - thick_v)
@@ -107,12 +104,10 @@ def main(test: bool = False) -> None:
         slider_hover_color=(180, 180, 180),
         page_ctrl_thick=thick_v,
         page_ctrl_color=(253, 246, 220),
-        onchange=v_changed
+        onchange=v_changed,
     )
     sb_v.set_shadow(
-        color=(52, 54, 56),
-        position=pygame_menu.locals.POSITION_NORTHWEST,
-        offset=4
+        color=(52, 54, 56), position=pygame_menu.locals.POSITION_NORTHWEST, offset=4
     )
     sb_v.set_controls(False)
     sb_v.set_position(scr_size[0] - thick_v, 0)
@@ -123,7 +118,6 @@ def main(test: bool = False) -> None:
     # Main loop
     # -------------------------------------------------------------------------
     while True:
-
         # Clock tick
         clock.tick(60)
 
@@ -154,5 +148,5 @@ def main(test: bool = False) -> None:
             break
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

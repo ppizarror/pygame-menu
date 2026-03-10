@@ -5,6 +5,7 @@ exclude = [".git", ".venv", "build", "dist", "__pycache__"]
 
 [tool.ruff.lint]
 select = [
+    "W",    # pycodestyle warnings
     "UP",   # pyupgrade
     "TCH",  # type-checking imports
     "I",    # import sorting

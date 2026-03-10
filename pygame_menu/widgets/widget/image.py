@@ -8,10 +8,7 @@ Image widget class, adds a simple image.
 
 from __future__ import annotations
 
-__all__ = [
-    'Image',
-    'ImageManager'
-]
+__all__ = ["Image", "ImageManager"]
 
 from abc import ABC
 from io import BytesIO
@@ -53,16 +50,17 @@ class Image(Widget):
     :param scale: Scale of the image on x-axis and y-axis (x, y) in px
     :param scale_smooth: Scale is smoothed
     """
+
     _image: BaseImage
 
     def __init__(
         self,
         image_path: str | Path | BaseImage | BytesIO | pygame.Surface,
         angle: NumberType = 0,
-        image_id: str = '',
+        image_id: str = "",
         onselect: CallbackType = None,
         scale: Tuple2NumberType = (1, 1),
-        scale_smooth: bool = True
+        scale_smooth: bool = True,
     ) -> None:
         assert isinstance(image_path, (str, Path, BaseImage, BytesIO, pygame.Surface))
         assert isinstance(image_id, str)
@@ -70,10 +68,7 @@ class Image(Widget):
         assert isinstance(scale_smooth, bool)
         assert_vector(scale, 2)
 
-        super().__init__(
-            onselect=onselect,
-            widget_id=image_id
-        )
+        super().__init__(onselect=onselect, widget_id=image_id)
 
         if isinstance(image_path, BaseImage):
             self._image = image_path
@@ -124,17 +119,34 @@ class Image(Widget):
         self._render()
         return self
 
-    def scale(self, width: NumberType, height: NumberType, smooth: bool = False, render: bool = True) -> Image:
+    def scale(
+        self,
+        width: NumberType,
+        height: NumberType,
+        smooth: bool = False,
+        render: bool = True,
+    ) -> Image:
         self._image.scale(width, height, smooth)
         return self._update_surface()
 
-    def resize(self, width: NumberType, height: NumberType, smooth: bool = False, render: bool = True) -> Image:
+    def resize(
+        self,
+        width: NumberType,
+        height: NumberType,
+        smooth: bool = False,
+        render: bool = True,
+    ) -> Image:
         self._image.resize(width, height, smooth)
         self._surface = None
         return self._update_surface()
 
-    def set_max_width(self, width: NumberType | None, scale_height: NumberType = False,
-                      smooth: bool = True, render: bool = True) -> Image:
+    def set_max_width(
+        self,
+        width: NumberType | None,
+        scale_height: NumberType = False,
+        smooth: bool = True,
+        render: bool = True,
+    ) -> Image:
         if width is not None and self._image.get_width() > width:
             sx = width / self._image.get_width()
             height = self._image.get_height()
@@ -144,8 +156,13 @@ class Image(Widget):
             return self._update_surface()
         return self
 
-    def set_max_height(self, height: NumberType | None, scale_width: NumberType = False,
-                       smooth: bool = True, render: bool = True) -> Image:
+    def set_max_height(
+        self,
+        height: NumberType | None,
+        scale_width: NumberType = False,
+        smooth: bool = True,
+        render: bool = True,
+    ) -> Image:
         if height is not None and self._image.get_height() > height:
             sy = height / self._image.get_height()
             width = self._image.get_width()
@@ -198,12 +215,12 @@ class ImageManager(AbstractWidgetManager, ABC):
         self,
         image_path: str | Path | pygame_menu.BaseImage | BytesIO | pygame.Surface,
         angle: NumberType = 0,
-        image_id: str = '',
+        image_id: str = "",
         onselect: Callable[[bool, Widget, pygame_menu.Menu], Any] | None = None,
         scale: Vector2NumberType = (1, 1),
         scale_smooth: bool = True,
         selectable: bool = False,
-        **kwargs
+        **kwargs,
     ) -> pygame_menu.widgets.Image:
         """
         Add a simple image to the Menu.
@@ -262,12 +279,26 @@ class ImageManager(AbstractWidgetManager, ABC):
 
         # Remove invalid keys from kwargs
         for key in list(kwargs.keys()):
-            if key not in ('align', 'background_color', 'background_inflate',
-                           'border_color', 'border_inflate', 'border_width',
-                           'cursor', 'margin', 'padding', 'selection_color',
-                           'selection_effect', 'border_position', 'float',
-                           'float_origin_position', 'shadow_color', 'shadow_radius',
-                           'shadow_type', 'shadow_width'):
+            if key not in (
+                "align",
+                "background_color",
+                "background_inflate",
+                "border_color",
+                "border_inflate",
+                "border_width",
+                "cursor",
+                "margin",
+                "padding",
+                "selection_color",
+                "selection_effect",
+                "border_position",
+                "float",
+                "float_origin_position",
+                "shadow_color",
+                "shadow_radius",
+                "shadow_type",
+                "shadow_width",
+            ):
                 kwargs.pop(key, None)
 
         # Filter widget attributes to avoid passing them to the callbacks
@@ -279,7 +310,7 @@ class ImageManager(AbstractWidgetManager, ABC):
             image_path=image_path,
             onselect=onselect,
             scale=scale,
-            scale_smooth=scale_smooth
+            scale_smooth=scale_smooth,
         )
         widget.is_selectable = selectable
 

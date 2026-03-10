@@ -8,7 +8,7 @@ Selector with a left arrow on the item.
 
 from __future__ import annotations
 
-__all__ = ['LeftArrowSelection']
+__all__ = ["LeftArrowSelection"]
 
 
 from typing import TYPE_CHECKING
@@ -32,6 +32,7 @@ class LeftArrowSelection(ArrowSelection):
     :param arrow_vertical_offset: Vertical offset of the arrow (px)
     :param blink_ms: Milliseconds between each blink; if ``0`` blinking is disabled
     """
+
     _arrow_right_margin: int
 
     def __init__(
@@ -39,10 +40,10 @@ class LeftArrowSelection(ArrowSelection):
         arrow_size: Tuple2IntType = (10, 15),
         arrow_right_margin: int = 5,
         arrow_vertical_offset: int = 0,
-        blink_ms: NumberType = 0
+        blink_ms: NumberType = 0,
     ) -> None:
         assert isinstance(arrow_right_margin, NumberInstance)
-        assert arrow_right_margin >= 0, 'margin cannot be negative'
+        assert arrow_right_margin >= 0, "margin cannot be negative"
 
         super().__init__(
             margin_left=arrow_size[0] + arrow_right_margin,
@@ -50,24 +51,36 @@ class LeftArrowSelection(ArrowSelection):
             margin_top=0,
             margin_bottom=0,
             arrow_vertical_offset=arrow_vertical_offset,
-            blink_ms=blink_ms
+            blink_ms=blink_ms,
         )
 
         self._arrow_right_margin = arrow_right_margin
 
     # noinspection PyMissingOrEmptyDocstring
-    def draw(self, surface: pygame.Surface, widget: pygame_menu.widgets.Widget) -> LeftArrowSelection:
+    def draw(
+        self, surface: pygame.Surface, widget: pygame_menu.widgets.Widget
+    ) -> LeftArrowSelection:
         # A
         #   \B        widget
         # C /
         #     <------>
         #      margin
         rect = widget.get_rect()
-        a = (rect.topleft[0] - self._arrow_size[0] - self._arrow_right_margin,
-             int(rect.midleft[1] - self._arrow_size[1] / 2 + self._arrow_vertical_offset))
-        b = (rect.midleft[0] - self._arrow_right_margin,
-             rect.midleft[1] + self._arrow_vertical_offset)
-        c = (rect.bottomleft[0] - self._arrow_size[0] - self._arrow_right_margin,
-             int(rect.midleft[1] + self._arrow_size[1] / 2 + self._arrow_vertical_offset))
+        a = (
+            rect.topleft[0] - self._arrow_size[0] - self._arrow_right_margin,
+            int(
+                rect.midleft[1] - self._arrow_size[1] / 2 + self._arrow_vertical_offset
+            ),
+        )
+        b = (
+            rect.midleft[0] - self._arrow_right_margin,
+            rect.midleft[1] + self._arrow_vertical_offset,
+        )
+        c = (
+            rect.bottomleft[0] - self._arrow_size[0] - self._arrow_right_margin,
+            int(
+                rect.midleft[1] + self._arrow_size[1] / 2 + self._arrow_vertical_offset
+            ),
+        )
         super()._draw_arrow(surface, widget, a, b, c)
         return self

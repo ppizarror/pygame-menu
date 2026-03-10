@@ -9,28 +9,22 @@ Base class for widgets.
 from __future__ import annotations
 
 __all__ = [
-
     # Main class
-    'AbstractWidgetManager',
-    'Widget',
-
+    "AbstractWidgetManager",
+    "Widget",
     # Utils
-    'check_widget_mouseleave',
-
+    "check_widget_mouseleave",
     # Types
-    'WidgetBorderPositionType',
-
+    "WidgetBorderPositionType",
     # Global widget mouseover list
-    'WIDGET_MOUSEOVER',
-
+    "WIDGET_MOUSEOVER",
     # Others
-    'WIDGET_BORDER_POSITION_FULL',
-    'WIDGET_BORDER_POSITION_NONE',
-    'WIDGET_FULL_BORDER',
-    'WIDGET_SHADOW_TYPE_ELLIPSE',
-    'WIDGET_SHADOW_TYPE_RECTANGULAR',
-    'WidgetTransformationNotImplemented'
-
+    "WIDGET_BORDER_POSITION_FULL",
+    "WIDGET_BORDER_POSITION_NONE",
+    "WIDGET_FULL_BORDER",
+    "WIDGET_SHADOW_TYPE_ELLIPSE",
+    "WIDGET_SHADOW_TYPE_RECTANGULAR",
+    "WidgetTransformationNotImplemented",
 ]
 
 import random
@@ -108,17 +102,19 @@ WIDGET_MOUSEOVER: list[Any] = [None, []]
 WIDGET_TOP_CURSOR: list[Any] = [None]
 WIDGET_TOP_CURSOR_WARNING = False
 
-WIDGET_BORDER_POSITION_NONE = 'border-none'
-WIDGET_BORDER_POSITION_FULL = 'border-position-border-full'
+WIDGET_BORDER_POSITION_NONE = "border-none"
+WIDGET_BORDER_POSITION_FULL = "border-position-border-full"
 WIDGET_FULL_BORDER = (POSITION_NORTH, POSITION_SOUTH, POSITION_EAST, POSITION_WEST)
 
 # Creates the shadow generator
 WIDGET_SHADOW_GENERATOR = ShadowGenerator()
-WIDGET_SHADOW_TYPE_ELLIPSE = 'ellipse'
-WIDGET_SHADOW_TYPE_RECTANGULAR = 'rectangular'
+WIDGET_SHADOW_TYPE_ELLIPSE = "ellipse"
+WIDGET_SHADOW_TYPE_RECTANGULAR = "rectangular"
 
 
-def check_widget_mouseleave(event: EventType | None = None, force: bool = False) -> None:
+def check_widget_mouseleave(
+    event: EventType | None = None, force: bool = False
+) -> None:
     """
     Check if the active widget (WIDGET_MOUSEOVER[0]) is still over, else, execute
     previous list (WIDGET_MOUSEOVER[1]).
@@ -131,9 +127,7 @@ def check_widget_mouseleave(event: EventType | None = None, force: bool = False)
 
 # noinspection PyProtectedMember
 def _check_widget_mouseleave(
-    event: EventType | None = None,
-    force: bool = False,
-    recursive: bool = False
+    event: EventType | None = None, force: bool = False, recursive: bool = False
 ) -> None:
     """
     Check if the active widget (WIDGET_MOUSEOVER[0]) is still over, else, execute
@@ -145,8 +139,8 @@ def _check_widget_mouseleave(
     """
     # If no widget is over, return
     if WIDGET_MOUSEOVER[0] is None:
-        assert not WIDGET_MOUSEOVER[1], 'widget leave sublist must be empty'
-        assert WIDGET_TOP_CURSOR[0] is None, 'widget top cursor must be None'
+        assert not WIDGET_MOUSEOVER[1], "widget leave sublist must be empty"
+        assert WIDGET_TOP_CURSOR[0] is None, "widget top cursor must be None"
         return
 
     if event is None:
@@ -154,7 +148,9 @@ def _check_widget_mouseleave(
 
     # Check widget is still over
     current: Widget = WIDGET_MOUSEOVER[0]
-    current._check_mouseover(event, check_all_widget_mouseleave=False)  # This may change WIDGET_MOUSEOVER
+    current._check_mouseover(
+        event, check_all_widget_mouseleave=False
+    )  # This may change WIDGET_MOUSEOVER
 
     # If mouse is not visible, forces
     if PYGAME_V2:
@@ -162,15 +158,14 @@ def _check_widget_mouseleave(
 
     # The active widget is not over
     if (not current._mouseover or force) and WIDGET_MOUSEOVER[0] is not None:
-        assert len(WIDGET_MOUSEOVER[1]) == 3, 'invalid widget leave sublist length'
+        assert len(WIDGET_MOUSEOVER[1]) == 3, "invalid widget leave sublist length"
 
         # Unpack list
         prev_widget: Widget = WIDGET_MOUSEOVER[1][0]
         prev_cursor = WIDGET_MOUSEOVER[1][1]
         prev_list: list[Any] = WIDGET_MOUSEOVER[1][2]
 
-        assert WIDGET_MOUSEOVER[0] == prev_widget, \
-            'inconsistent widget leave sublist'
+        assert WIDGET_MOUSEOVER[0] == prev_widget, "inconsistent widget leave sublist"
 
         # Set previous cursor
         set_pygame_cursor(prev_cursor)
@@ -182,16 +177,16 @@ def _check_widget_mouseleave(
             if prev_cursor != WIDGET_TOP_CURSOR[0]:
                 if WIDGET_TOP_CURSOR_WARNING and current._verbose:
                     warn(
-                        f'expected {WIDGET_TOP_CURSOR[0]} to be the top cursor '
-                        f'(WIDGET_TOP_CURSOR), but {prev_cursor} is the current '
-                        f'previous cursor from WIDGET_MOUSEOVER recursive list. '
-                        f'The top cursor {WIDGET_TOP_CURSOR[0]} will be established '
-                        f'as the pygame default mouse cursor'
+                        f"expected {WIDGET_TOP_CURSOR[0]} to be the top cursor "
+                        f"(WIDGET_TOP_CURSOR), but {prev_cursor} is the current "
+                        f"previous cursor from WIDGET_MOUSEOVER recursive list. "
+                        f"The top cursor {WIDGET_TOP_CURSOR[0]} will be established "
+                        f"as the pygame default mouse cursor"
                     )
                 set_pygame_cursor(WIDGET_TOP_CURSOR[0])
             WIDGET_TOP_CURSOR[0] = None
         else:
-            assert len(prev_list) == 3, 'invalid widget leave sublist length'
+            assert len(prev_list) == 3, "invalid widget leave sublist length"
             WIDGET_MOUSEOVER[0] = prev_list[0]
             WIDGET_MOUSEOVER[1] = prev_list
 
@@ -202,8 +197,15 @@ def _check_widget_mouseleave(
         _check_widget_mouseleave(event, force, recursive=True)
 
     # Check sublist
-    if len(WIDGET_MOUSEOVER[1]) == 3 and len(WIDGET_MOUSEOVER[1][2]) > 0 and not recursive and not force:
-        prev: list[Any] = WIDGET_MOUSEOVER[1][2]  # [widget, cursor, [widget, cursor, [...]]]
+    if (
+        len(WIDGET_MOUSEOVER[1]) == 3
+        and len(WIDGET_MOUSEOVER[1][2]) > 0
+        and not recursive
+        and not force
+    ):
+        prev: list[Any] = WIDGET_MOUSEOVER[1][
+            2
+        ]  # [widget, cursor, [widget, cursor, [...]]]
         while True:
             if not prev:
                 break
@@ -233,13 +235,31 @@ def _check_widget_mouseleave(
 
 # Types
 BackgroundSurfaceType = Optional[
-    list[Union['pygame.Rect', 'pygame.Surface', Optional[Union[ColorType, 'pygame_menu.BaseImage']]]]]
-CallbackMouseType = Optional[Union[Callable[['Widget', EventType], Any], CallableNoArgsType]]
-CallbackSelectType = Optional[Union[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any], CallableNoArgsType]]
+    list[
+        Union[
+            "pygame.Rect",
+            "pygame.Surface",
+            Optional[Union[ColorType, "pygame_menu.BaseImage"]],
+        ]
+    ]
+]
+CallbackMouseType = Optional[
+    Union[Callable[["Widget", EventType], Any], CallableNoArgsType]
+]
+CallbackSelectType = Optional[
+    Union[Callable[[bool, "Widget", "pygame_menu.Menu"], Any], CallableNoArgsType]
+]
 WidgetBorderPositionType = Union[str, list[str], tuple[str, ...]]
 WidgetBorderType = tuple[ColorType, int, WidgetBorderPositionType, Tuple2IntType]
 WidgetShadowType = dict[
-    str, Union[Optional['pygame.Surface'], Optional['pygame.Rect'], bool, tuple[str, int, int, int, Tuple3IntType]]]
+    str,
+    Union[
+        Optional["pygame.Surface"],
+        Optional["pygame.Rect"],
+        bool,
+        tuple[str, int, int, int, Tuple3IntType],
+    ],
+]
 
 
 # noinspection PyProtectedMember
@@ -259,6 +279,7 @@ class Widget(Base):
     :param args: Optional arguments for callbacks
     :param kwargs: Optional keyword arguments
     """
+
     _accept_events: bool
     _alignment: str
     _angle: NumberType
@@ -309,7 +330,9 @@ class Widget(Base):
     _mouse_enabled: bool
     _mouseleave_called: bool
     _mouseover: bool  # Check if mouse is over
-    _mouseover_called: bool | None  # Check if the mouseover/mouseleave callbacks were called
+    _mouseover_called: (
+        bool | None
+    )  # Check if the mouseover/mouseleave callbacks were called
     _mouseover_check_rect: Callable[[], pygame.Rect]
     _onchange: CallbackType
     _onmouseleave: CallbackMouseType
@@ -335,7 +358,9 @@ class Widget(Base):
     _touchscreen_enabled: bool
     _translate: Tuple2IntType  # Translation made by user
     _translate_virtual: Tuple2IntType  # Virtual translation applied by api
-    _update_callbacks: dict[str, Callable[[EventListType, Widget, pygame_menu.Menu], Any]]
+    _update_callbacks: dict[
+        str, Callable[[EventListType, Widget, pygame_menu.Menu], Any]
+    ]
     _visible: bool
     active: bool
     configured: bool
@@ -349,15 +374,15 @@ class Widget(Base):
 
     def __init__(
         self,
-        title: Any = '',
-        widget_id: str = '',
+        title: Any = "",
+        widget_id: str = "",
         onchange: CallbackType = None,
         onmouseleave: Callable[[Widget, EventType], Any] | None = None,
         onmouseover: Callable[[Widget, EventType], Any] | None = None,
         onreturn: CallbackType = None,
         onselect: Callable[[bool, Widget, pygame_menu.Menu], Any] | None = None,
         args=None,
-        kwargs=None
+        kwargs=None,
     ) -> None:
         super().__init__(object_id=widget_id)
 
@@ -436,14 +461,16 @@ class Widget(Base):
 
         # Menu reference
         self._menu = None  # Menu which contains the widget
-        self._menu_hook = None  # Menu the widget points to. Modified by WidgetManager._add_submenu
+        self._menu_hook = (
+            None  # Menu the widget points to. Modified by WidgetManager._add_submenu
+        )
 
         # Modified in set_font() method
         self._font = None
         self._font_antialias = True
         self._font_background_color = None
         self._font_color = (0, 0, 0)
-        self._font_name = ''
+        self._font_name = ""
         self._font_readonly_color = (0, 0, 0)
         self._font_readonly_selected_color = (255, 255, 255)
         self._font_selected_color = (255, 255, 255)
@@ -458,16 +485,16 @@ class Widget(Base):
 
         # Widget shadow
         self._shadow = {
-            'enabled': False,
-            'properties': (),
-            'rect': None,
-            'surface': None
+            "enabled": False,
+            "properties": (),
+            "rect": None,
+            "surface": None,
         }
 
         # Border
         self._border_color = (0, 0, 0)
         self._border_inflate = (0, 0)
-        self._border_position = 'none'
+        self._border_position = "none"
         self._border_width = 0
 
         # Rendering, this variable may be used by render() method. If the hash
@@ -485,7 +512,9 @@ class Widget(Base):
         # Inputs
         self._ctrl = Controller()
         self._keyboard_enabled = True
-        self._keyboard_ignore_nonphysical = True  # Ignores non-physical keyboard buttons pressed
+        self._keyboard_ignore_nonphysical = (
+            True  # Ignores non-physical keyboard buttons pressed
+        )
         self._joystick_enabled = True
         self._mouse_enabled = True  # Accept mouse interaction
         self._touchscreen_enabled = True
@@ -511,7 +540,10 @@ class Widget(Base):
         """
         if self._menu is None:
             return self._keyboard_ignore_nonphysical
-        return self._keyboard_ignore_nonphysical and self._menu._keyboard_ignore_nonphysical
+        return (
+            self._keyboard_ignore_nonphysical
+            and self._menu._keyboard_ignore_nonphysical
+        )
 
     def set_onchange(self, onchange: CallbackType) -> Widget:
         """
@@ -527,8 +559,9 @@ class Widget(Base):
         :return: Self reference
         """
         if onchange:
-            assert callable(onchange), \
-                'onchange must be callable (function-type) or None'
+            assert callable(onchange), (
+                "onchange must be callable (function-type) or None"
+            )
         self._onchange = onchange
         return self
 
@@ -546,8 +579,9 @@ class Widget(Base):
         :return: Self reference
         """
         if onreturn:
-            assert callable(onreturn), \
-                'onreturn must be callable (function-type) or None'
+            assert callable(onreturn), (
+                "onreturn must be callable (function-type) or None"
+            )
         self._onreturn = onreturn
         return self
 
@@ -565,8 +599,9 @@ class Widget(Base):
         :return: Self reference
         """
         if onselect:
-            assert callable(onselect), \
-                'onselect must be callable (function-type) or None'
+            assert callable(onselect), (
+                "onselect must be callable (function-type) or None"
+            )
         self._onselect = onselect
         return self
 
@@ -584,8 +619,9 @@ class Widget(Base):
         :return: Self reference
         """
         if onmouseover:
-            assert callable(onmouseover), \
-                'onmouseover must be callable (function-type) or None'
+            assert callable(onmouseover), (
+                "onmouseover must be callable (function-type) or None"
+            )
         self._onmouseover = onmouseover
         return self
 
@@ -603,15 +639,14 @@ class Widget(Base):
         :return: Self reference
         """
         if onmouseleave:
-            assert callable(onmouseleave), \
-                'onmouseleave must be callable (function-type) or None'
+            assert callable(onmouseleave), (
+                "onmouseleave must be callable (function-type) or None"
+            )
         self._onmouseleave = onmouseleave
         return self
 
     def mouseover(
-        self,
-        event: EventType,
-        check_all_widget_mouseleave: bool = True
+        self, event: EventType, check_all_widget_mouseleave: bool = True
     ) -> Widget:
         """
         Run the ``onmouseover`` if the mouse is placed over the Widget. The
@@ -676,9 +711,7 @@ class Widget(Base):
         return self
 
     def mouseleave(
-        self,
-        event: EventType,
-        check_all_widget_mouseleave: bool = True
+        self, event: EventType, check_all_widget_mouseleave: bool = True
     ) -> Widget:
         """
         Run the ``onmouseleave`` callback if the mouse is placed outside the Widget.
@@ -699,7 +732,11 @@ class Widget(Base):
         """
         # Check for consistency
         if WIDGET_MOUSEOVER[0] != self or not check_all_widget_mouseleave:
-            if self._onmouseleave is not None and self._mouseover_called or self._onmouseover is None:
+            if (
+                self._onmouseleave is not None
+                and self._mouseover_called
+                or self._onmouseover is None
+            ):
                 if self._onmouseleave and not self._mouseleave_called:
                     try:
                         self._onmouseleave(self, event)
@@ -715,7 +752,7 @@ class Widget(Base):
         self,
         event: EventType,
         rect: pygame.Rect | None = None,
-        check_all_widget_mouseleave: bool = True
+        check_all_widget_mouseleave: bool = True,
     ) -> bool:
         """
         Check the mouse is over the widget. If so, execute the methods.
@@ -725,11 +762,14 @@ class Widget(Base):
         :param check_all_widget_mouseleave: Check widget leave statutes
         :return: ``True`` if the mouseover status changed
         """
-        if not hasattr(event, 'type') or event.type not in (pygame.MOUSEMOTION, pygame.ACTIVEEVENT):
+        if not hasattr(event, "type") or event.type not in (
+            pygame.MOUSEMOTION,
+            pygame.ACTIVEEVENT,
+        ):
             return False
 
         # If mouse out from window
-        elif event.type == pygame.ACTIVEEVENT and hasattr(event, 'gain'):
+        elif event.type == pygame.ACTIVEEVENT and hasattr(event, "gain"):
             if event.gain == 1:
                 return False
             # Mouse is outside window
@@ -745,11 +785,11 @@ class Widget(Base):
 
         # Check if mouse is over the widget, the widget must be visible
         if (
-            self.is_visible() and
-            self._mouse_enabled and
-            hasattr(event, 'pos') and
-            rect.collidepoint(*event.pos) and
-            menu_enabled
+            self.is_visible()
+            and self._mouse_enabled
+            and hasattr(event, "pos")
+            and rect.collidepoint(*event.pos)
+            and menu_enabled
         ):
             if not self._mouseover:
                 self._mouseover = True
@@ -836,7 +876,7 @@ class Widget(Base):
 
         :return: Raises copy exception
         """
-        raise _WidgetCopyException('Widget class cannot be copied')
+        raise _WidgetCopyException("Widget class cannot be copied")
 
     def __deepcopy__(self, memodict: dict) -> pygame_menu.Menu:
         """
@@ -845,7 +885,7 @@ class Widget(Base):
         :param memodict: Memo dict
         :return: Raises copy exception
         """
-        raise _WidgetCopyException('Widget class cannot be deep-copied')
+        raise _WidgetCopyException("Widget class cannot be deep-copied")
 
     def _force_render(self) -> bool | None:
         """
@@ -884,7 +924,7 @@ class Widget(Base):
             # an Error. The usage of _widgets_surface_need_update is only on
             # Menu _render()
             self._menu._widgets_surface_need_update = True
-        self._shadow['surface'] = None
+        self._shadow["surface"] = None
         return self
 
     def force_menu_surface_cache_update(self) -> Widget:
@@ -948,7 +988,7 @@ class Widget(Base):
 
         :return: ``True`` if widget has rendered a new state, ``None`` if the widget has not changed, so render used a cache
         """
-        raise NotImplementedError('override is mandatory')
+        raise NotImplementedError("override is mandatory")
 
     @staticmethod
     def _hash_variables(*args) -> int:
@@ -978,7 +1018,9 @@ class Widget(Base):
             return True
         return False
 
-    def set_title(self, title: str, offsetx: NumberType = 0, offsety: NumberType = 0) -> Widget:
+    def set_title(
+        self, title: str, offsetx: NumberType = 0, offsety: NumberType = 0
+    ) -> Widget:
         """
         Update the Widget title.
 
@@ -1014,7 +1056,7 @@ class Widget(Base):
     def set_background_color(
         self,
         color: ColorInputType | pygame_menu.BaseImage | None,
-        inflate: Tuple2IntType | None = (0, 0)
+        inflate: Tuple2IntType | None = (0, 0),
     ) -> Widget:
         """
         Set the Widget background color.
@@ -1025,15 +1067,17 @@ class Widget(Base):
         """
         if color is not None:
             if isinstance(color, pygame_menu.BaseImage):
-                assert color.get_drawing_mode() == pygame_menu.baseimage.IMAGE_MODE_FILL, \
-                    'currently widget only supports IMAGE_MODE_FILL drawing mode'
+                assert (
+                    color.get_drawing_mode() == pygame_menu.baseimage.IMAGE_MODE_FILL
+                ), "currently widget only supports IMAGE_MODE_FILL drawing mode"
             else:
                 color = assert_color(color)
         if inflate is None:
             inflate = self._background_inflate
         assert_vector(inflate, 2, int)
-        assert inflate[0] >= 0 and inflate[1] >= 0, \
-            'widget background inflate must be equal or greater than zero in both axis'
+        assert inflate[0] >= 0 and inflate[1] >= 0, (
+            "widget background inflate must be equal or greater than zero in both axis"
+        )
 
         self._background_color = color
         self._background_inflate = tuple(inflate)
@@ -1073,9 +1117,7 @@ class Widget(Base):
         return inflate
 
     def _draw_background_color(
-        self,
-        surface: pygame.Surface,
-        rect: pygame.Rect | None = None
+        self, surface: pygame.Surface, rect: pygame.Rect | None = None
     ) -> None:
         """
         Fill a surface with the widget background color.
@@ -1094,16 +1136,16 @@ class Widget(Base):
 
         # Create the background surface if none, if the rect changed, or if the background color changed
         if (
-            self._background_surface is None or
-            self._background_surface[0] != rect or
-            self._background_surface[2] != bg
+            self._background_surface is None
+            or self._background_surface[0] != rect
+            or self._background_surface[2] != bg
         ):
             background_surface = make_surface(rect.width, rect.height, alpha=True)
             if isinstance(bg, pygame_menu.BaseImage):
                 bg.draw(
                     surface=background_surface,
                     area=background_surface.get_rect(),
-                    position=(0, 0)
+                    position=(0, 0),
                 )
             else:
                 background_surface.fill(bg, background_surface.get_rect())
@@ -1117,7 +1159,9 @@ class Widget(Base):
         # Draw the background surface
         surface.blit(self._background_surface[1], rect)
 
-    def _readonly_check_mouseover(self, events: EventListType, rect: pygame.Rect | None = None) -> None:
+    def _readonly_check_mouseover(
+        self, events: EventListType, rect: pygame.Rect | None = None
+    ) -> None:
         """
         Check mouseover if readonly.
 
@@ -1135,8 +1179,12 @@ class Widget(Base):
 
         :return: Color, width, position, and inflate
         """
-        return self._border_color, self._border_width, \
-            self._border_position, self._border_inflate
+        return (
+            self._border_color,
+            self._border_width,
+            self._border_position,
+            self._border_inflate,
+        )
 
     def _draw_border(self, surface: pygame.Surface) -> None:
         """
@@ -1147,19 +1195,17 @@ class Widget(Base):
         if self._border_width == 0 or self._border_color is None:
             return
         rect = self.get_rect(
-            inflate=(self._border_inflate[0] + self._background_inflate[0],
-                     self._border_inflate[1] + self._background_inflate[1]))
+            inflate=(
+                self._border_inflate[0] + self._background_inflate[0],
+                self._border_inflate[1] + self._background_inflate[1],
+            )
+        )
 
         if self._border_position == WIDGET_BORDER_POSITION_NONE:
             return
 
         elif self._border_position == WIDGET_BORDER_POSITION_FULL:
-            pygame.draw.rect(
-                surface,
-                self._border_color,
-                rect,
-                self._border_width
-            )
+            pygame.draw.rect(surface, self._border_color, rect, self._border_width)
 
         else:
             for pos in self._border_position:
@@ -1172,13 +1218,9 @@ class Widget(Base):
                 elif pos == POSITION_WEST:
                     start, end = rect.topleft, rect.bottomleft
                 else:
-                    raise RuntimeError('invalid border position')
+                    raise RuntimeError("invalid border position")
                 pygame.draw.line(
-                    surface,
-                    self._border_color,
-                    start,
-                    end,
-                    self._border_width
+                    surface, self._border_color, start, end, self._border_width
                 )
 
     def set_border(
@@ -1186,7 +1228,7 @@ class Widget(Base):
         width: int,
         color: ColorInputType | None,
         inflate: Tuple2IntType = (0, 0),
-        position: WidgetBorderPositionType = WIDGET_FULL_BORDER
+        position: WidgetBorderPositionType = WIDGET_FULL_BORDER,
     ) -> Widget:
         """
         Set the Widget border.
@@ -1213,14 +1255,25 @@ class Widget(Base):
             position = [position]
 
         # Check positioning
-        if POSITION_WEST in position and POSITION_SOUTH in position and POSITION_NORTH in position and POSITION_EAST in position:
+        if (
+            POSITION_WEST in position
+            and POSITION_SOUTH in position
+            and POSITION_NORTH in position
+            and POSITION_EAST in position
+        ):
             position = WIDGET_BORDER_POSITION_FULL
 
         else:
             for pos in position:
-                assert pos in (POSITION_NORTH, POSITION_SOUTH, POSITION_EAST, POSITION_WEST), \
-                    f'only north, south, east, and west positions are valid, ' \
+                assert pos in (
+                    POSITION_NORTH,
+                    POSITION_SOUTH,
+                    POSITION_EAST,
+                    POSITION_WEST,
+                ), (
+                    f"only north, south, east, and west positions are valid, "
                     f'but received "{pos}"'
+                )
 
         if width == 0:
             position = WIDGET_BORDER_POSITION_NONE
@@ -1356,8 +1409,7 @@ class Widget(Base):
             return False
 
     def _draw_shadow(
-        self,
-        surface: pygame.Surface, rect: pygame.Rect | None = None
+        self, surface: pygame.Surface, rect: pygame.Rect | None = None
     ) -> None:
         """
         Draw the widget shadow.
@@ -1365,11 +1417,13 @@ class Widget(Base):
         :param surface: Surface to draw the shadow
         :param rect: Which rect use to compute surfaces
         """
-        if self._shadow['enabled']:
+        if self._shadow["enabled"]:
             if not rect:
                 rect = self.get_rect(inflate=self._get_background_inflate())
-            if not self._shadow['surface'] or self._shadow['rect'] != rect:
-                shadow_type, shadow_width, corner_radius, aa_amount, color = self._shadow['properties']
+            if not self._shadow["surface"] or self._shadow["rect"] != rect:
+                shadow_type, shadow_width, corner_radius, aa_amount, color = (
+                    self._shadow["properties"]
+                )
                 s: pygame.Surface
                 w, h = rect.width + 2 * shadow_width, rect.height + 2 * shadow_width
                 if shadow_type == WIDGET_SHADOW_TYPE_RECTANGULAR:
@@ -1379,7 +1433,7 @@ class Widget(Base):
                         shadow_width_param=shadow_width,
                         corner_radius_param=corner_radius,
                         aa_amount=aa_amount,
-                        color=color
+                        color=color,
                     )
                 else:
                     s = WIDGET_SHADOW_GENERATOR.create_new_ellipse_shadow(
@@ -1387,18 +1441,20 @@ class Widget(Base):
                         height=h,
                         shadow_width_param=shadow_width,
                         aa_amount=aa_amount,
-                        color=color
+                        color=color,
                     )
                 WIDGET_SHADOW_GENERATOR.clear_short_term_caches()
-                self._shadow['surface'] = s
-            if not self._shadow['surface']:
+                self._shadow["surface"] = s
+            if not self._shadow["surface"]:
                 if self._verbose:
-                    warn(f'{self.get_class_id()} shadow computation failed, check if'
-                         f' the radius is smaller than the width and height of the menu')
-                self._shadow['enabled'] = False
+                    warn(
+                        f"{self.get_class_id()} shadow computation failed, check if"
+                        f" the radius is smaller than the width and height of the menu"
+                    )
+                self._shadow["enabled"] = False
                 return
-            w = self._shadow['properties'][1]
-            surface.blit(self._shadow['surface'], (rect.x - w, rect.y - w))
+            w = self._shadow["properties"][1]
+            surface.blit(self._shadow["surface"], (rect.x - w, rect.y - w))
 
     def draw(self, surface: pygame.Surface) -> Widget:
         """
@@ -1466,7 +1522,7 @@ class Widget(Base):
 
         :param surface: Surface to draw
         """
-        raise NotImplementedError('override is mandatory')
+        raise NotImplementedError("override is mandatory")
 
     def get_margin(self) -> Tuple2IntType:
         """
@@ -1522,7 +1578,9 @@ class Widget(Base):
         self._force_render()
         return self
 
-    def set_scrollarea(self, scrollarea: pygame_menu._scrollarea.ScrollArea | None) -> None:
+    def set_scrollarea(
+        self, scrollarea: pygame_menu._scrollarea.ScrollArea | None
+    ) -> None:
         """
         Set scrollarea reference. Mostly used for events.
 
@@ -1539,7 +1597,9 @@ class Widget(Base):
         """
         return self._scrollarea
 
-    def scroll_to_widget(self, margin: Tuple2NumberType = (0, 0), scroll_parent: bool = True) -> Widget:
+    def scroll_to_widget(
+        self, margin: Tuple2NumberType = (0, 0), scroll_parent: bool = True
+    ) -> Widget:
         """
         The container ScrollArea scrolls to the Widget.
 
@@ -1547,10 +1607,16 @@ class Widget(Base):
         :param scroll_parent: If ``True`` parent scroll also scrolls to widget
         :return: Self reference
         """
-        if self.has_attribute('ignore_scroll_to_widget'):
+        if self.has_attribute("ignore_scroll_to_widget"):
             return self
-        elif self._frame is not None and self._frame.is_scrollable and self._frame.get_scrollarea() is not None:
-            self._frame.get_scrollarea().scroll_to_rect(self.get_frame().get_rect(), margin, scroll_parent)
+        elif (
+            self._frame is not None
+            and self._frame.is_scrollable
+            and self._frame.get_scrollarea() is not None
+        ):
+            self._frame.get_scrollarea().scroll_to_rect(
+                self.get_frame().get_rect(), margin, scroll_parent
+            )
         if self._scrollarea is not None:
             rect = self.get_rect()
             # rect.y += self._border_width
@@ -1573,7 +1639,7 @@ class Widget(Base):
         to_real_position: bool = False,
         to_absolute_position: bool = False,
         render: bool = False,
-        real_position_visible: bool = True
+        real_position_visible: bool = True,
     ) -> pygame.Rect:
         """
         Return the :py:class:`pygame.Rect` object of the Widget. This method
@@ -1595,23 +1661,34 @@ class Widget(Base):
         if inflate is None:
             inflate = (0, 0)
 
-        padding = self.get_padding(transformed=use_transformed_padding)  # top,right,bottom,left
+        padding = self.get_padding(
+            transformed=use_transformed_padding
+        )  # top,right,bottom,left
         pad_top = padding[0] * apply_padding + inflate[1] / 2
         pad_right = padding[1] * apply_padding + inflate[0] / 2
         pad_bottom = padding[2] * apply_padding + inflate[1] / 2
         pad_left = padding[3] * apply_padding + inflate[0] / 2
 
-        rect = pygame.Rect(int(self._rect.x - pad_left),
-                           int(self._rect.y - pad_top),
-                           int(self._rect.width + pad_left + pad_right + self._rect_size_delta[0]),
-                           int(self._rect.height + pad_bottom + pad_top + self._rect_size_delta[1]))
+        rect = pygame.Rect(
+            int(self._rect.x - pad_left),
+            int(self._rect.y - pad_top),
+            int(self._rect.width + pad_left + pad_right + self._rect_size_delta[0]),
+            int(self._rect.height + pad_bottom + pad_top + self._rect_size_delta[1]),
+        )
 
         if self._scrollarea is not None:
-            assert not (to_real_position and to_absolute_position), \
-                'real and absolute positions cannot be True at the same time'
+            assert not (to_real_position and to_absolute_position), (
+                "real and absolute positions cannot be True at the same time"
+            )
             if to_real_position:
-                rect = self._scrollarea.to_real_position(rect, visible=real_position_visible)
-                soff = (0, 0) if self._menu is None else self._menu.get_last_surface_offset()
+                rect = self._scrollarea.to_real_position(
+                    rect, visible=real_position_visible
+                )
+                soff = (
+                    (0, 0)
+                    if self._menu is None
+                    else self._menu.get_last_surface_offset()
+                )
                 rect.x += soff[0]
                 rect.y += soff[1]
             elif to_absolute_position:
@@ -1630,9 +1707,9 @@ class Widget(Base):
 
         :return: Widget data value
         """
-        raise ValueError(f'{self.get_class_id()} does not accept value')
+        raise ValueError(f"{self.get_class_id()} does not accept value")
 
-    def add_self_to_kwargs(self, key: str = 'widget') -> Widget:
+    def add_self_to_kwargs(self, key: str = "widget") -> Widget:
         """
         Adds the Widget object to kwargs, it helps to get the Widget reference for
         callbacks. It raises ``KeyError`` if key is duplicated.
@@ -1643,7 +1720,7 @@ class Widget(Base):
         if not isinstance(key, str):
             raise TypeError("key must be a string")
         if key in self._kwargs.keys():
-            raise KeyError('duplicated key')
+            raise KeyError("duplicated key")
         self._kwargs[key] = self
         return self
 
@@ -1656,14 +1733,18 @@ class Widget(Base):
             self._surface = pygame.transform.rotate(self._surface, self._angle)
 
         if self._flip[0] or self._flip[1]:
-            self._surface = pygame.transform.flip(self._surface, self._flip[0], self._flip[1])
+            self._surface = pygame.transform.flip(
+                self._surface, self._flip[0], self._flip[1]
+            )
 
         self._padding_transform = self._padding  # Reset pad scaling
 
         # Get width/height
         width, height = self._surface.get_size()
-        width_pad, height_pad = width + self._padding[1] + self._padding[3], \
-                                height + self._padding[0] + self._padding[2]
+        width_pad, height_pad = (
+            width + self._padding[1] + self._padding[3],
+            height + self._padding[0] + self._padding[2],
+        )
 
         new_size, smooth = None, None
 
@@ -1692,8 +1773,9 @@ class Widget(Base):
                 smooth = self._max_height[2]
 
         else:
-            raise RuntimeError('max_width and max_height cannot be non-None at '
-                               'the same time')
+            raise RuntimeError(
+                "max_width and max_height cannot be non-None at the same time"
+            )
 
         # Apply scaling
         self._scale_factor = (1, 1)
@@ -1712,16 +1794,18 @@ class Widget(Base):
             pad_height = h / height
 
             # (top,right,bottom,left)
-            self._padding_transform = (int(self._padding[0] * pad_height),
-                                       int(self._padding[1] * pad_width),
-                                       int(self._padding[2] * pad_height),
-                                       int(self._padding[3] * pad_width))
+            self._padding_transform = (
+                int(self._padding[0] * pad_height),
+                int(self._padding[1] * pad_width),
+                int(self._padding[2] * pad_height),
+                int(self._padding[3] * pad_width),
+            )
 
     def _font_render_string(
         self,
         text: str,
         color: ColorInputType = (0, 0, 0),
-        use_background_color: bool = True
+        use_background_color: bool = True,
     ) -> pygame.Surface:
         """
         Render text. If the font is not defined returns a zero-width surface.
@@ -1732,8 +1816,9 @@ class Widget(Base):
         :return: Text surface
         """
         assert isinstance(text, str)
-        assert isinstance(use_background_color, bool), \
-            'use_background_color must be boolean'
+        assert isinstance(use_background_color, bool), (
+            "use_background_color must be boolean"
+        )
         color = assert_color(color)
         bgcolor = self._font_background_color
 
@@ -1745,7 +1830,7 @@ class Widget(Base):
             return make_surface(0, 0)
 
         # Replace tabs
-        text = text.replace('\t', ' ' * self._tab_size)
+        text = text.replace("\t", " " * self._tab_size)
         surface = self._font.render(text, self._font_antialias, color, bgcolor)
         return surface
 
@@ -1761,9 +1846,7 @@ class Widget(Base):
 
         # Create surface
         surface = make_surface(
-            width=text.get_width(),
-            height=text.get_height(),
-            alpha=True
+            width=text.get_width(), height=text.get_height(), alpha=True
         )
 
         # Draw shadow first
@@ -1780,7 +1863,7 @@ class Widget(Base):
         shadow_width: int = 10,
         corner_radius: int = 0,
         color: ColorInputType = (0, 0, 0),
-        aa_amount: int = 4
+        aa_amount: int = 4,
     ) -> Widget:
         """
         Configure the widget shadow.
@@ -1792,15 +1875,24 @@ class Widget(Base):
         :param aa_amount: Antialiasing amout
         :return: Self reference
         """
-        assert shadow_type in (WIDGET_SHADOW_TYPE_ELLIPSE, WIDGET_SHADOW_TYPE_RECTANGULAR)
+        assert shadow_type in (
+            WIDGET_SHADOW_TYPE_ELLIPSE,
+            WIDGET_SHADOW_TYPE_RECTANGULAR,
+        )
         assert isinstance(shadow_width, int) and shadow_width >= 0
         assert isinstance(corner_radius, int) and corner_radius >= 0
         assert isinstance(aa_amount, int) and aa_amount > 0
         color = assert_color(color)
-        self._shadow['enabled'] = shadow_width > 0
+        self._shadow["enabled"] = shadow_width > 0
         # noinspection PyTypeChecker
-        self._shadow['properties'] = (shadow_type, shadow_width, shadow_width + corner_radius, aa_amount, color[0:3])
-        self._shadow['surface'] = None
+        self._shadow["properties"] = (
+            shadow_type,
+            shadow_width,
+            shadow_width + corner_radius,
+            aa_amount,
+            color[0:3],
+        )
+        self._shadow["surface"] = None
         return self
 
     def get_font_color_status(self, check_selection: bool = True) -> ColorType:
@@ -1814,7 +1906,11 @@ class Widget(Base):
             if self._selected:
                 return self._font_readonly_selected_color
             return self._font_readonly_color
-        elif self._selected and check_selection and self._selection_effect.widget_apply_font_color:
+        elif (
+            self._selected
+            and check_selection
+            and self._selection_effect.widget_apply_font_color
+        ):
             return self._font_selected_color
         return self._font_color
 
@@ -1827,7 +1923,7 @@ class Widget(Base):
         readonly_color: ColorInputType,
         readonly_selected_color: ColorInputType,
         background_color: ColorInputType | None,
-        antialias: bool = True
+        antialias: bool = True,
     ) -> Widget:
         """
         Set the Widget font.
@@ -1857,7 +1953,9 @@ class Widget(Base):
             if len(background_color) == 4 and background_color[3] != 255:
                 background_color = None
                 if self._verbose:
-                    warn('font background color must be opaque, alpha channel must be 255')
+                    warn(
+                        "font background color must be opaque, alpha channel must be 255"
+                    )
 
         font_size = int(font_size)
 
@@ -1880,7 +1978,7 @@ class Widget(Base):
         enabled: bool = True,
         color: ColorInputType | None = None,
         position: str | None = None,
-        offset: int = 2
+        offset: int = 2,
     ) -> Widget:
         """
         Set the Widget font shadow.
@@ -1903,7 +2001,7 @@ class Widget(Base):
             assert_position(position)
             self._font_shadow_position = position
         assert isinstance(offset, int)
-        assert offset > 0, 'shadow offset must be greater than zero if enabled'
+        assert offset > 0, "shadow offset must be greater than zero if enabled"
         self._font_shadow_offset = offset
 
         # Set position
@@ -1932,8 +2030,10 @@ class Widget(Base):
         elif self._font_shadow_position == POSITION_CENTER:
             pass  # (0, 0)
 
-        self._font_shadow_tuple = (x * self._font_shadow_offset,
-                                   y * self._font_shadow_offset)
+        self._font_shadow_tuple = (
+            x * self._font_shadow_offset,
+            y * self._font_shadow_offset,
+        )
         self._force_render()
         return self
 
@@ -1967,14 +2067,14 @@ class Widget(Base):
             if k not in style.keys():
                 style[k] = current_font[k]
         return self.set_font(
-            antialias=style['antialias'],
-            background_color=style['background_color'],
-            color=style['color'],
-            font=style['name'],
-            font_size=style['size'],
-            readonly_color=style['readonly_color'],
-            readonly_selected_color=style['readonly_selected_color'],
-            selected_color=style['selected_color']
+            antialias=style["antialias"],
+            background_color=style["background_color"],
+            color=style["color"],
+            font=style["name"],
+            font_size=style["size"],
+            readonly_color=style["readonly_color"],
+            readonly_selected_color=style["readonly_selected_color"],
+            selected_color=style["selected_color"],
         )
 
     def get_font_info(self) -> dict[str, Any]:
@@ -1984,14 +2084,14 @@ class Widget(Base):
         :return: Font information dict
         """
         return {
-            'antialias': self._font_antialias,
-            'background_color': self._font_background_color,
-            'color': self._font_color,
-            'name': self._font_name,
-            'readonly_color': self._font_readonly_color,
-            'readonly_selected_color': self._font_readonly_selected_color,
-            'selected_color': self._font_selected_color,
-            'size': self._font_size
+            "antialias": self._font_antialias,
+            "background_color": self._font_background_color,
+            "color": self._font_color,
+            "name": self._font_name,
+            "readonly_color": self._font_readonly_color,
+            "readonly_selected_color": self._font_readonly_selected_color,
+            "selected_color": self._font_selected_color,
+            "size": self._font_size,
         }
 
     def set_menu(self, menu: pygame_menu.Menu | None) -> Widget:
@@ -2056,7 +2156,7 @@ class Widget(Base):
         """
         Function triggered after a font is applied to the widget.
         """
-        raise NotImplementedError('override is mandatory')
+        raise NotImplementedError("override is mandatory")
 
     def _set_position_relative_to_frame(self, index: int = -1) -> Widget:
         """
@@ -2095,8 +2195,12 @@ class Widget(Base):
         if self.lock_position:
             return self
         self._position = (int(x), int(y))
-        self._rect.x = self._position[0] + self._translate[0] + self._translate_virtual[0]
-        self._rect.y = self._position[1] + self._translate[1] + self._translate_virtual[1]
+        self._rect.x = (
+            self._position[0] + self._translate[0] + self._translate_virtual[0]
+        )
+        self._rect.y = (
+            self._position[1] + self._translate[1] + self._translate_virtual[1]
+        )
         return self
 
     def get_position(
@@ -2105,7 +2209,7 @@ class Widget(Base):
         use_transformed_padding: bool = True,
         to_real_position: bool = False,
         to_absolute_position: bool = False,
-        real_position_visible: bool = True
+        real_position_visible: bool = True,
     ) -> Tuple2IntType:
         """
         Return the widget position tuple on x-axis and y-axis (x, y) in px.
@@ -2124,7 +2228,7 @@ class Widget(Base):
             use_transformed_padding=use_transformed_padding,
             to_real_position=to_real_position,
             to_absolute_position=to_absolute_position,
-            real_position_visible=real_position_visible
+            real_position_visible=real_position_visible,
         )
         return rect.x, rect.y
 
@@ -2173,10 +2277,7 @@ class Widget(Base):
             self.render()
 
     def _scale_warn(
-        self,
-        scale: bool = True,
-        maxwidth: bool = True,
-        maxheight: bool = True
+        self, scale: bool = True, maxwidth: bool = True, maxheight: bool = True
     ) -> None:
         """
         Warns user about overriding properties of scale/maxwidth/maxheight.
@@ -2190,21 +2291,26 @@ class Widget(Base):
             return
         # Iterate each type and warn accordingly
         if self._scale[0] and scale:
-            warn('widget already has a scaling factor applied. Scaling has '
-                 'been disabled')
+            warn(
+                "widget already has a scaling factor applied. Scaling has been disabled"
+            )
         if self._max_width[0] is not None and maxwidth:
-            warn('widget max width is not None. Set widget.set_max_width(None) '
-                 'for disabling such feature. This scaling will be ignored')
+            warn(
+                "widget max width is not None. Set widget.set_max_width(None) "
+                "for disabling such feature. This scaling will be ignored"
+            )
         if self._max_height[0] is not None and maxheight:
-            warn('widget max height is not None. Set widget.set_max_height(None) '
-                 'for disabling such feature. This scaling will be ignored')
+            warn(
+                "widget max height is not None. Set widget.set_max_height(None) "
+                "for disabling such feature. This scaling will be ignored"
+            )
 
     def set_max_width(
         self,
         width: NumberType | None,
         scale_height: NumberType = False,
         smooth: bool = True,
-        render: bool = True
+        render: bool = True,
     ) -> Widget:
         """
         Transformation: Set the Widget max width, it applies a scaling factor if
@@ -2256,8 +2362,8 @@ class Widget(Base):
         if width is None:
             self._max_width[0] = None
         else:
-            assert isinstance(width, NumberInstance), 'width must be numeric'
-            assert width >= 0, 'width must be equal or greater than zero'
+            assert isinstance(width, NumberInstance), "width must be numeric"
+            assert width >= 0, "width must be equal or greater than zero"
             self._max_width = [width, scale_height, smooth]
 
         if render:
@@ -2269,7 +2375,7 @@ class Widget(Base):
         height: NumberType | None,
         scale_width: NumberType = False,
         smooth: bool = True,
-        render: bool = True
+        render: bool = True,
     ) -> Widget:
         """
         Transformation: Set the Widget max height, it applies a scaling factor
@@ -2316,8 +2422,8 @@ class Widget(Base):
         if height is None:
             self._max_height[0] = None
         else:
-            assert isinstance(height, NumberInstance), 'height must be numeric'
-            assert height > 0, 'height must be greater than zero'
+            assert isinstance(height, NumberInstance), "height must be numeric"
+            assert height > 0, "height must be greater than zero"
             self._max_height = [height, scale_width, smooth]
 
         if render:
@@ -2329,7 +2435,7 @@ class Widget(Base):
         width: NumberType,
         height: NumberType,
         smooth: bool = True,
-        render: bool = True
+        render: bool = True,
     ) -> Widget:
         """
         Transformation: Scale the Widget to a desired width and height factor.
@@ -2367,8 +2473,7 @@ class Widget(Base):
         assert isinstance(width, NumberInstance)
         assert isinstance(height, NumberInstance)
         assert isinstance(smooth, bool)
-        assert width > 0 and height > 0, \
-            'width and height must be greater than zero'
+        assert width > 0 and height > 0, "width and height must be greater than zero"
 
         self._scale_warn(scale=False)
         self._disable_scale(render=render)
@@ -2386,7 +2491,7 @@ class Widget(Base):
         width: NumberType,
         height: NumberType,
         smooth: bool = True,
-        render: bool = True
+        render: bool = True,
     ) -> Widget:
         """
         Transformation: Set the Widget size to another size.
@@ -2426,9 +2531,13 @@ class Widget(Base):
         self._disable_scale(render=render)
         if width == 1 and height == 1:
             if self._verbose:
-                warn('did you mean widget.scale(1,1) instead of widget.resize(1,1)?')
-        self.scale(float(width) / self.get_width(),
-                   float(height) / self.get_height(), smooth, render)
+                warn("did you mean widget.scale(1,1) instead of widget.resize(1,1)?")
+        self.scale(
+            float(width) / self.get_width(),
+            float(height) / self.get_height(),
+            smooth,
+            render,
+        )
         return self
 
     def translate(self, x: NumberType, y: NumberType, render: bool = True) -> Widget:
@@ -2625,9 +2734,7 @@ class Widget(Base):
         return self._surface
 
     def get_width(
-        self,
-        apply_padding: bool = True,
-        apply_selection: bool = False
+        self, apply_padding: bool = True, apply_selection: bool = False
     ) -> int:
         """
         Return the Widget width.
@@ -2649,9 +2756,7 @@ class Widget(Base):
         return int(width)
 
     def get_height(
-        self,
-        apply_padding: bool = True,
-        apply_selection: bool = False
+        self, apply_padding: bool = True, apply_selection: bool = False
     ) -> int:
         """
         Return the Widget height.
@@ -2673,9 +2778,7 @@ class Widget(Base):
         return int(height)
 
     def get_size(
-        self,
-        apply_padding: bool = True,
-        apply_selection: bool = False
+        self, apply_padding: bool = True, apply_selection: bool = False
     ) -> Tuple2IntType:
         """
         Return the Widget size.
@@ -2688,8 +2791,9 @@ class Widget(Base):
         :param apply_selection: Apply selection
         :return: Widget width and height in px
         """
-        return self.get_width(apply_padding=apply_padding, apply_selection=apply_selection), \
-            self.get_height(apply_padding=apply_padding, apply_selection=apply_selection)
+        return self.get_width(
+            apply_padding=apply_padding, apply_selection=apply_selection
+        ), self.get_height(apply_padding=apply_padding, apply_selection=apply_selection)
 
     def _focus(self) -> None:
         """
@@ -2731,7 +2835,7 @@ class Widget(Base):
         joystick: bool = True,
         mouse: bool = True,
         touchscreen: bool = True,
-        keyboard: bool = True
+        keyboard: bool = True,
     ) -> Widget:
         """
         Enable interfaces to control the Widget.
@@ -2767,7 +2871,7 @@ class Widget(Base):
 
         :param value: Value to be set on the widget
         """
-        raise ValueError(f'{self.get_class_id()} does not accept value')
+        raise ValueError(f"{self.get_class_id()} does not accept value")
 
     def set_default_value(self, value: Any) -> Widget:
         """
@@ -2816,7 +2920,7 @@ class Widget(Base):
         :param events: List/Tuple of pygame events
         :return: ``True`` if updated
         """
-        raise NotImplementedError('override is mandatory')
+        raise NotImplementedError("override is mandatory")
 
     def update_menu(self, events: EventVectorType) -> bool:
         """
@@ -2831,8 +2935,7 @@ class Widget(Base):
         return self.update(events)
 
     def add_draw_callback(
-        self,
-        draw_callback: Callable[[Widget, pygame_menu.Menu], Any]
+        self, draw_callback: Callable[[Widget, pygame_menu.Menu], Any]
     ) -> str:
         """
         Adds a function to the Widget to be executed each time the widget is drawn.
@@ -2868,8 +2971,7 @@ class Widget(Base):
         :param draw_callback: Function
         :return: Callback ID
         """
-        assert callable(draw_callback), \
-            'draw callback must be callable (function-type)'
+        assert callable(draw_callback), "draw callback must be callable (function-type)"
         callback_id: str = uuid4()
         self._draw_callbacks[callback_id] = draw_callback
         return callback_id
@@ -2900,8 +3002,7 @@ class Widget(Base):
         return self
 
     def add_update_callback(
-        self,
-        update_callback: Callable[[EventListType, Widget, pygame_menu.Menu], Any]
+        self, update_callback: Callable[[EventListType, Widget, pygame_menu.Menu], Any]
     ) -> str:
         """
         Adds a function to the Widget to be executed each time the Widget is
@@ -2923,8 +3024,9 @@ class Widget(Base):
         :param update_callback: Function
         :return: Callback ID
         """
-        assert callable(update_callback), \
-            'update callback must be callable (function-type)'
+        assert callable(update_callback), (
+            "update callback must be callable (function-type)"
+        )
         callback_id: str = uuid4()
         self._update_callbacks[callback_id] = update_callback
         return callback_id
@@ -2989,7 +3091,7 @@ class Widget(Base):
         self,
         float_status: bool = True,
         menu_render: bool = False,
-        origin_position: bool = False
+        origin_position: bool = False,
     ) -> Widget:
         """
         Set the floating status. If ``True`` the Widget don't contribute its
@@ -3048,6 +3150,7 @@ class Widget(Base):
                 try:
                     self._menu._update_widget_position()
                 except AttributeError:
+                    # Some menu types do not implement _update_widget_position; safe to ignore.
                     pass
         return self
 
@@ -3125,7 +3228,7 @@ class Widget(Base):
         :param frame: Frame object
         :return: Self reference
         """
-        assert self._frame is None, 'widget is already in another frame'
+        assert self._frame is None, "widget is already in another frame"
         assert isinstance(frame, pygame_menu.widgets.Frame)
         self._frame = frame
         return self
@@ -3154,8 +3257,8 @@ class Widget(Base):
         """
         # Assemble class name
         cls_name: str = self.__class__.__name__
-        if self.get_title() != '':
-            cls_name += '-' + self.get_title()
+        if self.get_title() != "":
+            cls_name += "-" + self.get_title()
 
         # Assemble geometric data
         rect: pygame.Rect = self.get_rect(render=True)
@@ -3163,10 +3266,17 @@ class Widget(Base):
         rect_abs: pygame.Rect = self.get_rect(to_absolute_position=True)
         cri: Tuple3IntType = self.get_col_row_index()
         geom = (
-            cri[0], cri[1], cri[2],  # Column/row layout
-            rect.x, rect.y, rect.width, rect.height,  # Drawing rect
-            rect_real.x, rect_real.y,  # Real rect positioning
-            rect_abs.x, rect_abs.y  # Absolute rect positioning
+            cri[0],
+            cri[1],
+            cri[2],  # Column/row layout
+            rect.x,
+            rect.y,
+            rect.width,
+            rect.height,  # Drawing rect
+            rect_real.x,
+            rect_real.y,  # Real rect positioning
+            rect_abs.x,
+            rect_abs.y,  # Absolute rect positioning
         )
 
         # Bool info
@@ -3177,7 +3287,7 @@ class Widget(Base):
             int(self.is_visible()),
             int(self.is_scrollable),
             int(self.get_frame() is not None),
-            self.get_frame_depth()
+            self.get_frame_depth(),
         )
 
         # Starting data
@@ -3192,10 +3302,12 @@ class Widget(Base):
 
         # Append inner widgets if drop select
         # noinspection PyUnresolvedReferences
-        if (isinstance(self, pygame_menu.widgets.DropSelect) and
-            hasattr(self, '_drop_frame') and
-            self._drop_frame is not None and
-            hasattr(self, '_option_buttons')):
+        if (
+            isinstance(self, pygame_menu.widgets.DropSelect)
+            and hasattr(self, "_drop_frame")
+            and self._drop_frame is not None
+            and hasattr(self, "_option_buttons")
+        ):
             data.append(self._drop_frame._get_status())
             for btn in self._option_buttons:
                 data.append(btn._get_status())
@@ -3203,6 +3315,7 @@ class Widget(Base):
         try:
             data.append(self.get_value())
         except ValueError:
+            # Some widgets do not define a value; ignore and continue building status.
             pass
 
         return tuple(data)
@@ -3241,6 +3354,7 @@ class _WidgetCopyException(Exception):
     """
     If user tries to copy a Widget.
     """
+
     pass
 
 
@@ -3248,6 +3362,7 @@ class _WidgetNoValue:
     """
     No value class.
     """
+
     pass
 
 
@@ -3255,6 +3370,7 @@ class WidgetTransformationNotImplemented(Exception):
     """
     Exception raised if widget does not implement a transformation.
     """
+
     pass
 
 
@@ -3262,6 +3378,7 @@ class AbstractWidgetManager:
     """
     Add/Remove widgets to the Menu.
     """
+
     _menu: pygame_menu.Menu
 
     def __init__(self) -> None:
@@ -3274,7 +3391,7 @@ class AbstractWidgetManager:
 
         :return: Menu theme reference
         """
-        raise NotImplementedError('override is mandatory')
+        raise NotImplementedError("override is mandatory")
 
     def _add_submenu(self, menu: pygame_menu.Menu, hook: Widget) -> None:
         """
@@ -3284,7 +3401,7 @@ class AbstractWidgetManager:
         :param menu: Menu reference
         :param hook: Widget hook
         """
-        raise NotImplementedError('override is mandatory')
+        raise NotImplementedError("override is mandatory")
 
     def _filter_widget_attributes(self, kwargs: dict[str, Any]) -> dict[str, Any]:
         """
@@ -3295,7 +3412,7 @@ class AbstractWidgetManager:
         :param kwargs: Optional keyword arguments (input attributes)
         :return: Dictionary of valid attributes
         """
-        raise NotImplementedError('override is mandatory')
+        raise NotImplementedError("override is mandatory")
 
     def _configure_widget(self, widget: Widget, **kwargs) -> None:
         """
@@ -3305,7 +3422,7 @@ class AbstractWidgetManager:
         :param widget: Widget object
         :param kwargs: Optional keywords arguments
         """
-        raise NotImplementedError('override is mandatory')
+        raise NotImplementedError("override is mandatory")
 
     @staticmethod
     def _check_kwargs(kwargs: dict[str, Any]) -> None:
@@ -3314,7 +3431,7 @@ class AbstractWidgetManager:
 
         :param kwargs: Kwargs dict
         """
-        raise NotImplementedError('override is mandatory')
+        raise NotImplementedError("override is mandatory")
 
     def _append_widget(self, widget: Widget) -> None:
         """
@@ -3322,7 +3439,7 @@ class AbstractWidgetManager:
 
         :param widget: Widget object
         """
-        raise NotImplementedError('override is mandatory')
+        raise NotImplementedError("override is mandatory")
 
     def configure_defaults_widget(self, widget: Widget) -> None:
         """
@@ -3331,4 +3448,4 @@ class AbstractWidgetManager:
 
         :param widget: Widget to be configured
         """
-        raise NotImplementedError('override is mandatory')
+        raise NotImplementedError("override is mandatory")
