@@ -135,6 +135,7 @@ class MenuBar(Widget):
             onreturn=onreturn,
             title=title,
             widget_id=menubar_id,
+            selectable=False,
         )
 
         self._backbox = back_box
@@ -157,7 +158,6 @@ class MenuBar(Widget):
         self.set_title(title, offsetx, offsety)
 
         # Public's
-        self.is_selectable = False
         self.fixed = True
 
     def _apply_font(self) -> None:

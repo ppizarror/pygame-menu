@@ -29,6 +29,7 @@ from pygame_menu._types import (
     NumberType,
     Tuple2IntType,
     Tuple2NumberType,
+    Tuple3IntType,
 )
 from pygame_menu.locals import FINGERDOWN, FINGERUP, INPUT_FLOAT, INPUT_INT, INPUT_TEXT
 from pygame_menu.utils import (
@@ -463,26 +464,32 @@ class TextInput(Widget):
         self._delete()
         self.change()
 
-    def get_value(self) -> str:
+    def get_value(self, as_string: bool = False) -> str | float | int | Tuple3IntType:
         """
         Return the value of the text.
 
-        :return: Text inside the widget
+        :param as_string: If True, return the raw input string
+        :return: Text inside the widget, or converted number
         """
-        value = ""
+        if as_string:
+            return self._input_string
+
         if self._input_type == INPUT_TEXT:
-            value = self._input_string  # Without filters
-        elif self._input_type == INPUT_FLOAT:
+            return self._input_string
+
+        if self._input_type == INPUT_FLOAT:
             try:
-                value = float(self._input_string)
+                return float(self._input_string)
             except ValueError:
-                value = 0
-        elif self._input_type == INPUT_INT:
+                return 0
+
+        if self._input_type == INPUT_INT:
             try:
-                value = int(float(self._input_string))
+                return int(float(self._input_string))
             except ValueError:
-                value = 0
-        return value
+                return 0
+
+        return self._input_string
 
     def scale(self, *args, **kwargs) -> TextInput:
         raise WidgetTransformationNotImplemented()

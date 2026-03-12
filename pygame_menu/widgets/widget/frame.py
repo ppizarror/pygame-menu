@@ -161,7 +161,7 @@ class Frame(Widget):
         orientation: str,
         frame_id: str = "",
     ) -> None:
-        super().__init__(widget_id=frame_id)
+        super().__init__(widget_id=frame_id, selectable=False)
         assert isinstance(width, NumberInstance)
         assert isinstance(height, NumberInstance)
         assert width > 0, f"width must be greater than zero ({width} received)"
@@ -201,7 +201,6 @@ class Frame(Widget):
         self.first_index = -1
         self.horizontal = orientation == ORIENTATION_HORIZONTAL
         self.is_scrollable = False
-        self.is_selectable = False
         self.last_index = -1
 
     def set_title(
