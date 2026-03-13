@@ -65,11 +65,17 @@ class Label(Widget):
         wordwrap: bool = False,
         leading: int | None = None,
         max_nlines: int | None = None,
+        accept_events: bool = False,
     ) -> None:
         assert isinstance(leading, (type(None), int))
         assert isinstance(max_nlines, (type(None), int))
         assert isinstance(wordwrap, bool)
-        super().__init__(title=title, onselect=onselect, widget_id=label_id)
+        super().__init__(
+            title=title,
+            onselect=onselect,
+            widget_id=label_id,
+            accept_events=accept_events,
+        )
         self._last_underline = ["", None]  # deco id, (color, offset, width)
         self._leading = leading
         self._lines = []  # Lines of text displayed

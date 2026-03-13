@@ -319,6 +319,7 @@ class TextInput(Widget):
             onselect=onselect,
             title=title,
             widget_id=textinput_id,
+            accept_events=True,
         )
 
         self._input_string = ""
@@ -407,7 +408,6 @@ class TextInput(Widget):
         self._apply_widget_update_callback = True
 
         # Other
-        self._accept_events = True
         self._alt_x_enabled = True
         self._copy_paste_enabled = copy_paste_enable
         self._current_underline_string = ""
