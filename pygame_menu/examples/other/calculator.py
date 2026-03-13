@@ -168,7 +168,7 @@ class CalculatorApp:
             w_deco.disable(on_layer)
             widget.set_attribute("on_layer", on_layer)
 
-            def widget_select(sel: bool, wid: pygame_menu.widgets.Widget, _):
+            def widget_select(sel: bool, wid: pygame_menu.widgets.Widget, _) -> None:
                 """
                 Function triggered if widget is selected
                 """
@@ -237,9 +237,9 @@ class CalculatorApp:
 
         :return: Operation result
         """
-        a = 0 if self.curr == "" else float(self.curr)
-        b = 0 if self.prev == "" else float(self.prev)
-        c = 0
+        a = 0.0 if self.curr == "" else float(self.curr)
+        b = 0.0 if self.prev == "" else float(self.prev)
+        c = 0.0
         if self.op == "+":
             c = a + b
         elif self.op == "-":
@@ -259,19 +259,24 @@ class CalculatorApp:
 
         :param digit: Number or symbol
         """
-        if digit in ("+", "-", "x", "/"):
+        if isinstance(digit, int):
+            digit_str = str(digit)
+        else:
+            digit_str = digit
+
+        if digit_str in ("+", "-", "x", "/"):
             if self.curr != "":
                 if self.op != "":
                     self.prev = str(self._operate())
                 else:
                     self.prev = self.curr
                 self.curr = ""
-            self.op = digit
+            self.op = digit_str
             if len(self.prev) <= 8:
                 self.screen.set_title(self.prev + self.op)
             else:
                 self.screen.set_title("Ans" + self.op)
-        elif digit == "=":
+        elif digit_str == "=":
             if self.prev == "":
                 self.curr = ""
                 self.screen.set_title("0")
@@ -287,12 +292,12 @@ class CalculatorApp:
         else:
             if self.op == "":
                 if len(self.prev) <= 7:
-                    self.prev += str(digit)
+                    self.prev += digit_str
                     self.prev = self._format(self.prev)
                 self.screen.set_title(self.prev)
             else:
                 if len(self.curr) <= 7:
-                    self.curr += str(digit)
+                    self.curr += digit_str
                     self.curr = self._format(self.curr)
                 self.screen.set_title(self.curr)
 

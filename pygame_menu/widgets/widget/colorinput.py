@@ -172,10 +172,11 @@ class ColorInput(TextInput):
         ), 'invalid hex format mode, it must be "none", "lower" or "upper"'
 
         maxchar: int = 0
+        valid_chars: list[str] | None = None
         self._color_type = color_type.lower()
         if self._color_type == COLORINPUT_TYPE_RGB:
             maxchar = 11  # RRR,GGG,BBB
-            self._valid_chars = [
+            valid_chars = [
                 "0",
                 "1",
                 "2",
@@ -190,7 +191,7 @@ class ColorInput(TextInput):
             ]
         elif self._color_type == COLORINPUT_TYPE_HEX:
             maxchar = 7  # #XXYYZZ
-            self._valid_chars = [
+            valid_chars = [
                 "a",
                 "A",
                 "b",
@@ -218,6 +219,8 @@ class ColorInput(TextInput):
 
         # noinspection PyArgumentEqualDefault
         super().__init__(
+            alt_x_enabled=False,
+            apply_widget_update_callback=False,
             copy_paste_enable=False,
             cursor_color=cursor_color,
             cursor_switch_ms=cursor_switch_ms,
@@ -238,7 +241,7 @@ class ColorInput(TextInput):
             text_ellipsis="",
             textinput_id=colorinput_id,
             title=title,
-            valid_chars=self._valid_chars,
+            valid_chars=valid_chars,
             *args,
             **kwargs,
         )
@@ -256,12 +259,6 @@ class ColorInput(TextInput):
         self._prev_margin = prev_margin
         self._prev_width_factor = prev_width_factor
         self._previsualization_surface = None
-
-        # Disable parent callbacks
-        self._apply_widget_update_callback = False
-
-        # Disable alt+x
-        self._alt_x_enabled = False
 
     def _apply_font(self) -> None:
         super()._apply_font()
