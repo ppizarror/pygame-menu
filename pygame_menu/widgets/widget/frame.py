@@ -200,7 +200,6 @@ class Frame(Widget):
         # Configure widget public's
         self.first_index = -1
         self.horizontal = orientation == ORIENTATION_HORIZONTAL
-        self.is_scrollable = False
         self.last_index = -1
 
     def set_title(

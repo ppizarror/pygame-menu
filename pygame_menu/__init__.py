@@ -6,89 +6,42 @@ PYGAME-MENU
 A menu for pygame. Simple, and easy to use.
 """
 
-from __future__ import annotations
+import logging
+import os
+from datetime import datetime
+from importlib.metadata import PackageNotFoundError, metadata
 
-__all__ = [
-    # Common classes
-    "BaseImage",
-    "Menu",
-    "Sound",
-    "Theme",
-]
+logger = logging.getLogger(__name__)
 
-# Check if pygame exists, if not maybe the module is being used by setup.py
-__pygame_version__ = None
+__all__ = ["BaseImage", "Menu", "Sound", "Theme"]
+
+# Metadata
 try:
-    from pygame import version as __pygame_version__
+    _meta = metadata("pygame-menu")
+    __version__ = _meta.get("Version")
+    __author__ = _meta.get("Author")
+    __email__ = _meta.get("Author-email")
+    __description__ = _meta.get("Summary")
+    __license__ = _meta.get("License")
+    __url__ = _meta.get("Home-page")
+    __module_name__ = _meta.get("Name")
+except PackageNotFoundError:
+    # Local fallback
+    __version__ = "4.4.3"
+    __author__ = "Pablo Pizarro R."
+    __email__ = "pablo@ppizarror.com"
+    __description__ = "A menu for pygame. Simple, and easy to use"
+    __license__ = "MIT"
+    __url__ = "https://pygame-menu.readthedocs.io"
+    __module_name__ = "pygame-menu"
 
-    __pygame_version__ = __pygame_version__.vernum
-except (ModuleNotFoundError, ImportError):
-    pass
+# Extra metadata not provided by importlib
+__url_documentation__ = "https://pygame-menu.readthedocs.io"
+__url_source_code__ = "https://github.com/ppizarror/pygame-menu"
+__url_bug_tracker__ = "https://github.com/ppizarror/pygame-menu/issues"
+__keywords__ = "pygame menu menus gui widget input button pygame-menu image sound ui"
+__copyright__ = f"Copyright 2017-{datetime.now().year} Pablo Pizarro R."
 
-# Import modules that require pygame
-if __pygame_version__ is not None:
-    """
-    BaseImage: Provides basic image loading and manipulation with pygame
-    """
-    import pygame_menu.baseimage
-    from pygame_menu.baseimage import BaseImage
-
-    """
-    Controls: Default controls of menu object and key definition
-    """
-    import pygame_menu.controls
-
-    """
-    Events: Menu events definition and locals
-    """
-    import pygame_menu.events
-
-    """
-    Fonts: Menu fonts
-    """
-    import pygame_menu.font
-
-    """
-    Locals: Local constants
-    """
-    import pygame_menu.locals
-
-    """
-    Menu: Menu class
-    """
-    from pygame_menu.menu import Menu
-
-    """
-    ScrollArea: Scrollarea class
-    """
-    import pygame_menu._scrollarea
-
-    """
-    Sound: Sound class
-    """
-    import pygame_menu.sound
-    from pygame_menu.sound import Sound
-
-    """
-    Themes: Menu themes
-    """
-    import pygame_menu.themes
-    from pygame_menu.themes import Theme
-
-    """
-    Widgets: Menu widgets
-    """
-    import pygame_menu.widgets
-
-"""
-Version: Library version
-"""
-import pygame_menu.version
-
-"""
-Metadata: Information about the project
-"""
-__author__ = "Pablo Pizarro R."
 __contributors__ = [
     # Author
     "ppizarror",
@@ -116,31 +69,40 @@ __contributors__ = [
     "werdeil",
     "zPaw",
 ]
-__copyright__ = "Copyright 2017 Pablo Pizarro R. @ppizarror"
-__description__ = "A menu for pygame. Simple, and easy to use"
-__email__ = "pablo@ppizarror.com"
-__keywords__ = "pygame menu menus gui widget input button pygame-menu image sound ui"
-__license__ = "MIT"
-__module_name__ = "pygame-menu"
-__url__ = "https://pygame-menu.readthedocs.io"
-__url_bug_tracker__ = "https://github.com/ppizarror/pygame-menu/issues"
-__url_documentation__ = "https://pygame-menu.readthedocs.io"
-__url_source_code__ = "https://github.com/ppizarror/pygame-menu"
-__version__ = pygame_menu.version.ver
 
-"""
-Print pygame-menu version.
-"""
-import logging
-import os
+# Pygame check
+__pygame_version__ = None
+try:
+    from pygame import version as __pv
 
-logger = logging.getLogger(__name__)
+    __pygame_version__ = __pv.vernum
+except (ModuleNotFoundError, ImportError):
+    # Pygame is not installed; skip pygame-dependent imports
+    pass
 
+# Conditional imports
+if __pygame_version__ is not None:
+    from pygame_menu import (
+        _scrollarea,
+        baseimage,
+        controls,
+        events,
+        font,
+        locals,
+        menu,
+        sound,
+        themes,
+        widgets,
+    )
+
+    BaseImage = baseimage.BaseImage
+    Menu = menu.Menu
+    Sound = sound.Sound
+    Theme = themes.Theme
+
+# Version print
 if (
     "PYGAME_MENU_HIDE_VERSION" not in os.environ
     and "PYGAME_HIDE_SUPPORT_PROMPT" not in os.environ
 ):
     logger.info(f"{__module_name__} {__version__}")
-
-# Cleanup namespace
-del os

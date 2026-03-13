@@ -362,7 +362,6 @@ class Widget(Base):
     ]
     configured: bool
     force_menu_draw_focus: bool
-    is_scrollable: bool
     last_surface: pygame.Surface | None
     lock_position: bool
     readonly: bool
@@ -380,12 +379,18 @@ class Widget(Base):
         args=None,
         kwargs=None,
         *,
+        active: bool = False,
+        accept_events: bool = False,
+        scrollable: bool = False,
         selectable: bool = True,
+        selection_effect_draw_post: bool = True,
         visible: bool = True,
     ) -> None:
         super().__init__(object_id=widget_id)
 
-        self._accept_events = False  # Indicate the widget receives events (info)
+        self._accept_events = (
+            accept_events  # Indicate the widget receives events (info)
+        )
         self._alignment = ALIGN_CENTER  # Widget alignment
         self._background_color = None
         self._background_inflate = (0, 0)
@@ -506,7 +511,7 @@ class Widget(Base):
         # NullSelection was created. Initially it was None
         self._selection_effect = pygame_menu.widgets.NoneSelection()
         # If False, the selection effect is drawn previous the widget surface
-        self._selection_effect_draw_post = True
+        self._selection_effect_draw_post = selection_effect_draw_post
 
         # Inputs
         self._ctrl = Controller()
@@ -520,10 +525,12 @@ class Widget(Base):
 
         # Public statutes. These values can be changed without calling for
         # methods (safe to update)
-        self.active = False  # Widget requests focus if selected
+        self.active = active  # Widget requests focus if selected
         self.configured = False  # Widget has been configured
         self.force_menu_draw_focus = False  # If True Menu draw focus if widget is selected, don't consider the previous requisites
-        self.is_scrollable = False  # Some widgets can be scrolled, such as the Frame
+        self.is_scrollable = (
+            scrollable  # Some widgets can be scrolled, such as the Frame
+        )
         self.is_selectable = selectable  # Some widgets cannot be selected like labels
         self.last_surface = None  # Stores the last surface the widget has been drawn
         self.lock_position = False  # If True, the widget don't update the position if .set_position() is executed

@@ -125,6 +125,7 @@ class ScrollBar(Widget):
             onchange=onchange,
             args=args,
             kwargs=kwargs,
+            scrollable=True,
             selectable=False,
         )
 
@@ -170,7 +171,6 @@ class ScrollBar(Widget):
         self.set_orientation(orientation)
 
         # Configure public's
-        self.is_scrollable = True
         self.scrolling = False
 
     def scroll_to_widget(self, *args, **kwargs) -> ScrollBar:

@@ -139,7 +139,6 @@ class DropSelect(Widget):
     :param kwargs: Optional keyword arguments
     """
 
-    _close_on_apply: bool
     _drop_frame: Frame | None
     _index: int
     _items: list[tuple[Any, ...]] | list[str]
@@ -187,6 +186,7 @@ class DropSelect(Widget):
         self,
         title: Any,
         items: list[tuple[Any, ...]] | list[str],
+        close_on_apply: bool = True,
         dropselect_id: str = "",
         default: int | None = None,
         onchange: CallbackType = None,
@@ -312,10 +312,11 @@ class DropSelect(Widget):
             widget_id=dropselect_id,
             args=args,
             kwargs=kwargs,
+            accept_events=True,
+            selection_effect_draw_post=False,
         )
 
-        self._accept_events = True
-        self._close_on_apply = True
+        self._close_on_apply = close_on_apply
         self._default_value = default
         self._drop_frame = None
         self._index = default
@@ -324,7 +325,6 @@ class DropSelect(Widget):
         self._open_middle = open_middle
         self._placeholder = placeholder
         self._placeholder_add_to_selection_box = placeholder_add_to_selection_box
-        self._selection_effect_draw_post = False
         self._title_size = (0, 0)
 
         # If True adds a space equals to the height of the option at left, used for
@@ -374,8 +374,6 @@ class DropSelect(Widget):
             "name": selection_option_font,
             "size": selection_option_font_size,
         }
-
-        self.active = False
 
     def set_default_value(self, index: int) -> DropSelect:
         self._default_value = index

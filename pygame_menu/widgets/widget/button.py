@@ -62,8 +62,7 @@ class Button(Label):
         *args,
         **kwargs,
     ) -> None:
-        super().__init__(title=title, label_id=button_id)
-        self._accept_events = True
+        super().__init__(title=title, label_id=button_id, accept_events=True)
         self._args = list(args)
         self._kwargs = kwargs
         self.set_onreturn(onreturn)

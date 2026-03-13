@@ -11,7 +11,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-assert len(sys.argv) == 2, "Argument is required, usage: build.py pip/twine"
+assert len(sys.argv) == 2, "Argument is required, usage: build_package.py pip/twine"
 mode: str = sys.argv[1].strip()
 
 root = Path(__file__).resolve().parent
@@ -20,16 +20,12 @@ build = root / "build"
 
 if mode == "pip":
     if dist.is_dir():
-        for k in dist.iterdir():
-            if "pygame_menu-" in k.name or "pygame-menu-" in k.name:
-                k.unlink()
+        shutil.rmtree(dist)
 
     if build.is_dir():
-        for k in build.iterdir():
-            if "bdist." in k.name or k.name == "lib":
-                shutil.rmtree(k)
+        shutil.rmtree(build)
 
-    subprocess.run(["python", "setup.py", "sdist", "bdist_wheel"], check=True)
+    subprocess.run(["python", "-m", "build"], check=True)
 
 elif mode == "twine":
     if dist.is_dir():
@@ -39,7 +35,9 @@ elif mode == "twine":
             check=True,
         )
     else:
-        raise FileNotFoundError("No distribution found, execute build.py pip first")
+        raise FileNotFoundError(
+            "No distribution found, execute build_package.py pip first"
+        )
 
 else:
     raise ValueError(f"Unknown mode {mode}")

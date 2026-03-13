@@ -202,6 +202,7 @@ class DropSelectMultiple(DropSelect):
         super().__init__(
             dropselect_id=dropselect_id,
             items=items,
+            close_on_apply=False,
             onchange=onchange,
             onreturn=onreturn,
             onselect=onselect,
@@ -261,7 +262,6 @@ class DropSelectMultiple(DropSelect):
 
         # Configure parent
         self._args = args or []
-        self._close_on_apply = False
         self._max_selected = max_selected
         self._selection_option_left_space_margin = selection_option_selected_box_margin
 
