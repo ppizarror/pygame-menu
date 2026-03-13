@@ -20,7 +20,7 @@ jobs:
         python: [ 3.9, '3.10', '3.11', '3.12', '3.13' ]
     with:
       env-vars: |
-        SDL_AUDIODRIVER=disk
+        SDL_AUDIODRIVER=dummy
         SDL_VIDEODRIVER=dummy
       install-extras: test
       os: ubuntu-latest
