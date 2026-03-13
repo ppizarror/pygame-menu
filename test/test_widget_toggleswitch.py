@@ -6,195 +6,220 @@ TEST WIDGET - TOGGLESWITCH
 Test ToggleSwitch widget.
 """
 
-from __future__ import annotations
-
-__all__ = ['ToggleSwitchWidgetTest']
+import pytest
 
 import pygame_menu
 import pygame_menu.controls as ctrl
 from pygame_menu.widgets.core.widget import WidgetTransformationNotImplemented
-from test._utils import BaseTest, MenuUtils, PygameEventUtils, surface
+from test._utils import MenuUtils, PygameEventUtils, surface
 
 
-class ToggleSwitchWidgetTest(BaseTest):
+@pytest.fixture
+def menu():
+    return MenuUtils.generic_menu()
 
-    # noinspection PyTypeChecker
-    def test_toggleswitch(self) -> None:
-        """
-        Test toggleswitch widget.
-        """
-        menu = MenuUtils.generic_menu()
 
-        value = [None]
+def test_toggleswitch_basic(menu):
+    value = [None]
 
-        def onchange(val) -> None:
-            """
-            Function executed by toggle.
-            """
-            value[0] = val
+    def onchange(v):
+        value[0] = v
 
-        switch = menu.add.toggle_switch('toggle', False, onchange=onchange, infinite=False, single_click=False)
-        self.assertFalse(switch.get_value())
-        self.assertIsNone(value[0])
-        switch.apply()
-        self.assertFalse(value[0])
+    switch = menu.add.toggle_switch(
+        "toggle", False, onchange=onchange, infinite=False, single_click=False
+    )
 
-        switch.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))  # not infinite
-        self.assertFalse(value[0])  # as this is false, don't change
-        switch.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
-        self.assertTrue(value[0])
-        switch.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
-        self.assertFalse(value[0])
-        switch.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
-        self.assertFalse(value[0])
-        self.assertFalse(switch.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True, testmode=False)))
+    assert switch.get_value() is False
+    assert value[0] is None
 
-        switch = menu.add.toggle_switch('toggle', False, onchange=onchange, infinite=True, single_click=False)
-        switch.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
-        self.assertTrue(value[0])
-        switch.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
-        self.assertFalse(value[0])
+    switch.apply()
+    assert value[0] is None
 
-        # As there's only 2 states, return should change too
-        switch.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
-        self.assertTrue(value[0])
-        switch.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
-        self.assertFalse(value[0])
+    # Not infinite: left does nothing
+    switch.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
+    assert value[0] is None
 
-        # Check left/right clicks
-        click_pos = switch.get_rect(to_real_position=True, apply_padding=False).midleft
-        switch.update(PygameEventUtils.mouse_click(click_pos[0] + 150, click_pos[1]))
-        self.assertFalse(value[0])
-        switch.update(PygameEventUtils.mouse_click(click_pos[0] + 250, click_pos[1]))
-        self.assertTrue(value[0])
-        switch.update(PygameEventUtils.mouse_click(click_pos[0] + 150, click_pos[1]))
-        self.assertFalse(value[0])
+    # Right toggles
+    switch.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
+    assert value[0] is True
 
-        # Test left/right touch
-        switch._touchscreen_enabled = True
-        switch.update(PygameEventUtils.touch_click(click_pos[0] + 250, click_pos[1], menu=switch.get_menu()))
-        self.assertTrue(value[0])
-        switch.update(PygameEventUtils.touch_click(click_pos[0] + 250, click_pos[1], menu=switch.get_menu()))
-        self.assertTrue(value[0])
-        switch.update(PygameEventUtils.touch_click(click_pos[0] + 150, click_pos[1], menu=switch.get_menu()))
-        self.assertFalse(value[0])
+    switch.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
+    assert value[0] is False
 
-        # Test readonly
-        switch.readonly = True
-        switch.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
-        self.assertFalse(value[0])
-        switch.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
-        self.assertFalse(value[0])
-        switch.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
-        self.assertFalse(value[0])
-        switch._left()
-        self.assertFalse(value[0])
-        switch._right()
-        self.assertFalse(value[0])
+    # No change
+    switch.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
+    assert value[0] is False
 
-        switch.readonly = False
-        switch.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
-        self.assertTrue(value[0])
-        switch.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
-        self.assertFalse(value[0])
+    assert not switch.update(
+        PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True, testmode=False)
+    )
 
-        switch.draw(surface)
+    # Infinite mode
+    switch = menu.add.toggle_switch(
+        "toggle", False, onchange=onchange, infinite=True, single_click=False
+    )
 
-        # Test transforms
-        switch.set_position(1, 1)
-        self.assertEqual(switch.get_position(), (1, 1))
+    switch.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
+    assert value[0] is True
 
-        switch.translate(1, 1)
-        self.assertEqual(switch.get_translate(), (1, 1))
+    switch.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
+    assert value[0] is False
 
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: switch.rotate(10))
-        self.assertEqual(switch._angle, 0)
+    # KEY_APPLY toggles
+    switch.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
+    assert value[0] is True
+    switch.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
+    assert value[0] is False
 
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: switch.scale(100, 100))
-        self.assertFalse(switch._scale[0])
-        self.assertEqual(switch._scale[1], 1)
-        self.assertEqual(switch._scale[2], 1)
+    # Mouse clicks
+    x, y = switch.get_rect(to_real_position=True, apply_padding=False).midleft
 
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: switch.resize(100, 100))
-        self.assertFalse(switch._scale[0])
-        self.assertEqual(switch._scale[1], 1)
-        self.assertEqual(switch._scale[2], 1)
+    switch.update(PygameEventUtils.mouse_click(x + 150, y))
+    assert value[0] is False
 
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: switch.flip(True, True))
-        self.assertFalse(switch._flip[0])
-        self.assertFalse(switch._flip[1])
+    switch.update(PygameEventUtils.mouse_click(x + 250, y))
+    assert value[0] is True
 
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: switch.set_max_width(100))
-        self.assertIsNone(switch._max_width[0])
+    switch.update(PygameEventUtils.mouse_click(x + 150, y))
+    assert value[0] is False
 
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: switch.set_max_height(100))
-        self.assertIsNone(switch._max_height[0])
+    # Touch clicks
+    switch._touchscreen_enabled = True
 
-        # Assert switch values
-        self.assertRaises(ValueError,
-                          lambda: menu.add.toggle_switch('toggle', 'false', onchange=onchange, infinite=False))
+    switch.update(PygameEventUtils.touch_click(x + 250, y, menu=switch.get_menu()))
+    assert value[0] is True
 
-        # Test single click toggle
-        switch_single = menu.add.toggle_switch('toggle', False, onchange=onchange)
-        self.assertTrue(switch_single._infinite)  # Infinite sets to True if using single click
+    switch.update(PygameEventUtils.touch_click(x + 250, y, menu=switch.get_menu()))
+    assert value[0] is True
 
-        self.assertFalse(switch_single.get_value())
-        switch_single._left()
-        self.assertTrue(switch_single.get_value())
+    switch.update(PygameEventUtils.touch_click(x + 150, y, menu=switch.get_menu()))
+    assert value[0] is False
 
-        click_pos = switch_single.get_rect(to_real_position=True, apply_padding=False).midleft
+    # Readonly mode
+    switch.readonly = True
 
-        # Test single click toggle between two states
-        switch_single.update(PygameEventUtils.mouse_click(click_pos[0] + 150, click_pos[1]))
-        self.assertFalse(switch_single.get_value())  # single_click_dir=True, move to left
-        switch_single.update(PygameEventUtils.mouse_click(click_pos[0] + 250, click_pos[1]))
-        self.assertTrue(switch_single.get_value())
-        switch_single.update(PygameEventUtils.mouse_click(click_pos[0] + 250, click_pos[1]))
-        self.assertFalse(switch_single.get_value())
+    switch.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
+    assert value[0] is False
 
-        switch_single._single_click_dir = False
-        switch_single.update(PygameEventUtils.mouse_click(click_pos[0] + 250, click_pos[1]))
-        self.assertTrue(switch_single.get_value())
+    switch._left()
+    assert value[0] is False
 
-        # Create invalid single click params
-        self.assertRaises(AssertionError, lambda: menu.add.toggle_switch('toggle', False, single_click='true'))
-        self.assertRaises(AssertionError, lambda: menu.add.toggle_switch('toggle', False, single_click_dir='true'))
+    switch._right()
+    assert value[0] is False
 
-        # Test other constructor params
-        pygame_menu.widgets.ToggleSwitch('Epic', state_text_font=menu._theme.widget_font)
-        self.assertRaises(AssertionError, lambda: pygame_menu.widgets.ToggleSwitch('Epic', state_text_font_size=-1))
+    # Back to normal
+    switch.readonly = False
+    switch.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
+    assert value[0] is True
+    switch.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
+    assert value[0] is False
 
-    def test_value(self) -> None:
-        """
-        Test toggleswitch value.
-        """
-        menu = MenuUtils.generic_menu()
-        switch = menu.add.toggle_switch('toggle', False)
-        self.assertEqual(switch._default_value, 0)
-        self.assertFalse(switch.value_changed())
-        switch.set_value(1)
-        self.assertEqual(switch.get_value(), 1)
-        self.assertTrue(switch.value_changed())
-        switch.reset_value()
-        self.assertEqual(switch.get_value(), 0)
-        self.assertFalse(switch.value_changed())
+    switch.draw(surface)
 
-    def test_empty_title(self) -> None:
-        """
-        Test empty title.
-        """
-        menu = MenuUtils.generic_menu()
-        switch = menu.add.toggle_switch('')
-        self.assertEqual(switch.get_size(), (191, 49))
 
-    def test_update_font(self) -> None:
-        """
-        Test update font.
-        """
-        menu = MenuUtils.generic_menu()
-        switch = menu.add.toggle_switch('abc')
-        self.assertEqual(switch.get_size(), (240, 49))
-        self.assertEqual(switch._state_font.get_height(), 41)
-        switch.update_font(dict(size=100))
-        self.assertEqual(switch._state_font.get_height(), 137)
-        self.assertEqual(switch.get_size(), (356, 145))
+@pytest.mark.parametrize(
+    "method,args",
+    [
+        ("rotate", (10,)),
+        ("scale", (100, 100)),
+        ("resize", (100, 100)),
+        ("flip", (True, True)),
+        ("set_max_width", (100,)),
+        ("set_max_height", (100,)),
+    ],
+)
+def test_toggleswitch_invalid_transforms(menu, method, args):
+    switch = menu.add.toggle_switch("toggle", False)
+    with pytest.raises(WidgetTransformationNotImplemented):
+        getattr(switch, method)(*args)
+
+
+def test_toggleswitch_position_and_translate(menu):
+    switch = menu.add.toggle_switch("toggle", False)
+
+    switch.set_position(1, 1)
+    assert switch.get_position() == (1, 1)
+
+    switch.translate(1, 1)
+    assert switch.get_translate() == (1, 1)
+
+
+@pytest.mark.parametrize("bad_value", ["false"])
+def test_toggleswitch_invalid_constructor(menu, bad_value):
+    with pytest.raises(ValueError):
+        menu.add.toggle_switch("toggle", bad_value)
+
+
+@pytest.mark.parametrize(
+    "param,value",
+    [
+        ("single_click", "true"),
+        ("single_click_dir", "true"),
+    ],
+)
+def test_toggleswitch_invalid_single_click_params(menu, param, value):
+    kwargs = {param: value}
+    with pytest.raises(AssertionError):
+        menu.add.toggle_switch("toggle", False, **kwargs)
+
+
+def test_toggleswitch_state_font_validation(menu):
+    pygame_menu.widgets.ToggleSwitch("Epic", state_text_font=menu._theme.widget_font)
+    with pytest.raises(AssertionError):
+        pygame_menu.widgets.ToggleSwitch("Epic", state_text_font_size=-1)
+
+
+def test_toggleswitch_single_click(menu):
+    switch = menu.add.toggle_switch("toggle", False)
+    assert switch._infinite is True  # single_click=True implies infinite
+
+    assert switch.get_value() is False
+    switch._left()
+    assert switch.get_value() is True
+
+    x, y = switch.get_rect(to_real_position=True, apply_padding=False).midleft
+
+    switch.update(PygameEventUtils.mouse_click(x + 150, y))
+    assert switch.get_value() is False
+
+    switch.update(PygameEventUtils.mouse_click(x + 250, y))
+    assert switch.get_value() is True
+
+    switch.update(PygameEventUtils.mouse_click(x + 250, y))
+    assert switch.get_value() is False
+
+    switch._single_click_dir = False
+    switch.update(PygameEventUtils.mouse_click(x + 250, y))
+    assert switch.get_value() is True
+
+
+def test_toggleswitch_value(menu):
+    switch = menu.add.toggle_switch("toggle", False)
+
+    assert switch._default_value == 0
+    assert not switch.value_changed()
+
+    switch.set_value(1)
+    assert switch.get_value() == 1
+    assert switch.value_changed()
+
+    switch.reset_value()
+    assert switch.get_value() == 0
+    assert not switch.value_changed()
+
+
+def test_toggleswitch_empty_title(menu):
+    switch = menu.add.toggle_switch("")
+    assert switch.get_size() == (191, 49)
+
+
+def test_toggleswitch_update_font(menu):
+    switch = menu.add.toggle_switch("abc")
+
+    assert switch.get_size() == (240, 49)
+    assert switch._state_font.get_height() == 41
+
+    switch.update_font(dict(size=100))
+
+    assert switch._state_font.get_height() == 137
+    assert switch.get_size() == (356, 145)

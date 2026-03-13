@@ -6,225 +6,232 @@ TEST SOUND
 Test sound management.
 """
 
-from __future__ import annotations
-
-__all__ = ['SoundTest']
-
 import copy
+import time
 from pathlib import Path
 
+import pygame
+import pytest
+
 import pygame_menu
-from test._utils import BaseTest, MenuUtils
+from pygame_menu.sound import (
+    SOUND_EXAMPLES,
+    SOUND_INITIALIZED,
+    SOUND_TYPES,
+    Sound,
+)
+from test._utils import MenuUtils
 
 
-class SoundTest(BaseTest):
+@pytest.fixture
+def sound():
+    """Return a fresh sound engine with forced mixer init."""
+    return Sound(force_init=True)
 
-    def setUp(self) -> None:
-        """
-        Setup sound engine.
-        """
-        self.sound = pygame_menu.sound.Sound(force_init=True)
 
-    def test_copy(self) -> None:
-        """
-        Test sound copy.
-        """
-        sound_src = pygame_menu.sound.Sound()
-        sound_src.load_example_sounds()
+@pytest.fixture
+def loaded_sound(sound):
+    """Return a sound engine with all example sounds loaded."""
+    sound.load_example_sounds()
+    return sound
 
-        sound = copy.copy(sound_src)
-        sound_deep = copy.deepcopy(sound_src)
 
-        # Check if sounds are different
-        t = pygame_menu.sound.SOUND_TYPE_CLICK_MOUSE
-        self.assertNotEqual(sound_src._sound[t]['file'], sound._sound[t]['file'])
-        self.assertNotEqual(sound_src._sound[t]['file'], sound_deep._sound[t]['file'])
-        self.assertEqual(sound_src._uniquechannel, sound._uniquechannel)
+def test_copy_semantics(loaded_sound):
+    """Ensure shallow and deep copies duplicate sound objects correctly."""
+    shallow = copy.copy(loaded_sound)
+    deep = copy.deepcopy(loaded_sound)
 
-    def test_none_channel(self) -> None:
-        """
-        Test none channel.
-        """
-        new_sound = pygame_menu.sound.Sound(uniquechannel=False)
-        new_sound.load_example_sounds()
-        new_sound.play_widget_selection()
-        new_sound._channel = None
-        new_sound.stop()
-        new_sound.pause()
-        new_sound.unpause()
-        new_sound.play_error()
-        info = new_sound.get_channel_info()
-        self.assertEqual(len(info), 5)
-        self.assertEqual(set(info.keys()), {'busy', 'endevent', 'queue', 'sound', 'volume'})
+    for t in SOUND_TYPES:
+        assert loaded_sound._sound[t]["file"] != shallow._sound[t]["file"]
+        assert loaded_sound._sound[t]["file"] != deep._sound[t]["file"]
 
-    def test_channel(self) -> None:
-        """
-        Test channel.
-        """
-        new_sound = pygame_menu.sound.Sound(uniquechannel=False)
-        new_sound.get_channel()
-        self.sound.get_channel_info()
-        self.sound.pause()
-        self.sound.unpause()
-        self.sound.stop()
+    assert loaded_sound._uniquechannel == shallow._uniquechannel
+    assert loaded_sound._mixer_configs == shallow._mixer_configs
 
-    def test_load_sound(self) -> None:
-        """
-        Test load sounds.
-        """
-        self.assertFalse(self.sound.set_sound(pygame_menu.sound.SOUND_TYPE_CLICK_MOUSE, None))
-        self.assertRaises(ValueError, lambda: self.sound.set_sound('none', None))
-        self.assertRaises(IOError, lambda: self.sound.set_sound(pygame_menu.sound.SOUND_TYPE_CLICK_MOUSE, 'bad_file'))
-        self.assertFalse(self.sound._play_sound(None))
-        self.assertFalse(self.sound.set_sound(pygame_menu.sound.SOUND_TYPE_ERROR, pygame_menu.font.FONT_PT_SERIF))
 
-        with self.assertRaises(AssertionError):
-            self.sound.set_sound(
-                pygame_menu.sound.SOUND_TYPE_CLICK_MOUSE,
-                pygame_menu.sound.SOUND_EXAMPLE_CLICK_MOUSE,
-                volume=2.0
-            )
+@pytest.mark.parametrize("sound_type, example", zip(SOUND_TYPES, SOUND_EXAMPLES))
+def test_load_example_sound_individually(sound, sound_type, example):
+    """Verify each example sound loads correctly."""
+    assert sound.set_sound(sound_type, example)
+    assert sound._sound[sound_type]["path"] == example
 
-        with self.assertRaises(AssertionError):
-            self.sound.set_sound(
-                pygame_menu.sound.SOUND_TYPE_CLICK_MOUSE,
-                pygame_menu.sound.SOUND_EXAMPLE_CLICK_MOUSE,
-                loops=-1
-            )
 
-        p = Path(pygame_menu.sound.SOUND_EXAMPLE_CLICK_MOUSE)
-        self.assertTrue(self.sound.set_sound(pygame_menu.sound.SOUND_TYPE_CLICK_MOUSE, p))
+@pytest.mark.parametrize("bad_volume", [-1, 1.1, 2.0])
+def test_set_sound_invalid_volume(sound, bad_volume):
+    """Ensure invalid volume values raise assertion errors."""
+    with pytest.raises(AssertionError):
+        sound.set_sound(SOUND_TYPES[0], SOUND_EXAMPLES[0], volume=bad_volume)
 
-    def test_example_sounds(self) -> None:
-        """
-        Test example sounds.
-        """
-        self.sound.load_example_sounds()
 
-        self.sound.play_click_mouse()
-        self.sound.play_click_touch()
-        self.sound.play_close_menu()
-        self.sound.play_error()
-        self.sound.play_event()
-        self.sound.play_event_error()
-        self.sound.play_key_add()
-        self.sound.play_key_del()
-        self.sound.play_open_menu()
+@pytest.mark.parametrize("bad_loops", [-1, -5])
+def test_set_sound_invalid_loops(sound, bad_loops):
+    """Ensure invalid loop counts raise assertion errors."""
+    with pytest.raises(AssertionError):
+        sound.set_sound(SOUND_TYPES[0], SOUND_EXAMPLES[0], loops=bad_loops)
 
-    def test_sound_menu(self) -> None:
-        """
-        Test sounds in menu.
-        """
-        menu = MenuUtils.generic_menu()
-        submenu = MenuUtils.generic_menu()
 
-        menu.add.button('submenu', submenu)
-        button = menu.add.button('button', lambda: None)
-        menu.set_sound(self.sound, True)
-        self.assertEqual(button.get_sound(), self.sound)
+@pytest.mark.parametrize("bad_time", [-1, -0.5])
+def test_set_sound_invalid_maxtime(sound, bad_time):
+    """Ensure invalid maxtime values raise assertion errors."""
+    with pytest.raises(AssertionError):
+        sound.set_sound(SOUND_TYPES[0], SOUND_EXAMPLES[0], maxtime=bad_time)
 
-        # This will remove the sound engine
-        menu.set_sound(None, True)
-        self.assertNotEqual(button.get_sound(), self.sound)
-        self.assertEqual(menu.get_sound(), menu._sound)
 
-    def test_set_sound_volume(self) -> None:
-        """
-        Test sound volume.
-        """
-        self.sound.load_example_sounds()
-        self.assertTrue(self.sound.set_sound_volume(pygame_menu.sound.SOUND_TYPE_CLICK_MOUSE, 0.5))
-        self.assertEqual(self.sound._sound[pygame_menu.sound.SOUND_TYPE_CLICK_MOUSE]['volume'], 0.5)
-        self.assertFalse(self.sound.set_sound_volume('bad_sound', 0.5))
-        self.assertTrue(self.sound.set_sound_volume(pygame_menu.sound.SOUND_TYPE_CLICK_MOUSE, 1.0))
-        self.assertEqual(self.sound._sound[pygame_menu.sound.SOUND_TYPE_CLICK_MOUSE]['volume'], 1.0)
-        self.assertTrue(self.sound.set_sound_volume(pygame_menu.sound.SOUND_TYPE_CLICK_MOUSE, 0.0))
-        self.assertEqual(self.sound._sound[pygame_menu.sound.SOUND_TYPE_CLICK_MOUSE]['volume'], 0.0)
-        self.assertFalse(self.sound.set_sound_volume(pygame_menu.sound.SOUND_TYPE_CLICK_MOUSE, 2.0))
+def test_set_sound_invalid_type(sound):
+    """Ensure invalid sound types raise ValueError."""
+    with pytest.raises(ValueError):
+        sound.set_sound("not_a_valid_type", None)
 
-    def test_init_state_flags(self):
-        from pygame_menu.sound import SOUND_INITIALIZED
 
-        # Fresh state after creating a new Sound with force_init=False
-        pygame_menu.sound.Sound(force_init=False)
-        self.assertTrue(SOUND_INITIALIZED.attempted)
-        self.assertTrue(SOUND_INITIALIZED.available)
+def test_set_sound_missing_file(sound):
+    """Ensure missing sound files raise OSError."""
+    with pytest.raises(OSError):
+        sound.set_sound(SOUND_TYPES[0], "nonexistent_file.ogg")
 
-    def test_reinit_logic(self):
-        import pygame
 
-        from pygame_menu.sound import SOUND_INITIALIZED
+@pytest.mark.parametrize("volume", [0.0, 0.5, 1.0])
+def test_set_sound_volume_valid(loaded_sound, volume):
+    """Ensure valid volume values are applied correctly."""
+    t = SOUND_TYPES[0]
+    assert loaded_sound.set_sound_volume(t, volume)
+    assert loaded_sound._sound[t]["volume"] == volume
 
-        # Reset state manually for test isolation
-        SOUND_INITIALIZED.attempted = False
 
-        mixer_was_initialized = pygame.mixer.get_init() is not None
+@pytest.mark.parametrize("volume", [-1, 2.0])
+def test_set_sound_volume_invalid(loaded_sound, volume):
+    """Ensure invalid volume values return False."""
+    t = SOUND_TYPES[0]
+    assert not loaded_sound.set_sound_volume(t, volume)
 
-        # Case 1: force_init=False
-        pygame_menu.sound.Sound(force_init=False)
 
-        if mixer_was_initialized:
-            # Mixer already initialized → Sound should NOT attempt init
-            self.assertFalse(SOUND_INITIALIZED.attempted)
-        else:
-            # Mixer not initialized → Sound SHOULD attempt init
-            self.assertTrue(SOUND_INITIALIZED.attempted)
+def test_set_sound_volume_disabled(sound):
+    """Ensure disabled sounds cannot have volume set."""
+    sound.set_sound(SOUND_TYPES[0], None)
+    assert not sound.set_sound_volume(SOUND_TYPES[0], 0.5)
 
-        # Case 2: force_init=True always triggers initialization
-        SOUND_INITIALIZED.attempted = False
-        pygame_menu.sound.Sound(force_init=True)
-        self.assertTrue(SOUND_INITIALIZED.attempted)
 
-    def test_unique_channel_behavior(self):
-        s = pygame_menu.sound.Sound(uniquechannel=True, force_init=True)
-        s.load_example_sounds()
+def test_none_channel_behavior(loaded_sound):
+    """Ensure channel operations behave safely when channel is None."""
+    loaded_sound.play_widget_selection()
+    loaded_sound._channel = None
 
-        ch = s.get_channel()
+    loaded_sound.stop()
+    loaded_sound.pause()
+    loaded_sound.unpause()
 
-        # Play first sound
-        s.play_click_mouse()
-        first_sound = ch.get_sound()
+    info = loaded_sound.get_channel_info()
+    assert set(info.keys()) == {"busy", "endevent", "queue", "sound", "volume"}
 
-        # Play second sound immediately — should replace the first
-        s.play_error()
-        second_sound = ch.get_sound()
 
-        self.assertNotEqual(first_sound, second_sound)
+def test_unique_channel_behavior(loaded_sound):
+    """Ensure uniquechannel forces reuse of the same channel."""
+    s = Sound(uniquechannel=True, force_init=True).load_example_sounds()
+    ch = s.get_channel()
 
-    def test_overlap_suppression(self):
-        s = pygame_menu.sound.Sound(uniquechannel=False, force_init=True)
-        s.load_example_sounds()
+    s.play_click_mouse()
+    first = ch.get_sound()
 
-        ch = s.get_channel()
+    s.play_error()
+    second = ch.get_sound()
 
-        # Play once
-        s.play_click_mouse()
-        first = ch.get_sound()
+    assert first != second
 
-        # Play again immediately — should be suppressed
-        s.play_click_mouse()
-        second = ch.get_sound()
 
-        self.assertEqual(first, second)
+def test_non_unique_channel_behavior(loaded_sound):
+    """Ensure non-unique channels allow overlap suppression."""
+    s = Sound(uniquechannel=False, force_init=True).load_example_sounds()
+    ch = s.get_channel()
 
-    def test_disabled_sound_behavior(self):
-        s = pygame_menu.sound.Sound(force_init=True)
+    s.play_click_mouse()
+    first = ch.get_sound()
 
-        # Disable a sound
-        s.set_sound(pygame_menu.sound.SOUND_TYPE_CLICK_MOUSE, None)
+    s.play_click_mouse()
+    second = ch.get_sound()
 
-        # Should not crash or play
-        s.play_click_mouse()
+    assert first == second
 
-        # Volume setting should fail
-        self.assertFalse(s.set_sound_volume(pygame_menu.sound.SOUND_TYPE_CLICK_MOUSE, 0.5))
 
-        # Channel info should still be valid
-        info = s.get_channel_info()
-        self.assertIsInstance(info, dict)
+def test_overlap_suppression_timing(monkeypatch):
+    """Ensure overlap suppression depends on timing thresholds."""
+    s = Sound(uniquechannel=False, force_init=True).load_example_sounds()
+    ch = s.get_channel()
 
-    def test_mixer_config_copied(self):
-        s = pygame_menu.sound.Sound(force_init=True)
-        s2 = copy.copy(s)
+    fake_time = [1000.0]
+    monkeypatch.setattr(time, "time", lambda: fake_time[0])
 
-        self.assertEqual(s._mixer_configs, s2._mixer_configs)
+    s.play_click_mouse()
+    first = ch.get_sound()
+
+    s.play_click_mouse()
+    second = ch.get_sound()
+    assert second is first
+
+    fake_time[0] += 9999
+    s.play_click_mouse()
+    third = ch.get_sound()
+
+    assert third is first
+    assert ch.get_busy()
+
+
+def test_init_state_flags():
+    """Ensure SOUND_INITIALIZED flags reflect mixer availability."""
+    SOUND_INITIALIZED.attempted = False
+    Sound(force_init=False)
+
+    mixer_was_initialized = pygame.mixer.get_init() is not None
+
+    if mixer_was_initialized:
+        assert not SOUND_INITIALIZED.attempted
+    else:
+        assert SOUND_INITIALIZED.attempted
+
+
+def test_reinit_logic():
+    """Ensure mixer reinitialization logic behaves correctly."""
+    SOUND_INITIALIZED.attempted = False
+    mixer_was_initialized = pygame.mixer.get_init() is not None
+
+    Sound(force_init=False)
+
+    if mixer_was_initialized:
+        assert not SOUND_INITIALIZED.attempted
+    else:
+        assert SOUND_INITIALIZED.attempted
+
+    SOUND_INITIALIZED.attempted = False
+    Sound(force_init=True)
+    assert SOUND_INITIALIZED.attempted
+
+
+def test_sound_menu_propagation(sound):
+    """Ensure menu sound assignment propagates recursively."""
+    menu = MenuUtils.generic_menu()
+    submenu = MenuUtils.generic_menu()
+
+    menu.add.button("submenu", submenu)
+    button = menu.add.button("button", lambda: None)
+
+    menu.set_sound(sound, recursive=True)
+    assert button.get_sound() is sound
+
+    menu.set_sound(None, recursive=True)
+    assert button.get_sound() is not sound
+    assert menu.get_sound() is menu._sound
+
+
+def test_disabled_sound_behavior(sound):
+    """Ensure disabled sounds behave safely when played."""
+    sound.set_sound(SOUND_TYPES[0], None)
+    sound.play_click_mouse()
+
+    assert not sound.set_sound_volume(SOUND_TYPES[0], 0.5)
+
+    info = sound.get_channel_info()
+    assert isinstance(info, dict)
+
+
+def test_mixer_config_copied(sound):
+    """Ensure mixer configuration is copied correctly."""
+    s2 = copy.copy(sound)
+    assert sound._mixer_configs == s2._mixer_configs

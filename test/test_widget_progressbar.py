@@ -6,66 +6,87 @@ TEST WIDGET - PROGRESSBAR
 Test ProgressBar widget.
 """
 
-from __future__ import annotations
-
-__all__ = ['ProgressBarWidgetTest']
+import pytest
 
 import pygame_menu
 from pygame_menu.widgets.core.widget import WidgetTransformationNotImplemented
-from test._utils import PYGAME_V2, BaseTest, MenuUtils, surface
+from test._utils import PYGAME_V2, MenuUtils, surface
 
 
-class ProgressBarWidgetTest(BaseTest):
+@pytest.fixture
+def menu():
+    return MenuUtils.generic_menu()
 
-    def test_progressbar(self) -> None:
-        """
-        Test progressbar slider.
-        """
-        menu = MenuUtils.generic_menu()
-        pb = pygame_menu.widgets.ProgressBar('progress',
-                                             progress_text_font=pygame_menu.font.FONT_BEBAS)
-        menu.add.generic_widget(pb, configure_defaults=True)
-        menu.draw(surface)
 
-        self.assertRaises(AssertionError, lambda: pygame_menu.widgets.ProgressBar(
-            'progress', default=-1))
+def test_progressbar_basic(menu):
+    pb = pygame_menu.widgets.ProgressBar(
+        "progress", progress_text_font=pygame_menu.font.FONT_BEBAS
+    )
 
-        self.assertEqual(pb.get_size(), (312, 49))
-        self.assertEqual(pb._width, 150)
+    menu.add.generic_widget(pb, configure_defaults=True)
+    menu.draw(surface)
 
-        # Test invalid transforms
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: pb.rotate())
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: pb.flip())
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: pb.scale())
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: pb.resize())
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: pb.set_max_width())
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: pb.set_max_height())
+    with pytest.raises(AssertionError):
+        pygame_menu.widgets.ProgressBar("progress", default=-1)
 
-        self.assertFalse(pb.update([]))
+    assert pb.get_size() == (312, 49)
+    assert pb._width == 150
 
-    # noinspection PyTypeChecker
-    def test_value(self) -> None:
-        """
-        Test progressbar value.
-        """
-        menu = MenuUtils.generic_menu()
-        pb = menu.add.progress_bar('progress', default=50, progress_text_align=pygame_menu.locals.ALIGN_LEFT)
-        self.assertRaises(AssertionError, lambda: pb.set_value(-1))
-        self.assertRaises(AssertionError, lambda: pb.set_value('a'))
-        self.assertEqual(pb.get_value(), 50)
-        self.assertFalse(pb.value_changed())
-        pb.set_value(75)
-        self.assertEqual(pb.get_value(), 75)
-        self.assertTrue(pb.value_changed())
-        pb.reset_value()
-        self.assertEqual(pb.get_value(), 50)
-        self.assertFalse(pb.value_changed())
 
-    def test_empty_title(self) -> None:
-        """
-        Test empty title.
-        """
-        menu = MenuUtils.generic_menu()
-        pb = menu.add.progress_bar('', box_margin=(0, 0), padding=0, progress_text_align=pygame_menu.locals.ALIGN_RIGHT)
-        self.assertEqual(pb.get_size(), (150, 41 if PYGAME_V2 else 42))
-        self.assertFalse(pb.is_selected())
+@pytest.mark.parametrize(
+    "method",
+    [
+        "rotate",
+        "flip",
+        "scale",
+        "resize",
+        "set_max_width",
+        "set_max_height",
+    ],
+)
+def test_progressbar_invalid_transforms(menu, method):
+    pb = pygame_menu.widgets.ProgressBar("progress")
+    with pytest.raises(WidgetTransformationNotImplemented):
+        getattr(pb, method)()
+
+
+def test_progressbar_update(menu):
+    pb = pygame_menu.widgets.ProgressBar("progress")
+    menu.add.generic_widget(pb, configure_defaults=True)
+    assert not pb.update([])
+
+
+def test_progressbar_value(menu):
+    pb = menu.add.progress_bar(
+        "progress", default=50, progress_text_align=pygame_menu.locals.ALIGN_LEFT
+    )
+
+    with pytest.raises(AssertionError):
+        pb.set_value(-1)
+
+    with pytest.raises(AssertionError):
+        pb.set_value("a")
+
+    assert pb.get_value() == 50
+    assert not pb.value_changed()
+
+    pb.set_value(75)
+    assert pb.get_value() == 75
+    assert pb.value_changed()
+
+    pb.reset_value()
+    assert pb.get_value() == 50
+    assert not pb.value_changed()
+
+
+def test_progressbar_empty_title(menu):
+    pb = menu.add.progress_bar(
+        "",
+        box_margin=(0, 0),
+        padding=0,
+        progress_text_align=pygame_menu.locals.ALIGN_RIGHT,
+    )
+
+    expected_height = 41 if PYGAME_V2 else 42
+    assert pb.get_size() == (150, expected_height)
+    assert not pb.is_selected()
