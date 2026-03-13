@@ -1152,6 +1152,7 @@ class Decorator(Base):
         try:
             decoid_exists = self._coord_cache[decoid] is not None
         except KeyError:
+            # No cached coordinates for this decoid; proceed as if unseen
             pass
         if (
             decoid_exists

@@ -41,9 +41,8 @@ class NoneWidget(Widget):
     :param widget_id: ID of the widget
     """
 
-    def __init__(self, widget_id: str = "") -> None:
-        super().__init__(widget_id=widget_id)
-        self.is_selectable = False
+    def __init__(self, widget_id: str = "", *, visible: bool = True) -> None:
+        super().__init__(widget_id=widget_id, selectable=False, visible=visible)
         self._surface = make_surface(0, 0, alpha=True)
 
     def _apply_font(self) -> None:

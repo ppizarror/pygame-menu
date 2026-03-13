@@ -432,6 +432,7 @@ class Table(Frame):
                 try:
                     cell.get_menu().remove_widget(cell)
                 except ValueError:
+                    # Removal can fail if the cell is no longer registered in the menu
                     pass
 
             # Check the cell frame is None
@@ -866,6 +867,7 @@ class Table(Frame):
         try:
             cell.update_font({"color": font_color, "name": font})
         except AssertionError:
+            # Font update may fail if parameters are invalid; ignore and keep previous font
             pass
 
         try:

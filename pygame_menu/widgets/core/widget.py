@@ -280,7 +280,6 @@ class Widget(Base):
     :param kwargs: Optional keyword arguments
     """
 
-    _accept_events: bool
     _alignment: str
     _angle: NumberType
     _args: list[Any]
@@ -361,12 +360,9 @@ class Widget(Base):
     _update_callbacks: dict[
         str, Callable[[EventListType, Widget, pygame_menu.Menu], Any]
     ]
-    _visible: bool
-    active: bool
     configured: bool
     force_menu_draw_focus: bool
     is_scrollable: bool
-    is_selectable: bool
     last_surface: pygame.Surface | None
     lock_position: bool
     readonly: bool
@@ -383,6 +379,9 @@ class Widget(Base):
         onselect: Callable[[bool, Widget, pygame_menu.Menu], Any] | None = None,
         args=None,
         kwargs=None,
+        *,
+        selectable: bool = True,
+        visible: bool = True,
     ) -> None:
         super().__init__(object_id=widget_id)
 
@@ -413,7 +412,7 @@ class Widget(Base):
         self._sound = Sound()
         self._tab_size = 0  # Tab spaces
         self._title = str(title)
-        self._visible = True  # Use show() or hide() to modify this status
+        self._visible = visible  # Use show() or hide() to modify this status
 
         # If True, the widget don't contribute width/height to the Menu widget
         # positioning computation. Use .set_float() to modify this status
@@ -525,7 +524,7 @@ class Widget(Base):
         self.configured = False  # Widget has been configured
         self.force_menu_draw_focus = False  # If True Menu draw focus if widget is selected, don't consider the previous requisites
         self.is_scrollable = False  # Some widgets can be scrolled, such as the Frame
-        self.is_selectable = True  # Some widgets cannot be selected like labels
+        self.is_selectable = selectable  # Some widgets cannot be selected like labels
         self.last_surface = None  # Stores the last surface the widget has been drawn
         self.lock_position = False  # If True, the widget don't update the position if .set_position() is executed
         self.readonly = False  # If True, widget ignores all input

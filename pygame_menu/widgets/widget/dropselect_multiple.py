@@ -236,6 +236,7 @@ class DropSelectMultiple(DropSelect):
             selection_option_font=selection_option_font,
             selection_option_font_color=selection_option_font_color,
             selection_option_font_size=selection_option_font_size,
+            selection_option_left_space=True,
             selection_option_left_space_height_factor=selection_option_selected_box_height,
             selection_option_padding=selection_option_padding,
             selection_option_selected_bgcolor=selection_option_selected_bgcolor,
@@ -262,7 +263,6 @@ class DropSelectMultiple(DropSelect):
         self._args = args or []
         self._close_on_apply = False
         self._max_selected = max_selected
-        self._selection_option_left_space = True
         self._selection_option_left_space_margin = selection_option_selected_box_margin
 
         # Set style
@@ -490,8 +490,6 @@ class DropSelectMultiple(DropSelect):
         :param item: Item to select, can be a string or an integer
         :param process_index: Adds/Removes the index from the selected indices list
         """
-        assert isinstance(item, (str, int)), "item must be a string or an integer"
-
         if isinstance(item, str):
             found = False
             for i in self._items:
