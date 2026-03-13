@@ -25,6 +25,7 @@ jobs:
       install-extras: test
       os: ubuntu-latest
       python-version: ${{ matrix.python }}
+      engine: pytest
 
   codeql:
     uses: ppizarror/workflow-actions/.github/workflows/codeql.yml@master
