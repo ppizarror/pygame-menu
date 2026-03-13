@@ -33,7 +33,7 @@ dependencies = ["pygame>=2.0.0"]
 
 [project.optional-dependencies]
 docs = ["sphinx<7", "sphinx-autodoc-typehints>=1.2.0", "sphinx-rtd-theme"]
-test = ["nose2[coverage_plugin]", "pytest"]
+test = ["nose2[coverage_plugin]", "pytest", "pytest-cov"]
 
 [project.entry-points."pyinstaller40"]
 hook-dirs = "pygame_menu.__pyinstaller:get_hook_dirs"
