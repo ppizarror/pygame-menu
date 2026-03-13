@@ -360,7 +360,7 @@ class ColorInput(TextInput):
             default = "#" + default
         return self.get_value(as_string=True) != default
 
-    def get_value(self, as_string: bool = False) -> str | Tuple3IntType:
+    def get_value(self, as_string: bool = False) -> str | float | int | Tuple3IntType:
         """
         Return the color value as a tuple or red blue and green channels.
 
@@ -371,7 +371,6 @@ class ColorInput(TextInput):
         :param as_string: If ``True`` returns the widget value as plain text
         :return: Color tuple as (R, G, B) or color string
         """
-        assert isinstance(as_string, bool)
         if as_string:
             return self._input_string
 

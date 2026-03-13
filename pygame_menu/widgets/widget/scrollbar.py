@@ -121,7 +121,11 @@ class ScrollBar(Widget):
         slider_hover_color = assert_color(slider_hover_color)
 
         super().__init__(
-            widget_id=scrollbar_id, onchange=onchange, args=args, kwargs=kwargs
+            widget_id=scrollbar_id,
+            onchange=onchange,
+            args=args,
+            kwargs=kwargs,
+            selectable=False,
         )
 
         self._check_mouseleave_call_render = True
@@ -167,7 +171,6 @@ class ScrollBar(Widget):
 
         # Configure public's
         self.is_scrollable = True
-        self.is_selectable = False
         self.scrolling = False
 
     def scroll_to_widget(self, *args, **kwargs) -> ScrollBar:
