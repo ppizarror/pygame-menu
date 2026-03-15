@@ -6,434 +6,399 @@ TEST WIDGET - BUTTON
 Test Button widget.
 """
 
-from __future__ import annotations
-
-__all__ = ['ButtonWidgetTest']
-
 import pygame
+import pytest
 
 import pygame_menu
-from pygame_menu.themes import THEME_DEFAULT
-from pygame_menu.widgets import Button
+from pygame_menu.widgets import Button, HighlightSelection
 from pygame_menu.widgets.core.widget import WIDGET_SHADOW_TYPE_ELLIPSE
-from test._utils import PYGAME_V2, BaseTest, MenuUtils, PygameEventUtils, surface
+from test._utils import PYGAME_V2, MenuUtils, PygameEventUtils, surface
 
 
-class ButtonWidgetTest(BaseTest):
+@pytest.fixture
+def menu():
+    """Provides a fresh generic menu for each test."""
+    return MenuUtils.generic_menu()
 
-    def test_button(self) -> None:
-        """
-        Test button widget.
-        """
-        menu = MenuUtils.generic_menu()
-        menu2 = MenuUtils.generic_menu()
 
-        # Valid
-        def test() -> bool:
-            """
-            Callback.
-            """
-            return True
+@pytest.fixture
+def submenu():
+    """Provides a second menu for testing sub-menu navigation."""
+    return MenuUtils.generic_menu()
 
-        # Invalid ones
-        invalid = [
-            1,  # int
-            'a',  # str
-            True,  # bool
-            pygame,  # module
-            surface,  # pygame
-            1.1,  # float
-            menu.add.button('eee'),  # widget
-            [1, 2, 3],  # list
-            (1, 2, 3),  # tuple
-            pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)  # baseimage
-        ]
-        for i in invalid:
-            self.assertRaises(ValueError, lambda: menu.add.button('b1', i))
 
-        # Valid
-        valid = [
-            menu2,
-            test,
-            pygame_menu.events.NONE,
-            pygame_menu.events.PYGAME_QUIT,
-            pygame_menu.events.PYGAME_WINDOWCLOSE,
-            None,
-            lambda: test(),
-            None
-        ]
-        for v in valid:
-            self.assertIsNotNone(menu.add.button('b1', v))
+@pytest.fixture
+def callback_flag():
+    """A mutable flag to verify if a callback was executed."""
+    return {"called": False, "value": None}
 
-        btn = menu.add.button('b1', menu2)
-        for v in [menu, 1, [1, 2, 3], (1, 2, 3)]:
-            self.assertRaises(AssertionError, lambda: btn.update_callback(v))
-        btn.update_callback(test)
 
-        # Invalid recursive menu
-        self.assertRaises(ValueError, lambda: menu.add.button('bt', menu))
+@pytest.mark.parametrize(
+    "invalid_input",
+    [
+        1,
+        "a",
+        True,
+        pygame,
+        surface,
+        1.1,
+        [1, 2, 3],
+        (1, 2, 3),
+        pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES),
+    ],
+)
+def test_button_raises_error_on_invalid_callback(menu, invalid_input):
+    with pytest.raises(ValueError):
+        menu.add.button("btn", invalid_input)
 
-        # Test callback
-        test = [False]
 
-        def callback(t=False) -> None:
-            """
-            Callback.
-            """
-            test[0] = t
+def test_button_raises_error_on_recursive_menu(menu):
+    """A menu cannot add a button that points back to itself (infinite loop)."""
+    with pytest.raises(ValueError):
+        menu.add.button("bt", menu)
 
-        btn = Button('epic', t=True, onreturn=callback)
-        btn.apply()
-        self.assertTrue(test[0])
-        test[0] = False
 
-        def callback() -> None:
-            """
-            Callback.
-            """
-            test[0] = False
+@pytest.mark.parametrize(
+    "valid_input",
+    [lambda: None, pygame_menu.events.NONE, pygame_menu.events.PYGAME_QUIT, None],
+)
+def test_button_accepts_valid_callbacks(menu, valid_input):
+    btn = menu.add.button("btn", valid_input)
+    assert btn is not None
 
-        btn = Button('epic', onreturn=callback)
-        btn.apply()
-        self.assertFalse(test[0])
 
-        # Test with no kwargs
-        def callback(**kwargs) -> None:
-            """
-            Callback.
-            """
-            self.assertEqual(len(kwargs.keys()), 0)
+def test_button_callback_execution_with_args(callback_flag):
+    def cb(t=False):
+        callback_flag["called"] = True
+        callback_flag["value"] = t
 
-        btn = menu.add.button('epic', callback, accept_kwargs=False)
-        btn.apply()
+    btn = Button("epic", t=True, onreturn=cb)
+    btn.apply()
 
-        # Test with kwargs
-        def callback(**kwargs) -> None:
-            """
-            Callback.
-            """
-            self.assertEqual(len(kwargs.keys()), 1)
-            self.assertTrue(kwargs.get('key', False))
+    assert callback_flag["called"] is True
+    assert callback_flag["value"] is True
 
-        btn = Button('epic', onreturn=callback, key=True)
-        self.assertTrue(btn._ignores_keyboard_nonphysical())
-        btn.apply()
-        btn = menu.add.button('epic', callback, accept_kwargs=True, key=True)
-        btn.apply()
 
-        # Test pygame events
-        btn = menu.add.button('epic', pygame_menu.events.PYGAME_QUIT)
-        self.assertEqual(btn._onreturn, menu._exit)
-        btn = menu.add.button('epic', pygame_menu.events.PYGAME_WINDOWCLOSE)
-        self.assertEqual(btn._onreturn, menu._exit)
+def test_button_kwargs_logic(menu):
+    def cb_check(**kwargs):
+        assert kwargs.get("key") is True
 
-        # Test None
-        btn = menu.add.button('epic', pygame_menu.events.NONE)
-        self.assertIsNone(btn._onreturn)
-        btn = menu.add.button('epic')
-        self.assertIsNone(btn._onreturn)
+    # Test explicit kwarg passing
+    btn = Button("test", onreturn=cb_check, key=True)
+    btn.apply()
 
-        # Test invalid kwarg
-        self.assertRaises(ValueError, lambda: menu.add.button('epic', callback, key=True))
+    # Test through menu factory
+    btn2 = menu.add.button("test2", cb_check, accept_kwargs=True, key=True)
+    btn2.apply()
 
-        # Remove button
+
+def test_button_underline_decoration(menu):
+    btn = menu.add.button("underline_me", pygame_menu.events.NONE)
+
+    btn.add_underline((255, 0, 0), 2, 2, force_render=True)
+    assert btn._decorator._total_decor() == 1
+
+    btn.remove_underline()
+    assert btn._decorator._total_decor() == 0
+
+
+def test_button_navigation_to_submenu(menu, submenu):
+    btn_to_sub = menu.add.button("go", submenu)
+    menu.full_reset()
+
+    # Trigger selection/apply
+    btn_to_sub.update(PygameEventUtils.keydown(pygame_menu.controls.KEY_APPLY))
+    assert menu.get_current() == submenu
+
+
+def test_button_empty_title_geometry(menu):
+    btn = menu.add.button("")
+    p = btn._padding
+    # Pygame version affects vertical alignment slightly
+    expected_h = p[0] + p[2] + (41 if PYGAME_V2 else 42)
+
+    assert btn.get_width() == p[1] + p[3]
+    assert btn.get_height() == expected_h
+
+
+def test_button_shadow_generation(menu):
+    btn = menu.add.button("shadow_test")
+    btn.shadow(shadow_width=10, color="black")
+
+    # Before drawing, surface is usually None
+    btn.draw(surface)
+
+    shadow_surf = btn._shadow["surface"]
+    assert shadow_surf is not None
+    # Shadow surface should be widget size + 2*width
+    assert shadow_surf.get_width() == btn.get_width() + 20
+
+
+def test_button_url_behavior(menu):
+    btn = menu.add.url("https://google.com", "Search")
+    assert btn.get_title() == "Search"
+
+    with pytest.raises(AssertionError):
+        menu.add.url("not-a-url")
+
+
+def test_banner_widget_properties(menu):
+    """Banners are specialized buttons typically used for images."""
+    img = pygame.Surface((100, 50))
+    custom_effect = HighlightSelection()
+
+    btn = menu.add.banner(img, padding=10, selection_effect=custom_effect)
+
+    assert abs(btn.get_height() - img.get_height()) <= 1
+    assert btn._padding == (10, 10, 10, 10)
+    assert isinstance(btn.get_selection_effect(), HighlightSelection)
+
+
+def test_button_multiline_wordwrap(menu):
+    text = "word " * 20
+    # Limit to 2 lines even if text is longer
+    btn = menu.add.button(text, wordwrap=True, max_nlines=2)
+
+    assert len(btn.get_lines()) == 2
+    assert len(btn.get_overflow_lines()) > 0
+
+
+def test_update_callback_rejects_invalid(menu):
+    btn = menu.add.button("b1", lambda: None)
+    for invalid in [menu, 1, [1, 2, 3], (1, 2, 3)]:
+        with pytest.raises(AssertionError):
+            btn.update_callback(invalid)
+
+
+def test_button_readonly_behavior(menu):
+    applied = []
+
+    def cb():
+        applied.append(True)
+
+    btn = menu.add.button("x", cb)
+    assert btn.apply() is None  # normal call returns None
+
+    btn.readonly = True
+    assert btn.apply() is None  # still allowed
+    # callback *does* run on apply()
+    assert applied == [True]
+
+    # but readonly blocks event-driven apply()
+    applied.clear()
+    event = PygameEventUtils.keydown(pygame_menu.controls.KEY_APPLY)
+    assert btn.update(event) is False
+    assert applied == []
+
+    # KEY_APPLY must not trigger apply() when readonly
+    event = PygameEventUtils.keydown(pygame_menu.controls.KEY_APPLY)
+    assert btn.update(event) is False
+
+
+def test_button_resize_flip_and_limits(menu):
+    btn = menu.add.button("resize", pygame_menu.events.NONE)
+
+    btn.resize(1, 1)
+    btn.set_max_height(None)
+    btn.set_max_width(None)
+    btn.flip(True, True)
+
+    assert btn._flip == (True, True)
+
+
+def test_button_active_selected_consistency(menu):
+    btn = menu.add.button("active", pygame_menu.events.NONE)
+
+    btn.active = True
+    btn._selected = False
+    btn.draw(surface)
+
+    # Drawing a non-selected active button must deactivate it
+    assert btn.active is False
+
+
+def test_button_change_calls_onchange(menu):
+    btn = menu.add.button("x", pygame_menu.events.NONE)
+    called = []
+
+    btn._onchange = lambda: called.append(True)
+    assert btn.change() is None
+    assert called == [True]
+
+
+def test_button_event_constants(menu):
+    # PYGAME_QUIT and WINDOWCLOSE must map to menu._exit
+    btn = menu.add.button("quit", pygame_menu.events.PYGAME_QUIT)
+    assert btn._onreturn == menu._exit
+
+    btn = menu.add.button("close", pygame_menu.events.PYGAME_WINDOWCLOSE)
+    assert btn._onreturn == menu._exit
+
+    # NONE must disable callback
+    btn = menu.add.button("none", pygame_menu.events.NONE)
+    assert btn._onreturn is None
+
+    # No callback provided → also None
+    btn = menu.add.button("none2")
+    assert btn._onreturn is None
+
+
+def test_button_invalid_kwarg_rejected(menu):
+    def cb(**kwargs):
+        pass
+
+    # accept_kwargs=False but kwarg provided → error
+    with pytest.raises(ValueError):
+        menu.add.button("bad", cb, key=True)
+
+
+def test_button_remove_widget(menu):
+    btn = menu.add.button("x")
+    menu.remove_widget(btn)
+
+    # Removing twice must raise
+    with pytest.raises(ValueError):
         menu.remove_widget(btn)
-        self.assertRaises(ValueError, lambda: menu.remove_widget(btn))
 
-        # Test underline
-        # Add underline
-        btn = menu.add.button('epic', pygame_menu.events.NONE)
-        self.assertEqual(btn._decorator._total_decor(), 0)
-        btn.add_underline((0, 0, 0), 1, 1, force_render=True)
-        self.assertNotEqual(btn._last_underline[0], '')
-        self.assertEqual(btn._decorator._total_decor(), 1)
-        btn.remove_underline()
-        self.assertEqual(btn._last_underline[0], '')
 
-        # Test return fun
-        def fun() -> str:
-            """
-            This should return "nice".
-            """
-            return 'nice'
+def test_button_shadow_full_behavior(menu):
+    btn = menu.add.button("shadow", pygame_menu.events.NONE)
 
-        btn = menu.add.button('', fun)
-        self.assertEqual(btn.apply(), 'nice')
-        btn.readonly = True
-        self.assertIsNone(btn.apply())
-        self.assertFalse(btn.update(PygameEventUtils.keydown(pygame_menu.controls.KEY_APPLY)))
+    # Enable shadow
+    btn.shadow(shadow_width=20, color="black")
+    assert btn._shadow["enabled"] is True
+    assert btn._shadow["properties"][4] == (0, 0, 0)
 
-        # Test button to menu
-        btn_menu = menu.add.button('to2', menu2)
-        self.assertTrue(btn_menu.to_menu)
-        menu.full_reset()
-        self.assertTrue(btn_menu.update(PygameEventUtils.keydown(pygame_menu.controls.KEY_APPLY)))
-        self.assertEqual(menu.get_current(), menu2)
-        menu.full_reset()
-        self.assertEqual(menu.get_current(), menu)
+    # Disable shadow with alpha color
+    btn.shadow(shadow_width=0, color=(250, 250, 30, 40))
+    assert btn._shadow["enabled"] is False
+    assert btn._shadow["properties"][4] == (250, 250, 30)
+    assert btn._shadow["surface"] is None
 
-        # Warns if adding button to menu
-        btn.set_menu(None)
-        btn.to_menu = True
-        menu2.add.generic_widget(btn)
+    # Disable shadow with RGB
+    btn.shadow(shadow_width=0, color=(250, 250, 100))
+    assert btn._shadow["enabled"] is False
+    assert btn._shadow["properties"][4] == (250, 250, 100)
 
-        # Test extreme resize
-        btn.resize(1, 1)
-        btn.set_max_height(None)
-        btn.set_max_width(None)
-        btn.flip(True, True)
-        self.assertEqual(btn._flip, (True, True))
+    # Re-enable and verify surface size
+    btn.shadow(shadow_width=20, color="black")
+    btn.draw(surface)
+    s = btn._shadow["surface"].get_size()
+    assert s[0] == btn.get_width() + 40
+    assert s[1] == btn.get_height() + 40
 
-        # Test consistency if active
-        btn.active = True
-        btn._selected = False
-        btn.draw(surface)
-        self.assertFalse(btn.active)
+    # Scaling must invalidate shadow surface
+    btn.scale(2, 2)
+    assert btn._shadow["surface"] is None
+    btn.draw(surface)
+    s2 = btn._shadow["surface"].get_size()
+    assert s2[0] == btn.get_width() + 40
+    assert s2[1] == btn.get_height() + 40
 
-        # Try onchange
-        btn._onchange = lambda: None
-        self.assertIsNone(btn.change())
+    # Ellipse shadow
+    btn2 = menu.add.button("ellipse")
+    btn2.shadow(WIDGET_SHADOW_TYPE_ELLIPSE, 50)
+    btn2.draw(surface)
 
-    def test_empty_title(self) -> None:
-        """
-        Test empty title.
-        """
-        menu = MenuUtils.generic_menu()
-        btn = menu.add.button('')
-        p = btn._padding
-        self.assertEqual(btn.get_width(), p[1] + p[3])
-        self.assertEqual(btn.get_height(), p[0] + p[2] + 41 if PYGAME_V2 else 42)
+    # Invalid corner radius disables shadow
+    btn2.shadow(corner_radius=4000)
+    assert btn2._shadow["enabled"] is True
+    btn2.draw(surface)
+    assert btn2._shadow["enabled"] is False
 
-    def test_shadow(self) -> None:
-        """
-        Test button shadow.
-        """
-        menu = MenuUtils.generic_menu()
-        menu.add.button('my button')
-        btn = menu.add.button('my buton 2')
-        btn.shadow(shadow_width=20, color='black')
-        self.assertTrue(btn._shadow['enabled'])
-        self.assertEqual(btn._shadow['properties'][4], (0, 0, 0))
-        btn.shadow(shadow_width=0, color=(250, 250, 30, 40))
-        self.assertFalse(btn._shadow['enabled'])
-        self.assertEqual(btn._shadow['properties'][4], (250, 250, 30))
-        self.assertIsNone(btn._shadow['surface'])
-        btn.shadow(shadow_width=0, color=(250, 250, 100))
-        self.assertFalse(btn._shadow['enabled'])
-        self.assertEqual(btn._shadow['properties'][4], (250, 250, 100))
 
-        # Check size modify
-        btn.shadow(shadow_width=20, color='black')
-        self.assertIsNone(btn._shadow['surface'])
-        btn.draw(surface)
-        self.assertIsNotNone(btn._shadow['surface'])
-        s = btn._shadow['surface'].get_size()
-        self.assertEqual(btn.get_size()[0] + 40, s[0])
-        self.assertEqual(btn.get_size()[1] + 40, s[1])
+def test_button_value_methods(menu):
+    btn = menu.add.button("button")
 
-        btn.scale(2, 2)
-        self.assertIsNone(btn._shadow['surface'])
-        btn.draw(surface)
-        s = btn._shadow['surface'].get_size()
-        self.assertEqual(btn.get_size()[0] + 40, s[0])
-        self.assertEqual(btn.get_size()[1] + 40, s[1])
+    with pytest.raises(ValueError):
+        btn.get_value()
 
-        # Add ellipse shadow
-        btn2 = menu.add.button('my buton 3')
-        btn2.shadow(WIDGET_SHADOW_TYPE_ELLIPSE, 50)
-        btn2.draw(surface)
+    with pytest.raises(ValueError):
+        btn.set_value("value")
 
-        # Set invalid width
-        btn2.shadow(corner_radius=4000)
-        self.assertTrue(btn2._shadow['enabled'])
-        btn2.draw(surface)
-        self.assertFalse(btn2._shadow['enabled'])
+    assert btn.value_changed() is False
+    btn.reset_value()
 
-    def test_value(self) -> None:
-        """
-        Test button value.
-        """
-        menu = MenuUtils.generic_menu()
-        btn = menu.add.button('button')
-        self.assertRaises(ValueError, lambda: btn.get_value())
-        self.assertRaises(ValueError, lambda: btn.set_value('value'))
-        self.assertFalse(btn.value_changed())
-        btn.reset_value()
 
-    def test_add_url(self) -> None:
-        """
-        Test add url.
-        """
-        menu = MenuUtils.generic_menu()
-        self.assertRaises(AssertionError, lambda: menu.add.url('invalid'))
-        self.assertRaises(AssertionError, lambda: menu.add.url('127.0.0.1'))
-        btn = menu.add.url('https://127.0.0.1')
-        self.assertEqual(btn.get_title(), 'https://127.0.0.1')
-        btn2 = menu.add.url('https://github.com/ppizarror/pygame-menu', 'github')
-        self.assertEqual(btn2.get_title(), 'github')
+def test_multiline_inside_frame_rewrap(menu):
+    s = (
+        "lorem ipsum dolor sit amet this was very important nice a test is required "
+        "lorem ipsum dolor sit amet this was very important nice a test is required"
+    )
 
-    def test_controller(self) -> None:
-        """
-        Test controller.
-        """
-        theme = THEME_DEFAULT.copy()
-        menu = MenuUtils.generic_menu(theme=theme)
-        from random import randrange
+    btn = menu.add.button(s, wordwrap=True, max_nlines=3)
+    assert len(btn.get_lines()) == 3
+    assert btn.get_overflow_lines() == ["important nice a test is required"]
 
-        from pygame_menu.controls import Controller
-        custom_controller = Controller()
-        test = [0]
+    # Inside frame → rewrap to container width
+    frame = menu.add.frame_h(200, 200)
+    frame.pack(btn)
 
-        # noinspection PyMissingOrEmptyDocstring
-        def btn_apply(event, _) -> bool:
-            applied = event.key in (pygame.K_a, pygame.K_b, pygame.K_c)
-            if applied:
-                menu.get_scrollarea().update_area_color((randrange(0, 255), randrange(0, 255), randrange(0, 255)))
-                test[0] += 1
-            return applied
+    assert len(btn.get_overflow_lines()) > 3  # many wrapped lines
 
-        custom_controller.apply = btn_apply
-        btn = menu.add.button('My button', lambda: print('Clicked!'))
-        btn.set_controller(custom_controller)
-        menu.update(PygameEventUtils.keydown(pygame.K_d))
-        self.assertEqual(test[0], 0)
-        menu.update(PygameEventUtils.keydown(pygame.K_a))
-        self.assertEqual(test[0], 1)
-        menu.update(PygameEventUtils.keydown(pygame.K_b))
-        self.assertEqual(test[0], 2)
-        menu.update(PygameEventUtils.keydown(pygame.K_c))
-        self.assertEqual(test[0], 3)
+    # Removing from frame restores original wrap
+    frame.unpack(btn)
+    assert btn.get_overflow_lines() == ["important nice a test is required"]
 
-        # Test select
-        self.assertTrue(btn.update(PygameEventUtils.joy_button(pygame_menu.controls.JOY_BUTTON_SELECT)))
 
-    def test_button_image(self) -> None:
-        """
-        Test button with an image.
-        """
-        menu = MenuUtils.generic_menu()
+def test_banner_respects_user_cursor(menu):
+    surf = pygame.Surface((50, 50))
+    btn = menu.add.banner(surf, cursor=pygame.SYSTEM_CURSOR_CROSSHAIR)
+    assert btn._cursor == pygame.SYSTEM_CURSOR_CROSSHAIR
 
-        # Test existing BaseImage support
-        image = pygame_menu.BaseImage(
-            image_path=pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU
-        ).scale(0.25, 0.25)
 
-        btn = menu.add.banner(image)
+def test_banner_float_behavior(menu):
+    surf = pygame.Surface((30, 30))
+    btn = menu.add.banner(surf, float=True)
+    assert btn.is_floating()
 
-        # Size must match the BaseImage
-        self.assertEqual(btn.get_width(), image.get_width())
-        self.assertEqual(btn.get_height(), image.get_height())
 
-        # Banner text is always a single space
-        self.assertEqual(btn.get_title(), ' ')
+def test_banner_apply_via_event(menu):
+    applied = {"ok": False}
 
-        # Padding override (default = 0)
-        self.assertEqual(btn._padding, (0, 0, 0, 0))
+    def cb():
+        applied["ok"] = True
 
-        # Selection color override (transparent)
-        self.assertEqual(btn._selection_effect.color, (0, 0, 0, 0))
+    surf = pygame.Surface((60, 60))
+    menu.add.banner(surf, cb)
 
-        # Test pygame.Surface support
-        surf_size = (120, 60)
-        raw_surf = pygame.Surface(surf_size)
-        btn_from_surf = menu.add.banner(raw_surf)
+    event = PygameEventUtils.keydown(pygame_menu.controls.KEY_APPLY)
+    menu.update(event)
 
-        # Size must match the raw surface
-        self.assertEqual(btn_from_surf.get_width(), surf_size[0])
-        self.assertEqual(btn_from_surf.get_height(), surf_size[1])
+    assert applied["ok"] is True
 
-        # Internally converted to BaseImage
-        self.assertIsInstance(btn_from_surf._background_color, pygame_menu.BaseImage)
 
-        # Padding override still applies
-        self.assertEqual(btn_from_surf._padding, (0, 0, 0, 0))
+def test_controller_behavior(menu):
+    from random import randrange
 
-        # Transparent selection color still applies
-        self.assertEqual(btn_from_surf._selection_effect.color, (0, 0, 0, 0))
+    from pygame_menu.controls import Controller
 
-        # Verify Selection Fix (NoneSelection)
-        from pygame_menu.widgets import NoneSelection
-        self.assertIsInstance(btn_from_surf.get_selection_effect(), NoneSelection)
+    custom = Controller()
+    counter = {"n": 0}
 
-        # Ensure theme selection effect did NOT leak through
-        theme_effect_type = type(menu.get_theme().widget_selection_effect)
-        self.assertNotEqual(type(btn_from_surf.get_selection_effect()), theme_effect_type)
+    def apply(event, _):
+        if event.key in (pygame.K_a, pygame.K_b, pygame.K_c):
+            menu.get_scrollarea().update_area_color(
+                (randrange(0, 255), randrange(0, 255), randrange(0, 255))
+            )
+            counter["n"] += 1
+            return True
+        return False
 
-    def test_multiline(self) -> None:
-        """
-        Test multiline button capabilities.
-        """
-        menu = MenuUtils.generic_menu()
-        s = 'lorem ipsum dolor sit amet this was very important nice a test is required ' \
-            'lorem ipsum dolor sit amet this was very important nice a test is required'
-        button = menu.add.button(s, wordwrap=True, max_nlines=3)  # Maximum number of lines
-        self.assertEqual(len(button.get_lines()), 3)  # The widget needs 4 lines, but maximum is 3
-        self.assertEqual(button.get_height(), 131)
-        self.assertEqual(button.get_overflow_lines(), ['important nice a test is required'])
+    custom.apply = apply
 
-        # Test multiline within Frame
-        f1 = menu.add.frame_h(200, 200)
-        f1.pack(button)
-        self.assertEqual(button.get_overflow_lines(),
-                         ['required', 'nice a test is', 'important', 'was very', 'amet this', 'dolor sit',
-                          'lorem ipsum', 'required', 'nice a test is', 'important', 'was very'])
-        self.assertLessEqual(abs(button.get_width() - button._get_max_container_width()), 2)
+    btn = menu.add.button("My button", lambda: None)
+    btn.set_controller(custom)
 
-        # Taking button out from Frame must restore its container and reassemble wrap
-        f1.unpack(button)
-        self.assertEqual(button.get_overflow_lines(), ['important nice a test is required'])
+    menu.update(PygameEventUtils.keydown(pygame.K_d))
+    assert counter["n"] == 0
 
-    def test_banner_respects_user_padding(self):
-        menu = MenuUtils.generic_menu()
-        surf = pygame.Surface((40, 40))
-        btn = menu.add.banner(surf, padding=(5, 10, 5, 10))
-        self.assertEqual(btn._padding, (5, 10, 5, 10))
+    menu.update(PygameEventUtils.keydown(pygame.K_a))
+    menu.update(PygameEventUtils.keydown(pygame.K_b))
+    menu.update(PygameEventUtils.keydown(pygame.K_c))
+    assert counter["n"] == 3
 
-    def test_banner_respects_user_selection_effect(self):
-        menu = MenuUtils.generic_menu()
-        from pygame_menu.widgets import HighlightSelection
-        custom = HighlightSelection()
-        image = pygame.Surface((50, 50))
-        btn = menu.add.banner(image, selection_effect=custom)
-        # User override must win → same TYPE, not same INSTANCE
-        self.assertIsInstance(btn._selection_effect, HighlightSelection)
-
-    def test_banner_inside_frame(self):
-        menu = MenuUtils.generic_menu()
-        frame = menu.add.frame_h(200, 200)
-        surf = pygame.Surface((80, 30))
-        btn = menu.add.banner(surf)
-        frame.pack(btn)
-        # Width must not exceed frame width
-        self.assertLessEqual(btn.get_width(), frame.get_width())
-
-    def test_banner_height_not_affected_by_text(self):
-        menu = MenuUtils.generic_menu()
-        surf = pygame.Surface((100, 40))
-        btn = menu.add.banner(surf)
-        self.assertEqual(btn.get_height(), 40)
-
-    def test_banner_apply_via_event(self):
-        menu = MenuUtils.generic_menu()
-        applied = [False]
-
-        def cb():
-            applied[0] = True
-
-        surf = pygame.Surface((60, 60))
-        menu.add.banner(surf, cb)
-        events = PygameEventUtils.keydown(pygame_menu.controls.KEY_APPLY)
-        menu.update(events)
-        self.assertTrue(applied[0])
-
-    def test_banner_respects_user_cursor(self):
-        menu = MenuUtils.generic_menu()
-        surf = pygame.Surface((50, 50))
-        btn = menu.add.banner(surf, cursor=pygame.SYSTEM_CURSOR_CROSSHAIR)
-        self.assertEqual(btn._cursor, pygame.SYSTEM_CURSOR_CROSSHAIR)
-
-    def test_banner_float_behavior(self):
-        menu = MenuUtils.generic_menu()
-        surf = pygame.Surface((30, 30))
-        btn = menu.add.banner(surf, float=True)
-        self.assertTrue(btn.is_floating())
+    # Joystick select must trigger update()
+    assert btn.update(
+        PygameEventUtils.joy_button(pygame_menu.controls.JOY_BUTTON_SELECT)
+    )

@@ -6,76 +6,118 @@ TEST WIDGET - SURFACE
 Test Surface widget.
 """
 
-from __future__ import annotations
-
-__all__ = ['SurfaceWidgetTest']
-
 import pygame
+import pytest
 
 from pygame_menu.widgets.core.widget import WidgetTransformationNotImplemented
-from test._utils import BaseTest, MenuUtils, PygameEventUtils, surface
+from test._utils import MenuUtils, PygameEventUtils, surface
 
 
-class SurfaceWidgetTest(BaseTest):
+@pytest.fixture
+def menu():
+    return MenuUtils.generic_menu()
 
-    def test_surface_widget(self) -> None:
-        """
-        Test surface widget.
-        """
-        menu = MenuUtils.generic_menu()
-        surf = pygame.Surface((150, 150))
-        surf.fill((255, 192, 203))
-        surf_widget = menu.add.surface(surf, font_color='red')
 
-        self.assertEqual(surf_widget.get_size(), (166, 158))
-        self.assertEqual(surf_widget.get_size(apply_padding=False), (150, 150))
-        self.assertEqual(surf_widget.get_surface(), surf)
-        self.assertEqual(surf_widget._font_color, (70, 70, 70, 255))  # not red
+def test_surface_widget_basic(menu):
+    surf = pygame.Surface((150, 150))
+    surf.fill((255, 192, 203))
 
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: surf_widget.rotate(10))
-        self.assertEqual(surf_widget._angle, 0)
+    widget = menu.add.surface(surf, font_color="red")
 
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: surf_widget.resize(10, 10))
-        self.assertFalse(surf_widget._scale[0])
-        self.assertEqual(surf_widget._scale[1], 1)
-        self.assertEqual(surf_widget._scale[2], 1)
+    assert widget.get_size() == (166, 158)
+    assert widget.get_size(apply_padding=False) == (150, 150)
+    assert widget.get_surface() is surf
 
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: surf_widget.scale(100, 100))
-        self.assertFalse(surf_widget._scale[0])
-        self.assertEqual(surf_widget._scale[1], 1)
-        self.assertEqual(surf_widget._scale[2], 1)
+    # Theme overrides font_color → not red
+    assert widget._font_color == (70, 70, 70, 255)
 
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: surf_widget.flip(True, True))
-        self.assertFalse(surf_widget._flip[0])
-        self.assertFalse(surf_widget._flip[1])
 
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: surf_widget.set_max_width(100))
-        self.assertIsNone(surf_widget._max_width[0])
+@pytest.mark.parametrize(
+    "method,args",
+    [
+        ("rotate", (10,)),
+        ("resize", (10, 10)),
+        ("scale", (100, 100)),
+        ("flip", (True, True)),
+        ("set_max_width", (100,)),
+        ("set_max_height", (100,)),
+    ],
+)
+def test_surface_widget_invalid_transforms(menu, method, args):
+    surf = pygame.Surface((150, 150))
+    widget = menu.add.surface(surf)
 
-        self.assertRaises(WidgetTransformationNotImplemented, lambda: surf_widget.set_max_height(100))
-        self.assertIsNone(surf_widget._max_height[0])
+    with pytest.raises(WidgetTransformationNotImplemented):
+        getattr(widget, method)(*args)
 
-        surf_widget.set_title('epic')
-        self.assertEqual(surf_widget.get_title(), '')
 
-        new_surface = pygame.Surface((160, 160))
-        new_surface.fill((255, 192, 203))
-        inner_surface = pygame.Surface((80, 80))
-        inner_surface.fill((75, 0, 130))
-        new_surface.blit(inner_surface, (40, 40))
-        surf_widget.set_surface(new_surface)
-        self.assertEqual(surf_widget.get_size(apply_padding=False), (160, 160))
-        menu.draw(surface)
-        surf_widget.update(PygameEventUtils.mouse_motion(surf_widget))
-        surf_widget.draw(surface)
+def test_surface_widget_transform_state(menu):
+    surf = pygame.Surface((150, 150))
+    widget = menu.add.surface(surf)
 
-    def test_value(self) -> None:
-        """
-        Test surface value.
-        """
-        menu = MenuUtils.generic_menu()
-        surf = menu.add.surface(pygame.Surface((150, 150)))
-        self.assertRaises(ValueError, lambda: surf.get_value())
-        self.assertRaises(ValueError, lambda: surf.set_value('value'))
-        self.assertFalse(surf.value_changed())
-        surf.reset_value()
+    # Angle unchanged
+    with pytest.raises(WidgetTransformationNotImplemented):
+        widget.rotate(10)
+    assert widget._angle == 0
+
+    # Scale unchanged
+    with pytest.raises(WidgetTransformationNotImplemented):
+        widget.scale(100, 100)
+    assert widget._scale[:3] == [False, 1, 1]
+
+    # Resize unchanged
+    with pytest.raises(WidgetTransformationNotImplemented):
+        widget.resize(100, 100)
+    assert widget._scale[:3] == [False, 1, 1]
+
+    # Flip unchanged
+    with pytest.raises(WidgetTransformationNotImplemented):
+        widget.flip(True, True)
+    assert widget._flip == (False, False)
+
+    # Max width/height unchanged
+    with pytest.raises(WidgetTransformationNotImplemented):
+        widget.set_max_width(100)
+    assert widget._max_width[0] is None
+
+    with pytest.raises(WidgetTransformationNotImplemented):
+        widget.set_max_height(100)
+    assert widget._max_height[0] is None
+
+
+def test_surface_widget_title_and_surface_update(menu):
+    surf = pygame.Surface((150, 150))
+    surf.fill((255, 192, 203))
+
+    widget = menu.add.surface(surf)
+
+    widget.set_title("epic")
+    assert widget.get_title() == ""  # Surface widgets ignore titles
+
+    # Replace surface
+    new_surface = pygame.Surface((160, 160))
+    new_surface.fill((255, 192, 203))
+
+    inner = pygame.Surface((80, 80))
+    inner.fill((75, 0, 130))
+    new_surface.blit(inner, (40, 40))
+
+    widget.set_surface(new_surface)
+    assert widget.get_size(apply_padding=False) == (160, 160)
+
+    menu.draw(surface)
+    widget.update(PygameEventUtils.mouse_motion(widget))
+    widget.draw(surface)
+
+
+def test_surface_widget_value_api(menu):
+    widget = menu.add.surface(pygame.Surface((150, 150)))
+
+    with pytest.raises(ValueError):
+        widget.get_value()
+
+    with pytest.raises(ValueError):
+        widget.set_value("value")
+
+    assert not widget.value_changed()
+    widget.reset_value()
