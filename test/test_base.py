@@ -6,134 +6,162 @@ TEST BASE
 Test base class.
 """
 
-from __future__ import annotations
+import pytest
 
-__all__ = ['BaseTest']
-
-# noinspection PyProtectedMember
 from pygame_menu._base import Base
-from test._utils import BaseTest as _BaseTest
 
 
-class BaseTest(_BaseTest):
+def test_counter_increments_from_zero():
+    """Counter starts at default and increments sequentially."""
+    obj = Base("")
+    for i in range(1, 7):
+        assert obj.get_counter_attribute("count", 1) == i
 
-    def test_counter(self) -> None:
-        """
-        Test counter.
-        """
-        obj = Base('')
-        self.assertEqual(obj.get_counter_attribute('count', 1), 1)
-        self.assertEqual(obj.get_counter_attribute('count', 1), 2)
-        self.assertEqual(obj.get_counter_attribute('count', 1), 3)
-        self.assertEqual(obj.get_counter_attribute('count', 1), 4)
-        self.assertEqual(obj.get_counter_attribute('count', 1), 5)
-        self.assertEqual(obj.get_counter_attribute('count', 1), 6)
 
-        self.assertAlmostEqual(obj.get_counter_attribute('count_epic', 1, '3.14'), 4.14)
-        self.assertAlmostEqual(obj.get_counter_attribute('count_epic', 1, '3.14'), 5.14)
-        self.assertAlmostEqual(obj.get_counter_attribute('count_epic', 1, '3.14'), 6.14)
+def test_counter_float_default_string():
+    """Counter initializes from float-like string default and increments."""
+    obj = Base("")
+    assert pytest.approx(obj.get_counter_attribute("epic", 1, "3.14")) == 4.14
+    assert pytest.approx(obj.get_counter_attribute("epic", 1, "3.14")) == 5.14
+    assert pytest.approx(obj.get_counter_attribute("epic", 1, "3.14")) == 6.14
 
-        # Test check instance
-        self.assertEqual(obj.get_counter_attribute('count1', 1, '1'), 2)
-        self.assertEqual(obj.get_counter_attribute('count1', 1, '1'), 3)
 
-        # Test check instance
-        self.assertEqual(obj.get_counter_attribute('count2', 1.0, '1'), 2.0)
-        self.assertEqual(obj.get_counter_attribute('count2', 1.0, '1'), 3.0)
+def test_counter_integer_default_string():
+    """Counter initializes from int-like string default and increments."""
+    obj = Base("")
+    assert obj.get_counter_attribute("count1", 1, "1") == 2
+    assert obj.get_counter_attribute("count1", 1, "1") == 3
 
-    def test_classid(self) -> None:
-        """
-        Test class id.
-        """
-        obj = Base('id')
-        self.assertEqual(obj.get_class_id(), 'Base<"id">')
 
-    def test_attributes(self) -> None:
-        """
-        Test attributes.
-        """
-        obj = Base('')
-        self.assertFalse(obj.has_attribute('epic'))
-        self.assertRaises(IndexError, lambda: obj.remove_attribute('epic'))
-        obj.set_attribute('epic', True)
-        self.assertTrue(obj.has_attribute('epic'))
-        self.assertTrue(obj.get_attribute('epic'))
-        obj.set_attribute('epic', False)
-        self.assertFalse(obj.get_attribute('epic'))
-        obj.remove_attribute('epic')
-        self.assertFalse(obj.has_attribute('epic'))
-        self.assertEqual(obj.get_attribute('epic', 420), 420)
+def test_counter_float_increment_with_string_default():
+    """Float increment works with string default coerced to number."""
+    obj = Base("")
+    assert obj.get_counter_attribute("count2", 1.0, "1") == 2.0
+    assert obj.get_counter_attribute("count2", 1.0, "1") == 3.0
 
-    def test_repr(self) -> None:
-        """
-        Test base repr.
-        """
-        obj = Base('id')
-        self.assertNotIn('["id"]', str(obj))
-        obj._id__repr__ = True
-        self.assertIn('["id"]', str(obj))
-        obj = Base('id2')
-        obj._class_id__repr__ = True
-        self.assertEqual(str(obj), 'Base<"id2">')
 
-    def test_object_id_zero_string(self):
-        obj = Base("0")
-        self.assertEqual(obj.get_id(), "0")
+def test_counter_non_numeric_default_raises():
+    """Non-numeric default value raises ValueError."""
+    obj = Base("")
+    with pytest.raises(ValueError):
+        obj.get_counter_attribute("c", 1, "not_a_number")
 
-    def test_object_id_whitespace(self) -> None:
-        obj = Base("   ")
-        self.assertEqual(obj.get_id(), "   ")
 
-    def test_object_id_type_error(self) -> None:
-        with self.assertRaises(TypeError):
-            Base(123)  # type: ignore
+def test_counter_non_numeric_increment_casts_to_float():
+    """Non-numeric increment is coerced to float."""
+    obj = Base("")
+    assert obj.get_counter_attribute("c", "5") == 5.0
 
-    def test_verbose_type_error(self) -> None:
-        with self.assertRaises(TypeError):
-            Base("id", verbose="yes")  # type: ignore
 
-    def test_repr_conflict(self) -> None:
-        obj = Base("id")
-        obj._class_id__repr__ = True
-        obj._id__repr__ = True
-        with self.assertRaises(AssertionError):
-            repr(obj)
+def test_attribute_missing():
+    """Missing attribute returns default and reports absence."""
+    obj = Base("")
+    assert not obj.has_attribute("epic")
+    assert obj.get_attribute("missing", 99) == 99
 
-    def test_repr_default(self) -> None:
-        obj = Base("id")
-        r = repr(obj)
-        self.assertIn("object at", r)
-        self.assertNotIn("id", r)
 
-    def test_attribute_overwrite(self) -> None:
-        obj = Base("")
-        obj.set_attribute("x", 1)
-        obj.set_attribute("x", "hello")
-        self.assertEqual(obj.get_attribute("x"), "hello")
+def test_attribute_remove_missing_raises():
+    """Removing a missing attribute raises IndexError."""
+    obj = Base("")
+    with pytest.raises(IndexError):
+        obj.remove_attribute("epic")
 
-    def test_get_attribute_no_attributes(self) -> None:
-        obj = Base("")
-        self.assertEqual(obj.get_attribute("missing", 99), 99)
 
-    def test_attribute_key_type_error(self) -> None:
-        obj = Base("")
-        with self.assertRaises(TypeError):
-            obj.set_attribute(123, "value")  # type: ignore
+def test_attribute_set_get_remove_cycle():
+    """Attributes can be set, updated, removed, and defaulted."""
+    obj = Base("")
+    obj.set_attribute("epic", True)
+    assert obj.has_attribute("epic")
+    assert obj.get_attribute("epic") is True
 
-    def test_counter_non_numeric_default(self) -> None:
-        obj = Base("")
-        with self.assertRaises(ValueError):
-            obj.get_counter_attribute("c", 1, "not_a_number")
+    obj.set_attribute("epic", False)
+    assert obj.get_attribute("epic") is False
 
-    def test_counter_non_numeric_incr(self) -> None:
-        obj = Base("")
-        self.assertEqual(obj.get_counter_attribute("c", "5"), 5.0)
+    obj.remove_attribute("epic")
+    assert not obj.has_attribute("epic")
+    assert obj.get_attribute("epic", 420) == 420
 
-    def test_update_repr_flags(self) -> None:
-        a = Base("a")
-        b = Base("b")
-        b._class_id__repr__ = True
-        b._id__repr__ = True
-        a._update__repr___(b)
-        self.assertTrue(a._class_id__repr__)
-        self.assertTrue(a._id__repr__)
+
+def test_attribute_overwrite():
+    """Setting an attribute twice overwrites previous value."""
+    obj = Base("")
+    obj.set_attribute("x", 1)
+    obj.set_attribute("x", "hello")
+    assert obj.get_attribute("x") == "hello"
+
+
+def test_attribute_key_type_error():
+    """Non-string attribute key raises TypeError."""
+    obj = Base("")
+    with pytest.raises(TypeError):
+        obj.set_attribute(123, "value")  # type: ignore
+
+
+def test_repr_default_does_not_include_id():
+    """Default repr does not include object ID."""
+    obj = Base("id")
+    r = repr(obj)
+    assert "object at" in r
+    assert "id" not in r
+
+
+def test_repr_id_injection():
+    """ID repr flag injects ID into repr output."""
+    obj = Base("id")
+    obj._id__repr__ = True
+    assert '["id"]' in repr(obj)
+
+
+def test_repr_class_id():
+    """Class ID repr flag returns Class<id> format."""
+    obj = Base("id2")
+    obj._class_id__repr__ = True
+    assert repr(obj) == 'Base<"id2">'
+
+
+def test_repr_conflict_raises():
+    """Enabling both repr flags raises AssertionError."""
+    obj = Base("id")
+    obj._class_id__repr__ = True
+    obj._id__repr__ = True
+    with pytest.raises(AssertionError):
+        repr(obj)
+
+
+def test_update_repr_flags():
+    """_update__repr___ copies repr flags from another Base."""
+    a = Base("a")
+    b = Base("b")
+    b._class_id__repr__ = True
+    b._id__repr__ = True
+    a._update__repr___(b)
+    assert a._class_id__repr__ is True
+    assert a._id__repr__ is True
+
+
+def test_object_id_zero_string():
+    """Object ID '0' is preserved."""
+    assert Base("0").get_id() == "0"
+
+
+def test_object_id_whitespace():
+    """Whitespace-only object ID is preserved."""
+    assert Base("   ").get_id() == "   "
+
+
+def test_object_id_type_error():
+    """Non-string object ID raises TypeError."""
+    with pytest.raises(TypeError):
+        Base(123)  # type: ignore
+
+
+def test_verbose_type_error():
+    """Non-bool verbose flag raises TypeError."""
+    with pytest.raises(TypeError):
+        Base("id", verbose="yes")  # type: ignore
+
+
+def test_class_id_format():
+    """get_class_id returns Class<id> format."""
+    obj = Base("id")
+    assert obj.get_class_id() == 'Base<"id">'

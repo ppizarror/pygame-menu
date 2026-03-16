@@ -56,6 +56,7 @@ try:
 except (ModuleNotFoundError, ImportError):
     copy, paste = lambda text: None, lambda: ""
 
+
     class PyperclipException(RuntimeError):  # type: ignore
         """
         Pyperclip exception thrown by pyperclip.
@@ -624,8 +625,8 @@ class TextInput(Widget):
 
             # Find coordinates of each position
             string = self._get_input_string_filtered()
-            string_init = string[self._renderbox[0] : pos[0]]
-            string_final = string[self._renderbox[0] : pos[1]]
+            string_init = string[self._renderbox[0]: pos[0]]
+            string_final = string[self._renderbox[0]: pos[1]]
 
             x1 = self._cursor_offset + self._font.size(self._title + string_init)[0]
             x2 = (
@@ -827,7 +828,7 @@ class TextInput(Widget):
             )
         else:  # Calculate position depending on renderbox
             string = string[
-                self._renderbox[0] : (self._renderbox[0] + self._renderbox[2])
+                self._renderbox[0]: (self._renderbox[0] + self._renderbox[2])
             ]
             cursor_x_pos = (
                 self._cursor_offset + self._font.size(self._title + string)[0]
@@ -906,7 +907,7 @@ class TextInput(Widget):
         """
         string: str = self._get_input_string_filtered()
         if self._maxwidth != 0 and len(string) > self._maxwidth:
-            text = string[self._renderbox[0] : self._renderbox[1]]
+            text = string[self._renderbox[0]: self._renderbox[1]]
             if add_ellipsis:
                 if self._ellipsis_right():
                     text += self._ellipsis
@@ -1236,7 +1237,7 @@ class TextInput(Widget):
             # Apply maxchar
             len_text = len(default_text)
             if 0 < self._maxchar < len_text:
-                default_text = default_text[len_text - self._maxchar : len_text]
+                default_text = default_text[len_text - self._maxchar: len_text]
 
             self._input_string = default_text
             for i in range(len(default_text) + 1):
@@ -1344,7 +1345,7 @@ class TextInput(Widget):
 
         :return: Text
         """
-        return self._input_string[self._selection_box[0] : self._selection_box[1]]
+        return self._input_string[self._selection_box[0]: self._selection_box[1]]
 
     def _update_input_string(
         self, new_string: str, update_history: bool = True
@@ -1365,9 +1366,9 @@ class TextInput(Widget):
             update_history
             and self._max_history > 0
             and (
-                (l_history > 0 and self._history[l_history - 1] != new_string)
-                or l_history == 0
-            )
+            (l_history > 0 and self._history[l_history - 1] != new_string)
+            or l_history == 0
+        )
         ):
             # If index is not at last add the current status as new
             if self._history_index != l_history:
@@ -1488,9 +1489,9 @@ class TextInput(Widget):
                 return False
 
         new_string: str = (
-            self._input_string[0 : self._cursor_position]
+            self._input_string[0: self._cursor_position]
             + text[0:text_end]
-            + self._input_string[self._cursor_position : len(self._input_string)]
+            + self._input_string[self._cursor_position: len(self._input_string)]
         )
 
         # If string is valid
@@ -1579,7 +1580,7 @@ class TextInput(Widget):
         """
         new_string = (
             self._input_string[: max(self._cursor_position - 1, 0)]
-            + self._input_string[self._cursor_position :]
+            + self._input_string[self._cursor_position:]
         )
         self._update_input_string(new_string, update_history=update_history)
         self._update_renderbox(left=-1, addition=True)
@@ -1595,7 +1596,7 @@ class TextInput(Widget):
         """
         new_string = (
             self._input_string[: self._cursor_position]
-            + self._input_string[self._cursor_position + 1 :]
+            + self._input_string[self._cursor_position + 1:]
         )
         self._update_input_string(new_string, update_history=update_history)
         self._update_renderbox(right=-1, addition=True)
@@ -1636,7 +1637,7 @@ class TextInput(Widget):
         new_string = (
             self._input_string[: self._cursor_position]
             + keychar
-            + self._input_string[self._cursor_position :]
+            + self._input_string[self._cursor_position:]
         )
 
         # If unwanted escape sequences
@@ -1686,8 +1687,8 @@ class TextInput(Widget):
         # Check mouse pressed
         mouse_left, mouse_middle, mouse_right = pygame.mouse.get_pressed()
         self._mouse_is_pressed = (
-            mouse_left or mouse_right or mouse_middle
-        ) and self._mouse_enabled
+                                     mouse_left or mouse_right or mouse_middle
+                                 ) and self._mouse_enabled
 
         rect = self.get_rect(to_real_position=True)
 
@@ -1820,22 +1821,22 @@ class TextInput(Widget):
                         last_space = 0
                         for j in range(len(self._input_string)):
                             if self._input_string[j].lower() not in (
-                                "0",
-                                "1",
-                                "2",
-                                "3",
-                                "4",
-                                "5",
-                                "6",
-                                "7",
-                                "8",
-                                "9",
-                                "a",
-                                "b",
-                                "c",
-                                "d",
-                                "e",
-                                "f",
+                                    "0",
+                                    "1",
+                                    "2",
+                                    "3",
+                                    "4",
+                                    "5",
+                                    "6",
+                                    "7",
+                                    "8",
+                                    "9",
+                                    "a",
+                                    "b",
+                                    "c",
+                                    "d",
+                                    "e",
+                                    "f",
                             ):
                                 last_space = j + 1
                         if last_space >= len(self._input_string):

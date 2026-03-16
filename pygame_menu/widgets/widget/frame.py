@@ -289,7 +289,7 @@ class Frame(Widget):
         pad_inner = parse_padding(padding_inner)
         self._frame_title = Frame(
             width=self.get_width()
-            - (pad_outer[1] + pad_outer[3] + pad_inner[1] + pad_inner[3]),
+                  - (pad_outer[1] + pad_outer[3] + pad_inner[1] + pad_inner[3]),
             height=title_label.get_height(),
             orientation=ORIENTATION_HORIZONTAL,
             frame_id=self._id + "+title-" + uuid4(short=True),
@@ -1877,15 +1877,15 @@ class Frame(Widget):
                             event.rel[0]
                             if event.type == pygame.MOUSEMOTION
                             else event.dx
-                            * self._menu.get_window_size()[0]
-                            * S_FINGER_FACTOR[0]
+                                 * self._menu.get_window_size()[0]
+                                 * S_FINGER_FACTOR[0]
                         )
                         ry = (
                             event.rel[1]
                             if event.type == pygame.MOUSEMOTION
                             else event.dy
-                            * self._menu.get_window_size()[1]
-                            * S_FINGER_FACTOR[1]
+                                 * self._menu.get_window_size()[1]
+                                 * S_FINGER_FACTOR[1]
                         )
 
                         event_pos = get_finger_pos(self._menu, event)
@@ -1987,33 +1987,33 @@ class FrameManager(AbstractWidgetManager, ABC):
         # Remove invalid keys from kwargs
         for key in list(kwargs.keys()):
             if key not in (
-                "align",
-                "background_color",
-                "background_inflate",
-                "border_color",
-                "border_inflate",
-                "border_width",
-                "cursor",
-                "margin",
-                "padding",
-                "max_height",
-                "max_width",
-                "scrollbar_color",
-                "scrollbar_cursor",
-                "scrollbar_shadow_color",
-                "scrollbar_shadow_offset",
-                "scrollbar_shadow_position",
-                "scrollbar_shadow",
-                "scrollbar_slider_color",
-                "scrollbar_slider_pad",
-                "scrollbar_thick",
-                "scrollbars",
-                "scrollarea_color",
-                "border_position",
-                "scrollbar_slider_hover_color",
-                "tab_size",
-                "float",
-                "float_origin_position",
+                    "align",
+                    "background_color",
+                    "background_inflate",
+                    "border_color",
+                    "border_inflate",
+                    "border_width",
+                    "cursor",
+                    "margin",
+                    "padding",
+                    "max_height",
+                    "max_width",
+                    "scrollbar_color",
+                    "scrollbar_cursor",
+                    "scrollbar_shadow_color",
+                    "scrollbar_shadow_offset",
+                    "scrollbar_shadow_position",
+                    "scrollbar_shadow",
+                    "scrollbar_slider_color",
+                    "scrollbar_slider_pad",
+                    "scrollbar_thick",
+                    "scrollbars",
+                    "scrollarea_color",
+                    "border_position",
+                    "scrollbar_slider_hover_color",
+                    "tab_size",
+                    "float",
+                    "float_origin_position",
             ):
                 kwargs.pop(key, None)
 

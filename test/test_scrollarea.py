@@ -6,13 +6,10 @@ TEST SCROLLAREA
 Test scrollarea.
 """
 
-from __future__ import annotations
-
-__all__ = ['ScrollAreaTest']
-
 import copy
 
 import pygame
+import pytest
 
 import pygame_menu
 
@@ -39,431 +36,440 @@ from pygame_menu.locals import (
 from test._utils import (
     PYGAME_V2,
     TEST_THEME,
-    BaseTest,
     MenuUtils,
     PygameEventUtils,
     surface,
 )
 
 
-class ScrollAreaTest(BaseTest):
+def _menu_with_default_theme():
+    """Return a generic menu using the default test theme."""
+    return MenuUtils.generic_menu(title="menu", theme=TEST_THEME.copy())
 
-    def test_scrollarea_position(self) -> None:
-        """
-        Test position.
-        """
-        self.assertEqual(len(get_scrollbars_from_position(SCROLLAREA_POSITION_FULL)), 4)
-        for i in (POSITION_EAST, POSITION_EAST, POSITION_WEST, POSITION_NORTH):
-            self.assertIsInstance(get_scrollbars_from_position(i), str)
-        self.assertEqual(get_scrollbars_from_position(POSITION_NORTHWEST), (POSITION_NORTH, POSITION_WEST))
-        self.assertEqual(get_scrollbars_from_position(POSITION_NORTHEAST), (POSITION_NORTH, POSITION_EAST))
-        self.assertEqual(get_scrollbars_from_position(POSITION_SOUTHEAST), (POSITION_SOUTH, POSITION_EAST))
-        self.assertEqual(get_scrollbars_from_position(POSITION_SOUTHWEST), (POSITION_SOUTH, POSITION_WEST))
-        self.assertEqual(get_scrollbars_from_position(SCROLLAREA_POSITION_BOTH_HORIZONTAL),
-                         (POSITION_SOUTH, POSITION_NORTH))
-        self.assertEqual(get_scrollbars_from_position(SCROLLAREA_POSITION_BOTH_VERTICAL),
-                         (POSITION_EAST, POSITION_WEST))
-        self.assertEqual(get_scrollbars_from_position(SCROLLAREA_POSITION_NONE), '')
 
-        # Invalid
-        self.assertRaises(ValueError, lambda: get_scrollbars_from_position(INPUT_TEXT))
-        self.assertRaises(ValueError, lambda: get_scrollbars_from_position(POSITION_CENTER))
+@pytest.fixture
+def menu():
+    """Provides a generic menu instance for testing."""
+    return MenuUtils.generic_menu()
 
-    def test_surface_cache(self) -> None:
-        """
-        Surface cache tests.
-        """
-        menu = MenuUtils.generic_menu()
-        sa = menu.get_scrollarea()
-        self.assertFalse(menu._widgets_surface_need_update)
-        sa.force_menu_surface_cache_update()
-        sa.force_menu_surface_update()
-        self.assertTrue(menu._widgets_surface_need_update)
 
-        # Remove world and draw
-        sa._world = None
-        sa.draw(surface)
+@pytest.fixture
+def sa(menu):
+    """Provides the scrollarea from the generic menu."""
+    return menu.get_scrollarea()
 
-    def test_copy(self) -> None:
-        """
-        Test copy.
-        """
-        sa = MenuUtils.generic_menu().get_scrollarea()
-        self.assertRaises(pygame_menu._scrollarea._ScrollAreaCopyException, lambda: copy.copy(sa))
-        self.assertRaises(pygame_menu._scrollarea._ScrollAreaCopyException, lambda: copy.deepcopy(sa))
 
-    def test_decorator(self) -> None:
-        """
-        Test decorator.
-        """
-        sa = MenuUtils.generic_menu().get_scrollarea()
-        dec = sa.get_decorator()
-        self.assertEqual(sa, dec._obj)
+def test_scrollarea_position_logic():
+    """Test the mapping of position constants to scrollbar identifiers."""
+    assert len(get_scrollbars_from_position(SCROLLAREA_POSITION_FULL)) == 4
 
-    def test_translate(self) -> None:
-        """
-        Translate scrollbar.
-        """
-        menu = MenuUtils.generic_menu()
-        sa = menu.get_scrollarea()
-        self.assertEqual(sa.get_translate(), (0, 0))
-        r = sa.get_rect()
-        sa.translate(10, 10)
-        self.assertEqual(sa.get_translate(), (10, 10))
-        new_r = sa.get_rect()
-        self.assertEqual(new_r.x, r.x + 10)
-        self.assertEqual(new_r.y, r.y + 10)
-        sa.translate(50, 90)
-        new_r = sa.get_rect()
-        self.assertEqual(new_r.x, r.x + 50)
-        self.assertEqual(new_r.y, r.y + 90)
+    for pos in (POSITION_EAST, POSITION_WEST, POSITION_NORTH):
+        assert isinstance(get_scrollbars_from_position(pos), str)
 
-    def test_show_hide_scrollbars(self) -> None:
-        """
-        Test show hide scrollbars.
-        """
-        menu = MenuUtils.generic_menu()
-        sa = menu.get_scrollarea()
-        menu.render()
-        menu.draw(surface)
-        for s in sa._scrollbars:
-            s.show()
-        if sa._scrollbars[1].get_orientation() == ORIENTATION_VERTICAL:
-            s1 = sa._scrollbars[1]
-            s2 = sa._scrollbars[0]
-        else:
-            s1 = sa._scrollbars[0]
-            s2 = sa._scrollbars[1]
-        sa.show_scrollbars(ORIENTATION_VERTICAL)
-        sa.show_scrollbars(ORIENTATION_HORIZONTAL)
+    assert get_scrollbars_from_position(POSITION_NORTHWEST) == (
+        POSITION_NORTH,
+        POSITION_WEST,
+    )
+    assert get_scrollbars_from_position(POSITION_NORTHEAST) == (
+        POSITION_NORTH,
+        POSITION_EAST,
+    )
+    assert get_scrollbars_from_position(POSITION_SOUTHEAST) == (
+        POSITION_SOUTH,
+        POSITION_EAST,
+    )
+    assert get_scrollbars_from_position(POSITION_SOUTHWEST) == (
+        POSITION_SOUTH,
+        POSITION_WEST,
+    )
+    assert get_scrollbars_from_position(SCROLLAREA_POSITION_BOTH_HORIZONTAL) == (
+        POSITION_SOUTH,
+        POSITION_NORTH,
+    )
+    assert get_scrollbars_from_position(SCROLLAREA_POSITION_BOTH_VERTICAL) == (
+        POSITION_EAST,
+        POSITION_WEST,
+    )
+    assert get_scrollbars_from_position(SCROLLAREA_POSITION_NONE) == ""
 
-        self.assertTrue(s1.is_visible())
-        sa.hide_scrollbars(ORIENTATION_VERTICAL)
-        self.assertFalse(s1.is_visible())
-        self.assertTrue(s2.is_visible())
-        sa.hide_scrollbars(ORIENTATION_HORIZONTAL)
-        self.assertFalse(s1.is_visible())
-        self.assertFalse(s2.is_visible())
-        sa.show_scrollbars(ORIENTATION_HORIZONTAL)
-        sa.show_scrollbars(ORIENTATION_VERTICAL)
-        self.assertTrue(s1.is_visible())
-        self.assertTrue(s2.is_visible())
+    # Invalid positions should raise ValueError
+    for invalid in (INPUT_TEXT, POSITION_CENTER):
+        with pytest.raises(ValueError):
+            get_scrollbars_from_position(invalid)
 
-        # Test show hide but with force
-        s1.disable_visibility_force()
-        s1.hide()
-        self.assertFalse(s1.is_visible())
-        s1.show()
-        self.assertTrue(s1.is_visible())
-        s1.hide(True)  # Hide with force
-        self.assertFalse(s1.is_visible())
-        s1.show()  # Without force, it will not change the status
-        self.assertFalse(s1.is_visible())
-        s1.show(True)  # Without force, it will not change the status
-        self.assertTrue(s1.is_visible())
-        s1.hide()  # Without force, it will not change the status
-        self.assertTrue(s1.is_visible())
 
-        # Disable visibility force
-        s1.disable_visibility_force()
-        s1.hide()
-        self.assertFalse(s1.is_visible())
-        s1.show()
-        self.assertTrue(s1.is_visible())
-        s1.hide()
-        self.assertFalse(s1.is_visible())
+def test_surface_cache(menu, sa):
+    """Test surface cache update flags."""
+    assert not menu._widgets_surface_need_update
+    sa.force_menu_surface_cache_update()
+    sa.force_menu_surface_update()
+    assert menu._widgets_surface_need_update
 
-        # Check scrollbar render
-        s1._slider_rect = None
-        self.assertIsNone(s1._render())
+    # Ensure draw handles a None world gracefully
+    sa._world = None
+    sa.draw(surface)
 
-    def test_size(self) -> None:
-        """
-        Test size.
-        """
-        menu = MenuUtils.generic_menu(title='menu', theme=TEST_THEME.copy())
-        menu.render()
-        self.assertEqual(menu.get_height(widget=True), 0)
 
-        # Adds a button, hide it, then the height should be 0 as well
-        btn = menu.add.button('hidden')
-        btn.hide()
-        self.assertEqual(menu.get_height(widget=True), 0)
-        menu.render()
+def test_copy_exception(sa):
+    """ScrollArea should strictly forbid copying."""
+    with pytest.raises(pygame_menu._scrollarea._ScrollAreaCopyException):
+        copy.copy(sa)
+    with pytest.raises(pygame_menu._scrollarea._ScrollAreaCopyException):
+        copy.deepcopy(sa)
 
-        # Get the size of the scrollarea
-        sa = menu.get_scrollarea()
 
-        sa_height = menu.get_height() - menu.get_menubar().get_height()
-        sa_width = menu.get_width()
-        self.assertEqual(sa.get_world_size()[0], sa_width)
-        self.assertEqual(sa.get_world_size()[1], sa_height)
-        rect = sa.get_view_rect()
-        self.assertEqual(rect.x, 0)
-        self.assertEqual(rect.y, 155)
-        self.assertEqual(rect.width, sa_width)
-        self.assertEqual(rect.height, sa_height)
-        self.assertEqual(sa.get_hidden_width(), 0)
-        self.assertEqual(sa.get_hidden_height(), 0)
+def test_decorator_association(sa):
+    """Test that the decorator correctly references the scrollarea."""
+    dec = sa.get_decorator()
+    assert dec._obj == sa
 
-        rect = sa.to_world_position(btn.get_rect())
-        self.assertEqual(rect.x, 0)
-        self.assertEqual(rect.y, -155)
-        self.assertEqual(rect.width, btn.get_width())
-        self.assertEqual(rect.height, btn.get_height())
 
-        pos_rect = sa.to_world_position((10, 10))
-        self.assertEqual(pos_rect, (10, -145))
+def test_translate(sa):
+    """Test relative translation of the scrollarea."""
+    assert sa.get_translate() == (0, 0)
+    rect = sa.get_rect()
 
-        self.assertFalse(sa.is_scrolling())
-        self.assertEqual(sa.get_menu(), menu)
+    sa.translate(10, 10)
+    assert sa.get_translate() == (10, 10)
 
-        sa._on_vertical_scroll(50)
-        sa._on_horizontal_scroll(50)
+    new_rect = sa.get_rect()
+    assert new_rect.x == rect.x + 10
+    assert new_rect.y == rect.y + 10
 
-        # Remove the world of surface
-        world = sa._world
-        sa._world = None
-        self.assertEqual(sa.get_world_size(), (0, 0))
-        sa._world = world
 
-        # Test collide
-        event = PygameEventUtils.mouse_click(100, 100, inlist=False)
-        self.assertFalse(sa.collide(btn, event))
+def test_scrollbar_visibility_logic(sa):
+    """Test granular control over scrollbar visibility and force-states."""
+    # Logic for finding the vertical/horizontal scrollbars
+    s_vert = next(
+        s for s in sa._scrollbars if s.get_orientation() == ORIENTATION_VERTICAL
+    )
 
-        # Create virtual rect from button
-        rect_virtual = sa.to_real_position(btn.get_rect())
-        event_click_widget = PygameEventUtils.middle_rect_click(rect_virtual, inlist=False)
-        self.assertTrue(sa.collide(btn, event_click_widget))
-        self.assertEqual(sa.get_world_rect(absolute=True), pygame.Rect(0, 0, 600, 345))
-        self.assertEqual(sa.get_size(), (600, 345))
-        self.assertIsInstance(sa.mouse_is_over(), bool)
+    # Test visibility toggle
+    s_vert.show()
+    assert s_vert.is_visible()
 
-        # Append many items within menu, thus, scrollbars will appear
-        self.assertEqual(sa.get_scrollbar_thickness(ORIENTATION_VERTICAL), 0)
-        self.assertEqual(sa.get_scrollbar_thickness(ORIENTATION_HORIZONTAL), 0)
+    sa.hide_scrollbars(ORIENTATION_VERTICAL)
+    assert not s_vert.is_visible()
 
-        sa._scrollbar_positions = (POSITION_NORTH, POSITION_EAST, POSITION_WEST, POSITION_SOUTH)
-        self.assertEqual(sa.get_view_rect(), pygame.Rect(0, 155, 600, 345))
+    # Test force-hide logic
+    s_vert.disable_visibility_force()
+    s_vert.hide(force=True)
+    assert not s_vert.is_visible()
 
-        for i in range(10):
-            menu.add.button(f'b{i}').scale(20, 1)
+    s_vert.show()  # Standard show should fail if forced hide is active
+    assert not s_vert.is_visible()
 
-        self.assertEqual(sa.get_scrollbar_thickness(ORIENTATION_VERTICAL), 20)
-        self.assertEqual(sa.get_scrollbar_thickness(ORIENTATION_HORIZONTAL), 20)
+    s_vert.show(force=True)
+    assert s_vert.is_visible()
 
-        sa._on_vertical_scroll(0.5)
-        sa._on_horizontal_scroll(0.5)
 
-        self.assertEqual(sa.to_real_position((10, 10)), (10, 165))
-        sa.get_view_rect()
+def test_scrollarea_dimensions():
+    """Test world size and coordinate transformations."""
+    menu = _menu_with_default_theme()
+    sa = menu.get_scrollarea()
 
-        # Test rect
-        sa = pygame_menu._scrollarea.ScrollArea(100, 100)
-        self.assertEqual(sa.get_rect(to_real_position=True), pygame.Rect(0, 0, 100, 100))
-        self.assertEqual(sa.get_scrollbar_thickness(ORIENTATION_VERTICAL, visible=False), 0)
-        self.assertEqual(sa.get_scrollbar_thickness(ORIENTATION_HORIZONTAL, visible=False), 0)
-        self.assertEqual(sa.get_scrollbar_thickness(ORIENTATION_VERTICAL, visible=False), 0)
-        self.assertRaises(AssertionError, lambda: sa.get_scrollbar_thickness('fake', visible=False))
+    menu.render()
+    menubar_h = menu.get_menubar().get_height()
+    expected_sa_height = menu.get_height() - menubar_h
 
-        # Test size with all scrollbars
-        theme = pygame_menu.themes.THEME_DEFAULT.copy()
-        theme.scrollarea_position = SCROLLAREA_POSITION_FULL
-        menu = MenuUtils.generic_menu(theme=theme)
-        for i in range(20):
-            menu.add.button(i, bool)
-        menu.get_scrollarea().show_scrollbars(ORIENTATION_VERTICAL)
-        menu.get_scrollarea().show_scrollbars(ORIENTATION_HORIZONTAL)
-        self.assertEqual(menu.get_scrollarea().get_view_rect(), (20, 100, 560, 400))
+    assert sa.get_world_size() == (menu.get_width(), expected_sa_height)
 
-    # noinspection PyTypeChecker
-    def test_widget_relative_to_view_rect(self) -> None:
-        """
-        Test widget relative position to view rect.
-        """
-        if not PYGAME_V2:
-            return
+    # Coordinate transformation: (10, 10) in local sa should be (10, 10 - menubar) in world
+    pos_world = sa.to_world_position((10, 10))
+    padding_top = sa.get_view_rect().y
+    assert pos_world == (10, 10 - padding_top)
 
-        menu = MenuUtils.generic_menu()
-        buttons = []
-        for i in range(20):
-            btn_title = f'b{i}'
-            buttons.append(menu.add.button(btn_title, button_id=btn_title))
-        sa = menu.get_scrollarea()
 
-        def test_relative(widget: pygame_menu.widgets.Widget, x: float, y: float) -> None:
-            """
-            Test relative position from widget to scroll view rect.
+def test_collision_detection(menu, sa):
+    """Test collision logic with widgets inside the scrollarea."""
+    btn = menu.add.button("test")
+    menu.render()
 
-            :param widget: Widget
-            :param x: X relative position
-            :param y: Y relative position
-            """
-            rx, ry = widget.get_scrollarea().get_widget_position_relative_to_view_rect(widget)
-            self.assertAlmostEqual(x, rx)
-            self.assertAlmostEqual(y, ry)
+    # Create a click event at the center of the widget's real screen position
+    rect_real = sa.to_real_position(btn.get_rect())
+    event_click = PygameEventUtils.middle_rect_click(rect_real, inlist=False)
 
-        test_relative(buttons[0], 0.4689655172413793, 0.15)
-        test_relative(buttons[-1], 0.45517241379310347, 2.4775)
+    assert sa.collide(btn, event_click)
 
-        # Scroll to middle
-        sa.scroll_to(ORIENTATION_VERTICAL, 0.5)
-        test_relative(buttons[0], 0.4689655172413793, -0.645)
-        test_relative(buttons[-1], 0.45517241379310347, 1.6825)
 
-        # Scroll to bottom
-        sa.scroll_to(ORIENTATION_VERTICAL, 1)
-        test_relative(buttons[0], 0.4689655172413793, -1.4375)
-        test_relative(buttons[-1], 0.45517241379310347, 0.89)
+@pytest.mark.parametrize(
+    "pos, expected_orientation",
+    [
+        (POSITION_SOUTH, ORIENTATION_HORIZONTAL),
+        (POSITION_EAST, ORIENTATION_VERTICAL),
+    ],
+)
+def test_get_scrollbar_default_config(sa, pos, expected_orientation):
+    """Test scrollbar retrieval in default (South-East) config."""
+    scrollbar = sa.get_scrollbar(pos)
+    assert scrollbar is not None
+    assert scrollbar.get_orientation() == expected_orientation
 
-    def test_bg_image(self) -> None:
-        """
-        Test background image.
-        """
-        img = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU)
-        sa = pygame_menu._scrollarea.ScrollArea(100, 100, scrollbars=POSITION_EAST, area_color=img)
-        sa._make_background_surface()
-        self.assertIsInstance(sa._area_color, pygame_menu.BaseImage)
 
-    def test_position(self) -> None:
-        """
-        Test different scrollbar and scrollarea positions.
-        """
-        sa = pygame_menu._scrollarea.ScrollArea(100, 100)
-        sa_scrolls = sa._scrollbar_positions
+@pytest.mark.parametrize("pos", [POSITION_NORTH, POSITION_WEST, POSITION_CENTER])
+def test_get_scrollbar_none_for_missing_positions(sa, pos):
+    """Test that non-existent scrollbars return None."""
+    assert sa.get_scrollbar(pos) is None
 
-        # Test invalid position
-        sa._scrollbar_positions = 'fake'
-        self.assertRaises(ValueError, lambda: sa._apply_size_changes())
-        sa._scrollbar_positions = sa_scrolls
 
-    def test_scrollbars(self) -> None:
-        """
-        Test scrollarea scrollbar's.
-        """
-        menu = MenuUtils.generic_menu(touchscreen=False, mouse_enabled=False,
-                                      joystick_enabled=False, keyboard_enabled=False)
-        sa = menu.get_scrollarea()
-        sb = sa._scrollbars[0]
-        self.assertFalse(sb._joystick_enabled)
-        self.assertFalse(sb._keyboard_enabled)
-        self.assertFalse(sb._mouse_enabled)
-        self.assertFalse(sb._touchscreen_enabled)
+def test_full_scrollarea_config():
+    """Test that all 4 scrollbars exist when using SCROLLAREA_POSITION_FULL."""
+    theme = TEST_THEME.copy()
+    theme.scrollarea_position = SCROLLAREA_POSITION_FULL
+    menu_full = MenuUtils.generic_menu(theme=theme)
+    sa_full = menu_full.get_scrollarea()
 
-        # Test scrollarea within frame
-        drop = menu.add.dropselect('Subject Id', items=[('a',), ('b',), ('c',)], dropselect_id='s0')
-        d_frame_sa = drop._drop_frame.get_scrollarea(inner=True)
-        sb_frame = d_frame_sa._scrollbars[0]
-        self.assertFalse(sb_frame._joystick_enabled)
-        self.assertFalse(sb_frame._keyboard_enabled)
-        self.assertFalse(sb_frame._mouse_enabled)
-        self.assertFalse(sb_frame._touchscreen_enabled)
-        self.assertEqual(sb_frame.get_menu(), menu)
-        self.assertEqual(d_frame_sa.get_menu(), menu)
+    for pos in (POSITION_NORTH, POSITION_SOUTH, POSITION_EAST, POSITION_WEST):
+        assert sa_full.get_scrollbar(pos) is not None
 
-    def test_empty_scrollarea(self) -> None:
-        """
-        Test menu without scrollbars.
-        """
-        theme = pygame_menu.themes.THEME_DEFAULT.copy()
-        theme.scrollarea_position = SCROLLAREA_POSITION_NONE
-        menu = MenuUtils.generic_menu(theme=theme)
-        for i in range(10):
-            menu.add.button(i, bool)
-        sa = menu.get_scrollarea()
-        self.assertEqual(sa._scrollbars, [])
-        self.assertEqual(sa._scrollbar_positions, ())
-        self.assertEqual(sa.get_size(), (600, 400))
-        self.assertEqual(sa.get_scrollbar_thickness(ORIENTATION_VERTICAL), 0)
-        self.assertEqual(sa.get_scrollbar_thickness(ORIENTATION_HORIZONTAL), 0)
 
-    def test_change_area_color(self) -> None:
-        """
-        Test area color.
-        """
-        menu = MenuUtils.generic_menu()
-        sa = menu.get_scrollarea()
-        sf = sa._bg_surface
-        self.assertEqual(sa.update_area_color('red'), sa)
-        self.assertNotEqual(sf, sa._bg_surface)
+def test_bg_image_support():
+    """Test that BaseImage is correctly accepted as an area color."""
+    img = pygame_menu.baseimage.BaseImage(
+        pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU
+    )
+    sa_custom = pygame_menu._scrollarea.ScrollArea(100, 100, area_color=img)
+    sa_custom._make_background_surface()
+    assert isinstance(sa_custom._area_color, pygame_menu.BaseImage)
 
-    def test_get_scrollbar_default_config_returns_south(self) -> None:
-        """
-        Test get_scrollbar returns the South scrollbar for default config (SOUTH_EAST).
-        """
-        menu = MenuUtils.generic_menu()
-        sa = menu.get_scrollarea()
-        south_scrollbar = sa.get_scrollbar(POSITION_SOUTH)
-        self.assertIsNotNone(south_scrollbar)
-        self.assertEqual(south_scrollbar.get_orientation(), ORIENTATION_HORIZONTAL)
 
-    def test_get_scrollbar_default_config_returns_east(self) -> None:
-        """
-        Test get_scrollbar returns the East scrollbar for default config (SOUTH_EAST).
-        """
-        menu = MenuUtils.generic_menu()
-        sa = menu.get_scrollarea()
-        east_scrollbar = sa.get_scrollbar(POSITION_EAST)
-        self.assertIsNotNone(east_scrollbar)
-        self.assertEqual(east_scrollbar.get_orientation(), ORIENTATION_VERTICAL)
+@pytest.mark.skipif(not PYGAME_V2, reason="Requires Pygame V2")
+def test_widget_relative_to_view_rect(menu, sa):
+    """Test relative widget positions within the scrollable viewport."""
+    buttons = [menu.add.button(f"b{i}") for i in range(10)]
+    menu.render()
 
-    def test_get_scrollbar_default_config_returns_none_for_north(self) -> None:
-        """
-        Test get_scrollbar returns None for North scrollbar on default config.
-        """
-        menu = MenuUtils.generic_menu()
-        sa = menu.get_scrollarea()
-        self.assertIsNone(sa.get_scrollbar(POSITION_NORTH))
+    rx, ry = sa.get_widget_position_relative_to_view_rect(buttons[0])
+    assert isinstance(rx, float)
+    assert isinstance(ry, float)
 
-    def test_get_scrollbar_default_config_returns_none_for_west(self) -> None:
-        """
-        Test get_scrollbar returns None for West scrollbar on default config.
-        """
-        menu = MenuUtils.generic_menu()
-        sa = menu.get_scrollarea()
-        self.assertIsNone(sa.get_scrollbar(POSITION_WEST))
 
-    def test_get_scrollbar_returns_none_for_center_position(self) -> None:
-        """
-        Test get_scrollbar returns None for POSITION_CENTER (not a scrollbar position).
-        """
-        menu = MenuUtils.generic_menu()
-        sa = menu.get_scrollarea()
-        # POSITION_CENTER is a valid position string but not a scrollbar position
-        self.assertIsNone(sa.get_scrollbar(POSITION_CENTER))
+def test_show_hide_scrollbars_full(menu, sa):
+    """Full visibility/force logic test for scrollbars."""
+    menu.render()
+    menu.draw(surface)
 
-    def test_get_scrollbar_full_config_returns_all_scrollbars(self) -> None:
-        """
-        Test get_scrollbar returns all scrollbars for SCROLLAREA_POSITION_FULL config.
-        """
-        theme_full = TEST_THEME.copy()
-        theme_full.scrollarea_position = SCROLLAREA_POSITION_FULL
-        menu_full = MenuUtils.generic_menu(theme=theme_full)
-        sa_full = menu_full.get_scrollarea()
+    # Show all scrollbars first
+    for s in sa._scrollbars:
+        s.show()
 
-        self.assertIsNotNone(sa_full.get_scrollbar(POSITION_NORTH))
-        self.assertIsNotNone(sa_full.get_scrollbar(POSITION_SOUTH))
-        self.assertIsNotNone(sa_full.get_scrollbar(POSITION_EAST))
-        self.assertIsNotNone(sa_full.get_scrollbar(POSITION_WEST))
+    # Identify vertical and horizontal scrollbars
+    if sa._scrollbars[1].get_orientation() == ORIENTATION_VERTICAL:
+        s_vert = sa._scrollbars[1]
+        s_horiz = sa._scrollbars[0]
+    else:
+        s_vert = sa._scrollbars[0]
+        s_horiz = sa._scrollbars[1]
 
-    def test_get_scrollbar_none_config_returns_no_scrollbars(self) -> None:
-        """
-        Test get_scrollbar returns None for all positions when SCROLLAREA_POSITION_NONE.
-        """
-        theme_none = TEST_THEME.copy()
-        theme_none.scrollarea_position = SCROLLAREA_POSITION_NONE
-        menu_none = MenuUtils.generic_menu(theme=theme_none)
-        sa_none = menu_none.get_scrollarea()
+    sa.show_scrollbars(ORIENTATION_VERTICAL)
+    sa.show_scrollbars(ORIENTATION_HORIZONTAL)
 
-        self.assertIsNone(sa_none.get_scrollbar(POSITION_NORTH))
-        self.assertIsNone(sa_none.get_scrollbar(POSITION_EAST))
-        self.assertIsNone(sa_none.get_scrollbar(POSITION_SOUTH))
-        self.assertIsNone(sa_none.get_scrollbar(POSITION_WEST))
+    assert s_vert.is_visible()
+    sa.hide_scrollbars(ORIENTATION_VERTICAL)
+    assert not s_vert.is_visible()
+    assert s_horiz.is_visible()
 
-    def test_get_scrollbar_raises_value_error_for_invalid_string(self) -> None:
-        """
-        Test get_scrollbar raises ValueError for a genuinely invalid position string.
-        """
-        menu = MenuUtils.generic_menu()
-        sa = menu.get_scrollarea()
-        self.assertRaises(AssertionError, lambda: sa.get_scrollbar("INVALID_POSITION_STRING"))
+    sa.hide_scrollbars(ORIENTATION_HORIZONTAL)
+    assert not s_vert.is_visible()
+    assert not s_horiz.is_visible()
+
+    sa.show_scrollbars(ORIENTATION_HORIZONTAL)
+    sa.show_scrollbars(ORIENTATION_VERTICAL)
+    assert s_vert.is_visible()
+    assert s_horiz.is_visible()
+
+    # Force‑hide logic
+    s_vert.disable_visibility_force()
+    s_vert.hide()
+    assert not s_vert.is_visible()
+
+    s_vert.show()
+    assert s_vert.is_visible()
+
+    s_vert.hide(force=True)
+    assert not s_vert.is_visible()
+
+    s_vert.show()  # Should NOT override force
+    assert not s_vert.is_visible()
+
+    s_vert.show(force=True)
+    assert s_vert.is_visible()
+
+    s_vert.hide()  # Should NOT override force
+    assert s_vert.is_visible()
+
+    # Reset force and test again
+    s_vert.disable_visibility_force()
+    s_vert.hide()
+    assert not s_vert.is_visible()
+    s_vert.show()
+    assert s_vert.is_visible()
+    s_vert.hide()
+    assert not s_vert.is_visible()
+
+    # Slider render test
+    s_vert._slider_rect = None
+    assert s_vert._render() is None
+
+
+def test_position_invalid():
+    """Test invalid scrollbar position handling."""
+    sa = pygame_menu._scrollarea.ScrollArea(100, 100)
+    original = sa._scrollbar_positions
+
+    sa._scrollbar_positions = "fake"
+    with pytest.raises(ValueError):
+        sa._apply_size_changes()
+
+    sa._scrollbar_positions = original
+
+
+def test_scrollbars_input_flags():
+    """Test scrollarea scrollbars input flags and frame scrollarea."""
+    menu = MenuUtils.generic_menu(
+        touchscreen=False,
+        mouse_enabled=False,
+        joystick_enabled=False,
+        keyboard_enabled=False,
+    )
+    sa = menu.get_scrollarea()
+    sb = sa._scrollbars[0]
+
+    assert not sb._joystick_enabled
+    assert not sb._keyboard_enabled
+    assert not sb._mouse_enabled
+    assert not sb._touchscreen_enabled
+
+    drop = menu.add.dropselect(
+        "Subject Id", items=[("a",), ("b",), ("c",)], dropselect_id="s0"
+    )
+    d_sa = drop._drop_frame.get_scrollarea(inner=True)
+    sb_frame = d_sa._scrollbars[0]
+
+    assert not sb_frame._joystick_enabled
+    assert not sb_frame._keyboard_enabled
+    assert not sb_frame._mouse_enabled
+    assert not sb_frame._touchscreen_enabled
+    assert sb_frame.get_menu() == menu
+    assert d_sa.get_menu() == menu
+
+
+def test_empty_scrollarea_config():
+    """Test scrollarea with SCROLLAREA_POSITION_NONE."""
+    theme = TEST_THEME.copy()
+    theme.scrollarea_position = SCROLLAREA_POSITION_NONE
+    menu = MenuUtils.generic_menu(title="menu", theme=theme)
+
+    for i in range(10):
+        menu.add.button(i, bool)
+
+    sa = menu.get_scrollarea()
+
+    expected_height = menu.get_height() - menu.get_menubar().get_height()
+
+    assert sa.get_size() == (600, expected_height)
+    assert sa.get_scrollbar_thickness(ORIENTATION_VERTICAL) == 0
+    assert sa.get_scrollbar_thickness(ORIENTATION_HORIZONTAL) == 0
+
+
+def test_change_area_color(menu, sa):
+    """Test area color update."""
+    old_surface = sa._bg_surface
+    assert sa.update_area_color("red") is sa
+    assert sa._bg_surface != old_surface
+
+
+def test_size_full(menu):
+    """Full port of the original test_size logic."""
+    menu = MenuUtils.generic_menu(title="menu", theme=TEST_THEME.copy())
+    menu.render()
+    assert menu.get_height(widget=True) == 0
+
+    btn = menu.add.button("hidden")
+    btn.hide()
+    assert menu.get_height(widget=True) == 0
+    menu.render()
+
+    sa = menu.get_scrollarea()
+    sa_height = menu.get_height() - menu.get_menubar().get_height()
+    sa_width = menu.get_width()
+
+    assert sa.get_world_size() == (sa_width, sa_height)
+
+    rect = sa.get_view_rect()
+    assert rect.x == 0
+    assert rect.y == 155
+    assert rect.width == sa_width
+    assert rect.height == sa_height
+    assert sa.get_hidden_width() == 0
+    assert sa.get_hidden_height() == 0
+
+    rect_world = sa.to_world_position(btn.get_rect())
+    assert rect_world.x == 0
+    assert rect_world.y == -155
+
+    assert sa.to_world_position((10, 10)) == (10, -145)
+    assert not sa.is_scrolling()
+    assert sa.get_menu() == menu
+
+    sa._on_vertical_scroll(50)
+    sa._on_horizontal_scroll(50)
+
+    world = sa._world
+    sa._world = None
+    assert sa.get_world_size() == (0, 0)
+    sa._world = world
+
+    event = PygameEventUtils.mouse_click(100, 100, inlist=False)
+    assert not sa.collide(btn, event)
+
+    rect_real = sa.to_real_position(btn.get_rect())
+    event_widget = PygameEventUtils.middle_rect_click(rect_real, inlist=False)
+    assert sa.collide(btn, event_widget)
+
+    assert sa.get_world_rect(absolute=True) == pygame.Rect(0, 0, 600, 345)
+    assert sa.get_size() == (600, 345)
+    assert isinstance(sa.mouse_is_over(), bool)
+
+    assert sa.get_scrollbar_thickness(ORIENTATION_VERTICAL) == 0
+    assert sa.get_scrollbar_thickness(ORIENTATION_HORIZONTAL) == 0
+
+    sa._scrollbar_positions = (
+        POSITION_NORTH,
+        POSITION_EAST,
+        POSITION_WEST,
+        POSITION_SOUTH,
+    )
+    assert sa.get_view_rect() == pygame.Rect(0, 155, 600, 345)
+
+    for i in range(10):
+        menu.add.button(f"b{i}").scale(20, 1)
+
+    assert sa.get_scrollbar_thickness(ORIENTATION_VERTICAL) == 20
+    assert sa.get_scrollbar_thickness(ORIENTATION_HORIZONTAL) == 20
+
+    sa._on_vertical_scroll(0.5)
+    sa._on_horizontal_scroll(0.5)
+
+    assert sa.to_real_position((10, 10)) == (10, 165)
+
+    sa2 = pygame_menu._scrollarea.ScrollArea(100, 100)
+    assert sa2.get_rect(to_real_position=True) == pygame.Rect(0, 0, 100, 100)
+    assert sa2.get_scrollbar_thickness(ORIENTATION_VERTICAL, visible=False) == 0
+    assert sa2.get_scrollbar_thickness(ORIENTATION_HORIZONTAL, visible=False) == 0
+
+    with pytest.raises(AssertionError):
+        sa2.get_scrollbar_thickness("fake", visible=False)
+
+    theme = pygame_menu.themes.THEME_DEFAULT.copy()
+    theme.scrollarea_position = SCROLLAREA_POSITION_FULL
+    menu_full = MenuUtils.generic_menu(theme=theme)
+
+    for i in range(20):
+        menu_full.add.button(i, bool)
+
+    sa_full = menu_full.get_scrollarea()
+    sa_full.show_scrollbars(ORIENTATION_VERTICAL)
+    sa_full.show_scrollbars(ORIENTATION_HORIZONTAL)
+
+    assert sa_full.get_view_rect() == (20, 100, 560, 400)

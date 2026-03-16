@@ -6,20 +6,10 @@ TEST VERSION
 Test version management.
 """
 
-from __future__ import annotations
-
-__all__ = ['VersionTest']
-
 import pygame_menu
-from test._utils import BaseTest
 
 
-class VersionTest(BaseTest):
-
-    def test_version(self) -> None:
-        """
-        Test version.
-        """
-        self.assertTrue(isinstance(pygame_menu.version.ver, str))
-        self.assertTrue(isinstance(repr(pygame_menu.version.vernum), str))
-        self.assertTrue(isinstance(str(pygame_menu.version.vernum), str))
+def test_version_types():
+    assert isinstance(pygame_menu.version.ver, str)
+    assert isinstance(repr(pygame_menu.version.vernum), str)
+    assert isinstance(str(pygame_menu.version.vernum), str)

@@ -6,72 +6,65 @@ TEST UTILS
 Library utils.
 """
 
-from __future__ import annotations
-
-__all__ = ['UtilsTest']
+import pytest
 
 import pygame_menu
 import pygame_menu.utils as ut
 from pygame_menu.locals import POSITION_NORTHWEST
-from test._utils import BaseTest
 
 
-class UtilsTest(BaseTest):
+def test_alpha():
+    assert ut._ALPHA_CHANNEL[0] is True
 
-    def test_alpha(self) -> None:
-        """
-        Configure alpha state.
-        """
-        self.assertTrue(ut._ALPHA_CHANNEL[0])
-        ut.configure_alpha(False)
-        self.assertFalse(ut._ALPHA_CHANNEL[0])
-        ut.configure_alpha(True)
-        self.assertTrue(ut._ALPHA_CHANNEL[0])
+    ut.configure_alpha(False)
+    assert ut._ALPHA_CHANNEL[0] is False
 
-    def test_callable(self) -> None:
-        """
-        Test is callable.
-        """
-        self.assertTrue(ut.is_callable(bool))
-        self.assertFalse(ut.is_callable(1))
+    ut.configure_alpha(True)
+    assert ut._ALPHA_CHANNEL[0] is True
 
-    def test_position_str(self) -> None:
-        """
-        Test position assert values as str.
-        """
-        self.assertIsNone(ut.assert_position_vector(POSITION_NORTHWEST))
 
-    def test_padding(self) -> None:
-        """
-        Padding test.
-        """
-        self.assertEqual(ut.parse_padding(1.0), (1, 1, 1, 1))
-        self.assertEqual(ut.parse_padding(1.05), (1, 1, 1, 1))
-        self.assertEqual(ut.parse_padding([1.0]), (1, 1, 1, 1))
-        self.assertEqual(ut.parse_padding((1.0,)), (1, 1, 1, 1))
+def test_callable():
+    assert ut.is_callable(bool)
+    assert not ut.is_callable(1)
 
-    def test_terminal_widget_title(self) -> None:
-        """
-        Test terminal title.
-        """
-        w = pygame_menu.widgets.Button('epic')
-        w.hide()
-        s = ut.widget_terminal_title(w)
-        self.assertIn('╳', s)
 
-    def test_shadows(self) -> None:
-        """
-        Test shadows.
-        """
-        shadow = ut.ShadowGenerator()
-        s1 = shadow.create_new_rectangle_shadow(100, 100, 15, 25)
-        s2 = shadow.create_new_ellipse_shadow(100, 100, 10)
-        shadow.create_new_ellipse_shadow(100, 100, 10)
-        self.assertIsNone(shadow.create_new_ellipse_shadow(100, 100, 0))
-        self.assertEqual(s1.get_size(), (100, 100))
-        self.assertEqual(s2.get_size(), (100, 100))
-        # Use cache
-        shadow.create_new_rectangle_shadow(100, 100, 15, 25)
-        shadow.create_new_rectangle_shadow(100, 150, 15, 25)
-        # Remove cache
-        shadow.clear_short_term_caches(force=True)
+def test_position_str():
+    assert ut.assert_position_vector(POSITION_NORTHWEST) is None
+
+
+@pytest.mark.parametrize(
+    "value,expected",
+    [
+        (1.0, (1, 1, 1, 1)),
+        (1.05, (1, 1, 1, 1)),
+        ([1.0], (1, 1, 1, 1)),
+        ((1.0,), (1, 1, 1, 1)),
+    ],
+)
+def test_padding(value, expected):
+    assert ut.parse_padding(value) == expected
+
+
+def test_terminal_widget_title():
+    w = pygame_menu.widgets.Button("epic")
+    w.hide()
+    s = ut.widget_terminal_title(w)
+    assert "╳" in s
+
+
+def test_shadows():
+    shadow = ut.ShadowGenerator()
+
+    s1 = shadow.create_new_rectangle_shadow(100, 100, 15, 25)
+    s2 = shadow.create_new_ellipse_shadow(100, 100, 10)
+
+    shadow.create_new_ellipse_shadow(100, 100, 10)  # cached
+    assert shadow.create_new_ellipse_shadow(100, 100, 0) is None
+
+    assert s1.get_size() == (100, 100)
+    assert s2.get_size() == (100, 100)
+
+    shadow.create_new_rectangle_shadow(100, 100, 15, 25)  # cached
+    shadow.create_new_rectangle_shadow(100, 150, 15, 25)
+
+    shadow.clear_short_term_caches(force=True)

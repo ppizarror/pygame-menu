@@ -946,7 +946,7 @@ class ShadowGenerator:
         )
         edge_shadow_fade_height = edge_rect.width
 
-        alpha_increment = 20.0 / (shadow_width_param**1.5)
+        alpha_increment = 20.0 / (shadow_width_param ** 1.5)
         shadow_alpha = alpha_increment
         r, g, b = color
         for _ in range(shadow_width_param):

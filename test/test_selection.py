@@ -6,11 +6,9 @@ TEST WIDGET SELECTION.
 Test widget selection effects.
 """
 
-from __future__ import annotations
-
-__all__ = ['SelectionTest']
-
 import copy
+
+import pytest
 
 from pygame_menu.widgets import Button
 from pygame_menu.widgets.core.selection import Selection
@@ -22,131 +20,117 @@ from pygame_menu.widgets.selection import (
     SimpleSelection,
 )
 from pygame_menu.widgets.selection.arrow_selection import ArrowSelection
-from test._utils import BaseTest, MenuUtils, surface
+from test._utils import MenuUtils, surface
 
 
-class SelectionTest(BaseTest):
+@pytest.fixture
+def menu():
+    m = MenuUtils.generic_menu()
+    m.enable()
+    return m
 
-    def setUp(self) -> None:
-        """
-        Setup sound engine.
-        """
-        self.menu = MenuUtils.generic_menu()
-        self.menu.enable()
 
-    def test_copy(self) -> None:
-        """
-        Test copy.
-        """
-        s = LeftArrowSelection()
-        s1 = copy.copy(s)
-        s2 = copy.deepcopy(s)
-        s3 = s.copy()
-        self.assertNotEqual(s, s1)
-        self.assertNotEqual(s, s2)
-        self.assertNotEqual(s, s3)
+def test_copy():
+    s = LeftArrowSelection()
+    s1 = copy.copy(s)
+    s2 = copy.deepcopy(s)
+    s3 = s.copy()
 
-    def test_abstracts(self) -> None:
-        """
-        Test abstract objects errors.
-        """
-        w = Button('epic')
+    assert s != s1
+    assert s != s2
+    assert s != s3
 
-        # Create abstract selection object
-        sel = Selection(0, 0, 0, 0)
-        self.assertRaises(NotImplementedError, lambda: sel.draw(surface, w))
 
-        # Create abstract arrow selection
-        arrow = ArrowSelection(0, 0, 0, 0)
-        self.assertRaises(NotImplementedError, lambda: arrow.draw(surface, w))
+def test_abstract_selection_draw_raises():
+    w = Button("epic")
 
-    def test_arrow(self) -> None:
-        """
-        Test arrow selection.
-        """
-        w = Button('epic')
-        w.set_selection_effect(LeftArrowSelection())
-        self.menu.add.generic_widget(w)
-        self.menu.draw(surface)
-        w.set_selection_effect(RightArrowSelection())
-        self.menu.draw(surface)
-
-        # Create abstract arrow selection
-        arrow = ArrowSelection(0, 0, 0, 0)
-        self.assertRaises(NotImplementedError, lambda: arrow.draw(surface, w))
-
-    def test_highlight(self) -> None:
-        """
-        Test highlight selection.
-        """
-        w = Button('epic')
-        border_width = 1
-        margin_x = 18
-        margin_y = 10
-        w.set_selection_effect(HighlightSelection(
-            border_width=border_width,
-            margin_x=margin_x,
-            margin_y=margin_y
-        ))
-        self.menu.add.generic_widget(w)
-        self.menu.draw(surface)
-
-        # noinspection PyTypeChecker
-        sel: HighlightSelection = w.get_selection_effect()
-        self.assertEqual(sel.get_height(), margin_y)
-        self.assertEqual(sel.get_width(), margin_x)
-
-        # Test inflate
-        rect = w.get_rect()
-        inflate_rect = sel.inflate(rect)
-        self.assertEqual(-inflate_rect.x + rect.x, sel.get_width() / 2)
-        self.assertEqual(-inflate_rect.y + rect.y, sel.get_height() / 2)
-
-        # Test margin xy
-        sel.margin_xy(10, 20)
-        self.assertEqual(sel.margin_left, 10)
-        self.assertEqual(sel.margin_right, 10)
-        self.assertEqual(sel.margin_top, 20)
-        self.assertEqual(sel.margin_bottom, 20)
-
-        # Test null border
-        sel._border_width = 0
+    sel = Selection(0, 0, 0, 0)
+    with pytest.raises(NotImplementedError):
         sel.draw(surface, w)
 
-        # Test background color
-        sel.set_background_color('red')
-        self.assertEqual(sel.get_background_color(), (255, 0, 0, 255))
+    arrow = ArrowSelection(0, 0, 0, 0)
+    with pytest.raises(NotImplementedError):
+        arrow.draw(surface, w)
 
-    def test_none(self) -> None:
-        """
-        Test none selection.
-        """
-        w = Button('epic')
-        w.set_selection_effect(NoneSelection())
-        self.menu.add.generic_widget(w)
-        self.menu.draw(surface)
 
-        rect = w.get_rect()
-        new_rect = w.get_selection_effect().inflate(rect)
-        self.assertEqual(rect, new_rect)
-        self.assertFalse(w.get_selection_effect().widget_apply_font_color)
+def test_arrow_selection(menu):
+    w = Button("epic")
+    w.set_selection_effect(LeftArrowSelection())
+    menu.add.generic_widget(w)
+    menu.draw(surface)
 
-        # Widgets default selection effect is None
-        last_selection = w.get_selection_effect()
-        w.set_selection_effect()
-        self.assertIsInstance(w.get_selection_effect(), NoneSelection)
-        self.assertNotEqual(w.get_selection_effect(), last_selection)
+    w.set_selection_effect(RightArrowSelection())
+    menu.draw(surface)
 
-    def test_simple(self) -> None:
-        """
-        Test simple selection.
-        """
-        w = Button('epic')
-        w.set_selection_effect(SimpleSelection())
-        self.menu.add.generic_widget(w)
-        self.menu.draw(surface)
+    arrow = ArrowSelection(0, 0, 0, 0)
+    with pytest.raises(NotImplementedError):
+        arrow.draw(surface, w)
 
-        rect = w.get_rect()
-        new_rect = w.get_selection_effect().inflate(rect)
-        self.assertEqual(rect, new_rect)
-        self.assertTrue(w.get_selection_effect().widget_apply_font_color)
+
+def test_highlight_selection(menu):
+    w = Button("epic")
+    border_width = 1
+    margin_x = 18
+    margin_y = 10
+
+    w.set_selection_effect(
+        HighlightSelection(
+            border_width=border_width,
+            margin_x=margin_x,
+            margin_y=margin_y,
+        )
+    )
+    menu.add.generic_widget(w)
+    menu.draw(surface)
+
+    sel: HighlightSelection = w.get_selection_effect()
+
+    assert sel.get_height() == margin_y
+    assert sel.get_width() == margin_x
+
+    rect = w.get_rect()
+    inflated = sel.inflate(rect)
+
+    assert -inflated.x + rect.x == sel.get_width() / 2
+    assert -inflated.y + rect.y == sel.get_height() / 2
+
+    sel.margin_xy(10, 20)
+    assert sel.margin_left == 10
+    assert sel.margin_right == 10
+    assert sel.margin_top == 20
+    assert sel.margin_bottom == 20
+
+    sel._border_width = 0
+    sel.draw(surface, w)
+
+    sel.set_background_color("red")
+    assert sel.get_background_color() == (255, 0, 0, 255)
+
+
+def test_none_selection(menu):
+    w = Button("epic")
+    w.set_selection_effect(NoneSelection())
+    menu.add.generic_widget(w)
+    menu.draw(surface)
+
+    rect = w.get_rect()
+    new_rect = w.get_selection_effect().inflate(rect)
+    assert rect == new_rect
+    assert not w.get_selection_effect().widget_apply_font_color
+
+    last_sel = w.get_selection_effect()
+    w.set_selection_effect()
+    assert isinstance(w.get_selection_effect(), NoneSelection)
+    assert w.get_selection_effect() != last_sel
+
+
+def test_simple_selection(menu):
+    w = Button("epic")
+    w.set_selection_effect(SimpleSelection())
+    menu.add.generic_widget(w)
+    menu.draw(surface)
+
+    rect = w.get_rect()
+    new_rect = w.get_selection_effect().inflate(rect)
+    assert rect == new_rect
+    assert w.get_selection_effect().widget_apply_font_color

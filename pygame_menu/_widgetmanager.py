@@ -395,8 +395,8 @@ class WidgetManager(
         try:
             self._menu._render()
         except (
-            pygame_menu.menu._MenuSizingException,
-            pygame_menu.menu._MenuWidgetOverflow,
+                pygame_menu.menu._MenuSizingException,
+                pygame_menu.menu._MenuWidgetOverflow,
         ):
             self._menu.remove_widget(widget)
             raise

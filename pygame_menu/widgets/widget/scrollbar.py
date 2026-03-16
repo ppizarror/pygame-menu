@@ -660,7 +660,7 @@ class ScrollBar(Widget):
                 direction = (
                     1
                     if event.pos[self._orientation]
-                    > (s_rect.x if self._orientation == 0 else s_rect.y)
+                       > (s_rect.x if self._orientation == 0 else s_rect.y)
                     else -1
                 )
                 if self._scroll(rect, direction * self._page_step):
@@ -689,7 +689,7 @@ class ScrollBar(Widget):
             direction = (
                 1
                 if pos[self._orientation]
-                > (s_rect.x if self._orientation == 0 else s_rect.y)
+                   > (s_rect.x if self._orientation == 0 else s_rect.y)
                 else -1
             )
             if self._scroll(rect, direction * self._page_step):
@@ -765,11 +765,11 @@ class ScrollBar(Widget):
                     event.rel[self._orientation]
                     if event.type == pygame.MOUSEMOTION
                     else self._menu is not None
-                    and (
-                        event.dx * 2 * self._menu.get_window_size()[0]
-                        if h
-                        else event.dy * 2 * self._menu.get_window_size()[1]
-                    )
+                         and (
+                             event.dx * 2 * self._menu.get_window_size()[0]
+                             if h
+                             else event.dy * 2 * self._menu.get_window_size()[1]
+                         )
                 )
 
                 # If mouse outside region and scroll is on limits, ignore

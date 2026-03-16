@@ -575,8 +575,8 @@ class MazeApp:
         for row in range(self._rows):
             for column in range(self._rows):
                 if (row, column) != self._start_point and (
-                    row,
-                    column,
+                        row,
+                        column,
                 ) != self._end_point:
                     self._grid[row][column].update(
                         nodetype="blank", is_visited=False, is_path=False
@@ -1260,7 +1260,7 @@ class MazeApp:
             _, current_distance, current_node = queue.pop()
 
         v_distances[goal_node] = current_distance + (
-            1 if not self._diagonals else 2**0.5
+            1 if not self._diagonals else 2 ** 0.5
         )
         visited_nodes.add(goal_node)
 
@@ -1317,8 +1317,8 @@ class MazeApp:
                 )
             elif ntype == "x":
                 queue.push(
-                    current_distance + ((2**0.5) * modifier) + heuristic,
-                    current_distance + ((2**0.5) * modifier),
+                    current_distance + ((2 ** 0.5) * modifier) + heuristic,
+                    current_distance + ((2 ** 0.5) * modifier),
                     neighbour,
                 )
 
