@@ -47,13 +47,13 @@ class AStarQueue:
     A* Queue.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.myheap = []
 
     def show(self):
         return self.myheap
 
-    def push(self, priority, distance, node):
+    def push(self, priority, distance, node) -> None:
         heapq.heappush(self.myheap, (priority, distance, node))
 
     def pop(self):
@@ -67,13 +67,13 @@ class PriorityQueue:
     Priority Queue.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.myheap = []
 
     def show(self):
         return self.myheap
 
-    def push(self, priority, node):
+    def push(self, priority, node) -> None:
         heapq.heappush(self.myheap, (priority, node))
 
     def pop(self):
@@ -87,14 +87,14 @@ class PrioritySet:
     Create a priority queue that doesn't add duplicate nodes.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.myheap = []
         self.myset = set()
 
     def show(self):
         return self.myheap
 
-    def push(self, priority, node):
+    def push(self, priority, node) -> None:
         if node not in self.myset:
             heapq.heappush(self.myheap, (priority, node))
             self.myset.add(node)
@@ -1074,7 +1074,7 @@ class MazeApp:
                     self._grid[row][column].update(is_visited=False, is_path=False)
         self._update_gui()
 
-    def _update_path(self) -> bool | _MazeType:
+    def _update_path(self) -> bool:
         """
         Updates the path.
         """
@@ -1403,11 +1403,14 @@ class MazeApp:
                 # Trace back to start using path_dict
                 path_node = goal_node
                 while True:
-                    path_node = path_dict[path_node]
-                    mazearray[path_node[0]][path_node[1]].update(is_path=True)  # type: ignore
-                    self._draw_square(mazearray, path_node[0], path_node[1])  # type: ignore
+                    parent = path_dict[path_node]
+                    if parent is None:
+                        break
+                    path_node = parent
+                    mazearray[path_node[0]][path_node[1]].update(is_path=True)
+                    self._draw_square(mazearray, path_node[0], path_node[1])
                     if self._visualize:
-                        self._update_square(path_node[0], path_node[1])  # type: ignore
+                        self._update_square(path_node[0], path_node[1])
                     if path_node == start_point:
                         return True
 

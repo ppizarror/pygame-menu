@@ -243,6 +243,7 @@ class DropSelectMultiple(DropSelect):
             selection_option_selected_bgcolor=selection_option_selected_bgcolor,
             selection_option_selected_font_color=selection_option_selected_font_color,
             title=title,
+            args=args,
             **kwargs,
         )
 
@@ -261,7 +262,6 @@ class DropSelectMultiple(DropSelect):
         assert isinstance(max_selected, int) and max_selected >= 0
 
         # Configure parent
-        self._args = args or []
         self._max_selected = max_selected
         self._selection_option_left_space_margin = selection_option_selected_box_margin
 

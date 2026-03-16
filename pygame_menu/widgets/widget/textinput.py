@@ -164,8 +164,6 @@ class TextInput(Widget):
     """
 
     _absolute_origin: Tuple2IntType
-    _alt_x_enabled: bool
-    _apply_widget_update_callback: bool  # Used in ColorInput
     _block_copy_paste: bool
     _clock: pygame.time.Clock
     _copy_paste_enabled: bool
@@ -228,6 +226,8 @@ class TextInput(Widget):
         self,
         title: Any,
         textinput_id: str = "",
+        apply_widget_update_callback: bool = True,
+        alt_x_enabled: bool = True,
         copy_paste_enable: bool = True,
         cursor_color: ColorInputType = (0, 0, 0),
         cursor_selection_color: ColorInputType = (30, 30, 30, 100),
@@ -406,10 +406,10 @@ class TextInput(Widget):
         self._valid_chars = valid_chars
 
         # Callbacks
-        self._apply_widget_update_callback = True
+        self._apply_widget_update_callback = apply_widget_update_callback
 
         # Other
-        self._alt_x_enabled = True
+        self._alt_x_enabled = alt_x_enabled
         self._copy_paste_enabled = copy_paste_enable
         self._current_underline_string = ""
         self._input_type = input_type
