@@ -12,7 +12,10 @@ import timeit
 import pygame
 import pytest
 
-import pygame_menu
+from pygame_menu.baseimage import IMAGE_EXAMPLE_PYGAME_MENU, BaseImage
+from pygame_menu.font import FONT_8BIT
+from pygame_menu.widgets.widget.button import Button
+from pygame_menu.widgets.widget.none import NoneWidget
 from test._utils import TEST_THEME, MenuUtils, surface
 
 TEST_TIME_DRAW = False
@@ -20,7 +23,7 @@ TEST_TIME_DRAW = False
 
 @pytest.mark.skipif(not TEST_TIME_DRAW, reason="Timing test disabled")
 def test_time_draw():
-    widg = pygame_menu.widgets.NoneWidget()
+    widg = NoneWidget()
     deco = widg.get_decorator()
     deco.cache = True
 
@@ -37,7 +40,7 @@ def test_time_draw():
 
 
 def test_cache():
-    widg = pygame_menu.widgets.NoneWidget()
+    widg = NoneWidget()
     deco = widg.get_decorator()
     deco.cache = True
 
@@ -87,7 +90,7 @@ def test_cache():
 
 
 def test_copy():
-    widg = pygame_menu.widgets.NoneWidget()
+    widg = NoneWidget()
     deco = widg.get_decorator()
 
     with pytest.raises(Exception):
@@ -97,7 +100,7 @@ def test_copy():
 
 
 def test_add_remove():
-    widg = pygame_menu.widgets.NoneWidget()
+    widg = NoneWidget()
     deco = widg.get_decorator()
 
     d = deco._add_none()
@@ -133,7 +136,7 @@ def test_enable_disable():
     def fun(surf, obj):
         test[0] = True
         assert isinstance(surf, pygame.Surface)
-        assert isinstance(obj, pygame_menu.widgets.Button)
+        assert isinstance(obj, Button)
 
     call_id = deco.add_callable(fun)
     assert not test[0]
@@ -197,7 +200,7 @@ def test_general():
     deco.add_circle(1, 1, 100, color, False, 5)
     deco.add_circle(50, 50, 100, color, True)
 
-    img = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU)
+    img = BaseImage(IMAGE_EXAMPLE_PYGAME_MENU)
     img.scale(0.15, 0.15)
     deco.add_surface(60, 60, img.get_surface(), prev=False)
 
@@ -244,9 +247,9 @@ def test_general():
     assert deco._coord_cache[img_dec] == (300, 173, ((300, 173),))
 
     with pytest.raises(ValueError):
-        deco.add_text(100, 200, "nice", pygame_menu.font.FONT_8BIT, 0, color)
+        deco.add_text(100, 200, "nice", FONT_8BIT, 0, color)
 
-    deco.add_text(-150, 0, "nice", pygame_menu.font.FONT_8BIT, 20, color, centered=True)
+    deco.add_text(-150, 0, "nice", FONT_8BIT, 20, color, centered=True)
     menu.draw(surface)
 
     with pytest.raises(AssertionError):

@@ -8,9 +8,9 @@ Library utils.
 
 import pytest
 
-import pygame_menu
 import pygame_menu.utils as ut
 from pygame_menu.locals import POSITION_NORTHWEST
+from pygame_menu.widgets.widget.button import Button
 
 
 def test_alpha():
@@ -46,7 +46,7 @@ def test_padding(value, expected):
 
 
 def test_terminal_widget_title():
-    w = pygame_menu.widgets.Button("epic")
+    w = Button("epic")
     w.hide()
     s = ut.widget_terminal_title(w)
     assert "╳" in s

@@ -8,12 +8,10 @@ Test sound management.
 
 import copy
 import time
-from pathlib import Path
 
 import pygame
 import pytest
 
-import pygame_menu
 from pygame_menu.sound import (
     SOUND_EXAMPLES,
     SOUND_INITIALIZED,
