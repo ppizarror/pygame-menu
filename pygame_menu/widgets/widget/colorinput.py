@@ -384,7 +384,7 @@ class ColorInput(TextInput):
         elif self._color_type == COLORINPUT_TYPE_HEX:
             if len(self._input_string) == 7:
                 color = self._input_string[1:]
-                color = tuple(int(color[i : i + 2], 16) for i in (0, 2, 4))
+                color = tuple(int(color[i: i + 2], 16) for i in (0, 2, 4))
                 return color[0], color[1], color[2]
 
         return -1, -1, -1
@@ -521,7 +521,7 @@ class ColorInput(TextInput):
                         new_string = (
                             self._input_string[: self._cursor_position]
                             + key
-                            + self._input_string[self._cursor_position :]
+                            + self._input_string[self._cursor_position:]
                         )
 
                         # Cannot be separator at first
@@ -617,10 +617,10 @@ class ColorInput(TextInput):
                 and len(self._input_string) == self._cursor_position
                 and total_separator < 2
                 and (
-                    len(self._input_string) == 1
-                    or len(self._input_string) > 2
-                    and self._input_string[self._cursor_position - 2] == self._separator
-                )
+                len(self._input_string) == 1
+                or len(self._input_string) > 2
+                and self._input_string[self._cursor_position - 2] == self._separator
+            )
             ):
                 self._push_key_input(
                     self._separator, sounds=False

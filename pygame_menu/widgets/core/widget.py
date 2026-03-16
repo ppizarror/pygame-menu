@@ -769,8 +769,8 @@ class Widget(Base):
         :return: ``True`` if the mouseover status changed
         """
         if not hasattr(event, "type") or event.type not in (
-            pygame.MOUSEMOTION,
-            pygame.ACTIVEEVENT,
+                pygame.MOUSEMOTION,
+                pygame.ACTIVEEVENT,
         ):
             return False
 

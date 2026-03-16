@@ -23,53 +23,53 @@ def menu():
     [
         (
             # long lorem ipsum
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod "
-            "tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, "
-            "quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. "
-            "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu "
-            "fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in "
-            "culpa qui officia deserunt mollit anim id est laborum.",
-            33,
-            [
-                "Lorem ipsum dolor sit amet,",
-                "consectetur adipiscing elit, sed",
-                "do eiusmod tempor incididunt ut",
-                "labore et dolore magna aliqua. Ut",
-                "enim ad minim veniam, quis",
-                "nostrud exercitation ullamco",
-                "laboris nisi ut aliquip ex ea",
-                "commodo consequat. Duis aute",
-                "irure dolor in reprehenderit in",
-                "voluptate velit esse cillum",
-                "dolore eu fugiat nulla pariatur.",
-                "Excepteur sint occaecat cupidatat",
-                "non proident, sunt in culpa qui",
-                "officia deserunt mollit anim id",
-                "est laborum.",
-            ],
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod "
+                "tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, "
+                "quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. "
+                "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu "
+                "fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in "
+                "culpa qui officia deserunt mollit anim id est laborum.",
+                33,
+                [
+                    "Lorem ipsum dolor sit amet,",
+                    "consectetur adipiscing elit, sed",
+                    "do eiusmod tempor incididunt ut",
+                    "labore et dolore magna aliqua. Ut",
+                    "enim ad minim veniam, quis",
+                    "nostrud exercitation ullamco",
+                    "laboris nisi ut aliquip ex ea",
+                    "commodo consequat. Duis aute",
+                    "irure dolor in reprehenderit in",
+                    "voluptate velit esse cillum",
+                    "dolore eu fugiat nulla pariatur.",
+                    "Excepteur sint occaecat cupidatat",
+                    "non proident, sunt in culpa qui",
+                    "officia deserunt mollit anim id",
+                    "est laborum.",
+                ],
         ),
         (
-            "This label should split.\nIn two lines",
-            None,
-            ["This label should split.", "In two lines"],
+                "This label should split.\nIn two lines",
+                None,
+                ["This label should split.", "In two lines"],
         ),
         (
-            "This label should split, this line is really long so it should split.\nThe second line",
-            40,
-            [
-                "This label should split, this line is",
-                "really long so it should split.",
-                "The second line",
-            ],
+                "This label should split, this line is really long so it should split.\nThe second line",
+                40,
+                [
+                    "This label should split, this line is",
+                    "really long so it should split.",
+                    "The second line",
+                ],
         ),
         (
-            "This label should split, this line is really long so it should split.\nThe second line",
-            -1,
-            [
-                "This label should split, this line is really",
-                "long so it should split.",
-                "The second line",
-            ],
+                "This label should split, this line is really long so it should split.\nThe second line",
+                -1,
+                [
+                    "This label should split, this line is really",
+                    "long so it should split.",
+                    "The second line",
+                ],
         ),
         ("a\n\nb\n\nc", -1, ["a", "", "b", "", "c"]),
     ],

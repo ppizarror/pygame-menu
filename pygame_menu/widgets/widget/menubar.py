@@ -252,10 +252,10 @@ class MenuBar(Widget):
             (self._mouse_enabled or self._touchscreen_enabled)
             and self._backbox
             and not (
-                self._box_mode == _MODE_CLOSE
-                and self._menu is not None
-                and self._menu._onclose is None
-            )
+            self._box_mode == _MODE_CLOSE
+            and self._menu is not None
+            and self._menu._onclose is None
+        )
         )
 
     def _draw(self, surface: pygame.Surface) -> None:

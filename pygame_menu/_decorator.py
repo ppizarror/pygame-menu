@@ -97,8 +97,8 @@ class Decorator(Base):
     def __init__(
         self,
         obj: pygame_menu.widgets.Widget
-        | pygame_menu._scrollarea.ScrollArea
-        | pygame_menu.Menu,
+             | pygame_menu._scrollarea.ScrollArea
+             | pygame_menu.Menu,
         decorator_id: str = "",
         verbose: bool = True,
     ) -> None:
@@ -1129,7 +1129,7 @@ class Decorator(Base):
         rect: pygame.Rect,
         decoid: str,
         pos: Tuple2NumberType
-        | tuple[Tuple2NumberType, ...],  # only (x, y) or ((x1,y1), ...
+             | tuple[Tuple2NumberType, ...],  # only (x, y) or ((x1,y1), ...
         use_center_positioning=True,
     ) -> tuple[Tuple2IntType, ...] | Tuple2IntType:
         """

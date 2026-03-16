@@ -151,7 +151,7 @@ class Sound(Base):
     def __init__(
         self,
         allowedchanges: int = AUDIO_ALLOW_CHANNELS_CHANGE
-        | AUDIO_ALLOW_FREQUENCY_CHANGE,
+                              | AUDIO_ALLOW_FREQUENCY_CHANGE,
         buffer: int = 4096,
         channels: int = 2,
         devicename: str = "",

@@ -138,8 +138,8 @@ class ToggleSwitch(Widget):
         state_text: tuple[str, ...] = ("Off", "On"),
         state_text_font: FontType | None = None,
         state_text_font_color: tuple[ColorInputType, ...] = (
-            (255, 255, 255),
-            (255, 255, 255),
+                (255, 255, 255),
+                (255, 255, 255),
         ),
         state_text_font_size: int | None = None,
         state_text_position: Tuple2NumberType = (0.5, 0.5),

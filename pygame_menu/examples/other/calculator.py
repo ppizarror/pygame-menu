@@ -142,21 +142,21 @@ class CalculatorApp:
 
         # Add decorator for each object
         for widget in (
-            b1,
-            b2,
-            b3,
-            b4,
-            b5,
-            b6,
-            b7,
-            b8,
-            b9,
-            b0,
-            beq,
-            b_plus,
-            b_minus,
-            b_times,
-            b_div,
+                b1,
+                b2,
+                b3,
+                b4,
+                b5,
+                b6,
+                b7,
+                b8,
+                b9,
+                b0,
+                beq,
+                b_plus,
+                b_minus,
+                b_times,
+                b_div,
         ):
             w_deco = widget.get_decorator()
             if widget != beq:

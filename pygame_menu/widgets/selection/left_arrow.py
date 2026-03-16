@@ -10,7 +10,6 @@ from __future__ import annotations
 
 __all__ = ["LeftArrowSelection"]
 
-
 from typing import TYPE_CHECKING
 
 from pygame_menu._types import NumberInstance, NumberType, Tuple2IntType

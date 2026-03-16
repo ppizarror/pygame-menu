@@ -10,7 +10,6 @@ from __future__ import annotations
 
 __all__ = ["NoneSelection"]
 
-
 from typing import TYPE_CHECKING
 
 from pygame_menu.widgets.selection.simple import SimpleSelection
