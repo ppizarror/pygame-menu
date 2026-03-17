@@ -26,7 +26,10 @@ try:
     __url__ = _meta.get("Home-page")
     __module_name__ = _meta.get("Name")
 except PackageNotFoundError:
-    # Local fallback
+    __version__ = None
+
+# Local fallback
+if __version__ is None:
     __version__ = "4.4.3"
     __author__ = "Pablo Pizarro R."
     __email__ = "pablo@ppizarror.com"
