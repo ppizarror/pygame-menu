@@ -32,7 +32,7 @@ dependencies = ["pygame>=2.0.0"]
 "Source Code" = "https://github.com/ppizarror/pygame-menu"
 
 [project.optional-dependencies]
-docs = ["sphinx<7", "sphinx-autodoc-typehints>=1.2.0", "sphinx-rtd-theme"]
+docs = ["sphinx", "sphinx-autodoc-typehints", "sphinx-rtd-theme"]
 test = ["nose2[coverage_plugin]", "pytest", "pytest-cov"]
 
 [project.entry-points."pyinstaller40"]
