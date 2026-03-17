@@ -19,17 +19,13 @@ __all__ = ["BaseImage", "Menu", "Sound", "Theme"]
 try:
     _meta = metadata("pygame-menu")
     __version__ = _meta.get("Version")
-    __author__ = _meta.get("Author")
-    __email__ = _meta.get("Author-email")
+    __author__ = _meta.get("Author-email").split("<")[0][1:-2].strip()
+    __email__ = _meta.get("Author-email").split("<")[1][:-1].strip()
     __description__ = _meta.get("Summary")
     __license__ = _meta.get("License")
     __url__ = _meta.get("Home-page")
     __module_name__ = _meta.get("Name")
 except PackageNotFoundError:
-    __version__ = None
-
-# Local fallback
-if __version__ is None:
     __version__ = "4.4.3"
     __author__ = "Pablo Pizarro R."
     __email__ = "pablo@ppizarror.com"
