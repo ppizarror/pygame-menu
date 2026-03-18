@@ -82,16 +82,17 @@ except (ModuleNotFoundError, ImportError):
 # Conditional imports
 if __pygame_version__ is not None:
     from pygame_menu import (
-        _scrollarea,
+        _scrollarea,  # type: ignore
         baseimage,
-        controls,
-        events,
-        font,
-        locals,
+        controls,  # type: ignore
+        events,  # type: ignore
+        font,  # type: ignore
+        locals,  # type: ignore
         menu,
         sound,
         themes,
-        widgets,
+        widgets,  # type: ignore
+        version,  # type: ignore
     )
 
     BaseImage = baseimage.BaseImage

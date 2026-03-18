@@ -35,7 +35,6 @@ class SimpleSelection(Selection):
             widget_apply_font_color=widget_apply_font_color,
         )
 
-    # noinspection PyMissingOrEmptyDocstring
     def draw(
         self, surface: pygame.Surface, widget: pygame_menu.widgets.Widget
     ) -> SimpleSelection:

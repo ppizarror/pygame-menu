@@ -28,7 +28,6 @@ class NoneSelection(SimpleSelection):
     def __init__(self) -> None:
         super().__init__(widget_apply_font_color=False)
 
-    # noinspection PyMissingOrEmptyDocstring
     def draw(
         self, surface: pygame.Surface, widget: pygame_menu.widgets.Widget
     ) -> NoneSelection:

@@ -79,7 +79,6 @@ class ArrowSelection(Selection):
         self._blink_status = True
         self._last_widget = None
 
-    # noinspection PyMissingOrEmptyDocstring
     def draw(
         self, surface: pygame.Surface, widget: pygame_menu.widgets.Widget
     ) -> ArrowSelection:

@@ -65,9 +65,7 @@ def test_abstract_widget_manager(method_call) -> None:
 
 
 def test_abstract_widget() -> None:
-    """
-    Test an abstract widget.
-    """
+    """Test an abstract widget."""
     w = Widget()
 
     w.readonly = True
@@ -94,9 +92,7 @@ def test_abstract_widget() -> None:
 
 
 def test_kwargs() -> None:
-    """
-    Test kwargs addition.
-    """
+    """Test kwargs addition."""
 
     def function_kwargs(*args, **kwargs) -> None:
         """
@@ -124,9 +120,7 @@ def test_kwargs() -> None:
 
 
 def test_copy() -> None:
-    """
-    Test widget copy.
-    """
+    """Test widget copy."""
     widget = pygame_menu.widgets.Widget()
     with pytest.raises(pygame_menu.widgets.core.widget._WidgetCopyException):
         copy.copy(widget)
@@ -135,9 +129,7 @@ def test_copy() -> None:
 
 
 def test_onselect() -> None:
-    """
-    Test onselect widgets.
-    """
+    """Test onselect widgets."""
     menu = MenuUtils.generic_menu()
     test = [None]
 
@@ -208,9 +200,7 @@ def test_onselect() -> None:
 
 
 def test_non_ascii() -> None:
-    """
-    Test non-ascii.
-    """
+    """Test non-ascii."""
     menu = MenuUtils.generic_menu()
     m = MenuUtils.generic_menu(title="Ménu")
     m.clear()
@@ -241,9 +231,7 @@ def test_non_ascii() -> None:
     ],
 )
 def test_background(color_input, expected_output) -> None:
-    """
-    Test widget background with parametrized colors.
-    """
+    """Test widget background with parametrized colors."""
     menu = MenuUtils.generic_menu()
     w = menu.add.label("Text")
 
@@ -260,9 +248,7 @@ def test_background(color_input, expected_output) -> None:
 
 
 def test_background_baseimage() -> None:
-    """
-    Test widget background with BaseImage.
-    """
+    """Test widget background with BaseImage."""
     menu = MenuUtils.generic_menu()
     w = menu.add.label("Text")
 
@@ -276,9 +262,7 @@ def test_background_baseimage() -> None:
 
 
 def test_max_width_height() -> None:
-    """
-    Test widget max width/height.
-    """
+    """Test widget max width/height."""
     label = Label("my label is really long yeah, it should be scaled in the width")
     label.set_font(
         pygame_menu.font.FONT_OPEN_SANS,
@@ -353,9 +337,7 @@ def test_max_width_height() -> None:
 
 
 def test_visibility() -> None:
-    """
-    Test widget visibility.
-    """
+    """Test widget visibility."""
     menu = MenuUtils.generic_menu()
     w = menu.add.label("Text")
     last_hash = w._last_render_hash
@@ -387,18 +369,14 @@ def test_visibility() -> None:
     ],
 )
 def test_font_shadow_positions(position) -> None:
-    """
-    Test widget font shadow on all positions.
-    """
+    """Test widget font shadow on all positions."""
     menu = MenuUtils.generic_menu()
     w = menu.add.label("Text")
     w.set_font_shadow(position=position)
 
 
 def test_font() -> None:
-    """
-    Test widget font.
-    """
+    """Test widget font."""
     menu = MenuUtils.generic_menu()
 
     w = menu.add.label("Text")  # type: Label
@@ -437,9 +415,7 @@ def test_font() -> None:
     ],
 )
 def test_padding_valid(padding_input, expected_output) -> None:
-    """
-    Test widget padding with valid inputs.
-    """
+    """Test widget padding with valid inputs."""
     menu = MenuUtils.generic_menu()
     w = menu.add.button(0, pygame_menu.events.NONE, padding=padding_input)
     assert w.get_padding() == expected_output
@@ -456,24 +432,17 @@ def test_padding_valid(padding_input, expected_output) -> None:
     ],
 )
 def test_padding_invalid(invalid_padding) -> None:
-    """
-    Test widget padding with invalid inputs.
-    """
+    """Test widget padding with invalid inputs."""
     menu = MenuUtils.generic_menu()
     with pytest.raises(Exception):
         menu.add.button(0, pygame_menu.events.NONE, padding=invalid_padding)
 
 
 def test_draw_callback() -> None:
-    """
-    Test drawing callback.
-    """
+    """Test drawing callback."""
     menu = MenuUtils.generic_menu()
 
     def call(widget, _) -> None:
-        """
-        Callback.
-        """
         widget.set_attribute("attr", True)
 
     btn = menu.add.button("btn")
@@ -488,14 +457,9 @@ def test_draw_callback() -> None:
 
 
 def test_update_callback() -> None:
-    """
-    Test update callback.
-    """
+    """Test update callback."""
 
     def update(event, widget, _) -> None:
-        """
-        Callback.
-        """
         assert isinstance(event, list)
         widget.set_attribute("attr", True)
 
@@ -507,9 +471,7 @@ def test_update_callback() -> None:
     deco = menu.get_decorator()
 
     def draw_rect() -> None:
-        """
-        Draw absolute rect on surface for testing purposes.
-        """
+        # Draw absolute rect on surface for testing purposes
         surface.fill((0, 255, 0), btn.get_rect(to_real_position=True))
 
     deco.add_callable(draw_rect, prev=False, pass_args=False)
@@ -543,9 +505,6 @@ def test_update_callback() -> None:
     assert not btn.get_attribute("attr", False)
 
     def update2(event, widget, _) -> None:
-        """
-        Callback.
-        """
         assert isinstance(event, list)
         widget.set_attribute("epic", "bass")
 
@@ -570,9 +529,7 @@ def test_update_callback() -> None:
     ],
 )
 def test_border_invalid(border_width, border_color, border_inflate) -> None:
-    """
-    Test widget border with invalid parameters.
-    """
+    """Test widget border with invalid parameters."""
     menu = MenuUtils.generic_menu()
     with pytest.raises(AssertionError):
         menu.add.button(
@@ -584,9 +541,7 @@ def test_border_invalid(border_width, border_color, border_inflate) -> None:
 
 
 def test_border_valid() -> None:
-    """
-    Test widget border with valid parameters.
-    """
+    """Test widget border with valid parameters."""
     menu = MenuUtils.generic_menu()
     btn = menu.add.button(
         "", border_width=1, border_color=(0, 0, 0), border_inflate=(1, 1)
@@ -610,9 +565,7 @@ def test_border_valid() -> None:
     ],
 )
 def test_border_positions(position) -> None:
-    """
-    Test widget border on different positions.
-    """
+    """Test widget border on different positions."""
     menu = MenuUtils.generic_menu()
     btn = menu.add.button(
         "", border_width=1, border_color="black", border_inflate=(1, 1)
@@ -622,9 +575,7 @@ def test_border_positions(position) -> None:
 
 
 def test_border_invalid_position() -> None:
-    """
-    Test widget border with invalid position.
-    """
+    """Test widget border with invalid position."""
     menu = MenuUtils.generic_menu()
     with pytest.raises(AssertionError):
         btn = menu.add.button(
@@ -634,9 +585,7 @@ def test_border_invalid_position() -> None:
 
 
 def test_border_edge_cases() -> None:
-    """
-    Test widget border edge cases.
-    """
+    """Test widget border edge cases."""
     menu = MenuUtils.generic_menu()
     btn = menu.add.button(
         "", border_width=1, border_color=(0, 0, 0), border_inflate=(1, 1)
@@ -659,9 +608,7 @@ def test_border_edge_cases() -> None:
 
 
 def test_scale_maxwidth_height() -> None:
-    """
-    Test the interaction between scale, max width and max height.
-    """
+    """Test the interaction between scale, max width and max height."""
     menu = MenuUtils.generic_menu()
     btn = menu.add.button("button")
 
@@ -688,9 +635,7 @@ def test_scale_maxwidth_height() -> None:
 
 
 def test_widget_floating_zero() -> None:
-    """
-    Test widgets with zero position if floated.
-    """
+    """Test widgets with zero position if floated."""
     menu = MenuUtils.generic_menu(title="Example menu")
     img = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU)
     img.scale(0.3, 0.3)
@@ -716,9 +661,7 @@ def test_widget_floating_zero() -> None:
 
 
 def test_widget_center_overflow_ignore_scrollbar_thickness() -> None:
-    """
-    Test widget centering if overflow ignores scrollbar thickness.
-    """
+    """Test widget centering if overflow ignores scrollbar thickness."""
     theme = TEST_THEME.copy()
 
     menu = MenuUtils.generic_menu(width=320, theme=theme)

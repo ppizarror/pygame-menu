@@ -438,7 +438,7 @@ class Menu(Base):
             None,
         )  # Accept menu as argument, callable object
         self._clock = pygame.time.Clock()
-        self._decorator = Decorator(self, verbose=verbose)
+        self._decorator = Decorator(self, verbose=verbose)  # type: ignore
         self._enabled = (
             enabled  # Menu is enabled or not. If disabled menu can't update or draw
         )

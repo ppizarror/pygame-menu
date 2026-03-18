@@ -412,13 +412,11 @@ class SolarSystemApp:
             ]
         )
 
-    # noinspection PyUnusedLocal
-    def draw_universe_background(self, surface: pygame.Surface, *args) -> None:
+    def draw_universe_background(self, surface: pygame.Surface, *_) -> None:
         """
         Draw stars as background.
 
         :param surface: Surface to draw
-        :param args: Optional arguments
         """
         t = self.menu.get_counter_attribute(
             "t", self.menu.get_clock().get_time() * 0.001

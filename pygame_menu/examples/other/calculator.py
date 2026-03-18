@@ -28,7 +28,6 @@ class CalculatorApp:
     screen: pygame_menu.widgets.Label
     surface: pygame.Surface
 
-    # noinspection PyArgumentEqualDefault
     def __init__(self) -> None:
         self.surface = create_example_window("Example - Calculator", (320, 480))
 

@@ -149,7 +149,7 @@ class Label(Widget):
             menu_update_widgets.append(self)
         return self
 
-    def set_title(self, title: str) -> Label:
+    def set_title(self, title: str, *args) -> Label:
         super().set_title(title)
         if self._title_generator is not None:
             if self._verbose:

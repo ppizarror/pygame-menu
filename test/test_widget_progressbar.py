@@ -65,7 +65,7 @@ def test_progressbar_value(menu):
         pb.set_value(-1)
 
     with pytest.raises(AssertionError):
-        pb.set_value("a")
+        pb.set_value("a")  # type: ignore
 
     assert pb.get_value() == 50
     assert not pb.value_changed()

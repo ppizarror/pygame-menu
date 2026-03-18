@@ -77,7 +77,7 @@ class Image(Widget):
             self._image.rotate(angle)
             self._image.scale(scale[0], scale[1], smooth=scale_smooth)
 
-    def set_title(self, title: str) -> Image:
+    def set_title(self, title: str, *args) -> Image:
         return self
 
     def get_image(self) -> BaseImage:

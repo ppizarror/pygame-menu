@@ -45,9 +45,6 @@ def test_theme_validation():
     assert theme.validate() is theme
 
 
-# Copy behavior
-
-
 def test_theme_copy(example_image):
     theme = pygame_menu.themes.THEME_DEFAULT.copy()
     theme.background_color = example_image
@@ -86,9 +83,6 @@ def test_theme_copy(example_image):
     assert theme_white.widget_selection_effect.color == (0, 0, 0)
 
 
-# Methods
-
-
 def test_methods(default_theme, example_image):
     theme = default_theme
     theme.background_color = example_image
@@ -100,15 +94,9 @@ def test_methods(default_theme, example_image):
     assert theme._format_color_opacity([1, 1, 1]) == (1, 1, 1, 255)
 
 
-# Invalid kwargs
-
-
 def test_invalid_kwargs():
     with pytest.raises(ValueError):
         pygame_menu.themes.Theme(this_is_an_invalid_kwarg=True)
-
-
-# Tuple formatting
 
 
 @pytest.mark.parametrize(
@@ -128,9 +116,6 @@ def test_vec_to_tuple_invalid(value):
     t = pygame_menu.themes.THEME_DEFAULT
     with pytest.raises(ValueError):
         t._vec_to_tuple(value, check_length=4)
-
-
-# Opacity formatting
 
 
 @pytest.mark.parametrize(
@@ -165,9 +150,6 @@ def test_format_opacity_invalid(example_image):
         t._format_color_opacity((1, 1, 1.1))
 
 
-# String/int color parsing
-
-
 def test_str_int_color():
     t = pygame_menu.themes.THEME_DEFAULT.copy()
     t.cursor_color = "#ffffff"
@@ -185,9 +167,6 @@ def test_str_int_color():
     assert t2.selection_color == (255, 255, 255, 255)
     assert t2.surface_clear_color == (0, 0, 0, 0)
     assert t2.title_font_color == (205, 102, 29, 255)
-
-
-# _get() behavior
 
 
 @pytest.mark.parametrize(

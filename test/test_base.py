@@ -8,6 +8,7 @@ Test base class.
 
 import pytest
 
+# noinspection PyProtectedMember
 from pygame_menu._base import Base
 
 

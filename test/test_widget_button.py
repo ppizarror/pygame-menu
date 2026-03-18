@@ -167,7 +167,7 @@ def test_update_callback_rejects_invalid(menu):
     btn = menu.add.button("b1", lambda: None)
     for invalid in [menu, 1, [1, 2, 3], (1, 2, 3)]:
         with pytest.raises(AssertionError):
-            btn.update_callback(invalid)
+            btn.update_callback(invalid)  # type: ignore
 
 
 def test_button_readonly_behavior(menu):
@@ -244,7 +244,7 @@ def test_button_event_constants(menu):
 
 
 def test_button_invalid_kwarg_rejected(menu):
-    def cb(**kwargs):
+    def cb(**_):
         pass
 
     # accept_kwargs=False but kwarg provided → error

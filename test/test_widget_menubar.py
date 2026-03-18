@@ -60,7 +60,7 @@ def test_menubar_backbox_border_width(menu):
     mb.set_backbox_border_width(2)
 
     with pytest.raises(AssertionError):
-        mb.set_backbox_border_width(1.5)
+        mb.set_backbox_border_width(1.5)  # type: ignore
     with pytest.raises(AssertionError):
         mb.set_backbox_border_width(0)
     with pytest.raises(AssertionError):
@@ -70,7 +70,7 @@ def test_menubar_backbox_border_width(menu):
 
 
 def test_menubar_unknown_mode(menu):
-    mb = MenuBar("Menu", 500, (0, 0, 0), back_box=True, mode="unknown")
+    mb = MenuBar("Menu", 500, (0, 0, 0), back_box=True, mode="unknown")  # type: ignore
     with pytest.raises(ValueError):
         mb.set_menu(menu)
 

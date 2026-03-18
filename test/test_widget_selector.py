@@ -94,7 +94,7 @@ def test_selector_basic(menu):
 
     # Invalid set_value inputs
     with pytest.raises(AssertionError):
-        selector.set_value(bool)
+        selector.set_value(bool)  # type: ignore
     with pytest.raises(AssertionError):
         selector.set_value(200)
 

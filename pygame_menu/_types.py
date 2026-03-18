@@ -54,7 +54,7 @@ TupleIntType = tuple[int, ...]
 
 # Menu constructor types
 MenuColumnMaxWidthType = Optional[Union[int, float, VectorType]]
-MenuColumnMinWidthType = Union[int, float, VectorType]
+MenuColumnMinWidthType = Optional[Union[int, float, VectorType]]
 MenuRowsType = Optional[Union[int, VectorIntType]]
 
 # Other

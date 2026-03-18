@@ -28,20 +28,15 @@ from test._utils import PYGAME_V2, surface
 
 
 def test_pathlib():
-    """
-    Test image load with pathlib.
-    """
+    """Test image load with pathlib."""
     path_img = Path(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
     image = pygame_menu.BaseImage(path_img)
     image.draw(surface)
     assert image.get_path() == str(path_img)
 
 
-# noinspection SpellCheckingInspection
 def test_from_bytesio():
-    """
-    Test image load from base64.
-    """
+    """Test image load from base64."""
     photo = (
         "R0lGODlhRgBGAPZUAAAAAAAAMwAAzAArAAArMwArzAAr/wBVmQBVzABV/zMAADMAMzMrADMrMzMrmTMrzDMr/zNVADNVMzNVZjNVmTN"
         "VzDNV/zOAADOAMzOAZjOA/zOqM2YAM2YrAGYrM2ZVAGZVM2ZVZmZVmWZVzGZV/2aAAGaAM2aAZmaAmWaAzGaA/2aqAGaqM2aqZmaqmW"
@@ -101,9 +96,7 @@ def test_from_bytesio():
 
 
 def test_rotation():
-    """
-    Test rotation.
-    """
+    """Test rotation."""
     image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
     image.rotate(360)
     prev_size = image.get_size()
@@ -138,9 +131,7 @@ def test_rotation():
 
 
 def test_crop():
-    """
-    Test baseimage crop.
-    """
+    """Test baseimage crop."""
     image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
     image_c = image.get_crop(0, 0, 10, 10)
     image_cr = image.get_crop_rect(pygame.Rect(0, 0, 10, 10))
@@ -159,21 +150,16 @@ def test_crop():
     assert image.get_size() == (8, 8)
 
 
-# noinspection PyTypeChecker
 @pytest.mark.parametrize("alpha", [0.5, -1, 267])
 def test_alpha_invalid(alpha):
-    """
-    Test alpha modes.
-    """
+    """Test alpha modes."""
     image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
     with pytest.raises(AssertionError):
         image.set_alpha(alpha)
 
 
 def test_alpha_none():
-    """
-    Test setting alpha to None.
-    """
+    """Test setting alpha to None."""
     image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
     image.set_alpha(None)
 
@@ -190,9 +176,7 @@ def test_alpha_none():
     ],
 )
 def test_modes(mode):
-    """
-    Test drawing modes.
-    """
+    """Test drawing modes."""
     image = pygame_menu.BaseImage(
         pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES, drawing_mode=mode
     )
@@ -200,9 +184,7 @@ def test_modes(mode):
 
 
 def test_modes_invalid():
-    """
-    Test invalid drawing mode.
-    """
+    """Test invalid drawing mode."""
     with pytest.raises(AssertionError):
         pygame_menu.BaseImage(
             pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES, drawing_mode=-1
@@ -210,9 +192,7 @@ def test_modes_invalid():
 
 
 def test_modes_get():
-    """
-    Get drawing mode.
-    """
+    """Get drawing mode."""
     image = pygame_menu.BaseImage(
         pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES, drawing_mode=IMAGE_MODE_CENTER
     )
@@ -220,9 +200,7 @@ def test_modes_get():
 
 
 def test_drawing_offset():
-    """
-    Test drawing offset.
-    """
+    """Test drawing offset."""
     image = pygame_menu.BaseImage(
         pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES, drawing_mode=IMAGE_MODE_CENTER
     )
@@ -231,38 +209,29 @@ def test_drawing_offset():
 
 
 def test_image_path():
-    """
-    Test path.
-    """
+    """Test path."""
     image = pygame_menu.BaseImage(
         pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES, drawing_mode=IMAGE_MODE_CENTER
     )
     assert image.get_path() == pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES
 
 
-# noinspection SpellCheckingInspection
 @pytest.mark.parametrize(
     "invalid_path", ["invalid.pnng", "invalid", "file_invalid.png"]
 )
 def test_extension_validation(invalid_path):
-    """
-    Validate a image extension.
-    """
+    """Validate a image extension."""
     with pytest.raises(AssertionError):
         pygame_menu.BaseImage(invalid_path)
 
 
 def test_extension_validation_valid():
-    """
-    Test valid extension.
-    """
+    """Test valid extension."""
     pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
 
 
 def test_image_properties():
-    """
-    Test the getters of the image object.
-    """
+    """Test the getters of the image object."""
     image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
     w, h = image.get_size()
     assert w == 256
@@ -272,9 +241,7 @@ def test_image_properties():
 
 
 def test_scale():
-    """
-    Test scale.
-    """
+    """Test scale."""
     image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
     w, h = image.get_size()
     assert w == 256
@@ -299,9 +266,7 @@ def test_scale():
 
 
 def test_operations():
-    """
-    Test the file operations.
-    """
+    """Test the file operations."""
     image_original = pygame_menu.BaseImage(
         pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES
     )
@@ -324,9 +289,7 @@ def test_operations():
 
 
 def test_invalid_image():
-    """
-    Test invalid image opening.
-    """
+    """Test invalid image opening."""
     image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYTHON)
     assert image.get_size() == (110, 109)
 
@@ -340,9 +303,7 @@ def test_invalid_image():
 
 
 def test_copy():
-    """
-    Test copy image.
-    """
+    """Test copy image."""
     image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
     image_copied = image.copy()
     assert image.equals(image_copied)
@@ -353,9 +314,7 @@ def test_copy():
 
 
 def test_transform():
-    """
-    Test the image transformation.
-    """
+    """Test the image transformation."""
     image_original = pygame_menu.BaseImage(
         pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES
     )
@@ -403,7 +362,6 @@ def test_transform():
     image.to_bw()
 
     # Image channels
-    # noinspection PyTypeChecker
     image.pick_channels(("r", "g", "b"))
 
     assert image.get_at((10, 10)) == (56, 56, 56, 255)
@@ -427,9 +385,7 @@ def test_transform():
     ],
 )
 def test_drawing_position(position, expected_delta):
-    """
-    Test drawing position.
-    """
+    """Test drawing position."""
     image = pygame_menu.BaseImage(
         pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES, drawing_offset=(100, 100)
     )
@@ -443,9 +399,7 @@ def test_drawing_position(position, expected_delta):
 
 
 def test_drawing_position_invalid():
-    """
-    Test invalid drawing position.
-    """
+    """Test invalid drawing position."""
     image = pygame_menu.BaseImage(
         pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES, drawing_offset=(100, 100)
     )
@@ -454,9 +408,7 @@ def test_drawing_position_invalid():
 
 
 def test_attributes_copy():
-    """
-    Test image attributes on object copy.
-    """
+    """Test image attributes on object copy."""
     image = pygame_menu.BaseImage(
         pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES, drawing_offset=(100, 100)
     )
@@ -471,9 +423,7 @@ def test_attributes_copy():
 
 
 def test_cache():
-    """
-    Cache draw test.
-    """
+    """Cache draw test."""
     image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
     assert image._last_transform[2] is None
 
@@ -496,18 +446,14 @@ def test_cache():
 
 
 def test_subsurface():
-    """
-    Test subsurface.
-    """
+    """Test subsurface."""
     image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_TILED_BORDER)
     assert image.get_size() == (18, 18)
     assert image.subsurface((0, 0, 3, 3)).get_size() == (3, 3)
 
 
 def test_from_surface():
-    """
-    Test image load from a pygame.Surface object.
-    """
+    """Test image load from a pygame.Surface object."""
     # Create a simple surface
     surf = pygame.Surface((50, 50))
     surf.fill((255, 0, 0))

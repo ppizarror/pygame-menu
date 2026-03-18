@@ -150,7 +150,7 @@ def test_draw_update_callbacks():
 
     draw_flag = [False]
 
-    def _draw(*args):
+    def _draw(*_):
         draw_flag[0] = True
 
     draw_id = wid.add_draw_callback(_draw)
@@ -170,7 +170,7 @@ def test_draw_update_callbacks():
 
     update_flag = [False]
 
-    def _update(*args):
+    def _update(*_):
         update_flag[0] = True
 
     update_id = wid.add_update_callback(_update)
@@ -359,12 +359,12 @@ def test_menu_link():
         menu.add.menu_link(menu)
 
     with pytest.raises(ValueError):
-        menu.add.menu_link(True)
+        menu.add.menu_link(True)  # type: ignore
 
     def open_link(*args):
-        link = args[-1]
-        assert isinstance(link, pygame_menu.widgets.MenuLink)
-        link.open()
+        _link = args[-1]
+        assert isinstance(_link, pygame_menu.widgets.MenuLink)
+        _link.open()
 
     sel = menu.add.selector(
         "Change menu ",

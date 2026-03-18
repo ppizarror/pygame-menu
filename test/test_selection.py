@@ -83,7 +83,7 @@ def test_highlight_selection(menu):
     menu.add.generic_widget(w)
     menu.draw(surface)
 
-    sel: HighlightSelection = w.get_selection_effect()
+    sel: HighlightSelection = w.get_selection_effect()  # type: ignore
 
     assert sel.get_height() == margin_y
     assert sel.get_width() == margin_x

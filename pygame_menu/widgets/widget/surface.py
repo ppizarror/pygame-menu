@@ -55,7 +55,7 @@ class SurfaceWidget(Widget):
         super().__init__(onselect=onselect, widget_id=surface_id)
         self._surface_obj = surface
 
-    def set_title(self, title: str) -> SurfaceWidget:
+    def set_title(self, title: str, *args) -> SurfaceWidget:
         return self
 
     def set_surface(self, surface: pygame.Surface) -> SurfaceWidget:

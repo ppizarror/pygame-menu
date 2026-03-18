@@ -45,10 +45,10 @@ def test_single_rangeslider_basic_flow(menu, slider_single):
     test_state = {"change": 0, "return": 0}
 
     def onchange(x: float):
-        test_state["change"] = x
+        test_state["change"] = x  # type: ignore
 
     def onreturn(x: float):
-        test_state["return"] = x
+        test_state["return"] = x  # type: ignore
 
     slider_single.set_onchange(onchange)
     slider_single.set_onreturn(onreturn)
@@ -348,7 +348,7 @@ def test_double_slider_overlap_constraints(slider_double):
     with pytest.raises(AssertionError):
         slider_double.set_value((1.0, 0.2))
     with pytest.raises(AssertionError):
-        slider_double.set_value((0.2, 0.5, 1.0))
+        slider_double.set_value((0.2, 0.5, 1.0))  # type: ignore
 
     # Overlap constraints
     with pytest.raises(AssertionError):

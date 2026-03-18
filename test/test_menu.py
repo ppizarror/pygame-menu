@@ -36,6 +36,7 @@ from pygame_menu.locals import (
     ORIENTATION_VERTICAL,
     SCROLLAREA_POSITION_NONE,
 )
+# noinspection PyProtectedMember
 from pygame_menu.menu import (
     JOY_EVENT_DOWN,
     JOY_EVENT_LEFT,
@@ -65,10 +66,12 @@ TEST_TIME_DRAW = False
 
 
 def dummy_function() -> None:
+    """Dummy function for callbacks in tests."""
     return
 
 
 def test_mainloop_disabled():
+    """Test disabled mainloop."""
     menu = MenuUtils.generic_menu(title="mainmenu")
     menu.disable()
     with pytest.raises(RuntimeError):
@@ -77,6 +80,7 @@ def test_mainloop_disabled():
 
 
 def test_time_draw():
+    """Measure draw/update performance for stress scenarios."""
     if not TEST_TIME_DRAW:
         return
 
@@ -97,6 +101,7 @@ def test_time_draw():
         menu.add.text_input(title="text", default="the default text")
 
     def draw_and_update():
+        """Draw and update the menu once."""
         menu.draw(surface)
         menu.update(pygame.event.get())
 
@@ -104,6 +109,7 @@ def test_time_draw():
 
 
 def test_copy():
+    """Test menu copy protection."""
     menu = MenuUtils.generic_menu()
     with pytest.raises(_MenuCopyException):
         copy.copy(menu)
@@ -112,6 +118,7 @@ def test_copy():
 
 
 def test_size_constructor():
+    """Test menu size constructor validation."""
     inf_size = 1000000000
 
     with pytest.raises(AssertionError):
@@ -129,6 +136,7 @@ def test_size_constructor():
 
 
 def test_position():
+    """Test menu and widget positioning."""
     theme_src = TEST_THEME.copy()
 
     menu = MenuUtils.generic_menu(theme=theme_src)
@@ -288,6 +296,7 @@ def test_position():
 
 
 def test_float_position():
+    """Test float widget positioning behavior."""
     menu = MenuUtils.generic_menu(center_content=False)
 
     a = menu.add.label("nice")
@@ -322,6 +331,7 @@ def test_float_position():
 
 
 def test_translate():
+    """Test menu translation."""
     menu = MenuUtils.generic_menu(width=400, theme=THEME_NON_FIXED_TITLE)
     btn = menu.add.button("button")
 
@@ -348,6 +358,7 @@ def test_translate():
 
 
 def test_close():
+    """Test menu close behavior and callbacks."""
     menu = MenuUtils.generic_menu()
     menu.disable()
     menu.set_title("1")
@@ -355,6 +366,7 @@ def test_close():
     menu._back()
 
     def close():
+        """Set a flag when menu closes."""
         menu.set_attribute("epic", True)
 
     menu.set_onclose(close)
@@ -367,6 +379,7 @@ def test_close():
     test = [False, False]
 
     def closefun():
+        """Mark close callback as executed."""
         test[0] = True
 
     menu2 = MenuUtils.generic_menu(onclose=closefun)
@@ -377,6 +390,7 @@ def test_close():
     assert test[0]
 
     def closefun_menu(m: Menu):
+        """Validate close callback receives current menu."""
         test[1] = True
         assert m == menu2
 
@@ -410,12 +424,14 @@ def test_close():
     assert menu2.get_current().get_title() == "1"
 
     def new_close(m: Menu):
+        """Reset menu from close callback."""
         assert m == menu
         m.reset(1)
 
     reset = [False]
 
     def onreset(m: Menu):
+        """Mark reset callback as executed."""
         assert m == menu
         reset[0] = True
 
@@ -451,6 +467,7 @@ def test_close():
 
 
 def test_enabled():
+    """Test menu enable and disable behavior."""
     menu = MenuUtils.generic_menu(onclose=events.NONE, enabled=False)
     assert not menu.is_enabled()
     menu.enable()
@@ -462,6 +479,7 @@ def test_enabled():
 
 
 def test_depth():
+    """Test submenu depth tracking."""
     menu = MenuUtils.generic_menu(title="mainmenu")
     assert menu._get_depth() == 0
 
@@ -500,6 +518,7 @@ def test_depth():
 
 
 def test_get_widget():
+    """Test widget retrieval, including recursive search."""
     menu = MenuUtils.generic_menu(title="mainmenu")
 
     widget = menu.add.text_input("test", textinput_id="some_id")
@@ -523,6 +542,7 @@ def test_get_widget():
 
 
 def test_add_generic_widget():
+    """Test adding generic widgets to menu."""
     menu = MenuUtils.generic_menu()
     btn = menu.add.button("nice")
     w = Button("title")
@@ -544,6 +564,7 @@ def test_add_generic_widget():
 
 
 def test_get_selected_widget():
+    """Test selected widget state transitions."""
     menu = MenuUtils.generic_menu(title="mainmenu")
 
     widget = menu.add.text_input("test", default="some_id")
@@ -623,7 +644,7 @@ def test_get_selected_widget():
     menu._index = 100
     assert menu.get_selected_widget() is None
 
-    menu._index = "0"
+    menu._index = "0"  # type: ignore
     assert menu.get_selected_widget() is None
     assert menu._index == 0
 
@@ -634,6 +655,7 @@ def test_get_selected_widget():
 
 
 def test_submenu():
+    """Test submenu linking and lifecycle behavior."""
     menu = MenuUtils.generic_menu()
     menu2 = MenuUtils.generic_menu()
     btn = menu.add.button("btn", menu2)
@@ -728,6 +750,7 @@ def test_submenu():
 
 
 def test_centering():
+    """Test automatic menu centering behavior."""
     theme = THEME_BLUE.copy()
     theme.widget_offset = (0, 100)
     menu = MenuUtils.generic_menu(theme=theme)
@@ -758,6 +781,7 @@ def test_centering():
 
 
 def test_getters():
+    """Test basic menu getters."""
     menu = MenuUtils.generic_menu(title="mainmenu")
     assert menu.get_menubar() is not None
     assert menu.get_scrollarea() is not None
@@ -772,11 +796,13 @@ def test_getters():
 
 
 def test_generic_events():
+    """Test generic keyboard, joystick, and mouse events."""
     menu = MenuUtils.generic_menu(title="mainmenu")
 
     event_val = [False]
 
     def _some_event():
+        """Toggle event flag and return payload."""
         event_val[0] = True
         return "the value"
 
@@ -823,6 +849,7 @@ def test_generic_events():
 
 
 def test_back_event():
+    """Test back event handling."""
     menu = MenuUtils.generic_menu(title="mainmenu")
     assert menu._get_depth() == 0
     menu_ = MenuUtils.generic_menu(title="submenu")
@@ -834,6 +861,7 @@ def test_back_event():
 
 
 def test_mouse_empty_submenu():
+    """Test mouse navigation when opening a smaller submenu."""
     menu = MenuUtils.generic_menu(title="mainmenu")
     menu.enable()
 
@@ -854,6 +882,7 @@ def test_mouse_empty_submenu():
 
 
 def test_input_data():
+    """Test input data gathering and validation."""
     menu = MenuUtils.generic_menu(title="mainmenu")
 
     menu.add.text_input("text1", textinput_id="id1", default=1)
@@ -894,6 +923,7 @@ def test_input_data():
 
 
 def test_columns_menu():
+    """Test multi-column menu behavior."""
     # Basic invalid configurations
     with pytest.raises(AssertionError):
         MenuUtils.generic_menu(columns=0)
@@ -967,7 +997,7 @@ def test_columns_menu():
         assert column_menu._column_min_width[i] == 500
 
     with pytest.raises(AssertionError):
-        MenuUtils.generic_menu(columns=3, rows=4, column_min_width=None)
+        MenuUtils.generic_menu(columns=3, rows=4, column_min_width=None)  # type: ignore
 
     # max width > min width
     with pytest.raises(AssertionError):
@@ -1198,6 +1228,7 @@ def test_columns_menu():
 
 
 def test_screen_dimension():
+    """Test custom screen dimension validation."""
     with pytest.raises(AssertionError):
         MenuUtils.generic_menu(title="mainmenu", screen_dimension=1)
     with pytest.raises(AssertionError):
@@ -1213,6 +1244,7 @@ def test_screen_dimension():
 
 
 def test_touchscreen():
+    """Test touchscreen interaction behavior."""
     with pytest.raises(AssertionError):
         MenuUtils.generic_menu(
             title="mainmenu",
@@ -1230,6 +1262,7 @@ def test_touchscreen():
     event_val = [False]
 
     def _some_event():
+        """Toggle touch event flag and return payload."""
         event_val[0] = True
         return "the value"
 
@@ -1254,6 +1287,7 @@ def test_touchscreen():
 
 
 def test_remove_widget():
+    """Test widget removal from update lists."""
     menu = MenuUtils.generic_menu()
     f = menu.add.frame_h(100, 200)
     menu._update_frames.append(f)
@@ -1268,6 +1302,7 @@ def test_remove_widget():
 
 
 def test_reset_value():
+    """Test value reset across widgets and submenus."""
     menu = MenuUtils.generic_menu(title="mainmenu")
     menu2 = MenuUtils.generic_menu(title="other")
 
@@ -1299,13 +1334,16 @@ def test_reset_value():
 
 
 def test_mainloop_kwargs():
+    """Test mainloop callback argument handling."""
     test = [False, False]
 
     def test_accept_menu(m: Menu):
+        """Callback that expects a menu argument."""
         assert isinstance(m, Menu)
         test[0] = True
 
     def test_not_accept_menu():
+        """Callback that does not expect arguments."""
         test[1] = True
 
     menu = MenuUtils.generic_menu()
@@ -1320,6 +1358,7 @@ def test_mainloop_kwargs():
     test = [False, 0]
 
     def bgfun():
+        """Background callback used while waiting for events."""
         test[0] = not test[0]
         test[1] += 1
         pygame.event.post(PygameEventUtils.joy_center(inlist=False))
@@ -1333,6 +1372,7 @@ def test_mainloop_kwargs():
     menu = MenuUtils.generic_menu()
 
     def bgfun():
+        """Background callback used to count frames."""
         test[0] += 1
         if test[0] == 20:
             assert test[0] == menu._stats.loop
@@ -1342,16 +1382,19 @@ def test_mainloop_kwargs():
 
 
 def _call_invalid_menu():
+    """Call Menu constructor with an invalid keyword."""
     bad = {"fake_option": True}
     Menu(height=100, width=100, title="nice", **bad)
 
 
 def test_invalid_args():
+    """Test invalid constructor argument handling."""
     with pytest.raises(TypeError):
         _call_invalid_menu()
 
 
 def test_set_title():
+    """Test title updates and offsets."""
     menu = MenuUtils.generic_menu(title="menu")
     theme = menu.get_theme()
     menubar = menu.get_menubar()
@@ -1377,6 +1420,7 @@ def test_set_title():
 
 
 def test_empty():
+    """Test empty and hidden-widget menu height."""
     menu = MenuUtils.generic_menu(title="menu")
     menu.render()
     assert menu.get_height(widget=True) == 0
@@ -1389,11 +1433,13 @@ def test_empty():
 
 
 def test_beforeopen():
+    """Test onbeforeopen callbacks."""
     menu = MenuUtils.generic_menu()
     menu2 = MenuUtils.generic_menu()
     test = [False]
 
     def onbeforeopen(menu_from: Menu, menu_to: Menu):
+        """Validate source and target menus before opening."""
         assert menu_from == menu
         assert menu_to == menu2
         test[0] = True
@@ -1404,6 +1450,7 @@ def test_beforeopen():
     assert test[0]
 
     def onbeforeopen_select_widget(_from: Menu, _to: Menu):
+        """Select a specific widget before opening submenu."""
         _to.select_widget("option2")
 
     menu = MenuUtils.generic_menu()
@@ -1420,6 +1467,7 @@ def test_beforeopen():
 
 
 def test_focus():
+    """Test focus overlay rendering conditions."""
     menu = MenuUtils.generic_menu(title="menu", mouse_motion_selection=True)
     btn = menu.add.button("nice")
 
@@ -1464,6 +1512,7 @@ def test_focus():
 
 
 def test_visible():
+    """Test widget visibility and selection updates."""
     menu = MenuUtils.generic_menu(title="menu")
     btn1 = menu.add.button("nice")
     btn2 = menu.add.button("nice")
@@ -1525,12 +1574,14 @@ def test_visible():
 
 
 def test_decorator():
+    """Test menu decorator retrieval."""
     menu = MenuUtils.generic_menu()
     dec = menu.get_decorator()
     assert dec._obj == menu
 
 
 def test_events():
+    """Test menu event update flow."""
     if not PYGAME_V2:
         return
 
@@ -1670,14 +1721,16 @@ def test_events():
     test = [None]
 
     def on_over(m, e):
+        """Handle menu mouse-over events."""
         assert isinstance(m, Menu)
         assert e.type == pygame.MOUSEMOTION
-        test[0] = True
+        test[0] = True  # type: ignore
 
     def on_leave(m, e):
+        """Handle menu mouse-leave events."""
         assert isinstance(m, Menu)
         assert e.type == pygame.MOUSEMOTION
-        test[0] = False
+        test[0] = False  # type: ignore
 
     menu = MenuUtils.generic_menu(width=100, height=100)
     menu.set_onmouseover(on_over)
@@ -1724,12 +1777,14 @@ def test_events():
     test = [None]
 
     def on_over(m):
+        """Handle window mouse-over events."""
         assert isinstance(m, Menu)
-        test[0] = True
+        test[0] = True  # type: ignore
 
     def on_leave(m):
+        """Handle window mouse-leave events."""
         assert isinstance(m, Menu)
-        test[0] = False
+        test[0] = False  # type: ignore
 
     menu.set_onwindowmouseover(on_over)
     menu.set_onwindowmouseleave(on_leave)
@@ -1783,6 +1838,7 @@ def test_events():
 
 
 def test_theme_params():
+    """Test theme parameters affecting menu behavior."""
     th = TEST_THEME.copy()
 
     th.title = False
@@ -1800,12 +1856,14 @@ def test_theme_params():
 
 
 def test_widget_move_index():
+    """Test moving widgets by index and reference."""
     menu = MenuUtils.generic_menu(theme=TEST_THEME.copy())
     btn1 = menu.add.button("1")
     btn2 = menu.add.button("2")
     btn3 = menu.add.button("3")
 
     def test_order(buttons, selected):
+        """Assert widget order and selection snapshot."""
         assert menu.get_selected_widget() == selected
         sel = [int(w == selected) for w in buttons]
 
@@ -1878,11 +1936,12 @@ def test_widget_move_index():
     with pytest.raises(AssertionError):
         menu.move_widget_index(btn1, -1)
     with pytest.raises(AssertionError):
-        menu.move_widget_index(btn1, -1.5)
+        menu.move_widget_index(btn1, -1.5)  # type: ignore
     test_order((btn1, btn3, btn2), btn2)
 
 
 def test_mouseover_widget():
+    """Test mouseover and mouseleave callbacks."""
     menu = MenuUtils.generic_menu()
     btn1 = menu.add.button("1", cursor=CURSOR_ARROW, button_id="b1")
     btn2 = menu.add.button("2", cursor=CURSOR_ARROW, button_id="b2")
@@ -1896,18 +1955,22 @@ def test_mouseover_widget():
     test = [False, False, False, False]
 
     def onover1(widget, _):
+        """Handle mouse-over for first button."""
         assert widget == btn1
         test[0] = not test[0]
 
     def onleave1(widget, _):
+        """Handle mouse-leave for first button."""
         assert widget == btn1
         test[1] = not test[1]
 
     def onover2(widget, _):
+        """Handle mouse-over for second button."""
         assert widget == btn2
         test[2] = not test[2]
 
     def onleave2(widget, _):
+        """Handle mouse-leave for second button."""
         assert widget == btn2
         test[3] = not test[3]
 
@@ -1939,6 +2002,7 @@ def test_mouseover_widget():
     deco = menu.get_decorator()
 
     def draw_rect():
+        """Paint a test rect over first button area."""
         surface.fill((255, 255, 255), btn1.get_rect(to_real_position=True))
 
     deco.add_callable(draw_rect, prev=False, pass_args=False)
@@ -2074,6 +2138,7 @@ def test_mouseover_widget():
 
 
 def test_floating_pos():
+    """Test floating widget layout behavior."""
     menu = MenuUtils.generic_menu(theme=THEME_NON_FIXED_TITLE)
     btn = menu.add.button("floating")
     assert btn.get_alignment() == ALIGN_CENTER
@@ -2118,6 +2183,7 @@ def test_floating_pos():
 
 
 def test_surface_cache():
+    """Test surface cache update flags."""
     menu = MenuUtils.generic_menu()
     assert not menu._widgets_surface_need_update
     menu.force_surface_cache_update()
@@ -2126,6 +2192,7 @@ def test_surface_cache():
 
 
 def test_baseimage_selector():
+    """Test BaseImage selector integration with menu links."""
     if sys.version_info.major == 3 and sys.version_info.minor == 8:
         return
 
@@ -2138,6 +2205,7 @@ def test_baseimage_selector():
         selector: widgets.Selector
 
         def __init__(self):
+            """Build menus, icons, and selector callbacks."""
             theme = Theme(
                 title_font_size=8,
                 title_bar_style=widgets.MENUBAR_STYLE_SIMPLE,
@@ -2163,12 +2231,14 @@ def test_baseimage_selector():
             self.icon = self.main_menu.add.image(image_path=self.icons[0].copy())
 
             def update_icon(*args):
+                """Update displayed icon from selector index."""
                 icon_idx = args[0][-1]
                 set_icon = self.icons[icon_idx].copy()
                 set_icon.scale(2, 2)
                 self.icon.set_image(set_icon)
 
             def open_menu(*args):
+                """Open submenu linked to selector option."""
                 sub = args[-1][0][1]
                 sub.open()
 
@@ -2200,6 +2270,7 @@ def test_baseimage_selector():
 
 
 def test_resize():
+    """Test menu resize behavior."""
     theme = THEME_DEFAULT.copy()
     menu = MenuUtils.generic_menu(theme=theme)
     assert menu.get_size() == (600, 400)
@@ -2236,6 +2307,7 @@ def test_resize():
     menu = MenuUtils.generic_menu()
 
     def _resize():
+        """Toggle menu width between two presets."""
         if menu.get_size()[0] == 300:
             menu.resize(600, 400)
         else:
@@ -2290,6 +2362,7 @@ def test_resize():
 
 
 def test_get_size():
+    """Test menu size getters and border size calculation."""
     theme = THEME_DEFAULT.copy()
     menu = MenuUtils.generic_menu(theme=theme)
     assert menu.get_size() == (600, 400)
@@ -2329,6 +2402,7 @@ def test_get_size():
 
 
 def test_border_color():
+    """Test menu border color and image border handling."""
     theme = THEME_DEFAULT.copy()
     assert theme.border_color is None
     theme.border_width = 10
@@ -2348,6 +2422,7 @@ def test_border_color():
 
 
 def test_menu_render_toggle():
+    """Test render toggling performance behavior."""
     menu = MenuUtils.generic_menu(columns=3, rows=50)
     nc, nr = menu.get_col_rows()
     assert nc == 3
@@ -2355,19 +2430,19 @@ def test_menu_render_toggle():
 
     n = sum(nr)
     t0 = time.time()
-    widgets = []
+    wdt = []  # Widgets
     for i in range(n):
-        widgets.append(menu.add.label(i))
+        wdt.append(menu.add.label(i))
     t_on = time.time() - t0
 
-    position_before = [w.get_position() for w in widgets]
+    position_before = [w.get_position() for w in wdt]
 
     menu.clear()
-    widgets.clear()
+    wdt.clear()
     menu.disable_render()
     t0 = time.time()
     for i in range(n):
-        widgets.append(menu.add.label(i))
+        wdt.append(menu.add.label(i))
     menu.enable_render()
     menu.render()
     t_off = time.time() - t0
@@ -2375,10 +2450,11 @@ def test_menu_render_toggle():
     assert t_on > t_off
 
     for i in range(n):
-        assert position_before[i] == widgets[i].get_position()
+        assert position_before[i] == wdt[i].get_position()
 
 
 def test_menu_widget_selected_events():
+    """Test event forwarding to selected widget."""
     menu = MenuUtils.generic_menu()
     age = menu.add.text_input("Character age:")
     name = menu.add.text_input("Character name:")
@@ -2411,6 +2487,7 @@ def test_menu_widget_selected_events():
 
 
 def test_subsurface_offset():
+    """Test subsurface offset handling for draw and update."""
     main_surface = surface
     w, h = surface.get_size()
     left_surf_w = 300
@@ -2430,6 +2507,7 @@ def test_subsurface_offset():
     btn_click = [False]
 
     def btn():
+        """Mark subsurface button callback as executed."""
         btn_click[0] = True
 
     b1 = menu.add.button("Button", btn)
@@ -2464,8 +2542,11 @@ def test_subsurface_offset():
 
 
 def test_inheritance():
+    """Test Menu inheritance behavior."""
+
     class SubMenu(Menu):
         def __init__(self):
+            """Initialize inherited menu with one submenu button."""
             super().__init__(
                 title="Test",
                 width=150,
@@ -2483,6 +2564,7 @@ def test_inheritance():
 
 
 def test_selection():
+    """Test selection persistence between linked menus."""
     menu = MenuUtils.generic_menu()
     sub = MenuUtils.generic_menu()
     sub2 = MenuUtils.generic_menu()

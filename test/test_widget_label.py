@@ -78,9 +78,8 @@ def test_label_splitting(menu, text, max_char, expected):
     kwargs = {}
     if max_char is not None:
         kwargs["max_char"] = max_char
-
     label = menu.add.label(text, **kwargs)
-    assert [l.get_title() for l in label] == expected
+    assert [i.get_title() for i in label] == expected
 
 
 def test_label_properties(menu):

@@ -20,9 +20,7 @@ def disable_gc():
 
 @pytest.fixture(autouse=True)
 def pygame_surface():
-    """
-    Automatically reset the pygame surface before and after each test.
-    """
+    """Automatically reset the pygame surface before and after each test."""
     test_reset_surface()
     yield
     test_reset_surface()

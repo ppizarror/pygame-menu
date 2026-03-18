@@ -1890,8 +1890,7 @@ class Widget(Base):
         assert isinstance(aa_amount, int) and aa_amount > 0
         color = assert_color(color)
         self._shadow["enabled"] = shadow_width > 0
-        # noinspection PyTypeChecker
-        self._shadow["properties"] = (
+        self._shadow["properties"] = (  # type: ignore
             shadow_type,
             shadow_width,
             shadow_width + corner_radius,

@@ -231,7 +231,6 @@ class PygameEventUtils:
         :param testmode: Event is in test mode
         :return: Event
         """
-        # noinspection PyArgumentList
         pygame.key.set_mods(pygame.KMOD_CTRL)
         event_obj = pygame.event.Event(pygame.KEYDOWN, {"key": key, "test": testmode})
         if inlist:
@@ -243,7 +242,6 @@ class PygameEventUtils:
         """
         Release pygame key mods.
         """
-        # noinspection PyArgumentList
         pygame.key.set_mods(pygame.KMOD_NONE)
 
     @staticmethod
@@ -258,7 +256,6 @@ class PygameEventUtils:
         :param testmode: Event is in test mode
         :return: Event
         """
-        # noinspection PyArgumentList
         pygame.key.set_mods(pygame.KMOD_ALT)
         event_obj = pygame.event.Event(pygame.KEYDOWN, {"key": key, "test": testmode})
         if inlist:

@@ -147,7 +147,7 @@ def test_toggleswitch_position_and_translate(menu):
 @pytest.mark.parametrize("bad_value", ["false"])
 def test_toggleswitch_invalid_constructor(menu, bad_value):
     with pytest.raises(ValueError):
-        menu.add.toggle_switch("toggle", bad_value)
+        menu.add.toggle_switch("toggle", bad_value)  # type: ignore
 
 
 @pytest.mark.parametrize(

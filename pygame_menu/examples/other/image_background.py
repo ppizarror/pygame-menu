@@ -43,7 +43,6 @@ def main(test: bool = False) -> None:
     :param test: Indicate function is being tested
     """
     global main_menu
-    global sound
     global surface
 
     # Create window

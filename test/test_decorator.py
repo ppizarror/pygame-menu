@@ -23,6 +23,7 @@ TEST_TIME_DRAW = False
 
 @pytest.mark.skipif(not TEST_TIME_DRAW, reason="Timing test disabled")
 def test_time_draw():
+    """This test the time that takes to draw the decorator surface with several decorations."""
     widg = NoneWidget()
     deco = widg.get_decorator()
     deco.cache = True
@@ -40,6 +41,7 @@ def test_time_draw():
 
 
 def test_cache():
+    """Test cache."""
     widg = NoneWidget()
     deco = widg.get_decorator()
     deco.cache = True
@@ -90,6 +92,7 @@ def test_cache():
 
 
 def test_copy():
+    """Test decorator copy."""
     widg = NoneWidget()
     deco = widg.get_decorator()
 
@@ -100,6 +103,7 @@ def test_copy():
 
 
 def test_add_remove():
+    """Test add remove."""
     widg = NoneWidget()
     deco = widg.get_decorator()
 
@@ -127,6 +131,7 @@ def test_add_remove():
 
 
 def test_enable_disable():
+    """Test enable disable decoration."""
     menu = MenuUtils.generic_menu()
     btn = menu.add.button("Button")
     deco = btn.get_decorator()
@@ -168,6 +173,7 @@ def test_enable_disable():
 
 
 def test_general():
+    """Test all decorators."""
     theme = TEST_THEME.copy()
     theme.widget_selection_effect = None
 
@@ -260,7 +266,7 @@ def test_general():
 
     test = [False]
 
-    def fun(surf, obj):
+    def fun(_, __):
         test[0] = True
 
     deco.add_callable(fun)

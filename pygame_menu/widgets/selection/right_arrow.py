@@ -55,7 +55,6 @@ class RightArrowSelection(ArrowSelection):
 
         self._arrow_left_margin = arrow_left_margin
 
-    # noinspection PyMissingOrEmptyDocstring
     def draw(
         self, surface: pygame.Surface, widget: pygame_menu.widgets.Widget
     ) -> RightArrowSelection:

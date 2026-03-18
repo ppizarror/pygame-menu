@@ -28,6 +28,7 @@ from test._utils import MenuUtils, PygameEventUtils
 
 
 def test_example_game_selector():
+    """Test game selector example."""
     game_selector.main(test=True)
     font = MenuUtils.load_font(MenuUtils.random_font(), 5)
 
@@ -46,6 +47,7 @@ def test_example_game_selector():
 
 
 def test_example_multi_input():
+    """Test multi-input example."""
     multi_input.main(test=True)
     multi_input.check_name_test("name")
     multi_input.update_menu_sound(("sound", None), True)
@@ -68,15 +70,16 @@ def test_example_multi_input():
 
 
 def test_example_scroll_menu():
+    """Test scroll menu example."""
     scroll_menu.main(test=True)
     scroll_menu.on_button_click("pygame-menu", "epic")
     scroll_menu.on_button_click("pygame-menu")
 
 
 def test_example_simple():
+    """Test example simple."""
     sel = simple.menu.get_widgets()[1]
     sel.change(sel.get_value())
-
     btn = simple.menu.get_widgets()[2]
     btn.apply()
 
@@ -237,6 +240,7 @@ def test_example_other_scrollbar_area():
 
 
 def test_example_other_ui_solar_system():
+    """Test solar system."""
     app = ui_solarsystem.main(test=True)
 
     assert not app.menu._disable_draw
@@ -253,8 +257,8 @@ def test_example_other_ui_solar_system():
 
 
 def test_example_other_widget_positioning():
+    """Test widget positioning."""
     widget_positioning.menu.render()
-
     assert widget_positioning.f.is_floating()
     assert widget_positioning.b1.is_floating()
     assert widget_positioning.b2.is_floating()

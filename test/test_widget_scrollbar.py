@@ -364,14 +364,14 @@ def test_invalid_color_setters(default_scrollbar, setter):
 
 def test_invalid_slider_rect_call(default_scrollbar):
     with pytest.raises(AttributeError):
-        default_scrollbar.get_slider_rect().invalid_method()
+        default_scrollbar.get_slider_rect().invalid_method()  # type: ignore
 
 
 def test_update_invalid_event(default_scrollbar):
     with pytest.raises(AttributeError):
-        default_scrollbar.update("invalid_event")
+        default_scrollbar.update("invalid_event")  # type: ignore
 
 
 def test_draw_invalid_surface(default_scrollbar):
     with pytest.raises(AttributeError):
-        default_scrollbar.draw("invalid_surface")
+        default_scrollbar.draw("invalid_surface")  # type: ignore

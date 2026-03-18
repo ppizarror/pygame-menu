@@ -560,6 +560,7 @@ def test_dropselect_open_middle_and_last_surface(generic_menu, drop_items):
     if PYGAME_V2:
         x2, y2 = drop._drop_frame.get_position()
         # Position should change when switching to open_middle
+        # noinspection PyUnboundLocalVariable
         assert (x1, y1) != (x2, y2)
         assert 0 <= x2 <= surface.get_width()
         assert 0 <= y2 <= surface.get_height()
@@ -628,12 +629,12 @@ def test_dropselect_multiple_format_errors(generic_menu, drop_items):
     drop.set_value(0, process_index=True)
 
     # Invalid type
-    drop._selection_placeholder_format = 1
+    drop._selection_placeholder_format = 1  # type: ignore
     with pytest.raises(ValueError):
         drop._get_current_selected_text()
 
     # Wrong signature
-    drop._selection_placeholder_format = lambda: "none"
+    drop._selection_placeholder_format = lambda: "none"  # type: ignore
     with pytest.raises(ValueError):
         drop._get_current_selected_text()
 

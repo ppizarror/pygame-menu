@@ -151,7 +151,7 @@ def test_textinput_invalid_cursor_sizes(invalid_size):
     """
     menu = MenuUtils.generic_menu()
     with pytest.raises(AssertionError):
-        menu.add.text_input("title", cursor_size=invalid_size)
+        menu.add.text_input("title", cursor_size=invalid_size)  # type: ignore
 
 
 def test_textinput_transformation_exceptions():
@@ -195,7 +195,7 @@ def test_colorinput_rgb_basics():
     with pytest.raises(AssertionError):
         widget.set_value("0,0,0")  # Must be tuple
     with pytest.raises(AssertionError):
-        widget.set_value((255, 0))  # Missing channel
+        widget.set_value((255, 0))  # type: ignore
     with pytest.raises(AssertionError):
         widget.set_value((255, 255, -255))  # Out of range
 
@@ -263,7 +263,7 @@ def test_widget_value_tracking():
     # Track changes via a list (mocking a nonlocal reference)
     callback_data = {"val": None}
 
-    def on_change(m, w):
+    def on_change(_, w):
         callback_data["val"] = w.get_value()
 
     menu.set_onwidgetchange(on_change)
@@ -454,7 +454,7 @@ def test_colorinput_copy_paste_exceptions():
     menu = MenuUtils.generic_menu()
     widget = menu.add.color_input("title", color_type="rgb")
 
-    def invalid_clipboard(*args):
+    def invalid_clipboard(*_):
         raise tinput.PyperclipException("test")
 
     original_copy = tinput.clipboard_copy

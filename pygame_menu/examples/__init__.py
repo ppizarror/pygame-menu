@@ -17,7 +17,6 @@ import pygame
 _PYGAME_ICON = [None]
 
 
-# noinspection PyTypeChecker
 def create_example_window(
     title: str,
     window_size: tuple[int, int],
@@ -65,11 +64,11 @@ def create_example_window(
         # noinspection PyBroadException
         try:
             if _PYGAME_ICON[0] is not None:
-                pygame.display.set_icon(_PYGAME_ICON[0])
+                pygame.display.set_icon(_PYGAME_ICON[0])  # type: ignore
             else:
                 icon = BaseImage(IMAGE_EXAMPLE_PYGAME_MENU).get_surface(new=False)
                 pygame.display.set_icon(icon)
-                _PYGAME_ICON[0] = icon
+                _PYGAME_ICON[0] = icon  # type: ignore
         except BaseException:
             pass
 

@@ -41,7 +41,7 @@ RED = (255, 0, 0)
 WHITE = (255, 255, 255)
 
 
-# noinspection PyMissingTypeHints,PyMissingOrEmptyDocstring
+# noinspection PyMissingOrEmptyDocstring
 class AStarQueue:
     """
     A* Queue.
@@ -61,7 +61,7 @@ class AStarQueue:
         return priority, distance, node
 
 
-# noinspection PyMissingTypeHints,PyMissingOrEmptyDocstring
+# noinspection PyMissingOrEmptyDocstring
 class PriorityQueue:
     """
     Priority Queue.
@@ -81,7 +81,7 @@ class PriorityQueue:
         return priority, node
 
 
-# noinspection PyMissingTypeHints,PyMissingOrEmptyDocstring
+# noinspection PyMissingOrEmptyDocstring
 class PrioritySet:
     """
     Create a priority queue that doesn't add duplicate nodes.
@@ -309,8 +309,7 @@ class MazeApp:
         """
 
         # Creates the events
-        # noinspection PyUnusedLocal
-        def onchange_dropselect(*args) -> None:
+        def onchange_dropselect(*_) -> None:
             """
             Called if the select is changed.
             """
@@ -1407,10 +1406,10 @@ class MazeApp:
                     if parent is None:
                         break
                     path_node = parent
-                    mazearray[path_node[0]][path_node[1]].update(is_path=True)
-                    self._draw_square(mazearray, path_node[0], path_node[1])
+                    mazearray[path_node[0]][path_node[1]].update(is_path=True)  # type: ignore
+                    self._draw_square(mazearray, path_node[0], path_node[1])  # type: ignore
                     if self._visualize:
-                        self._update_square(path_node[0], path_node[1])
+                        self._update_square(path_node[0], path_node[1])  # type: ignore
                     if path_node == start_point:
                         return True
 

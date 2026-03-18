@@ -23,6 +23,7 @@ from pygame_menu.locals import (
 )
 from pygame_menu.utils import get_cursor
 from pygame_menu.widgets.core.widget import WidgetTransformationNotImplemented
+# noinspection PyProtectedMember
 from pygame_menu.widgets.widget.frame import (
     _FrameDoNotAcceptScrollarea,
     _FrameSizeException,
@@ -225,7 +226,7 @@ def test_mouseover_events_and_cursor(menu):
     events = {"f1": False, "f2": False, "b1": False}
 
     def toggle(k):
-        def cb(w, _):
+        def cb(_, __):
             events[k] = not events[k]
 
         return cb

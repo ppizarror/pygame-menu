@@ -246,7 +246,7 @@ def test_widget_always_ignores_nonphysical(menu):
 @pytest.mark.parametrize("value", [(1, 1), (-1, -1), (1, -1), (-1, 1)])
 def test_joystick_diagonals_do_not_trigger(value):
     """Test diagonal hat directions do not trigger movement."""
-    event = PygameEventUtils.joy_hat_motion(value, inlist=False)
+    event = PygameEventUtils.joy_hat_motion(value, inlist=False)  # type: ignore
     assert ctrl.Controller.joy_up(event, None) is False
     assert ctrl.Controller.joy_down(event, None) is False
     assert ctrl.Controller.joy_left(event, None) is False
