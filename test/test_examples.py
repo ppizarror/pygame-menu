@@ -53,9 +53,11 @@ def test_example_multi_input():
     multi_input.update_menu_sound(("sound", None), True)
     multi_input.update_menu_sound(("sound", None), False)
 
+    # Test methods within submenus
     settings = multi_input.main_menu.get_submenus()[0]
     settings.get_widget("store").apply()
 
+    # Check range slider has event
     rslider = settings.get_widget("range_slider")
     assert rslider._onchange is not None
     assert rslider.get_value() == 50
@@ -238,7 +240,6 @@ def test_example_other_scrollbar():
     """Test scrollbar example."""
     pygame.event.post(PygameEventUtils.keydown(pygame.K_v, inlist=False))
     pygame.event.post(PygameEventUtils.keydown(pygame.K_h, inlist=False))
-
     scrollbar.main(test=True)
     scrollbar.h_changed(1)
     scrollbar.v_changed(1)

@@ -126,7 +126,6 @@ def test_copy():
 def test_size_constructor():
     """Test menu size constructor validation."""
     inf_size = 1000000000
-
     with pytest.raises(AssertionError):
         MenuUtils.generic_menu(width=0, height=300)
     with pytest.raises(AssertionError):
@@ -143,8 +142,8 @@ def test_size_constructor():
 
 def test_position():
     """Test menu and widget positioning."""
+    # Test centering
     theme_src = TEST_THEME.copy()
-
     menu = MenuUtils.generic_menu(theme=theme_src)
     btn = menu.add.button("button")
     menu.center_content()
@@ -330,6 +329,7 @@ def test_float_position():
     z = menu.add.label("nice", float=True)
     assert a.get_position() == z.get_position()
 
+    # Now add a frame
     f = menu.add.frame_v(1000, 1000)
     f.set_float()
     assert a.get_position()[1] == f.get_position()[1]
@@ -369,7 +369,6 @@ def test_translate():
     assert menu.get_translate() == (0, 0)
 
     menu.translate(0, 100)
-
     assert menu.get_position() == (100, 200)
     assert menu.get_scrollarea().get_position() == (100, 255)
     assert menu.get_menubar().get_position() == (100, 200)
@@ -416,6 +415,7 @@ def test_close():
         test[1] = True
         assert m == menu2
 
+    # Change onclose
     menu2.set_onclose(closefun_menu)
     menu2.enable()
     menu2.close()
@@ -504,7 +504,7 @@ def test_enabled():
     menu.enable()
     assert menu.is_enabled()
     assert menu.is_enabled()
-
+    # Initialize and close
     menu.mainloop(surface, bgfun=lambda: None, disable_loop=True)
     menu._close()
 
@@ -514,6 +514,7 @@ def test_depth():
     menu = MenuUtils.generic_menu(title="mainmenu")
     assert menu._get_depth() == 0
 
+    # Adds some menus
     menu_prev = menu
     menu_ = None
     for i in range(1, 11):
@@ -530,14 +531,12 @@ def test_depth():
     assert menu_._get_depth() == 10
     assert menu._get_depth() == 10
 
-    # menu when it was opened it changed to submenu 1, when submenu 1 was opened
-    # it changed to submenu 2, and so on...
+    # Menu when it was opened it changed to submenu 1, when submenu 1 was opened it changed to submenu 2, and so on...
     assert menu.get_title() == "mainmenu"
     assert menu.get_current().get_title() == "submenu 10"
     assert menu_.get_current().get_title() == "submenu 10"
 
-    # Submenu 10 has not changed to any, so back will not affect it,
-    # but mainmenu will reset 1 unit
+    # Submenu 10 has not changed to any, so back will not affect it, but mainmenu will reset 1 unit
     menu_._back()
     assert menu_.get_title() == "submenu 10"
 
@@ -1172,11 +1171,10 @@ def test_columns_menu():
     for col_w in menu._column_widths:
         assert col_w == width / 2
 
-    # Add new button
+    # Add new button. Layout:
+    #     # btn3 | btn5 | btn7
+    #     # btn4 | btn6 |
     btn7 = menu.add.button("btn")
-    # Layout:
-    # btn3 | btn5 | btn7
-    # btn4 | btn6 |
 
     # Select second button
     with pytest.raises(ValueError):
@@ -1355,6 +1353,7 @@ def test_touchscreen():
     with pytest.raises(RuntimeError):
         menu.mainloop(surface, bgfun=dummy_function)
 
+    # Add a menu and a method that set a function
     event_val = [False]
 
     def _some_event():
@@ -1362,12 +1361,14 @@ def test_touchscreen():
         event_val[0] = True
         return "the value"
 
+    # Add some widgets
     button = menu.add.button("button", _some_event)
 
     if hasattr(pygame, "FINGERUP"):
         click_pos = button.get_rect(to_real_position=True).center
         menu.enable()
 
+        # Event must be normalized
         menu.update(
             PygameEventUtils.touch_click(click_pos[0], click_pos[1], normalize=False)
         )
@@ -1455,6 +1456,7 @@ def test_mainloop_kwargs():
     assert test[0]
     assert test[1]
 
+    # Test wait for events
     test = [False, 0]
 
     def bgfun():
@@ -1468,6 +1470,7 @@ def test_mainloop_kwargs():
     menu.enable()
     menu.mainloop(surface, bgfun, wait_for_event=True)
 
+    # Test mainloop for a number of frames
     test = [0]
     menu = MenuUtils.generic_menu()
 
@@ -1554,6 +1557,7 @@ def test_beforeopen():
         """Select a specific widget before opening submenu."""
         _to.select_widget("option2")
 
+    # Test select widget
     menu = MenuUtils.generic_menu()
     submenu = MenuUtils.generic_menu()
     submenu.add.button("Option 1", button_id="option1")
@@ -2286,6 +2290,7 @@ def test_mouseover_widget():
 
 def test_floating_pos():
     """Test floating widget layout behavior."""
+    # First, add a widget and test the positioning
     menu = MenuUtils.generic_menu(theme=THEME_NON_FIXED_TITLE)
     btn = menu.add.button("floating")
     assert btn.get_alignment() == ALIGN_CENTER
@@ -2298,6 +2303,7 @@ def test_floating_pos():
     btn.set_float(menu_render=True)
     assert btn.get_position() == expc_pos
 
+    # Auto set pos width if zero
     menu = MenuUtils.generic_menu(columns=3, rows=[2, 2, 2])
     assert len(menu._column_widths) == 0
     for _ in range(6):
@@ -2310,6 +2316,7 @@ def test_floating_pos():
     assert len(menu._column_widths) == 0
     for _ in range(6):
         menu.add.none_widget()
+    # This should be proportional
     assert menu._column_widths == [360.0, 120.0, 120.0]
 
     menu = MenuUtils.generic_menu(
@@ -2318,6 +2325,7 @@ def test_floating_pos():
     assert len(menu._column_widths) == 0
     for _ in range(6):
         menu.add.none_widget()
+    # This should be proportional
     assert menu._column_widths == [600, 600, 600]
 
     menu = MenuUtils.generic_menu(
@@ -2326,6 +2334,7 @@ def test_floating_pos():
     assert len(menu._column_widths) == 0
     for _ in range(6):
         menu.add.none_widget()
+    # This should be proportional
     assert menu._column_widths == [100, 250, 250]
 
 
@@ -2347,6 +2356,7 @@ def test_baseimage_selector():
     y = 400
 
     class Sample:
+        """Sample example class which contains a selector that changes an image."""
         icons: list[BaseImage]
         icon: widgets.Image
         selector: widgets.Selector
@@ -2525,6 +2535,7 @@ def test_get_size():
     menu = MenuUtils.generic_menu(theme=theme)
     assert menu.get_size() == (600, 400)
 
+    # Create new menu with image border
     for scale in [(1, 1), (2, 5), (5, 2)]:
         theme.border_color = BaseImage(baseimage.IMAGE_EXAMPLE_TILED_BORDER)
         theme.border_color.scale(*scale)
@@ -2536,16 +2547,19 @@ def test_get_size():
             400 + 2 * border_size[1] / 3,
         )
 
+    # Create new menu with border color
     theme.border_width = 10
     theme.border_color = "red"
     menu = MenuUtils.generic_menu(theme=theme)
     assert menu.get_size(border=True) == (600 + 20, 400 + 20)
 
+    # Menu with none border color
     theme.border_width = 10
     theme.border_color = None
     menu = MenuUtils.generic_menu(theme=theme)
     assert menu.get_size(border=True) == (600, 400)
 
+    # Menu with selection effect
     theme = THEME_BLUE.copy()
     theme.title = False
     theme.scrollarea_position = SCROLLAREA_POSITION_NONE
@@ -2566,14 +2580,17 @@ def test_border_color():
     theme.border_width = 10
     theme.title_font_size = 15
 
+    # Test invalid
     theme.border_color = "invalid"
     with pytest.raises(ValueError):
         Menu("Menu with border color", 250, 250, theme=theme)
 
+    # Test with border color
     theme.border_color = "red"
     menu = Menu("Menu with border color", 250, 250, theme=theme)
     menu.draw(surface)
 
+    # Test with image
     theme.border_color = BaseImage(baseimage.IMAGE_EXAMPLE_TILED_BORDER)
     menu = Menu("Menu with border image", 250, 250, theme=theme)
     menu.draw(surface)
@@ -2771,6 +2788,5 @@ def test_selection():
     menu.get_current()._remember_selection = True
     btn3.apply()
     assert menu.get_current() == sub2
-
     sub.clear(reset=False)
     assert menu.get_current() == sub2

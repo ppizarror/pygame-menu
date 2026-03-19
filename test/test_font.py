@@ -193,7 +193,11 @@ def test_font_argument_direct_instance_in_menu():
     """Test menu widget accepts direct pygame.Font instance."""
     menu = MenuUtils.generic_menu()
     f0 = pygame.font.SysFont(pygame.font.get_fonts()[0], 20)
+
+    # Widget with custom font
     text = menu.add.text_input("First name: ", default="John", font_name=f0)
     assert text.get_font_info()["name"] is f0
+
+    # Test widgets with default font, check are equal
     text2 = menu.add.text_input("First name: ", default="John")
     assert text2.get_font_info()["name"] == menu.get_theme().widget_font

@@ -12,6 +12,7 @@ from test._utils import test_reset_surface
 
 @pytest.fixture(autouse=True)
 def disable_gc():
+    """Disable garbage collection."""
     gc.disable()
     yield
     gc.enable()

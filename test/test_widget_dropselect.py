@@ -892,3 +892,275 @@ def test_dropselect_touch_interaction_full():
             touch_sel[0], touch_sel[1], menu=menu, evtype=FINGERDOWN
         )
     )
+
+
+def test_frame_support():
+    """
+    Test drop selects within frames.
+    """
+    menu = MenuUtils.generic_menu()
+
+    menu.add.dropselect("Subject Id", items=[("a", "a"), ("b", "b"), ("c", "c")], dropselect_id="s0")
+    frame_s = menu.add.frame_h(600, 58)
+    frame_s.pack(
+        menu.add.dropselect("Subject Id", items=[("a", "a"), ("b", "b"), ("c", "c")], dropselect_id="s1",
+                            open_middle=True)
+    )
+    frame_s.pack(menu.add.button("One", lambda: print("1")))
+    frame_t = menu.add.frame_h(600, 58)
+    frame_t.pack(
+        menu.add.dropselect("Subject Id", items=[("a", "a"), ("b", "b"), ("c", "c")], dropselect_id="s2")
+    )
+    frame_t.pack(menu.add.button("Two", lambda: print("2")))
+    menu.add.dropselect("Subject Id", items=[("a", "a"), ("b", "b"), ("c", "c")], dropselect_id="s3")
+    menu.add.dropselect("Subject Id", items=[("a", "a"), ("b", "b"), ("c", "c")], dropselect_id="s4",
+                        open_middle=True)
+
+    # Test draw surfaces
+    menu.draw(surface)
+    s0 = menu.get_widget("s0")
+    s1 = menu.get_widget("s1")
+    surf = menu._widgets_surface
+    assert s0.is_selected()
+    assert s0.last_surface == surf
+    s0.active = True
+    menu.render()
+    menu.draw(surface)
+    assert s0.last_surface == surf
+    s0._selection_effect_draw_post = True
+    menu.render()
+    menu.draw(surface)
+    s0.draw_after_if_selected(surface)
+
+    s1.select(update_menu=True)
+    s1.active = True
+    menu.draw(surface)
+    assert s1.last_surface == surf
+
+
+def test_dropselect_multiple():
+    """Test dropselect multiple widget."""
+    theme = pygame_menu.themes.THEME_DEFAULT.copy()
+    theme.widget_font_size = 25
+    menu = MenuUtils.generic_menu(mouse_motion_selection=True, theme=theme)
+    items = [("This is a really long selection item", 1), ("epic", 2)]
+    for i in range(10):
+        items.append((f"item{i + 1}", i + 1))
+    drop = pygame_menu.widgets.DropSelectMultiple(
+        "dropsel", items, open_middle=True, selection_box_height=5
+    )
+    assert id(items) != id(drop._items)
+    menu.add.generic_widget(drop, configure_defaults=True)
+    assert drop._selection_box_width == 225
+
+    # Check drop is empty
+    assert drop.get_value() == ([], [])
+    assert drop.get_index() == []
+    assert drop._get_current_selected_text() == "Select an option"
+
+    # Check events
+    assert not drop.active
+    drop.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
+    assert drop.active
+    assert drop._index == -1
+    drop.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))  # Index is -1
+    assert not drop.active
+    drop.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
+    assert drop.active
+    drop.update(PygameEventUtils.key(ctrl.KEY_MOVE_UP, keydown=True))
+    assert drop._index == 0
+    drop.update(PygameEventUtils.key(ctrl.KEY_MOVE_UP, keydown=True))
+    assert drop._index == 1
+
+    # Apply on current
+    drop.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
+    assert drop.get_value() == ([("epic", 2)], [1])
+    assert drop.get_index() == [1]
+    assert drop._get_current_selected_text() == "1 selected"
+    drop.update(PygameEventUtils.key(ctrl.KEY_MOVE_UP, keydown=True))
+    drop.update(PygameEventUtils.key(ctrl.KEY_MOVE_UP, keydown=True))
+    drop.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
+    assert drop.get_value() == ([("epic", 2), ("item2", 2)], [1, 3])
+    assert drop._get_current_selected_text() == "2 selected"
+
+    # Change selection type
+    drop._selection_placeholder_format = DROPSELECT_MULTIPLE_SFORMAT_LIST_COMMA
+    assert drop._get_current_selected_text() == "epic,item2 selected"
+    drop._selection_placeholder_format = DROPSELECT_MULTIPLE_SFORMAT_LIST_HYPHEN
+    assert drop._get_current_selected_text() == "epic-item2 selected"
+    drop._selection_placeholder_format = "+"
+    assert drop._get_current_selected_text() == "epic+item2 selected"
+
+    def format_string_list(items_list) -> str:
+        """Receives the items list string and returns a function."""
+        if len(items_list) == 1:
+            return items_list[0]
+        elif len(items_list) == 2:
+            return items_list[0] + " and " + items_list[1]
+        return "overflow"
+
+    drop._selection_placeholder_format = format_string_list
+    assert drop._get_current_selected_text() == "epic and item2 selected"
+
+    # Invalid format
+    drop._selection_placeholder_format = 1  # type: ignore
+    with pytest.raises(ValueError):
+        drop._get_current_selected_text()
+    drop._selection_placeholder_format = lambda: print("nice")  # type: ignore
+    with pytest.raises(ValueError):
+        drop._get_current_selected_text()
+    drop._selection_placeholder_format = lambda x: 1  # type: ignore
+    with pytest.raises(AssertionError):
+        drop._get_current_selected_text()
+
+    # Back to default
+    drop._selection_placeholder_format = DROPSELECT_MULTIPLE_SFORMAT_TOTAL
+
+    # Click item 2, this should unselect
+    assert drop.active
+    drop.update(PygameEventUtils.middle_rect_click(drop._option_buttons[3]))
+    assert drop.get_value() == ([("epic", 2)], [1])
+    assert drop._get_current_selected_text() == "1 selected"
+    drop.update(PygameEventUtils.key(ctrl.KEY_MOVE_UP, keydown=True))
+    assert drop._index == 4
+    drop.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
+    assert drop.get_value() == ([("epic", 2), ("item3", 3)], [1, 4])
+    assert drop._get_current_selected_text() == "2 selected"
+
+    # Close
+    drop.update(PygameEventUtils.key(pygame.K_ESCAPE, keydown=True))
+    assert not drop.active
+    assert drop.get_value() == ([("epic", 2), ("item3", 3)], [1, 4])
+    assert drop._get_current_selected_text() == "2 selected"
+
+    # Set max limit
+    drop._max_selected = 3
+    assert drop.get_total_selected() == 2
+    drop.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
+    drop.update(PygameEventUtils.key(ctrl.KEY_MOVE_UP, keydown=True))
+    drop.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
+    assert drop.get_total_selected() == 3
+    assert drop.active
+    drop.update(PygameEventUtils.key(ctrl.KEY_MOVE_UP, keydown=True))
+    drop.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
+    assert drop.get_total_selected() == 3  # Limit reached
+    assert drop.get_value() == ([("epic", 2), ("item3", 3), ("item4", 4)], [1, 4, 5])
+    drop.update(PygameEventUtils.key(ctrl.KEY_MOVE_DOWN, keydown=True))
+    drop.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))  # Unselect previous
+    assert drop.get_total_selected() == 2  # Limit reached
+    assert drop.get_value() == ([("epic", 2), ("item3", 3)], [1, 4])
+
+    # Update elements
+    drop.update_items([("This is a really long selection item", 1), ("epic", 2)])
+    assert drop.get_value() == ([], [])
+    assert drop._get_current_selected_text() == "Select an option"
+    drop.set_value(1, process_index=True)
+    assert drop.get_value() == ([("epic", 2)], [1])
+    drop.set_value("This is a really long selection item", process_index=True)
+    assert drop.get_value() == (
+        [("This is a really long selection item", 1), ("epic", 2)],
+        [0, 1],
+    )
+    assert drop._get_current_selected_text() == "2 selected"
+    drop.set_default_value(1)
+    assert drop.get_value() == ([("epic", 2)], [1])
+    assert drop._get_current_selected_text() == "1 selected"
+
+    # Use manager
+    drop2 = menu.add.dropselect_multiple(
+        "nice",
+        [("This is a really long selection item", 1), ("epic", 2)],
+        placeholder_selected="nice {0}",
+        placeholder="epic",
+        max_selected=1,
+    )
+    assert drop2._selection_box_width == 134
+    assert drop2._get_current_selected_text() == "epic"
+    drop2.set_value("epic", process_index=True)
+    assert drop2.get_index() == [1]
+    assert drop2._get_current_selected_text() == "nice 1"
+    drop2.set_value(0, process_index=True)
+    assert drop2.get_index() == [1]
+    assert drop2._get_current_selected_text() == "nice 1"
+    assert drop2._default_value == []
+    assert drop2._index == 0
+    with pytest.raises(ValueError):
+        drop2.set_value("not epic")
+
+    # Reset
+    drop2.reset_value()
+    assert drop2._get_current_selected_text() == "epic"
+    assert drop2._default_value == []
+    assert drop2._index == -1
+    assert drop2.get_index() == []
+    assert id(drop2._default_value) != id(drop2._selected_indices)
+
+    menu.select_widget(drop2)
+    assert drop2.update(PygameEventUtils.key(pygame.K_TAB, keydown=True))
+
+    # Test hide
+    assert drop2._drop_frame.is_visible()
+    assert drop2.active
+    drop2.hide()  # Hiding selects the other widget
+    assert menu.get_selected_widget() == drop
+    assert not drop2._drop_frame.is_visible()
+    assert not drop2.active
+    drop2.show()
+    assert not drop2._drop_frame.is_visible()
+    assert not drop2.active
+    assert menu.get_selected_widget() == drop
+    menu.select_widget(drop2)
+    drop2._toggle_drop()
+    assert drop2.active
+    assert drop2._drop_frame.is_visible()
+
+    # Test change
+    test = [-1]
+
+    def onchange(value, *_, **__) -> None:
+        """Test onchange."""
+        test[0] = value[1]
+
+    drop2.set_onchange(onchange)
+
+    # Pick any option
+    menu.render()
+    assert test == [-1]
+    drop2._option_buttons[0].apply()
+    assert test[0] == [0]
+    drop2._option_buttons[0].apply()
+    assert test[0] == []
+    drop2._option_buttons[0].apply()
+    drop2._option_buttons[1].apply()
+    assert test[0] == [0]  # As max selected is only 1
+    drop2._max_selected = 2
+    drop2._option_buttons[1].apply()
+    assert test[0] == [0, 1]
+
+    # Test none drop frame
+    drop2._drop_frame = None
+    assert drop2.get_scroll_value_percentage("any") == -1
+
+    # Test format option from manager
+    menu._theme.widget_background_inflate_to_selection = True
+    menu._theme.widget_background_inflate = 0  # type: ignore
+    menu._theme.widget_margin = 0  # type: ignore
+    drop2 = menu.add.dropselect_multiple(
+        "nice",
+        [("This is a really long selection item", 1), ("epic", 2)],
+        placeholder_selected="nice {0}",
+        placeholder="epic",
+        max_selected=1,
+        selection_placeholder_format=lambda x: "not EPIC",
+    )
+    assert drop2._get_current_selected_text() == "epic"
+    drop2.set_value("epic", process_index=True)
+    assert drop2._get_current_selected_text() == "nice not EPIC"
+    assert drop2.get_margin() == (0, 0)
+    assert drop2._background_inflate == (0, 0)
+    assert drop2._border_inflate == (0, 0)
+    menu._theme.widget_background_inflate_to_selection = False
+
+    # Process index
+    drop2._index = -1
+    drop2._process_index()

@@ -252,7 +252,7 @@ class ScrollArea(Base):
         self._border_color = border_color
         self._border_width = border_width
         self._bg_surface = None
-        self._decorator = Decorator(self)
+        self._decorator = Decorator(self)  # type: ignore
         self._scrollbar_positions = tuple(unique_scrolls)  # Ensure unique
         self._translate = (0, 0)
         self._world = world

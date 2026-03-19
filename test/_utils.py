@@ -385,7 +385,6 @@ class PygameEventUtils:
             evtype, {"button": button, "pos": (x, y), "rel": rel, "test": testmode}
         )
         if update_mouse:
-            # print('set mouse position', (x, y))
             pygame.mouse.set_pos((x, y))
         if inlist:
             event_obj = [event_obj]

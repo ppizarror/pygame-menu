@@ -439,6 +439,7 @@ def test_draw_callback() -> None:
     menu = MenuUtils.generic_menu()
 
     def call(widget, _) -> None:
+        """Internal draw callback."""
         widget.set_attribute("attr", True)
 
     btn = menu.add.button("btn")
@@ -456,6 +457,7 @@ def test_update_callback() -> None:
     """Test update callback."""
 
     def update(event, widget, _) -> None:
+        """Internal update callback."""
         assert isinstance(event, list)
         widget.set_attribute("attr", True)
 
@@ -467,7 +469,7 @@ def test_update_callback() -> None:
     deco = menu.get_decorator()
 
     def draw_rect() -> None:
-        # Draw absolute rect on surface for testing purposes
+        """Draw absolute rect on surface for testing purposes."""
         surface.fill((0, 255, 0), btn.get_rect(to_real_position=True))
 
     deco.add_callable(draw_rect, prev=False, pass_args=False)
@@ -501,6 +503,7 @@ def test_update_callback() -> None:
     assert not btn.get_attribute("attr", False)
 
     def update2(event, widget, _) -> None:
+        """Internal update callback."""
         assert isinstance(event, list)
         widget.set_attribute("epic", "bass")
 

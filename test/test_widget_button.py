@@ -435,3 +435,36 @@ def test_controller_behavior(menu):
     assert btn.update(
         PygameEventUtils.joy_button(pygame_menu.controls.JOY_BUTTON_SELECT)
     )
+
+
+def test_add_url():
+    """Test add url."""
+    menu = MenuUtils.generic_menu()
+    with pytest.raises(AssertionError):
+        menu.add.url("invalid")
+    with pytest.raises(AssertionError):
+        menu.add.url("127.0.0.1")
+    btn = menu.add.url("https://127.0.0.1")
+    assert btn.get_title() == "https://127.0.0.1"
+    btn2 = menu.add.url("https://github.com/ppizarror/pygame-menu", "github")
+    assert btn2.get_title() == "github"
+
+
+def test_button_image():
+    """Test button with an image."""
+    menu = MenuUtils.generic_menu()
+    apply_test = [False]
+
+    def test() -> None:
+        print("clicked")
+        apply_test[0] = True
+
+    image = pygame_menu.BaseImage(
+        image_path=pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU
+    ).scale(0.25, 0.25)
+    btn = menu.add.banner(image, test)
+    assert abs(btn.get_size()[0] - image.get_size()[0]) <= 1
+    assert abs(btn.get_size()[1] - image.get_size()[1]) <= 1
+    assert not apply_test[0]
+    btn.apply()
+    assert apply_test[0]

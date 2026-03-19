@@ -186,6 +186,7 @@ def test_modes(mode):
 def test_modes_invalid():
     """Test invalid drawing mode."""
     with pytest.raises(AssertionError):
+        # Attempt to create an invalid drawing mode
         pygame_menu.BaseImage(
             pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES, drawing_mode=-1
         )
@@ -362,11 +363,8 @@ def test_transform():
 
     # Image channels
     image.pick_channels(("r", "g", "b"))
-
     assert image.get_at((10, 10)) == (56, 56, 56, 255)
-
     image.set_at((10, 10), (0, 0, 0))
-    # assert image.get_at((10, 10)) == (0, 0, 0, 255)
 
 
 @pytest.mark.parametrize(

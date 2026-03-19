@@ -31,8 +31,25 @@ def test_time_draw():
     for _ in range(10000):
         deco.add_pixel(1, 2, (0, 0, 0))
 
+    # (100) no cache, 0.214
+    # (100) with cache, 0.646
+    # (250) no cache, 0.467
+    # (250) with cache, 0.594
+    # (300) no cache, 0.581
+    # (300) with cache, 0.606
+    # (400) no cache, 0.82
+    # (400) with cache, 0.638
+    # (500) no cache, 1.087
+    # (500) with cache, 0.601
+    # (750) no cache, 1.484
+    # (750) with cache, 0.664
+    # (1.000) no cache, 2.228
+    # (1.000) with cache, 0.615
+    # (10.000) no cache, 20.430
+    # (10.000) with cache, 0.599
+    print("Total decorations", deco._total_decor(), "Cache", deco.cache)
     total_tests = 10
-    total = 0
+    total = 0  # Total time
     for i in range(total_tests):
         t = timeit.timeit(lambda: widg.draw(surface), number=1000)
         total += t
@@ -97,7 +114,6 @@ def test_copy():
     """Test decorator copy."""
     widg = NoneWidget()
     deco = widg.get_decorator()
-
     with pytest.raises(Exception):
         copy.copy(deco)
     with pytest.raises(Exception):
@@ -141,6 +157,7 @@ def test_enable_disable():
     test = [False]
 
     def fun(surf, obj):
+        """Test callable decoration."""
         test[0] = True
         assert isinstance(surf, pygame.Surface)
         assert isinstance(obj, Button)
@@ -277,6 +294,7 @@ def test_general():
     test = [False]
 
     def fun(_, __):
+        """Test callable decoration."""
         test[0] = True
 
     deco.add_callable(fun)
@@ -287,6 +305,7 @@ def test_general():
     test[0] = False
 
     def fun_noargs():
+        """No args function."""
         test[0] = True
 
     deco.add_callable(fun_noargs, pass_args=False)

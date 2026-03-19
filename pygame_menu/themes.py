@@ -709,24 +709,24 @@ class Theme:
         self.widget_url_color = self._format_color_opacity(self.widget_url_color)
 
         # List to tuple
-        self.scrollarea_outer_margin = self._vec_to_tuple(
+        self.scrollarea_outer_margin = self._vec_to_tuple(  # type: ignore
             self.scrollarea_outer_margin, 2, NumberInstance
         )
-        self.title_offset = self._vec_to_tuple(self.title_offset, 2, NumberInstance)
-        self.widget_background_inflate = self._vec_to_tuple(
+        self.title_offset = self._vec_to_tuple(self.title_offset, 2, NumberInstance)  # type: ignore
+        self.widget_background_inflate = self._vec_to_tuple(  # type: ignore
             self.widget_background_inflate, 2, int
         )
-        self.widget_border_inflate = self._vec_to_tuple(
+        self.widget_border_inflate = self._vec_to_tuple(  # type: ignore
             self.widget_border_inflate, 2, int
         )
-        self.widget_box_arrow_margin = self._vec_to_tuple(
+        self.widget_box_arrow_margin = self._vec_to_tuple(  # type: ignore
             self.widget_box_arrow_margin, 3, int
         )
-        self.widget_box_inflate = self._vec_to_tuple(self.widget_box_inflate, 2, int)
-        self.widget_box_margin = self._vec_to_tuple(
+        self.widget_box_inflate = self._vec_to_tuple(self.widget_box_inflate, 2, int)  # type: ignore
+        self.widget_box_margin = self._vec_to_tuple(  # type: ignore
             self.widget_box_margin, 2, NumberInstance
         )
-        self.widget_margin = self._vec_to_tuple(self.widget_margin, 2, NumberInstance)
+        self.widget_margin = self._vec_to_tuple(self.widget_margin, 2, NumberInstance)  # type: ignore
         if isinstance(self.widget_padding, VectorInstance):
             self.widget_padding = self._vec_to_tuple(self.widget_padding)
             assert 2 <= len(self.widget_padding) <= 4, (
@@ -739,7 +739,7 @@ class Theme:
                 assert p >= 0, "all padding elements must be equal or greater than zero"
         else:
             assert self.widget_padding >= 0, "padding cannot be a negative number"
-        self.widget_offset = self._vec_to_tuple(self.widget_offset, 2, NumberInstance)
+        self.widget_offset = self._vec_to_tuple(self.widget_offset, 2, NumberInstance)  # type: ignore
 
         # Check sizes
         assert self.border_width >= 0, "border width must be equal or greater than zero"

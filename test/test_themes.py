@@ -199,6 +199,7 @@ def test_get_misc(example_image):
     t = pygame_menu.themes.THEME_DEFAULT
 
     class Test:
+        """Class to test."""
         pass
 
     def dummy():

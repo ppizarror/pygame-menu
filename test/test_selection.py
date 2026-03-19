@@ -66,6 +66,7 @@ def test_arrow_selection(menu):
     w.set_selection_effect(RightArrowSelection())
     menu.draw(surface)
 
+    # Create abstract arrow selection
     arrow = ArrowSelection(0, 0, 0, 0)
     with pytest.raises(NotImplementedError):
         arrow.draw(surface, w)

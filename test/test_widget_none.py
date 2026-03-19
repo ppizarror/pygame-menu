@@ -222,14 +222,17 @@ def test_vfill():
     assert menu.get_height(widget=True) == bh
     assert menu.get_size(widget=True) == b.get_size()
 
+    # Now add 1 vfill, this should use all available height
     vf1 = menu.add.vertical_fill()
     assert vf1.get_width() == 0
     assert vf1.get_height() == menu.get_height(inner=True) - bh - 1
     assert menu.get_height(inner=True) - 1 == menu.get_height(widget=True)
 
+    # Add another vfill, now both vfills should have the same height
     vf2 = menu.add.vertical_fill()
     assert vf1.get_height() == vf2.get_height() + 1
 
+    # Test another menu, but with interlaced buttons and vfills
     menu = MenuUtils.generic_menu()
     b1 = menu.add.button(1)
     vf1 = menu.add.vertical_fill()
@@ -245,19 +248,20 @@ def test_vfill():
 
     prev_height = vf1.get_height()
 
+    # Now, if more buttons are added, the height of previous vills should be zero
     added = []
     for i in range(5, 10):
         added.append(menu.add.button(i))
-
     assert vf1.get_height() == 0
     assert vf2.get_height() == 0
     assert vf3.get_height() == 0
 
+    # Removing buttons should also update vfills
     for b in added:
         menu.remove_widget(b)
-
     assert vf1.get_height() == prev_height
 
+    # Hiding vfill should also update
     total = vf1.get_height() + vf2.get_height() + vf3.get_height()
     vf2.hide()
     total_after = vf1.get_height() + vf3.get_height()
@@ -268,6 +272,7 @@ def test_vfill():
     vf2.show()
     assert total == vf1.get_height() + vf2.get_height() + vf3.get_height()
 
+    # Hiding a button should also affect vfills
     vf1_prev = vf1.get_height()
     b1_height = math.ceil(b1.get_height() / 3)
 
@@ -277,31 +282,33 @@ def test_vfill():
     b1.show()
     assert vf1.get_height() == vf1_prev
 
+    # Test min height
     menu = MenuUtils.generic_menu()
     b = menu.add.button(1)
     v = menu.add.vertical_fill(10)
-
     assert v.get_height() == menu.get_height(inner=True) - b.get_height() - 1
-
     for i in range(20):
         menu.add.button(i)
-
     assert v.get_height() == 10
 
+    # Test widget alignment
     menu = MenuUtils.generic_menu(
         theme=pygame_menu.Theme(widget_alignment=pygame_menu.locals.ALIGN_LEFT)
     )
 
+    # Now add 1 vfill, this should use all available height
     vf1 = menu.add.vertical_fill()
     assert menu.get_size(widget=True) == (0, vf1.get_height())
     assert vf1.get_height() == menu.get_height(inner=True) - 1
 
+    # Add button, this should change widget size width
     b = menu.add.button("nice")
     assert menu.get_size(widget=True) == (
         b.get_width(),
         b.get_height() + vf1.get_height(),
     )
 
+    # Now add 1 vfill, this should use all available height
     vf2 = menu.add.vertical_fill()
     assert menu.get_size(widget=True) == (
         b.get_width(),
@@ -340,10 +347,12 @@ def test_menu_link():
     btn2 = menu.add.button("menu2", menu2)
     btn3 = menu.add.button("menu3", menu3)
 
+    # Hide the buttons
     btn1.hide()
     btn2.hide()
     btn3.hide()
 
+    # Now open menu with the button, this should open Menu1 by default
     assert menu.get_current() is menu
     btn1.apply()
     assert menu.get_current() is menu1
@@ -351,6 +360,7 @@ def test_menu_link():
     menu.full_reset()
     assert menu.get_current() is menu
 
+    # Add menu link
     link = menu.add.menu_link(menu2)
     link.open()
     assert menu.get_current() is menu2
@@ -364,9 +374,9 @@ def test_menu_link():
     link.show()
     assert not link.is_visible()
 
+    # Invalid objects
     with pytest.raises(ValueError):
         menu.add.menu_link(menu)
-
     with pytest.raises(ValueError):
         menu.add.menu_link(True)  # type: ignore
 
@@ -376,6 +386,7 @@ def test_menu_link():
         assert isinstance(_link, pygame_menu.widgets.MenuLink)
         _link.open()
 
+    # Add a selection object, which opens the links
     sel = menu.add.selector(
         "Change menu ",
         [

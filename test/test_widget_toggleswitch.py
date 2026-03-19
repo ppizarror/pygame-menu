@@ -25,6 +25,7 @@ def test_toggleswitch_basic(menu):
     value = [None]
 
     def onchange(v):
+        """Handle toggle events."""
         value[0] = v
 
     switch = menu.add.toggle_switch(

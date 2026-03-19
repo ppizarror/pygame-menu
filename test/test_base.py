@@ -117,7 +117,7 @@ def test_repr_class_id():
     """Class ID repr flag returns Class<id> format."""
     obj = Base("id2")
     obj._class_id__repr__ = True
-    assert repr(obj) == 'Base<"id2">'
+    assert repr(obj) == "Base<\"id2\">"
 
 
 def test_repr_conflict_raises():
@@ -165,4 +165,4 @@ def test_verbose_type_error():
 def test_class_id_format():
     """get_class_id returns Class<id> format."""
     obj = Base("id")
-    assert obj.get_class_id() == 'Base<"id">'
+    assert obj.get_class_id() == "Base<\"id\">"

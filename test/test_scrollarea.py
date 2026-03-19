@@ -233,16 +233,6 @@ def test_bg_image_support():
     assert isinstance(sa_custom._area_color, pygame_menu.BaseImage)
 
 
-@pytest.mark.skipif(not PYGAME_V2, reason="Requires Pygame V2")
-def test_widget_relative_to_view_rect(menu, sa):
-    """Test relative widget positions within the scrollable viewport."""
-    buttons = [menu.add.button(f"b{i}") for i in range(10)]
-    menu.render()
-    rx, ry = sa.get_widget_position_relative_to_view_rect(buttons[0])
-    assert isinstance(rx, float)
-    assert isinstance(ry, float)
-
-
 def test_show_hide_scrollbars_full(menu, sa):
     """Full visibility/force logic test for scrollbars."""
     menu.render()
@@ -471,3 +461,41 @@ def test_size_full(menu):
     sa_full.show_scrollbars(ORIENTATION_HORIZONTAL)
 
     assert sa_full.get_view_rect() == (20, 100, 560, 400)
+
+
+@pytest.mark.skipif(not PYGAME_V2, reason="Requires Pygame V2")
+def test_widget_relative_to_view_rect():
+    """
+    Test widget relative position to view rect.
+    """
+    menu = MenuUtils.generic_menu()
+    buttons = []
+    for i in range(20):
+        btn_title = f'b{i}'
+        buttons.append(menu.add.button(btn_title, button_id=btn_title))
+    sa = menu.get_scrollarea()
+
+    def test_relative(widget: 'pygame_menu.widgets.Widget', x: float, y: float) -> None:
+        """
+        Test relative position from widget to scroll view rect.
+
+        :param widget: Widget
+        :param x: X relative position
+        :param y: Y relative position
+        """
+        rx, ry = widget.get_scrollarea().get_widget_position_relative_to_view_rect(widget)
+        assert rx == pytest.approx(x)
+        assert ry == pytest.approx(y)
+
+    test_relative(buttons[0], 0.4689655172413793, 0.15)
+    test_relative(buttons[-1], 0.45517241379310347, 2.4775)
+
+    # Scroll to middle
+    sa.scroll_to(ORIENTATION_VERTICAL, 0.5)
+    test_relative(buttons[0], 0.4689655172413793, -0.645)
+    test_relative(buttons[-1], 0.45517241379310347, 1.6825)
+
+    # Scroll to bottom
+    sa.scroll_to(ORIENTATION_VERTICAL, 1)
+    test_relative(buttons[0], 0.4689655172413793, -1.4375)
+    test_relative(buttons[-1], 0.45517241379310347, 0.89)

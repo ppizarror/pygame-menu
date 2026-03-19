@@ -31,6 +31,7 @@ def toggle_button(menu):
     state = {"value": False}
 
     def toggle():
+        """Toggle state."""
         state["value"] = not state["value"]
 
     btn = menu.add.button("toggle", toggle)
@@ -150,6 +151,7 @@ def test_key_apply_affects_future_widgets(menu):
     state = {"value": False}
 
     def toggle():
+        """Toggle state."""
         state["value"] = not state["value"]
 
     btn = menu.add.button("x", toggle)
@@ -164,6 +166,7 @@ def test_custom_controller_apply(toggle_button):
     count = {"n": 0}
 
     def custom_apply(event, _):
+        """Custom apply method overrides default behavior."""
         count["n"] += 1
         return event.key == pygame.K_a
 
