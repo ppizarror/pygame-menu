@@ -188,15 +188,13 @@ def test_toggleswitch_single_click(menu):
 
     x, y = switch.get_rect(to_real_position=True, apply_padding=False).midleft
 
+    # Test single click toggle between two states
     switch.update(PygameEventUtils.mouse_click(x + 150, y))
     assert switch.get_value() is False
-
     switch.update(PygameEventUtils.mouse_click(x + 250, y))
     assert switch.get_value() is True
-
     switch.update(PygameEventUtils.mouse_click(x + 250, y))
     assert switch.get_value() is False
-
     switch._single_click_dir = False
     switch.update(PygameEventUtils.mouse_click(x + 250, y))
     assert switch.get_value() is True
@@ -227,11 +225,8 @@ def test_toggleswitch_empty_title(menu):
 def test_toggleswitch_update_font(menu):
     """Test update font."""
     switch = menu.add.toggle_switch("abc")
-
     assert switch.get_size() == (240, 49)
     assert switch._state_font.get_height() == 41
-
     switch.update_font(dict(size=100))
-
     assert switch._state_font.get_height() == 137
     assert switch.get_size() == (356, 145)

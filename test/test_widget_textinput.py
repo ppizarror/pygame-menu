@@ -620,7 +620,6 @@ def test_colorinput():
         widget.set_value("#FFFFF")
     with pytest.raises(AssertionError):
         widget.set_value("#F")
-    # noinspection SpellCheckingInspection
     with pytest.raises(AssertionError):
         widget.set_value("FFFFF")
     with pytest.raises(AssertionError):
@@ -725,7 +724,6 @@ def test_textinput_underline():
     assert textinput._current_underline_string == "________________________________"
     menu.render()
     assert (menu.get_width(widget=True), menu.get_width(inner=True)) == (401, 400)
-    # noinspection SpellCheckingInspection
     textinput.set_value("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ")
     assert textinput.get_width() == 731
     assert textinput._current_underline_string == (
@@ -755,7 +753,6 @@ def test_textinput_underline():
 
     menu.clear()
     textinput = menu.add.text_input("title: ", input_underline=".-")
-    # noinspection SpellCheckingInspection
     textinput.set_value("QQQQQQQQQQQQQQQ")
     assert textinput.get_width() == 403
     assert textinput._current_underline_string == (
@@ -984,8 +981,7 @@ def test_unicode():
     textinput._input_type = "other"
     assert textinput._check_input_type("-")
     assert not textinput._check_input_type("x")
-    # noinspection PyTypeChecker
-    textinput._maxwidth_update = None
+    textinput._maxwidth_update = None  # type: ignore
     assert textinput._update_maxlimit_renderbox() is None
 
 
@@ -1209,3 +1205,33 @@ def test_complex_textinput():
     assert textinput.get_menu() == menu
     menu.clear()
     assert menu._stats.removed_widgets == 4
+
+
+def test_undo_redo():
+    """Test undo/redo."""
+    menu = MenuUtils.generic_menu()
+
+    # Test maxchar and undo/redo
+    textinput = menu.add.text_input("title", input_underline="_", maxchar=20)
+    textinput.set_value("the size of this textinput is way greater than the limit")
+    assert textinput.get_value() == "eater than the limit"  # Same as maxchar
+    assert textinput._cursor_position == 20
+    textinput._undo()  # This must set default at ""
+    assert textinput.get_value() == ""
+    textinput._redo()
+    assert textinput.get_value() == "eater than the limit"
+    textinput.draw(surface)
+    textinput._copy()
+    textinput._paste()
+    textinput._block_copy_paste = False
+    textinput._select_all()
+    textinput._cut()
+    assert textinput.get_value() == ""
+    textinput._undo()
+    assert textinput.get_value() == "eater than the limit"
+
+    assert textinput._history_index == 1
+    textinput._history_index = 0
+    assert not textinput._undo()
+    textinput._history_index = len(textinput._history) - 1
+    assert not textinput._redo()

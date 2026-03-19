@@ -403,6 +403,7 @@ def test_banner_apply_via_event(menu):
 def test_controller_behavior(menu):
     """Test controller."""
     from random import randrange
+
     from pygame_menu.controls import Controller
 
     custom = Controller()

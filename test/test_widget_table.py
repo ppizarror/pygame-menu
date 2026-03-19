@@ -8,10 +8,8 @@ Test Table widget.
 
 import pygame
 import pytest
-import pygame_menu
 
-from pygame_menu import locals as pgm_locals
-from pygame_menu.widgets import Label, SurfaceWidget
+import pygame_menu
 from test._utils import PYGAME_V2, MenuUtils, surface
 
 
@@ -44,7 +42,7 @@ def test_table_initialization(menu, table):
 def test_row_addition_and_sizing(table):
     """Test table row addition and sizing."""
     row1 = table.add_row(
-        [1, 2, 3], row_background_color="blue", cell_align=pgm_locals.ALIGN_CENTER
+        [1, 2, 3], row_background_color="blue", cell_align=pygame_menu.locals.ALIGN_CENTER
     )
     assert row1.get_size() == (51, 41)
 
@@ -95,8 +93,8 @@ def test_complex_nesting(menu, table):
 
     row = table.add_row(
         ["sub", sub, btn],
-        cell_align=pgm_locals.ALIGN_CENTER,
-        cell_vertical_position=pgm_locals.POSITION_CENTER,
+        cell_align=pygame_menu.locals.ALIGN_CENTER,
+        cell_vertical_position=pygame_menu.locals.POSITION_CENTER,
     )
 
     assert btn.get_frame() == row
@@ -113,8 +111,8 @@ def test_surface_and_images(table):
     surf.fill((255, 192, 203))
 
     row = table.add_row([surf, "Label"])
-    assert isinstance(row.get_widgets()[0], SurfaceWidget)
-    assert isinstance(row.get_widgets()[1], Label)
+    assert isinstance(row.get_widgets()[0], pygame_menu.widgets.SurfaceWidget)
+    assert isinstance(row.get_widgets()[1], pygame_menu.widgets.Label)
 
 
 @pytest.mark.skipif(not PYGAME_V2, reason="Requires Pygame V2")
@@ -154,8 +152,8 @@ def test_frame_packing(menu, table):
     frame = menu.add.frame_v(300, 300, background_color="yellow", padding=0)
     frame.pack(
         table,
-        align=pgm_locals.ALIGN_CENTER,
-        vertical_position=pgm_locals.POSITION_CENTER,
+        align=pygame_menu.locals.ALIGN_CENTER,
+        vertical_position=pygame_menu.locals.POSITION_CENTER,
     )
 
     assert table._translate_virtual != (0, 0)

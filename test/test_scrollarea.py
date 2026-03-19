@@ -475,14 +475,8 @@ def test_widget_relative_to_view_rect():
         buttons.append(menu.add.button(btn_title, button_id=btn_title))
     sa = menu.get_scrollarea()
 
-    def test_relative(widget: 'pygame_menu.widgets.Widget', x: float, y: float) -> None:
-        """
-        Test relative position from widget to scroll view rect.
-
-        :param widget: Widget
-        :param x: X relative position
-        :param y: Y relative position
-        """
+    def test_relative(widget: pygame_menu.widgets.Widget, x: float, y: float) -> None:
+        """Test relative position from widget to scroll view rect."""
         rx, ry = widget.get_scrollarea().get_widget_position_relative_to_view_rect(widget)
         assert rx == pytest.approx(x)
         assert ry == pytest.approx(y)

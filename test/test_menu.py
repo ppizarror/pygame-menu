@@ -36,6 +36,7 @@ from pygame_menu.locals import (
     ORIENTATION_VERTICAL,
     SCROLLAREA_POSITION_NONE,
 )
+
 # noinspection PyProtectedMember
 from pygame_menu.menu import (
     JOY_EVENT_DOWN,

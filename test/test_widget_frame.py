@@ -24,6 +24,7 @@ from pygame_menu.locals import (
 from pygame_menu.utils import get_cursor, set_pygame_cursor
 from pygame_menu.widgets import Button
 from pygame_menu.widgets.core.widget import WidgetTransformationNotImplemented
+
 # noinspection PyProtectedMember
 from pygame_menu.widgets.widget.frame import (
     _FrameDoNotAcceptScrollarea,
@@ -33,9 +34,9 @@ from test._utils import (
     PYGAME_V2,
     TEST_THEME,
     THEME_NON_FIXED_TITLE,
+    WIDGET_MOUSEOVER,
     MenuUtils,
     PygameEventUtils,
-    WIDGET_MOUSEOVER,
     reset_widgets_over,
     surface,
 )
@@ -2204,3 +2205,167 @@ def test_pack_columns():
     assert label_inner.get_col_row_index() == (0, 0, 1)
     assert label_outer.get_col_row_index() == (1, 0, 2)
     assert label_inner.get_frame() == frame
+
+
+def test_general_widget():
+    """Test frame widget containers."""
+    menu = MenuUtils.generic_menu(theme=TEST_THEME.copy())
+
+    menu.add.button("rr")
+    frame = menu.add.frame_h(250, 100, background_color=(200, 0, 0))
+    frame._pack_margin_warning = False
+    btn = menu.add.button("nice1")
+    menu.add.button("44")
+    frame2 = menu.add.frame_v(50, 250, background_color=(0, 0, 200))
+    frame2._pack_margin_warning = False
+    btn2 = menu.add.button("nice2")
+    btn3 = menu.add.button("nice3")
+
+    frame11 = menu.add.frame_v(50, 90, background_color=(0, 200, 0))
+    frame11._pack_margin_warning = False
+    btn11 = menu.add.button("11")
+    btn12 = menu.add.button("12")
+
+    frame11.pack(btn11)
+    frame11.pack(btn12)
+
+    frame.pack(btn)
+    frame.pack(btn2, ALIGN_CENTER, vertical_position=POSITION_CENTER)
+    frame.pack(frame11, ALIGN_RIGHT, vertical_position=POSITION_SOUTH)
+
+    frame2.pack(menu.add.button("1"))
+    frame2.pack(menu.add.button("2"), align=ALIGN_CENTER)
+    frame2.pack(menu.add.button("3"), align=ALIGN_RIGHT)
+
+    for w in frame.get_widgets():
+        w.get_selection_effect().zero_margin()
+    for w in frame2.get_widgets():
+        w.get_selection_effect().zero_margin()
+
+    menu.render()
+    wid = menu.get_widgets()
+    assert wid[0].get_col_row_index() == (0, 0, 0)
+    assert wid[1].get_col_row_index() == (0, 1, 1)
+    assert wid[2].get_col_row_index() == (0, 1, 2)
+    assert wid[3].get_col_row_index() == (0, 1, 3)
+    assert wid[4].get_col_row_index() == (0, 1, 4)
+    assert wid[5].get_col_row_index() == (0, 1, 5)
+    assert wid[6].get_col_row_index() == (0, 1, 6)
+    assert wid[7].get_col_row_index() == (0, 2, 7)
+    assert wid[8].get_col_row_index() == (0, 3, 8)
+    assert wid[9].get_col_row_index() == (0, 3, 9)
+    assert wid[10].get_col_row_index() == (0, 3, 10)
+    assert wid[11].get_col_row_index() == (0, 3, 11)
+    assert wid[12].get_col_row_index() == (0, 4, 12)
+
+    assert btn3.get_frame() is None
+    assert btn2.get_frame() == frame
+    assert btn2.get_translate() == (0, 0)
+    assert btn2.get_translate(virtual=True) == (88, 29)
+    assert not btn2.is_floating()
+    menu.remove_widget(btn2)
+    assert btn2.get_frame() is None
+    assert btn2.get_translate() == (0, 0)
+    assert btn2.get_translate(virtual=True) == (0, 0)
+    assert btn2.is_floating()
+
+    wid = menu.get_widgets()
+    assert wid[0].get_position() == (278, 5)
+    assert wid[1].get_position() == (165, 56 if PYGAME_V2 else 57)
+    assert wid[2].get_position() == (165, 56 if PYGAME_V2 else 57)
+    assert wid[3].get_position() == (365, 66 if PYGAME_V2 else 67)
+    assert wid[4].get_position() == (365, 66 if PYGAME_V2 else 67)
+    assert wid[5].get_position() == (365, 107 if PYGAME_V2 else 109)
+    assert wid[6].get_position() == (273, 166 if PYGAME_V2 else 167)
+    assert wid[7].get_position() == (265, 217 if PYGAME_V2 else 219)
+    assert wid[8].get_position() == (265, 217 if PYGAME_V2 else 219)
+    assert wid[9].get_position() == (281, 258 if PYGAME_V2 else 261)
+    assert wid[10].get_position() == (298, 299 if PYGAME_V2 else 303)
+    assert wid[11].get_position() == (253, 477 if PYGAME_V2 else 479)
+
+    theme = TEST_THEME.copy()
+    menu = MenuUtils.generic_menu(theme=theme)
+    menu.get_theme().widget_selection_effect.zero_margin()
+    menu.get_theme().widget_font_size = 18
+
+    frame = menu.add.frame_v(250, 150, background_color=(50, 50, 50))
+    frame._pack_margin_warning = False
+    frame_title = menu.add.frame_h(250, 30, background_color=(180, 180, 180))
+    frame_title._pack_margin_warning = False
+    frame_content = menu.add.frame_v(250, 120)
+    frame_content._pack_margin_warning = False
+    frame.pack(frame_title)
+    frame.pack(frame_content)
+
+    frame_title.pack(menu.add.label("Settings"), margin=(2, 2))
+    close_btn = frame_title.pack(
+        menu.add.button(
+            "Close",
+            pygame_menu.events.EXIT,
+            padding=(0, 5),
+            background_color=(160, 160, 160),
+        ),
+        align=ALIGN_RIGHT,
+        margin=(-2, 2),
+    )
+    frame_content.pack(
+        menu.add.label("Pick a number", font_color=(150, 150, 150)),
+        align=ALIGN_CENTER,
+    )
+    frame_numbers = menu.add.frame_h(
+        250,
+        42,
+        background_color=(255, 255, 255),
+        font_color=(2000, 0, 0),
+        frame_id="frame_numbers",
+    )
+    frame_numbers._pack_margin_warning = False
+    frame_content.pack(frame_numbers)
+    for i in range(9):
+        frame_numbers.pack(
+            menu.add.button(i, font_color=(5 * i, 11 * i, 13 * i), font_size=30),
+            align=ALIGN_CENTER,
+        )
+    with pytest.raises(AssertionError):
+        frame_numbers.pack(close_btn)
+    frame_content.pack(menu.add.vertical_margin(15))
+    frame_content.pack(
+        menu.add.toggle_switch("Nice toggle", False, width=100, font_color=(150, 150, 150)),
+        align=ALIGN_CENTER,
+    )
+    menu.render()
+
+    assert menu.get_width(widget=True) == 250
+    assert menu.get_height(widget=True) == 150
+    assert menu._widget_offset[1] == 97
+    assert frame_numbers.get_widgets()[0].get_translate() == (0, 0)
+    assert frame_numbers.get_widgets()[0].get_translate(virtual=True) == (48, 0)
+    assert frame_numbers.get_widgets()[0].get_position() == (
+        223,
+        153 if PYGAME_V2 else 154,
+    )
+    assert frame_numbers._recursive_render == 0
+    prev_widg = frame_numbers.get_widgets()
+    c_widget = frame_numbers._control_widget
+    assert c_widget == prev_widg[0]
+    frame_numbers.unpack(c_widget)
+    assert c_widget.is_floating()
+    assert c_widget in menu.get_widgets()
+    with pytest.raises(ValueError):
+        frame_numbers.unpack(prev_widg[0])
+    assert frame_numbers._control_widget == prev_widg[1]
+    for w in frame_numbers.get_widgets():
+        frame_numbers.unpack(w)
+    assert len(frame_numbers._widgets) == 0
+    with pytest.raises(AssertionError):
+        frame_numbers.unpack(prev_widg[0])
+
+    # Test sizes
+    size_exception = pygame_menu.widgets.widget.frame._FrameSizeException
+    assert not frame_numbers._relax
+    assert len(frame_numbers.get_widgets(unpack_subframes_include_frame=True)) == 0
+    with pytest.raises(size_exception):
+        frame_numbers.pack(menu.add.frame_v(100, 400))
+    with pytest.raises(size_exception):
+        frame_numbers.pack(menu.add.frame_v(400, 10))
+    assert len(frame_numbers.get_widgets(unpack_subframes_include_frame=True)) == 0
