@@ -160,6 +160,7 @@ class Menu(Base):
     _index: int
     _joy_event: int
     _joy_event_repeat: int
+    _joy_event_timer: bool
     _joystick: bool
     _keyboard: bool
     _keyboard_ignore_nonphysical: bool
@@ -559,6 +560,7 @@ class Menu(Base):
                 pygame.joystick.Joystick(i).init()
         self._joy_event = 0
         self._joy_event_repeat = pygame.NUMEVENTS - 1
+        self._joy_event_timer = True
 
         # Init keyboard
         self._keyboard = keyboard_enabled
@@ -2675,6 +2677,16 @@ class Menu(Base):
             return [_events.MENU_LAST_NONE]
         return self._current._last_update_mode
 
+    def _trigger_joy_repeat_timer(self, milis: int = 0) -> None:
+        """
+        Trigger joy repeat timer.
+
+        :param milis: Number of miliseconds to repeat
+        """
+        if not self._current._joy_event_timer:
+            return
+        pygame.time.set_timer(self._current._joy_event_repeat, milis)
+
     def update(self, events: EventVectorType) -> bool:
         """
         Update the status of the Menu using external events. The update event is
@@ -2912,13 +2924,9 @@ class Menu(Base):
                     if self._current._joy_event:
                         sel = self._current._handle_joy_event(True)
                         if self._current._joy_event == prev:
-                            pygame.time.set_timer(
-                                self._current._joy_event_repeat, self._ctrl.joy_repeat
-                            )
+                            self._trigger_joy_repeat_timer(self._ctrl.joy_repeat)
                         else:
-                            pygame.time.set_timer(
-                                self._current._joy_event_repeat, self._ctrl.joy_delay
-                            )
+                            self._trigger_joy_repeat_timer(self._ctrl.joy_delay)
                         if sel:
                             self._current._last_update_mode.append(
                                 _events.MENU_LAST_JOY_REPEAT
@@ -2926,15 +2934,13 @@ class Menu(Base):
                             updated = True
                             break
                     else:
-                        pygame.time.set_timer(self._current._joy_event_repeat, 0)
+                        self._trigger_joy_repeat_timer(self._ctrl.joy_delay)
 
                 # User repeats previous joy event input
                 elif event.type == self._current._joy_event_repeat:
                     if self._current._joy_event:
                         sel = self._current._handle_joy_event(True)
-                        pygame.time.set_timer(
-                            self._current._joy_event_repeat, self._ctrl.joy_repeat
-                        )
+                        self._trigger_joy_repeat_timer(self._ctrl.joy_repeat)
                         if sel:
                             self._current._last_update_mode.append(
                                 _events.MENU_LAST_JOY_REPEAT
@@ -2942,7 +2948,7 @@ class Menu(Base):
                             updated = True
                             break
                     else:
-                        pygame.time.set_timer(self._current._joy_event_repeat, 0)
+                        self._trigger_joy_repeat_timer()
 
                 # Select widget by clicking
                 elif (
