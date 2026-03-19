@@ -89,7 +89,6 @@ html_theme_options = {"prev_next_buttons_location": None}
 
 # -- Options for LaTeX output -------------------------------------------------
 
-# noinspection SpellCheckingInspection
 latex_elements = {
     "papersize": "a4paper",
     "pointsize": "10pt",

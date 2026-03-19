@@ -41,7 +41,6 @@ RED = (255, 0, 0)
 WHITE = (255, 255, 255)
 
 
-# noinspection PyMissingOrEmptyDocstring
 class AStarQueue:
     """
     A* Queue.
@@ -51,17 +50,19 @@ class AStarQueue:
         self.myheap = []
 
     def show(self):
+        """Show the heap."""
         return self.myheap
 
     def push(self, priority, distance, node) -> None:
+        """Put the node into heap."""
         heapq.heappush(self.myheap, (priority, distance, node))
 
     def pop(self):
+        """Remove the heap item and return it."""
         priority, distance, node = heapq.heappop(self.myheap)
         return priority, distance, node
 
 
-# noinspection PyMissingOrEmptyDocstring
 class PriorityQueue:
     """
     Priority Queue.
@@ -71,17 +72,19 @@ class PriorityQueue:
         self.myheap = []
 
     def show(self):
+        """Show the heap."""
         return self.myheap
 
     def push(self, priority, node) -> None:
+        """Put the node into heap."""
         heapq.heappush(self.myheap, (priority, node))
 
     def pop(self):
+        """Remove the heap item and return it."""
         priority, node = heapq.heappop(self.myheap)
         return priority, node
 
 
-# noinspection PyMissingOrEmptyDocstring
 class PrioritySet:
     """
     Create a priority queue that doesn't add duplicate nodes.
@@ -92,14 +95,17 @@ class PrioritySet:
         self.myset = set()
 
     def show(self):
+        """Show the heap."""
         return self.myheap
 
     def push(self, priority, node) -> None:
+        """Put the node into heap."""
         if node not in self.myset:
             heapq.heappush(self.myheap, (priority, node))
             self.myset.add(node)
 
     def pop(self):
+        """Remove the heap item and return it."""
         priority, node = heapq.heappop(self.myheap)
         self.myset.remove(node)
         return priority, node

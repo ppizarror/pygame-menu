@@ -63,8 +63,8 @@ def make_menu(
     )
 
 
-# noinspection PyMissingTypeHints,PyMissingOrEmptyDocstring
-def change_background_color(selected_value, color, **kwargs):
+def change_background_color(selected_value: tuple, color: tuple, **kwargs):
+    """Change background color."""
     from random import randrange
 
     value_tuple, _ = selected_value
@@ -78,8 +78,8 @@ def change_background_color(selected_value, color, **kwargs):
     widget.get_selection_effect().color = color
 
 
-# noinspection PyMissingTypeHints,PyMissingOrEmptyDocstring
-def func(name):
+def func(name: str):
+    """Example function."""
     print("Hello world from", name)  # name will be 'foo'
 
 
@@ -299,12 +299,14 @@ elif EXAMPLE == "MENU_LINK":
     menu2 = make_menu(pygame_menu.themes.THEME_GREEN, "Menu 2")
     menu3 = make_menu(pygame_menu.themes.THEME_SOLARIZED, "Menu 3")
 
+
     def open_link(*args) -> None:
         """
         Opens link.
         """
         link: pygame_menu.widgets.MenuLink = args[-1]
         link.open()
+
 
     # Create the links
     link1 = menu.add.menu_link(menu1)

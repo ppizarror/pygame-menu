@@ -91,8 +91,8 @@ if __pygame_version__ is not None:
         menu,
         sound,
         themes,
-        widgets,  # type: ignore
         version,  # type: ignore
+        widgets,  # type: ignore
     )
 
     BaseImage = baseimage.BaseImage

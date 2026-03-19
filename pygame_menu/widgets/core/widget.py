@@ -2291,7 +2291,6 @@ class Widget(Base):
         :param maxwidth: Warn bout maxwidth
         :param maxheight: Warn about maxheight
         """
-        # noinspection PyUnresolvedReferences
         if not self._verbose:
             return
         # Iterate each type and warn accordingly
@@ -3306,7 +3305,6 @@ class Widget(Base):
                     data.append(ww._get_status())
 
         # Append inner widgets if drop select
-        # noinspection PyUnresolvedReferences
         if (
             isinstance(self, pygame_menu.widgets.DropSelect)
             and hasattr(self, "_drop_frame")

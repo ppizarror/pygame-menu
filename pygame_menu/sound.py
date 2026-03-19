@@ -195,7 +195,6 @@ class Sound(Base):
             # Set sound as initialized globally
             SOUND_INITIALIZED.attempted = True
 
-            # noinspection PyBroadException
             try:
                 # pygame < 1.9.5
                 mixer_kwargs: dict[str, int | str] = {
@@ -213,7 +212,6 @@ class Sound(Base):
 
                 # Call to mixer
                 mixer.init(**mixer_kwargs)
-
             except Exception as e:
                 if self._verbose:
                     warn("sound error: " + str(e))

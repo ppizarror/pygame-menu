@@ -66,7 +66,6 @@ DECOR_TYPE_PREV: str = "prev"
 DECOR_TYPE_POST: str = "post"
 
 
-# noinspection PyProtectedMember
 class Decorator(Base):
     """
     Decorator class.
