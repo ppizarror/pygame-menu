@@ -34,6 +34,7 @@ from test._utils import MenuUtils, PygameEventUtils, surface
 
 @pytest.fixture
 def menu():
+    """Return a generic menu fixture."""
     return MenuUtils.generic_menu()
 
 
@@ -50,12 +51,14 @@ def menu():
     ],
 )
 def test_menubar_modes(menu, mode):
+    """Test menubar widget modes."""
     mb = MenuBar("Menu", 500, (0, 0, 0), back_box=True, mode=mode)
     menu.add.generic_widget(mb)
     menu.draw(surface)
 
 
 def test_menubar_backbox_border_width(menu):
+    """Test menubar backbox border width."""
     mb = MenuBar("Menu", 500, (0, 0, 0), back_box=True)
     mb.set_backbox_border_width(2)
 
@@ -70,12 +73,14 @@ def test_menubar_backbox_border_width(menu):
 
 
 def test_menubar_unknown_mode(menu):
+    """Test menubar unknown mode handling."""
     mb = MenuBar("Menu", 500, (0, 0, 0), back_box=True, mode="unknown")  # type: ignore
     with pytest.raises(ValueError):
         mb.set_menu(menu)
 
 
 def test_menubar_scrollbar_displacements(menu):
+    """Test menubar scrollbar displacements."""
     mb = MenuBar("Menu", 500, (0, 0, 0), back_box=True, mode=MENUBAR_STYLE_ADAPTIVE)
 
     assert mb.get_scrollbar_style_change(POSITION_SOUTH) == (0, (0, 0))
@@ -90,6 +95,7 @@ def test_menubar_scrollbar_displacements(menu):
 
 
 def test_menubar_displacements_with_title_only():
+    """Test displacements with title-only menubar."""
     theme = pygame_menu.themes.THEME_DEFAULT.copy()
     theme.title_bar_style = MENUBAR_STYLE_TITLE_ONLY
 
@@ -103,6 +109,7 @@ def test_menubar_displacements_with_title_only():
 
 
 def test_menubar_displacements_with_close_button():
+    """Test displacements with close button enabled."""
     theme = pygame_menu.themes.THEME_DEFAULT.copy()
     theme.title_bar_style = MENUBAR_STYLE_TITLE_ONLY
     theme.widget_border_inflate = (0, 0)
@@ -138,6 +145,7 @@ def test_menubar_displacements_with_close_button():
 
 
 def test_menubar_events(menu):
+    """Test menubar event handling."""
     theme = pygame_menu.themes.THEME_DEFAULT.copy()
     theme.title_bar_style = MENUBAR_STYLE_TITLE_ONLY
     menu = MenuUtils.generic_menu(theme=theme, title="my title")
@@ -179,6 +187,7 @@ def test_menubar_events(menu):
     ],
 )
 def test_menubar_invalid_transforms(method, args):
+    """Test unsupported menubar transforms."""
     mb = MenuBar("Menu", 500, (0, 0, 0), back_box=True)
 
     with pytest.raises(WidgetTransformationNotImplemented):
@@ -186,6 +195,7 @@ def test_menubar_invalid_transforms(method, args):
 
 
 def test_menubar_transform_state():
+    """Test menubar transform state after invalid transforms."""
     mb = MenuBar("Menu", 500, (0, 0, 0), back_box=True)
 
     with pytest.raises(WidgetTransformationNotImplemented):
@@ -214,6 +224,7 @@ def test_menubar_transform_state():
 
 
 def test_menubar_empty_title():
+    """Test menubar empty title size."""
     mb = MenuBar("", 500, (0, 0, 0), back_box=True)
     p = mb._padding
 
@@ -222,6 +233,7 @@ def test_menubar_empty_title():
 
 
 def test_menubar_value_api():
+    """Test menubar value API."""
     mb = MenuBar("Menu", 500, (0, 0, 0), back_box=True)
 
     with pytest.raises(ValueError):

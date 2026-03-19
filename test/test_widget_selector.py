@@ -15,10 +15,12 @@ from test._utils import MenuUtils, PygameEventUtils, surface
 
 @pytest.fixture
 def menu():
+    """Return a generic menu fixture."""
     return MenuUtils.generic_menu()
 
 
 def test_selector_basic(menu):
+    """Test selector widget."""
     selector = menu.add.selector(
         "selector",
         [("1 - Easy", "EASY"), ("2 - Medium", "MEDIUM"), ("3 - Hard", "HARD")],
@@ -142,6 +144,7 @@ def test_selector_basic(menu):
     ],
 )
 def test_selector_value(menu, initial, change, expected):
+    """Test selector value behavior."""
     sel = menu.add.selector("title", [("a", "a"), ("b", "b")], default=1)
 
     assert sel.get_value() == (initial, 1)
@@ -157,5 +160,6 @@ def test_selector_value(menu, initial, change, expected):
 
 
 def test_selector_empty_title(menu):
+    """Test selector empty title."""
     sel = menu.add.selector("", [("a", "a"), ("b", "b")])
     assert sel.get_size() == (83, 49)

@@ -15,10 +15,12 @@ from test._utils import PYGAME_V2, MenuUtils, surface
 
 @pytest.fixture
 def menu():
+    """Return a generic menu fixture."""
     return MenuUtils.generic_menu()
 
 
 def test_progressbar_basic(menu):
+    """Test progressbar widget."""
     pb = pygame_menu.widgets.ProgressBar(
         "progress", progress_text_font=pygame_menu.font.FONT_BEBAS
     )
@@ -45,18 +47,21 @@ def test_progressbar_basic(menu):
     ],
 )
 def test_progressbar_invalid_transforms(menu, method):
+    """Test invalid progressbar transforms."""
     pb = pygame_menu.widgets.ProgressBar("progress")
     with pytest.raises(WidgetTransformationNotImplemented):
         getattr(pb, method)()
 
 
 def test_progressbar_update(menu):
+    """Test progressbar update."""
     pb = pygame_menu.widgets.ProgressBar("progress")
     menu.add.generic_widget(pb, configure_defaults=True)
     assert not pb.update([])
 
 
 def test_progressbar_value(menu):
+    """Test progressbar value."""
     pb = menu.add.progress_bar(
         "progress", default=50, progress_text_align=pygame_menu.locals.ALIGN_LEFT
     )
@@ -80,6 +85,7 @@ def test_progressbar_value(menu):
 
 
 def test_progressbar_empty_title(menu):
+    """Test progressbar empty title."""
     pb = menu.add.progress_bar(
         "",
         box_margin=(0, 0),

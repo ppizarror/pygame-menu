@@ -42,12 +42,15 @@ def slider_double():
 
 
 def test_single_rangeslider_basic_flow(menu, slider_single):
+    """Test single range slider basic flow."""
     test_state = {"change": 0, "return": 0}
 
     def onchange(x: float):
+        """Handle slider change callback."""
         test_state["change"] = x  # type: ignore
 
     def onreturn(x: float):
+        """Handle slider return callback."""
         test_state["return"] = x  # type: ignore
 
     slider_single.set_onchange(onchange)
@@ -87,6 +90,7 @@ def test_single_rangeslider_basic_flow(menu, slider_single):
 
 
 def test_single_rangeslider_readonly_and_internal_update(menu, slider_single):
+    """Test single slider readonly and internal update behavior."""
     menu.add.generic_widget(slider_single, True)
     slider_single.set_value(0.5)
     slider_single.draw(surface)
@@ -105,11 +109,13 @@ def test_single_rangeslider_readonly_and_internal_update(menu, slider_single):
 
 @pytest.mark.parametrize("invalid_val", [-1, [0.4, 0.5], "string"])
 def test_invalid_value_exceptions(slider_single, invalid_val):
+    """Test invalid single slider values raise errors."""
     with pytest.raises(AssertionError):
         slider_single.set_value(invalid_val)
 
 
 def test_single_invalid_constructor_cases():
+    """Test invalid constructor cases for single slider."""
     with pytest.raises(AssertionError):
         pygame_menu.widgets.RangeSlider("Range S", default_value=2)
     with pytest.raises(AssertionError):
@@ -121,6 +127,7 @@ def test_single_invalid_constructor_cases():
 
 
 def test_transformation_not_implemented(slider_single):
+    """Test unsupported slider transformations."""
     transforms = [
         slider_single.rotate,
         slider_single.flip,
@@ -135,6 +142,7 @@ def test_transformation_not_implemented(slider_single):
 
 
 def test_single_mouse_click_and_extremes(menu, slider_single):
+    """Test single slider mouse clicks and boundary values."""
     menu.add.generic_widget(slider_single, True)
     slider_single.set_value(0.5)
 
@@ -183,6 +191,7 @@ def test_single_mouse_click_and_extremes(menu, slider_single):
 
 
 def test_single_scroll_drag(menu, slider_single):
+    """Test single slider scroll dragging."""
     menu.add.generic_widget(slider_single, True)
     slider_single.set_value(1)
 
@@ -213,6 +222,7 @@ def test_single_scroll_drag(menu, slider_single):
 
 
 def test_single_ignore_tab_and_keyrepeat(menu, slider_single):
+    """Test single slider tab ignore and key repeat."""
     menu.add.generic_widget(slider_single, True)
     slider_single.set_value(0.5)
 
@@ -238,6 +248,7 @@ def test_single_ignore_tab_and_keyrepeat(menu, slider_single):
 
 
 def test_single_range_box_single_slider(menu):
+    """Test single slider range box rendering."""
     slider_rb = pygame_menu.widgets.RangeSlider("Range", range_box_single_slider=True)
     menu.add.generic_widget(slider_rb, True)
     slider_rb.draw(surface)
@@ -248,6 +259,7 @@ def test_single_range_box_single_slider(menu):
 
 
 def test_single_discrete_logic(menu):
+    """Test single discrete slider logic."""
     rv = [0, 1, 2, 3, 4, 5]
     slider = pygame_menu.widgets.RangeSlider("Range", range_values=rv)
     menu.add.generic_widget(slider, True)
@@ -330,6 +342,7 @@ def test_single_discrete_logic(menu):
 
 
 def test_double_slider_selection_cycling(slider_double):
+    """Test double slider selection cycling."""
     # Default: first handle selected
     assert slider_double._slider_selected[0] is True
 
@@ -340,6 +353,7 @@ def test_double_slider_selection_cycling(slider_double):
 
 
 def test_double_slider_overlap_constraints(slider_double):
+    """Test double slider overlap constraints."""
     # Invalid values
     with pytest.raises(AssertionError):
         slider_double.set_value(0.2)
@@ -358,6 +372,7 @@ def test_double_slider_overlap_constraints(slider_double):
 
 
 def test_double_slider_mouse_drag_and_limits(menu):
+    """Test double slider mouse drag and limits."""
     slider = pygame_menu.widgets.RangeSlider(
         "Range",
         range_text_value_tick_number=3,
@@ -500,6 +515,7 @@ def test_double_slider_mouse_drag_and_limits(menu):
 
 
 def test_double_discrete(menu):
+    """Test double discrete slider behavior."""
     rv = [0, 1, 2, 3, 4, 5]
     slider = menu.add.range_slider("Range", (1, 4), rv, range_text_value_tick_number=3)
     slider.draw(surface)
@@ -542,17 +558,20 @@ def test_double_discrete(menu):
 
 
 def test_kwargs_from_manager(menu):
+    """Test slider kwargs from manager."""
     slider = menu.add.range_slider("Range", 0.5, (0, 1), 1, range_margin=(100, 0))
     assert len(slider._kwargs) == 0
     assert slider._range_margin == (100, 0)
 
 
 def test_empty_title(menu):
+    """Test slider empty title."""
     r = menu.add.range_slider("", 0.5, (0, 1), 0.1)
     assert r.get_size() == (198, 66)
 
 
 def test_invalid_range(menu):
+    """Test slider invalid range behavior."""
     r = menu.add.range_slider(
         "Infection Rate", default=2, increment=0.5, range_values=(2, 10)
     )
@@ -569,6 +588,7 @@ def test_invalid_range(menu):
 
 
 def test_value_single_and_double(menu):
+    """Test single and double slider value API."""
     # Single
     r = menu.add.range_slider("Range", 0.5, (0, 1), 0.1)
     assert r.get_value() == 0.5
@@ -595,6 +615,7 @@ def test_value_single_and_double(menu):
 
 
 def test_reset_functionality(slider_double):
+    """Test slider reset functionality."""
     slider_double.set_value((0.4, 0.9))
     assert slider_double.value_changed() is True
 
@@ -604,6 +625,7 @@ def test_reset_functionality(slider_double):
 
 
 def test_keyrepeat_original_style(menu_no_ignore):
+    """Test original style key repeat behavior."""
     e = PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True)
     slider_on = menu_no_ignore.add.range_slider("", 0, [0, 1], increment=0.1)
     slider_on.update(e)
@@ -621,6 +643,7 @@ def test_keyrepeat_original_style(menu_no_ignore):
 
 
 def test_key_repeat_functionality(menu):
+    """Test controlled key repeat behavior."""
     # Controlled version (no sleep)
     menu._keyboard_ignore_nonphysical = False
     slider = menu.add.range_slider("", 0, [0, 1], increment=0.1, repeat_keys=True)
@@ -643,6 +666,7 @@ def test_key_repeat_functionality(menu):
 
 
 def test_set_default_value_logic():
+    """Test set_default_value logic."""
     # Single slider
     slider_single = pygame_menu.widgets.RangeSlider(
         "Single", default_value=0.5, range_values=(0, 1), increment=0.1
@@ -691,6 +715,7 @@ def test_set_default_value_logic():
 
 
 def test_render_invariants(menu):
+    """Test slider render invariants."""
     r = menu.add.range_slider("R", 0.5, (0, 1), 0.1)
     r.draw(surface)
     assert r._slider_height > 0
@@ -700,6 +725,7 @@ def test_render_invariants(menu):
 
 
 def test_tick_generation(menu):
+    """Test range tick generation."""
     r = menu.add.range_slider("R", 0.5, (0, 1), 0.1, range_text_value_tick_number=5)
     r.draw(surface)
     assert len(r._range_text_value_tick_surfaces) == 5
@@ -708,6 +734,7 @@ def test_tick_generation(menu):
 
 
 def test_tick_disabled(menu):
+    """Test disabled range tick option."""
     r = menu.add.range_slider(
         "R", 0.5, (0, 1), 0.1, range_text_value_tick_enabled=False
     )
@@ -716,6 +743,7 @@ def test_tick_disabled(menu):
 
 
 def test_custom_value_format(menu):
+    """Test custom value format rendering."""
     r = menu.add.range_slider(
         "R", 0.5, (0, 1), 0.1, value_format=lambda x: f"{int(x * 100)}%"
     )
@@ -724,6 +752,7 @@ def test_custom_value_format(menu):
 
 
 def test_value_format_double(menu):
+    """Test double slider value format rendering."""
     r = menu.add.range_slider(
         "R", (0.2, 0.8), (0, 1), 0.1, value_format=lambda x: f"{x:.2f}"
     )
@@ -734,6 +763,7 @@ def test_value_format_double(menu):
 
 
 def test_readonly_render(menu):
+    """Test readonly slider rendering."""
     r = menu.add.range_slider("R", 0.5, (0, 1), 0.1)
     r.readonly = True
     r.draw(surface)
@@ -743,6 +773,7 @@ def test_readonly_render(menu):
 
 
 def test_overlap_selection(menu):
+    """Test overlap selection handling."""
     r = menu.add.range_slider("R", (0.5, 0.50000001), (0, 1), 0.1)
     r.draw(surface)
     rect = r._get_slider_inflate_rect(1, to_real_position=True)
@@ -752,6 +783,7 @@ def test_overlap_selection(menu):
 
 
 def test_discrete_drag_snapping(menu):
+    """Test discrete drag snapping."""
     rv = [0, 1, 2, 3, 4]
     r = menu.add.range_slider("R", 2, rv)
     r.draw(surface)
@@ -765,6 +797,7 @@ def test_discrete_drag_snapping(menu):
 
 
 def test_shift_increment(menu):
+    """Test slider increment with right key."""
     r = menu.add.range_slider("R", 0.5, (0, 1), 0.1)
     v = r.get_value()
     r.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
@@ -773,6 +806,7 @@ def test_shift_increment(menu):
 
 @pytest.mark.parametrize("range_box", [True, False])
 def test_range_box_visibility(menu, range_box):
+    """Test range box visibility option."""
     r = menu.add.range_slider("R", (0.2, 0.8), (0, 1), 0.1, range_box_enabled=range_box)
     r.draw(surface)
     if range_box:
@@ -782,12 +816,14 @@ def test_range_box_visibility(menu, range_box):
 
 
 def test_range_box_disabled(menu):
+    """Test disabled range box."""
     r = menu.add.range_slider("R", (0.2, 0.8), (0, 1), 0.1, range_box_enabled=False)
     r.draw(surface)
     assert not (hasattr(r, "_range_box") and r._range_box_enabled)
 
 
 def test_padding_effect(menu):
+    """Test slider text padding effect."""
     r = menu.add.range_slider("R", 0.5, (0, 1), 0.1, slider_text_value_padding=(10, 20))
     r.draw(surface)
     s = r._slider_text_value_surfaces[0]
@@ -795,12 +831,14 @@ def test_padding_effect(menu):
 
 
 def test_margin_effect(menu):
+    """Test slider margin effect."""
     r = menu.add.range_slider("R", 0.5, (0, 1), 0.1, range_margin=(50, 0))
     r.draw(surface)
     assert r._range_margin == (50, 0)
 
 
 def test_repeated_set_value(menu):
+    """Test repeated set_value calls."""
     r = menu.add.range_slider("R", 0.5, (0, 1), 0.1)
     r.set_value(0.5)
     r.set_value(0.5)
@@ -808,6 +846,7 @@ def test_repeated_set_value(menu):
 
 
 def test_repeated_reset(menu):
+    """Test repeated reset calls."""
     r = menu.add.range_slider("R", 0.5, (0, 1), 0.1)
     r.reset_value()
     r.reset_value()
@@ -815,6 +854,7 @@ def test_repeated_reset(menu):
 
 
 def test_small_increment(menu):
+    """Test very small slider increment."""
     r = menu.add.range_slider("R", 0.5, (0, 1), 1e-9)
     r.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
     assert r.get_value() == pytest.approx(0.500000001)

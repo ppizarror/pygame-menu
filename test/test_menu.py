@@ -87,6 +87,7 @@ def test_time_draw():
     menu = MenuUtils.generic_menu(title="EPIC")
     menu.enable()
 
+    # Add several widgets
     add_decorator = True
     for i in range(30):
         btn = menu.add.button(title="epic", action=events.BACK)
@@ -105,6 +106,11 @@ def test_time_draw():
         menu.draw(surface)
         menu.update(pygame.event.get())
 
+    # (no decorator) no updates, 0.921
+    # (no decorator) updates, 0.860
+    # (no decorator) check len updates, 0.855
+    # (no decorator) with surface cache, 0.10737799999999886
+    # (decorator) with surface cache, 0.1033874000000008
     print(timeit.timeit(lambda: draw_and_update(), number=100))
 
 
@@ -152,21 +158,23 @@ def test_position():
     assert btn.get_size()[1] == h
     assert menu.get_height(widget=True) == h
 
-    v_pos = int((345 - h) / 2)
+    v_pos = int((345 - h) / 2)  # available_height - widget_height
     assert menu._widget_offset[1] == v_pos
     assert btn.get_position()[1] == v_pos + 1
 
+    # If there's too many widgets, the centering should be disabled
     for i in range(20):
         menu.add.button("button")
     assert menu._widget_offset[1] == 0
 
     theme = menu.get_theme()
 
+    # Anyway, as the widget is 0, the first button position should be the height of its selection effect
     btneff = btn.get_selection_effect().get_margin()[0]
     assert btn.get_position()[1] == btneff + 1
-
     assert h * 21 + theme.widget_margin[1] * 20 == menu.get_height(widget=True)
 
+    # Test menu not centered
     menu = MenuUtils.generic_menu(center_content=False, theme=theme_src)
     btn = menu.add.button("button")
     btneff = btn.get_selection_effect().get_margin()[0]
@@ -223,12 +231,14 @@ def test_position():
     assert quit2.get_position() == (550, 43)
     assert label.get_position() == (556, 81)
 
+    # Test no selectable position
     menu = MenuUtils.generic_menu(center_content=False, theme=theme_src)
     btn = menu.add.button("button")
     btn.is_selectable = False
     menu.render()
     assert btn.get_position()[1] == 1
 
+    # Test no selectable + widget
     menu = MenuUtils.generic_menu()
     img = menu.add.image(
         baseimage.IMAGE_EXAMPLE_PYGAME_MENU,
@@ -245,6 +255,11 @@ def test_position():
         == menu._widget_offset[1]
     )
 
+    # Test alternating float
+    # b1,b2
+    # b3
+    # b4,b5,b6
+    # b7
     menu = MenuUtils.generic_menu()
     b1 = menu.add.button("b1")
     b2 = menu.add.button("b2").set_float()
@@ -262,6 +277,9 @@ def test_position():
     assert b6.get_col_row_index() == (0, 2, 5)
     assert b7.get_col_row_index() == (0, 3, 6)
 
+    # b1,b2
+    # b3,b5,b6
+    # b7
     menu.remove_widget(b4)
 
     assert b1.get_col_row_index() == (0, 0, 0)
@@ -272,6 +290,8 @@ def test_position():
     assert b6.get_col_row_index() == (0, 1, 4)
     assert b7.get_col_row_index() == (0, 2, 5)
 
+    # b1,b2,b5,b6
+    # b7
     menu.remove_widget(b3)
 
     assert b1.get_col_row_index() == (0, 0, 0)
@@ -282,11 +302,13 @@ def test_position():
     assert b6.get_col_row_index() == (0, 0, 3)
     assert b7.get_col_row_index() == (0, 1, 4)
 
+    # Test position relative/absolute
     menu.set_relative_position(50, 50)
     assert menu._position == (0, 100)
     menu.set_absolute_position(50, 50)
     assert menu._position == (50, 50)
 
+    # Test absolute position constructor
     menu = Menu("", 200, 300, position=(50, 50))
     assert menu._position == (200, 150)
     menu = Menu("", 200, 300, position=(50, 50, True))
@@ -402,32 +424,38 @@ def test_close():
     menu2.set_onclose(None)
     menu2.enable()
     result = menu2.close()
-    assert not result
+    assert not result  # NONE status don't change enabled
     assert menu2.is_enabled()
 
     menu2.set_onclose(events.NONE)
     result = menu2.close()
-    assert not result
+    assert not result  # NONE event don't change enabled
     assert menu2.is_enabled()
 
+    # Add button with submenu, and open it
     assert menu2.get_current().get_title() == "2"
     menu2.add.button("to1", menu).apply()
     assert menu2.get_current().get_title() == "1"
     assert menu2.get_current() == menu
 
+    # Set onclose 1 as reset, if close then menu should be disabled and back to '2'
     menu.set_onclose(events.RESET)
     menu.close()
 
+    # Open again 1
     assert not menu2.is_enabled()
     menu2.enable()
     menu2.get_selected_widget().apply()
     assert menu2.get_current().get_title() == "1"
 
+    # Set new close callback, it receives the menu and fires reset,
+    # the output should be the same, except it doesn't close
     def new_close(m: Menu):
         """Reset menu from close callback."""
         assert m == menu
         m.reset(1)
 
+    # Also, set first menu onreset to test this behavior
     reset = [False]
 
     def onreset(m: Menu):
@@ -443,6 +471,7 @@ def test_close():
     assert menu2.get_current().get_title() == "2"
     assert not menu2.is_enabled()
 
+    # Test back event
     menu2.enable()
     menu2.get_selected_widget().apply()
     menu.set_onclose(events.BACK)
@@ -451,6 +480,7 @@ def test_close():
     menu2.close()
     assert menu2.get_current() == menu2
 
+    # Test close event, this should NOT change the pointer
     menu2.enable()
     menu2.get_selected_widget().apply()
     menu.set_onclose(events.CLOSE)
@@ -461,6 +491,7 @@ def test_close():
     menu.reset(1)
     assert menu2.get_current() == menu2
 
+    # Close if not enabled
     menu.disable()
     with pytest.raises(RuntimeError):
         menu.close()
@@ -499,19 +530,25 @@ def test_depth():
     assert menu_._get_depth() == 10
     assert menu._get_depth() == 10
 
+    # menu when it was opened it changed to submenu 1, when submenu 1 was opened
+    # it changed to submenu 2, and so on...
     assert menu.get_title() == "mainmenu"
     assert menu.get_current().get_title() == "submenu 10"
     assert menu_.get_current().get_title() == "submenu 10"
 
+    # Submenu 10 has not changed to any, so back will not affect it,
+    # but mainmenu will reset 1 unit
     menu_._back()
     assert menu_.get_title() == "submenu 10"
 
+    # Mainmenu has changed, go back changes from submenu 10 to 9
     assert menu._get_depth() == 9
     menu._back()
     assert menu._get_depth() == 8
     assert menu.get_title() == "mainmenu"
     assert menu.get_current().get_title() == "submenu 8"
 
+    # Full go back (reset)
     menu.full_reset()
     assert menu._get_depth() == 0
     assert menu.get_current().get_title() == "mainmenu"
@@ -525,12 +562,14 @@ def test_get_widget():
     widget_found = menu.get_widget("some_id")
     assert widget == widget_found
 
+    # Add a widget to the deepest menu
     prev_menu = menu
     for i in range(11):
         menu_ = MenuUtils.generic_menu()
         prev_menu.add.button("menu", menu_)
         prev_menu = menu_
 
+    # Add a deep input and selector
     deep_widget = prev_menu.add.text_input("title", textinput_id="deep_id")
     deep_selector = prev_menu.add.selector(
         "selector", [("0", 0), ("1", 1)], selector_id="deep_selector", default=1
@@ -567,16 +606,17 @@ def test_get_selected_widget():
     """Test selected widget state transitions."""
     menu = MenuUtils.generic_menu(title="mainmenu")
 
+    # Test widget selection and removal
     widget = menu.add.text_input("test", default="some_id")
     assert widget == menu.get_selected_widget()
     menu.remove_widget(widget)
     assert menu.get_selected_widget() is None
     assert menu.get_index() == -1
 
+    # Add two widgets, first widget will be selected first, but if removed the second should be selected
     widget1 = menu.add.text_input("test", default="some_id", textinput_id="epic")
     with pytest.raises(IndexError):
         menu.add.text_input("test", default="some_id", textinput_id="epic")
-
     widget2 = menu.add.text_input("test", default="some_id")
     assert widget1.get_menu() == menu
     assert widget1 == menu.get_selected_widget()
@@ -587,6 +627,7 @@ def test_get_selected_widget():
     assert widget2.get_menu() is None
     assert len(menu.get_widgets()) == 0
 
+    # Add 3 widgets, select the last one and remove it, then the selected widget must be the first
     w1 = menu.add.button("1")
     w2 = Label("2")
     menu.add.generic_widget(w2, configure_defaults=True)
@@ -595,59 +636,75 @@ def test_get_selected_widget():
     menu.select_widget(w3)
     assert menu.get_selected_widget() == w3
     menu.remove_widget(w3)
-    assert menu.get_selected_widget() == w1
+    assert menu.get_selected_widget() == w1  # 3 was deleted, so 1 should be selected
 
+    # Hides w1, then w2 should be selected
     w1.hide()
     assert menu.get_selected_widget() == w2
 
+    # Un-hide w1, w2 should be keep selected
     w1.show()
     assert menu.get_selected_widget() == w2
 
+    # Mark w1 as unselectable and remove w2, then no widget should be selected
     w1.is_selectable = False
     menu.remove_widget(w2)
     assert menu.get_selected_widget() is None
     with pytest.raises(ValueError):
         menu.select_widget(w1)
 
+    # Mark w1 as selectable
     w1.is_selectable = True
     menu.add.generic_widget(w2)
     assert menu.get_selected_widget() == w2
 
+    # Add a new widget that cannot be selected
     menu.add.label("not selectable")
     menu.add.label("not selectable")
     w_last = menu.add.label("not selectable", selectable=True)
 
+    # If w2 is removed, then menu will try to select labels, but as them are not selectable it should select the last one
     w2.hide()
     assert menu.get_selected_widget() == w_last
 
+    # Mark w1 as unselectable, then w1 is not selectable, nor w2, and labels are unselectable too
+    # so the selected should be the same
     w1.is_selectable = False
     menu.update(PygameEventUtils.key(ctrl.KEY_MOVE_DOWN, keydown=True))
     assert menu.get_selected_widget() == w_last
 
+    # Show w2, then if DOWN is pressed again, the selected status should be 2
     w2.show()
     menu.update(PygameEventUtils.key(ctrl.KEY_MOVE_DOWN, keydown=True))
     assert menu.get_selected_widget() == w2
 
+    # Hide w2, pass again to w_last
     w2.hide()
     assert menu.get_selected_widget() == w_last
 
+    # Hide w_last, then nothing is selected
     w_last.hide()
     assert menu.get_selected_widget() is None
 
+    # Un-hide w2, then it should be selected
     w2.show()
     assert menu.get_selected_widget() == w2
 
+    # Remove w2, then nothing should be selected
     menu.remove_widget(w2)
     assert menu.get_selected_widget() is None
 
+    # Clear all widgets and get index
     menu._widgets = []
     menu._index = 100
     assert menu.get_selected_widget() is None
 
+    # Destroy index
     menu._index = "0"  # type: ignore
     assert menu.get_selected_widget() is None
     assert menu._index == 0
 
+    # Add new index
     btn = menu.add.button("epic")
     assert menu.get_selected_widget() == btn
     menu.unselect_widget()
@@ -666,10 +723,12 @@ def test_submenu():
     assert menu2 in menu.get_submenus()
     assert menu not in menu2.get_submenus()
 
+    # Remove menu2 from menu
     btn.update_callback(lambda: None)
     assert not btn.to_menu
     assert not menu.in_submenu(menu2)
 
+    # Test recursive
     menu.clear()
     menu2.clear()
 
@@ -679,6 +738,7 @@ def test_submenu():
     with pytest.raises(ValueError):
         menu2.add.button("to1", menu)
 
+    # Test duplicated submenu
     menu_d = MenuUtils.generic_menu()
     b1 = menu_d.add.button("btn", menu, button_id="1")
     b2 = menu_d.add.button("btn2", menu, button_id="2")
@@ -696,9 +756,11 @@ def test_submenu():
 
     assert menu_d._submenus == {}
 
+    # Clear menu
     menu.clear()
     assert btn._menu is None
 
+    # Add more submenus
     menu3 = MenuUtils.generic_menu()
     ba = menu.add.button("btn12A", menu2)
     bb = menu.add.button("btn12B", menu2)
@@ -710,6 +772,7 @@ def test_submenu():
     assert menu.get_submenus(recursive=True) == (menu2, menu3)
     assert menu._submenus[menu2] == [ba, bb, bc]
 
+    # Remove links upon submenu disappears
     menu.remove_widget(bb)
     assert menu.get_submenus() == (menu2,)
     assert menu._submenus[menu2] == [ba, bc]
@@ -721,6 +784,7 @@ def test_submenu():
     assert menu.get_submenus(recursive=True) == ()
     assert menu._submenus == {}
 
+    # Test circular
     assert b23._menu == menu2
     menu2.clear()
     assert b23._menu is None
@@ -732,6 +796,7 @@ def test_submenu():
     with pytest.raises(ValueError):
         menu3.add.button("31", menu2)
 
+    # Test update action
     menu.clear()
     menu2.clear()
 
@@ -757,15 +822,18 @@ def test_centering():
     assert menu.get_theme() == theme
     assert not menu._auto_centering
 
+    # Outer scrollarea margin disables centering
     theme = THEME_BLUE.copy()
     theme.scrollarea_outer_margin = (0, 100)
     menu = MenuUtils.generic_menu(theme=theme)
     assert not menu._auto_centering
 
+    # Normal
     theme = THEME_BLUE.copy()
     menu = MenuUtils.generic_menu(theme=theme)
     assert menu._auto_centering
 
+    # Text offset
     theme = THEME_DARK.copy()
     theme.title_font_size = 35
     theme.widget_font_size = 25
@@ -801,11 +869,13 @@ def test_generic_events():
 
     event_val = [False]
 
+    # Add a menu and a method that set a function
     def _some_event():
         """Toggle event flag and return payload."""
         event_val[0] = True
         return "the value"
 
+    # Add some widgets
     button = None
     wid = []
     for i in range(5):
@@ -814,23 +884,29 @@ def test_generic_events():
     assert len(menu.get_widgets()) == 5
     assert len(menu.get_widgets(wid)) == 5
 
+    # Create an event in pygame
     menu.update(PygameEventUtils.key(ctrl.KEY_MOVE_UP, keydown=True))
     assert menu.get_index() == 1
 
+    # Move down twice
     for i in range(2):
         menu.update(PygameEventUtils.key(ctrl.KEY_MOVE_DOWN, keydown=True))
     assert menu.get_index() == 4
     menu.update(PygameEventUtils.key(ctrl.KEY_MOVE_UP, keydown=True))
     assert menu.get_index() == 0
 
+    # Press enter, button should trigger and call function
     assert button.apply() == "the value"
     menu.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
 
+    # Other
     menu.update(PygameEventUtils.key(ctrl.KEY_CLOSE_MENU, keydown=True))
     menu.update(PygameEventUtils.key(ctrl.KEY_BACK, keydown=True))
 
+    # Check index is the same as before
     assert menu.get_index() == 0
 
+    # Check joy
     menu.update(PygameEventUtils.joy_hat_motion(ctrl.JOY_UP))
     assert menu.get_index() == 4
     menu.update(PygameEventUtils.joy_hat_motion(ctrl.JOY_DOWN))
@@ -909,12 +985,15 @@ def test_input_data():
     data = menu.get_input_data(True)
     assert data["id3"] == 1.5
 
+    # Add input to a submenu
     submenu = MenuUtils.generic_menu()
     submenu.add.text_input("text", textinput_id="id4", default="thewidget")
     menu.add.button("submenu", submenu)
     data = menu.get_input_data(recursive=True)
     assert data["id4"] == "thewidget"
 
+    # Add a submenu within submenu with a repeated id, menu.get_input_data
+    # should raise an exception because of the repeated id, even if it's in a different submenu
     subsubmenu = MenuUtils.generic_menu()
     subsubmenu.add.text_input("text", textinput_id="id4", default="repeateddata")
     submenu.add.button("submenu", subsubmenu)
@@ -1049,6 +1128,7 @@ def test_columns_menu():
     assert btn5.get_col_row_index() == (2, 0, 4)
     assert btn6.get_col_row_index() == (2, 1, 5)
 
+    # Check size
     assert len(menu._column_widths) == 3
     for col_w in menu._column_widths:
         assert col_w == width / 3
@@ -1094,6 +1174,9 @@ def test_columns_menu():
 
     # Add new button
     btn7 = menu.add.button("btn")
+    # Layout:
+    # btn3 | btn5 | btn7
+    # btn4 | btn6 |
 
     # Select second button
     with pytest.raises(ValueError):
@@ -1117,7 +1200,9 @@ def test_columns_menu():
     assert not btn7.is_selected()
     assert btn3.is_selected()
 
-    # Floating layout
+    # Set btn4 as floating, then the layout should be
+    # btn3,4 | btn6
+    # btn5   | btn7
     btn4.set_float()
     menu.render()
     assert btn3.get_col_row_index() == (0, 0, 0)
@@ -1126,7 +1211,9 @@ def test_columns_menu():
     assert btn6.get_col_row_index() == (1, 0, 3)
     assert btn7.get_col_row_index() == (1, 1, 4)
 
-    # Sizing tests
+    # Test sizing
+    # btn3   | btn6
+    # btn4,5 | btn7
     btn4.set_float(False)
     btn5.set_float()
     menu.render()
@@ -1135,11 +1222,13 @@ def test_columns_menu():
     for col_w in menu._column_widths:
         assert col_w == width / 2
 
+    # Scale 4, this should not change menu column widths
     btn4.scale(5, 5)
     menu.render()
     for col_w in menu._column_widths:
         assert col_w == width / 2
 
+    # Scale 3, this should change menu column widths
     btn3.scale(5, 1)
     btn3_sz = btn3.get_width(apply_selection=True)
     btn6_sz = btn6.get_width(apply_selection=True)
@@ -1174,15 +1263,21 @@ def test_columns_menu():
 
     btn1.resize(300, 10)
     menu.render()
+    # btn1 | btn3 | btn4
+    # btn2 |      | btn5
 
     assert menu._column_widths == [300, 200, 100]
     assert menu._column_pos_x == [150, 400, 550]
 
+    # Change menu max column width, this should fulfill third column to its maximum possible less than 300
+    # col2 should keep its current width
     menu._column_max_width = [300, None, 300]
     menu.render()
     assert menu._column_widths == [300, 63, 238]
     assert menu._column_pos_x == [150, 331, 482]
 
+    # Chance maximum width of third column and enlarge button 4, then
+    # middle column 3 will take 600-300-100 = 200
     menu._column_max_width = [300, None, 100]
     btn5.resize(100, 10)
     menu.render()
@@ -1196,13 +1291,15 @@ def test_columns_menu():
         column_max_width=[200, None, 150],
         column_min_width=[150, 150, 150],
     )
+    # btn1 | btn3 | btn4
+    # btn2 |      | btn5
     btn1 = menu.add.button("btn")
     menu.add.button("btn")
     menu.add.button("btn")
     menu.add.button("btn")
     menu.add.button("btn")
     btn1.resize(200, 10)
-    menu.render()
+    menu.render()  # This should scale 2 column
     assert menu._column_widths == [200, 250, 150]
 
     menu = MenuUtils.generic_menu(
@@ -1235,10 +1332,9 @@ def test_screen_dimension():
         MenuUtils.generic_menu(title="mainmenu", screen_dimension=(-1, 1))
     with pytest.raises(AssertionError):
         MenuUtils.generic_menu(title="mainmenu", screen_dimension=(1, -1))
-
     with pytest.raises(AssertionError):
+        # The menu is 600x400, so using a lower screen throws an error
         MenuUtils.generic_menu(title="mainmenu", screen_dimension=(1, 1))
-
     menu = MenuUtils.generic_menu(title="mainmenu", screen_dimension=(888, 999))
     assert menu.get_window_size() == (888, 999)
 
@@ -1313,19 +1409,23 @@ def test_reset_value():
     menu.add.label("mylabel")
     menu.add.button("submenu", menu2)
 
+    # Change values
     color.set_value("aaaaaa")
     text.set_value("changed")
     text2.set_value("changed2")
     selector.set_value(0)
 
+    # Reset values
     color.reset_value()
     assert color.get_value(as_string=True) == "#ff0000"
     color.set_value("aaaaaa")
 
+    # Check values changed
     assert color.get_value(as_string=True) == "#aaaaaa"
     assert text.get_value() == "changed"
     assert selector.get_index() == 0
 
+    # Reset values
     menu.reset_value(recursive=True)
     assert color.get_value(as_string=True) == "#ff0000"
     assert text.get_value() == "epic"
@@ -1425,6 +1525,7 @@ def test_empty():
     menu.render()
     assert menu.get_height(widget=True) == 0
 
+    # Adds a button, hide it, then the height should be 0 as well
     btn = menu.add.button("hidden")
     btn.hide()
     assert menu.get_height(widget=True) == 0
@@ -1461,6 +1562,7 @@ def test_beforeopen():
     submenu.set_onbeforeopen(onbeforeopen_select_widget)
     btn_submenu = menu.add.button("Submenu", submenu)
 
+    # Test applying to submenu, which should trigger onbeforeopen
     assert submenu.get_selected_widget().get_id() == "option1"
     btn_submenu.apply()
     assert submenu.get_selected_widget().get_id() == "option2"
@@ -1471,6 +1573,7 @@ def test_focus():
     menu = MenuUtils.generic_menu(title="menu", mouse_motion_selection=True)
     btn = menu.add.button("nice")
 
+    # Test focus
     btn.active = True
     focus = menu._draw_focus_widget(surface, btn)
     assert len(focus) == 4
@@ -1486,10 +1589,12 @@ def test_focus():
         assert focus[3] == ((336, 304), (600, 304), (600, 352), (336, 352))
         assert focus[4] == ((0, 353), (600, 353), (600, 600), (0, 600))
 
+    # Test cases where the focus must fail
     btn._selected = False
     assert menu._draw_focus_widget(surface, btn) is None
     btn._selected = True
 
+    # Set active false
     btn.active = False
     assert menu._draw_focus_widget(surface, btn) is None
     btn.active = True
@@ -1521,12 +1626,13 @@ def test_visible():
     btn2.hide()
     menu.select_widget(btn1)
 
+    # btn2 cannot be selected as it is hidden
     with pytest.raises(ValueError):
         menu.select_widget(btn2)
-
     btn2.show()
     menu.select_widget(btn2)
 
+    # Hide buttons
     btn1.hide()
     btn2.hide()
 
@@ -1549,26 +1655,30 @@ def test_visible():
     assert btn.is_selected()
     btn.hide()
 
+    # As there's no more visible widgets, index must be -1
     assert menu._index == -1
     assert not btn.is_selected()
 
+    # Widget should be selected, and index must be 0
     btn.show()
     assert btn.is_selected()
     assert menu._index == 0
 
+    # Hide button, and set is as unselectable
     btn.hide()
     btn.is_selectable = False
     assert menu._index == -1
     btn.show()
 
+    # Now, as widget is not selectable, button should not be selected and index still -1
     assert not btn.is_selected()
     assert menu._index == -1
 
+    # Set selectable again
     btn.is_selectable = True
     btn.select()
     assert menu._index == -1
     assert menu.get_selected_widget() is None
-
     btn.select(update_menu=True)
     assert menu.get_selected_widget() == btn
 
@@ -1601,8 +1711,11 @@ def test_events():
         b = menu.add.button("test" + str(i))
         wid_g.append(b)
 
+    # btn0 | btn2 | btn4 | btn6
+    # btn1 | btn3 | btn5 | btn7
     assert menu_top.get_current() == menu
 
+    # Arrow keys
     assert menu.get_selected_widget() == wid_g[0]
     menu_top.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
     assert menu.get_selected_widget() == wid_g[6]
@@ -1613,6 +1726,7 @@ def test_events():
     menu_top.update(PygameEventUtils.key(ctrl.KEY_MOVE_DOWN, keydown=True))
     assert menu.get_selected_widget() == wid_g[0]
 
+    # Joy key
     menu_top.update(PygameEventUtils.joy_hat_motion(ctrl.JOY_LEFT))
     assert menu.get_selected_widget() == wid_g[6]
     menu_top.update(PygameEventUtils.joy_hat_motion(ctrl.JOY_DOWN))
@@ -1622,80 +1736,86 @@ def test_events():
     menu_top.update(PygameEventUtils.joy_hat_motion(ctrl.JOY_UP))
     assert menu.get_selected_widget() == wid_g[0]
 
+    # Joy hat
     menu_top.update(PygameEventUtils.joy_motion(-10, 0))
     assert menu_top.get_current()._joy_event == JOY_EVENT_LEFT
     assert menu.get_selected_widget() == wid_g[6]
-
     menu_top.update(PygameEventUtils.joy_motion(0, 10))
     assert menu_top.get_current()._joy_event == JOY_EVENT_DOWN
     assert menu.get_selected_widget() == wid_g[7]
-
     menu_top.update(PygameEventUtils.joy_motion(10, 0))
     assert menu_top.get_current()._joy_event == JOY_EVENT_RIGHT
     assert menu.get_selected_widget() == wid_g[1]
-
     menu_top.update(PygameEventUtils.joy_motion(0, -10))
     assert menu_top.get_current()._joy_event == JOY_EVENT_UP
     assert menu.get_selected_widget() == wid_g[0]
 
+    # Menu should keep a recursive state of joy
     assert menu.get_current()._joy_event != 0
     menu_top.update(PygameEventUtils.joy_center())
     assert menu.get_current()._joy_event == 0
 
+    # Click widget
     menu_top.enable()
     menu_top.update(
         PygameEventUtils.middle_rect_click(wid_g[1], evtype=pygame.MOUSEBUTTONDOWN)
     )
     assert menu.get_selected_widget() == wid_g[1]
-
     menu_top.update(
         PygameEventUtils.middle_rect_click(wid_g[0], evtype=pygame.MOUSEBUTTONDOWN)
     )
     assert menu.get_selected_widget() == wid_g[0]
-
     menu_top.update(
         PygameEventUtils.middle_rect_click(wid_g[1], evtype=pygame.MOUSEBUTTONDOWN)
     )
     assert menu.get_selected_widget() == wid_g[1]
 
+    # It should not change the menu selection (button up)
     assert menu_top.update(
         PygameEventUtils.middle_rect_click(wid_g[1], evtype=pygame.MOUSEBUTTONUP)
     )
     assert menu.get_selected_widget() == wid_g[1]
 
+    # Applying button up in a non-selected widget must return false
     assert not menu.update(
         PygameEventUtils.middle_rect_click(wid_g[0], evtype=pygame.MOUSEBUTTONUP)
     )
 
+    # Fingerdown don't change selected widget if _touchscreen_motion_selection is enabled
     assert menu._touchscreen_motion_selection
     menu.update(PygameEventUtils.middle_rect_click(wid_g[0], evtype=FINGERDOWN))
 
+    # If touchscreen motion is disabled, then fingerdown should select the widget
     menu._touchscreen_motion_selection = False
     menu.update(PygameEventUtils.middle_rect_click(wid_g[1], evtype=FINGERDOWN))
     assert menu.get_selected_widget() == wid_g[1]
     menu._touchscreen_motion_selection = True
 
+    # Fingermotion should select widgets as touchscreen is active
     menu.update(PygameEventUtils.middle_rect_click(wid_g[0], evtype=FINGERMOTION))
     assert menu.get_selected_widget() == wid_g[0]
 
+    # Infinite joy
     menu_top.update(PygameEventUtils.joy_motion(0, 10))
     menu.update([pygame.event.Event(menu._joy_event_repeat)])
     assert menu._joy_event != 0
 
+    # Now disable joy event, then event repeat should not continue
     menu._joy_event = 0
     menu.update([pygame.event.Event(menu._joy_event_repeat)])
     menu_top.update(PygameEventUtils.joy_center())
     assert menu.get_current()._joy_event == 0
 
+    # Active widget, and click outside to disable it (only if motion selection enabled)
     wid = menu.get_selected_widget()
     wid.active = True
 
+    # Clicking the same rect should not fire the callback
     menu_top.update(
         PygameEventUtils.middle_rect_click(wid, evtype=pygame.MOUSEBUTTONDOWN)
     )
     assert wid.active
     assert wid.is_selected()
-
     wid._rect.x += 500
     menu._mouse_motion_selection = True
     menu_top.update(
@@ -1707,6 +1827,7 @@ def test_events():
         in menu_top.get_last_update_mode()[0]
     )
 
+    # Test same effect but with touchbar
     menu._mouse_motion_selection = True
     menu._touchscreen = True
     menu._touchscreen_motion_selection = True
@@ -1718,6 +1839,7 @@ def test_events():
         in menu_top.get_last_update_mode()[0]
     )
 
+    # Test mouseover and mouseleave
     test = [None]
 
     def on_over(m, e):
@@ -1759,6 +1881,7 @@ def test_events():
     assert not menu._mouseover
     assert test[0] is False
 
+    # Test empty parameters
     menu.set_onmouseover(lambda: None)
     menu.set_onmouseleave(lambda: None)
 
@@ -1774,6 +1897,7 @@ def test_events():
         PygameEventUtils.mouse_click(50, 50, inlist=True, evtype=pygame.MOUSEMOTION)
     )
 
+    # Test window mouseover and mouseleave
     test = [None]
 
     def on_over(m):
@@ -1795,6 +1919,7 @@ def test_events():
     menu.update(PygameEventUtils.leave_window())
     assert test[0] is False
 
+    # Test empty parameters
     menu.set_onwindowmouseover(lambda: None)
     menu.set_onwindowmouseleave(lambda: None)
 
@@ -1806,6 +1931,7 @@ def test_events():
     menu.update([])
     assert menu.get_last_update_mode()[0] == events.MENU_LAST_NONE
 
+    # Test if not enabled
     menu.disable()
     with pytest.raises(RuntimeError):
         menu.update([])
@@ -1815,23 +1941,26 @@ def test_events():
     assert not menu.update([])
     menu._disable_update = False
 
+    # Test scrollbars
     menu._scrollarea.update = lambda _: True
     assert menu.update([])
     assert menu.get_last_update_mode()[0] == events.MENU_LAST_SCROLL_AREA
     menu._scrollarea.update = lambda _: False
 
+    # Test menubar
     menu._menubar.update = lambda _: True
     assert menu.update([])
     assert menu.get_last_update_mode()[0] == events.MENU_LAST_MENUBAR
     menu._menubar.update = lambda _: False
 
+    # Test quit
     menu._disable_exit = True
     assert menu.update([pygame.event.Event(pygame.QUIT)])
     assert menu.get_last_update_mode()[0] == events.MENU_LAST_QUIT
-
     assert menu.update([pygame.event.Event(events.PYGAME_WINDOWCLOSE)])
     assert menu.get_last_update_mode()[0] == events.MENU_LAST_QUIT
 
+    # Test menu close
     menu._onclose = lambda: None
     assert menu.update(PygameEventUtils.key(ctrl.KEY_CLOSE_MENU, keydown=True))
     assert menu.get_last_update_mode()[0] == events.MENU_LAST_MENU_CLOSE
@@ -1946,13 +2075,14 @@ def test_mouseover_widget():
     btn1 = menu.add.button("1", cursor=CURSOR_ARROW, button_id="b1")
     btn2 = menu.add.button("2", cursor=CURSOR_ARROW, button_id="b2")
 
+    # Setup
     menu.select_widget("b2")
     assert menu.get_selected_widget() == btn2
     menu.select_widget("b1")
     assert btn1.is_selected()
     assert not menu._mouse_motion_selection
 
-    test = [False, False, False, False]
+    test = [False, False, False, False]  # btn1over, btn1leave, btn2over, btn2leave
 
     def onover1(widget, _):
         """Handle mouse-over for first button."""
@@ -1982,11 +2112,13 @@ def test_mouseover_widget():
     btn1.set_cursor(CURSOR_HAND)
     btn2.set_cursor(CURSOR_CROSSHAIR)
 
+    # Test before
     assert test == [False, False, False, False]
 
     reset_widgets_over()
     assert WIDGET_MOUSEOVER == [None, []]
 
+    # Get cursors
     cur_none = get_cursor()
     if cur_none is None:
         return
@@ -1999,6 +2131,7 @@ def test_mouseover_widget():
 
     set_pygame_cursor(cur_none)
 
+    # Place mouse over widget 1, it should set as mouseover and trigger the events
     deco = menu.get_decorator()
 
     def draw_rect():
@@ -2014,6 +2147,7 @@ def test_mouseover_widget():
     assert WIDGET_MOUSEOVER == [btn1, [btn1, cur_none, []]]
     assert get_cursor() == cur1
 
+    # Place mouse away. This should force widget 1 mouseleave
     mouse_away_event = PygameEventUtils.middle_rect_click(
         (1000, 1000), evtype=pygame.MOUSEMOTION
     )
@@ -2022,16 +2156,19 @@ def test_mouseover_widget():
     assert WIDGET_MOUSEOVER == [None, []]
     assert get_cursor() == cur_none
 
+    # Place over widget 2
     menu.update(PygameEventUtils.mouse_motion(btn2))
     assert test == [True, True, True, False]
     assert WIDGET_MOUSEOVER == [btn2, [btn2, cur_none, []]]
     assert get_cursor() == cur2
 
+    # Place mouse away. This should force widget 1 mouseleave
     menu.update(mouse_away_event)
     assert test == [True, True, True, True]
     assert WIDGET_MOUSEOVER == [None, []]
     assert get_cursor() == cur_none
 
+    # Test immediate switch, from 1 to 2, then from 2 to 1, then off
     test = [False, False, False, False]
     menu.update(PygameEventUtils.mouse_motion(btn1))
     assert menu.get_selected_widget() == btn1
@@ -2049,6 +2186,7 @@ def test_mouseover_widget():
     assert WIDGET_MOUSEOVER == [None, []]
     assert get_cursor() == cur_none
 
+    # Same switch test, but now with widget selection by mouse motion
     menu._mouse_motion_selection = True
     test = [False, False, False, False]
     menu.select_widget(btn2)
@@ -2072,6 +2210,7 @@ def test_mouseover_widget():
     assert get_cursor() == cur_none
     assert menu.get_selected_widget() == btn2
 
+    # Mouseover btn1, but then hide it
     menu._mouse_motion_selection = False
     test = [False, False, False, False]
     menu.update(PygameEventUtils.mouse_motion(btn1))
@@ -2083,6 +2222,7 @@ def test_mouseover_widget():
     assert WIDGET_MOUSEOVER == [None, []]
     assert get_cursor() == cur_none
 
+    # Test close
     menu.update(PygameEventUtils.mouse_motion(btn2))
     assert test == [True, True, True, False]
     assert WIDGET_MOUSEOVER == [btn2, [btn2, cur_none, []]]
@@ -2098,17 +2238,20 @@ def test_mouseover_widget():
     assert WIDGET_MOUSEOVER == [None, []]
     assert get_cursor() == cur_none
 
+    # Enable
     menu.enable()
     menu.update(PygameEventUtils.mouse_motion(btn2))
     assert test == [True, True, False, True]
     assert WIDGET_MOUSEOVER == [btn2, [btn2, cur_none, []]]
     assert get_cursor() == cur2
 
+    # Move to hidden
     menu.update(PygameEventUtils.mouse_motion(btn1))
     assert test == [True, True, False, False]
     assert WIDGET_MOUSEOVER == [None, []]
     assert get_cursor() == cur_none
 
+    # Unhide
     btn1.show()
     test = [False, False, False, False]
     prev_pos1 = PygameEventUtils.mouse_motion(btn1)
@@ -2116,6 +2259,7 @@ def test_mouseover_widget():
     assert test == [True, False, False, False]
     assert WIDGET_MOUSEOVER == [btn1, [btn1, cur_none, []]]
 
+    # Move btn1 and btn2
     assert menu.get_widgets() == (btn1, btn2)
     menu.move_widget_index(btn1, btn2)
     assert menu.get_widgets() == (btn2, btn1)
@@ -2124,13 +2268,16 @@ def test_mouseover_widget():
     menu.update(prev_pos1)
     assert WIDGET_MOUSEOVER == [btn2, [btn2, cur_none, []]]
 
+    # Remove btn2
     menu.remove_widget(btn2)
     assert WIDGET_MOUSEOVER == [None, []]
 
+    # Select btn1
     menu.update(PygameEventUtils.mouse_motion(btn1))
     assert WIDGET_MOUSEOVER == [btn1, [btn1, cur_none, []]]
     assert get_cursor() == cur1
 
+    # Change previous cursor to assert an error if mouseleave doesn't reset it
     assert cur_none == WIDGET_TOP_CURSOR[0]
     WIDGET_MOUSEOVER[1][1] = cur2
     menu.update(mouse_away_event)
@@ -2275,6 +2422,7 @@ def test_resize():
     menu = MenuUtils.generic_menu(theme=theme)
     assert menu.get_size() == (600, 400)
 
+    # Disable auto centering depending on the case
     menu._auto_centering = True
     theme.widget_offset = (0, 10)
     menu.resize(300, 300)
@@ -2287,6 +2435,7 @@ def test_resize():
     assert not menu._auto_centering
     theme.widget_offset = (0, 0)
 
+    # Test resize
     menu = MenuUtils.generic_menu(theme=theme, column_max_width=[0])
     assert menu._column_max_width_zero == [True]
     assert menu._column_max_width == [600]
@@ -2298,12 +2447,14 @@ def test_resize():
     assert menu._column_max_width == [300]
     assert menu._menubar._width == 300
 
+    # Render
     assert menu._widgets_surface is None
     menu.render()
     assert menu._widgets_surface is not None
     menu.resize(200, 200)
     assert menu._widgets_surface_need_update
 
+    # Add button to resize
     menu = MenuUtils.generic_menu()
 
     def _resize():
@@ -2318,36 +2469,43 @@ def test_resize():
     btn.apply()
     assert menu.get_size()[0] == 300
 
+    # Resize with another surface size
     menu.resize(300, 300, (500, 500))
 
+    # Invalid size
     with pytest.raises(ValueError):
         menu.resize(50, 10)
 
+    # Resize but using position absolute
     menu.resize(400, 400, position=(50, 50))
     assert menu._position_relative
     assert menu._position == (100, 100)
-
     menu.resize(400, 400, position=(50, 50, False))
     assert not menu._position_relative
     assert menu._position == (50, 50)
 
+    # Resize, hide scrollbars
     theme = THEME_DEFAULT.copy()
     menu = MenuUtils.generic_menu(theme=theme)
     for i in range(8):
         menu.add.button(i, bool)
     sa = menu.get_scrollarea()
 
+    # Test with force
     assert sa.get_size(inner=True) == (580, 400)
     sa.hide_scrollbars(ORIENTATION_VERTICAL)
     assert sa.get_size(inner=True) == (600, 400)
     sa.show_scrollbars(ORIENTATION_VERTICAL)
     assert sa.get_size(inner=True) == (580, 400)
 
+    # Disable force, this will not affect menu as after resizing the scrollbars
+    # will re-show again
     sa.hide_scrollbars(ORIENTATION_VERTICAL, force=False)
     assert sa.get_size(inner=True) == (580, 400)
     sa.show_scrollbars(ORIENTATION_VERTICAL, force=False)
     assert sa.get_size(inner=True) == (580, 400)
 
+    # Test submenu recursive resizing
     menu = MenuUtils.generic_menu(theme=theme)
     menu2 = MenuUtils.generic_menu(theme=theme)
     menu3 = MenuUtils.generic_menu(theme=theme)
@@ -2356,7 +2514,7 @@ def test_resize():
     assert menu.get_submenus(True) == (menu2, menu3)
     for m in (menu, menu2, menu3):
         assert m.get_size() == (600, 400)
-    menu.resize(300, 300, recursive=True)
+    menu.resize(300, 300, recursive=True)  # Now, resize
     for m in (menu, menu2, menu3):
         assert m.get_size() == (300, 300)
 
@@ -2428,7 +2586,8 @@ def test_menu_render_toggle():
     assert nc == 3
     assert nr == [50, 50, 50]
 
-    n = sum(nr)
+    # Test with rendering enabled
+    n = sum(nr)  # Number of widgets to be added
     t0 = time.time()
     wdt = []  # Widgets
     for i in range(n):
@@ -2437,6 +2596,7 @@ def test_menu_render_toggle():
 
     position_before = [w.get_position() for w in wdt]
 
+    # Test with rendering disabled
     menu.clear()
     wdt.clear()
     menu.disable_render()
@@ -2449,8 +2609,10 @@ def test_menu_render_toggle():
 
     assert t_on > t_off
 
+    # Position after render must be equal!
     for i in range(n):
         assert position_before[i] == wdt[i].get_position()
+    print(f'Render on: {t_on}s, off: {t_off}s')
 
 
 def test_menu_widget_selected_events():
@@ -2469,18 +2631,22 @@ def test_menu_widget_selected_events():
     assert not age.is_selected()
     assert name.is_selected()
 
+    # Now, disable global widget selected event
     menu._widget_selected_update = False
     menu.update(PygameEventUtils.key(pygame.K_a, keydown=True, char="a"))
     assert name.get_value() == ""
 
+    # Re-enable global widget selected event
     menu._widget_selected_update = True
     menu.update(PygameEventUtils.key(pygame.K_a, keydown=True, char="a"))
     assert name.get_value() == "a"
 
+    # Disable local widget accept event
     name.receive_menu_update_events = False
     menu.update(PygameEventUtils.key(pygame.K_a, keydown=True, char="a"))
     assert name.get_value() == "a"
 
+    # Enable local widget accept event
     name.receive_menu_update_events = True
     menu.update(PygameEventUtils.key(pygame.K_s, keydown=True, char="s"))
     assert name.get_value() == "as"
@@ -2569,9 +2735,11 @@ def test_selection():
     sub = MenuUtils.generic_menu()
     sub2 = MenuUtils.generic_menu()
 
+    # Add "sub" as a link within "menu"
     sub_link = menu.add.menu_link(sub)
     btn_back = sub.add.button("Back", events.BACK)
 
+    # Add "sub2" as a link within "sub"
     sub2_link = sub.add.menu_link(sub2)
     btn_back_2 = sub2.add.button("Back", events.BACK)
 
@@ -2582,6 +2750,9 @@ def test_selection():
     menu.render()
     assert menu.get_selected_widget() == btn
 
+    # Now, we test selection preservation on return. By default, menu does not
+    # keep previous selection. So, selecting widget 2 (that opens the new menu
+    # sub2), and moving back, the index should be 0
     menu.select_widget(btn2).get_selected_widget().apply()
     assert menu.get_current() == sub
     assert menu.get_current().get_selected_widget() == btn_back
@@ -2590,11 +2761,13 @@ def test_selection():
     btn_back_2.apply()
     assert menu.get_current().get_selected_widget() == btn_back
 
+    # Now we select the btn3 and apply
     menu.get_current()._remember_selection = True
     menu.get_current().select_widget(btn3).get_selected_widget().apply()
     btn_back_2.apply()
     assert menu.get_current().get_selected_widget() == btn3
 
+    # Disable the feature, and now see what happens if trying to select first index if menu is empty
     menu.get_current()._remember_selection = True
     btn3.apply()
     assert menu.get_current() == sub2

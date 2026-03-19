@@ -25,12 +25,14 @@ from test._utils import MenuUtils, surface
 
 @pytest.fixture
 def menu():
+    """Create and enable a generic menu fixture."""
     m = MenuUtils.generic_menu()
     m.enable()
     return m
 
 
 def test_copy():
+    """Test selection effect copy behavior."""
     s = LeftArrowSelection()
     s1 = copy.copy(s)
     s2 = copy.deepcopy(s)
@@ -42,6 +44,7 @@ def test_copy():
 
 
 def test_abstract_selection_draw_raises():
+    """Test abstract selection draw methods raise errors."""
     w = Button("epic")
 
     sel = Selection(0, 0, 0, 0)
@@ -54,6 +57,7 @@ def test_abstract_selection_draw_raises():
 
 
 def test_arrow_selection(menu):
+    """Test arrow-based selection effects."""
     w = Button("epic")
     w.set_selection_effect(LeftArrowSelection())
     menu.add.generic_widget(w)
@@ -68,6 +72,7 @@ def test_arrow_selection(menu):
 
 
 def test_highlight_selection(menu):
+    """Test highlight selection properties and rendering."""
     w = Button("epic")
     border_width = 1
     margin_x = 18
@@ -88,26 +93,30 @@ def test_highlight_selection(menu):
     assert sel.get_height() == margin_y
     assert sel.get_width() == margin_x
 
+    # Test inflate
     rect = w.get_rect()
     inflated = sel.inflate(rect)
-
     assert -inflated.x + rect.x == sel.get_width() / 2
     assert -inflated.y + rect.y == sel.get_height() / 2
 
+    # Test margin xy
     sel.margin_xy(10, 20)
     assert sel.margin_left == 10
     assert sel.margin_right == 10
     assert sel.margin_top == 20
     assert sel.margin_bottom == 20
 
+    # Test null border
     sel._border_width = 0
     sel.draw(surface, w)
 
+    # Test background color
     sel.set_background_color("red")
     assert sel.get_background_color() == (255, 0, 0, 255)
 
 
 def test_none_selection(menu):
+    """Test none selection behavior."""
     w = Button("epic")
     w.set_selection_effect(NoneSelection())
     menu.add.generic_widget(w)
@@ -118,6 +127,7 @@ def test_none_selection(menu):
     assert rect == new_rect
     assert not w.get_selection_effect().widget_apply_font_color
 
+    # Widgets default selection effect is None
     last_sel = w.get_selection_effect()
     w.set_selection_effect()
     assert isinstance(w.get_selection_effect(), NoneSelection)
@@ -125,6 +135,7 @@ def test_none_selection(menu):
 
 
 def test_simple_selection(menu):
+    """Test simple selection behavior."""
     w = Button("epic")
     w.set_selection_effect(SimpleSelection())
     menu.add.generic_widget(w)

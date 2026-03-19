@@ -85,12 +85,14 @@ def test_example_simple():
 
 
 def test_example_resizable_window():
+    """Test resizable window."""
     window_resize.on_resize()
     assert window_resize.menu.get_window_size() == (600, 600)
     assert window_resize.menu.get_size() == (450, 420)
 
 
 def test_example_timer_clock():
+    """Test timer clock example."""
     pygame.event.post(PygameEventUtils.keydown(pygame.K_ESCAPE, inlist=False))
     timer_clock.main(test=True)
 
@@ -103,8 +105,10 @@ def test_example_timer_clock():
 
 
 def test_example_other_calculator():
+    """Test calculator example."""
     app = calculator.main(test=True)
 
+    # Process events
     app.process_events(
         PygameEventUtils.keydown(
             [pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5, pygame.K_PLUS]
@@ -167,12 +171,13 @@ def test_example_other_calculator():
     assert app.curr == ""
     assert app.prev == ""
 
+    # Test methods
     with pytest.raises(ValueError):
         app._format("n")
-
     assert app._format("1.2") == "1"
     assert app._format("2.0") == "2"
 
+    # Test selection
     app.menu._test_print_widgets()
     b1 = app.menu.get_widgets()[4]
     deco = b1.get_decorator()
@@ -186,6 +191,7 @@ def test_example_other_calculator():
 
 
 def test_example_other_dynamic_button_append():
+    """Test dynamic button example."""
     btn = dynamic_button.add_dynamic_button()
     assert btn.get_counter_attribute("count") == 0
     btn.apply()
@@ -194,6 +200,7 @@ def test_example_other_dynamic_button_append():
 
 
 def test_example_other_dynamic_widget_update():
+    """Test dynamic widget update example."""
     app = dynamic_widget.App()
     app.current = 3
     app.animate_quit_button(app.quit_button, app.menu)
@@ -203,10 +210,12 @@ def test_example_other_dynamic_widget_update():
 
 
 def test_example_other_image_background():
+    """Test background image example."""
     image_background.main(test=True)
 
 
 def test_example_other_maze():
+    """Test maze app example."""
     app = maze.MazeApp(rows=10)
     btn = app._menu.get_widget("clear")
 
@@ -226,6 +235,7 @@ def test_example_other_maze():
 
 
 def test_example_other_scrollbar():
+    """Test scrollbar example."""
     pygame.event.post(PygameEventUtils.keydown(pygame.K_v, inlist=False))
     pygame.event.post(PygameEventUtils.keydown(pygame.K_h, inlist=False))
 
@@ -235,6 +245,7 @@ def test_example_other_scrollbar():
 
 
 def test_example_other_scrollbar_area():
+    """Test scrollbar area example."""
     pygame.event.post(PygameEventUtils.keydown(pygame.K_ESCAPE, inlist=False))
     scrollbar_area.main(test=True)
 

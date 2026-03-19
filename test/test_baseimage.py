@@ -255,7 +255,6 @@ def test_scale():
     assert image4a.get_size() == (1024, 1024)
 
     image4b = image.copy().scale4x()
-
     image.scale(2, 2).scale(2, 2)
     assert image.get_size() == (1024, 1024)
 
@@ -426,7 +425,6 @@ def test_cache():
     """Cache draw test."""
     image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
     assert image._last_transform[2] is None
-
     image.set_drawing_mode(pygame_menu.baseimage.IMAGE_MODE_FILL)
 
     # Draw, this should force cache
@@ -469,7 +467,6 @@ def test_from_surface():
 
     # Ensure the internal surface is not the same object
     assert image._surface is not surf
-
     assert image._original_surface is not surf
 
     image.to_bw()

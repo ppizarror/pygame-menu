@@ -238,7 +238,6 @@ def test_widget_relative_to_view_rect(menu, sa):
     """Test relative widget positions within the scrollable viewport."""
     buttons = [menu.add.button(f"b{i}") for i in range(10)]
     menu.render()
-
     rx, ry = sa.get_widget_position_relative_to_view_rect(buttons[0])
     assert isinstance(rx, float)
     assert isinstance(ry, float)
@@ -364,7 +363,6 @@ def test_empty_scrollarea_config():
         menu.add.button(i, bool)
 
     sa = menu.get_scrollarea()
-
     expected_height = menu.get_height() - menu.get_menubar().get_height()
 
     assert sa.get_size() == (600, expected_height)

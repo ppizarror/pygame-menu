@@ -37,9 +37,7 @@ from test._utils import (
 
 @pytest.fixture(autouse=True)
 def setup_widgets_test() -> None:
-    """
-    Setup widgets test.
-    """
+    """Setup widgets test."""
     test_reset_surface()
 
 
@@ -56,9 +54,7 @@ def setup_widgets_test() -> None:
     ],
 )
 def test_abstract_widget_manager(method_call) -> None:
-    """
-    Test abstract widget manager raises NotImplementedError for all abstract methods.
-    """
+    """Test abstract widget manager raises NotImplementedError for all abstract methods."""
     wm = AbstractWidgetManager()
     with pytest.raises(NotImplementedError):
         method_call(wm)

@@ -14,21 +14,22 @@ from pygame_menu.widgets.widget.button import Button
 
 
 def test_alpha():
+    """Configure alpha state."""
     assert ut._ALPHA_CHANNEL[0] is True
-
     ut.configure_alpha(False)
     assert ut._ALPHA_CHANNEL[0] is False
-
     ut.configure_alpha(True)
     assert ut._ALPHA_CHANNEL[0] is True
 
 
 def test_callable():
+    """Test is callable."""
     assert ut.is_callable(bool)
     assert not ut.is_callable(1)
 
 
 def test_position_str():
+    """Test position assert values as str."""
     assert ut.assert_position_vector(POSITION_NORTHWEST) is None
 
 
@@ -42,10 +43,12 @@ def test_position_str():
     ],
 )
 def test_padding(value, expected):
+    """Padding test."""
     assert ut.parse_padding(value) == expected
 
 
 def test_terminal_widget_title():
+    """Test terminal title."""
     w = Button("epic")
     w.hide()
     s = ut.widget_terminal_title(w)
@@ -53,6 +56,7 @@ def test_terminal_widget_title():
 
 
 def test_shadows():
+    """Test shadows."""
     shadow = ut.ShadowGenerator()
 
     s1 = shadow.create_new_rectangle_shadow(100, 100, 15, 25)

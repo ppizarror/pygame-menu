@@ -18,6 +18,7 @@ from test._utils import MenuUtils, PygameEventUtils, surface
 
 
 def test_none_widget_behavior():
+    """Test none widget behavior."""
     menu = MenuUtils.generic_menu()
 
     widgets = [
@@ -125,6 +126,7 @@ def test_none_widget_behavior():
         assert wid.get_selected_time() == 0
 
         def my_event():
+            """Generic event callback."""
             return
 
         wid.set_onchange(my_event)
@@ -146,11 +148,13 @@ def test_none_widget_behavior():
 
 
 def test_draw_update_callbacks():
+    """Test draw and update callbacks."""
     wid = NoneWidget()
 
     draw_flag = [False]
 
     def _draw(*_):
+        """Set draw callback flag."""
         draw_flag[0] = True
 
     draw_id = wid.add_draw_callback(_draw)
@@ -171,6 +175,7 @@ def test_draw_update_callbacks():
     update_flag = [False]
 
     def _update(*_):
+        """Set update callback flag."""
         update_flag[0] = True
 
     update_id = wid.add_update_callback(_update)
@@ -190,6 +195,7 @@ def test_draw_update_callbacks():
 
 
 def test_hmargin():
+    """Test horizontal margin widget."""
     w = pygame_menu.widgets.HMargin(999)
     w._render()
 
@@ -208,6 +214,7 @@ def test_hmargin():
 
 
 def test_vfill():
+    """Test vertical fill widget."""
     menu = MenuUtils.generic_menu()
     b = menu.add.button("nice")
     bh = b.get_height()
@@ -303,6 +310,7 @@ def test_vfill():
 
 
 def test_vmargin():
+    """Test vertical margin widget."""
     menu = MenuUtils.generic_menu()
     w = menu.add.vertical_margin(999)
     w._render()
@@ -317,6 +325,7 @@ def test_vmargin():
 
 
 def test_menu_link():
+    """Test menu link widget."""
     menu = MenuUtils.generic_menu()
     menu1 = MenuUtils.generic_menu(title="Menu1", theme=pygame_menu.themes.THEME_BLUE)
     menu1.add.button("Back", pygame_menu.events.BACK)
@@ -362,6 +371,7 @@ def test_menu_link():
         menu.add.menu_link(True)  # type: ignore
 
     def open_link(*args):
+        """Open a menu link from selector callback."""
         _link = args[-1]
         assert isinstance(_link, pygame_menu.widgets.MenuLink)
         _link.open()
@@ -381,6 +391,7 @@ def test_menu_link():
 
 
 def test_value_errors():
+    """Test none-like widgets value API errors."""
     menu = MenuUtils.generic_menu()
     menu2 = MenuUtils.generic_menu()
 
@@ -404,6 +415,7 @@ def test_value_errors():
 
 
 def test_shadow():
+    """Test shadow is disabled for none-like widgets."""
     menu = MenuUtils.generic_menu()
     w = menu.add.vertical_margin(1)
 

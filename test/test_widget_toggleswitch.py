@@ -16,10 +16,12 @@ from test._utils import MenuUtils, PygameEventUtils, surface
 
 @pytest.fixture
 def menu():
+    """Create a generic menu fixture for ToggleSwitch tests."""
     return MenuUtils.generic_menu()
 
 
 def test_toggleswitch_basic(menu):
+    """Test toggleswitch widget."""
     value = [None]
 
     def onchange(v):
@@ -129,12 +131,14 @@ def test_toggleswitch_basic(menu):
     ],
 )
 def test_toggleswitch_invalid_transforms(menu, method, args):
+    """Test transforms are not implemented for ToggleSwitch."""
     switch = menu.add.toggle_switch("toggle", False)
     with pytest.raises(WidgetTransformationNotImplemented):
         getattr(switch, method)(*args)
 
 
 def test_toggleswitch_position_and_translate(menu):
+    """Test transforms affecting position and translation."""
     switch = menu.add.toggle_switch("toggle", False)
 
     switch.set_position(1, 1)
@@ -146,6 +150,7 @@ def test_toggleswitch_position_and_translate(menu):
 
 @pytest.mark.parametrize("bad_value", ["false"])
 def test_toggleswitch_invalid_constructor(menu, bad_value):
+    """Test invalid ToggleSwitch constructor values."""
     with pytest.raises(ValueError):
         menu.add.toggle_switch("toggle", bad_value)  # type: ignore
 
@@ -158,18 +163,21 @@ def test_toggleswitch_invalid_constructor(menu, bad_value):
     ],
 )
 def test_toggleswitch_invalid_single_click_params(menu, param, value):
+    """Test invalid single-click constructor params."""
     kwargs = {param: value}
     with pytest.raises(AssertionError):
         menu.add.toggle_switch("toggle", False, **kwargs)
 
 
 def test_toggleswitch_state_font_validation(menu):
+    """Test other ToggleSwitch constructor params related to state font."""
     pygame_menu.widgets.ToggleSwitch("Epic", state_text_font=menu._theme.widget_font)
     with pytest.raises(AssertionError):
         pygame_menu.widgets.ToggleSwitch("Epic", state_text_font_size=-1)
 
 
 def test_toggleswitch_single_click(menu):
+    """Test single click toggle behavior."""
     switch = menu.add.toggle_switch("toggle", False)
     assert switch._infinite is True  # single_click=True implies infinite
 
@@ -194,6 +202,7 @@ def test_toggleswitch_single_click(menu):
 
 
 def test_toggleswitch_value(menu):
+    """Test toggleswitch value."""
     switch = menu.add.toggle_switch("toggle", False)
 
     assert switch._default_value == 0
@@ -209,11 +218,13 @@ def test_toggleswitch_value(menu):
 
 
 def test_toggleswitch_empty_title(menu):
+    """Test empty title."""
     switch = menu.add.toggle_switch("")
     assert switch.get_size() == (191, 49)
 
 
 def test_toggleswitch_update_font(menu):
+    """Test update font."""
     switch = menu.add.toggle_switch("abc")
 
     assert switch.get_size() == (240, 49)

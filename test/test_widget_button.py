@@ -48,6 +48,7 @@ def callback_flag():
     ],
 )
 def test_button_raises_error_on_invalid_callback(menu, invalid_input):
+    """Test that invalid callback raises an error."""
     with pytest.raises(ValueError):
         menu.add.button("btn", invalid_input)
 
@@ -63,12 +64,16 @@ def test_button_raises_error_on_recursive_menu(menu):
     [lambda: None, pygame_menu.events.NONE, pygame_menu.events.PYGAME_QUIT, None],
 )
 def test_button_accepts_valid_callbacks(menu, valid_input):
+    """Test that valid callbacks are accepted."""
     btn = menu.add.button("btn", valid_input)
     assert btn is not None
 
 
 def test_button_callback_execution_with_args(callback_flag):
+    """Test that callback execution with args is accepted."""
+
     def cb(t=False):
+        """Store callback execution state and passed value."""
         callback_flag["called"] = True
         callback_flag["value"] = t
 
@@ -80,7 +85,10 @@ def test_button_callback_execution_with_args(callback_flag):
 
 
 def test_button_kwargs_logic(menu):
+    """Test that kwargs are accepted."""
+
     def cb_check(**kwargs):
+        """Validate kwargs forwarded to callback."""
         assert kwargs.get("key") is True
 
     # Test explicit kwarg passing
@@ -93,6 +101,7 @@ def test_button_kwargs_logic(menu):
 
 
 def test_button_underline_decoration(menu):
+    """Test that underline decoration is accepted."""
     btn = menu.add.button("underline_me", pygame_menu.events.NONE)
 
     btn.add_underline((255, 0, 0), 2, 2, force_render=True)
@@ -103,6 +112,7 @@ def test_button_underline_decoration(menu):
 
 
 def test_button_navigation_to_submenu(menu, submenu):
+    """Test that navigation to submenu is accepted."""
     btn_to_sub = menu.add.button("go", submenu)
     menu.full_reset()
 
@@ -112,6 +122,7 @@ def test_button_navigation_to_submenu(menu, submenu):
 
 
 def test_button_empty_title_geometry(menu):
+    """Test that empty title geometry is accepted."""
     btn = menu.add.button("")
     p = btn._padding
     # Pygame version affects vertical alignment slightly
@@ -122,6 +133,7 @@ def test_button_empty_title_geometry(menu):
 
 
 def test_button_shadow_generation(menu):
+    """Test that shadow generation is accepted."""
     btn = menu.add.button("shadow_test")
     btn.shadow(shadow_width=10, color="black")
 
@@ -135,6 +147,7 @@ def test_button_shadow_generation(menu):
 
 
 def test_button_url_behavior(menu):
+    """Test that url behavior is accepted."""
     btn = menu.add.url("https://google.com", "Search")
     assert btn.get_title() == "Search"
 
@@ -155,6 +168,7 @@ def test_banner_widget_properties(menu):
 
 
 def test_button_multiline_wordwrap(menu):
+    """Test multiline wordwrap behavior."""
     text = "word " * 20
     # Limit to 2 lines even if text is longer
     btn = menu.add.button(text, wordwrap=True, max_nlines=2)
@@ -164,6 +178,7 @@ def test_button_multiline_wordwrap(menu):
 
 
 def test_update_callback_rejects_invalid(menu):
+    """Test rejection callback rejects invalid input."""
     btn = menu.add.button("b1", lambda: None)
     for invalid in [menu, 1, [1, 2, 3], (1, 2, 3)]:
         with pytest.raises(AssertionError):
@@ -171,9 +186,11 @@ def test_update_callback_rejects_invalid(menu):
 
 
 def test_button_readonly_behavior(menu):
+    """Test readonly behavior."""
     applied = []
 
     def cb():
+        """Track callback invocation."""
         applied.append(True)
 
     btn = menu.add.button("x", cb)
@@ -196,6 +213,7 @@ def test_button_readonly_behavior(menu):
 
 
 def test_button_resize_flip_and_limits(menu):
+    """Test resize and flip behavior."""
     btn = menu.add.button("resize", pygame_menu.events.NONE)
 
     btn.resize(1, 1)
@@ -207,6 +225,7 @@ def test_button_resize_flip_and_limits(menu):
 
 
 def test_button_active_selected_consistency(menu):
+    """Test active selection consistency behavior."""
     btn = menu.add.button("active", pygame_menu.events.NONE)
 
     btn.active = True
@@ -218,6 +237,7 @@ def test_button_active_selected_consistency(menu):
 
 
 def test_button_change_calls_onchange(menu):
+    """Test change behavior."""
     btn = menu.add.button("x", pygame_menu.events.NONE)
     called = []
 
@@ -227,6 +247,7 @@ def test_button_change_calls_onchange(menu):
 
 
 def test_button_event_constants(menu):
+    """Test button event constants behavior."""
     # PYGAME_QUIT and WINDOWCLOSE must map to menu._exit
     btn = menu.add.button("quit", pygame_menu.events.PYGAME_QUIT)
     assert btn._onreturn == menu._exit
@@ -244,7 +265,10 @@ def test_button_event_constants(menu):
 
 
 def test_button_invalid_kwarg_rejected(menu):
+    """Test button invalid kwarg rejected."""
+
     def cb(**_):
+        """Dummy callback for kwarg validation."""
         pass
 
     # accept_kwargs=False but kwarg provided → error
@@ -253,6 +277,7 @@ def test_button_invalid_kwarg_rejected(menu):
 
 
 def test_button_remove_widget(menu):
+    """Test removing button widget from menu."""
     btn = menu.add.button("x")
     menu.remove_widget(btn)
 
@@ -262,6 +287,7 @@ def test_button_remove_widget(menu):
 
 
 def test_button_shadow_full_behavior(menu):
+    """Test full shadow behavior, including re-enable and invalid radius cases."""
     btn = menu.add.button("shadow", pygame_menu.events.NONE)
 
     # Enable shadow
@@ -308,6 +334,7 @@ def test_button_shadow_full_behavior(menu):
 
 
 def test_button_value_methods(menu):
+    """Test button value API behavior."""
     btn = menu.add.button("button")
 
     with pytest.raises(ValueError):
@@ -321,6 +348,7 @@ def test_button_value_methods(menu):
 
 
 def test_multiline_inside_frame_rewrap(menu):
+    """Test multiline button rewrap when packed into and unpacked from a frame."""
     s = (
         "lorem ipsum dolor sit amet this was very important nice a test is required "
         "lorem ipsum dolor sit amet this was very important nice a test is required"
@@ -342,21 +370,25 @@ def test_multiline_inside_frame_rewrap(menu):
 
 
 def test_banner_respects_user_cursor(menu):
+    """Test banner respects user-provided cursor."""
     surf = pygame.Surface((50, 50))
     btn = menu.add.banner(surf, cursor=pygame.SYSTEM_CURSOR_CROSSHAIR)
     assert btn._cursor == pygame.SYSTEM_CURSOR_CROSSHAIR
 
 
 def test_banner_float_behavior(menu):
+    """Test banner float behavior."""
     surf = pygame.Surface((30, 30))
     btn = menu.add.banner(surf, float=True)
     assert btn.is_floating()
 
 
 def test_banner_apply_via_event(menu):
+    """Test banner apply via keyboard event."""
     applied = {"ok": False}
 
     def cb():
+        """Mark banner callback as called."""
         applied["ok"] = True
 
     surf = pygame.Surface((60, 60))
@@ -369,14 +401,15 @@ def test_banner_apply_via_event(menu):
 
 
 def test_controller_behavior(menu):
+    """Test controller."""
     from random import randrange
-
     from pygame_menu.controls import Controller
 
     custom = Controller()
     counter = {"n": 0}
 
     def apply(event, _):
+        """Handle key events through custom controller and count accepted keys."""
         if event.key in (pygame.K_a, pygame.K_b, pygame.K_c):
             menu.get_scrollarea().update_area_color(
                 (randrange(0, 255), randrange(0, 255), randrange(0, 255))

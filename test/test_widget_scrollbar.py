@@ -21,6 +21,7 @@ from test._utils import WINDOW_SIZE, MenuUtils, PygameEventUtils, surface
 
 @pytest.fixture
 def world_surface():
+    """Return a large world surface for scrollbar tests."""
     world = pygame.Surface((WINDOW_SIZE[0] * 2, WINDOW_SIZE[1] * 3))
     world.fill((200, 200, 200))
     for x in range(100, world.get_width(), 200):
@@ -31,10 +32,12 @@ def world_surface():
 
 @pytest.fixture
 def default_scrollbar():
+    """Return a default vertical scrollbar fixture."""
     return ScrollBar(100, (0, 100), "sb", ORIENTATION_VERTICAL)
 
 
 def test_scrollbar_full_interaction(world_surface):
+    """Test full scrollbar interaction flow."""
     screen_size = surface.get_size()
     thick = 80
     length = screen_size[1]
@@ -224,6 +227,7 @@ def test_scrollbar_full_interaction(world_surface):
 
 
 def test_value_behavior():
+    """Test scrollbar value behavior and helpers."""
     menu = MenuUtils.generic_menu()
     sb = menu.get_scrollarea()._scrollbars[0]
 
@@ -259,27 +263,32 @@ def test_value_behavior():
 
 
 def test_set_length(default_scrollbar):
+    """Test setting scrollbar length."""
     default_scrollbar.set_length(200)
     assert default_scrollbar._page_ctrl_length == 200
 
 
 def test_set_page_step(default_scrollbar):
+    """Test setting scrollbar page step."""
     default_scrollbar.set_page_step(20)
     assert default_scrollbar._page_step == 20
 
 
 @pytest.mark.parametrize("value", [-10, 110])
 def test_set_value_out_of_range(default_scrollbar, value):
+    """Test setting out-of-range scrollbar values."""
     with pytest.raises(AssertionError):
         default_scrollbar.set_value(value)
 
 
 def test_value_percentage(default_scrollbar):
+    """Test scrollbar value percentage."""
     default_scrollbar.set_value(50)
     assert pytest.approx(default_scrollbar.get_value_percentage(), abs=0.01) == 0.5
 
 
 def test_at_top_bottom(default_scrollbar):
+    """Test scrollbar top and bottom states."""
     assert default_scrollbar.is_at_top()
     assert not default_scrollbar.is_at_bottom()
 
@@ -289,6 +298,7 @@ def test_at_top_bottom(default_scrollbar):
 
 
 def test_bump_to_top_bottom(default_scrollbar):
+    """Test bumping scrollbar to top and bottom."""
     default_scrollbar.set_value(50)
     default_scrollbar.bump_to_top()
     assert default_scrollbar.get_value() == 0
@@ -298,15 +308,18 @@ def test_bump_to_top_bottom(default_scrollbar):
 
 
 def test_scroll_to_widget(default_scrollbar):
+    """Test scroll_to_widget return behavior."""
     assert default_scrollbar.scroll_to_widget() is default_scrollbar
 
 
 def test_set_orientation(default_scrollbar):
+    """Test setting scrollbar orientation."""
     default_scrollbar.set_orientation(ORIENTATION_HORIZONTAL)
     assert default_scrollbar.get_orientation() == ORIENTATION_HORIZONTAL
 
 
 def test_set_maximum_minimum(default_scrollbar):
+    """Test setting scrollbar maximum and minimum values."""
     default_scrollbar.set_maximum(200)
     assert default_scrollbar.get_maximum() == 200
 
@@ -316,40 +329,48 @@ def test_set_maximum_minimum(default_scrollbar):
 
 @pytest.mark.parametrize("length", [0])
 def test_set_length_zero(default_scrollbar, length):
+    """Test setting zero scrollbar length raises error."""
     with pytest.raises(AssertionError):
         default_scrollbar.set_length(length)
 
 
 @pytest.mark.parametrize("step", [0])
 def test_set_page_step_zero(default_scrollbar, step):
+    """Test setting zero page step raises error."""
     with pytest.raises(AssertionError):
         default_scrollbar.set_page_step(step)
 
 
 def test_minimum_greater_than_maximum(default_scrollbar):
+    """Test invalid minimum greater than maximum."""
     with pytest.raises(AssertionError):
         default_scrollbar.set_minimum(100)
 
 
 def test_maximum_less_than_minimum(default_scrollbar):
+    """Test invalid maximum less than minimum."""
     with pytest.raises(AssertionError):
         default_scrollbar.set_maximum(0)
 
 
 def test_percentage_zero(default_scrollbar):
+    """Test value percentage at zero."""
     assert pytest.approx(default_scrollbar.get_value_percentage(), abs=0.01) == 0
 
 
 def test_percentage_one(default_scrollbar):
+    """Test value percentage at one."""
     default_scrollbar.set_value(100)
     assert pytest.approx(default_scrollbar.get_value_percentage(), abs=0.01) == 1
 
 
 def test_scroll_to_widget_invalid(default_scrollbar):
+    """Test scroll_to_widget with invalid widget."""
     assert default_scrollbar.scroll_to_widget("invalid") is default_scrollbar
 
 
 def test_invalid_orientation(default_scrollbar):
+    """Test invalid scrollbar orientation."""
     with pytest.raises(AssertionError):
         default_scrollbar.set_orientation("invalid")
 
@@ -358,20 +379,24 @@ def test_invalid_orientation(default_scrollbar):
     "setter", ["_page_ctrl_color", "_slider_color", "_slider_hover_color"]
 )
 def test_invalid_color_setters(default_scrollbar, setter):
+    """Test invalid color setter calls."""
     with pytest.raises(TypeError):
         getattr(default_scrollbar, setter)("invalid_color")
 
 
 def test_invalid_slider_rect_call(default_scrollbar):
+    """Test invalid slider rect attribute access."""
     with pytest.raises(AttributeError):
         default_scrollbar.get_slider_rect().invalid_method()  # type: ignore
 
 
 def test_update_invalid_event(default_scrollbar):
+    """Test update with invalid event object."""
     with pytest.raises(AttributeError):
         default_scrollbar.update("invalid_event")  # type: ignore
 
 
 def test_draw_invalid_surface(default_scrollbar):
+    """Test draw with invalid surface object."""
     with pytest.raises(AttributeError):
         default_scrollbar.draw("invalid_surface")  # type: ignore

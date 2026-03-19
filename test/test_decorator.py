@@ -46,6 +46,7 @@ def test_cache():
     deco = widg.get_decorator()
     deco.cache = True
 
+    # Prev
     assert deco._cache_surface["prev"] is None
     assert deco._cache_surface["post"] is None
 
@@ -78,6 +79,7 @@ def test_cache():
     assert not deco._cache_needs_update["prev"]
     deco.draw_prev(surface)
 
+    # Post
     deco.add_circle(1, 1, 1, (0, 0, 0), False, prev=False)
     assert deco._cache_needs_update["post"]
     assert deco._cache_surface["post"] is None
@@ -153,6 +155,7 @@ def test_enable_disable():
 
     assert deco.is_enabled(call_id)
 
+    # Now disable the decoration
     deco.disable(call_id)
     assert not deco.is_enabled(call_id)
     test[0] = False
@@ -166,6 +169,7 @@ def test_enable_disable():
     deco.remove(call_id)
     assert call_id not in deco._decor_enabled
 
+    # Disable unknown decorations
     with pytest.raises(IndexError):
         deco.disable("unknown")
     with pytest.raises(IndexError):
@@ -184,43 +188,46 @@ def test_general():
     poly = [(50, 50), (50, 100), (100, 50)]
     color = (1, 1, 1)
 
+    # Polygon
     with pytest.raises(AssertionError):
         deco.add_polygon([(1, 1)], color, True)
     with pytest.raises(AssertionError):
         deco.add_polygon([(1, 1)], color, True, 1)
     with pytest.raises(AssertionError):
         deco.add_polygon([(1, 1)], color, True, gfx=False)
-
     deco.add_polygon(poly, color, True)
     deco.add_polygon(poly, color, False)
     deco.add_polygon(poly, color, False, gfx=False)
     deco.draw_prev(surface)
 
+    # Circle
     with pytest.raises(AssertionError):
         deco.add_circle(1, 1, 0, color, True)
     with pytest.raises(AssertionError):
         deco.add_circle(1, 1, 0, color, True, gfx=False)
     with pytest.raises(AssertionError):
         deco.add_circle(50, 50, 100, color, True, 1)
-
     deco.add_circle(1, 1, 100, color, False, 5)
     deco.add_circle(50, 50, 100, color, True)
 
+    # Surface
     img = BaseImage(IMAGE_EXAMPLE_PYGAME_MENU)
     img.scale(0.15, 0.15)
     deco.add_surface(60, 60, img.get_surface(), prev=False)
 
+    # BaseImage
     img_dec = deco.add_baseimage(0, 0, img)
-
     assert len(deco._coord_cache) == 3
     menu.draw(surface)
     assert len(deco._coord_cache) == 7
     assert deco._coord_cache[img_dec] == (299, 173, ((299, 173),))
 
+    # If widget changes in size, coord cache should change too
     btn.translate(1, 0)
     menu.draw(surface)
     assert deco._coord_cache[img_dec] == (300, 173, ((300, 173),))
 
+    # As some problems occur here, test the position of the widget before padding
     w, h = btn.get_width(), btn.get_height()
     x, y = btn.get_position()
     assert menu.get_width(widget=True) == w
@@ -230,12 +237,13 @@ def test_general():
     assert menu._widget_offset[1] == int(wo)
     assert btn.get_rect().center == (int(x + w / 2), int(y + h / 2))
 
+    # If widget changes padding, the center does not change if pad is equal, so the coord cache must be the same
     btn.set_padding(100)
     menu.draw(surface)
 
+    # Test sizing
     assert menu.get_width(widget=True) == w + 200
     assert menu.get_height(widget=True) == h + 200
-
     wo = (menu.get_height(inner=True) - (h + 200)) / 2
     assert menu._widget_offset[1] == int(wo)
     assert btn.get_rect().x == x - 100
@@ -244,6 +252,7 @@ def test_general():
 
     assert deco._coord_cache[img_dec] == (300, 173, ((300, 173),))
 
+    # Padding left is 0, then widget center changes
     btn.set_padding((100, 100, 100, 0))
     menu.draw(surface)
     assert deco._coord_cache[img_dec] == (300, 173, ((300, 173),))
@@ -252,18 +261,19 @@ def test_general():
     menu.draw(surface)
     assert deco._coord_cache[img_dec] == (300, 173, ((300, 173),))
 
+    # Text
     with pytest.raises(ValueError):
         deco.add_text(100, 200, "nice", FONT_8BIT, 0, color)
-
     deco.add_text(-150, 0, "nice", FONT_8BIT, 20, color, centered=True)
     menu.draw(surface)
 
+    # Ellipse
     with pytest.raises(AssertionError):
         deco.add_ellipse(0, 0, 0, 0, color, True)
-
     deco.add_ellipse(-250, 0, 110, 150, (255, 0, 0), True)
     deco.add_ellipse(-250, 0, 110, 150, (255, 0, 0), False)
 
+    # Callable
     test = [False]
 
     def fun(_, __):
@@ -283,21 +293,34 @@ def test_general():
     btn.draw(surface)
     assert test[0]
 
+    # Textured polygon
     deco.add_textured_polygon(((10, 10), (100, 100), (120, 10)), img)
+
+    # Arc
     deco.add_arc(0, 0, 50, 0, 100, (0, 255, 0), True)
     deco.add_arc(0, 0, 50, 0, 100, (0, 255, 0), False)
+
+    # Pie
     deco.add_pie(0, 0, 50, 0, 100, (0, 255, 0))
+
+    # Bezier
     deco.add_bezier(((100, 100), (0, 0), (0, -100)), (70, 10, 100), 10)
+
+    # Rect
     deco.add_rect(200, 30, pygame.Rect(0, 0, 100, 300), (0, 0, 100))
     deco.add_rect(0, 30, pygame.Rect(0, 0, 100, 300), (100, 0, 100), width=10)
 
+    # Pixel
     for i in range(5):
         for j in range(5):
             deco.add_pixel(10 * i, 10 * j, color)
 
+    # Line
     deco.add_line((10, 10), (100, 100), (45, 180, 34), 10)
     deco.add_hline(1, 2, 3, color)
     deco.add_vline(1, 2, 3, color)
+
+    # Fill
     deco.add_fill((0, 0, 0))
 
     menu.draw(surface)

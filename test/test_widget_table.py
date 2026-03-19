@@ -28,6 +28,7 @@ def table(menu):
 
 @pytest.mark.skipif(not PYGAME_V2, reason="Requires Pygame V2")
 def test_table_initialization(menu, table):
+    """Test table initialization."""
     btn = menu.add.button("1")
 
     assert table.is_rectangular()
@@ -40,6 +41,7 @@ def test_table_initialization(menu, table):
 
 @pytest.mark.skipif(not PYGAME_V2, reason="Requires Pygame V2")
 def test_row_addition_and_sizing(table):
+    """Test table row addition and sizing."""
     row1 = table.add_row(
         [1, 2, 3], row_background_color="blue", cell_align=pgm_locals.ALIGN_CENTER
     )
@@ -53,6 +55,7 @@ def test_row_addition_and_sizing(table):
 
 @pytest.mark.skipif(not PYGAME_V2, reason="Requires Pygame V2")
 def test_cell_access_and_styling(table):
+    """Test table cell access and style updates."""
     table.add_row([1, 2, 3])
     table.add_row([10, 20, 30])
 
@@ -70,6 +73,7 @@ def test_cell_access_and_styling(table):
 
 @pytest.mark.skipif(not PYGAME_V2, reason="Requires Pygame V2")
 def test_visibility_toggle(table):
+    """Test table visibility toggling."""
     table.add_row([1, 2, 3])
     c = table.get_cell(1, 1)
 
@@ -82,6 +86,7 @@ def test_visibility_toggle(table):
 
 @pytest.mark.skipif(not PYGAME_V2, reason="Requires Pygame V2")
 def test_complex_nesting(menu, table):
+    """Test nested tables and widget frame relationships."""
     sub = menu.add.table(font_size=10)
     sub_row1 = sub.add_row([1, 2])
 
@@ -102,6 +107,7 @@ def test_complex_nesting(menu, table):
 
 @pytest.mark.skipif(not PYGAME_V2, reason="Requires Pygame V2")
 def test_surface_and_images(table):
+    """Test table rows containing surfaces and labels."""
     surf = pygame.Surface((40, 40))
     surf.fill((255, 192, 203))
 
@@ -120,6 +126,7 @@ def test_surface_and_images(table):
     ],
 )
 def test_bulk_cell_updates(table, col, row_idx, expected):
+    """Test bulk cell style updates using wildcard row and column selectors."""
     for _ in range(4):
         table.add_row([1, 2, 3])
 
@@ -129,6 +136,7 @@ def test_bulk_cell_updates(table, col, row_idx, expected):
 
 @pytest.mark.skipif(not PYGAME_V2, reason="Requires Pygame V2")
 def test_row_removal(table):
+    """Test table row removal."""
     table.add_row([1, 2, 3])
     r2 = table.add_row([4, 5, 6])
 
@@ -141,6 +149,7 @@ def test_row_removal(table):
 
 @pytest.mark.skipif(not PYGAME_V2, reason="Requires Pygame V2")
 def test_frame_packing(menu, table):
+    """Test packing table widgets into frames."""
     frame = menu.add.frame_v(300, 300, background_color="yellow", padding=0)
     frame.pack(
         table,
@@ -161,6 +170,7 @@ def test_frame_packing(menu, table):
 
 @pytest.mark.skipif(not PYGAME_V2, reason="Requires Pygame V2")
 def test_scrollable_frame_interactions(menu, table):
+    """Test table interactions with scrollable frames and update lists."""
     table.add_row([1])
 
     frame3 = menu.add.frame_v(
@@ -179,6 +189,7 @@ def test_scrollable_frame_interactions(menu, table):
 
 @pytest.mark.skipif(not PYGAME_V2, reason="Requires Pygame V2")
 def test_value_api(table):
+    """Test table value API."""
     with pytest.raises(ValueError):
         table.get_value()
     with pytest.raises(ValueError):
@@ -190,4 +201,5 @@ def test_value_api(table):
 
 @pytest.mark.skipif(not PYGAME_V2, reason="Requires Pygame V2")
 def test_update_empty(table):
+    """Test table update with empty event list."""
     assert table.update([]) is False

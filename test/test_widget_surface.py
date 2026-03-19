@@ -15,10 +15,12 @@ from test._utils import MenuUtils, PygameEventUtils, surface
 
 @pytest.fixture
 def menu():
+    """Provide a fresh generic menu for surface testing."""
     return MenuUtils.generic_menu()
 
 
 def test_surface_widget_basic(menu):
+    """Test surface widget."""
     surf = pygame.Surface((150, 150))
     surf.fill((255, 192, 203))
 
@@ -44,6 +46,7 @@ def test_surface_widget_basic(menu):
     ],
 )
 def test_surface_widget_invalid_transforms(menu, method, args):
+    """Test invalid transforms for surface widget."""
     surf = pygame.Surface((150, 150))
     widget = menu.add.surface(surf)
 
@@ -52,6 +55,7 @@ def test_surface_widget_invalid_transforms(menu, method, args):
 
 
 def test_surface_widget_transform_state(menu):
+    """Test surface widget transform state remains unchanged on invalid transforms."""
     surf = pygame.Surface((150, 150))
     widget = menu.add.surface(surf)
 
@@ -86,6 +90,7 @@ def test_surface_widget_transform_state(menu):
 
 
 def test_surface_widget_title_and_surface_update(menu):
+    """Test title handling and surface replacement for surface widget."""
     surf = pygame.Surface((150, 150))
     surf.fill((255, 192, 203))
 
@@ -111,6 +116,7 @@ def test_surface_widget_title_and_surface_update(menu):
 
 
 def test_surface_widget_value_api(menu):
+    """Test surface value."""
     widget = menu.add.surface(pygame.Surface((150, 150)))
 
     with pytest.raises(ValueError):

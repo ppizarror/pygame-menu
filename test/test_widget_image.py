@@ -15,10 +15,12 @@ from test._utils import MenuUtils, PygameEventUtils, surface
 
 @pytest.fixture
 def menu():
+    """Create a generic menu fixture for image tests."""
     return MenuUtils.generic_menu()
 
 
 def test_image_widget_basic(menu):
+    """Test image widget."""
     img = menu.add.image(
         pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES, font_color=(2, 9)
     )
@@ -35,6 +37,7 @@ def test_image_widget_basic(menu):
 
 
 def test_image_widget_transformations(menu):
+    """Test image widget transformations."""
     img = menu.add.image(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
 
     assert img.get_size() == (272, 264)
@@ -84,6 +87,7 @@ def test_image_widget_transformations(menu):
 
 
 def test_image_widget_value_api(menu):
+    """Test image value."""
     img = menu.add.image(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
 
     with pytest.raises(ValueError):
@@ -97,6 +101,7 @@ def test_image_widget_value_api(menu):
 
 
 def test_image_from_surface(menu):
+    """Test that Image accepts a pygame.Surface and wraps it correctly."""
     surf = pygame.Surface((120, 80))
     img = menu.add.image(surf)
     img.set_padding(0)
@@ -106,6 +111,7 @@ def test_image_from_surface(menu):
 
 
 def test_image_surface_transformations(menu):
+    """Test transformations on an Image created from a pygame.Surface."""
     surf = pygame.Surface((100, 50))
     img = menu.add.image(surf)
     img.set_padding(0)
@@ -121,6 +127,7 @@ def test_image_surface_transformations(menu):
 
 
 def test_image_surface_widget_behavior(menu):
+    """Ensure Surface-based Image behaves like a normal widget."""
     surf = pygame.Surface((60, 60))
     img = menu.add.image(surf)
 

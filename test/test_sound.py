@@ -187,16 +187,21 @@ def test_init_state_flags():
 
 def test_reinit_logic():
     """Ensure mixer reinitialization logic behaves correctly."""
+    # Reset state manually for test isolation
     SOUND_INITIALIZED.attempted = False
     mixer_was_initialized = pygame.mixer.get_init() is not None
 
+    # Case 1: force_init=False
     Sound(force_init=False)
 
     if mixer_was_initialized:
+        # Mixer already initialized → Sound should NOT attempt init
         assert not SOUND_INITIALIZED.attempted
     else:
+        # Mixer not initialized → Sound SHOULD attempt init
         assert SOUND_INITIALIZED.attempted
 
+    # Case 2: force_init=True always triggers initialization
     SOUND_INITIALIZED.attempted = False
     Sound(force_init=True)
     assert SOUND_INITIALIZED.attempted

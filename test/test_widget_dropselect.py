@@ -30,6 +30,7 @@ from test._utils import (
 
 @pytest.fixture
 def generic_menu():
+    """Create a generic menu configured for DropSelect tests."""
     return MenuUtils.generic_menu(
         mouse_motion_selection=True, theme=THEME_NON_FIXED_TITLE
     )
@@ -37,6 +38,7 @@ def generic_menu():
 
 @pytest.fixture
 def drop_items():
+    """Create a list of DropSelect items used by tests."""
     items = [("This is a really long selection item", 1), ("epic", 2)]
     for i in range(10):
         items.append((f"item{i + 1}", i + 1))
@@ -44,6 +46,7 @@ def drop_items():
 
 
 def test_dropselect_initialization_and_status(generic_menu, drop_items):
+    """Test DropSelect initialization and internal status snapshots."""
     menu = generic_menu
     drop = pygame_menu.widgets.DropSelect(
         "dropsel",
@@ -144,6 +147,7 @@ def test_dropselect_initialization_and_status(generic_menu, drop_items):
 
 
 def test_dropselect_keyboard_events_and_scrolling(generic_menu, drop_items):
+    """Test DropSelect keyboard navigation and scrolling behavior."""
     menu = generic_menu
     drop = menu.add.dropselect("dropsel", drop_items)
 
@@ -190,6 +194,7 @@ def test_dropselect_keyboard_events_and_scrolling(generic_menu, drop_items):
 
 
 def test_dropselect_mouse_and_touch_toggle(generic_menu, drop_items):
+    """Test DropSelect mouse and touch interaction toggling."""
     menu = generic_menu
     drop = menu.add.dropselect("dropsel", drop_items)
 
@@ -238,6 +243,7 @@ def test_dropselect_mouse_and_touch_toggle(generic_menu, drop_items):
 
 
 def test_dropselect_focus_geometry(generic_menu, drop_items):
+    """Test focus mask geometry generated for DropSelect widgets."""
     menu = generic_menu
     drop = menu.add.dropselect("dropsel", drop_items)
 
@@ -260,6 +266,7 @@ def test_dropselect_focus_geometry(generic_menu, drop_items):
 
 
 def test_dropselect_items_update_and_empty(generic_menu, drop_items):
+    """Test DropSelect item updates and empty-state behavior."""
     menu = generic_menu
     drop = menu.add.dropselect("dropsel", drop_items)
 
@@ -309,6 +316,7 @@ def test_dropselect_items_update_and_empty(generic_menu, drop_items):
 
 
 def test_dropselect_transformations_not_implemented(generic_menu, drop_items):
+    """Test DropSelect transformations that are not implemented."""
     menu = generic_menu
     drop = menu.add.dropselect("dropsel", drop_items)
 
@@ -347,6 +355,7 @@ def test_dropselect_transformations_not_implemented(generic_menu, drop_items):
 
 
 def test_dropselect_open_bottom_and_frames(generic_menu, drop_items):
+    """Test DropSelect open direction and frame integration behavior."""
     menu = generic_menu
     items = drop_items
 
@@ -492,10 +501,12 @@ def test_dropselect_open_bottom_and_frames(generic_menu, drop_items):
     drop2.set_default_value(0)
 
     def test_change(item, v):
+        """Validate onchange callback payload for DropSelect."""
         assert item[0][1] == v
         test_state[0] = item[0][0]
 
     def test_apply(item, v):
+        """Validate onreturn callback payload for DropSelect."""
         assert item[0][1] == v
         test_state[1] = not test_state[1]
 
@@ -545,6 +556,7 @@ def test_dropselect_open_bottom_and_frames(generic_menu, drop_items):
 
 
 def test_dropselect_open_middle_and_last_surface(generic_menu, drop_items):
+    """Test open-middle positioning and last-surface tracking."""
     menu = generic_menu
     drop = menu.add.dropselect("dropsel", drop_items)
 
@@ -585,6 +597,7 @@ def test_dropselect_open_middle_and_last_surface(generic_menu, drop_items):
 
 
 def test_dropselect_multiple_selection_and_formatting(generic_menu, drop_items):
+    """Test DropSelectMultiple selection and placeholder formatting modes."""
     menu = generic_menu
     drop = pygame_menu.widgets.DropSelectMultiple(
         "dropsel", drop_items, open_middle=True, selection_box_height=5
@@ -624,6 +637,7 @@ def test_dropselect_multiple_selection_and_formatting(generic_menu, drop_items):
 
 
 def test_dropselect_multiple_format_errors(generic_menu, drop_items):
+    """Test DropSelectMultiple formatting error cases."""
     menu = generic_menu
     drop = menu.add.dropselect_multiple("test", drop_items)
     drop.set_value(0, process_index=True)
@@ -640,6 +654,7 @@ def test_dropselect_multiple_format_errors(generic_menu, drop_items):
 
 
 def test_dropselect_multiple_max_limit(generic_menu, drop_items):
+    """Test DropSelectMultiple maximum selected-items limit."""
     menu = generic_menu
     drop = menu.add.dropselect_multiple("limit_test", drop_items, max_selected=2)
 
@@ -654,6 +669,7 @@ def test_dropselect_multiple_max_limit(generic_menu, drop_items):
 
 
 def test_value_changed_tracking(generic_menu):
+    """Test value-changed tracking for single and multiple DropSelect widgets."""
     menu = generic_menu
     values = [("a", "a"), ("b", "b")]
 
@@ -673,6 +689,7 @@ def test_value_changed_tracking(generic_menu):
 
 
 def test_empty_title_sizing(generic_menu):
+    """Test DropSelect sizing with empty titles."""
     menu = generic_menu
     values = [("a", "a")]
     drop = menu.add.dropselect("", items=values)
@@ -683,6 +700,7 @@ def test_empty_title_sizing(generic_menu):
 
 
 def test_frame_surface_integrity(generic_menu):
+    """Test DropSelect surface routing when packed inside frames."""
     menu = generic_menu
     items = [("a", "a"), ("b", "b")]
 
@@ -698,6 +716,7 @@ def test_frame_surface_integrity(generic_menu):
 
 
 def test_visibility_toggle_behavior(generic_menu, drop_items):
+    """Test visibility toggling behavior for DropSelectMultiple."""
     menu = generic_menu
     drop = menu.add.dropselect_multiple("hide_test", drop_items)
 
@@ -712,6 +731,7 @@ def test_visibility_toggle_behavior(generic_menu, drop_items):
 
 
 def test_theme_translation_and_focus_rect():
+    """Test translated menu coordinates update DropSelect focus rect."""
     menu_theme = pygame_menu.themes.THEME_ORANGE.copy()
     menu_theme.title_fixed = False
     menu_theme.title_offset = (5, -2)
@@ -750,7 +770,10 @@ def test_theme_translation_and_focus_rect():
 
 
 def test_update_list_via_button_callback():
+    """Test updating DropSelect item lists through button callbacks."""
+
     def remove_selection_item(select: pygame_menu.widgets.DropSelect):
+        """Remove currently selected item from a DropSelect widget."""
         if select.get_index() == -1:
             return
         s_val = select.get_value()
@@ -796,10 +819,12 @@ def test_update_list_via_button_callback():
 
 
 def test_dropselect_touch_interaction_full():
+    """Test full DropSelect interaction flow using touch events."""
     if not PYGAME_V2:
         pytest.skip("Touch tests require Pygame V2")
 
     def remove_selection_item(select: pygame_menu.widgets.DropSelect):
+        """Remove currently selected item from a DropSelect widget."""
         if select.get_index() == -1:
             return
         s_val = select.get_value()

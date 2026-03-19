@@ -32,9 +32,7 @@ def assert_invalid_color(widget):
 
 
 def test_textinput_basic_behavior():
-    """
-    Test basic TextInput widget functionality and constraints.
-    """
+    """Test basic TextInput widget functionality and constraints."""
     menu = MenuUtils.generic_menu()
 
     # Assert bad settings using pytest.raises
@@ -61,9 +59,7 @@ def test_textinput_basic_behavior():
 
 
 def test_textinput_selection_and_events():
-    """
-    Test selection box logic and event handling.
-    """
+    """Test selection box logic and event handling."""
     menu = MenuUtils.generic_menu()
     textinput = menu.add.text_input("title")
 
@@ -86,9 +82,7 @@ def test_textinput_selection_and_events():
 
 
 def test_textinput_undo_redo_logic():
-    """
-    Test undo/redo and clipboard operations.
-    """
+    """Test undo/redo and clipboard operations."""
     menu = MenuUtils.generic_menu()
     textinput = menu.add.text_input("title", maxchar=20)
 
@@ -104,9 +98,7 @@ def test_textinput_undo_redo_logic():
 
 
 def test_textinput_unicode_conversions():
-    """
-    Test Alt+X Unicode conversion support.
-    """
+    """Test Alt+X Unicode conversion support."""
     menu = MenuUtils.generic_menu()
     textinput = menu.add.text_input("title")
 
@@ -117,9 +109,7 @@ def test_textinput_unicode_conversions():
 
 
 def test_textinput_readonly_and_active_states():
-    """
-    Test readonly locks and focus states.
-    """
+    """Test readonly locks and focus states."""
     menu = MenuUtils.generic_menu()
     textinput = menu.add.text_input("title")
     textinput.set_value("tk")
@@ -146,18 +136,14 @@ def test_textinput_readonly_and_active_states():
     ],
 )
 def test_textinput_invalid_cursor_sizes(invalid_size):
-    """
-    Parametrized test for cursor size validation.
-    """
+    """Parametrized test for cursor size validation."""
     menu = MenuUtils.generic_menu()
     with pytest.raises(AssertionError):
         menu.add.text_input("title", cursor_size=invalid_size)  # type: ignore
 
 
 def test_textinput_transformation_exceptions():
-    """
-    Verify that certain transformations are explicitly not implemented.
-    """
+    """Verify that certain transformations are explicitly not implemented."""
     menu = MenuUtils.generic_menu()
     textinput = menu.add.text_input("title", maxwidth=10)
 
@@ -168,9 +154,7 @@ def test_textinput_transformation_exceptions():
 
 
 def test_password_constraints():
-    """
-    Test password-specific behaviors.
-    """
+    """Test password-specific behaviors."""
     menu = MenuUtils.generic_menu()
     password_input = menu.add.text_input("title", password=True)
 
