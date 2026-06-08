@@ -1,8 +1,4 @@
-<h1 align="center">
-  <img alt="Pygame Menu" src="https://res.ppizarror.com/other/python.png" width="150px" height="150px" />
-  <br /><br />
-  Pygame Menu</h1>
-
+<h1 align="center">Pygame Menu</h1>
 <p align="center">Menu for pygame. Simple, lightweight and easy to use</p>
 
 <div align="left">
@@ -56,25 +52,25 @@ Python library that can create a simple menu for the pygame application. Support
 #### Normal button menu
 
 <p align="center">
-    <img src="https://res.ppizarror.com/images/pygame-menu/example1.gif" width="60%" >
+    <img src="https://raw.githubusercontent.com/ppizarror/pygame-menu/v2/.github/images/example1.gif" width="60%" >
 </p>
 
 #### Textual menus
 
 <p align="center">
-    <img src="https://res.ppizarror.com/images/pygame-menu/example2.gif" width="60%"  >
+    <img src="https://raw.githubusercontent.com/ppizarror/pygame-menu/v2/.github/images/example2.gif" width="60%"  >
 </p>
 
 #### Mouse support
 
 <p align="center">
-    <img src="https://res.ppizarror.com/images/pygame-menu/example3.gif" width="60%" >
+    <img src="https://raw.githubusercontent.com/ppizarror/pygame-menu/v2/.github/images/example3.gif" width="60%" >
 </p>
 
 #### Different inputs
 
 <p align="center">
-    <img src="https://res.ppizarror.com/images/pygame-menu/example4.gif" width="60%" >
+    <img src="https://raw.githubusercontent.com/ppizarror/pygame-menu/v2/.github/images/example4.gif" width="60%" >
 </p>
 
 ## Install
