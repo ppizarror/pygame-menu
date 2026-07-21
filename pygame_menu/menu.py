@@ -901,7 +901,7 @@ class Menu(Base):
         """
         Set ``onbeforeopen`` callback. Callback is executed before opening the
         Menu, it receives the current Menu and the next Menu. This method is only
-        executed programatically (by calling ``menu._open``) or by applying to
+        executed programmatically (by calling ``menu._open``) or by applying to
         certain widgets, like :py:class:`pygame_menu.widgets.Button`. Rendering, or
         drawing the current Menu does not trigger this event.
 
