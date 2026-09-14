@@ -30,10 +30,6 @@ pygame-menu
     :target: https://github.com/ppizarror/pygame-menu/actions/workflows/ci.yml
     :alt: Build status
     
-.. image:: https://app.fossa.com/api/projects/git%2Bgithub.com%2Fppizarror%2Fpygame-menu.svg?type=shield
-    :target: https://app.fossa.com/projects/git%2Bgithub.com%2Fppizarror%2Fpygame-menu?ref=badge_shield
-    :alt: FOSSA Status
-    
 .. image:: https://readthedocs.org/projects/pygame-menu/badge/?version=latest
     :target: https://pygame-menu.readthedocs.io
     :alt: Documentation Status
