@@ -291,7 +291,10 @@ def test_operations():
 def test_invalid_image():
     """Test invalid image opening."""
     image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYTHON)
-    assert image.get_size() == (110, 109)
+    if getattr(pygame, "IS_CE", False):
+        assert image.get_size() == (111, 110)
+    else:
+        assert image.get_size() == (110, 109)
 
     image._drawing_position = "invalid"
     with pytest.raises(ValueError):
