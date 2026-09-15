@@ -24,7 +24,10 @@ classifiers = [
     "Topic :: Multimedia",
     "Topic :: Software Development :: Libraries :: pygame",
 ]
-dependencies = ["pygame>=2.0.0"]
+dependencies = [
+    "pyperclip>=1.8.0",
+    "pygame>=2.0.0",
+]
 
 [project.urls]
 "Bug Tracker" = "https://github.com/ppizarror/pygame-menu/issues"
@@ -32,6 +35,8 @@ dependencies = ["pygame>=2.0.0"]
 "Source Code" = "https://github.com/ppizarror/pygame-menu"
 
 [project.optional-dependencies]
+pygame = ["pygame>=2.0.0"]
+ce = ["pygame-ce>=2.2.0"]
 docs = ["sphinx", "sphinx-autodoc-typehints", "sphinx-rtd-theme"]
 test = ["nose2[coverage_plugin]", "pytest", "pytest-cov"]
 

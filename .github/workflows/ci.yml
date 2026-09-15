@@ -16,14 +16,16 @@ jobs:
   test:
     uses: ppizarror/workflow-actions/.github/workflows/test_python.yml@master
     strategy:
+      fail-fast: false
       matrix:
         python: [ 3.9, '3.10', '3.11', '3.12', '3.13' ]
+        backend: [pygame, ce]
     with:
       engine: pytest
       env-vars: |
         SDL_AUDIODRIVER=dummy
         SDL_VIDEODRIVER=dummy
-      install-extras: test
+      install-extras: test,${{ matrix.backend }}
       os: ubuntu-latest
       python-version: ${{ matrix.python }}
 
@@ -38,10 +40,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: '3.12'
 
@@ -62,9 +64,9 @@ jobs:
   ruff:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: '3.9'
       - name: Install dependencies

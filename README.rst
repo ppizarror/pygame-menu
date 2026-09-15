@@ -73,24 +73,31 @@ more, with multiple customization options.
 Comprehensive documentation for the latest version is available at
 https://pygame-menu.readthedocs.io
 
-**Note**: For `pygame-ce`, check out `pygame-menu-ce <https://github.com/ppizarror/pygame-menu/tree/pygame-ce>`_.
-
-
 Install Instructions
 --------------------
 
-Pygame-menu can be installed via pip. Simply run:
+Pygame-menu requires either **pygame** (default) or **pygame-ce** to be installed.
+If you install pygame-menu normally, the standard pygame backend is used.
+
+To install with the default **pygame** backend:
 
 .. code-block:: bash
 
     $> pip install pygame-menu -U
 
+To install with **pygame-ce** (Community Edition):
+
+.. code-block:: bash
+
+    $> pip install pygame-menu[ce] -U
+
 To build the documentation from a Git repository:
 
 .. code-block:: bash
 
-    $> clone https://github.com/ppizarror/pygame-menu
+    $> git clone https://github.com/ppizarror/pygame-menu
     $> cd pygame-menu
-    $> pip install -e ."[docs]"
+    $> pip install -e ".[docs]"
+    $> pip install pygame -U   # or pygame-ce if preferred
     $> cd docs
     $> make html
