@@ -32,7 +32,6 @@ __all__ = [
 
 import base64
 import math
-import os.path as path
 from io import BytesIO
 from pathlib import Path
 from typing import TYPE_CHECKING, Literal, Union
@@ -215,11 +214,10 @@ class BaseImage(Base):
 
             # Determine extension
             if isinstance(image_path, (str, Path)):
-                image_path = str(image_path)
+                image_path = Path(image_path)
                 if not frombase64:
-                    _, ext = path.splitext(image_path)
-                    ext = ext.lower()
-                    assert path.isfile(image_path), (
+                    ext = image_path.suffix.lower()
+                    assert image_path.is_file(), (
                         f"file {image_path} does not exist or could not be found"
                     )
                 else:
@@ -239,8 +237,9 @@ class BaseImage(Base):
                 self._set_source_info(str(original_path), ext, frombase64)
 
             # Extract filename (only for real filesystem paths)
-            if isinstance(original_path, str) and not frombase64:
-                self._filename = path.splitext(path.basename(original_path))[0]
+            if isinstance(original_path, (str, Path)) and not frombase64:
+                p = Path(original_path)
+                self._filename = p.stem
             else:
                 self._filename = ""
 
@@ -251,7 +250,11 @@ class BaseImage(Base):
 
             # Load from file if requested
             if self._load_from_file:
-                self._surface = load_pygame_image_file(image_path)
+                # pygame requires a string path
+                load_target = (
+                    str(image_path) if isinstance(image_path, Path) else image_path
+                )
+                self._surface = load_pygame_image_file(load_target)
                 self._original_surface = self._surface.copy()
 
         # Drawing configuration
