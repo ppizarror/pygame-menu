@@ -41,7 +41,7 @@ __all__ = [
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, TypedDict
 
 from pygame import error as pygame_error, mixer, vernum as pygame_version
 
@@ -126,6 +126,17 @@ class SoundInitState:
 SOUND_INITIALIZED = SoundInitState()
 
 
+class SoundData(TypedDict):
+    fade_ms: NumberType
+    file: mixer.Sound
+    length: float
+    loops: int
+    maxtime: NumberType
+    path: str | Path
+    type: str
+    volume: float
+
+
 class Sound(Base):
     """
     Sound engine class.
@@ -145,8 +156,9 @@ class Sound(Base):
     _channel: mixer.Channel | None
     _last_play: str
     _last_time: float
-    _mixer_configs: dict[str, bool | int | str]
-    _sound: dict[str, dict[str, Any]]
+    _mixer_configs: dict[str, int | str]
+    _mixer_missing: bool
+    _sound: dict[str, SoundData]
     _uniquechannel: bool
 
     def __init__(
@@ -165,38 +177,57 @@ class Sound(Base):
     ) -> None:
         super().__init__(object_id=sound_id, verbose=verbose)
 
-        assert isinstance(allowedchanges, int)
-        assert isinstance(buffer, int)
-        assert isinstance(channels, int)
-        assert isinstance(devicename, str)
-        assert isinstance(force_init, bool)
-        assert isinstance(frequency, int)
-        assert isinstance(size, int)
-        assert isinstance(uniquechannel, bool)
+        if not isinstance(allowedchanges, int):
+            raise TypeError("allowedchanges must be an integer")
+        if not isinstance(buffer, int):
+            raise TypeError("buffer must be an integer")
+        if not isinstance(channels, int):
+            raise TypeError("channels must be an integer")
+        if not isinstance(devicename, str):
+            raise TypeError("devicename must be a string")
+        if not isinstance(force_init, bool):
+            raise TypeError("force_init must be a boolean")
+        if not isinstance(frequency, int):
+            raise TypeError("frequency must be an integer")
+        if not isinstance(size, int):
+            raise TypeError("size must be an integer")
+        if not isinstance(uniquechannel, bool):
+            raise TypeError("uniquechannel must be a boolean")
 
-        assert buffer > 0, "buffer size must be greater than zero"
-        assert channels > 0, "channels must be greater than zero"
-        assert frequency > 0, "frequency must be greater than zero"
+        if buffer <= 0:
+            raise ValueError("buffer size must be greater than zero")
+        if channels <= 0:
+            raise ValueError("channels must be greater than zero")
+        if frequency <= 0:
+            raise ValueError("frequency must be greater than zero")
 
-        # Check if mixer is init
-        mixer_missing = "MissingModule" in str(type(mixer))
-        if mixer_missing:
+        self._channel: mixer.Channel | None = None
+        self._uniquechannel: bool = uniquechannel
+        self._sound: dict[str, SoundData] = {
+            sound_type: {} for sound_type in SOUND_TYPES  # type: ignore
+        }
+        self._mixer_configs: dict[str, int | str] = {}
+        self._last_play: str = ""
+        self._last_time: float = 0.0
+
+        # Check if mixer is available
+        self._mixer_missing = "MissingModule" in str(type(mixer))
+        if self._mixer_missing:
             if self._verbose:
                 warn(
-                    "pygame mixer module could not be found, NotImplementedError"
+                    "pygame mixer module could not be found, NotImplementedError "
                     "has been raised. Sound support is disabled"
                 )
             SOUND_INITIALIZED.available = False
 
-        # Initialize sounds if not initialized
-        if not mixer_missing and (
+        # Initialize mixer if needed
+        if not self._mixer_missing and (
             (mixer.get_init() is None and not SOUND_INITIALIZED.attempted) or force_init
         ):
             # Set sound as initialized globally
             SOUND_INITIALIZED.attempted = True
 
             try:
-                # pygame < 1.9.5
                 mixer_kwargs: dict[str, int | str] = {
                     "frequency": frequency,
                     "size": size,
@@ -212,6 +243,7 @@ class Sound(Base):
 
                 # Call to mixer
                 mixer.init(**mixer_kwargs)
+
             except Exception as e:
                 if self._verbose:
                     warn("sound error: " + str(e))
@@ -231,17 +263,6 @@ class Sound(Base):
             "size": size,
         }
 
-        # Channel where a sound is played
-        self._channel = None
-        self._uniquechannel = uniquechannel
-
-        # Sound dict
-        self._sound = {sound_type: {} for sound_type in SOUND_TYPES}
-
-        # Last played song
-        self._last_play = ""
-        self._last_time = 0
-
     def copy(self) -> Sound:
         """
         Return a copy of the object.
@@ -251,6 +272,7 @@ class Sound(Base):
         new_sound = Sound(uniquechannel=self._uniquechannel)
         new_sound._channel = self._channel
         new_sound._mixer_configs = dict(self._mixer_configs)
+        new_sound._mixer_missing = self._mixer_missing
         new_sound._last_play = self._last_play
         new_sound._last_time = self._last_time
         for sound_type in self._sound.keys():
@@ -317,24 +339,34 @@ class Sound(Base):
         :param fade_ms: Fading ms
         :return: The status of the sound load, ``True`` if the sound was loaded
         """
-        assert isinstance(sound_type, str)
-        assert isinstance(sound_file, (str, type(None), Path))
-        assert isinstance(volume, NumberInstance)
-        assert isinstance(loops, int)
-        assert isinstance(maxtime, NumberInstance)
-        assert isinstance(fade_ms, NumberInstance)
-        assert loops >= 0, "loops count must be equal or greater than zero"
-        assert maxtime >= 0, "maxtime must be equal or greater than zero"
-        assert fade_ms >= 0, "fade_ms must be equal or greater than zero"
-        assert 1 >= volume >= 0, "volume must be between 0 and 1"
+        if not isinstance(sound_type, str):
+            raise TypeError("sound_type must be a string")
+        if not isinstance(sound_file, (str, type(None), Path)):
+            raise TypeError("sound_file must be a string, Path, or None")
+        if not isinstance(volume, NumberInstance):
+            raise TypeError("volume must be a number")
+        if not isinstance(loops, int):
+            raise TypeError("loops must be an integer")
+        if not isinstance(maxtime, NumberInstance):
+            raise TypeError("maxtime must be a number")
+        if not isinstance(fade_ms, NumberInstance):
+            raise TypeError("fade_ms must be a number")
 
-        # Check sound type is correct
+        if loops < 0:
+            raise ValueError("loops count must be equal or greater than zero")
+        if maxtime < 0:
+            raise ValueError("maxtime must be equal or greater than zero")
+        if fade_ms < 0:
+            raise ValueError("fade_ms must be equal or greater than zero")
+        if not (0.0 <= volume <= 1.0):
+            raise ValueError("volume must be between 0 and 1")
+
         if sound_type not in SOUND_TYPES:
             raise ValueError("sound type not valid, check the manual")
 
         # If file is none disable the sound
         if sound_file is None or not SOUND_INITIALIZED.available:
-            self._sound[sound_type] = {}
+            self._sound[sound_type] = {}  # type: ignore
             return False
 
         # Check the file exists
@@ -351,7 +383,7 @@ class Sound(Base):
                 warn(
                     f'the sound file "{sound_file}" could not be loaded, it has been disabled'
                 )
-            self._sound[sound_type] = {}
+            self._sound[sound_type] = {}  # type: ignore
             return False
 
         # Configure the sound
@@ -377,12 +409,16 @@ class Sound(Base):
         :param volume: Volume of the sound, from ``0`` to ``1``
         :return: Self reference
         """
-        assert isinstance(volume, NumberInstance) and 0 <= volume <= 1
+        if not isinstance(volume, NumberInstance):
+            raise TypeError("volume must be a number")
+        if not (0.0 <= volume <= 1.0):
+            raise ValueError("volume must be between 0 and 1")
+
         for sound_type, example in zip(SOUND_TYPES, SOUND_EXAMPLES):
             self.set_sound(sound_type, example, volume=float(volume))
         return self
 
-    def _play_sound(self, sound: dict[str, Any] | None) -> bool:
+    def _play_sound(self, sound: SoundData | None) -> bool:
         """
         Play a sound.
 
@@ -433,7 +469,7 @@ class Sound(Base):
         :param sound_type: The type of sound to play
         :return: Self reference
         """
-        if sound_type in self._sound:
+        if sound_type in self._sound and self._sound[sound_type]:
             self._play_sound(self._sound[sound_type])
         return self
 

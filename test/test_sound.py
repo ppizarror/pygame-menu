@@ -45,6 +45,7 @@ def test_copy_semantics(loaded_sound):
 
     assert loaded_sound._uniquechannel == shallow._uniquechannel
     assert loaded_sound._mixer_configs == shallow._mixer_configs
+    assert loaded_sound._mixer_missing == shallow._mixer_missing
 
 
 @pytest.mark.parametrize("sound_type, example", zip(SOUND_TYPES, SOUND_EXAMPLES))
@@ -56,22 +57,22 @@ def test_load_example_sound_individually(sound, sound_type, example):
 
 @pytest.mark.parametrize("bad_volume", [-1, 1.1, 2.0])
 def test_set_sound_invalid_volume(sound, bad_volume):
-    """Ensure invalid volume values raise assertion errors."""
-    with pytest.raises(AssertionError):
+    """Ensure invalid volume values raise ValueError."""
+    with pytest.raises(ValueError):
         sound.set_sound(SOUND_TYPES[0], SOUND_EXAMPLES[0], volume=bad_volume)
 
 
 @pytest.mark.parametrize("bad_loops", [-1, -5])
 def test_set_sound_invalid_loops(sound, bad_loops):
-    """Ensure invalid loop counts raise assertion errors."""
-    with pytest.raises(AssertionError):
+    """Ensure invalid loop counts raise ValueError."""
+    with pytest.raises(ValueError):
         sound.set_sound(SOUND_TYPES[0], SOUND_EXAMPLES[0], loops=bad_loops)
 
 
 @pytest.mark.parametrize("bad_time", [-1, -0.5])
 def test_set_sound_invalid_maxtime(sound, bad_time):
-    """Ensure invalid maxtime values raise assertion errors."""
-    with pytest.raises(AssertionError):
+    """Ensure invalid maxtime values raise ValueError."""
+    with pytest.raises(ValueError):
         sound.set_sound(SOUND_TYPES[0], SOUND_EXAMPLES[0], maxtime=bad_time)
 
 
@@ -238,3 +239,16 @@ def test_mixer_config_copied(sound):
     """Ensure mixer configuration is copied correctly."""
     s2 = copy.copy(sound)
     assert sound._mixer_configs == s2._mixer_configs
+
+
+@pytest.mark.parametrize("bad_fade", [-1, -50])
+def test_set_sound_invalid_fade_ms(sound, bad_fade):
+    """Ensure invalid fade_ms values raise ValueError."""
+    with pytest.raises(ValueError):
+        sound.set_sound(SOUND_TYPES[0], SOUND_EXAMPLES[0], fade_ms=bad_fade)
+
+
+def test_set_sound_invalid_fade_ms_type(sound):
+    """Ensure non-numeric fade_ms values raise TypeError."""
+    with pytest.raises(TypeError):
+        sound.set_sound(SOUND_TYPES[0], SOUND_EXAMPLES[0], fade_ms="not_a_number")
