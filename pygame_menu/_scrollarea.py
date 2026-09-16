@@ -195,6 +195,27 @@ class ScrollArea(Base):
     ) -> None:
         super().__init__(object_id=scrollarea_id)
 
+        self._area_color: ColorInputType | pygame_menu.BaseImage | None = None
+        self._border_color: ColorInputType | pygame_menu.BaseImage | None = None
+        self._border_tiles: list[pygame.Surface] = []
+        self._border_tiles_size: Tuple2IntType = (0, 0)
+        self._border_width: int = border_width
+        self._bg_surface: pygame.Surface | None = None
+        self._decorator: Decorator = Decorator(self)
+        self._extend_x: int = extend_x
+        self._extend_y: int = extend_y
+        self._menu: pygame_menu.Menu | None = None
+        self._menubar: pygame_menu.widgets.MenuBar | None = menubar
+        self._parent_scrollarea: ScrollArea | None = parent_scrollarea
+        self._rect: pygame.Rect = pygame.Rect(0, 0, 0, 0)
+        self._scrollbar_positions: tuple[str, ...] = ()
+        self._scrollbars: list[ScrollBar] = []
+        self._scrollbars_props: tuple[Any, ...] = ()
+        self._translate: Tuple2IntType = (0, 0)
+        self._view_rect: pygame.Rect = pygame.Rect(0, 0, 0, 0)
+        self._world: pygame.Surface | None = world
+
+        # Parameter validations
         assert isinstance(area_height, int)
         assert isinstance(area_width, int)
         assert isinstance(border_width, int)
@@ -236,6 +257,7 @@ class ScrollArea(Base):
         assert area_width > 0 and area_height > 0, "area size must be greater than zero"
 
         assert isinstance(scrollbars, (str, VectorInstance))
+
         unique_scrolls: list[str] = []
         if isinstance(scrollbars, str):
             unique_scrolls.append(scrollbars)
@@ -250,17 +272,7 @@ class ScrollArea(Base):
 
         self._area_color = area_color
         self._border_color = border_color
-        self._border_width = border_width
-        self._bg_surface = None
-        self._decorator = Decorator(self)  # type: ignore
-        self._scrollbar_positions = tuple(unique_scrolls)  # Ensure unique
-        self._translate = (0, 0)
-        self._world = world
-
-        self._extend_x = extend_x
-        self._extend_y = extend_y
-        self._menubar = menubar
-
+        self._scrollbar_positions = tuple(unique_scrolls)
         self._scrollbars_props = (
             scrollbar_color,
             scrollbar_thick,
@@ -277,11 +289,9 @@ class ScrollArea(Base):
             controls_touchscreen,
             controls_keyboard,
         )
+
         self.set_parent_scrollarea(parent_scrollarea)
         self.create_rect(area_width, area_height)
-
-        # Menu reference
-        self._menu = None
 
     def create_rect(self, width: int, height: int) -> None:
         """
