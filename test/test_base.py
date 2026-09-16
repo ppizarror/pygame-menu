@@ -166,3 +166,30 @@ def test_class_id_format():
     """get_class_id returns Class<id> format."""
     obj = Base("id")
     assert obj.get_class_id() == "Base<\"id\">"
+
+
+def test_get_attributes_returns_copy():
+    obj = Base("")
+    obj.set_attribute("x", 1)
+    attrs = obj.get_attributes()
+    attrs["x"] = 999
+    assert obj.get_attribute("x") == 1
+
+
+def test_clear_attributes():
+    """clear_attributes removes all stored attributes."""
+    obj = Base("")
+    obj.set_attribute("a", 1)
+    obj.set_attribute("b", 2)
+    assert len(obj.get_attributes()) == 2
+
+    obj.clear_attributes()
+    assert obj.get_attributes() == {}
+    assert not obj.has_attribute("a")
+
+
+def test_str_method():
+    """__str__ returns the class ID format."""
+    obj = Base("test_id")
+    assert str(obj) == 'Base<"test_id">'
+    assert str(obj) == obj.get_class_id()
