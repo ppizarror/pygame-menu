@@ -17,9 +17,11 @@ class Version(tuple):
     """
 
     __slots__ = ()
-    fields = "major", "minor", "patch"
+    fields: tuple[str, str, str] = ("major", "minor", "patch")
 
-    def __new__(cls, major, minor, patch) -> Version:
+    def __new__(cls, major: int, minor: int, patch: int) -> Version:
+        if not all(isinstance(x, int) for x in (major, minor, patch)):
+            raise TypeError("Version components must be integers")
         return tuple.__new__(cls, (major, minor, patch))  # type: ignore
 
     def __repr__(self) -> str:
@@ -29,9 +31,45 @@ class Version(tuple):
     def __str__(self) -> str:
         return ".".join(str(x) for x in self)
 
-    major = property(lambda self: self[0])
-    minor = property(lambda self: self[1])
-    patch = property(lambda self: self[2])
+    def __lt__(self, other: object) -> bool:
+        if not isinstance(other, Version):
+            return NotImplemented
+        return tuple(self) < tuple(other)
+
+    def __le__(self, other: object) -> bool:
+        if not isinstance(other, Version):
+            return NotImplemented
+        return tuple(self) <= tuple(other)
+
+    def __gt__(self, other: object) -> bool:
+        if not isinstance(other, Version):
+            return NotImplemented
+        return tuple(self) > tuple(other)
+
+    def __ge__(self, other: object) -> bool:
+        if not isinstance(other, Version):
+            return NotImplemented
+        return tuple(self) >= tuple(other)
+
+    @property
+    def major(self) -> int:
+        return self[0]
+
+    @property
+    def minor(self) -> int:
+        return self[1]
+
+    @property
+    def patch(self) -> int:
+        return self[2]
+
+    # Parser
+    @classmethod
+    def parse(cls, s: str) -> Version:
+        parts = s.split(".")
+        if len(parts) != 3:
+            raise ValueError("Version string must be 'major.minor.patch'")
+        return cls(*(int(x) for x in parts))
 
 
 vernum = Version(4, 5, 5)
