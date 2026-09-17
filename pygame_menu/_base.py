@@ -21,7 +21,7 @@ class Base:
     Base object.
     """
 
-    _attributes: dict[str, Any] | None
+    _attributes: dict[str, Any] | None = None
     _class_id__repr__: bool
     _id: str
     _id__repr__: bool
@@ -83,7 +83,7 @@ class Base:
         :return: Self reference
         """
         if not isinstance(key, str):
-            raise TypeError("key must be a string")
+            raise TypeError(f"key must be a string, got {type(key).__name__}")
 
         if self._attributes is None:
             self._attributes = {}
@@ -132,7 +132,7 @@ class Base:
         :return: Attribute data
         """
         if not isinstance(key, str):
-            raise TypeError("key must be a string")
+            raise TypeError(f"key must be a string, got {type(key).__name__}")
 
         if not self.has_attribute(key):
             return default
@@ -147,7 +147,7 @@ class Base:
         :return: ``True`` if exists
         """
         if not isinstance(key, str):
-            raise TypeError("key must be a string")
+            raise TypeError(f"key must be a string, got {type(key).__name__}")
 
         return self._attributes is not None and key in self._attributes
 
@@ -180,3 +180,27 @@ class Base:
         :return: Object ID
         """
         return self._id
+
+    def get_attributes(self) -> dict[str, Any]:
+        """
+        Return a copy of all stored attributes.
+
+        :return: Attributes dictionary
+        """
+        return self._attributes.copy() if self._attributes is not None else {}
+
+    def clear_attributes(self) -> None:
+        """
+        Remove all stored attributes.
+
+        :return: None
+        """
+        self._attributes = None
+
+    def __str__(self) -> str:
+        """
+        Return the object Class+ID string.
+
+        :return: Class+ID format
+        """
+        return self.get_class_id()
