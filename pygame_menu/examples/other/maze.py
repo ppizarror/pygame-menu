@@ -13,6 +13,7 @@ __all__ = ["MazeApp"]
 
 import heapq
 import random
+import sys
 import time
 from collections import deque
 from math import inf
@@ -1467,7 +1468,7 @@ class MazeApp:
         Quit app.
         """
         pygame.quit()
-        exit()
+        sys.exit()
 
     def mainloop(self, test: bool) -> None:
         """

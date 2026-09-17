@@ -10,6 +10,7 @@ from __future__ import annotations
 
 __all__ = ["main"]
 
+import sys
 from random import randrange
 from typing import Any
 
@@ -99,7 +100,7 @@ def play_function(difficulty: list, font: pygame.font.Font, test: bool = False) 
         events = pygame.event.get()
         for e in events:
             if e.type == pygame.QUIT:
-                exit()
+                sys.exit()
             elif e.type == pygame.KEYDOWN:
                 if e.key == pygame.K_ESCAPE:
                     main_menu.enable()
@@ -244,7 +245,7 @@ def main(test: bool = False) -> None:
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
-                exit()
+                sys.exit()
 
         # Main menu
         if main_menu.is_enabled():

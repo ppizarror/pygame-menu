@@ -124,7 +124,7 @@ in charge to update and draw the menu when it is necessary.
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
-                exit()
+                sys.exit()
 
         if mymenu.is_enabled():
             mymenu.draw(surface)

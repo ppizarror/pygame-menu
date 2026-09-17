@@ -11,6 +11,7 @@ from __future__ import annotations
 __all__ = ["main"]
 
 import datetime
+import sys
 from random import randrange
 
 import pygame
@@ -249,7 +250,7 @@ def main(test: bool = False) -> None:
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
-                exit()
+                sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if (
                     event.key == pygame.K_ESCAPE

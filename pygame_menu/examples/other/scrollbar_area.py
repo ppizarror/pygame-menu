@@ -11,6 +11,7 @@ from __future__ import annotations
 __all__ = ["main"]
 
 import itertools
+import sys
 from typing import TYPE_CHECKING
 
 import pygame
@@ -158,7 +159,7 @@ def main(test: bool = False) -> None:
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
-                exit(0)
+                sys.exit(0)
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     next(worlds)

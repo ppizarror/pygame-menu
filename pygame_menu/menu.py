@@ -2447,8 +2447,7 @@ class Menu(Base):
         except SystemExit:
             os._exit(1)
         # This should be unreachable
-        # noinspection PyUnreachableCode
-        exit(0)
+        raise SystemExit(0)
 
     def is_enabled(self) -> bool:
         """
