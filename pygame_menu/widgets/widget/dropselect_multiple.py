@@ -385,7 +385,7 @@ class DropSelectMultiple(DropSelect):
             sel_items.append(self._items[i][0])
         return sel_items
 
-    def get_value(self) -> tuple[list[tuple[Any, ...] | str], list[int]]:
+    def get_value(self, as_string: bool = False) -> tuple[list[tuple[Any, ...] | str], list[int]]:
         selected_items = []
         for j in self._selected_indices:
             selected_items.append(self._items[j])

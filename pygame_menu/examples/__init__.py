@@ -70,6 +70,7 @@ def create_example_window(
                 pygame.display.set_icon(icon)
                 _PYGAME_ICON[0] = icon  # type: ignore
         except BaseException:
-            pass
+            # Icon could not be loaded; skip setting a custom window icon
+            _PYGAME_ICON[0] = None
 
     return surface

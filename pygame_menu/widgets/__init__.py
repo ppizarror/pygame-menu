@@ -9,7 +9,6 @@ Widgets elements that can be added to the Menu.
 from __future__ import annotations
 
 # Widgets core
-import pygame_menu.widgets.core
 from pygame_menu.widgets.core import Widget
 
 # Selection

@@ -1702,7 +1702,7 @@ class Widget(Base):
 
         return rect
 
-    def get_value(self) -> Any:
+    def get_value(self, as_string: bool = False) -> Any:
         """
         Return the Widget value. If exception ``ValueError`` is raised, no value
         will be passed to the callbacks.

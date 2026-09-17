@@ -217,7 +217,7 @@ class ProgressBar(Widget):
     def flip(self, *args, **kwargs) -> ProgressBar:
         raise WidgetTransformationNotImplemented()
 
-    def get_value(self) -> NumberType:
+    def get_value(self, as_string: bool = False) -> NumberType:
         return self._progress
 
     def _apply_font(self) -> None:

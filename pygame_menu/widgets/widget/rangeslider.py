@@ -582,7 +582,7 @@ class RangeSlider(Widget):
     def flip(self, *args, **kwargs) -> RangeSlider:
         raise WidgetTransformationNotImplemented()
 
-    def get_value(self) -> NumberType | tuple[NumberType, NumberType]:
+    def get_value(self, as_string: bool = False) -> NumberType | tuple[NumberType, NumberType]:
         if self._single:
             return self._value[0]
         return self._value[0], self._value[1]

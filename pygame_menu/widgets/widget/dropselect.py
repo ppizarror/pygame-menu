@@ -1025,7 +1025,7 @@ class DropSelect(Widget):
         """
         return self._index
 
-    def get_value(self) -> tuple[tuple[Any, ...] | str, int]:
+    def get_value(self, as_string: bool = False) -> tuple[tuple[Any, ...] | str, int]:
         """
         Return the current value of the selected index.
 

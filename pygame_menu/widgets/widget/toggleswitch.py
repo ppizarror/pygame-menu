@@ -301,7 +301,7 @@ class ToggleSwitch(Widget):
     def flip(self, *args, **kwargs) -> ToggleSwitch:
         raise WidgetTransformationNotImplemented()
 
-    def get_value(self) -> Any:
+    def get_value(self, as_string: bool = False) -> Any:
         return self._state_values[self._state]
 
     def _apply_font(self) -> None:
