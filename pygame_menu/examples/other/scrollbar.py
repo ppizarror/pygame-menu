@@ -10,6 +10,8 @@ from __future__ import annotations
 
 __all__ = ["main"]
 
+import sys
+
 import pygame
 
 import pygame_menu
@@ -125,7 +127,7 @@ def main(test: bool = False) -> None:
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
-                exit()
+                sys.exit()
 
             if event.type == pygame.KEYDOWN and event.key == pygame.K_h:
                 sb_h.set_value(100)
