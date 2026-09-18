@@ -132,7 +132,7 @@ class ScrollBar(Widget):
         self._check_mouseleave_call_render = True
         self._clicked = False
         self._last_mouse_pos = (-1, -1)
-        self._mouseover_check_rect = lambda: self.get_slider_rect()
+        self._mouseover_check_rect = self.get_slider_rect
         self._orientation = 0  # 0: horizontal, 1: vertical
         self._values_range = list(values_range)
         self._visible_force = -1  # Visibility changed with force
@@ -310,7 +310,7 @@ class ScrollBar(Widget):
         value = self.get_value()
         return round((value - v_min) / (v_max - v_min), 3)
 
-    def get_value(self) -> int:
+    def get_value(self, as_string: bool = False) -> int:
         """
         Return the value according to the slider position.
 
