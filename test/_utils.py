@@ -612,6 +612,11 @@ class MenuUtils:
         """
         fonts = pygame.font.get_fonts()
         fonts.sort()
+
+        if not fonts:
+            # Fallback to bundled fonts
+            return FONT_EXAMPLES[0]
+
         fonts.pop(0)
         return fonts[int(random.randrange(0, len(fonts)))]
 
