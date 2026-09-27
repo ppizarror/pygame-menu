@@ -25,6 +25,7 @@ from pygame_menu.utils import (
 )
 
 # Import widgets
+from pygame_menu.widgets.core.selection import Selection
 from pygame_menu.widgets.core.widget import Widget, check_widget_mouseleave
 from pygame_menu.widgets.widget.button import ButtonManager
 from pygame_menu.widgets.widget.colorinput import ColorInputManager
@@ -324,10 +325,7 @@ class WidgetManager(
         else:
             selection_effect = selection_effect.copy()
 
-        assert isinstance(
-            selection_effect,
-            pygame_menu.widgets.core.Selection,
-        )
+        assert isinstance(selection_effect, Selection)
 
         selection_effect.set_color(attributes["selection_color"])
         attributes["selection_effect"] = selection_effect

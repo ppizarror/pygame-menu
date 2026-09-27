@@ -13,6 +13,7 @@ __all__ = ["main"]
 import datetime
 import sys
 from random import randrange
+from typing import Any
 
 import pygame
 
@@ -46,6 +47,7 @@ def mainmenu_background() -> None:
     Background color of the main menu, on this function user can plot
     images, play sounds, etc.
     """
+    assert surface is not None
     surface.fill((40, 0, 40))
 
 
@@ -53,6 +55,7 @@ def reset_timer() -> None:
     """
     Reset timer.
     """
+    assert timer is not None
     timer[0] = 0
 
 
@@ -69,7 +72,9 @@ class TestCallClassMethod:
         print("Update game with new settings")
 
 
-def change_color_bg(value: tuple, c: tuple | None = None, **kwargs) -> None:
+def change_color_bg(
+    value: tuple[Any, ...], c: tuple[int, int, int] | None = None, **kwargs: Any
+) -> None:
     """
     Change background color.
 
@@ -77,14 +82,19 @@ def change_color_bg(value: tuple, c: tuple | None = None, **kwargs) -> None:
     :param c: Color tuple
     """
     color, _ = value
-    if c == (-1, -1, -1):  # If random color
-        c = (randrange(0, 255), randrange(0, 255), randrange(0, 255))
-    if kwargs["write_on_console"]:
-        r, g, b = c
+    resolved_c: tuple[int, int, int]
+    if c == (-1, -1, -1) or c is None:  # If random color or none
+        resolved_c = (randrange(0, 255), randrange(0, 255), randrange(0, 255))
+    else:
+        resolved_c = c
+
+    if kwargs.get("write_on_console", False):
+        r, g, b = resolved_c
         print(f"New background color: {color[0]} ({r},{g},{b})")
-    COLOR_BACKGROUND[0] = c[0]
-    COLOR_BACKGROUND[1] = c[1]
-    COLOR_BACKGROUND[2] = c[2]
+
+    COLOR_BACKGROUND[0] = resolved_c[0]
+    COLOR_BACKGROUND[1] = resolved_c[1]
+    COLOR_BACKGROUND[2] = resolved_c[2]
 
 
 def main(test: bool = False) -> None:
@@ -223,12 +233,14 @@ def main(test: bool = False) -> None:
     while True:
         # Tick clock
         clock.tick(FPS)
+        assert timer is not None
         timer[0] += dt
         frame += 1
 
         # Title is evaluated at current level as the title of the base pointer
         # object (main_menu) can change if user opens submenus
         current_menu = main_menu.get_current()
+        assert surface is not None
         if current_menu.get_title() != "Main Menu" or not main_menu.is_enabled():
             # Draw timer
             surface.fill(COLOR_BACKGROUND)

@@ -564,22 +564,22 @@ class RangeSlider(Widget):
         self._value_hidden = self._value.copy()
         self._render()
 
-    def scale(self, *args, **kwargs) -> RangeSlider:
+    def scale(self, *args: Any, **kwargs: Any) -> RangeSlider:
         raise WidgetTransformationNotImplemented()
 
-    def resize(self, *args, **kwargs) -> RangeSlider:
+    def resize(self, *args: Any, **kwargs: Any) -> RangeSlider:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_width(self, *args, **kwargs) -> RangeSlider:
+    def set_max_width(self, *args: Any, **kwargs: Any) -> RangeSlider:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_height(self, *args, **kwargs) -> RangeSlider:
+    def set_max_height(self, *args: Any, **kwargs: Any) -> RangeSlider:
         raise WidgetTransformationNotImplemented()
 
-    def rotate(self, *args, **kwargs) -> RangeSlider:
+    def rotate(self, *args: Any, **kwargs: Any) -> RangeSlider:
         raise WidgetTransformationNotImplemented()
 
-    def flip(self, *args, **kwargs) -> RangeSlider:
+    def flip(self, *args: Any, **kwargs: Any) -> RangeSlider:
         raise WidgetTransformationNotImplemented()
 
     def get_value(self, as_string: bool = False) -> NumberType | tuple[NumberType, NumberType]:

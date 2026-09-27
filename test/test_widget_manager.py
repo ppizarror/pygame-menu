@@ -13,6 +13,7 @@ import pytest
 import pygame_menu
 from pygame_menu._widgetmanager import WidgetManager
 from pygame_menu.widgets import Button, Label
+from pygame_menu.widgets.core.selection import Selection
 
 
 @pytest.fixture
@@ -198,10 +199,7 @@ def test_filter_widget_attributes_selection_effect_none_creates_default(
 
     attributes = manager._filter_widget_attributes({"selection_effect": None})
 
-    assert isinstance(
-        attributes["selection_effect"],
-        pygame_menu.widgets.core.Selection,
-    )
+    assert isinstance(attributes["selection_effect"], Selection)
 
 
 def test_filter_widget_attributes_copies_selection_effect(menu_and_manager):
@@ -215,10 +213,7 @@ def test_filter_widget_attributes_copies_selection_effect(menu_and_manager):
     attributes = manager._filter_widget_attributes({"selection_effect": original})
 
     assert attributes["selection_effect"] is not original
-    assert isinstance(
-        attributes["selection_effect"],
-        pygame_menu.widgets.core.Selection,
-    )
+    assert isinstance(attributes["selection_effect"], Selection)
 
 
 def test_check_kwargs_accepts_empty_kwargs():

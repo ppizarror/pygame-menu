@@ -492,19 +492,19 @@ class TextInput(Widget):
 
         return self._input_string
 
-    def scale(self, *args, **kwargs) -> TextInput:
+    def scale(self, *args: Any, **kwargs: Any) -> TextInput:
         raise WidgetTransformationNotImplemented()
 
-    def resize(self, *args, **kwargs) -> TextInput:
+    def resize(self, *args: Any, **kwargs: Any) -> TextInput:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_width(self, *args, **kwargs) -> TextInput:
+    def set_max_width(self, *args: Any, **kwargs: Any) -> TextInput:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_height(self, *args, **kwargs) -> TextInput:
+    def set_max_height(self, *args: Any, **kwargs: Any) -> TextInput:
         raise WidgetTransformationNotImplemented()
 
-    def rotate(self, *args, **kwargs) -> TextInput:
+    def rotate(self, *args: Any, **kwargs: Any) -> TextInput:
         raise WidgetTransformationNotImplemented()
 
     def flip(

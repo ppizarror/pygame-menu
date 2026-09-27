@@ -356,7 +356,7 @@ class Theme:
     widget_margin: Tuple2NumberType
     widget_offset: Tuple2NumberType
     widget_padding: PaddingType
-    widget_selection_effect: pygame_menu.widgets.core.Selection
+    widget_selection_effect: Selection
     widget_shadow_aa: int
     widget_shadow_color: ColorType
     widget_shadow_radius: int
@@ -365,7 +365,7 @@ class Theme:
     widget_tab_size: int
     widget_url_color: ColorType
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
 
         # Menu general
         self.background_color = self._get(

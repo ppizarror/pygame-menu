@@ -283,22 +283,22 @@ class ToggleSwitch(Widget):
         self._state = state
         self._render()
 
-    def scale(self, *args, **kwargs) -> ToggleSwitch:
+    def scale(self, *args: Any, **kwargs: Any) -> ToggleSwitch:
         raise WidgetTransformationNotImplemented()
 
-    def resize(self, *args, **kwargs) -> ToggleSwitch:
+    def resize(self, *args: Any, **kwargs: Any) -> ToggleSwitch:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_width(self, *args, **kwargs) -> ToggleSwitch:
+    def set_max_width(self, *args: Any, **kwargs: Any) -> ToggleSwitch:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_height(self, *args, **kwargs) -> ToggleSwitch:
+    def set_max_height(self, *args: Any, **kwargs: Any) -> ToggleSwitch:
         raise WidgetTransformationNotImplemented()
 
-    def rotate(self, *args, **kwargs) -> ToggleSwitch:
+    def rotate(self, *args: Any, **kwargs: Any) -> ToggleSwitch:
         raise WidgetTransformationNotImplemented()
 
-    def flip(self, *args, **kwargs) -> ToggleSwitch:
+    def flip(self, *args: Any, **kwargs: Any) -> ToggleSwitch:
         raise WidgetTransformationNotImplemented()
 
     def get_value(self, as_string: bool = False) -> Any:

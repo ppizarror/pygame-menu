@@ -26,12 +26,14 @@ menu = pygame_menu.Menu(
     width=640,
 )
 
-menu.add.label(
+my_app_label = menu.add.label(
     "My App",
     background_color="#333",
     background_inflate=(30, 0),
     float=True,  # Widget does not add size to the menu
-).translate(0, 10)
+)
+if not isinstance(my_app_label, list):
+    my_app_label.translate(0, 10)
 
 label = menu.add.label(
     "Lorem ipsum",
@@ -39,13 +41,14 @@ label = menu.add.label(
     font_name=pygame_menu.font.FONT_OPEN_SANS_ITALIC,
     font_size=25,
 )
-label.rotate(90)
-label.translate(300, 160)
+if not isinstance(label, list):
+    label.rotate(90)
+    label.translate(300, 160)
 
 # Button options
 b1 = menu.add.button(
     "Main Menu",
-    lambda: print(f"My method"),
+    lambda: print("My method"),
     align=pygame_menu.locals.ALIGN_LEFT,
     float=True,
     selection_color="#fff",
@@ -76,7 +79,8 @@ labels = [
     for i in range(20)
 ]
 for j in labels:
-    f.pack(j)
+    if not isinstance(j, list):
+        f.pack(j)
 
 if __name__ == "__main__":
     menu.mainloop(surface)

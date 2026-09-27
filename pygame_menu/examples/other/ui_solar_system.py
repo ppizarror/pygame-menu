@@ -12,6 +12,7 @@ __all__ = ["main"]
 
 import math
 import random
+from typing import TYPE_CHECKING, Any
 
 import pygame
 import pygame.gfxdraw as gfxdraw
@@ -19,6 +20,14 @@ import pygame.gfxdraw as gfxdraw
 import pygame_menu
 from pygame_menu.examples import create_example_window
 from pygame_menu.examples._resources import NEBULA_IMG, SOLAR_SYSTEM_IMG
+from pygame_menu.widgets.selection.highlight import HighlightSelection
+from pygame_menu.widgets.selection.left_arrow import LeftArrowSelection
+from pygame_menu.widgets.selection.none import NoneSelection
+from pygame_menu.widgets.widget.menubar import MENUBAR_STYLE_NONE
+
+if TYPE_CHECKING:
+    from pygame_menu.widgets.core.widget import Widget
+    from pygame_menu.widgets.widget.button import Button
 
 
 class Planet:
@@ -26,7 +35,7 @@ class Planet:
     Planet object.
     """
 
-    button: pygame_menu.widgets.Button | None
+    button: Button | None
     fontsize: int
     image: pygame_menu.BaseImage
     info: str
@@ -74,6 +83,7 @@ class SolarSystemApp:
     planets: dict[str, Planet]
     rotation_velocity: float
     stars: list[list[int | float]]
+    shooting_stars: list[list[int | float]]
     surface: pygame.Surface
 
     def __init__(self) -> None:
@@ -86,10 +96,10 @@ class SolarSystemApp:
 
         theme.background_color = (0, 0, 0)
         theme.scrollbar_cursor = pygame_menu.locals.CURSOR_HAND
-        theme.title_bar_style = pygame_menu.widgets.MENUBAR_STYLE_TITLE_ONLY
+        theme.title_bar_style = MENUBAR_STYLE_NONE
         theme.title_close_button_cursor = pygame_menu.locals.CURSOR_HAND
         theme.title_floating = True
-        theme.widget_selection_effect = pygame_menu.widgets.NoneSelection()
+        theme.widget_selection_effect = NoneSelection()
 
         # Load the SS image
         base_img = pygame_menu.BaseImage(SOLAR_SYSTEM_IMG, frombase64=True)
@@ -279,7 +289,7 @@ class SolarSystemApp:
             # Get color from figure's center pixel
             go_back_color = go_back_img.get_at((100, 100), ignore_alpha=True)
             go_back.get_decorator().add_baseimage(0, 0, go_back_img, centered=True)
-            go_back_selection = pygame_menu.widgets.HighlightSelection(border_width=2)
+            go_back_selection = HighlightSelection(border_width=2)
             go_back.set_selection_effect(go_back_selection.set_color(go_back_color))
 
             # Description
@@ -321,9 +331,7 @@ class SolarSystemApp:
             button.get_decorator().add_baseimage(0, 2, planet.image, centered=True)
             button.set_attribute("planet", planet)
             button.add_draw_callback(self.rotate_planet)
-            button_selection = pygame_menu.widgets.LeftArrowSelection(
-                arrow_size=(20, 30), blink_ms=1000
-            )
+            button_selection = LeftArrowSelection(arrow_size=(20, 30), blink_ms=1000)
             button.set_selection_effect(button_selection.set_color(go_back_color))
 
             # Set random times
@@ -412,7 +420,7 @@ class SolarSystemApp:
             ]
         )
 
-    def draw_universe_background(self, surface: pygame.Surface, *_) -> None:
+    def draw_universe_background(self, surface: pygame.Surface, *_: Any) -> None:
         """
         Draw stars as background.
 
@@ -431,7 +439,7 @@ class SolarSystemApp:
         for s in self.stars:
             x, y, flicker = s
             c = int(127 * max(0.5, 1 + math.cos(t + flicker)))
-            gfxdraw.pixel(surface, x, y, (c, c, c))
+            gfxdraw.pixel(surface, int(x), int(y), (c, c, c))
 
         # Draw shooting stars
         for s in self.shooting_stars:
@@ -446,9 +454,11 @@ class SolarSystemApp:
                     ),
                 )
             )
-            x = int(x)
-            y = int(y)
-            gfxdraw.line(surface, x, y, x + dx, y + dy, (c, c, c))
+            x_int = int(x)
+            y_int = int(y)
+            gfxdraw.line(
+                surface, x_int, y_int, x_int + int(dx), y_int + int(dy), (c, c, c)
+            )
 
             # Update velocity + window constraints
             s[0] = (s[0] + speed * math.cos(theta)) % self.menu.get_width()
@@ -484,9 +494,7 @@ class SolarSystemApp:
                     if not menu._disable_draw:
                         self.add_shooting_star()
 
-    def rotate_planet(
-        self, widget: pygame_menu.widgets.Widget, menu: pygame_menu.Menu
-    ) -> None:
+    def rotate_planet(self, widget: Widget, menu: pygame_menu.Menu) -> None:
         """
         Rotate a planet.
 
@@ -508,9 +516,9 @@ class SolarSystemApp:
 
         # Compute position based on radius
         if planet.name == "Moon":
-            xc, yc = self.planets["earth"].button.get_attribute(
-                "pos"
-            )  # Center of earth
+            earth_btn = self.planets["earth"].button
+            assert earth_btn is not None
+            xc, yc = earth_btn.get_attribute("pos")  # Center of earth
             x += xc + 1
             y += yc - 10
 

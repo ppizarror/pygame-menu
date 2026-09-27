@@ -12,7 +12,7 @@ __all__ = ["main"]
 
 import itertools
 import sys
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import pygame
 
@@ -71,9 +71,9 @@ def make_world(width: int, height: int, text: str = "") -> pygame.Surface:
 
     posy = 60
     for line in text.splitlines():
-        text = font.render(str(line), True, (0, 0, 0))
-        world.blit(text, (60, posy))
-        posy += text.get_height() + 10
+        text_surface = font.render(str(line), True, (0, 0, 0))
+        world.blit(text_surface, (60, posy))
+        posy += text_surface.get_height() + 10
 
     for x in range(0, width, 10):
         if x % 100 == 0 and x != 0:
@@ -96,7 +96,7 @@ def make_world(width: int, height: int, text: str = "") -> pygame.Surface:
 
 
 # noinspection PyProtectedMember
-def iter_world(area: ScrollArea) -> Generator:
+def iter_world(area: ScrollArea) -> Generator[dict[str, Any], None, None]:
     """
     Iterate through worlds.
 

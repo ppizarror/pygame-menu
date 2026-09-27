@@ -16,7 +16,7 @@ from pygame_menu.examples import create_example_window
 surface = create_example_window("Example - Simple", (600, 400))
 
 
-def set_difficulty(selected: tuple, value: Any) -> None:
+def set_difficulty(selected: tuple[Any, ...], value: Any) -> None:
     """
     Set the difficulty of the game.
     """

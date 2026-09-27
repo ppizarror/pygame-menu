@@ -17,7 +17,7 @@ import pygame
 import pygame_menu
 from pygame_menu.examples import create_example_window
 from pygame_menu.utils import make_surface
-from pygame_menu.widgets import ScrollBar
+from pygame_menu.widgets.widget.scrollbar import ScrollBar
 
 
 def make_world(width: int, height: int) -> pygame.Surface:
