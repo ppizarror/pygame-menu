@@ -127,12 +127,12 @@ class ScrollBar(Widget):
             kwargs=kwargs,
             scrollable=True,
             selectable=False,
+            mouseover_check_rect=self.get_slider_rect,
         )
 
         self._check_mouseleave_call_render = True
         self._clicked = False
         self._last_mouse_pos = (-1, -1)
-        self._mouseover_check_rect = self.get_slider_rect
         self._orientation = 0  # 0: horizontal, 1: vertical
         self._values_range = list(values_range)
         self._visible_force = -1  # Visibility changed with force
