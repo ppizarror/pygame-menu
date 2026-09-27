@@ -71,8 +71,6 @@ class Image(Widget):
 
         super().__init__(onselect=onselect, widget_id=image_id)
 
-        self._flip = (False, False)
-
         if isinstance(image_path, BaseImage):
             self._image = image_path
         else:
