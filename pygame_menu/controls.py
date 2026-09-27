@@ -25,10 +25,15 @@ __all__ = [
     "KEY_APPLY",
     "KEY_BACK",
     "KEY_CLOSE_MENU",
+    "KEY_DELETE",
+    "KEY_END",
+    "KEY_ESCAPE",
+    "KEY_HOME",
     "KEY_LEFT",
     "KEY_MOVE_DOWN",
     "KEY_MOVE_UP",
     "KEY_RIGHT",
+    "KEY_TAB",
     # Controller object
     "Controller",
 ]
@@ -52,6 +57,7 @@ JOY_BUTTON_BACK: int = 1
 JOY_BUTTON_SELECT: int = 0
 JOY_DEADZONE: float = 0.5
 JOY_DELAY: int = 300  # ms
+# Hat directions are matched exactly; diagonal hat values are ignored.
 JOY_DOWN: Tuple2IntType = (0, -1)
 JOY_LEFT: Tuple2IntType = (-1, 0)
 JOY_REPEAT: int = 100  # ms
@@ -62,9 +68,16 @@ JOY_UP: Tuple2IntType = (0, 1)
 KEY_APPLY = _locals.K_RETURN
 KEY_BACK = _locals.K_BACKSPACE
 KEY_CLOSE_MENU = _locals.K_ESCAPE
+KEY_DELETE = _locals.K_DELETE
+KEY_END = _locals.K_END
+KEY_ESCAPE = _locals.K_ESCAPE
+KEY_HOME = _locals.K_HOME
 KEY_LEFT = _locals.K_LEFT
+
+# Historical pygame-menu behavior:
+# "move_down" is triggered by the physical Up key, and vice versa.
 KEY_MOVE_DOWN = _locals.K_UP
-KEY_MOVE_UP = _locals.K_DOWN  # Consider keys are "inverted"
+KEY_MOVE_UP = _locals.K_DOWN
 KEY_RIGHT = _locals.K_RIGHT
 KEY_TAB = _locals.K_TAB
 
@@ -72,8 +85,10 @@ KEY_TAB = _locals.K_TAB
 # noinspection PyUnusedLocal
 class Controller:
     """
-    Controller class. Accepts any object and provides functions to handle each
-    event.
+    Default keyboard and joystick event predicates used by menus.
+
+    Each public method accepts a pygame event and a widget and returns whether
+    the event matches the corresponding control.
     """
 
     joy_delay: int
@@ -84,6 +99,16 @@ class Controller:
         self.joy_repeat = JOY_REPEAT
 
     @staticmethod
+    def _key_pressed(event: EventType, key: int) -> bool:
+        """Helper to check if an event is a matching KEYDOWN event."""
+        return event.type == _locals.KEYDOWN and event.key == key
+
+    @staticmethod
+    def _joy_button_pressed(event: EventType, button: int) -> bool:
+        """Helper to check if an event is a matching JOYBUTTONDOWN event."""
+        return event.type == _locals.JOYBUTTONDOWN and event.button == button
+
+    @staticmethod
     def apply(event: EventType, widget: WidgetType) -> bool:
         """
         Accepts apply key. Requires ``pygame.KEYDOWN``.
@@ -92,7 +117,7 @@ class Controller:
         :param widget: Widget that accepts the event
         :return: True if event matches
         """
-        return event.key == KEY_APPLY
+        return Controller._key_pressed(event, KEY_APPLY)
 
     @staticmethod
     def back(event: EventType, widget: WidgetType) -> bool:
@@ -103,7 +128,7 @@ class Controller:
         :param widget: Widget that accepts the event
         :return: True if event matches
         """
-        return event.key == KEY_BACK
+        return Controller._key_pressed(event, KEY_BACK)
 
     @staticmethod
     def close_menu(event: EventType, widget: WidgetType) -> bool:
@@ -114,7 +139,7 @@ class Controller:
         :param widget: Widget that accepts the event
         :return: True if event matches
         """
-        return event.key == KEY_CLOSE_MENU
+        return Controller._key_pressed(event, KEY_CLOSE_MENU)
 
     @staticmethod
     def delete(event: EventType, widget: WidgetType) -> bool:
@@ -125,7 +150,7 @@ class Controller:
         :param widget: Widget that accepts the event
         :return: True if event matches
         """
-        return event.key == _locals.K_DELETE
+        return Controller._key_pressed(event, KEY_DELETE)
 
     @staticmethod
     def end(event: EventType, widget: WidgetType) -> bool:
@@ -136,7 +161,7 @@ class Controller:
         :param widget: Widget that accepts the event
         :return: True if event matches
         """
-        return event.key == _locals.K_END
+        return Controller._key_pressed(event, KEY_END)
 
     @staticmethod
     def escape(event: EventType, widget: WidgetType) -> bool:
@@ -147,7 +172,7 @@ class Controller:
         :param widget: Widget that accepts the event
         :return: True if event matches
         """
-        return event.key == _locals.K_ESCAPE
+        return Controller._key_pressed(event, KEY_ESCAPE)
 
     @staticmethod
     def home(event: EventType, widget: WidgetType) -> bool:
@@ -158,7 +183,7 @@ class Controller:
         :param widget: Widget that accepts the event
         :return: True if event matches
         """
-        return event.key == _locals.K_HOME
+        return Controller._key_pressed(event, KEY_HOME)
 
     @staticmethod
     def joy_axis_x_left(event: EventType, widget: WidgetType) -> bool:
@@ -169,7 +194,11 @@ class Controller:
         :param widget: Widget that accepts the event
         :return: True if event matches
         """
-        return event.axis == JOY_AXIS_X and event.value < -JOY_DEADZONE
+        return (
+            event.type == _locals.JOYAXISMOTION
+            and event.axis == JOY_AXIS_X
+            and event.value < -JOY_DEADZONE
+        )
 
     @staticmethod
     def joy_axis_x_right(event: EventType, widget: WidgetType) -> bool:
@@ -180,7 +209,11 @@ class Controller:
         :param widget: Widget that accepts the event
         :return: True if event matches
         """
-        return event.axis == JOY_AXIS_X and event.value > JOY_DEADZONE
+        return (
+            event.type == _locals.JOYAXISMOTION
+            and event.axis == JOY_AXIS_X
+            and event.value > JOY_DEADZONE
+        )
 
     @staticmethod
     def joy_axis_y_down(event: EventType, widget: WidgetType) -> bool:
@@ -191,7 +224,11 @@ class Controller:
         :param widget: Widget that accepts the event
         :return: True if event matches
         """
-        return event.axis == JOY_AXIS_Y and event.value > JOY_DEADZONE
+        return (
+            event.type == _locals.JOYAXISMOTION
+            and event.axis == JOY_AXIS_Y
+            and event.value > JOY_DEADZONE
+        )
 
     @staticmethod
     def joy_axis_y_up(event: EventType, widget: WidgetType) -> bool:
@@ -202,7 +239,11 @@ class Controller:
         :param widget: Widget that accepts the event
         :return: True if event matches
         """
-        return event.axis == JOY_AXIS_Y and event.value < -JOY_DEADZONE
+        return (
+            event.type == _locals.JOYAXISMOTION
+            and event.axis == JOY_AXIS_Y
+            and event.value < -JOY_DEADZONE
+        )
 
     @staticmethod
     def joy_back(event: EventType, widget: WidgetType) -> bool:
@@ -213,7 +254,7 @@ class Controller:
         :param widget: Widget that accepts the event
         :return: True if event matches
         """
-        return event.button == JOY_BUTTON_BACK
+        return Controller._joy_button_pressed(event, JOY_BUTTON_BACK)
 
     @staticmethod
     def joy_down(event: EventType, widget: WidgetType) -> bool:
@@ -224,7 +265,7 @@ class Controller:
         :param widget: Widget that accepts the event
         :return: True if event matches
         """
-        return event.value == JOY_DOWN
+        return event.type == _locals.JOYHATMOTION and event.value == JOY_DOWN
 
     @staticmethod
     def joy_left(event: EventType, widget: WidgetType) -> bool:
@@ -235,7 +276,7 @@ class Controller:
         :param widget: Widget that accepts the event
         :return: True if event matches
         """
-        return event.value == JOY_LEFT
+        return event.type == _locals.JOYHATMOTION and event.value == JOY_LEFT
 
     @staticmethod
     def joy_right(event: EventType, widget: WidgetType) -> bool:
@@ -246,7 +287,7 @@ class Controller:
         :param widget: Widget that accepts the event
         :return: True if event matches
         """
-        return event.value == JOY_RIGHT
+        return event.type == _locals.JOYHATMOTION and event.value == JOY_RIGHT
 
     @staticmethod
     def joy_select(event: EventType, widget: WidgetType) -> bool:
@@ -257,7 +298,7 @@ class Controller:
         :param widget: Widget that accepts the event
         :return: True if event matches
         """
-        return event.button == JOY_BUTTON_SELECT
+        return Controller._joy_button_pressed(event, JOY_BUTTON_SELECT)
 
     @staticmethod
     def joy_up(event: EventType, widget: WidgetType) -> bool:
@@ -268,7 +309,7 @@ class Controller:
         :param widget: Widget that accepts the event
         :return: True if event matches
         """
-        return event.value == JOY_UP
+        return event.type == _locals.JOYHATMOTION and event.value == JOY_UP
 
     @staticmethod
     def left(event: EventType, widget: WidgetType) -> bool:
@@ -279,7 +320,7 @@ class Controller:
         :param widget: Widget that accepts the event
         :return: True if event matches
         """
-        return event.key == KEY_LEFT
+        return Controller._key_pressed(event, KEY_LEFT)
 
     @staticmethod
     def move_down(event: EventType, widget: WidgetType) -> bool:
@@ -290,7 +331,7 @@ class Controller:
         :param widget: Widget that accepts the event
         :return: True if event matches
         """
-        return event.key == KEY_MOVE_DOWN
+        return Controller._key_pressed(event, KEY_MOVE_DOWN)
 
     @staticmethod
     def move_up(event: EventType, widget: WidgetType) -> bool:
@@ -301,7 +342,7 @@ class Controller:
         :param widget: Widget that accepts the event
         :return: True if event matches
         """
-        return event.key == KEY_MOVE_UP
+        return Controller._key_pressed(event, KEY_MOVE_UP)
 
     @staticmethod
     def right(event: EventType, widget: WidgetType) -> bool:
@@ -312,7 +353,7 @@ class Controller:
         :param widget: Widget that accepts the event
         :return: True if event matches
         """
-        return event.key == KEY_RIGHT
+        return Controller._key_pressed(event, KEY_RIGHT)
 
     @staticmethod
     def tab(event: EventType, widget: WidgetType) -> bool:
@@ -323,4 +364,4 @@ class Controller:
         :param widget: Widget that accepts the event
         :return: True if event matches
         """
-        return event.key == KEY_TAB
+        return Controller._key_pressed(event, KEY_TAB)
