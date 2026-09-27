@@ -24,6 +24,7 @@ import pygame
 import pygame_menu
 import pygame_menu.utils as ut
 from pygame_menu.examples import create_example_window
+from pygame_menu.widgets.selection.highlight import HighlightSelection
 
 if TYPE_CHECKING:
     from collections.abc import Generator
@@ -48,17 +49,17 @@ class AStarQueue:
     """
 
     def __init__(self) -> None:
-        self.myheap = []
+        self.myheap: list[tuple[float, float, _Point2]] = []
 
-    def show(self):
+    def show(self) -> list[tuple[float, float, _Point2]]:
         """Show the heap."""
         return self.myheap
 
-    def push(self, priority, distance, node) -> None:
+    def push(self, priority: float, distance: float, node: _Point2) -> None:
         """Put the node into heap."""
         heapq.heappush(self.myheap, (priority, distance, node))
 
-    def pop(self):
+    def pop(self) -> tuple[float, float, _Point2]:
         """Remove the heap item and return it."""
         priority, distance, node = heapq.heappop(self.myheap)
         return priority, distance, node
@@ -70,17 +71,17 @@ class PriorityQueue:
     """
 
     def __init__(self) -> None:
-        self.myheap = []
+        self.myheap: list[tuple[float, _Point2]] = []
 
-    def show(self):
+    def show(self) -> list[tuple[float, _Point2]]:
         """Show the heap."""
         return self.myheap
 
-    def push(self, priority, node) -> None:
+    def push(self, priority: float, node: _Point2) -> None:
         """Put the node into heap."""
         heapq.heappush(self.myheap, (priority, node))
 
-    def pop(self):
+    def pop(self) -> tuple[float, _Point2]:
         """Remove the heap item and return it."""
         priority, node = heapq.heappop(self.myheap)
         return priority, node
@@ -92,20 +93,20 @@ class PrioritySet:
     """
 
     def __init__(self) -> None:
-        self.myheap = []
-        self.myset = set()
+        self.myheap: list[tuple[float, _Point2]] = []
+        self.myset: set[_Point2] = set()
 
-    def show(self):
+    def show(self) -> list[tuple[float, _Point2]]:
         """Show the heap."""
         return self.myheap
 
-    def push(self, priority, node) -> None:
+    def push(self, priority: float, node: _Point2) -> None:
         """Put the node into heap."""
         if node not in self.myset:
             heapq.heappush(self.myheap, (priority, node))
             self.myset.add(node)
 
-    def pop(self):
+    def pop(self) -> tuple[float, _Point2]:
         """Remove the heap item and return it."""
         priority, node = heapq.heappop(self.myheap)
         self.myset.remove(node)
@@ -157,7 +158,10 @@ class Node:
     }
 
     def __init__(
-        self, nodetype: str, colors: dict = colors, dmf: dict = distance_modifiers
+        self,
+        nodetype: str,
+        colors: dict[str, dict[str, tuple[int, int, int]]] = colors,
+        dmf: dict[str, float] = distance_modifiers,
     ) -> None:
         """
         Constructor.
@@ -190,17 +194,18 @@ class Node:
         nodetype: bool | str = False,
         is_visited: bool | str = "unchanged",
         is_path: bool | str = "unchanged",
-        colors: dict = colors,
-        dmf: dict = distance_modifiers,
-        nodetypes: dict = nodetypes,
+        colors: dict[str, dict[str, tuple[int, int, int]]] = colors,
+        dmf: dict[str, float] = distance_modifiers,
+        nodetypes: list[str] = nodetypes,
     ) -> None:
         """
         Update the node.
         """
         if nodetype:
+            assert isinstance(nodetype, str)
             assert nodetype in nodetypes, f"nodetype must be one of: {nodetypes}"
-            if (self.nodetype == ("start" or "end")) and (
-                nodetype == ("wall" or "mud")
+            if (self.nodetype == "start" or self.nodetype == "end") and (
+                nodetype == "wall" or nodetype == "mud"
             ):
                 pass
             else:
@@ -238,7 +243,7 @@ class MazeApp:
     Maze class.
     """
 
-    _algorithms: dict
+    _algorithms: dict[int, str]
     _diagonals: bool
     _end_point: _Point2
     _grid: _MazeType
@@ -251,6 +256,14 @@ class MazeApp:
     _start_point: _Point2
     _visualize: bool
     _width: int
+    _algorithm_run: bool | str
+    _path_found: bool
+    _drag_start_point: bool
+    _drag_end_point: bool
+    _screen_width: int
+    _clock: pygame.time.Clock
+    _fps: int
+    _surface: pygame.Surface
 
     def __init__(self, width: int = 8, rows: int = 75, margin: int = 0) -> None:
         """
@@ -316,16 +329,17 @@ class MazeApp:
         """
 
         # Creates the events
-        def onchange_dropselect(*_) -> None:
+        def onchange_dropselect(*_: Any) -> None:
             """
             Called if the select is changed.
             """
             b = self._menu.get_widget("run_generator")
+            assert b is not None, "Generator button must exist"
             b.readonly = False
             b.is_selectable = True
             b.set_cursor(pygame_menu.locals.CURSOR_HAND)
 
-        def button_onmouseover(w: pygame_menu.widgets.Widget, _) -> None:
+        def button_onmouseover(w: Any, _: Any) -> None:
             """
             Set the background color of buttons if entered.
             """
@@ -333,13 +347,13 @@ class MazeApp:
                 return
             w.set_background_color((98, 103, 106))
 
-        def button_onmouseleave(w: pygame_menu.widgets.Widget, _) -> None:
+        def button_onmouseleave(w: Any, _: Any) -> None:
             """
             Set the background color of buttons if leaved.
             """
             w.set_background_color((75, 79, 81))
 
-        def button_onmouseover_clear(w: pygame_menu.widgets.Widget, _) -> None:
+        def button_onmouseover_clear(w: Any, _: Any) -> None:
             """
             Set the background color of buttons if entered.
             """
@@ -347,7 +361,7 @@ class MazeApp:
                 return
             w.set_background_color((139, 0, 0))
 
-        def button_onmouseleave_clear(w: pygame_menu.widgets.Widget, _) -> None:
+        def button_onmouseleave_clear(w: Any, _: Any) -> None:
             """
             Set the background color of buttons if leaved.
             """
@@ -373,7 +387,7 @@ class MazeApp:
             widget_font=pygame_menu.font.FONT_FIRACODE,
             widget_font_color=(255, 255, 255),
             widget_margin=(0, 15),
-            widget_selection_effect=pygame_menu.widgets.NoneSelection(),
+            widget_selection_effect=HighlightSelection(),
         )
         self._menu = pygame_menu.Menu(
             height=self._screen_width,
@@ -407,12 +421,15 @@ class MazeApp:
             width=80,
         )
 
-        self._menu.add.label(
+        lbl_gen = self._menu.add.label(
             "Maze generator",
             font_name=pygame_menu.font.FONT_FIRACODE_BOLD,
             font_size=22,
             margin=(0, 5),
-        ).translate(-12, 0)
+        )
+        assert not isinstance(lbl_gen, list)
+        lbl_gen.translate(-12, 0)
+
         self._menu.add.dropselect(
             title="",
             items=[("Prim", 0), ("Alt Prim", 1), ("Recursive", 2), ("(+) Terrain", 3)],
@@ -441,12 +458,15 @@ class MazeApp:
         btn.readonly = True
         btn.is_selectable = False
 
-        self._menu.add.label(
+        lbl_solver = self._menu.add.label(
             "Maze Solver",
             font_name=pygame_menu.font.FONT_FIRACODE_BOLD,
             font_size=22,
             margin=(0, 5),
-        ).translate(-30, 0)
+        )
+        assert not isinstance(lbl_solver, list)
+        lbl_solver.translate(-30, 0)
+
         self._menu.add.dropselect(
             title="",
             items=[("Dijkstra", 0), ("A*", 1), ("DFS", 2), ("BFS", 3)],
@@ -475,7 +495,7 @@ class MazeApp:
         )
 
         # Clears
-        btn = self._menu.add.button(
+        btn_clear = self._menu.add.button(
             "Clear",
             self._clear_maze,
             background_color=(205, 92, 92),
@@ -485,9 +505,9 @@ class MazeApp:
             margin=(0, 30),
             shadow_width=10,
         )
-        btn.set_onmouseover(button_onmouseover_clear)
-        btn.set_onmouseleave(button_onmouseleave_clear)
-        btn.translate(-50, 0)
+        btn_clear.set_onmouseover(button_onmouseover_clear)
+        btn_clear.set_onmouseleave(button_onmouseleave_clear)
+        btn_clear.translate(-50, 0)
 
         # Create about menu
         menu_about = pygame_menu.Menu(
@@ -551,7 +571,7 @@ class MazeApp:
             shadow_width=10,
         )
 
-        btn = self._menu.add.button(
+        btn_about = self._menu.add.button(
             "About",
             menu_about,
             button_id="about",
@@ -560,17 +580,17 @@ class MazeApp:
             margin=(0, 75),
             shadow_width=10,
         )
-        btn.translate(50, 0)
+        btn_about.translate(50, 0)
 
         # Configure buttons
-        for btn in self._menu.get_widgets(
+        for w_btn in self._menu.get_widgets(
             ["run_generator", "run_solver", "about", "about_back"]
         ):
-            btn.set_onmouseover(button_onmouseover)
-            btn.set_onmouseleave(button_onmouseleave)
-            if not btn.readonly:
-                btn.set_cursor(pygame_menu.locals.CURSOR_HAND)
-            btn.set_background_color((75, 79, 81))
+            w_btn.set_onmouseover(button_onmouseover)
+            w_btn.set_onmouseleave(button_onmouseleave)
+            if not w_btn.readonly:
+                w_btn.set_cursor(pygame_menu.locals.CURSOR_HAND)
+            w_btn.set_background_color((75, 79, 81))
 
     def _clear_maze(self) -> None:
         """
@@ -581,8 +601,8 @@ class MazeApp:
         for row in range(self._rows):
             for column in range(self._rows):
                 if (row, column) != self._start_point and (
-                        row,
-                        column,
+                    row,
+                    column,
                 ) != self._end_point:
                     self._grid[row][column].update(
                         nodetype="blank", is_visited=False, is_path=False
@@ -596,7 +616,9 @@ class MazeApp:
         if self._visualize:
             ut.set_pygame_cursor(pygame_menu.locals.CURSOR_NO)
         o_visualize = self._visualize
-        gen_type = self._menu.get_widget("generator").get_value()[1]
+        gen_widget = self._menu.get_widget("generator")
+        assert gen_widget is not None, "Generator widget must exist"
+        gen_type = gen_widget.get_value()[1]
         if gen_type != 3:
             self._clear_maze()
         if gen_type == 0:
@@ -617,10 +639,16 @@ class MazeApp:
         Run the solver.
         """
         o_visualize = self._visualize
-        solver_type = self._menu.get_widget("solver").get_value()[1]
+        solver_widget = self._menu.get_widget("solver")
+        assert solver_widget is not None, "Solver widget must exist"
+        solver_type = solver_widget.get_value()[1]
+
         if self._visualize:
             pygame.display.flip()
-        if self._path_found and self._algorithms[solver_type] == self._algorithm_run:
+        if (
+            self._path_found
+            and self._algorithms.get(solver_type) == self._algorithm_run
+        ):
             self._visualize = False
         else:
             self._clear_visited()
@@ -687,7 +715,7 @@ class MazeApp:
         """
         # If a maze isn't input, we just create a grid full of walls
         if not mazearray:
-            mazearray: _MazeType = []
+            mazearray = []
             for row in range(self._rows):
                 mazearray.append([])
                 for column in range(self._rows):
@@ -787,7 +815,7 @@ class MazeApp:
         """
         # If a maze isn't input, we just create a grid full of walls
         if not mazearray:
-            mazearray: _MazeType = []
+            mazearray = []
             for row in range(self._rows):
                 mazearray.append([])
                 for column in range(self._rows):
@@ -819,11 +847,15 @@ class MazeApp:
         while len(walls) > 0:
             self._check_esc()
             wall = random.choice(tuple(walls))
-            wall_neighbours = self._get_neighbours(wall, n)
+            wall_neighbours = (
+                self._get_nested_neighbours(wall, n)
+                if hasattr(self, "_get_nested_neighbours")
+                else self._get_neighbours(wall, n)
+            )
             neighbouring_walls = set()
             pcount = 0
             for wall_neighbour, _ in wall_neighbours:
-                if wall_neighbour == (start_point or self._end_point):
+                if wall_neighbour == start_point or wall_neighbour == self._end_point:
                     continue
                 elif mazearray[wall_neighbour[0]][wall_neighbour[1]].nodetype != "wall":
                     pcount += 1
@@ -847,7 +879,7 @@ class MazeApp:
         return mazearray
 
     def _recursive_division(
-        self, chamber: tuple[int, int, int, int] | None = None, halving=True
+        self, chamber: tuple[int, int, int, int] | None = None, halving: bool = True
     ) -> None:
         """
         Performs recursive division.
@@ -996,12 +1028,13 @@ class MazeApp:
 
         :param num_patches: Number of patches
         """
-        if not num_patches:
-            num_patches: int = random.randrange(
+        resolved_num_patches = num_patches
+        if not resolved_num_patches:
+            resolved_num_patches = random.randrange(
                 int(self._rows / 10), int(self._rows / 4)
             )
 
-        terrain_nodes = set()
+        terrain_nodes: set[_Point2] = set()
 
         if self._visualize:
             pygame.display.flip()
@@ -1010,7 +1043,7 @@ class MazeApp:
         # getting neighbors of neighbors etc. for each node that we consider, there is
         # a variable probability of it becoming a patch of mud
         # As we branch outwards that probability decreases
-        for patch in range(num_patches + 1):
+        for patch in range(resolved_num_patches + 1):
             self._check_esc()
             neighbour_cycles = 0
             centre_point = (
@@ -1036,15 +1069,23 @@ class MazeApp:
 
                 neighbour_cycles += 1
 
-                for node, _ in self._get_neighbours(node):
-                    if self._grid[node[0]][node[1]].nodetype == "mud":
+                for neighbour_node, _ in self._get_neighbours(node):
+                    if (
+                        self._grid[neighbour_node[0]][neighbour_node[1]].nodetype
+                        == "mud"
+                    ):
                         continue
                     threshold = 700 - (neighbour_cycles * 10)
 
                     if random.randrange(1, 101) <= threshold:
-                        terrain_nodes.add(node)
+                        terrain_nodes.add(neighbour_node)
 
-    def _update_gui(self, draw_background=True, draw_menu=True, draw_grid=True) -> None:
+    def _update_gui(
+        self,
+        draw_background: bool = True,
+        draw_menu: bool = True,
+        draw_grid: bool = True,
+    ) -> None:
         """
         Updates the gui.
 
@@ -1123,6 +1164,8 @@ class MazeApp:
         """
         if not max_width:
             max_width = self._rows - 1
+
+        neighbours: tuple[tuple[_Point2, str], ...]
         if not self._diagonals:
             neighbours = (
                 ((min(max_width, node[0] + 1), node[1]), "+"),
@@ -1205,12 +1248,14 @@ class MazeApp:
         n = len(mazearray) - 1
 
         # Create the various data structures with speed in mind
-        visited_nodes = set()
-        unvisited_nodes = {(x, y) for x in range(n + 1) for y in range(n + 1)}
+        visited_nodes: set[_Point2] = set()
+        unvisited_nodes: set[_Point2] = {
+            (x, y) for x in range(n + 1) for y in range(n + 1)
+        }
         queue = AStarQueue()
 
         queue.push(distance + heuristic, distance, start_point)
-        v_distances = {}
+        v_distances: dict[_Point2, float] = {}
 
         # If a goal_node is not set, put it in the bottom right (1 square away from either edge)
         if not goal_node:
@@ -1235,8 +1280,6 @@ class MazeApp:
                     visited_nodes=visited_nodes,
                     unvisited_nodes=unvisited_nodes,
                     queue=queue,
-                    # v_distances=v_distances,
-                    # current_node=current_node,
                     current_distance=current_distance,
                     astar=astar,
                 )
@@ -1266,7 +1309,7 @@ class MazeApp:
             _, current_distance, current_node = queue.pop()
 
         v_distances[goal_node] = current_distance + (
-            1 if not self._diagonals else 2 ** 0.5
+            1 if not self._diagonals else 2**0.5
         )
         visited_nodes.add(goal_node)
 
@@ -1287,53 +1330,62 @@ class MazeApp:
 
     def _neighbours_loop(
         self,
-        neighbour,
-        mazearr,
-        visited_nodes,
-        unvisited_nodes,
-        queue,  # v_distances, current_node,
-        current_distance,
-        astar=False,
+        neighbour: tuple[_Point2, str],
+        mazearr: _MazeType,
+        visited_nodes: set[_Point2],
+        unvisited_nodes: set[_Point2],
+        queue: AStarQueue,
+        current_distance: float,
+        astar: bool = False,
     ) -> None:
         """
         Loop through neighbors.
         """
-        neighbour, ntype = neighbour
-        heuristic = 0
+        actual_neighbour, ntype = neighbour
+        heuristic = 0.0
 
         if astar:
-            heuristic += abs(self._end_point[0] - neighbour[0]) + abs(
-                self._end_point[1] - neighbour[1]
+            heuristic += abs(self._end_point[0] - actual_neighbour[0]) + abs(
+                self._end_point[1] - actual_neighbour[1]
             )
-            heuristic *= 1  # If this goes above 1 then the shortest path is not guaranteed, but the attempted route becomes more direct
+            heuristic *= 1.0  # If this goes above 1 then the shortest path is not guaranteed, but the attempted route becomes more direct
 
         # If the neighbor has already been visited
-        if neighbour in visited_nodes:
+        if actual_neighbour in visited_nodes:
             pass
-        elif mazearr[neighbour[0]][neighbour[1]].nodetype == "wall":
-            visited_nodes.add(neighbour)
-            unvisited_nodes.discard(neighbour)
+        elif mazearr[actual_neighbour[0]][actual_neighbour[1]].nodetype == "wall":
+            visited_nodes.add(actual_neighbour)
+            unvisited_nodes.discard(actual_neighbour)
         else:
-            modifier = mazearr[neighbour[0]][neighbour[1]].distance_modifier
+            modifier = mazearr[actual_neighbour[0]][
+                actual_neighbour[1]
+            ].distance_modifier
             if ntype == "+":
                 queue.push(
-                    current_distance + (1 * modifier) + heuristic,
-                    current_distance + (1 * modifier),
-                    neighbour,
+                    current_distance + (1.0 * modifier) + heuristic,
+                    current_distance + (1.0 * modifier),
+                    actual_neighbour,
                 )
             elif ntype == "x":
                 queue.push(
-                    current_distance + ((2 ** 0.5) * modifier) + heuristic,
-                    current_distance + ((2 ** 0.5) * modifier),
-                    neighbour,
+                    current_distance + ((2**0.5) * modifier) + heuristic,
+                    current_distance + ((2**0.5) * modifier),
+                    actual_neighbour,
                 )
 
-    def _trace_back(self, goal_node, start_node, v_distances, n, mazearray) -> None:
+    def _trace_back(
+        self,
+        goal_node: _Point2,
+        start_node: _Point2,
+        v_distances: dict[_Point2, float],
+        n: int,
+        mazearray: _MazeType,
+    ) -> None:
         """
         (DIJKSTRA/A*) trace a path back from the end node to the start node after the algorithm has been run.
         """
         # Begin the list of nodes which will represent the path back, starting with the end node
-        path = [goal_node]
+        path: list[_Point2] = [goal_node]
         current_node = goal_node
 
         # Set the loop in motion until we get back to the start
@@ -1390,10 +1442,10 @@ class MazeApp:
         n = len(mazearray) - 1
 
         # Create the various data structures with speed in mind
-        mydeque = deque()
+        mydeque: deque[_Point2] = deque()
         mydeque.append(start_point)
-        visited_nodes = set()
-        path_dict = {start_point: None}
+        visited_nodes: set[_Point2] = set()
+        path_dict: dict[_Point2, _Point2 | None] = {start_point: None}
 
         # Main algorithm loop
         while len(mydeque) > 0:
@@ -1413,10 +1465,10 @@ class MazeApp:
                     if parent is None:
                         break
                     path_node = parent
-                    mazearray[path_node[0]][path_node[1]].update(is_path=True)  # type: ignore
-                    self._draw_square(mazearray, path_node[0], path_node[1])  # type: ignore
+                    mazearray[path_node[0]][path_node[1]].update(is_path=True)
+                    self._draw_square(mazearray, path_node[0], path_node[1])
                     if self._visualize:
-                        self._update_square(path_node[0], path_node[1])  # type: ignore
+                        self._update_square(path_node[0], path_node[1])
                     if path_node == start_point:
                         return True
 
@@ -1609,9 +1661,10 @@ class MazeApp:
                             # If we have already run the algorithm, update it as the point is moved
                             if self._algorithm_run:
                                 self._path_found = self._update_path()
+                                # Fixed: Keep end point as "end" instead of "start"
                                 self._grid[self._end_point[0]][
                                     self._end_point[1]
-                                ].update(nodetype="start")
+                                ].update(nodetype="end")
 
                     pygame.display.flip()
 

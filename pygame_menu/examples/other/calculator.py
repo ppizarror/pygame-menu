@@ -9,11 +9,18 @@ Simple calculator app.
 from __future__ import annotations
 
 __all__ = ["main"]
+from typing import TYPE_CHECKING, Any
 
 import pygame
 
 import pygame_menu
 from pygame_menu.examples import create_example_window
+from pygame_menu.widgets.selection.highlight import HighlightSelection
+from pygame_menu.widgets.widget.menubar import MENUBAR_STYLE_SIMPLE
+
+if TYPE_CHECKING:
+    from pygame_menu.widgets.core.widget import Widget
+    from pygame_menu.widgets.widget.label import Label
 
 
 class CalculatorApp:
@@ -25,7 +32,7 @@ class CalculatorApp:
     prev: str  # Prev value
     curr: str  # Current value
     menu: pygame_menu.Menu
-    screen: pygame_menu.widgets.Label
+    screen: Label
     surface: pygame.Surface
 
     def __init__(self) -> None:
@@ -36,7 +43,7 @@ class CalculatorApp:
 
         theme.background_color = (43, 43, 43)
         theme.title_background_color = (43, 43, 43)
-        theme.title_bar_style = pygame_menu.widgets.MENUBAR_STYLE_SIMPLE
+        theme.title_bar_style = MENUBAR_STYLE_SIMPLE
         theme.title_close_button_cursor = pygame_menu.locals.CURSOR_HAND
         theme.title_font_size = 35
         theme.widget_alignment = pygame_menu.locals.ALIGN_LEFT
@@ -45,9 +52,9 @@ class CalculatorApp:
         theme.widget_font_color = (255, 255, 255)
         theme.widget_font_size = 40
         theme.widget_padding = 0
-        theme.widget_selection_effect = pygame_menu.widgets.HighlightSelection(
-            1, 0, 0
-        ).set_color((120, 120, 120))
+        theme.widget_selection_effect = HighlightSelection(1, 0, 0).set_color(
+            (120, 120, 120)
+        )
 
         self.menu = pygame_menu.Menu(
             "",
@@ -66,13 +73,15 @@ class CalculatorApp:
         menu_deco.add_rectangle(
             10, 88, 300, 55, (60, 63, 65), use_center_positioning=False
         )
-        self.screen = self.menu.add.label(
+        screen_widget = self.menu.add.label(
             "0",
             background_color=None,
             margin=(10, 0),
             selectable=True,
             selection_effect=None,
         )
+        assert not isinstance(screen_widget, list)
+        self.screen = screen_widget
         self.menu.add.vertical_margin(20)
 
         cursor = pygame_menu.locals.CURSOR_HAND
@@ -141,21 +150,21 @@ class CalculatorApp:
 
         # Add decorator for each object
         for widget in (
-                b1,
-                b2,
-                b3,
-                b4,
-                b5,
-                b6,
-                b7,
-                b8,
-                b9,
-                b0,
-                beq,
-                b_plus,
-                b_minus,
-                b_times,
-                b_div,
+            b1,
+            b2,
+            b3,
+            b4,
+            b5,
+            b6,
+            b7,
+            b8,
+            b9,
+            b0,
+            beq,
+            b_plus,
+            b_minus,
+            b_times,
+            b_div,
         ):
             w_deco = widget.get_decorator()
             if widget != beq:
@@ -167,7 +176,7 @@ class CalculatorApp:
             w_deco.disable(on_layer)
             widget.set_attribute("on_layer", on_layer)
 
-            def widget_select(sel: bool, wid: pygame_menu.widgets.Widget, _) -> None:
+            def widget_select(sel: bool, wid: Widget, _: Any) -> None:
                 """
                 Function triggered if widget is selected
                 """
@@ -188,7 +197,9 @@ class CalculatorApp:
         self.menu.set_onupdate(self.process_events)
         self.menu.set_onwindowmouseleave(lambda m: self.screen.select(update_menu=True))
 
-    def process_events(self, events: list[pygame.event.Event], _=None) -> None:
+    def process_events(
+        self, events: list[pygame.event.Event], _: Any | None = None
+    ) -> None:
         """
         Process events from user.
         """
@@ -313,11 +324,9 @@ class CalculatorApp:
                 return str(int(x))
         except ValueError:
             pass
-        try:
-            x = float(x)
-        except ValueError:
-            pass
-        return str(round(int(x), 0))
+
+        x_float = float(x)
+        return str(round(int(x_float), 0))
 
     def mainloop(self, test: bool) -> None:
         """

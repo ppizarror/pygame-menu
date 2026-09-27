@@ -60,7 +60,6 @@ from pygame_menu._types import (
     PaddingInstance,
     PaddingType,
     Tuple2IntType,
-    Tuple3IntType,
     Tuple4IntType,
     Vector2NumberType,
     VectorInstance,
@@ -408,7 +407,7 @@ def is_callable(func: Any) -> bool:
     return callable(func)
 
 
-def load_pygame_image_file(image_path: str, **kwargs) -> pygame.Surface:
+def load_pygame_image_file(image_path: str, **kwargs: Any) -> pygame.Surface:
     """
     Loads an image and returns a surface.
 

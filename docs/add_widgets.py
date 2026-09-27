@@ -10,6 +10,8 @@ import sys
 
 sys.path.insert(0, "../")
 
+from typing import Any
+
 import pygame
 
 import pygame_menu
@@ -63,7 +65,7 @@ def make_menu(
     )
 
 
-def change_background_color(selected_value: tuple, color: tuple, **kwargs):
+def change_background_color(selected_value: tuple, color: tuple, **kwargs: Any):
     """Change background color."""
     from random import randrange
 

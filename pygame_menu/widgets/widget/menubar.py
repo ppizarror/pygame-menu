@@ -163,31 +163,31 @@ class MenuBar(Widget):
     def _apply_font(self) -> None:
         pass
 
-    def set_padding(self, *args, **kwargs) -> MenuBar:
+    def set_padding(self, *args: Any, **kwargs: Any) -> MenuBar:
         return self
 
-    def scale(self, *args, **kwargs) -> MenuBar:
+    def scale(self, *args: Any, **kwargs: Any) -> MenuBar:
         raise WidgetTransformationNotImplemented()
 
-    def resize(self, *args, **kwargs) -> MenuBar:
+    def resize(self, *args: Any, **kwargs: Any) -> MenuBar:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_width(self, *args, **kwargs) -> MenuBar:
+    def set_max_width(self, *args: Any, **kwargs: Any) -> MenuBar:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_height(self, *args, **kwargs) -> MenuBar:
+    def set_max_height(self, *args: Any, **kwargs: Any) -> MenuBar:
         raise WidgetTransformationNotImplemented()
 
-    def rotate(self, *args, **kwargs) -> MenuBar:
+    def rotate(self, *args: Any, **kwargs: Any) -> MenuBar:
         raise WidgetTransformationNotImplemented()
 
-    def flip(self, *args, **kwargs) -> MenuBar:
+    def flip(self, *args: Any, **kwargs: Any) -> MenuBar:
         raise WidgetTransformationNotImplemented()
 
-    def set_selection_effect(self, *args, **kwargs) -> MenuBar:
+    def set_selection_effect(self, *args: Any, **kwargs: Any) -> MenuBar:
         return self
 
-    def set_border(self, *args, **kwargs) -> MenuBar:
+    def set_border(self, *args: Any, **kwargs: Any) -> MenuBar:
         return self
 
     def _check_title_color(self, background_menu: bool) -> None:
@@ -232,10 +232,10 @@ class MenuBar(Widget):
         assert width > 0
         self._backbox_border_width = width
 
-    def _draw_background_color(self, *args, **kwargs) -> None:
+    def _draw_background_color(self, *args: Any, **kwargs: Any) -> None:
         pass
 
-    def _draw_border(self, *args, **kwargs) -> None:
+    def _draw_border(self, *args: Any, **kwargs: Any) -> None:
         pass
 
     def _backbox_visible(self) -> bool:

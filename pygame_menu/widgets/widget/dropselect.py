@@ -754,22 +754,22 @@ class DropSelect(Widget):
             self._drop_frame.update_position()
         return self
 
-    def scale(self, *args, **kwargs) -> DropSelect:
+    def scale(self, *args: Any, **kwargs: Any) -> DropSelect:
         raise WidgetTransformationNotImplemented()
 
-    def resize(self, *args, **kwargs) -> DropSelect:
+    def resize(self, *args: Any, **kwargs: Any) -> DropSelect:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_width(self, *args, **kwargs) -> DropSelect:
+    def set_max_width(self, *args: Any, **kwargs: Any) -> DropSelect:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_height(self, *args, **kwargs) -> DropSelect:
+    def set_max_height(self, *args: Any, **kwargs: Any) -> DropSelect:
         raise WidgetTransformationNotImplemented()
 
-    def rotate(self, *args, **kwargs) -> DropSelect:
+    def rotate(self, *args: Any, **kwargs: Any) -> DropSelect:
         raise WidgetTransformationNotImplemented()
 
-    def flip(self, *args, **kwargs) -> DropSelect:
+    def flip(self, *args: Any, **kwargs: Any) -> DropSelect:
         raise WidgetTransformationNotImplemented()
 
     def _draw(self, surface: pygame.Surface) -> None:
