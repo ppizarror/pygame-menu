@@ -87,7 +87,7 @@ class Button(Label):
             )
         self._onselect = callback
 
-    def update_callback(self, callback: Callable, *args) -> None:
+    def update_callback(self, callback: Callable, *args: Any) -> None:
         """
         Update function triggered by the button; ``callback`` cannot point to a Menu, that
         behavior is only valid using :py:meth:`pygame_menu.menu.Menu.add.button` method.
@@ -487,7 +487,7 @@ class ButtonManager(AbstractWidgetManager, ABC):
 
         return widget
 
-    def url(self, href: str, title: str = "", **kwargs) -> pygame_menu.widgets.Button:
+    def url(self, href: str, title: str = "", **kwargs: Any) -> pygame_menu.widgets.Button:
         """
         Adds a Button url to the Menu. Clicking the widget will open the link.
         If ``title`` is defined, the link will not be written. For example:

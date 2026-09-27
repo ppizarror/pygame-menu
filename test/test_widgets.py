@@ -7,6 +7,7 @@ Test general widget properties.
 """
 
 import copy
+from typing import Any
 
 import pygame
 import pytest
@@ -90,7 +91,7 @@ def test_abstract_widget() -> None:
 def test_kwargs() -> None:
     """Test kwargs addition."""
 
-    def function_kwargs(*args, **kwargs) -> None:
+    def function_kwargs(*args: Any, **kwargs: Any) -> None:
         """
         Button callback.
         """

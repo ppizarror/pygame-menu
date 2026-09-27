@@ -11,7 +11,7 @@ from __future__ import annotations
 __all__ = ["NoneWidget", "NoneWidgetManager"]
 
 from abc import ABC
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import pygame
 
@@ -48,130 +48,130 @@ class NoneWidget(Widget):
     def _apply_font(self) -> None:
         pass
 
-    def set_padding(self, *args, **kwargs) -> NoneWidget:
+    def set_padding(self, *args: Any, **kwargs: Any) -> NoneWidget:
         return self
 
     def get_selected_time(self) -> NumberType:
         return 0
 
-    def set_title(self, *args, **kwargs) -> NoneWidget:
+    def set_title(self, *args: Any, **kwargs: Any) -> NoneWidget:
         return self
 
-    def get_rect(self, *args, **kwargs) -> pygame.Rect:
+    def get_rect(self, *args: Any, **kwargs: Any) -> pygame.Rect:
         return pygame.Rect(0, 0, 0, 0)
 
-    def set_background_color(self, *args, **kwargs) -> NoneWidget:
+    def set_background_color(self, *args: Any, **kwargs: Any) -> NoneWidget:
         return self
 
-    def _draw_background_color(self, *args, **kwargs) -> None:
+    def _draw_background_color(self, *args: Any, **kwargs: Any) -> None:
         pass
 
-    def _draw_border(self, *args, **kwargs) -> None:
+    def _draw_border(self, *args: Any, **kwargs: Any) -> None:
         pass
 
-    def set_selection_effect(self, *args, **kwargs) -> NoneWidget:
+    def set_selection_effect(self, *args: Any, **kwargs: Any) -> NoneWidget:
         return self
 
-    def apply(self, *args) -> None:
+    def apply(self, *args: Any) -> None:
         pass
 
-    def change(self, *args) -> None:
+    def change(self, *args: Any) -> None:
         pass
 
-    def _draw(self, *args, **kwargs) -> None:
+    def _draw(self, *args: Any, **kwargs: Any) -> None:
         pass
 
-    def _render(self, *args, **kwargs) -> bool | None:
+    def _render(self, *args: Any, **kwargs: Any) -> bool | None:
         pass
 
-    def set_margin(self, *args, **kwargs) -> NoneWidget:
+    def set_margin(self, *args: Any, **kwargs: Any) -> NoneWidget:
         return self
 
-    def _apply_transforms(self, *args, **kwargs) -> None:
+    def _apply_transforms(self, *args: Any, **kwargs: Any) -> None:
         pass
 
-    def set_font(self, *args, **kwargs) -> NoneWidget:
+    def set_font(self, *args: Any, **kwargs: Any) -> NoneWidget:
         return self
 
-    def update_font(self, *args, **kwargs) -> NoneWidget:
+    def update_font(self, *args: Any, **kwargs: Any) -> NoneWidget:
         return self
 
-    def set_position(self, *args, **kwargs) -> NoneWidget:
+    def set_position(self, *args: Any, **kwargs: Any) -> NoneWidget:
         return self
 
-    def scale(self, *args, **kwargs) -> NoneWidget:
+    def scale(self, *args: Any, **kwargs: Any) -> NoneWidget:
         raise WidgetTransformationNotImplemented()
 
-    def resize(self, *args, **kwargs) -> NoneWidget:
+    def resize(self, *args: Any, **kwargs: Any) -> NoneWidget:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_width(self, *args, **kwargs) -> NoneWidget:
+    def set_max_width(self, *args: Any, **kwargs: Any) -> NoneWidget:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_height(self, *args, **kwargs) -> NoneWidget:
+    def set_max_height(self, *args: Any, **kwargs: Any) -> NoneWidget:
         raise WidgetTransformationNotImplemented()
 
-    def rotate(self, *args, **kwargs) -> NoneWidget:
+    def rotate(self, *args: Any, **kwargs: Any) -> NoneWidget:
         raise WidgetTransformationNotImplemented()
 
-    def flip(self, *args, **kwargs) -> NoneWidget:
+    def flip(self, *args: Any, **kwargs: Any) -> NoneWidget:
         raise WidgetTransformationNotImplemented()
 
-    def translate(self, *args, **kwargs) -> NoneWidget:
+    def translate(self, *args: Any, **kwargs: Any) -> NoneWidget:
         raise WidgetTransformationNotImplemented()
 
-    def select(self, *args, **kwargs) -> NoneWidget:
+    def select(self, *args: Any, **kwargs: Any) -> NoneWidget:
         return self
 
-    def set_font_shadow(self, *args, **kwargs) -> NoneWidget:
+    def set_font_shadow(self, *args: Any, **kwargs: Any) -> NoneWidget:
         return self
 
-    def set_sound(self, *args, **kwargs) -> NoneWidget:
+    def set_sound(self, *args: Any, **kwargs: Any) -> NoneWidget:
         return self
 
-    def set_cursor(self, *args, **kwargs) -> NoneWidget:
+    def set_cursor(self, *args: Any, **kwargs: Any) -> NoneWidget:
         return self
 
-    def set_controls(self, *args, **kwargs) -> NoneWidget:
+    def set_controls(self, *args: Any, **kwargs: Any) -> NoneWidget:
         return self
 
-    def set_border(self, *args, **kwargs) -> NoneWidget:
+    def set_border(self, *args: Any, **kwargs: Any) -> NoneWidget:
         return self
 
-    def _check_mouseover(self, *args, **kwargs) -> bool:
+    def _check_mouseover(self, *args: Any, **kwargs: Any) -> bool:
         self._mouseover = False
         return False
 
-    def mouseleave(self, *args, **kwargs) -> NoneWidget:
+    def mouseleave(self, *args: Any, **kwargs: Any) -> NoneWidget:
         return self
 
-    def mouseover(self, *args, **kwargs) -> NoneWidget:
+    def mouseover(self, *args: Any, **kwargs: Any) -> NoneWidget:
         return self
 
-    def set_onchange(self, *args, **kwargs) -> NoneWidget:
+    def set_onchange(self, *args: Any, **kwargs: Any) -> NoneWidget:
         self._onchange = None
         return self
 
-    def set_onreturn(self, *args, **kwargs) -> NoneWidget:
+    def set_onreturn(self, *args: Any, **kwargs: Any) -> NoneWidget:
         self._onreturn = None
         return self
 
-    def set_onmouseleave(self, *args, **kwargs) -> NoneWidget:
+    def set_onmouseleave(self, *args: Any, **kwargs: Any) -> NoneWidget:
         self._onmouseleave = None
         return self
 
-    def set_onmouseover(self, *args, **kwargs) -> NoneWidget:
+    def set_onmouseover(self, *args: Any, **kwargs: Any) -> NoneWidget:
         self._onmouseover = None
         return self
 
-    def set_onselect(self, *args, **kwargs) -> NoneWidget:
+    def set_onselect(self, *args: Any, **kwargs: Any) -> NoneWidget:
         self._onselect = None
         return self
 
-    def set_tab_size(self, *args, **kwargs) -> NoneWidget:
+    def set_tab_size(self, *args: Any, **kwargs: Any) -> NoneWidget:
         return self
 
-    def shadow(self, *args, **kwargs) -> NoneWidget:
+    def shadow(self, *args: Any, **kwargs: Any) -> NoneWidget:
         return self
 
     def update(self, events: EventVectorType) -> bool:

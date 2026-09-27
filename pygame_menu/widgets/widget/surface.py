@@ -55,7 +55,7 @@ class SurfaceWidget(Widget):
         super().__init__(onselect=onselect, widget_id=surface_id)
         self._surface_obj = surface
 
-    def set_title(self, title: str, *args) -> SurfaceWidget:
+    def set_title(self, title: str, *args: Any) -> SurfaceWidget:
         return self
 
     def set_surface(self, surface: pygame.Surface) -> SurfaceWidget:
@@ -74,22 +74,22 @@ class SurfaceWidget(Widget):
     def _apply_font(self) -> None:
         pass
 
-    def scale(self, *args, **kwargs) -> SurfaceWidget:
+    def scale(self, *args: Any, **kwargs: Any) -> SurfaceWidget:
         raise WidgetTransformationNotImplemented()
 
-    def resize(self, *args, **kwargs) -> SurfaceWidget:
+    def resize(self, *args: Any, **kwargs: Any) -> SurfaceWidget:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_width(self, *args, **kwargs) -> SurfaceWidget:
+    def set_max_width(self, *args: Any, **kwargs: Any) -> SurfaceWidget:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_height(self, *args, **kwargs) -> SurfaceWidget:
+    def set_max_height(self, *args: Any, **kwargs: Any) -> SurfaceWidget:
         raise WidgetTransformationNotImplemented()
 
-    def rotate(self, *args, **kwargs) -> SurfaceWidget:
+    def rotate(self, *args: Any, **kwargs: Any) -> SurfaceWidget:
         raise WidgetTransformationNotImplemented()
 
-    def flip(self, *args, **kwargs) -> SurfaceWidget:
+    def flip(self, *args: Any, **kwargs: Any) -> SurfaceWidget:
         raise WidgetTransformationNotImplemented()
 
     def _draw(self, surface: pygame.Surface) -> None:

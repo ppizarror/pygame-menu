@@ -11,10 +11,11 @@ from __future__ import annotations
 __all__ = ["create_example_window"]
 
 import sys
+from typing import Any
 
 import pygame
 
-_PYGAME_ICON = [None]
+_PYGAME_ICON: list[pygame.Surface | None] = [None]
 
 
 def create_example_window(
@@ -23,7 +24,7 @@ def create_example_window(
     pygame_menu_icon: bool = True,
     init_pygame: bool = True,
     center_window: bool = True,
-    **kwargs,
+    **kwargs: Any,
 ) -> pygame.Surface:
     """
     Set pygame window.
@@ -64,12 +65,12 @@ def create_example_window(
         # noinspection PyBroadException
         try:
             if _PYGAME_ICON[0] is not None:
-                pygame.display.set_icon(_PYGAME_ICON[0])  # type: ignore
+                pygame.display.set_icon(_PYGAME_ICON[0])
             else:
                 icon = BaseImage(IMAGE_EXAMPLE_PYGAME_MENU).get_surface(new=False)
                 pygame.display.set_icon(icon)
-                _PYGAME_ICON[0] = icon  # type: ignore
-        except BaseException:
+                _PYGAME_ICON[0] = icon
+        except Exception:
             # Icon could not be loaded; skip setting a custom window icon
             _PYGAME_ICON[0] = None
 

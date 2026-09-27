@@ -11,7 +11,7 @@ from __future__ import annotations
 __all__ = ["Table", "TableManager"]
 
 from abc import ABC
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Any, Union
 
 import pygame
 
@@ -122,7 +122,7 @@ class Table(Frame):
         # Finals
         self.relax()
 
-    def pack(self, *args, **kwargs) -> None:
+    def pack(self, *args: Any, **kwargs: Any) -> None:
         raise RuntimeError(f"{self.get_class_id()} cannot pack external widgets")
 
     def remove_row(self, row: Frame) -> None:
@@ -936,7 +936,7 @@ class TableManager(AbstractWidgetManager, ABC):
     Table manager.
     """
 
-    def table(self, table_id: str = "", **kwargs) -> pygame_menu.widgets.Table:
+    def table(self, table_id: str = "", **kwargs: Any) -> pygame_menu.widgets.Table:
         """
         Adds a Table to the Menu. A table is a frame which can pack widgets in a
         structured way.

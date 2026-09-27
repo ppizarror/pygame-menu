@@ -11,9 +11,13 @@ from __future__ import annotations
 __all__ = ["main"]
 
 from random import randrange
+from typing import TYPE_CHECKING
 
 import pygame_menu
 from pygame_menu.examples import create_example_window
+
+if TYPE_CHECKING:
+    from pygame_menu.widgets.widget.button import Button
 
 surface = create_example_window("Example - Dynamic Button Append", (600, 400))
 menu = pygame_menu.Menu(
@@ -21,7 +25,7 @@ menu = pygame_menu.Menu(
 )
 
 
-def add_dynamic_button() -> pygame_menu.widgets.Button:
+def add_dynamic_button() -> Button:
     """
     Append a button to the menu on demand.
 
@@ -35,7 +39,7 @@ def add_dynamic_button() -> pygame_menu.widgets.Button:
         btn.set_title(str(count))
 
     btn.update_callback(_update_button)
-    return btn
+    return btn  # type: ignore[no-any-return]
 
 
 menu.add.text_input("Name: ", default="John Doe")

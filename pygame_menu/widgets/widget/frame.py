@@ -838,10 +838,10 @@ class Frame(Widget):
         """
         return len(self._widgets.values())
 
-    def select(self, *args, **kwargs) -> Frame:
+    def select(self, *args: Any, **kwargs: Any) -> Frame:
         return self
 
-    def set_selection_effect(self, *args, **kwargs) -> Frame:
+    def set_selection_effect(self, *args: Any, **kwargs: Any) -> Frame:
         pass
 
     def _apply_font(self) -> None:
@@ -864,22 +864,22 @@ class Frame(Widget):
         self._rect.height = self._frame_size[1] + self._title_height()
         self._rect.width = self._frame_size[0]
 
-    def _draw(self, *args, **kwargs) -> None:
+    def _draw(self, *args: Any, **kwargs: Any) -> None:
         pass
 
-    def scale(self, *args, **kwargs) -> Frame:
+    def scale(self, *args: Any, **kwargs: Any) -> Frame:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_width(self, *args, **kwargs) -> Frame:
+    def set_max_width(self, *args: Any, **kwargs: Any) -> Frame:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_height(self, *args, **kwargs) -> Frame:
+    def set_max_height(self, *args: Any, **kwargs: Any) -> Frame:
         raise WidgetTransformationNotImplemented()
 
-    def rotate(self, *args, **kwargs) -> Frame:
+    def rotate(self, *args: Any, **kwargs: Any) -> Frame:
         raise WidgetTransformationNotImplemented()
 
-    def flip(self, *args, **kwargs) -> Frame:
+    def flip(self, *args: Any, **kwargs: Any) -> Frame:
         raise WidgetTransformationNotImplemented()
 
     def get_decorator(self) -> Decorator:

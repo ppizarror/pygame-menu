@@ -569,11 +569,11 @@ class DropSelectMultiple(DropSelect):
             btn.set_attribute("deco_off", off)
         return self
 
-    def apply(self, *args) -> Any:
+    def apply(self, *args: Any) -> Any:
         self._process_index()
         super().apply()
 
-    def change(self, *args) -> Any:
+    def change(self, *args: Any) -> Any:
         super().change()
 
 
