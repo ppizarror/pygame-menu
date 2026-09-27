@@ -2312,7 +2312,7 @@ class Widget(Base):
     def set_max_width(
         self,
         width: NumberType | None,
-        scale_height: NumberType = False,
+        scale_height: bool = False,
         smooth: bool = True,
         render: bool = True,
     ) -> Widget:
