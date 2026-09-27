@@ -37,6 +37,7 @@ import pygame
 import pygame_menu
 from pygame_menu._base import Base
 from pygame_menu._decorator import Decorator
+from pygame_menu._shadow import ShadowGenerator
 from pygame_menu._types import (
     CallableNoArgsType,
     CallbackType,
@@ -73,7 +74,6 @@ from pygame_menu.locals import (
 from pygame_menu.sound import Sound
 from pygame_menu.utils import (
     PYGAME_V2,
-    ShadowGenerator,
     assert_alignment,
     assert_color,
     assert_position,

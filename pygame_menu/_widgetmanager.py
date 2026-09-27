@@ -97,68 +97,93 @@ class WidgetManager(
         self._menu._submenus[menu].append(hook)
         hook._menu_hook = menu
 
-    def _filter_widget_attributes(self, kwargs: dict[str, Any]) -> dict[str, Any]:
-        attributes = {}
+    @staticmethod
+    def _normalize_inflate(value: Any) -> tuple[int, int]:
+        """Normalize and validate a widget inflate value."""
+        if value == 0:
+            value = (0, 0)
+
+        assert_vector(value, 2, int)
+        assert value[0] >= 0 and value[1] >= 0, (
+            "both inflate components must be equal or greater than zero"
+        )
+        return value
+
+    def _filter_widget_attributes(
+        self,
+        kwargs: dict[str, Any],
+    ) -> dict[str, Any]:
+        """
+        Extract and validate widget attributes from ``kwargs``.
+
+        Recognized options are removed from ``kwargs``. Any remaining
+        entries are treated as unsupported options by the caller.
+        """
+        attributes: dict[str, Any] = {}
+        theme = self._theme
 
         # align
-        align = kwargs.pop("align", self._theme.widget_alignment)
+        align = kwargs.pop("align", theme.widget_alignment)
         assert isinstance(align, str)
         attributes["align"] = align
 
         # background_color
-        background_is_color = False
         background_color = kwargs.pop(
-            "background_color", self._theme.widget_background_color
+            "background_color",
+            theme.widget_background_color,
         )
-        if background_color is not None:
-            if isinstance(background_color, pygame_menu.BaseImage):
-                pass
-            else:
-                background_color = assert_color(background_color)
-                background_is_color = True
+
+        background_is_color = background_color is not None and not isinstance(
+            background_color, pygame_menu.BaseImage
+        )
+
+        if background_is_color:
+            background_color = assert_color(background_color)
+
         attributes["background_color"] = background_color
 
         # background_inflate
         background_inflate = kwargs.pop(
-            "background_inflate", self._theme.widget_background_inflate
+            "background_inflate",
+            theme.widget_background_inflate,
         )
-        if background_inflate == 0:
-            background_inflate = (0, 0)
-        assert_vector(background_inflate, 2, int)
-        assert background_inflate[0] >= 0 and background_inflate[1] >= 0, (
-            "both background inflate components must be equal or greater than zero"
-        )
-        attributes["background_inflate"] = background_inflate
+        attributes["background_inflate"] = self._normalize_inflate(background_inflate)
 
         # border_color
-        border_color = kwargs.pop("border_color", self._theme.widget_border_color)
+        border_color = kwargs.pop(
+            "border_color",
+            theme.widget_border_color,
+        )
         if border_color is not None:
             border_color = assert_color(border_color)
+
         attributes["border_color"] = border_color
 
         # border_inflate
-        border_inflate = kwargs.pop("border_inflate", self._theme.widget_border_inflate)
-        if border_inflate == 0:
-            border_inflate = (0, 0)
-        assert_vector(border_inflate, 2, int)
-        assert isinstance(border_inflate[0], int) and border_inflate[0] >= 0
-        assert isinstance(border_inflate[1], int) and border_inflate[1] >= 0
-        attributes["border_inflate"] = border_inflate
+        border_inflate = kwargs.pop(
+            "border_inflate",
+            theme.widget_border_inflate,
+        )
+        attributes["border_inflate"] = self._normalize_inflate(border_inflate)
 
         # border_position
         border_position = kwargs.pop(
-            "border_position", self._theme.widget_border_position
+            "border_position",
+            theme.widget_border_position,
         )
         assert_position_vector(border_position)
         attributes["border_position"] = border_position
 
         # border_width
-        border_width = kwargs.pop("border_width", self._theme.widget_border_width)
+        border_width = kwargs.pop(
+            "border_width",
+            theme.widget_border_width,
+        )
         assert isinstance(border_width, int) and border_width >= 0
         attributes["border_width"] = border_width
 
         # cursor
-        cursor = kwargs.pop("cursor", self._theme.widget_cursor)
+        cursor = kwargs.pop("cursor", theme.widget_cursor)
         assert_cursor(cursor)
         attributes["cursor"] = cursor
 
@@ -166,133 +191,207 @@ class WidgetManager(
         float_ = kwargs.pop("float", False)
         assert isinstance(float_, bool)
         attributes["float"] = float_
-        float_origin_position = kwargs.pop("float_origin_position", False)
+
+        float_origin_position = kwargs.pop(
+            "float_origin_position",
+            False,
+        )
         assert isinstance(float_origin_position, bool)
         attributes["float_origin_position"] = float_origin_position
 
         # font_antialias
-        attributes["font_antialias"] = self._theme.widget_font_antialias
+        attributes["font_antialias"] = theme.widget_font_antialias
 
         # font_background_color
         font_background_color = kwargs.pop(
-            "font_background_color", self._theme.widget_font_background_color
+            "font_background_color",
+            theme.widget_font_background_color,
         )
+
         if (
             font_background_color is None
-            and self._theme.widget_font_background_color_from_menu
+            and theme.widget_font_background_color_from_menu
             and not background_is_color
+            and not isinstance(theme.background_color, pygame_menu.BaseImage)
         ):
-            if not isinstance(self._theme.background_color, pygame_menu.BaseImage):
-                font_background_color = assert_color(self._theme.background_color)
+            font_background_color = assert_color(theme.background_color)
+
         attributes["font_background_color"] = font_background_color
 
         # font_color
-        font_color = kwargs.pop("font_color", self._theme.widget_font_color)
+        font_color = kwargs.pop(
+            "font_color",
+            theme.widget_font_color,
+        )
         attributes["font_color"] = assert_color(font_color)
 
         # font_name
-        font_name = kwargs.pop("font_name", self._theme.widget_font)
+        font_name = kwargs.pop(
+            "font_name",
+            theme.widget_font,
+        )
         assert_font(font_name)
         attributes["font_name"] = font_name
 
         # font_shadow
-        font_shadow = kwargs.pop("font_shadow", self._theme.widget_font_shadow)
+        font_shadow = kwargs.pop(
+            "font_shadow",
+            theme.widget_font_shadow,
+        )
         assert isinstance(font_shadow, bool)
         attributes["font_shadow"] = font_shadow
 
         # font_shadow_color
         font_shadow_color = kwargs.pop(
-            "font_shadow_color", self._theme.widget_font_shadow_color
+            "font_shadow_color",
+            theme.widget_font_shadow_color,
         )
         attributes["font_shadow_color"] = assert_color(font_shadow_color)
 
         # font_shadow_offset
         font_shadow_offset = kwargs.pop(
-            "font_shadow_offset", self._theme.widget_font_shadow_offset
+            "font_shadow_offset",
+            theme.widget_font_shadow_offset,
         )
         assert isinstance(font_shadow_offset, int)
         attributes["font_shadow_offset"] = font_shadow_offset
 
         # font_shadow_position
         font_shadow_position = kwargs.pop(
-            "font_shadow_position", self._theme.widget_font_shadow_position
+            "font_shadow_position",
+            theme.widget_font_shadow_position,
         )
         assert isinstance(font_shadow_position, str)
         attributes["font_shadow_position"] = font_shadow_position
 
         # font_size
-        font_size = kwargs.pop("font_size", self._theme.widget_font_size)
+        font_size = kwargs.pop(
+            "font_size",
+            theme.widget_font_size,
+        )
         assert isinstance(font_size, int)
         assert font_size > 0, "font size must be greater than zero"
         attributes["font_size"] = font_size
 
         # margin
-        margin = kwargs.pop("margin", self._theme.widget_margin)
+        margin = kwargs.pop(
+            "margin",
+            theme.widget_margin,
+        )
         if margin == 0:
             margin = (0, 0)
+
         assert_vector(margin, 2)
         attributes["margin"] = margin
 
         # padding
-        padding = kwargs.pop("padding", self._theme.widget_padding)
+        padding = kwargs.pop(
+            "padding",
+            theme.widget_padding,
+        )
         assert isinstance(padding, PaddingInstance)
         attributes["padding"] = padding
 
         # readonly_color
-        readonly_color = kwargs.pop("readonly_color", self._theme.readonly_color)
+        readonly_color = kwargs.pop(
+            "readonly_color",
+            theme.readonly_color,
+        )
         attributes["readonly_color"] = assert_color(readonly_color)
 
         # readonly_selected_color
         readonly_selected_color = kwargs.pop(
-            "readonly_selected_color", self._theme.readonly_selected_color
+            "readonly_selected_color",
+            theme.readonly_selected_color,
         )
         attributes["readonly_selected_color"] = assert_color(readonly_selected_color)
 
         # selection_color
-        selection_color = kwargs.pop("selection_color", self._theme.selection_color)
+        selection_color = kwargs.pop(
+            "selection_color",
+            theme.selection_color,
+        )
         attributes["selection_color"] = assert_color(selection_color)
 
         # selection_effect
         selection_effect = kwargs.pop(
-            "selection_effect", self._theme.widget_selection_effect
+            "selection_effect",
+            theme.widget_selection_effect,
         )
+
         if selection_effect is None:
             selection_effect = pygame_menu.widgets.NoneSelection()
         else:
             selection_effect = selection_effect.copy()
-        assert isinstance(selection_effect, pygame_menu.widgets.core.Selection)
+
+        assert isinstance(
+            selection_effect,
+            pygame_menu.widgets.core.Selection,
+        )
 
         selection_effect.set_color(attributes["selection_color"])
         attributes["selection_effect"] = selection_effect
 
         # shadow
-        attributes["shadow_aa"] = kwargs.pop("shadow_aa", self._theme.widget_shadow_aa)
+        attributes["shadow_aa"] = kwargs.pop(
+            "shadow_aa",
+            theme.widget_shadow_aa,
+        )
         attributes["shadow_color"] = kwargs.pop(
-            "shadow_color", self._theme.widget_shadow_color
+            "shadow_color",
+            theme.widget_shadow_color,
         )
         attributes["shadow_radius"] = kwargs.pop(
-            "shadow_radius", self._theme.widget_shadow_radius
+            "shadow_radius",
+            theme.widget_shadow_radius,
         )
         attributes["shadow_type"] = kwargs.pop(
-            "shadow_type", self._theme.widget_shadow_type
+            "shadow_type",
+            theme.widget_shadow_type,
         )
         attributes["shadow_width"] = kwargs.pop(
-            "shadow_width", self._theme.widget_shadow_width
+            "shadow_width",
+            theme.widget_shadow_width,
         )
 
         # tab_size
-        attributes["tab_size"] = kwargs.pop("tab_size", self._theme.widget_tab_size)
+        attributes["tab_size"] = kwargs.pop(
+            "tab_size",
+            theme.widget_tab_size,
+        )
 
         return attributes
 
-    def _configure_widget(self, widget: Widget, **kwargs) -> None:
+    def _configure_widget(
+        self,
+        widget: Widget,
+        **kwargs: Any,
+    ) -> None:
         assert isinstance(widget, Widget)
+
+        menu = self._menu
+        theme = self._theme
+
         widget._verbose = self._verbose
 
+        # Basic layout
         widget.set_alignment(align=kwargs["align"])
 
+        widget.set_margin(
+            x=kwargs["margin"][0],
+            y=kwargs["margin"][1],
+        )
+        widget.set_padding(padding=kwargs["padding"])
+
+        widget.set_float(
+            float_status=kwargs["float"],
+            origin_position=kwargs["float_origin_position"],
+        )
+
+        # Background and border
         widget.set_background_color(
-            color=kwargs["background_color"], inflate=kwargs["background_inflate"]
+            color=kwargs["background_color"],
+            inflate=kwargs["background_inflate"],
         )
 
         widget.set_border(
@@ -302,20 +401,18 @@ class WidgetManager(
             width=kwargs["border_width"],
         )
 
+        # Input controls
         widget.set_controls(
-            joystick=self._menu._joystick,
-            keyboard=self._menu._keyboard,
-            mouse=self._menu._mouse,
-            touchscreen=self._menu._touchscreen,
+            joystick=menu._joystick,
+            keyboard=menu._keyboard,
+            mouse=menu._mouse,
+            touchscreen=menu._touchscreen,
         )
 
         widget.set_cursor(cursor=kwargs["cursor"])
+        widget.set_tab_size(tab_size=kwargs["tab_size"])
 
-        widget.set_float(
-            float_status=kwargs["float"],
-            origin_position=kwargs["float_origin_position"],
-        )
-
+        # Font
         widget.set_font(
             antialias=kwargs["font_antialias"],
             background_color=kwargs["font_background_color"],
@@ -334,13 +431,10 @@ class WidgetManager(
             position=kwargs["font_shadow_position"],
         )
 
-        widget.set_margin(x=kwargs["margin"][0], y=kwargs["margin"][1])
-
-        widget.set_padding(padding=kwargs["padding"])
-
-        widget.set_selection_effect(selection=kwargs["selection_effect"])
-
-        widget.set_tab_size(tab_size=kwargs["tab_size"])
+        # Selection and shadow effects
+        widget.set_selection_effect(
+            selection=kwargs["selection_effect"],
+        )
 
         widget.shadow(
             aa_amount=kwargs["shadow_aa"],
@@ -350,66 +444,78 @@ class WidgetManager(
             shadow_width=kwargs["shadow_width"],
         )
 
-        if self._theme.widget_background_inflate_to_selection:
+        if theme.widget_background_inflate_to_selection:
             widget.background_inflate_to_selection_effect()
 
+        # Final widget state
         widget._update__repr___(self)
-        widget._keyboard_ignore_nonphysical = self._menu._keyboard_ignore_nonphysical
-
+        widget._keyboard_ignore_nonphysical = menu._keyboard_ignore_nonphysical
         widget.configured = True
         widget._configure()
 
     @staticmethod
     def _check_kwargs(kwargs: dict[str, Any]) -> None:
-        for invalid_keyword in kwargs.keys():
-            raise ValueError(
-                f"widget addition optional parameter kwargs.{invalid_keyword} is not valid"
-            )
+        if not kwargs:
+            return
+
+        invalid_keyword = next(iter(kwargs))
+        raise ValueError(
+            f"widget addition optional parameter kwargs.{invalid_keyword} is not valid"
+        )
 
     def _append_widget(self, widget: Widget) -> None:
         assert isinstance(widget, Widget)
+
+        menu = self._menu
+
+        # Associate the widget with this menu.
         if widget.get_menu() is None:
-            widget.set_menu(self._menu)
-        assert widget.get_menu() == self._menu, (
+            widget.set_menu(menu)
+
+        assert widget.get_menu() == menu, (
             "widget cannot have a different instance of menu"
         )
-        self._menu._check_id_duplicated(widget.get_id())
+
+        menu._check_id_duplicated(widget.get_id())
 
         if widget.get_scrollarea() is None:
-            widget.set_scrollarea(self._menu.get_scrollarea())
+            widget.set_scrollarea(menu.get_scrollarea())
 
-        # Unselect
+        # Widgets are initially unselected.
         widget.select(False)
 
-        # Append to lists
-        self._menu._widgets.append(widget)
+        # Append the widget to the menu.
+        menu._widgets.append(widget)
 
-        # Update selection index
-        if self._menu._index < 0 and widget.is_selectable:
+        # Select the first selectable widget.
+        if menu._index < 0 and widget.is_selectable:
             widget.select()
-            self._menu._index = len(self._menu._widgets) - 1
+            menu._index = len(menu._widgets) - 1
 
-        # Force menu rendering, this checks if the menu overflows or has sizing
-        # errors; if added on execution time forces the update of the surface
-        self._menu._widgets_surface = None
+        # Force menu rendering. This checks for sizing errors and overflow.
+        # If the widget is added during execution, it also refreshes the surface.
+        menu._widgets_surface = None
+
         try:
-            self._menu._render()
+            menu._render()
         except (
-                pygame_menu.menu._MenuSizingException,
-                pygame_menu.menu._MenuWidgetOverflow,
+            pygame_menu.menu._MenuSizingException,
+            pygame_menu.menu._MenuWidgetOverflow,
         ):
-            self._menu.remove_widget(widget)
+            # Restore the menu if rendering fails.
+            menu.remove_widget(widget)
             raise
-        self._menu.render()
 
-        # Sort frame widgets, as render position changes frame position/frame
-        if len(self._menu._update_frames) > 0:
-            self._menu._update_frames[0]._sort_menu_update_frames()
+        menu.render()
 
-        # Update widgets
+        # Sort frame widgets because rendering may change frame positions.
+        if menu._update_frames:
+            menu._update_frames[0]._sort_menu_update_frames()
+
+        # Update widget mouse state.
         check_widget_mouseleave()
 
-        # Call event
+        # Notify the widget that it has been appended to the menu.
         widget._append_to_menu()
 
     def configure_defaults_widget(self, widget: Widget) -> None:
