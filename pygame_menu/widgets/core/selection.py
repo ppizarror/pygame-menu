@@ -75,6 +75,31 @@ class Selection:
         self.margin_top = margin_top
         self.widget_apply_font_color = widget_apply_font_color
 
+    def _repr_attrs(self) -> dict[str, object]:
+        """
+        Return dictionary of attributes for string representation.
+
+        :return: Dictionary of attributes
+        """
+        return {
+            "color": self.color,
+            "color_bg": self.color_bg,
+            "margin_left": self.margin_left,
+            "margin_right": self.margin_right,
+            "margin_top": self.margin_top,
+            "margin_bottom": self.margin_bottom,
+            "widget_apply_font_color": self.widget_apply_font_color,
+        }
+
+    def __repr__(self) -> str:
+        """
+        Return string representation.
+
+        :return: String representation
+        """
+        attrs = ", ".join(f"{k}={v!r}" for k, v in self._repr_attrs().items())
+        return f"{self.__class__.__name__}({attrs})"
+
     def margin_xy(self, x: NumberType, y: NumberType) -> Selection:
         """
         Set margins at left-right / top-bottom.

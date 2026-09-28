@@ -227,15 +227,20 @@ add a selection effect in :ref:`Create a selection effect` chapter.
 
 The available selection effects are:
 
-======================================================  ============================
-Class                                                   Selection effect
-======================================================  ============================
-:py:class:`pygame_menu.widgets.HighlightSelection`      Rectangular highlight
-:py:class:`pygame_menu.widgets.LeftArrowSelection`      Left arrow on the widget
-:py:class:`pygame_menu.widgets.NoneSelection`           No selection
-:py:class:`pygame_menu.widgets.RightArrowSelection`     Right arrow on the widget
-:py:class:`pygame_menu.widgets.SimpleSelection`         Only font color is changed
-======================================================  ============================
+===============================================================  =====================================
+Class                                                            Selection effect
+===============================================================  =====================================
+:py:class:`pygame_menu.widgets.HighlightSelection`               Rectangular highlight
+:py:class:`pygame_menu.widgets.RoundedHighlightSelection`        Rounded highlight box
+:py:class:`pygame_menu.widgets.LeftArrowSelection`               Left arrow on the widget
+:py:class:`pygame_menu.widgets.RightArrowSelection`              Right arrow on the widget
+:py:class:`pygame_menu.widgets.DoubleArrowSelection`             Arrows on both sides of the widget
+:py:class:`pygame_menu.widgets.UnderlineSelection`               Underline beneath the widget
+:py:class:`pygame_menu.widgets.DotSelection`                     Dot indicator on the left side
+:py:class:`pygame_menu.widgets.ImageSelection`                   Custom image selection indicator
+:py:class:`pygame_menu.widgets.SimpleSelection`                  Only font color is changed
+:py:class:`pygame_menu.widgets.NoneSelection`                    No selection
+===============================================================  =====================================
 
 The selection color is defined in :py:attr:`Theme.widget_selection_color`.
 
