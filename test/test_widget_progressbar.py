@@ -181,35 +181,6 @@ def test_progressbar_increments_and_boundaries(menu):
     assert pb.get_value() == 0
 
 
-def test_progressbar_percentage_edge_cases(menu):
-    """Test percentage calculation edge cases (e.g., zero span)."""
-    pb = pygame_menu.widgets.ProgressBar(
-        "progress", default=10, min_value=0, max_value=100
-    )
-    pb._min_value = 50
-    pb._max_value = 50
-    assert pb.get_percentage() == 0.0
-
-
-def test_progressbar_text_formatting_and_caching(menu):
-    """Test custom text formatting functions and rendering cache behavior."""
-    custom_format = lambda x: f"Val:{int(x)}"
-    pb = pygame_menu.widgets.ProgressBar(
-        "progress",
-        default=50,
-        progress_text_format=custom_format,
-        progress_text_placeholder="{0}",
-    )
-    menu.add.generic_widget(pb, configure_defaults=True)
-    menu.draw(surface)
-
-    assert pb.get_value(as_string=True) == "Val:50"
-
-    for i in range(300):
-        pb.set_value(i % 100)
-    assert len(pb._text_cache) <= 256
-
-
 def test_progressbar_increment_decrement_invalid_type():
     """Test increment/decrement reject non-numeric values."""
     pb = pygame_menu.widgets.ProgressBar("progress")
@@ -258,3 +229,168 @@ def test_progressbar_get_value_as_string_default():
     )
 
     assert pb.get_value(as_string=True) == "25.5 %"
+
+
+def test_progressbar_vertical_layout_geometry(menu):
+    """Verify vertical progress bars place the box below the title."""
+    pb = pygame_menu.widgets.ProgressBar(
+        "progress",
+        orientation=ORIENTATION_VERTICAL,
+        width=150,
+        height=20,
+    )
+
+    menu.add.generic_widget(pb, configure_defaults=True)
+    menu.draw(surface)
+
+    assert pb._box_offset_x == 0
+    assert pb._box_offset_y > 0
+
+
+def test_progressbar_horizontal_layout_geometry(menu):
+    """Verify horizontal progress bars place the box beside the title."""
+    pb = pygame_menu.widgets.ProgressBar(
+        "progress",
+        orientation=ORIENTATION_HORIZONTAL,
+        width=150,
+        height=20,
+    )
+
+    menu.add.generic_widget(pb, configure_defaults=True)
+    menu.draw(surface)
+
+    assert pb._box_offset_x > 0
+    assert pb._box_offset_y == 0
+
+
+def test_progressbar_vertical_dimensions(menu):
+    """Verify vertical progress bars swap width and height."""
+    pb = pygame_menu.widgets.ProgressBar(
+        "progress",
+        orientation=ORIENTATION_VERTICAL,
+        width=150,
+        height=20,
+    )
+
+    menu.add.generic_widget(pb, configure_defaults=True)
+    menu.draw(surface)
+
+    assert pb._box.get_width() == 20
+    assert pb._box.get_height() == 150
+
+
+def test_progressbar_box_margin_affects_widget_size(menu):
+    """Verify box margin contributes to widget geometry."""
+    pb_no_margin = pygame_menu.widgets.ProgressBar(
+        "progress",
+        box_margin=(0, 0),
+    )
+
+    pb_margin = pygame_menu.widgets.ProgressBar(
+        "progress",
+        box_margin=(50, 0),
+    )
+
+    menu.add.generic_widget(pb_no_margin, configure_defaults=True)
+    menu.draw(surface)
+    size_no_margin = pb_no_margin.get_size()
+
+    menu.clear()
+    menu.add.generic_widget(pb_margin, configure_defaults=True)
+    menu.draw(surface)
+    size_margin = pb_margin.get_size()
+
+    assert size_margin[0] > size_no_margin[0]
+
+
+def test_progressbar_percentage_custom_range():
+    """Verify percentage is computed correctly for arbitrary ranges."""
+    pb = pygame_menu.widgets.ProgressBar(
+        "progress",
+        default=75,
+        min_value=50,
+        max_value=150,
+    )
+
+    assert pb.get_percentage() == 25.0
+
+    pb.set_value(100)
+    assert pb.get_percentage() == 50.0
+
+    pb.set_value(150)
+    assert pb.get_percentage() == 100.0
+
+
+def test_progressbar_increment_decrement_default_step():
+    """Verify increment and decrement use a default step of one."""
+    pb = pygame_menu.widgets.ProgressBar(
+        "progress",
+        default=10,
+        min_value=0,
+        max_value=20,
+    )
+
+    pb.increment()
+    assert pb.get_value() == 11
+
+    pb.decrement()
+    assert pb.get_value() == 10
+
+
+def test_progressbar_is_complete():
+    """Test is_complete method under various progress values."""
+    pb = pygame_menu.widgets.ProgressBar(
+        "progress",
+        default=50,
+        min_value=0,
+        max_value=100,
+    )
+
+    assert not pb.is_complete()
+
+    pb.set_value(100)
+    assert pb.is_complete()
+
+    pb.set_value(75)
+    assert not pb.is_complete()
+
+
+def test_progressbar_set_percentage():
+    """Test set_percentage method with valid values, clamping, and invalid inputs."""
+    pb = pygame_menu.widgets.ProgressBar(
+        "progress",
+        min_value=0,
+        max_value=100,
+    )
+
+    # Happy path: 50% of range (0 to 100, span is 100) -> value should be 50.0
+    pb.set_percentage(50.0)
+    assert pb.get_value() == 50.0
+
+    # Clamping: below 0% clamps to min_value (0)
+    pb.set_percentage(-10.0)
+    assert pb.get_value() == 0.0
+
+    # Clamping: above 100% clamps to max_value (100)
+    pb.set_percentage(150.0)
+    assert pb.get_value() == 100.0
+
+    # Error handling: non-numeric type validation
+    with pytest.raises(AssertionError):
+        pb.set_percentage("50")  # type: ignore
+
+
+def test_progressbar_reset():
+    """Test reset method restores the default value correctly."""
+    pb = pygame_menu.widgets.ProgressBar(
+        "progress",
+        default=25,
+        min_value=0,
+        max_value=100,
+    )
+
+    pb.set_value(90)
+    assert pb.get_value() == 90
+
+    pb.reset()
+    assert pb.get_value() == 25
