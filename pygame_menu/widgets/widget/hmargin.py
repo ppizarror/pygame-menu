@@ -11,7 +11,7 @@ from __future__ import annotations
 __all__ = ["HMargin", "HMarginManager"]
 
 from abc import ABC
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from pygame_menu._types import NumberInstance, NumberType
 from pygame_menu.widgets.core.widget import AbstractWidgetManager
@@ -44,7 +44,7 @@ class HMargin(NoneWidget):
         self._rect.width = int(margin)
         self._rect.height = 0
 
-    def get_rect(self, *args, **kwargs) -> pygame.Rect:
+    def get_rect(self, *args: Any, **kwargs: Any) -> pygame.Rect:
         return self._rect.copy()
 
 

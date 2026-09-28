@@ -11,7 +11,7 @@ from __future__ import annotations
 __all__ = ["VFill", "VFillManager"]
 
 from abc import ABC
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from pygame_menu._types import NumberInstance, NumberType
 from pygame_menu.widgets.core.widget import AbstractWidgetManager
@@ -44,7 +44,7 @@ class VFill(NoneWidget):
         super().__init__(widget_id=widget_id)
         self._min_height = min_height
 
-    def get_rect(self, *args, **kwargs) -> pygame.Rect:
+    def get_rect(self, *args: Any, **kwargs: Any) -> pygame.Rect:
         # Get all menu widgets, and for those in the same column store the total
         # size (without considering other vfills). Then, divide all available height
         # in the total vfills found

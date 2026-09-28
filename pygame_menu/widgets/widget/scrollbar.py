@@ -10,7 +10,7 @@ from __future__ import annotations
 
 __all__ = ["ScrollBar"]
 
-from typing import Literal
+from typing import Any, Literal
 
 import pygame
 
@@ -173,31 +173,31 @@ class ScrollBar(Widget):
         # Configure public's
         self.scrolling = False
 
-    def scroll_to_widget(self, *args, **kwargs) -> ScrollBar:
+    def scroll_to_widget(self, *args: Any, **kwargs: Any) -> ScrollBar:
         return self
 
     def _apply_font(self) -> None:
         pass
 
-    def set_padding(self, *args, **kwargs) -> ScrollBar:
+    def set_padding(self, *args: Any, **kwargs: Any) -> ScrollBar:
         return self
 
-    def scale(self, *args, **kwargs) -> ScrollBar:
+    def scale(self, *args: Any, **kwargs: Any) -> ScrollBar:
         raise WidgetTransformationNotImplemented()
 
-    def resize(self, *args, **kwargs) -> ScrollBar:
+    def resize(self, *args: Any, **kwargs: Any) -> ScrollBar:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_width(self, *args, **kwargs) -> ScrollBar:
+    def set_max_width(self, *args: Any, **kwargs: Any) -> ScrollBar:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_height(self, *args, **kwargs) -> ScrollBar:
+    def set_max_height(self, *args: Any, **kwargs: Any) -> ScrollBar:
         raise WidgetTransformationNotImplemented()
 
-    def rotate(self, *args, **kwargs) -> ScrollBar:
+    def rotate(self, *args: Any, **kwargs: Any) -> ScrollBar:
         raise WidgetTransformationNotImplemented()
 
-    def flip(self, *args, **kwargs) -> ScrollBar:
+    def flip(self, *args: Any, **kwargs: Any) -> ScrollBar:
         raise WidgetTransformationNotImplemented()
 
     def _apply_size_changes(self) -> None:

@@ -33,6 +33,8 @@ def main_background() -> None:
     Background color of the main menu, on this function user can plot
     images, play sounds, etc.
     """
+    global surface
+    assert surface is not None
     background_image.draw(surface)
 
 

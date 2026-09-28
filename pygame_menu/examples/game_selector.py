@@ -55,7 +55,9 @@ def random_color() -> tuple[int, int, int]:
     return randrange(0, 255), randrange(0, 255), randrange(0, 255)
 
 
-def play_function(difficulty: list, font: pygame.font.Font, test: bool = False) -> None:
+def play_function(
+    difficulty: list[str], font: pygame.font.Font, test: bool = False
+) -> None:
     """
     Main game function.
 
@@ -64,21 +66,24 @@ def play_function(difficulty: list, font: pygame.font.Font, test: bool = False) 
     :param test: Test method, if ``True`` only one loop is allowed
     """
     assert isinstance(difficulty, list)
-    difficulty = difficulty[0]
-    assert isinstance(difficulty, str)
+    diff_val = difficulty[0]
+    assert isinstance(diff_val, str)
 
     # Define globals
     global main_menu
     global clock
+    assert clock is not None
+    assert main_menu is not None
+    assert surface is not None
 
-    if difficulty == "EASY":
+    if diff_val == "EASY":
         f = font.render("Playing as a baby (easy)", True, (255, 255, 255))
-    elif difficulty == "MEDIUM":
+    elif diff_val == "MEDIUM":
         f = font.render("Playing as a kid (medium)", True, (255, 255, 255))
-    elif difficulty == "HARD":
+    elif diff_val == "HARD":
         f = font.render("Playing as a champion (hard)", True, (255, 255, 255))
     else:
-        raise ValueError(f"unknown difficulty {difficulty}")
+        raise ValueError(f"unknown difficulty {diff_val}")
     f_esc = font.render("Press ESC to open the menu", True, (255, 255, 255))
 
     # Draw random color and text
@@ -140,6 +145,7 @@ def main_background() -> None:
     Function used by menus, draw on background while menu is active.
     """
     global surface
+    assert surface is not None
     surface.fill((128, 0, 128))
 
 
@@ -236,6 +242,7 @@ def main(test: bool = False) -> None:
     # -------------------------------------------------------------------------
     while True:
         # Tick
+        assert clock is not None
         clock.tick(FPS)
 
         # Paint background

@@ -10,6 +10,8 @@ from __future__ import annotations
 
 __all__ = ["main"]
 
+from typing import Any
+
 import pygame
 
 import pygame_menu
@@ -29,6 +31,7 @@ def main_background() -> None:
     Background color of the main menu, on this function user can plot
     images, play sounds, etc.
     """
+    assert surface is not None
     surface.fill((40, 40, 40))
 
 
@@ -41,7 +44,7 @@ def check_name_test(value: str) -> None:
     print(f"User name: {value}")
 
 
-def update_menu_sound(value: tuple, enabled: bool) -> None:
+def update_menu_sound(value: tuple[Any, ...], enabled: bool) -> None:
     """
     Update menu sound.
 
@@ -49,6 +52,7 @@ def update_menu_sound(value: tuple, enabled: bool) -> None:
     :param enabled: Parameter of the selector, (True/False)
     """
     assert isinstance(value, tuple)
+    assert main_menu is not None
     if enabled:
         main_menu.set_sound(sound, recursive=True)
         print("Menu sounds were enabled")
@@ -135,7 +139,11 @@ def main(test: bool = False) -> None:
     )
 
     # Selectable items
-    items = [("Easy", "EASY"), ("Medium", "MEDIUM"), ("Hard", "HARD")]
+    items: list[tuple[str, str]] = [
+        ("Easy", "EASY"),
+        ("Medium", "MEDIUM"),
+        ("Hard", "HARD"),
+    ]
 
     # Create selector with 3 difficulty options
     settings_menu.add.selector(
@@ -200,14 +208,21 @@ def main(test: bool = False) -> None:
     )
 
     # Create discrete range
-    range_values_discrete = {0: "A", 1: "B", 2: "C", 3: "D", 4: "E", 5: "F"}
+    range_values_discrete: dict[int, str] = {
+        0: "A",
+        1: "B",
+        2: "C",
+        3: "D",
+        4: "E",
+        5: "F",
+    }
     settings_menu.add.range_slider(
         "Pick a letter",
         0,
         list(range_values_discrete.keys()),
         rangeslider_id="range_slider_discrete",
         slider_text_value_enabled=False,
-        value_format=lambda x: range_values_discrete[x],
+        value_format=lambda x: range_values_discrete[int(x)],
     )
 
     # Add a progress bar
@@ -266,7 +281,7 @@ def main(test: bool = False) -> None:
         "Color 2 RGB: ", color_type="rgb", default=(255, 0, 0), input_separator="-"
     )
 
-    def print_color(color: tuple) -> None:
+    def print_color(color: tuple[int, ...]) -> None:
         """
         Test onchange/onreturn.
 
@@ -352,6 +367,7 @@ def main(test: bool = False) -> None:
         main_background()
 
         # Main menu
+        assert surface is not None
         main_menu.mainloop(surface, main_background, disable_loop=test, fps_limit=FPS)
 
         # Flip surface

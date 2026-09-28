@@ -11,12 +11,20 @@ from __future__ import annotations
 __all__ = ["main"]
 
 import math
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import pygame
 
 import pygame_menu
 from pygame_menu.examples import create_example_window
+from pygame_menu.widgets.widget.menubar import MENUBAR_STYLE_UNDERLINE_TITLE
+
+if TYPE_CHECKING:
+    from pygame_menu.widgets.core.widget import Widget
+    from pygame_menu.widgets.widget.button import Button
+    from pygame_menu.widgets.widget.image import Image
+    from pygame_menu.widgets.widget.label import Label
+    from pygame_menu.widgets.widget.selector import Selector
 
 
 class App:
@@ -24,13 +32,13 @@ class App:
     The following object creates the whole app.
     """
 
-    image_widget: pygame_menu.widgets.Image
-    item_description_widget: pygame_menu.widgets.Label
+    image_widget: Image
+    item_description_widget: Label
     menu: pygame_menu.Menu
     modes: dict[int, dict[str, Any]]
-    quit_button: pygame_menu.widgets.Button
-    quit_button_fake: pygame_menu.widgets.Button
-    selector_widget: pygame_menu.widgets.Selector
+    quit_button: Button
+    quit_button_fake: Button
+    selector_widget: Selector
     surface: pygame.Surface
 
     def __init__(self) -> None:
@@ -45,7 +53,7 @@ class App:
 
         # Set theme
         theme = pygame_menu.themes.THEME_DEFAULT.copy()
-        theme.title_bar_style = pygame_menu.widgets.MENUBAR_STYLE_UNDERLINE_TITLE
+        theme.title_bar_style = MENUBAR_STYLE_UNDERLINE_TITLE
         theme.title_close_button_cursor = pygame_menu.locals.CURSOR_HAND
         theme.title_font_color = (35, 35, 35)
 
@@ -93,7 +101,9 @@ class App:
             padding=(25, 0, 0, 0),  # top, right, bottom, left
         )
 
-        self.item_description_widget = self.menu.add.label(title="")
+        item_description_widget = self.menu.add.label(title="")
+        assert not isinstance(item_description_widget, list)
+        self.item_description_widget = item_description_widget
 
         self.quit_button = self.menu.add.button("Quit", pygame_menu.events.EXIT)
 
@@ -107,9 +117,7 @@ class App:
         # from ("The first", 1) tuple
         self._update_from_selection(int(self.selector_widget.get_value()[0][1]))
 
-    def animate_quit_button(
-        self, widget: pygame_menu.widgets.Widget, menu: pygame_menu.Menu
-    ) -> None:
+    def animate_quit_button(self, widget: Widget, menu: pygame_menu.Menu) -> None:
         """
         Animate widgets if the last option is selected.
 

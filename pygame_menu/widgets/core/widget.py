@@ -37,6 +37,7 @@ import pygame
 import pygame_menu
 from pygame_menu._base import Base
 from pygame_menu._decorator import Decorator
+from pygame_menu._shadow import ShadowGenerator
 from pygame_menu._types import (
     CallableNoArgsType,
     CallbackType,
@@ -73,7 +74,6 @@ from pygame_menu.locals import (
 from pygame_menu.sound import Sound
 from pygame_menu.utils import (
     PYGAME_V2,
-    ShadowGenerator,
     assert_alignment,
     assert_color,
     assert_position,
@@ -1009,7 +1009,7 @@ class Widget(Base):
             h = random.randrange(-100000, 100000)
         return h
 
-    def _render_hash_changed(self, *args) -> bool:
+    def _render_hash_changed(self, *args: Any) -> bool:
         """
         This method checks if the widget must render because the inner variables
         changed. This method should include all the variables used by the render
@@ -1332,7 +1332,7 @@ class Widget(Base):
         self._force_render()
         return self
 
-    def apply(self, *args) -> Any:
+    def apply(self, *args: Any) -> Any:
         """
         Run ``onreturn`` callback when return event. The callback function receives
         the following arguments:
@@ -1366,7 +1366,7 @@ class Widget(Base):
             return self._onreturn(*args, **self._kwargs)
         return None
 
-    def change(self, *args) -> Any:
+    def change(self, *args: Any) -> Any:
         """
         Run ``onchange`` callback after change event is triggered. The callback
         function receives the following arguments:
@@ -2312,7 +2312,7 @@ class Widget(Base):
     def set_max_width(
         self,
         width: NumberType | None,
-        scale_height: NumberType = False,
+        scale_height: bool = False,
         smooth: bool = True,
         render: bool = True,
     ) -> Widget:
@@ -3417,7 +3417,7 @@ class AbstractWidgetManager:
         """
         raise NotImplementedError("override is mandatory")
 
-    def _configure_widget(self, widget: Widget, **kwargs) -> None:
+    def _configure_widget(self, widget: Widget, **kwargs: Any) -> None:
         """
         Update the given widget with the parameters defined at the Menu level.
         This method does not add widget to Menu.

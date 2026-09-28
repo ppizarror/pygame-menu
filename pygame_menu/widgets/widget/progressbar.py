@@ -199,22 +199,22 @@ class ProgressBar(Widget):
         self._progress = value
         self._render()
 
-    def scale(self, *args, **kwargs) -> ProgressBar:
+    def scale(self, *args: Any, **kwargs: Any) -> ProgressBar:
         raise WidgetTransformationNotImplemented()
 
-    def resize(self, *args, **kwargs) -> ProgressBar:
+    def resize(self, *args: Any, **kwargs: Any) -> ProgressBar:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_width(self, *args, **kwargs) -> ProgressBar:
+    def set_max_width(self, *args: Any, **kwargs: Any) -> ProgressBar:
         raise WidgetTransformationNotImplemented()
 
-    def set_max_height(self, *args, **kwargs) -> ProgressBar:
+    def set_max_height(self, *args: Any, **kwargs: Any) -> ProgressBar:
         raise WidgetTransformationNotImplemented()
 
-    def rotate(self, *args, **kwargs) -> ProgressBar:
+    def rotate(self, *args: Any, **kwargs: Any) -> ProgressBar:
         raise WidgetTransformationNotImplemented()
 
-    def flip(self, *args, **kwargs) -> ProgressBar:
+    def flip(self, *args: Any, **kwargs: Any) -> ProgressBar:
         raise WidgetTransformationNotImplemented()
 
     def get_value(self, as_string: bool = False) -> NumberType:
