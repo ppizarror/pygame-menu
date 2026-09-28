@@ -64,7 +64,10 @@ def test_example_multi_input():
 
     rslider.set_value(69)
     rslider.change()
-    assert settings.get_widget("progress").get_value() == 69
+
+    # Check both horizontal and vertical progress bars update correctly
+    assert settings.get_widget("progress_h").get_value() == 69
+    assert settings.get_widget("progress_v").get_value() == 69
 
     more_settings = multi_input.main_menu.get_submenus()[1]
     hex_color_widget = more_settings.get_widget("hex_color")
