@@ -13,11 +13,16 @@ from pygame_menu.widgets.core import Widget
 
 # Selection
 from pygame_menu.widgets.selection import (
+    DotSelection,
+    DoubleArrowSelection,
     HighlightSelection,
+    ImageSelection,
     LeftArrowSelection,
     NoneSelection,
     RightArrowSelection,
+    RoundedHighlightSelection,
     SimpleSelection,
+    UnderlineSelection,
 )
 
 # Widgets

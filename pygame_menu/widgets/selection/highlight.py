@@ -54,6 +54,29 @@ class HighlightSelection(Selection):
 
         self._border_width = border_width
 
+    def _repr_attrs(self) -> dict[str, object]:
+        """
+        Return dictionary of attributes for string representation.
+
+        :return: Dictionary of attributes
+        """
+        attrs = super()._repr_attrs()
+        attrs.update(
+            {
+                "border_width": self._border_width,
+            }
+        )
+        return attrs
+
+    def __repr__(self) -> str:
+        """
+        Return string representation.
+
+        :return: String representation
+        """
+        attrs = ", ".join(f"{k}={v!r}" for k, v in self._repr_attrs().items())
+        return f"{self.__class__.__name__}({attrs})"
+
     def draw(
         self, surface: pygame.Surface, widget: pygame_menu.widgets.Widget
     ) -> HighlightSelection:

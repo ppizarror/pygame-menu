@@ -49,18 +49,42 @@ class RightArrowSelection(ArrowSelection):
             margin_right=arrow_size[0] + arrow_left_margin,
             margin_top=0,
             margin_bottom=0,
+            arrow_size=arrow_size,
             arrow_vertical_offset=arrow_vertical_offset,
             blink_ms=blink_ms,
         )
 
         self._arrow_left_margin = arrow_left_margin
 
+    def _repr_attrs(self) -> dict[str, object]:
+        """
+        Return dictionary of attributes for string representation.
+
+        :return: Dictionary of attributes
+        """
+        attrs = super()._repr_attrs()
+        attrs.update(
+            {
+                "arrow_left_margin": self._arrow_left_margin,
+            }
+        )
+        return attrs
+
+    def __repr__(self) -> str:
+        """
+        Return string representation.
+
+        :return: String representation
+        """
+        attrs = ", ".join(f"{k}={v!r}" for k, v in self._repr_attrs().items())
+        return f"{self.__class__.__name__}({attrs})"
+
     def draw(
         self, surface: pygame.Surface, widget: pygame_menu.widgets.Widget
     ) -> RightArrowSelection:
         #                 /A
         # widget        B
-        #                \ C
+        #                 \ C
         #       <------>
         #        margin
         rect = widget.get_rect()
