@@ -21,13 +21,14 @@ import pygame_menu
 import pygame_menu.events as _events
 from pygame_menu.locals import CURSOR_HAND, FINGERUP
 from pygame_menu.utils import get_finger_pos, warn
-from pygame_menu.widgets.core.widget import AbstractWidgetManager, Widget
+from pygame_menu.widgets.core.abstract_widget import AbstractWidgetManager
 from pygame_menu.widgets.widget.label import Label
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
     from pygame_menu._types import CallbackType, EventVectorType
+    from pygame_menu.widgets.core.widget import Widget
 
 
 class Button(Label):

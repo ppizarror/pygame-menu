@@ -35,7 +35,8 @@ from pygame_menu.utils import (
     get_finger_pos,
     make_surface,
 )
-from pygame_menu.widgets.core.widget import AbstractWidgetManager, Widget
+from pygame_menu.widgets.core.abstract_widget import AbstractWidgetManager
+from pygame_menu.widgets.core.widget import Widget
 
 if TYPE_CHECKING:
     from collections.abc import Callable

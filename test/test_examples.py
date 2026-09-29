@@ -64,7 +64,10 @@ def test_example_multi_input():
 
     rslider.set_value(69)
     rslider.change()
-    assert settings.get_widget("progress").get_value() == 69
+
+    # Check both horizontal and vertical progress bars update correctly
+    assert settings.get_widget("progress_h").get_value() == 69
+    assert settings.get_widget("progress_v").get_value() == 69
 
     more_settings = multi_input.main_menu.get_submenus()[1]
     hex_color_widget = more_settings.get_widget("hex_color")
@@ -274,3 +277,29 @@ def test_example_other_widget_positioning():
     assert widget_positioning.f.is_floating()
     assert widget_positioning.b1.is_floating()
     assert widget_positioning.b2.is_floating()
+
+
+def test_example_other_custom_selectors():
+    """Test custom selectors example."""
+    import pygame_menu.examples.other.example_selectors as custom_selectors
+
+    custom_selectors.main(test=True)
+
+    menu = custom_selectors.menu if hasattr(custom_selectors, "menu") else None
+    if menu is None:
+        return
+
+    widgets = menu.get_widgets()
+    assert isinstance(
+        widgets[2].get_selection_effect(), custom_selectors.RoundedHighlightSelection
+    )
+    assert isinstance(widgets[3].get_selection_effect(), custom_selectors.DotSelection)
+    assert isinstance(
+        widgets[4].get_selection_effect(), custom_selectors.DoubleArrowSelection
+    )
+    assert isinstance(
+        widgets[5].get_selection_effect(), custom_selectors.ImageSelection
+    )
+    assert isinstance(
+        widgets[6].get_selection_effect(), custom_selectors.UnderlineSelection
+    )

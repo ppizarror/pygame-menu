@@ -10,7 +10,6 @@ from __future__ import annotations
 
 __all__ = [
     # Main class
-    "AbstractWidgetManager",
     "Widget",
     # Utils
     "check_widget_mouseleave",
@@ -769,8 +768,8 @@ class Widget(Base):
         :return: ``True`` if the mouseover status changed
         """
         if not hasattr(event, "type") or event.type not in (
-                pygame.MOUSEMOTION,
-                pygame.ACTIVEEVENT,
+            pygame.MOUSEMOTION,
+            pygame.ACTIVEEVENT,
         ):
             return False
 
@@ -2312,7 +2311,7 @@ class Widget(Base):
     def set_max_width(
         self,
         width: NumberType | None,
-        scale_height: NumberType = False,
+        scale_height: bool = False,
         smooth: bool = True,
         render: bool = True,
     ) -> Widget:
@@ -3352,6 +3351,64 @@ class Widget(Base):
         """
         return self._ctrl
 
+    def is_focused(self) -> bool:
+        """
+        Return ``True`` if the Widget is focused.
+
+        A Widget is considered focused when it is selected and active.
+
+        :return: Focus status
+        """
+        return self._selected and self.active
+
+    def toggle_selection(self, update_menu: bool = False) -> Widget:
+        """
+        Toggle the Widget selection status.
+
+        This method is equivalent to calling
+        :py:meth:`pygame_menu.widgets.core.widget.Widget.select`
+        with the opposite of the current selection state.
+
+        :param update_menu: If ``True`` this status is also applied on the menu
+            that contains this widget
+        :return: Self reference
+        """
+        return self.select(not self._selected, update_menu=update_menu)
+
+    def toggle_visibility(self) -> Widget:
+        """
+        Toggle the Widget visibility status.
+
+        If the Widget is visible, it is hidden. If it is hidden, it is shown.
+
+        :return: Self reference
+        """
+        return self.hide() if self._visible else self.show()
+
+    def contains_point(
+        self,
+        pos: Tuple2NumberType,
+        apply_padding: bool = True,
+        real_position: bool = True,
+    ) -> bool:
+        """
+        Return ``True`` if a point is within the Widget rect.
+
+        :param pos: Point coordinates as ``(x, y)``
+        :param apply_padding: Apply widget padding to the rect
+        :param real_position: Use the Widget real position within the window
+        :return: ``True`` if the point collides with the Widget rect
+        """
+        assert_vector(pos, 2, (int, float))
+
+        rect = self.get_rect(
+            apply_padding=apply_padding,
+            to_real_position=real_position,
+            render=True,
+        )
+
+        return rect.collidepoint(int(pos[0]), int(pos[1]))
+
 
 class _WidgetCopyException(Exception):
     """
@@ -3375,80 +3432,3 @@ class WidgetTransformationNotImplemented(Exception):
     """
 
     pass
-
-
-class AbstractWidgetManager:
-    """
-    Add/Remove widgets to the Menu.
-    """
-
-    _menu: pygame_menu.Menu
-
-    def __init__(self) -> None:
-        pass
-
-    @property
-    def _theme(self) -> pygame_menu.Theme:
-        """
-        Return menu theme.
-
-        :return: Menu theme reference
-        """
-        raise NotImplementedError("override is mandatory")
-
-    def _add_submenu(self, menu: pygame_menu.Menu, hook: Widget) -> None:
-        """
-        Adds a submenu. Requires the menu instance and the widget that adds the
-        sub-menu.
-
-        :param menu: Menu reference
-        :param hook: Widget hook
-        """
-        raise NotImplementedError("override is mandatory")
-
-    def _filter_widget_attributes(self, kwargs: dict[str, Any]) -> dict[str, Any]:
-        """
-        Return the valid widgets attributes from a dictionary.
-
-        The valid (key, value) are removed from the initial dictionary.
-
-        :param kwargs: Optional keyword arguments (input attributes)
-        :return: Dictionary of valid attributes
-        """
-        raise NotImplementedError("override is mandatory")
-
-    def _configure_widget(self, widget: Widget, **kwargs: Any) -> None:
-        """
-        Update the given widget with the parameters defined at the Menu level.
-        This method does not add widget to Menu.
-
-        :param widget: Widget object
-        :param kwargs: Optional keywords arguments
-        """
-        raise NotImplementedError("override is mandatory")
-
-    @staticmethod
-    def _check_kwargs(kwargs: dict[str, Any]) -> None:
-        """
-        Check kwargs after widget addition. It should be empty. Raises ``ValueError``.
-
-        :param kwargs: Kwargs dict
-        """
-        raise NotImplementedError("override is mandatory")
-
-    def _append_widget(self, widget: Widget) -> None:
-        """
-        Add a widget to the list of widgets.
-
-        :param widget: Widget object
-        """
-        raise NotImplementedError("override is mandatory")
-
-    def configure_defaults_widget(self, widget: Widget) -> None:
-        """
-        Apply default menu settings to widget. This method does not add widget to
-        the Menu.
-
-        :param widget: Widget to be configured
-        """
-        raise NotImplementedError("override is mandatory")

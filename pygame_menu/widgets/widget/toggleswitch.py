@@ -35,8 +35,8 @@ from pygame_menu.utils import (
     get_finger_pos,
     make_surface,
 )
+from pygame_menu.widgets.core.abstract_widget import AbstractWidgetManager
 from pygame_menu.widgets.core.widget import (
-    AbstractWidgetManager,
     Widget,
     WidgetTransformationNotImplemented,
 )

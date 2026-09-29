@@ -47,10 +47,10 @@ from pygame_menu.utils import (
     warn,
 )
 from pygame_menu.version import ver
+from pygame_menu.widgets.core.abstract_widget import AbstractWidgetManager
 from pygame_menu.widgets.core.widget import (
     WIDGET_BORDER_POSITION_NONE,
     WIDGET_FULL_BORDER,
-    AbstractWidgetManager,
     Widget,
     WidgetBorderPositionType,
 )

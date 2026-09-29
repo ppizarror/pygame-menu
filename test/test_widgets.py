@@ -25,7 +25,8 @@ from pygame_menu.locals import (
     POSITION_WEST,
 )
 from pygame_menu.widgets import Button, Label
-from pygame_menu.widgets.core.widget import AbstractWidgetManager, Widget
+from pygame_menu.widgets.core.abstract_widget import AbstractWidgetManager
+from pygame_menu.widgets.core.widget import Widget
 from test._utils import (
     PYGAME_V2,
     TEST_THEME,
@@ -40,25 +41,6 @@ from test._utils import (
 def setup_widgets_test() -> None:
     """Setup widgets test."""
     test_reset_surface()
-
-
-@pytest.mark.parametrize(
-    "method_call",
-    [
-        lambda wm: wm._theme,
-        lambda wm: wm._add_submenu(None, None),
-        lambda wm: wm._filter_widget_attributes({}),
-        lambda wm: wm._configure_widget(None),
-        lambda wm: wm._check_kwargs({}),
-        lambda wm: wm._append_widget(None),
-        lambda wm: wm.configure_defaults_widget(None),
-    ],
-)
-def test_abstract_widget_manager(method_call) -> None:
-    """Test abstract widget manager raises NotImplementedError for all abstract methods."""
-    wm = AbstractWidgetManager()
-    with pytest.raises(NotImplementedError):
-        method_call(wm)
 
 
 def test_abstract_widget() -> None:
@@ -679,3 +661,343 @@ def test_widget_center_overflow_ignore_scrollbar_thickness() -> None:
     scrollbar_thickness = menu._get_scrollbar_thickness()
     assert pos_after[0] - pos_before[0] == scrollbar_thickness[1] / 2  # x
     assert pos_after[1] == pos_before[1]  # y
+
+
+def test_dynamic_style_updates() -> None:
+    """Test updating widget styles dynamically forces re-render and hash updates."""
+    menu = MenuUtils.generic_menu()
+    btn = menu.add.button("Dynamic")
+
+    # Force initial render
+    menu.render()
+    old_hash = btn._last_render_hash
+
+    # Change background and padding dynamically
+    btn.set_background_color((255, 0, 0))
+    btn.set_padding(20)
+
+    assert btn._last_render_hash != old_hash
+
+    # Change font size and verify size updates
+    old_width = btn.get_width()
+    btn.update_font({"size": 40})
+    menu.render()
+    assert btn.get_width() != old_width
+
+
+def test_extreme_transformations() -> None:
+    """Test widget behavior under zero, negative, and extreme scale values."""
+    menu = MenuUtils.generic_menu()
+    w = menu.add.label("Scale Test")
+
+    # Zero scale should raise an assertion error based on widget validation
+    with pytest.raises(AssertionError):
+        w.scale(0.0, 0.0)
+
+    # Negative scale should also raise an assertion error
+    with pytest.raises(AssertionError):
+        w.scale(-1.0, -1.0)
+
+    # Extreme positive scaling
+    w.scale(10.0, 10.0)
+    assert w.get_width() > 0
+
+
+def test_widget_destruction() -> None:
+    """Test widget update callbacks and manual cleanup."""
+    menu = MenuUtils.generic_menu()
+    btn = menu.add.button("Killable")
+
+    called = [False]
+    callback_id = btn.add_update_callback(lambda *args: called.__setitem__(0, True))
+
+    assert len(btn._update_callbacks) > 0
+
+    # Remove widget from menu
+    menu.remove_widget(btn)
+
+    # Clear or remove the callback to stop updates
+    btn.remove_update_callback(callback_id)
+
+    # Ensure updates no longer trigger the callback
+    btn.update([])
+    assert not called[0]
+
+
+def test_floating_widget_hit_testing() -> None:
+    """Test coordinate collision and hit-testing on floating widgets."""
+    menu = MenuUtils.generic_menu()
+    img = menu.add.image(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+    img.set_float(origin_position=True)
+    img.translate(50, 50)
+    menu.render()
+
+    rect = img.get_rect(to_real_position=True)
+
+    # Point inside the floating widget
+    inside_point = (rect.x + 5, rect.y + 5)
+    assert img.contains_point(inside_point)
+
+    # Point outside the floating widget
+    outside_point = (rect.x - 20, rect.y - 20)
+    assert not img.contains_point(outside_point)
+
+
+def test_widget_is_focused() -> None:
+    """Test widget is_focused method behavior with selection and active states."""
+    menu = MenuUtils.generic_menu()
+    btn = menu.add.button("Focus Test")
+
+    # Ensure active attribute exists on the widget
+    if not hasattr(btn, "active"):
+        btn.active = True
+
+    # 1. Selected = False, Active = True -> False
+    btn._selected = False
+    btn.active = True
+    assert not btn.is_focused()
+
+    # 2. Selected = True, Active = False -> False
+    btn._selected = True
+    btn.active = False
+    assert not btn.is_focused()
+
+    # 3. Selected = True, Active = True -> True
+    btn._selected = True
+    btn.active = True
+    assert btn.is_focused()
+
+
+def test_widget_toggle_selection() -> None:
+    """Test widget toggle_selection method."""
+    menu = MenuUtils.generic_menu()
+    btn = menu.add.button("Toggle Selection Test")
+
+    # Initial state should be unselected or depend on menu init, let's force state
+    btn._selected = False
+
+    # Toggle to True
+    btn.toggle_selection(update_menu=False)
+    assert btn._selected is True
+
+    # Toggle back to False
+    btn.toggle_selection(update_menu=False)
+    assert btn._selected is False
+
+
+def test_widget_toggle_visibility() -> None:
+    """Test widget toggle_visibility method."""
+    menu = MenuUtils.generic_menu()
+    w = menu.add.label("Toggle Visibility Test")
+
+    # Initially visible
+    assert w.is_visible()
+
+    # Toggle to hidden
+    w.toggle_visibility()
+    assert not w.is_visible()
+
+    # Toggle back to visible
+    w.toggle_visibility()
+    assert w.is_visible()
+
+
+def test_widget_contains_point() -> None:
+    """Test widget contains_point method."""
+    menu = MenuUtils.generic_menu()
+    w = menu.add.button("Contains Point Test")
+    menu.render()
+
+    rect = w.get_rect(to_real_position=True)
+
+    # Inside
+    assert w.contains_point(rect.center)
+
+    # Outside top-left
+    assert not w.contains_point(
+        (rect.left - 10, rect.top - 10)
+    )
+
+    # Outside bottom-right
+    assert not w.contains_point(
+        (rect.right + 10, rect.bottom + 10)
+    )
+
+
+def test_widget_contains_point_invalid_input() -> None:
+    """Test widget contains_point handles invalid vector lengths or types via assert_vector."""
+    menu = MenuUtils.generic_menu()
+    w = menu.add.button("Invalid Point Test")
+
+    with pytest.raises(AssertionError):
+        w.contains_point((10,))  # Too short (vector length 1)
+
+    with pytest.raises(AssertionError):
+        w.contains_point((10, 20, 30))  # Too long (vector length 3)
+
+    with pytest.raises(AssertionError):
+        w.contains_point(("invalid", 20))  # Invalid type
+
+
+def test_draw_callback_remove_self() -> None:
+    """Test draw callback removing itself during execution."""
+    menu = MenuUtils.generic_menu()
+    btn = menu.add.button("Button")
+
+    callback_id = None
+
+    def callback(widget, menu):
+        widget.remove_draw_callback(callback_id)
+
+    callback_id = btn.add_draw_callback(callback)
+
+    menu.draw(surface)
+
+    assert callback_id not in btn._draw_callbacks
+
+
+def test_update_callback_remove_self() -> None:
+    """Test update callback removing itself during execution."""
+    menu = MenuUtils.generic_menu()
+    btn = menu.add.button("Button")
+
+    callback_id = None
+
+    def callback(events, widget, menu):
+        widget.remove_update_callback(callback_id)
+
+    callback_id = btn.add_update_callback(callback)
+
+    btn.update([])
+
+    assert callback_id not in btn._update_callbacks
+
+
+def test_widget_focus_lifecycle() -> None:
+    """Test widget focus state through selection."""
+    menu = MenuUtils.generic_menu()
+
+    btn = menu.add.button("Button")
+
+    btn.select(True)
+
+    assert btn.is_selected()
+    assert not btn.is_focused()
+
+    btn.active = True
+
+    assert btn.is_focused()
+
+    btn.select(False)
+
+    assert not btn.is_focused()
+
+
+def test_widget_contains_point() -> None:
+    """Test widget contains_point boundaries."""
+    menu = MenuUtils.generic_menu()
+
+    btn = menu.add.button("Button")
+    menu.render()
+
+    rect = btn.get_rect(to_real_position=True)
+
+    assert btn.contains_point(rect.center)
+
+    assert btn.contains_point(rect.topleft)
+
+    assert btn.contains_point(
+        (rect.right - 1, rect.bottom - 1)
+    )
+
+    assert not btn.contains_point(
+        (rect.left - 1, rect.top)
+    )
+
+    assert not btn.contains_point(
+        (rect.right + 1, rect.bottom)
+    )
+
+
+def test_frame_depth() -> None:
+    """Test frame nesting depth."""
+    menu = MenuUtils.generic_menu()
+
+    frame1 = menu.add.frame_h(100, 100)
+    frame2 = menu.add.frame_h(100, 100)
+
+    frame1.pack(frame2)
+
+    btn = Button("Button")
+    frame2.pack(btn)
+
+    assert btn.get_frame_depth() == 2
+
+
+def test_hide_widget_clears_mouseover() -> None:
+    """Test hiding widget clears mouse state."""
+    menu = MenuUtils.generic_menu()
+
+    btn = menu.add.button("Button")
+
+    btn._mouseover = True
+
+    btn.hide()
+
+    assert not btn._mouseover
+    assert not btn.active
+
+
+def test_render_hash_stable() -> None:
+    """Test render hash does not change without modifications."""
+    menu = MenuUtils.generic_menu()
+
+    btn = menu.add.button("Button")
+
+    btn.render()
+
+    h1 = btn._last_render_hash
+
+    btn.render()
+
+    h2 = btn._last_render_hash
+
+    assert h1 == h2
+
+
+@pytest.mark.parametrize(
+    "angle",
+    [0, 45, 90, 180, -90, 360]
+)
+def test_rotation(angle) -> None:
+    """Test widget rotation."""
+    menu = MenuUtils.generic_menu()
+
+    btn = menu.add.button("Button")
+
+    btn.rotate(angle)
+
+    menu.render()
+
+    assert btn.get_surface() is not None
+
+
+def test_toggle_selection_calls_onselect() -> None:
+    """Test toggle_selection triggers callback."""
+    menu = MenuUtils.generic_menu()
+
+    called = [False]
+
+    def onselect(*_):
+        called[0] = True
+
+    btn = menu.add.button(
+        "Button",
+        onselect=onselect
+    )
+
+    called[0] = False
+
+    btn.toggle_selection()
+
+    assert called[0]

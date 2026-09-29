@@ -225,18 +225,30 @@ def main(test: bool = False) -> None:
         value_format=lambda x: range_values_discrete[int(x)],
     )
 
-    # Add a progress bar
+    # Add a horizontal progress bar
     progress = settings_menu.add.progress_bar(
-        "Progress", default=rslider.get_value(), progressbar_id="progress"
+        "Horizontal Progress", default=rslider.get_value(), progressbar_id="progress_h"
+    )
+
+    # Add a vertical progress bar
+    progress_v = settings_menu.add.progress_bar(
+        "Vertical Progress",
+        default=rslider.get_value(),
+        orientation=pygame_menu.locals.ORIENTATION_VERTICAL,
+        width=120,  # Length of the vertical bar
+        height=40,  # Thickness of the bar (make it large enough to fit the text!)
+        progressbar_id="progress_v",
+        box_progress_color=(0, 150, 255),
     )
 
     def on_change_slider(val: int) -> None:
         """
-        Updates the progress bar.
+        Updates the progress bars.
 
         :param val: Value of the progress from 0 to 100
         """
         progress.set_value(val)
+        progress_v.set_value(val)
 
     rslider.set_onchange(on_change_slider)
 

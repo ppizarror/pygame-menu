@@ -56,8 +56,8 @@ from pygame_menu.utils import (
     make_surface,
     parse_padding,
 )
+from pygame_menu.widgets.core.abstract_widget import AbstractWidgetManager
 from pygame_menu.widgets.core.widget import (
-    AbstractWidgetManager,
     Widget,
     WidgetTransformationNotImplemented,
 )

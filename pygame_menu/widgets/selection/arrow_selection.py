@@ -79,6 +79,31 @@ class ArrowSelection(Selection):
         self._blink_status = True
         self._last_widget = None
 
+    def _repr_attrs(self) -> dict[str, object]:
+        """
+        Return dictionary of attributes for string representation.
+
+        :return: Dictionary of attributes
+        """
+        attrs = super()._repr_attrs()
+        attrs.update(
+            {
+                "arrow_size": self._arrow_size,
+                "arrow_vertical_offset": self._arrow_vertical_offset,
+                "blink_ms": self._blink_ms,
+            }
+        )
+        return attrs
+
+    def __repr__(self) -> str:
+        """
+        Return string representation.
+
+        :return: String representation
+        """
+        attrs = ", ".join(f"{k}={v!r}" for k, v in self._repr_attrs().items())
+        return f"{self.__class__.__name__}({attrs})"
+
     def draw(
         self, surface: pygame.Surface, widget: pygame_menu.widgets.Widget
     ) -> ArrowSelection:

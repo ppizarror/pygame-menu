@@ -35,7 +35,12 @@ from pygame_menu._types import (
     Tuple4IntType,
 )
 from pygame_menu.font import FontType, assert_font
-from pygame_menu.locals import ALIGN_CENTER, ALIGN_LEFT
+from pygame_menu.locals import (
+    ALIGN_CENTER,
+    ALIGN_LEFT,
+    ORIENTATION_HORIZONTAL,
+    ORIENTATION_VERTICAL,
+)
 from pygame_menu.utils import (
     assert_alignment,
     assert_color,
@@ -43,8 +48,8 @@ from pygame_menu.utils import (
     make_surface,
     parse_padding,
 )
+from pygame_menu.widgets.core.abstract_widget import AbstractWidgetManager
 from pygame_menu.widgets.core.widget import (
-    AbstractWidgetManager,
     Widget,
     WidgetTransformationNotImplemented,
 )
@@ -54,7 +59,8 @@ ProgressBarTextFormatType = Callable[[NumberType], str]
 
 class ProgressBar(Widget):
     """
-    Progress bar widget, offers a bar that accepts a percentage from ``0`` to ``100``.
+    Progress bar widget that displays a value between ``min_value`` and
+    ``max_value``.
 
     .. note::
 
@@ -62,8 +68,12 @@ class ProgressBar(Widget):
 
     :param title: Progressbar title
     :param progressbar_id: ProgressBar ID
-    :param default: Default value of the progressbar, from ``0`` to ``100``
+    :param default: Default value of the progress bar. Must be between ``min_value`` and ``max_value``
+    :param min_value: Minimum progress value
+    :param max_value: Maximum progress value
     :param width: Progress bar width in px
+    :param height: Progress bar height in px
+    :param orientation: Progress bar orientation. Can be ``ORIENTATION_HORIZONTAL`` or ``ORIENTATION_VERTICAL``
     :param onselect: Function when selecting the widget
     :param box_background_color: Background color of the box
     :param box_border_color: Border color of the box
@@ -76,7 +86,7 @@ class ProgressBar(Widget):
     :param progress_text_font: Progress font. If ``None`` uses the same as the widget font
     :param progress_text_font_color: Progress font color. If ``None`` uses the same as the widget font
     :param progress_text_font_hfactor: Height factor of the font height relative to the widget font height
-    :param progress_text_format: Format function of the progress text, which considers as input the progress value (0-100)
+    :param progress_text_format: Format function of the progress text, which considers as input the progress value
     :param progress_text_margin: Margin of the progress box on x-axis and y-axis in px
     :param progress_text_placeholder: Placeholder of the progress text, which considers as format the output of ``progress_text_format``
     :param args: Optional arguments for callbacks
@@ -89,10 +99,14 @@ class ProgressBar(Widget):
     _box_border_width: int
     _box_height: int
     _box_margin: Tuple2IntType
-    _box_pos: int
+    _box_offset_x: int
+    _box_offset_y: int
     _box_progress_color: ColorType
     _box_progress_padding: Tuple4IntType
+    _min_value: NumberType
+    _max_value: NumberType
     _progress: NumberType
+    _orientation: str
     _progress_font: FontType
     _progress_text_align: str
     _progress_text_enabled: bool
@@ -110,7 +124,11 @@ class ProgressBar(Widget):
         title: Any,
         progressbar_id: str = "",
         default: NumberType = 0,
+        min_value: NumberType = 0,
+        max_value: NumberType = 100,
         width: int = 150,
+        height: int = 20,
+        orientation: str = ORIENTATION_HORIZONTAL,
         onselect: CallbackType = None,
         box_background_color: ColorInputType = (255, 255, 255),
         box_border_color: ColorInputType = (0, 0, 0),
@@ -137,9 +155,18 @@ class ProgressBar(Widget):
             widget_id=progressbar_id,
         )
 
-        # Check the value
+        # Check values
+        assert isinstance(min_value, NumberInstance)
+        assert isinstance(max_value, NumberInstance)
+        assert min_value < max_value, "min_value must be less than max_value"
         assert isinstance(default, NumberInstance)
-        assert 0 <= default <= 100, "default value must range from 0 to 100"
+        assert min_value <= default <= max_value, (
+            "default value must range from min_value to max_value"
+        )
+
+        assert orientation in (ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL), (
+            "orientation must be ORIENTATION_HORIZONTAL or ORIENTATION_VERTICAL"
+        )
 
         # Check fonts
         if progress_text_font is not None:
@@ -162,20 +189,27 @@ class ProgressBar(Widget):
         )
         assert_vector(box_margin, 2, int)
         assert_vector(progress_text_margin, 2, int)
-        assert isinstance(width, int)
-        assert width > 0, "width must be greater than zero"
+        assert isinstance(width, int) and width > 0, "width must be greater than zero"
+        assert isinstance(height, int) and height > 0, (
+            "height must be greater than zero"
+        )
+
         box_progress_padding = parse_padding(box_progress_padding)
         self._box_progress_padding = box_progress_padding
 
         # Check progress text
         assert isinstance(progress_text_enabled, bool)
         assert callable(progress_text_format)
-        assert isinstance(progress_text_format(0), str)
+        assert isinstance(progress_text_format(min_value), str)
         assert isinstance(progress_text_placeholder, str)
         assert_alignment(progress_text_align)
 
         # Store properties
         self._default_value = default
+        self._min_value = min_value
+        self._max_value = max_value
+        self._orientation = orientation
+        self._box_height = height
         self._box_background_color = box_background_color
         self._box_border_color = box_border_color
         self._box_border_width = box_border_width
@@ -192,12 +226,61 @@ class ProgressBar(Widget):
         self._progress_text_margin = progress_text_margin
         self._progress_text_placeholder = progress_text_placeholder
         self._width = width
+        self._box_offset_x = 0
+        self._box_offset_y = 0
 
     def set_value(self, value: NumberType) -> None:
         assert isinstance(value, NumberInstance), "progress value must be numeric"
-        assert 0 <= value <= 100, "value must be between 0 and 100"
+        assert self._min_value <= value <= self._max_value, (
+            f"value must be between {self._min_value} and {self._max_value}"
+        )
+
+        if value == self._progress:
+            return
+
         self._progress = value
         self._render()
+
+    def set_range(self, min_value: NumberType, max_value: NumberType) -> None:
+        assert isinstance(min_value, NumberInstance)
+        assert isinstance(max_value, NumberInstance)
+        assert min_value < max_value, "min_value must be less than max_value"
+        self._min_value = min_value
+        self._max_value = max_value
+        self._progress = max(min_value, min(max_value, self._progress))
+        self._render()
+
+    def increment(self, amount: NumberType = 1) -> None:
+        assert isinstance(amount, NumberInstance)
+        self.set_value(min(self._max_value, self._progress + amount))
+
+    def decrement(self, amount: NumberType = 1) -> None:
+        assert isinstance(amount, NumberInstance)
+        self.set_value(max(self._min_value, self._progress - amount))
+
+    def is_complete(self) -> bool:
+        return self._progress >= self._max_value
+
+    def set_percentage(self, percentage: float) -> None:
+        assert isinstance(percentage, (int, float)), "percentage must be numeric"
+        percentage = max(0.0, min(100.0, percentage))
+        span = self._max_value - self._min_value
+        value = self._min_value + (span * (percentage / 100.0))
+        self.set_value(value)
+
+    def reset(self) -> None:
+        self.set_value(self._default_value)
+
+    def get_min_value(self) -> NumberType:
+        return self._min_value
+
+    def get_max_value(self) -> NumberType:
+        return self._max_value
+
+    def get_percentage(self) -> float:
+        span = self._max_value - self._min_value
+        pct = (self._progress - self._min_value) / span * 100.0
+        return max(0.0, min(100.0, pct))
 
     def scale(self, *args: Any, **kwargs: Any) -> ProgressBar:
         raise WidgetTransformationNotImplemented()
@@ -217,28 +300,30 @@ class ProgressBar(Widget):
     def flip(self, *args: Any, **kwargs: Any) -> ProgressBar:
         raise WidgetTransformationNotImplemented()
 
-    def get_value(self, as_string: bool = False) -> NumberType:
+    def get_value(self, as_string: bool = False) -> NumberType | str:
+        if as_string:
+            return self._progress_text_placeholder.format(
+                self._progress_text_format(self._progress)
+            )
         return self._progress
 
     def _apply_font(self) -> None:
-        if self._progress_text_font is None:
-            self._progress_text_font = self._font_name
+        font_name = self._progress_text_font or self._font_name
         self._progress_text_font_height = int(
             self._font_size * self._progress_text_font_height_factor
         )
         self._progress_font = pygame_menu.font.get_font(
-            self._progress_text_font, self._progress_text_font_height
+            font_name, self._progress_text_font_height
         )
-        self._box_height = self._font_render_string("TEST").get_height()
 
     def _draw(self, surface: pygame.Surface) -> None:
         # Draw title
         surface.blit(self._surface, (self._rect.x, self._rect.y))
 
-        # Draw box
+        # Draw box using correct offsets including margins
         box_rect = self._box.get_rect()
-        box_rect.x += self._rect.x + self._box_margin[0] + self._box_pos
-        box_rect.y += self._rect.y + self._box_margin[1]
+        box_rect.x += self._rect.x + self._box_margin[0] + self._box_offset_x
+        box_rect.y += self._rect.y + self._box_margin[1] + self._box_offset_y
         surface.blit(self._box, box_rect)
 
         # Draw box border
@@ -252,54 +337,109 @@ class ProgressBar(Widget):
             return False
 
         elif not self._render_hash_changed(
-            self._selected, self._title, self._visible, self.readonly, self._progress
+            self._selected,
+            self._title,
+            self._visible,
+            self.readonly,
+            self._progress,
+            self._min_value,
+            self._max_value,
+            self._orientation,
+            self._width,
+            self._box_height,
         ):
             return True
 
         # Create basic title
         self._surface = self._render_string(self._title, self.get_font_color_status())
-        self._rect.width, self._rect.height = self._surface.get_size()
+        title_width, title_height = self._surface.get_size()
 
-        # Create box
-        self._box = make_surface(
-            self._width, self._box_height, fill_color=self._box_background_color
-        )
-        box_progress = make_surface(
-            int(self._width * self._progress / 100),
-            self._box_height
-            - self._box_progress_padding[0]
-            - self._box_progress_padding[2],
-            fill_color=self._box_progress_color,
-        )
-        self._box.blit(
-            box_progress, (self._box_progress_padding[1], self._box_progress_padding[0])
-        )
-        self._box_pos = self._rect.width
+        # Create box surface based on orientation and dimensions
+        if self._orientation == ORIENTATION_HORIZONTAL:
+            box_w = self._width
+            box_h = self._box_height
+        else:
+            box_w = self._box_height
+            box_h = self._width
 
-        # Create progress text
+        self._box = make_surface(box_w, box_h, fill_color=self._box_background_color)
+
+        # Compute filled progress area
+        span = self._max_value - self._min_value
+        pct = (self._progress - self._min_value) / span
+
+        if self._orientation == ORIENTATION_HORIZONTAL:
+            progress_w = int(
+                (box_w - self._box_progress_padding[1] - self._box_progress_padding[3])
+                * pct
+            )
+            progress_h = (
+                box_h - self._box_progress_padding[0] - self._box_progress_padding[2]
+            )
+            box_progress = make_surface(
+                max(0, progress_w),
+                max(0, progress_h),
+                fill_color=self._box_progress_color,
+            )
+            self._box.blit(
+                box_progress,
+                (self._box_progress_padding[1], self._box_progress_padding[0]),
+            )
+            self._box_offset_x = title_width
+            self._box_offset_y = 0
+
+            self._rect.width = title_width + box_w + self._box_margin[0]
+            self._rect.height = max(title_height, box_h)
+        else:
+            progress_w = (
+                box_w - self._box_progress_padding[1] - self._box_progress_padding[3]
+            )
+            progress_h = int(
+                (box_h - self._box_progress_padding[0] - self._box_progress_padding[2])
+                * pct
+            )
+            box_progress = make_surface(
+                max(0, progress_w),
+                max(0, progress_h),
+                fill_color=self._box_progress_color,
+            )
+            y_pos = box_h - self._box_progress_padding[2] - progress_h
+            self._box.blit(box_progress, (self._box_progress_padding[1], y_pos))
+            self._box_offset_x = 0
+            self._box_offset_y = title_height
+
+            self._rect.width = max(title_width, box_w)
+            self._rect.height = title_height + box_h + self._box_margin[1]
+
+        # Render progress text directly using raw progress value
+        formatted_text = self._progress_text_placeholder.format(
+            self._progress_text_format(self._progress)
+        )
         text = self._progress_font.render(
-            self._progress_text_placeholder.format(
-                self._progress_text_format(self._progress)
-            ),
+            formatted_text,
             self._font_antialias,
             self._progress_text_font_color,
         )
-        text_y = int((self._box_height - text.get_height()) / 2)
+
+        text_x = int((box_w - text.get_width()) / 2)
+        text_y = int((box_h - text.get_height()) / 2)
+
         if self._progress_text_align == ALIGN_LEFT:
-            text_x = self._box_progress_padding[1]
+            text_x = self._box_progress_padding[1] + self._progress_text_margin[0]
         elif self._progress_text_align == ALIGN_CENTER:
-            text_x = int((self._width - text.get_width()) / 2)
+            text_x += self._progress_text_margin[0]
         else:
-            text_x = self._width - self._box_progress_padding[3] - text.get_width()
-        text_x += self._progress_text_margin[0]
+            text_x = (
+                box_w
+                - self._box_progress_padding[3]
+                - text.get_width()
+                - self._progress_text_margin[0]
+            )
+
         text_y += self._progress_text_margin[1]
 
         if self._progress_text_enabled:
             self._box.blit(text, (text_x, text_y))
-
-        # Update maximum rect height
-        self._rect.height = max(self._rect.height, self._box.get_height())
-        self._rect.width += self._width + self._box_margin[0]
 
         # Finals
         self.force_menu_surface_update()
@@ -319,6 +459,10 @@ class ProgressBarManager(AbstractWidgetManager, ABC):
         self,
         title: Any,
         default: NumberType = 0,
+        min_value: NumberType = 0,
+        max_value: NumberType = 100,
+        height: int = 20,
+        orientation: str = ORIENTATION_HORIZONTAL,
         onselect: CallbackType = None,
         progressbar_id: str = "",
         progress_text_format: ProgressBarTextFormatType = lambda x: str(round(x, 1)),
@@ -328,7 +472,7 @@ class ProgressBarManager(AbstractWidgetManager, ABC):
     ) -> pygame_menu.widgets.ProgressBar:
         """
         Add a progress bar, which offers a bar that accepts a percentage from
-        ``0`` to ``100``.
+        ``min_value`` to ``max_value``.
 
         If ``onselect`` is defined, the callback is executed as follows, where
         ``selected`` is a boolean representing the selected status:
@@ -409,6 +553,9 @@ class ProgressBarManager(AbstractWidgetManager, ABC):
         :rtype: :py:class:`pygame_menu.widgets.ProgressBar`
         """
         assert isinstance(selectable, bool)
+        assert orientation in (ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL), (
+            "orientation must be ORIENTATION_HORIZONTAL or ORIENTATION_VERTICAL"
+        )
 
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
@@ -432,7 +579,11 @@ class ProgressBarManager(AbstractWidgetManager, ABC):
             title=title,
             progressbar_id=progressbar_id,
             default=default,
+            min_value=min_value,
+            max_value=max_value,
             width=width,
+            height=height,
+            orientation=orientation,
             onselect=onselect,
             box_background_color=box_background_color,
             box_border_color=box_border_color,

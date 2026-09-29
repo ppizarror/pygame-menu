@@ -39,13 +39,14 @@ from pygame_menu._types import (
 )
 from pygame_menu.locals import INPUT_TEXT
 from pygame_menu.utils import check_key_pressed_valid, make_surface
-from pygame_menu.widgets.core.widget import AbstractWidgetManager, Widget
+from pygame_menu.widgets.core.abstract_widget import AbstractWidgetManager
 from pygame_menu.widgets.widget.textinput import TextInput
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
     import pygame_menu
+    from pygame_menu.widgets.core.widget import Widget
 
 # Input modes
 COLORINPUT_TYPE_HEX = "hex"

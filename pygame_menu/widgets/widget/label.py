@@ -20,7 +20,8 @@ import pygame
 
 import pygame_menu
 from pygame_menu.utils import assert_color, make_surface, uuid4, warn
-from pygame_menu.widgets.core.widget import AbstractWidgetManager, Widget
+from pygame_menu.widgets.core.abstract_widget import AbstractWidgetManager
+from pygame_menu.widgets.core.widget import Widget
 
 if TYPE_CHECKING:
     from pygame_menu._types import (

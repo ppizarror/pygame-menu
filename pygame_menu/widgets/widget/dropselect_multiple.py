@@ -26,7 +26,7 @@ from typing import TYPE_CHECKING, Any, Union
 
 from pygame_menu.locals import POSITION_NORTHWEST, POSITION_SOUTHEAST
 from pygame_menu.utils import assert_color, assert_vector
-from pygame_menu.widgets.core.widget import AbstractWidgetManager, Widget
+from pygame_menu.widgets.core.abstract_widget import AbstractWidgetManager
 from pygame_menu.widgets.widget.dropselect import DropSelect
 
 if TYPE_CHECKING:
@@ -45,6 +45,7 @@ if TYPE_CHECKING:
         Tuple3IntType,
     )
     from pygame_menu.font import FontType
+    from pygame_menu.widgets.core.widget import Widget
     from pygame_menu.widgets.widget.button import Button
 
 DROPSELECT_MULTIPLE_SFORMAT_LIST_COMMA = "comma-list"

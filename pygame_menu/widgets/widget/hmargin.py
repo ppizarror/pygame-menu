@@ -14,7 +14,7 @@ from abc import ABC
 from typing import TYPE_CHECKING, Any
 
 from pygame_menu._types import NumberInstance, NumberType
-from pygame_menu.widgets.core.widget import AbstractWidgetManager
+from pygame_menu.widgets.core.abstract_widget import AbstractWidgetManager
 from pygame_menu.widgets.widget.none import NoneWidget
 
 if TYPE_CHECKING:
