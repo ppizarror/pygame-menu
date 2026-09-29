@@ -3000,7 +3000,7 @@ class Widget(Base):
         """
         if not self._draw_callbacks:
             return self
-        for callback in self._draw_callbacks.values():
+        for callback in list(self._draw_callbacks.values()):
             callback(self, self._menu)
         return self
 
@@ -3060,7 +3060,7 @@ class Widget(Base):
         """
         if not self._update_callbacks or self.readonly:
             return self
-        for callback in self._update_callbacks.values():
+        for callback in list(self._update_callbacks.values()):
             callback(events, self, self._menu)
         return self
 

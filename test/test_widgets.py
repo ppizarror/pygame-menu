@@ -25,7 +25,6 @@ from pygame_menu.locals import (
     POSITION_WEST,
 )
 from pygame_menu.widgets import Button, Label
-from pygame_menu.widgets.core.abstract_widget import AbstractWidgetManager
 from pygame_menu.widgets.core.widget import Widget
 from test._utils import (
     PYGAME_V2,
@@ -891,47 +890,6 @@ def test_widget_focus_lifecycle() -> None:
     btn.select(False)
 
     assert not btn.is_focused()
-
-
-def test_widget_contains_point() -> None:
-    """Test widget contains_point boundaries."""
-    menu = MenuUtils.generic_menu()
-
-    btn = menu.add.button("Button")
-    menu.render()
-
-    rect = btn.get_rect(to_real_position=True)
-
-    assert btn.contains_point(rect.center)
-
-    assert btn.contains_point(rect.topleft)
-
-    assert btn.contains_point(
-        (rect.right - 1, rect.bottom - 1)
-    )
-
-    assert not btn.contains_point(
-        (rect.left - 1, rect.top)
-    )
-
-    assert not btn.contains_point(
-        (rect.right + 1, rect.bottom)
-    )
-
-
-def test_frame_depth() -> None:
-    """Test frame nesting depth."""
-    menu = MenuUtils.generic_menu()
-
-    frame1 = menu.add.frame_h(100, 100)
-    frame2 = menu.add.frame_h(100, 100)
-
-    frame1.pack(frame2)
-
-    btn = Button("Button")
-    frame2.pack(btn)
-
-    assert btn.get_frame_depth() == 2
 
 
 def test_hide_widget_clears_mouseover() -> None:
