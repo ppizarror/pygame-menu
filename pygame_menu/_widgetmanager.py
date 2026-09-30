@@ -29,6 +29,7 @@ from pygame_menu.widgets.core.selection import Selection
 from pygame_menu.widgets.core.widget import Widget, check_widget_mouseleave
 from pygame_menu.widgets.widget.button import ButtonManager
 from pygame_menu.widgets.widget.colorinput import ColorInputManager
+from pygame_menu.widgets.widget.counter import CounterManager
 from pygame_menu.widgets.widget.dropselect import DropSelectManager
 from pygame_menu.widgets.widget.dropselect_multiple import DropSelectMultipleManager
 from pygame_menu.widgets.widget.frame import FrameManager
@@ -53,6 +54,7 @@ class WidgetManager(
     Base,
     ButtonManager,
     ColorInputManager,
+    CounterManager,
     DropSelectManager,
     DropSelectMultipleManager,
     FrameManager,

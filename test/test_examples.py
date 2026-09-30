@@ -12,6 +12,7 @@ import pytest
 import pygame_menu.examples.game_selector as game_selector
 import pygame_menu.examples.multi_input as multi_input
 import pygame_menu.examples.other.calculator as calculator
+import pygame_menu.examples.other.counter as counter
 import pygame_menu.examples.other.dynamic_button_append as dynamic_button
 import pygame_menu.examples.other.dynamic_widget_update as dynamic_widget
 import pygame_menu.examples.other.image_background as image_background
@@ -303,3 +304,41 @@ def test_example_other_custom_selectors():
     assert isinstance(
         widgets[6].get_selection_effect(), custom_selectors.UnderlineSelection
     )
+
+
+def test_example_other_counter():
+    """Test counter example."""
+    app = counter.main(test=True)
+
+    assert app.counter.get_value() == 0
+
+    app.increment()
+    assert app.counter.get_value() == 1
+
+    app.decrement()
+    assert app.counter.get_value() == 0
+
+    app.increment()
+    app.increment()
+    app.reset()
+    assert app.counter.get_value() == 0
+
+    # Test keyboard controls
+    app.process_events(PygameEventUtils.keydown(pygame.K_UP))
+    assert app.counter.get_value() == 1
+
+    app.process_events(PygameEventUtils.keydown(pygame.K_RIGHT))
+    assert app.counter.get_value() == 2
+
+    app.process_events(PygameEventUtils.keydown(pygame.K_DOWN))
+    assert app.counter.get_value() == 1
+
+    app.process_events(PygameEventUtils.keydown(pygame.K_LEFT))
+    assert app.counter.get_value() == 0
+
+    app.process_events(PygameEventUtils.keydown(pygame.K_r))
+    assert app.counter.get_value() == 0
+
+    app.process_events(PygameEventUtils.keydown(pygame.K_UP))
+    app.process_events(PygameEventUtils.keydown(pygame.K_0))
+    assert app.counter.get_value() == 0
