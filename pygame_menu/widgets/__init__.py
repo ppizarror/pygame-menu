@@ -31,6 +31,7 @@ from pygame_menu.widgets.widget import (
     ColorInput,
     DropSelect,
     DropSelectMultiple,
+    FPS,
     Frame,
     HMargin,
     Image,

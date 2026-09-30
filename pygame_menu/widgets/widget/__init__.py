@@ -12,6 +12,7 @@ from pygame_menu.widgets.widget.button import Button
 from pygame_menu.widgets.widget.colorinput import ColorInput
 from pygame_menu.widgets.widget.dropselect import DropSelect
 from pygame_menu.widgets.widget.dropselect_multiple import DropSelectMultiple
+from pygame_menu.widgets.widget.fps import FPS
 from pygame_menu.widgets.widget.frame import Frame
 from pygame_menu.widgets.widget.hmargin import HMargin
 from pygame_menu.widgets.widget.image import Image
