@@ -366,6 +366,55 @@ class Label(Widget):
                 break
         return False
 
+    def clear(self) -> Label:
+        """
+        Clear the label text.
+
+        Equivalent to setting the title to an empty string.
+
+        :return: Self reference
+        """
+        self.set_title("")
+        return self
+
+    def get_line_count(self) -> int:
+        """
+        Return the number of currently displayed lines.
+
+        If wordwrap is enabled, this returns the number of visible wrapped
+        lines. Otherwise, returns ``1`` for non-empty labels.
+
+        :return: Number of displayed lines
+        """
+        return len(self._lines)
+
+    def has_overflow(self) -> bool:
+        """
+        Check whether the label contains overflow lines.
+
+        This method is intended for labels using ``wordwrap`` together with
+        ``max_nlines``.
+
+        :return: ``True`` if text overflow exists
+        """
+        return len(self._overflow_lines) > 0
+
+    def get_overflow_count(self) -> int:
+        """
+        Return the number of overflow lines.
+
+        :return: Number of non-displayed lines
+        """
+        return len(self._overflow_lines)
+
+    def is_empty(self) -> bool:
+        """
+        Check whether the label title is empty.
+
+        :return: ``True`` if the label contains no text
+        """
+        return self._title == ""
+
 
 class LabelManager(AbstractWidgetManager, ABC):
     """
