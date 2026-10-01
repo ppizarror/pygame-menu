@@ -2,8 +2,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-VERTICAL VILL
-Vertical fill box. Fills all available vertical space.
+VFILL MANAGER
+Base class for VFillManager.
 """
 
 from __future__ import annotations

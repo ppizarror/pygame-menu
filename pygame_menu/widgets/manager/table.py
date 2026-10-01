@@ -2,8 +2,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-TABLE
-The table widget is a Frame which packs widgets in a structured way.
+TABLE MANAGER
+Base class for TableManager.
 """
 
 from __future__ import annotations

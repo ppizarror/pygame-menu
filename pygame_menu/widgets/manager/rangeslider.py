@@ -2,8 +2,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-RANGE SLIDER
-Slider bar between one/two numeric ranges.
+RANGE SLIDER MANAGER
+Base class for RangeSliderManager.
 """
 
 from __future__ import annotations

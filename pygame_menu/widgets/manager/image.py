@@ -2,8 +2,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-IMAGE
-Image widget class, adds a simple image.
+IMAGE MANAGER
+Base class for ImageManager.
 """
 
 from __future__ import annotations

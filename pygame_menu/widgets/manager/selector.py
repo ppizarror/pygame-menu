@@ -2,9 +2,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-SELECTOR
-Selector class, contains several items that can be changed in a horizontal way
-(left/right). Items are solely displayed.
+SELECTOR MANAGER
+Base class for SelectorManager.
 """
 
 from __future__ import annotations

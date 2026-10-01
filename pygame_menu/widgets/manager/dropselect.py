@@ -2,9 +2,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-DROPSELECT
-Drop select widget. This is similar to HTML selects, it can contain many items
-(options) to select. The selection is unique.
+DROP SELECT MANAGER
+Base class for DropSelectManager.
 """
 
 from __future__ import annotations

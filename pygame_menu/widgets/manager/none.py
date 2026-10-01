@@ -2,8 +2,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-NONE WIDGET
-None widget definition.
+NONE WIDGET MANAGER
+Base class for NoneWidgetManager.
 """
 
 from __future__ import annotations

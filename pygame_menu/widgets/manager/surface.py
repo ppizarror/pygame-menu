@@ -2,8 +2,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-SURFACE
-Surface widget. This widget contains an external surface.
+SURFACE WIDGET MANAGER
+Base class for SurfaceWidgetManager.
 """
 
 from __future__ import annotations

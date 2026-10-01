@@ -2,8 +2,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-TEXT INPUT
-Text input class, this widget lets user write text.
+TEXT INPUT MANAGER
+Base class for TextInputManager.
 """
 
 from __future__ import annotations
@@ -151,13 +151,13 @@ class TextInputManager(AbstractWidgetManager, ABC):
         """
         assert isinstance(default, (str, NumberInstance))
 
-        # Filter widget attributes to avoid passing them to the callbacks
-        attributes = self._filter_widget_attributes(kwargs)
-        input_underline_vmargin = kwargs.pop("input_underline_vmargin", 0)
-
         # If password is active no default value should exist
         if password and default != "":
             raise ValueError("default value must be empty if the input is a password")
+
+        # Filter widget attributes to avoid passing them to the callbacks
+        attributes = self._filter_widget_attributes(kwargs)
+        input_underline_vmargin = kwargs.pop("input_underline_vmargin", 0)
 
         widget = TextInput(
             copy_paste_enable=copy_paste_enable,

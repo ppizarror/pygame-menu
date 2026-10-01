@@ -2,9 +2,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-COLOR INPUT
-Color input class, Widget created in top of TextInput that provides a textbox
-for entering and previewing colors in RGB and HEX format.
+COLOR INPUT MANAGER
+Base class for ColorInputManager.
 """
 
 from __future__ import annotations

@@ -2,8 +2,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-FRAME
-Widget container.
+FRAME MANAGER
+Base class for FrameManager.
 """
 
 from __future__ import annotations

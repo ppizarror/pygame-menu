@@ -2,8 +2,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-VERTICAL MARGIN
-Vertical box margin.
+WMARGIN MANAGER
+Base class for VMarginManager.
 """
 
 from __future__ import annotations

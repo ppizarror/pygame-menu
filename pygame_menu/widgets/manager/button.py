@@ -2,8 +2,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-BUTTON
-Button widget. Basically, a label with callback function and enhanced events.
+BUTTON MANAGER
+Base class for ButtonManager.
 """
 
 from __future__ import annotations

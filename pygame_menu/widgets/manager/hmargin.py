@@ -2,8 +2,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-HORIZONTAL MARGIN
-Horizontal box margin.
+HORIZONTAL MARGIN MANAGER
+Base class for HMarginManager.
 """
 
 from __future__ import annotations

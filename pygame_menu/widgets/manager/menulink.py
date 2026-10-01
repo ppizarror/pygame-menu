@@ -2,9 +2,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-MENULINK
-Similar to a Button that opens a Menu, MenuLink is a widget that contains a Menu
-reference. This Menu can be opened with .open() method.
+MENU LINK MANAGER
+Base class for MenuLinkManager.
 """
 
 from __future__ import annotations

@@ -2,8 +2,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-PROGRESS BAR
-Progress bar widget.
+PROGRESS BAR MANAGER
+Base class for ProgressBarManager.
 """
 
 from __future__ import annotations

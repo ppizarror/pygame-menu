@@ -2,8 +2,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-TOGGLE SWITCH
-Switch between several states.
+TOGGLE SWITCH MANAGER
+Base class for ToggleSwitchManager.
 """
 
 from __future__ import annotations

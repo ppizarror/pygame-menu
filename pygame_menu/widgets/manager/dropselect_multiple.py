@@ -2,8 +2,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-DROPSELECT MULTIPLE
-Drop select where multiple options can be selected at the same time.
+DROP SELECT MULTIPLE MANAGER
+Base class for DropSelectMultipleManager.
 """
 
 from __future__ import annotations

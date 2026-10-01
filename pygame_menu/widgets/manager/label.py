@@ -2,8 +2,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-LABEL
-Label class, adds a simple text to the Menu.
+LABEL MANAGER
+Base class for LabelManager.
 """
 
 from __future__ import annotations
