@@ -95,23 +95,9 @@ def test_label_with_underline(manager, monkeypatch):
 
 
 def test_label_multiline_split(manager, monkeypatch):
-    # To test multiline splitting without breaking recursion, we let Label factory create mocks
-    # and patch the underlying recursion or use an unpatched manager method for inner calls.
     sub1 = Mock(name="Sub1")
     sub2 = Mock(name="Sub2")
 
-    original_label = manager.label
-    call_count = 0
-
-    def patched_label(self, title, **kwargs):
-        nonlocal call_count
-        if call_count == 0:
-            call_count += 1
-            # Let it run normally for the split lines
-            return original_label(title=title, **kwargs)
-        return sub1 if title == "Line1" else sub2
-
-    # Instead of mocking manager.label completely, let's mock the Label factory to return sub1 and sub2 sequentially
     label_factory = Mock(side_effect=[sub1, sub2])
     monkeypatch.setattr(label_module, "Label", label_factory)
 

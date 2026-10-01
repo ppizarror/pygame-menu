@@ -415,7 +415,6 @@ def test_selector_does_not_append_when_configuration_fails(
     manager,
     selector_factory,
 ):
-    selector_factory, widget = selector_factory
 
     manager._filter_widget_attributes = Mock(return_value={})
     manager._configure_widget = Mock(side_effect=RuntimeError("configuration failed"))

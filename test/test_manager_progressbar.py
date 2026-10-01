@@ -449,7 +449,6 @@ def test_progress_bar_does_not_append_when_configuration_fails(
     manager,
     progress_bar_factory,
 ):
-    progress_bar_factory, widget = progress_bar_factory
 
     manager._filter_widget_attributes = Mock(return_value={})
     manager._configure_widget = Mock(side_effect=RuntimeError("configuration failed"))

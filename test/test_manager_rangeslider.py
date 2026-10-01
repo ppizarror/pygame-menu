@@ -59,7 +59,7 @@ def test_range_slider_creates_configures_appends_and_returns_widget(
     onreturn_cb = Mock()
     onselect_cb = Mock()
     rangeslider_id = "vol-slider"
-    value_format = lambda x: str(x)
+    value_format = str
     width = 200
 
     kwargs = {
