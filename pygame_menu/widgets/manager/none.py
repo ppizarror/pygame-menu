@@ -11,7 +11,6 @@ from __future__ import annotations
 __all__ = ["NoneWidgetManager"]
 
 from abc import ABC
-from typing import TYPE_CHECKING
 
 from pygame_menu.widgets.core.abstract_widget import AbstractWidgetManager
 from pygame_menu.widgets.widget.none import NoneWidget
