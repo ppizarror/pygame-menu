@@ -23,6 +23,7 @@ __all__ = [
 ]
 
 import copy
+import json
 from typing import TYPE_CHECKING, Any
 
 from pygame_menu._scrollarea import get_scrollbars_from_position
@@ -283,9 +284,95 @@ class Theme:
     :type widget_url_color: tuple, list, str, int, :py:class:`pygame.Color`
     """
 
+    __slots__ = (
+        "_disable_validation",
+        "background_color",
+        "border_color",
+        "border_width",
+        "cursor_color",
+        "cursor_selection_color",
+        "cursor_switch_ms",
+        "focus_background_color",
+        "fps",
+        "readonly_color",
+        "readonly_selected_color",
+        "scrollarea_outer_margin",
+        "scrollarea_position",
+        "scrollbar_color",
+        "scrollbar_cursor",
+        "scrollbar_shadow",
+        "scrollbar_shadow_color",
+        "scrollbar_shadow_offset",
+        "scrollbar_shadow_position",
+        "scrollbar_slider_color",
+        "scrollbar_slider_hover_color",
+        "scrollbar_slider_pad",
+        "scrollbar_thick",
+        "selection_color",
+        "surface_clear_color",
+        "title",
+        "title_background_color",
+        "title_bar_modify_scrollarea",
+        "title_bar_style",
+        "title_close_button",
+        "title_close_button_background_color",
+        "title_close_button_cursor",
+        "title_fixed",
+        "title_floating",
+        "title_font",
+        "title_font_antialias",
+        "title_font_color",
+        "title_font_shadow",
+        "title_font_shadow_color",
+        "title_font_shadow_offset",
+        "title_font_shadow_position",
+        "title_font_size",
+        "title_offset",
+        "title_updates_pygame_display",
+        "widget_alignment",
+        "widget_alignment_ignore_scrollbar_thickness",
+        "widget_background_color",
+        "widget_background_inflate",
+        "widget_background_inflate_to_selection",
+        "widget_border_color",
+        "widget_border_inflate",
+        "widget_border_position",
+        "widget_border_width",
+        "widget_box_arrow_color",
+        "widget_box_arrow_margin",
+        "widget_box_background_color",
+        "widget_box_border_color",
+        "widget_box_border_width",
+        "widget_box_inflate",
+        "widget_box_margin",
+        "widget_cursor",
+        "widget_font",
+        "widget_font_antialias",
+        "widget_font_background_color",
+        "widget_font_background_color_from_menu",
+        "widget_font_color",
+        "widget_font_shadow",
+        "widget_font_shadow_color",
+        "widget_font_shadow_offset",
+        "widget_font_shadow_position",
+        "widget_font_size",
+        "widget_margin",
+        "widget_offset",
+        "widget_padding",
+        "widget_selection_effect",
+        "widget_shadow_aa",
+        "widget_shadow_color",
+        "widget_shadow_radius",
+        "widget_shadow_type",
+        "widget_shadow_width",
+        "widget_tab_size",
+        "widget_url_color",
+    )
+
     _disable_validation: bool
     background_color: ColorType | BaseImage
-    border_color: ColorType | BaseImage
+    border_color: ColorType | BaseImage | None
+    border_width: int
     cursor_color: ColorType
     cursor_selection_color: ColorType
     cursor_switch_ms: NumberType
@@ -344,7 +431,7 @@ class Theme:
     widget_box_margin: Tuple2NumberType
     widget_cursor: CursorType  # type: ignore
     widget_font: FontType
-    widget_font_antialias: str
+    widget_font_antialias: bool
     widget_font_background_color: ColorType | None
     widget_font_background_color_from_menu: bool
     widget_font_color: ColorType
@@ -356,7 +443,7 @@ class Theme:
     widget_margin: Tuple2NumberType
     widget_offset: Tuple2NumberType
     widget_padding: PaddingType
-    widget_selection_effect: Selection
+    widget_selection_effect: Selection | None
     widget_shadow_aa: int
     widget_shadow_color: ColorType
     widget_shadow_radius: int
@@ -487,7 +574,7 @@ class Theme:
             kwargs, "widget_background_color", "color_image_none"
         )
         self.widget_background_inflate = self._get(
-            kwargs, "background_inflate", "tuple2int", (0, 0)
+            kwargs, "widget_background_inflate", "tuple2int", (0, 0)
         )
         self.widget_background_inflate_to_selection = self._get(
             kwargs, "widget_background_inflate_to_selection", bool, False
@@ -582,18 +669,9 @@ class Theme:
         # Test purpose only, if True disables any validation
         self._disable_validation = False
 
-    def validate(self) -> Theme:
-        """
-        Validate the values of the theme. If there's an invalid parameter throws an
-        ``AssertionError``.
-
-        This function also converts all lists to tuples. This is done because lists
-        are mutable.
-
-        :return: Self reference
-        """
-        if self._disable_validation:
-            return self
+    def _validate_types(self) -> None:
+        if self.widget_selection_effect is None:
+            self.widget_selection_effect = NoneSelection()
 
         # Boolean asserts
         assert isinstance(self.scrollbar_shadow, bool)
@@ -604,26 +682,6 @@ class Theme:
         assert isinstance(self.widget_font_antialias, bool)
         assert isinstance(self.widget_font_background_color_from_menu, bool)
         assert isinstance(self.widget_font_shadow, bool)
-
-        # Value type checks
-        assert_alignment(self.widget_alignment)
-        assert_cursor(self.scrollbar_cursor)
-        assert_cursor(self.title_close_button_cursor)
-        assert_cursor(self.widget_cursor)
-        assert_font(self.title_font)
-        assert_font(self.widget_font)
-        assert_position(self.scrollbar_shadow_position)
-        assert_position(self.title_font_shadow_position)
-        assert_position(self.widget_font_shadow_position)
-        assert_position_vector(self.widget_border_position)
-
-        assert _check_menubar_style(self.title_bar_style)
-        assert get_scrollbars_from_position(self.scrollarea_position) is not None
-
-        # Check selection effect if None
-        if self.widget_selection_effect is None:
-            self.widget_selection_effect = NoneSelection()
-
         assert isinstance(self.border_width, int)
         assert isinstance(self.cursor_switch_ms, NumberInstance)
         assert isinstance(self.fps, NumberInstance)
@@ -648,8 +706,7 @@ class Theme:
         assert isinstance(self.widget_shadow_width, int)
         assert isinstance(self.widget_tab_size, int)
 
-        # Format colors, this converts all color lists to tuples automatically,
-        # if it is an image, return the same object
+    def _validate_colors(self) -> None:
         self.background_color = self._format_color_opacity(self.background_color)
         self.border_color = self._format_color_opacity(self.border_color, none=True)
         self.cursor_color = self._format_color_opacity(self.cursor_color)
@@ -708,30 +765,45 @@ class Theme:
         self.widget_shadow_color = self._format_color_opacity(self.widget_shadow_color)
         self.widget_url_color = self._format_color_opacity(self.widget_url_color)
 
-        # List to tuple
-        self.scrollarea_outer_margin = self._vec_to_tuple(  # type: ignore
+    def _validate_vectors(self) -> None:
+        self.scrollarea_outer_margin = self._vec_to_tuple(
             self.scrollarea_outer_margin, 2, NumberInstance
         )
-        self.title_offset = self._vec_to_tuple(self.title_offset, 2, NumberInstance)  # type: ignore
-        self.widget_background_inflate = self._vec_to_tuple(  # type: ignore
+
+        self.title_offset = self._vec_to_tuple(self.title_offset, 2, NumberInstance)
+
+        self.widget_background_inflate = self._vec_to_tuple(
             self.widget_background_inflate, 2, int
         )
-        self.widget_border_inflate = self._vec_to_tuple(  # type: ignore
+
+        if isinstance(self.widget_border_position, VectorInstance):
+            self.widget_border_position = self._vec_to_tuple(
+                self.widget_border_position
+            )
+
+        self.widget_border_inflate = self._vec_to_tuple(
             self.widget_border_inflate, 2, int
         )
-        self.widget_box_arrow_margin = self._vec_to_tuple(  # type: ignore
+
+        self.widget_box_arrow_margin = self._vec_to_tuple(
             self.widget_box_arrow_margin, 3, int
         )
-        self.widget_box_inflate = self._vec_to_tuple(self.widget_box_inflate, 2, int)  # type: ignore
-        self.widget_box_margin = self._vec_to_tuple(  # type: ignore
+
+        self.widget_box_inflate = self._vec_to_tuple(self.widget_box_inflate, 2, int)
+
+        self.widget_box_margin = self._vec_to_tuple(
             self.widget_box_margin, 2, NumberInstance
         )
-        self.widget_margin = self._vec_to_tuple(self.widget_margin, 2, NumberInstance)  # type: ignore
+
+        self.widget_margin = self._vec_to_tuple(self.widget_margin, 2, NumberInstance)
+
         if isinstance(self.widget_padding, VectorInstance):
             self.widget_padding = self._vec_to_tuple(self.widget_padding)
+
             assert 2 <= len(self.widget_padding) <= 4, (
                 "widget padding tuple length must be 2, 3 or 4"
             )
+
             for p in self.widget_padding:
                 assert isinstance(p, NumberInstance), (
                     "each padding element must be numeric (integer or float)"
@@ -739,9 +811,23 @@ class Theme:
                 assert p >= 0, "all padding elements must be equal or greater than zero"
         else:
             assert self.widget_padding >= 0, "padding cannot be a negative number"
-        self.widget_offset = self._vec_to_tuple(self.widget_offset, 2, NumberInstance)  # type: ignore
 
-        # Check sizes
+        self.widget_offset = self._vec_to_tuple(self.widget_offset, 2, NumberInstance)
+
+    def _validate_ranges(self) -> None:
+        assert_alignment(self.widget_alignment)
+        assert_cursor(self.scrollbar_cursor)
+        assert_cursor(self.title_close_button_cursor)
+        assert_cursor(self.widget_cursor)
+        assert_font(self.title_font)
+        assert_font(self.widget_font)
+        assert_position(self.scrollbar_shadow_position)
+        assert_position(self.title_font_shadow_position)
+        assert_position(self.widget_font_shadow_position)
+        assert_position_vector(self.widget_border_position)
+        assert _check_menubar_style(self.title_bar_style)
+        assert get_scrollbars_from_position(self.scrollarea_position) is not None
+
         assert self.border_width >= 0, "border width must be equal or greater than zero"
         assert (
             self.scrollarea_outer_margin[0] >= 0
@@ -802,7 +888,92 @@ class Theme:
             "focus background color cannot be fully transparent, suggested opacity between 1 and 255"
         )
 
+    def validate(self) -> Theme:
+        """
+        Validate the values of the theme. If there's an invalid parameter throws an
+        ``AssertionError``.
+
+        This function also converts all lists to tuples. This is done because lists
+        are mutable.
+
+        :return: Self reference
+        """
+        if self._disable_validation:
+            return self
+
+        self._validate_types()
+        self._validate_colors()
+        self._validate_vectors()
+        self._validate_ranges()
         return self
+
+    @classmethod
+    def from_theme(cls, theme: Theme, **overrides: Any) -> Theme:
+        """Create a new theme inheriting from an existing theme with overrides."""
+        new_theme = theme.copy()
+        for k, v in overrides.items():
+            if not hasattr(new_theme, k):
+                raise ValueError(f"parameter Theme.{k} does not exist")
+            setattr(new_theme, k, v)
+        return new_theme.validate()
+
+    def to_dict(self) -> dict[str, Any]:
+        """Serialize theme attributes to a dictionary.
+
+        Notes:
+            - BaseImage fields are omitted
+            - Selection effect objects are omitted because they are not JSON serializable
+        """
+        d = {}
+
+        for slot in self.__slots__:
+            if slot == "_disable_validation":
+                continue
+
+            val = getattr(self, slot, None)
+
+            if isinstance(val, (BaseImage, Selection)):
+                continue
+
+            d[slot] = val
+
+        return d
+
+    def to_json(self) -> str:
+        """Serialize theme to a JSON string."""
+        return json.dumps(self.to_dict())
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> Theme:
+        """Create a Theme instance from a dictionary configuration."""
+        return cls(**data).validate()
+
+    @classmethod
+    def from_json(cls, json_str: str) -> Theme:
+        """Create a Theme instance from a JSON string."""
+        return cls.from_dict(json.loads(json_str))
+
+    def diff(self, other: Theme) -> dict[str, tuple[Any, Any]]:
+        """Return differing configuration values between two themes."""
+        differences = {}
+
+        for slot in self.__slots__:
+            if slot == "_disable_validation":
+                continue
+
+            val1 = getattr(self, slot, None)
+            val2 = getattr(other, slot, None)
+
+            # Compare selection effects by type rather than object identity
+            if slot == "widget_selection_effect":
+                if type(val1) != type(val2):
+                    differences[slot] = (val1, val2)
+                continue
+
+            if val1 != val2:
+                differences[slot] = (val1, val2)
+
+        return differences
 
     def set_background_color_opacity(self, opacity: float) -> Theme:
         """
@@ -826,8 +997,10 @@ class Theme:
 
     @staticmethod
     def _vec_to_tuple(
-        obj: tuple | list, check_length: int = 0, check_instance: type = Any
-    ) -> tuple:
+        obj: tuple[Any, ...] | list[Any],
+        check_length: int = 0,
+        check_instance: type[Any] = Any,
+    ) -> tuple[Any, ...]:
         """
         Return a tuple from a list or tuple object.
 
@@ -870,6 +1043,30 @@ class Theme:
         """
         return self.copy()
 
+    def __repr__(self) -> str:
+        """Return a clean representation showing only non-default values."""
+        non_defaults = {}
+
+        for slot in self.__slots__:
+            if slot == "_disable_validation":
+                continue
+
+            val = getattr(self, slot, None)
+            default_val = getattr(_THEME_DEFAULT_REFERENCE, slot, None)
+
+            # Compare selection effects by type rather than object identity
+            if slot == "widget_selection_effect":
+                if type(val) is not type(default_val):
+                    non_defaults[slot] = val
+                continue
+
+            if val != default_val:
+                non_defaults[slot] = val
+
+        args_repr = ", ".join(f"{k}={v!r}" for k, v in non_defaults.items())
+
+        return f"Theme({args_repr})"
+
     @staticmethod
     def _format_color_opacity(
         color: ColorInputType | BaseImage | None, none: bool = False
@@ -898,7 +1095,7 @@ class Theme:
             if len(color) == 4:
                 if isinstance(color, tuple):
                     return color
-                return tuple(color)  # type: ignore
+                return tuple(color)
             elif len(color) == 3:
                 color = color[0], color[1], color[2], 255
         else:
@@ -911,7 +1108,9 @@ class Theme:
     def _get(
         params: dict[str, Any],
         key: str,
-        allowed_types: type | str | list[type] | tuple[type, ...] | None = None,
+        allowed_types: (
+            type[Any] | str | list[type[Any]] | tuple[type[Any], ...] | None
+        ) = None,
         default: Any = None,
     ) -> Any:
         """
@@ -950,62 +1149,45 @@ class Theme:
             for val_type in allowed_types:
                 if val_type == "alignment":
                     assert_alignment(value)
-
                 elif (
                     val_type == callable
                     or val_type == "function"
                     or val_type == "callable"
                 ):
                     assert callable(value), "value must be callable type"
-
                 elif val_type == "color":
                     value = assert_color(value)
-
                 elif val_type == "color_image":
                     if not isinstance(value, BaseImage):
                         value = assert_color(value)
-
                 elif val_type == "color_image_none":
                     if not (value is None or isinstance(value, BaseImage)):
                         value = assert_color(value)
-
                 elif val_type == "color_none":
                     if value is not None:
                         value = assert_color(value)
-
                 elif val_type == "cursor":
                     assert_cursor(value)
-
                 elif val_type == "font":
                     assert_font(value)
-
                 elif val_type == "image":
                     assert isinstance(value, BaseImage), "value must be BaseImage type"
-
                 elif val_type == "none":
                     assert value is None
-
                 elif val_type == "position":
                     assert_position(value)
-
                 elif val_type == "position_vector":
                     assert_position_vector(value)
-
                 elif val_type == "type":
                     assert isinstance(value, type), "value is not type-class"
-
                 elif val_type == "tuple2":
                     assert_vector(value, 2)
-
                 elif val_type == "tuple2int":
                     assert_vector(value, 2, int)
-
                 elif val_type == "tuple3":
                     assert_vector(value, 3)
-
                 elif val_type == "tuple3int":
                     assert_vector(value, 3, int)
-
                 else:  # Unknown type
                     assert isinstance(val_type, type), (
                         f'allowed type "{val_type}" is not a type-class'
@@ -1021,6 +1203,8 @@ class Theme:
 
         return value
 
+
+_THEME_DEFAULT_REFERENCE = Theme()
 
 THEME_DEFAULT = Theme()
 
