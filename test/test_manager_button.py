@@ -14,11 +14,9 @@ import pytest
 import pygame_menu
 import pygame_menu.events as _events
 import pygame_menu.widgets.manager.button as button_module
-from pygame_menu.locals import CURSOR_HAND
-from pygame_menu.widgets.manager.button import ButtonManager
 
 
-class TestableButtonManager(ButtonManager):
+class TestableButtonManager(button_module.ButtonManager):
     __test__ = False  # Prevents pytest from collecting this as a test class
 
     def __init__(self, menu=None):
@@ -60,11 +58,6 @@ def manager():
 def setup_manager(manager):
     manager._menu = Mock()
     manager._verbose = True
-
-
-# ==========================================
-# 1. BUTTON CREATION & ACTIONS (HAPPY PATHS)
-# ==========================================
 
 
 def test_button_basic_creation(manager, monkeypatch):
@@ -147,11 +140,6 @@ def test_button_submenu_action(manager, monkeypatch):
     add_submenu_mock.assert_called_once_with(submenu_mock, widget_mock)
 
 
-# ==========================================
-# 2. BANNER CREATION
-# ==========================================
-
-
 def test_banner_creation_surface_and_baseimage(manager, monkeypatch):
     widget_mock = Mock(name="Button")
     widget_mock.resize.return_value = widget_mock
@@ -166,11 +154,6 @@ def test_banner_creation_surface_and_baseimage(manager, monkeypatch):
     assert banner_btn is widget_mock
     btn_factory.assert_called_once()
     widget_mock.resize.assert_called_once_with(100, 50)
-
-
-# ==========================================
-# 3. URL CREATION
-# ==========================================
 
 
 @patch("webbrowser.open")
@@ -199,11 +182,6 @@ def test_url_empty_title_uses_href(manager, monkeypatch):
 
     title_arg = btn_factory.call_args[0][0]
     assert title_arg == "http://localhost:8000"
-
-
-# ==========================================
-# 4. ERROR HANDLING & EDGE CASES
-# ==========================================
 
 
 def test_button_recursive_menu_raises_error(manager):

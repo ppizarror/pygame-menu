@@ -12,10 +12,9 @@ import pytest
 
 import pygame_menu.widgets.manager.textinput as textinput_module
 from pygame_menu.locals import INPUT_TEXT
-from pygame_menu.widgets.manager.textinput import TextInputManager
 
 
-class DummyTextInputManager(TextInputManager):
+class DummyTextInputManager(textinput_module.TextInputManager):
     def _add_submenu(self, *args, **kwargs):
         pass
 

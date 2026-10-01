@@ -11,10 +11,9 @@ from unittest.mock import Mock
 import pytest
 
 import pygame_menu.widgets.manager.toggleswitch as toggleswitch_module
-from pygame_menu.widgets.manager.toggleswitch import ToggleSwitchManager
 
 
-class DummyToggleSwitchManager(ToggleSwitchManager):
+class DummyToggleSwitchManager(toggleswitch_module.ToggleSwitchManager):
     def _add_submenu(self, *args, **kwargs):
         pass
 

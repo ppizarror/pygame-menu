@@ -11,10 +11,9 @@ from unittest.mock import Mock
 import pytest
 
 import pygame_menu.widgets.manager.colorinput as colorinput_module
-from pygame_menu.widgets.manager.colorinput import ColorInputManager
 
 
-class DummyColorInputManager(ColorInputManager):
+class DummyColorInputManager(colorinput_module.ColorInputManager):
     def _add_submenu(self, *args, **kwargs):
         pass
 

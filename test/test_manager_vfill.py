@@ -11,10 +11,9 @@ from unittest.mock import Mock
 import pytest
 
 import pygame_menu.widgets.manager.vfill as vfill_module
-from pygame_menu.widgets.manager.vfill import VFillManager
 
 
-class TestableVFillManager(VFillManager):
+class TestableVFillManager(vfill_module.VFillManager):
     def _add_submenu(self, *args, **kwargs):
         pass
 

@@ -11,10 +11,9 @@ from unittest.mock import Mock
 import pytest
 
 import pygame_menu.widgets.manager.table as table_module
-from pygame_menu.widgets.manager.table import TableManager
 
 
-class TestableTableManager(TableManager):
+class TestableTableManager(table_module.TableManager):
     def _add_submenu(self, *args, **kwargs):
         pass
 

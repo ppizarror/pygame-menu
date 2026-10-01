@@ -11,11 +11,10 @@ from unittest.mock import Mock
 import pytest
 
 import pygame_menu.widgets.manager.selector as selector_module
-from pygame_menu.widgets.manager.selector import SelectorManager
 from pygame_menu.widgets.widget.selector import SELECTOR_STYLE_CLASSIC
 
 
-class DummySelectorManager(SelectorManager):
+class DummySelectorManager(selector_module.SelectorManager):
     def _add_submenu(self, *args, **kwargs):
         pass
 

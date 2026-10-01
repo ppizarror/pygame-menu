@@ -11,10 +11,9 @@ from unittest.mock import Mock
 import pytest
 
 import pygame_menu.widgets.manager.none as none_module
-from pygame_menu.widgets.manager.none import NoneWidgetManager
 
 
-class TestableNoneWidgetManager(NoneWidgetManager):
+class TestableNoneWidgetManager(none_module.NoneWidgetManager):
     def _add_submenu(self, *args, **kwargs):
         pass
 

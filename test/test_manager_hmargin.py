@@ -11,10 +11,9 @@ from unittest.mock import Mock
 import pytest
 
 import pygame_menu.widgets.manager.hmargin as hmargin_module
-from pygame_menu.widgets.manager.hmargin import HMarginManager
 
 
-class TestableHMarginManager(HMarginManager):
+class TestableHMarginManager(hmargin_module.HMarginManager):
     def _add_submenu(self, *args, **kwargs):
         pass
 

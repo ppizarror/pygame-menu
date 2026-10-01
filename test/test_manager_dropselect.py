@@ -16,10 +16,9 @@ from pygame_menu.locals import (
     POSITION_SOUTHWEST,
     SCROLLAREA_POSITION_NONE,
 )
-from pygame_menu.widgets.manager.dropselect import DropSelectManager
 
 
-class TestableDropSelectManager(DropSelectManager):
+class TestableDropSelectManager(dropselect_module.DropSelectManager):
     __test__ = False  # Prevents pytest from collecting this as a test class
 
     def _add_submenu(self, *args, **kwargs):

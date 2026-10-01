@@ -6,7 +6,7 @@ TEST WIDGET - FRAME
 Test Frame widget.
 """
 
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
 
 import pytest
 
@@ -17,10 +17,9 @@ from pygame_menu.locals import (
     POSITION_SOUTHWEST,
     SCROLLAREA_POSITION_NONE,
 )
-from pygame_menu.widgets.manager.frame import FrameManager
 
 
-class TestableFrameManager(FrameManager):
+class TestableFrameManager(frame_module.FrameManager):
     __test__ = False  # Prevents pytest from collecting this as a test class
 
     def _add_submenu(self, *args, **kwargs):

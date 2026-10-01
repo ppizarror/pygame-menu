@@ -11,10 +11,9 @@ from unittest.mock import Mock, patch
 import pytest
 
 import pygame_menu.widgets.manager.label as label_module
-from pygame_menu.widgets.manager.label import LabelManager
 
 
-class TestableLabelManager(LabelManager):
+class TestableLabelManager(label_module.LabelManager):
     __test__ = False  # Prevents pytest from collecting this as a test class
 
     def _add_submenu(self, *args, **kwargs):

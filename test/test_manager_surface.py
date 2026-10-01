@@ -11,10 +11,9 @@ from unittest.mock import Mock
 import pytest
 
 import pygame_menu.widgets.manager.surface as surface_module
-from pygame_menu.widgets.manager.surface import SurfaceWidgetManager
 
 
-class TestableSurfaceWidgetManager(SurfaceWidgetManager):
+class TestableSurfaceWidgetManager(surface_module.SurfaceWidgetManager):
     __test__ = False  # Prevents pytest from trying to collect this as a test class
 
     def _add_submenu(self, *args, **kwargs):

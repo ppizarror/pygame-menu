@@ -14,10 +14,9 @@ import pygame
 import pytest
 
 import pygame_menu.widgets.manager.image as image_module
-from pygame_menu.widgets.manager.image import ImageManager
 
 
-class TestableImageManager(ImageManager):
+class TestableImageManager(image_module.ImageManager):
     def _add_submenu(self, *args, **kwargs):
         pass
 

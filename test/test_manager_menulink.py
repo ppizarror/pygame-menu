@@ -11,7 +11,6 @@ from unittest.mock import Mock
 import pytest
 
 import pygame_menu.widgets.manager.menulink as menulink_module
-from pygame_menu.widgets.manager.menulink import MenuLinkManager
 
 
 class FakeMenu:
@@ -27,7 +26,7 @@ class FakeMenu:
         return self.title
 
 
-class TestableMenuLinkManager(MenuLinkManager):
+class TestableMenuLinkManager(menulink_module.MenuLinkManager):
     def _add_submenu(self, *args, **kwargs):
         pass
 

@@ -15,10 +15,9 @@ from pygame_menu.locals import (
     ORIENTATION_HORIZONTAL,
     ORIENTATION_VERTICAL,
 )
-from pygame_menu.widgets.manager.progressbar import ProgressBarManager
 
 
-class DummyProgressBarManager(ProgressBarManager):
+class DummyProgressBarManager(progressbar_module.ProgressBarManager):
     def _add_submenu(self, *args, **kwargs):
         pass
 

@@ -11,10 +11,9 @@ from unittest.mock import Mock
 import pytest
 
 import pygame_menu.widgets.manager.vmargin as vmargin_module
-from pygame_menu.widgets.manager.vmargin import VMarginManager
 
 
-class TestableVMarginManager(VMarginManager):
+class TestableVMarginManager(vmargin_module.VMarginManager):
     def _add_submenu(self, *args, **kwargs):
         pass
 
