@@ -242,6 +242,36 @@ def test_dropselect_mouse_and_touch_toggle(generic_menu, drop_items):
         assert drop.active
 
 
+def test_dropselect_mouse_selection_applies_value(generic_menu):
+    """Mouse selection runs both the change and apply callbacks."""
+    callbacks = []
+
+    def record_change(value, option_value):
+        callbacks.append(("change", value, option_value))
+
+    def record_apply(value, option_value):
+        callbacks.append(("apply", value, option_value))
+
+    drop = generic_menu.add.dropselect(
+        "dropsel",
+        [("First", "first"), ("Second", "second")],
+        default=0,
+        onchange=record_change,
+        onreturn=record_apply,
+    )
+    drop._toggle_drop()
+
+    assert drop.update(
+        PygameEventUtils.middle_rect_click(drop._option_buttons[1], button=1)
+    )
+
+    assert callbacks == [
+        ("change", (("Second", "second"), 1), "second"),
+        ("apply", (("Second", "second"), 1), "second"),
+    ]
+    assert not drop.active
+
+
 def test_dropselect_focus_geometry(generic_menu, drop_items):
     """Test focus mask geometry generated for DropSelect widgets."""
     menu = generic_menu
