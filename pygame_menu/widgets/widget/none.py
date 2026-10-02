@@ -8,22 +8,19 @@ None widget definition.
 
 from __future__ import annotations
 
-__all__ = ["NoneWidget", "NoneWidgetManager"]
+__all__ = ["NoneWidget"]
 
-from abc import ABC
 from typing import TYPE_CHECKING, Any
 
 import pygame
 
 from pygame_menu.utils import make_surface
 from pygame_menu.widgets.core.widget import (
-    AbstractWidgetManager,
     Widget,
     WidgetTransformationNotImplemented,
 )
 
 if TYPE_CHECKING:
-    import pygame_menu
     from pygame_menu._types import EventVectorType, NumberType
 
 
@@ -177,37 +174,3 @@ class NoneWidget(Widget):
     def update(self, events: EventVectorType) -> bool:
         self.apply_update_callbacks(events)
         return False
-
-
-class NoneWidgetManager(AbstractWidgetManager, ABC):
-    """
-    NoneWidget manager.
-    """
-
-    def none_widget(self, widget_id: str = "") -> pygame_menu.widgets.NoneWidget:
-        """
-        Add a none widget to the Menu.
-
-        .. note::
-
-            This widget is useful to fill column/rows layout without compromising
-            any visuals. Also, it can be used to store information or even to add
-            a ``draw_callback`` function to it for being called on each Menu draw.
-
-        .. note::
-
-            This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behavior apply to
-            :py:meth:`pygame_menu.menu.Menu.get_current` object.
-
-        :param widget_id: Widget ID
-        :return: Widget object
-        :rtype: :py:class:`pygame_menu.widgets.NoneWidget`
-        """
-        attributes = self._filter_widget_attributes({})
-
-        widget = NoneWidget(widget_id=widget_id)
-        self._configure_widget(widget=widget, **attributes)
-        self._append_widget(widget)
-
-        return widget
