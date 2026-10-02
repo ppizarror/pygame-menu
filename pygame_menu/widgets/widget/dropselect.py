@@ -717,6 +717,7 @@ class DropSelect(Widget):
         if self._index != -1:
             if self._index != prev_index:
                 self.change(*self._items[self._index][1:])
+        if self._index != -1:
             self.apply(*self._items[self._index][1:])
         if self._close_on_apply:
             self.active = False

@@ -271,6 +271,42 @@ def test_dropselect_mouse_selection_applies_value(generic_menu):
     ]
     assert not drop.active
 
+    drop._toggle_drop()
+    assert drop.update(
+        PygameEventUtils.middle_rect_click(drop._option_buttons[1], button=1)
+    )
+    assert callbacks[-1] == ("apply", (("Second", "second"), 1), "second")
+    assert len(callbacks) == 3
+
+
+def test_dropselect_mouse_change_clearing_items_skips_apply(generic_menu):
+    """Clearing items during onchange skips the now-invalid mouse apply."""
+    callbacks = []
+
+    def clear_items(value, option_value):
+        callbacks.append(("change", value, option_value))
+        drop.update_items([])
+
+    def record_apply(value, option_value):
+        callbacks.append(("apply", value, option_value))
+
+    drop = generic_menu.add.dropselect(
+        "dropsel",
+        [("First", "first"), ("Second", "second")],
+        default=0,
+        onchange=clear_items,
+        onreturn=record_apply,
+    )
+    drop._toggle_drop()
+
+    assert drop.update(
+        PygameEventUtils.middle_rect_click(drop._option_buttons[1], button=1)
+    )
+
+    assert callbacks == [("change", (("Second", "second"), 1), "second")]
+    assert drop.get_items() == []
+    assert drop.get_index() == -1
+
 
 def test_dropselect_focus_geometry(generic_menu, drop_items):
     """Test focus mask geometry generated for DropSelect widgets."""
