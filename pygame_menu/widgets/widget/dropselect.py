@@ -710,9 +710,8 @@ class DropSelect(Widget):
         btn.set_attribute("ignore_scroll_to_widget")
         prev_index = self._index
         self.set_value(index)
-        if self._index != -1:
-            if self._index != prev_index:
-                self.change(*self._items[self._index][1:])
+        if self._index != -1 and self._index != prev_index:
+            self.change(*self._items[self._index][1:])
         if self._index != -1:
             self.apply(*self._items[self._index][1:])
         if self._close_on_apply:
