@@ -27,25 +27,25 @@ from pygame_menu.utils import (
 # Import widgets
 from pygame_menu.widgets.core.selection import Selection
 from pygame_menu.widgets.core.widget import Widget, check_widget_mouseleave
-from pygame_menu.widgets.widget.button import ButtonManager
-from pygame_menu.widgets.widget.colorinput import ColorInputManager
-from pygame_menu.widgets.widget.dropselect import DropSelectManager
-from pygame_menu.widgets.widget.dropselect_multiple import DropSelectMultipleManager
-from pygame_menu.widgets.widget.frame import FrameManager
-from pygame_menu.widgets.widget.hmargin import HMarginManager
-from pygame_menu.widgets.widget.image import ImageManager
-from pygame_menu.widgets.widget.label import LabelManager
-from pygame_menu.widgets.widget.menulink import MenuLinkManager
-from pygame_menu.widgets.widget.none import NoneWidgetManager
-from pygame_menu.widgets.widget.progressbar import ProgressBarManager
-from pygame_menu.widgets.widget.rangeslider import RangeSliderManager
-from pygame_menu.widgets.widget.selector import SelectorManager
-from pygame_menu.widgets.widget.surface import SurfaceWidgetManager
-from pygame_menu.widgets.widget.table import TableManager
-from pygame_menu.widgets.widget.textinput import TextInputManager
-from pygame_menu.widgets.widget.toggleswitch import ToggleSwitchManager
-from pygame_menu.widgets.widget.vfill import VFillManager
-from pygame_menu.widgets.widget.vmargin import VMarginManager
+from pygame_menu.widgets.manager.button import ButtonManager
+from pygame_menu.widgets.manager.colorinput import ColorInputManager
+from pygame_menu.widgets.manager.dropselect import DropSelectManager
+from pygame_menu.widgets.manager.dropselect_multiple import DropSelectMultipleManager
+from pygame_menu.widgets.manager.frame import FrameManager
+from pygame_menu.widgets.manager.hmargin import HMarginManager
+from pygame_menu.widgets.manager.image import ImageManager
+from pygame_menu.widgets.manager.label import LabelManager
+from pygame_menu.widgets.manager.menulink import MenuLinkManager
+from pygame_menu.widgets.manager.none import NoneWidgetManager
+from pygame_menu.widgets.manager.progressbar import ProgressBarManager
+from pygame_menu.widgets.manager.rangeslider import RangeSliderManager
+from pygame_menu.widgets.manager.selector import SelectorManager
+from pygame_menu.widgets.manager.surface import SurfaceWidgetManager
+from pygame_menu.widgets.manager.table import TableManager
+from pygame_menu.widgets.manager.textinput import TextInputManager
+from pygame_menu.widgets.manager.toggleswitch import ToggleSwitchManager
+from pygame_menu.widgets.manager.vfill import VFillManager
+from pygame_menu.widgets.manager.vmargin import VMarginManager
 
 
 # noinspection PyProtectedMember
