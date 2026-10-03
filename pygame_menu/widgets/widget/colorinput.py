@@ -367,7 +367,7 @@ class ColorInput(TextInput):
             color = self._input_string.split(self._separator)
             if len(color) == 3 and color[0] != "" and color[1] != "" and color[2] != "":
                 r, g, b = int(color[0]), int(color[1]), int(color[2])
-                if 0 <= r <= 255 and 0 <= g <= 255 and 0 <= g <= 255:
+                if 0 <= r <= 255 and 0 <= g <= 255 and 0 <= b <= 255:
                     return r, g, b
 
         elif self._color_type == COLORINPUT_TYPE_HEX:
@@ -463,190 +463,204 @@ class ColorInput(TextInput):
             self._readonly_check_mouseover(events)
             return False
 
+        handlers = {
+            COLORINPUT_TYPE_RGB: self._update_rgb,
+            COLORINPUT_TYPE_HEX: self._update_hex,
+        }
+        handler = handlers.get(self._color_type)
+        if handler:
+            return handler(events)
+        return False
+
+    def _update_rgb(self, events: EventVectorType) -> bool:
         input_str = self._input_string
         cursor_pos = self._cursor_position
-        disable_remove_separator = True
-
         key = ""  # Pressed key
 
-        if self._color_type == COLORINPUT_TYPE_RGB:
-            for event in events:
-                # User writes
-                if event.type == pygame.KEYDOWN and self._keyboard_enabled:
-                    # Check if any key is pressed
-                    if (
-                        self._ignores_keyboard_nonphysical()
-                        and not check_key_pressed_valid(event)
-                    ):
-                        continue
+        for event in events:
+            # User writes
+            if event.type == pygame.KEYDOWN and self._keyboard_enabled:
+                # Check if any key is pressed
+                if (
+                    self._ignores_keyboard_nonphysical()
+                    and not check_key_pressed_valid(event)
+                ):
+                    continue
 
-                    elif (
-                        disable_remove_separator
-                        and len(input_str) > 0
-                        and len(input_str) > cursor_pos
-                        and (
-                            f"{self._separator}{self._separator}" not in input_str
-                            or input_str[cursor_pos] == self._separator
-                            and len(input_str) == cursor_pos + 1
-                        )
-                    ):
-                        # Backspace button, delete text from right
-                        if self._ctrl.back(event, self):
-                            if (
-                                len(input_str) >= 1
-                                and input_str[cursor_pos - 1] == self._separator
-                            ):
-                                return True
+                if self._handle_rgb_backspace_delete(event, input_str, cursor_pos):
+                    return True
 
-                        # Delete button, delete text from left
-                        elif self._ctrl.delete(event, self):
-                            if input_str[cursor_pos] == self._separator:
-                                return True
+                # Verify only on user key input, the rest of events are checked
+                # by TextInput on super call
+                key = str(event.unicode)
+                if key in self._valid_chars:
+                    # Cannot be separator at first
+                    if not input_str and key == self._separator:
+                        return False
 
-                    # Verify only on user key input, the rest of events are checked
-                    # by TextInput on super call
-                    key = str(event.unicode)
-                    if key in self._valid_chars:
-                        new_string = (
-                            self._input_string[: self._cursor_position]
-                            + key
-                            + self._input_string[self._cursor_position :]
-                        )
+                    if not self._is_rgb_key_valid(key, cursor_pos, input_str):
+                        return False
 
-                        # Cannot be separator at first
-                        if not input_str and key == self._separator:
-                            return False
-
-                        elif len(input_str) > 1:
-                            # Check separators
-                            if key == self._separator:
-                                # If more than 2 separators
-                                total_separator = 0
-                                for ch in input_str:
-                                    if ch == self._separator:
-                                        total_separator += 1
-                                if total_separator >= 2:
-                                    return False
-
-                            # Check the number between the current separators,
-                            # this number must be between 0-255
-                            if key != self._separator:
-                                pos_before = 0
-                                pos_after = 0
-                                for i in range(cursor_pos):
-                                    if (
-                                        new_string[cursor_pos - i - 1]
-                                        == self._separator
-                                    ):
-                                        pos_before = cursor_pos - i
-                                        break
-                                for i in range(len(new_string) - cursor_pos):
-                                    if new_string[cursor_pos + i] == self._separator:
-                                        pos_after = cursor_pos + i
-                                        break
-                                if pos_after == 0:
-                                    pos_after = len(new_string)
-                                num = new_string[pos_before:pos_after].replace(",", "")
-                                if num == "":
-                                    num = "0"
-
-                                if int(num) > 255:  # Number exceeds 25X
-                                    return False
-                                # User adds 0 at left, example: 12 -> 012
-                                elif num != str(int(num)) and key == "0":
-                                    return False
-                                elif len(num) > 3:  # Number like 0XXX
-                                    return False
-
-        elif self._color_type == COLORINPUT_TYPE_HEX:
-            self._format_hex()
-
-            for event in events:
-                # User writes
-                if event.type == pygame.KEYDOWN and self._keyboard_enabled:
-                    # Check if any key is pressed
-                    if (
-                        self._ignores_keyboard_nonphysical()
-                        and not check_key_pressed_valid(event)
-                    ):
-                        continue
-
-                    # Backspace button, delete text from right
-                    elif self._ctrl.back(event, self):
-                        if cursor_pos == 1:
-                            return True
-
-                    # Delete button, delete text from left
-                    elif self._ctrl.delete(event, self):
-                        if cursor_pos == 0:
-                            return True
-
-                    # Verify only on user key input, the rest of events are checked
-                    # by TextInput on super call
-                    key = str(event.unicode)
-                    if key in self._valid_chars:
-                        if key == "#":
-                            return True
-                        elif cursor_pos == 0:
-                            return True
-
-        # Update
         updated = super().update(events)
+        self._post_process_rgb(input_str, cursor_pos, key)
+        return updated
 
-        # After
-        if self._color_type == COLORINPUT_TYPE_RGB:
-            total_separator = 0
-            for ch in input_str:
-                if ch == self._separator:
-                    total_separator += 1
+    def _update_hex(self, events: EventVectorType) -> bool:
+        self._format_hex()
 
-            # Adds auto separator
+        for event in events:
+            # User writes
+            if event.type == pygame.KEYDOWN and self._keyboard_enabled:
+                # Check if any key is pressed
+                if (
+                    self._ignores_keyboard_nonphysical()
+                    and not check_key_pressed_valid(event)
+                ):
+                    continue
+
+                # Backspace button, delete text from right
+                elif self._ctrl.back(event, self) and self._cursor_position == 1:
+                    return True
+
+                # Delete button, delete text from left
+                elif self._ctrl.delete(event, self) and self._cursor_position == 0:
+                    return True
+
+                # Verify only on user key input, the rest of events are checked
+                # by TextInput on super call
+                key = str(event.unicode)
+                if key in self._valid_chars:
+                    if key == "#":
+                        return True
+                    elif self._cursor_position == 0:
+                        return True
+
+        return super().update(events)
+
+    def _handle_rgb_backspace_delete(self, event: pygame.Event, input_str: str, cursor_pos: int) -> bool:
+        if (
+            len(input_str) > 0
+            and len(input_str) > cursor_pos
+            and (
+                f"{self._separator}{self._separator}" not in input_str
+                or input_str[cursor_pos] == self._separator
+                and len(input_str) == cursor_pos + 1
+            )
+        ):
+            # Backspace button, delete text from right
+            if self._ctrl.back(event, self):
+                if (
+                    len(input_str) >= 1
+                    and input_str[cursor_pos - 1] == self._separator
+                ):
+                    return True
+
+            # Delete button, delete text from left
+            elif self._ctrl.delete(event, self):
+                if input_str[cursor_pos] == self._separator:
+                    return True
+        return False
+
+    def _is_rgb_key_valid(self, key: str, cursor_pos: int, input_str: str) -> bool:
+        new_string = (
+            input_str[:cursor_pos]
+            + key
+            + input_str[cursor_pos:]
+        )
+
+        if len(input_str) > 1:
+            # Check separators
+            if key == self._separator:
+                # If more than 2 separators
+                total_separator = 0
+                for ch in input_str:
+                    if ch == self._separator:
+                        total_separator += 1
+                if total_separator >= 2:
+                    return False
+
+            # Check the number between the current separators,
+            # this number must be between 0-255
+            if key != self._separator:
+                pos_before = 0
+                pos_after = 0
+                for i in range(cursor_pos):
+                    if (
+                        new_string[cursor_pos - i - 1]
+                        == self._separator
+                    ):
+                        pos_before = cursor_pos - i
+                        break
+                for i in range(len(new_string) - cursor_pos):
+                    if new_string[cursor_pos + i] == self._separator:
+                        pos_after = cursor_pos + i
+                        break
+                if pos_after == 0:
+                    pos_after = len(new_string)
+                num = new_string[pos_before:pos_after].replace(self._separator, "")
+                if num == "":
+                    num = "0"
+
+                if int(num) > 255:  # Number exceeds 25X
+                    return False
+                # User adds 0 at left, example: 12 -> 012
+                elif num != str(int(num)) and key == "0":
+                    return False
+                elif len(num) > 3:  # Number like 0XXX
+                    return False
+        return True
+
+    def _post_process_rgb(self, original_input: str, original_cursor: int, key: str) -> None:
+        total_separator = 0
+        for ch in self._input_string:
+            if ch == self._separator:
+                total_separator += 1
+
+        # Adds auto separator
+        if (
+            key == "0"
+            and len(self._input_string) == self._cursor_position
+            and total_separator < 2
+            and (
+                len(self._input_string) == 1
+                or len(self._input_string) > 2
+                and self._input_string[self._cursor_position - 2] == self._separator
+            )
+        ):
+            self._push_key_input(
+                self._separator, sounds=False
+            )  # This calls .onchange()
+
+        # Check number is valid (fix) because sometimes the user can type
+        # too fast and avoid analysis of the text
+        colors = self._input_string.split(self._separator)
+        for c in colors:
+            if len(c) > 0 and (int(c) > 255 or int(c) < 0):
+                self._input_string = original_input
+                self._cursor_position = original_cursor
+                break
+
+        if len(colors) == 3:
+            self._auto_separator_pos = [0, 1]
+
+        # Add an auto separator if the number can't continue growing and the cursor
+        # is at the end of the line
+        if total_separator < 2 and len(self._input_string) == self._cursor_position:
+            auto_pos = len(colors) - 1
+            last_num = colors[auto_pos]
             if (
-                key == "0"
-                and len(self._input_string) == self._cursor_position
-                and total_separator < 2
-                and (
-                    len(self._input_string) == 1
-                    or len(self._input_string) > 2
-                    and self._input_string[self._cursor_position - 2] == self._separator
-                )
-            ):
+                (len(last_num) == 2 and int(last_num) > 25)
+                or (len(last_num) == 3 and int(last_num) <= 255)
+            ) and auto_pos not in self._auto_separator_pos:
                 self._push_key_input(
                     self._separator, sounds=False
                 )  # This calls .onchange()
+                self._auto_separator_pos.append(auto_pos)
 
-            # Check number is valid (fix) because sometimes the user can type
-            # too fast and avoid analysis of the text
-            colors = self._input_string.split(self._separator)
-            for c in colors:
-                if len(c) > 0 and (int(c) > 255 or int(c) < 0):
-                    self._input_string = input_str
-                    self._cursor_position = cursor_pos
-                    break
-
-            if len(colors) == 3:
-                self._auto_separator_pos = [0, 1]
-
-            # Add an auto separator if the number can't continue growing and the cursor
-            # is at the end of the line
-            if total_separator < 2 and len(self._input_string) == self._cursor_position:
-                auto_pos = len(colors) - 1
-                last_num = colors[auto_pos]
-                if (
-                    (len(last_num) == 2 and int(last_num) > 25)
-                    or (len(last_num) == 3 and int(last_num) <= 255)
-                ) and auto_pos not in self._auto_separator_pos:
-                    self._push_key_input(
-                        self._separator, sounds=False
-                    )  # This calls .onchange()
-                    self._auto_separator_pos.append(auto_pos)
-
-            # If the user cleared all the string, reset auto separator
-            if total_separator == 0 and (
-                len(self._input_string) < 2
-                or len(self._input_string) == 2
-                and int(colors[0]) <= 25
-            ):
-                self._auto_separator_pos.clear()
-
-        return updated
+        # If the user cleared all the string, reset auto separator
+        if total_separator == 0 and (
+            len(self._input_string) < 2
+            or len(self._input_string) == 2
+            and int(colors[0]) <= 25
+        ):
+            self._auto_separator_pos.clear()
