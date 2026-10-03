@@ -230,3 +230,211 @@ def test_clock(menu):
         menu.add.clock(title_format="bad")
 
     assert isinstance(clock, Label)
+
+
+def test_wordwrap_long_single_word(menu):
+    """Test wrapping of a word larger than the container width."""
+    label = menu.add.label(
+        "supercalifragilisticexpialidocious" * 5,
+        wordwrap=True,
+    )
+
+    assert label.get_lines()
+    assert label.get_width() > 0
+
+
+def test_wordwrap_overflow(menu):
+    """Test that wrapped text can produce overflow lines."""
+    text = (
+        "lorem ipsum dolor sit amet this was very important nice "
+        "a test is required lorem ipsum dolor sit amet this was "
+        "very important nice a test is required"
+    )
+
+    label = menu.add.label(
+        text,
+        wordwrap=True,
+        max_nlines=1,
+    )
+
+    assert label.has_overflow()
+    assert label.get_overflow_lines()
+
+
+def test_wordwrap_empty(menu):
+    """Test empty wrapped label."""
+    label = menu.add.label("", wordwrap=True)
+
+    assert label.get_lines() == [""]
+    assert label.get_line_count() == 1
+    assert not label.has_overflow()
+    assert label.get_overflow_count() == 0
+
+
+def test_wordwrap_newlines_only(menu):
+    """Test labels containing only newlines."""
+    label = menu.add.label(
+        "\n\n\n",
+        wordwrap=True,
+    )
+
+    assert label.get_lines()
+    assert label.get_line_count() == len(label.get_lines())
+
+
+def test_wordwrap_tabs(menu):
+    """Test tab replacement."""
+    label = menu.add.label(
+        "hello\tworld\ttest",
+        wordwrap=True,
+    )
+
+    assert label.get_lines()
+
+
+def test_remove_underline_twice(menu):
+    """Removing underline twice should be safe."""
+    label = menu.add.label("test")
+
+    label.add_underline((0, 0, 0), 1, 1)
+    label.remove_underline()
+    label.remove_underline()
+
+    assert label._decorator._total_decor() == 0
+
+
+def test_generator_invalid_type(menu):
+    """Generator must return a string."""
+    label = menu.add.label("test")
+
+    label.set_title_generator(lambda: 123)
+
+    with pytest.raises(AssertionError):
+        label.update([])
+
+
+def test_generator_removed_stops_updates(menu):
+    """Removing the generator should stop title updates."""
+    label = menu.add.label("test")
+
+    label.set_title_generator(lambda: "dynamic")
+    label.update([])
+
+    label.set_title_generator(None)
+    label.set_title("fixed")
+    label.update([])
+
+    assert label.get_title() == "fixed"
+
+
+def test_standalone_label():
+    """Test a label without a menu."""
+    label = Label("hello")
+
+    label.render()
+
+    assert label.get_title() == "hello"
+
+
+def test_label_split_one_char(menu):
+    """Test aggressive label splitting."""
+    labels = menu.add.label(
+        "abcdef",
+        max_char=1,
+    )
+
+    assert len(labels) == 6
+
+
+def test_unicode_text(menu):
+    """Test unicode rendering."""
+    label = menu.add.label(
+        "你好世界 Καλημέρα Привет 😀"
+    )
+
+    assert label.get_title() == "你好世界 Καλημέρα Привет 😀"
+
+
+def test_label_helpers(menu):
+    """Test label helper methods."""
+    label = menu.add.label("hello")
+
+    assert not label.is_empty()
+
+    returned = label.clear()
+
+    assert returned is label
+    assert label.get_title() == ""
+    assert label.is_empty()
+
+
+def test_clear_resets_overflow(menu):
+    """Clearing a label removes its displayed and overflow text."""
+    label = menu.add.label(
+        "lorem ipsum dolor sit amet this was very important nice "
+        "a test is required",
+        wordwrap=True,
+        max_nlines=1,
+    )
+
+    assert label.has_overflow()
+
+    returned = label.clear()
+
+    assert returned is label
+    assert label.is_empty()
+    assert label.get_lines() == [""]
+    assert label.get_line_count() == 1
+    assert not label.has_overflow()
+    assert label.get_overflow_count() == 0
+
+
+def test_label_get_line_count(menu):
+    """Test the line count helper."""
+    label = menu.add.label("hello")
+
+    assert label.get_line_count() == 1
+    assert label.get_line_count() == len(label.get_lines())
+
+    label = menu.add.label(
+        "lorem ipsum dolor sit amet this is a test",
+        wordwrap=True,
+    )
+
+    assert label.get_line_count() > 0
+    assert label.get_line_count() == len(label.get_lines())
+
+
+def test_label_overflow_helpers(menu):
+    """Test overflow helper methods."""
+    text = (
+        "lorem ipsum dolor sit amet this was very important nice "
+        "a test is required lorem ipsum dolor sit amet this was "
+        "very important nice a test is required"
+    )
+
+    label = menu.add.label(
+        text,
+        wordwrap=True,
+        max_nlines=3,
+    )
+
+    assert label.has_overflow()
+    assert label.get_overflow_lines()
+    assert label.get_overflow_count() > 0
+    assert label.get_overflow_count() == len(
+        label.get_overflow_lines()
+    )
+
+
+def test_label_without_overflow(menu):
+    """Test helper methods when all lines fit."""
+    label = menu.add.label(
+        "short text",
+        wordwrap=True,
+        max_nlines=3,
+    )
+
+    assert not label.has_overflow()
+    assert label.get_overflow_lines() == []
+    assert label.get_overflow_count() == 0

@@ -6,6 +6,7 @@ TEST THEME
 Test theme.
 """
 
+import json
 from pathlib import Path
 
 import pytest
@@ -200,6 +201,7 @@ def test_get_misc(example_image):
 
     class Test:
         """Class to test."""
+
         pass
 
     def dummy():
@@ -304,3 +306,206 @@ def test_get_invalid_cases():
 
     with pytest.raises(AssertionError):
         t._get({}, "", int, 4.4)
+
+
+def test_from_theme():
+    """Test theme inheritance and overrides."""
+    parent = pygame_menu.themes.THEME_DARK
+
+    child = pygame_menu.themes.Theme.from_theme(
+        parent,
+        widget_font_size=123,
+    )
+
+    assert child.widget_font_size == 123
+    assert parent.widget_font_size != 123
+    assert child.background_color == parent.background_color
+
+
+def test_from_theme_invalid_kwarg():
+    """Test invalid overrides in from_theme."""
+    with pytest.raises(ValueError):
+        pygame_menu.themes.Theme.from_theme(
+            pygame_menu.themes.THEME_DEFAULT,
+            invalid_attribute=True,
+        )
+
+
+def test_diff_equal_themes():
+    """Test diff between equal themes."""
+    t1 = pygame_menu.themes.Theme()
+    t2 = t1.copy()
+
+    assert t1.diff(t2) == {}
+
+
+def test_diff_different_themes():
+    """Test diff between different themes."""
+    t1 = pygame_menu.themes.Theme()
+    t2 = t1.copy()
+
+    t2.widget_font_size = 999
+
+    diff = t1.diff(t2)
+
+    assert len(diff) == 1
+    assert "widget_font_size" in diff
+    assert diff["widget_font_size"] == (
+        t1.widget_font_size,
+        999,
+    )
+
+
+def test_to_dict():
+    """Test dictionary serialization."""
+    theme = pygame_menu.themes.Theme(
+        widget_font_size=123,
+        title_font_size=456,
+    )
+
+    data = theme.to_dict()
+
+    assert data["widget_font_size"] == 123
+    assert data["title_font_size"] == 456
+    assert "_disable_validation" not in data
+
+
+def test_from_dict():
+    """Test dictionary deserialization."""
+    theme = pygame_menu.themes.Theme(
+        widget_font_size=321,
+        title_font_size=654,
+    )
+
+    restored = pygame_menu.themes.Theme.from_dict(theme.to_dict())
+
+    diff = restored.diff(theme)
+    diff.pop("widget_selection_effect", None)
+    assert diff == {}
+
+
+def test_json_roundtrip():
+    """Test json serialization roundtrip."""
+    theme = pygame_menu.themes.Theme(
+        widget_font_size=123,
+        title_font_size=456,
+    )
+
+    restored = pygame_menu.themes.Theme.from_json(theme.to_json())
+
+    diff = restored.diff(theme)
+    diff.pop("widget_selection_effect", None)
+    assert diff == {}
+
+
+def test_to_dict_skips_baseimage(example_image):
+    """Test BaseImage fields are omitted."""
+    theme = pygame_menu.themes.Theme()
+    theme.background_color = example_image
+
+    data = theme.to_dict()
+
+    assert "background_color" not in data
+
+
+def test_repr():
+    """Test repr contains modified values."""
+    theme = pygame_menu.themes.Theme(
+        widget_font_size=999,
+    )
+
+    text = repr(theme)
+
+    assert "widget_font_size" in text
+    assert "999" in text
+
+
+def test_repr_default_theme():
+    """Test repr of default theme."""
+    theme = pygame_menu.themes.Theme()
+
+    assert repr(theme).startswith("Theme(")
+
+
+def test_selection_effect_none_normalization():
+    """Test None selection effect normalization."""
+    theme = pygame_menu.themes.Theme()
+
+    theme.widget_selection_effect = None
+
+    theme.validate()
+
+    assert isinstance(
+        theme.widget_selection_effect,
+        pygame_menu.widgets.core.Selection,
+    )
+
+
+def test_slots_prevent_unknown_attributes():
+    """Test __slots__ prevents dynamic attributes."""
+    theme = pygame_menu.themes.Theme()
+
+    with pytest.raises(AttributeError):
+        theme.this_attribute_does_not_exist = True
+
+
+def test_copy_independence():
+    """Test copied themes are independent."""
+    t1 = pygame_menu.themes.Theme()
+    t2 = t1.copy()
+
+    t2.widget_font_size = 999
+
+    assert t1.widget_font_size != t2.widget_font_size
+
+
+def test_dict_roundtrip_preserves_configuration():
+    """Roundtrip through dict should preserve equality."""
+    theme = pygame_menu.themes.THEME_BLUE.copy()
+
+    restored = pygame_menu.themes.Theme.from_dict(theme.to_dict())
+
+    diff = restored.diff(theme)
+    diff.pop("widget_selection_effect", None)
+    assert diff == {}
+
+
+def test_json_roundtrip_preserves_configuration():
+    """Roundtrip through json should preserve equality."""
+    theme = pygame_menu.themes.THEME_GREEN.copy()
+
+    restored = pygame_menu.themes.Theme.from_json(theme.to_json())
+
+    diff = restored.diff(theme)
+    diff.pop("widget_selection_effect", None)
+    assert diff == {}
+
+
+def test_from_json_invalid():
+    """Test invalid json input."""
+    with pytest.raises(json.JSONDecodeError):
+        pygame_menu.themes.Theme.from_json("{invalid json}")
+
+
+def test_to_dict_skips_selection_effect():
+    """Selection objects are not serializable and should be omitted."""
+    theme = pygame_menu.themes.Theme()
+
+    data = theme.to_dict()
+
+    assert "widget_selection_effect" not in data
+
+
+def test_json_roundtrip_restores_tuples():
+    """Tuple-based attributes should survive json roundtrip."""
+    theme = pygame_menu.themes.Theme(
+        widget_margin=(10, 20),
+        title_offset=(5, 6),
+    )
+
+    restored = pygame_menu.themes.Theme.from_json(
+        theme.to_json()
+    )
+
+    assert restored.widget_margin == (10, 20)
+    assert restored.title_offset == (5, 6)
