@@ -31,7 +31,6 @@ from pygame_menu.widgets.widget.button import ButtonManager
 from pygame_menu.widgets.widget.colorinput import ColorInputManager
 from pygame_menu.widgets.widget.dropselect import DropSelectManager
 from pygame_menu.widgets.widget.dropselect_multiple import DropSelectMultipleManager
-from pygame_menu.widgets.widget.fps import FPSManager
 from pygame_menu.widgets.widget.frame import FrameManager
 from pygame_menu.widgets.widget.hmargin import HMarginManager
 from pygame_menu.widgets.widget.image import ImageManager
@@ -56,7 +55,6 @@ class WidgetManager(
     ColorInputManager,
     DropSelectManager,
     DropSelectMultipleManager,
-    FPSManager,
     FrameManager,
     HMarginManager,
     ImageManager,

@@ -27,11 +27,11 @@ from pygame_menu.widgets.selection import (
 
 # Widgets
 from pygame_menu.widgets.widget import (
+    FPS,
     Button,
     ColorInput,
     DropSelect,
     DropSelectMultiple,
-    FPS,
     Frame,
     HMargin,
     Image,
