@@ -156,7 +156,7 @@ def test_fps_title_changes_with_generator(menu, clock):
     """FPS title generator remains active."""
     fps = menu.add.fps(clock)
 
-    title_a = fps.get_title()
+    fps.get_title()
 
     clock.tick(60)
     fps.update([])
