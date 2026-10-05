@@ -27,6 +27,17 @@ from pygame_menu.widgets.widget.button import Button
 if TYPE_CHECKING:
     from collections.abc import Callable
 
+# Module-level compiled regex for URL validation
+_URL_REGEX = re.compile(
+    r"^(?:http|ftp)s?://"  # http:// or https://
+    r"(?:(?:[A-Z\d](?:[A-Z\d-]{0,61}[A-Z\d])?\.)+(?:[A-Z]{2,6}\.?|[A-Z\d-]{2,}\.?)|"  # domain...
+    r"localhost|"  # localhost...
+    r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})"  # ...or ip
+    r"(?::\d+)?"  # optional port
+    r"(?:/?|[/?]\S+)$",
+    re.IGNORECASE,
+)
+
 
 class ButtonManager(AbstractWidgetManager, ABC):
     """
@@ -121,8 +132,7 @@ class ButtonManager(AbstractWidgetManager, ABC):
         kwargs.setdefault("padding", 0)
 
         # This prevents the theme selection effect from overwriting the banner
-        if "selection_effect" not in kwargs:
-            kwargs["selection_effect"] = pygame_menu.widgets.NoneSelection()
+        kwargs.setdefault("selection_effect", pygame_menu.widgets.NoneSelection())
 
         # Ensure the selection color doesn't show up on the ' ' character
         kwargs.setdefault("selection_color", (0, 0, 0, 0))
@@ -134,6 +144,110 @@ class ButtonManager(AbstractWidgetManager, ABC):
         btn = self.button(" ", action, *args, **kwargs)
 
         return btn.resize(*image.get_size())
+
+    def _normalize_button_action(
+        self,
+        action: pygame_menu.Menu | _events.MenuAction | Callable | int | None,
+    ) -> pygame_menu.Menu | _events.MenuAction | Callable | int:
+        """
+        Normalize special button actions.
+        """
+        if action in (_events.PYGAME_QUIT, _events.PYGAME_WINDOWCLOSE):
+            return _events.EXIT
+        if action is None:
+            return _events.NONE
+        return action
+
+    def _create_event_button(
+        self,
+        title: Any,
+        button_id: str,
+        action: _events.MenuAction | int,
+        total_back: int,
+    ) -> Button:
+        """
+        Create button from menu event.
+        """
+        if action == _events.BACK:
+            return Button(title, button_id, self._menu.reset, total_back)
+
+        if action == _events.CLOSE:
+            return Button(title, button_id, self._menu._close)
+
+        if action == _events.EXIT:
+            return Button(title, button_id, self._menu._exit)
+
+        if action == _events.NONE:
+            return Button(title, button_id)
+
+        if action == _events.RESET:
+            return Button(title, button_id, self._menu.full_reset)
+
+        raise ValueError(f"unsupported event action {action}")
+
+    def _create_menu_button(
+        self,
+        title: Any,
+        button_id: str,
+        menu: pygame_menu.Menu,
+    ) -> Button:
+        """
+        Create submenu button.
+        """
+        if menu == self._menu or menu.in_submenu(self._menu, recursive=True):
+            raise ValueError(
+                f'{menu.get_class_id()} title "{menu.get_title()}" is '
+                f"already on submenu structure, recursive menus lead to "
+                f"unexpected behaviours. For returning to previous menu "
+                f"use pygame_menu.events.BACK event defining an optional "
+                f"back_count number of menus to return from, default is 1"
+            )
+
+        widget = Button(title, button_id, self._menu._open, menu)
+        widget.to_menu = True
+        return widget
+
+    def _create_button_from_action(
+        self,
+        title: Any,
+        button_id: str,
+        action: pygame_menu.Menu | _events.MenuAction | Callable | int | None,
+        total_back: int,
+        accept_kwargs: bool,
+        args: tuple[Any, ...],
+        kwargs: dict[str, Any],
+    ) -> Button:
+        """
+        Orchestrate button creation by normalizing and evaluating action types.
+        """
+        action = self._normalize_button_action(action)
+
+        if isinstance(action, (pygame_menu.Menu, type(self._menu))):
+            return self._create_menu_button(title, button_id, action)
+
+        if action in (
+            _events.BACK,
+            _events.CLOSE,
+            _events.EXIT,
+            _events.NONE,
+            _events.RESET,
+        ):
+            return self._create_event_button(
+                title,
+                button_id,
+                action,
+                total_back,
+            )
+
+        if callable(action):
+            if accept_kwargs:
+                return Button(title, button_id, action, *args, **kwargs)
+            return Button(title, button_id, action, *args)
+
+        raise ValueError(
+            "action must be a Menu, a MenuAction (event), "
+            "a function (callable), or None"
+        )
 
     # noinspection PyProtectedMember
     def button(
@@ -266,57 +380,7 @@ class ButtonManager(AbstractWidgetManager, ABC):
         max_nlines = kwargs.pop("max_nlines", None)
         assert isinstance(max_nlines, (type(None), int))
 
-        # Change action if certain events
-        if action == _events.PYGAME_QUIT or action == _events.PYGAME_WINDOWCLOSE:
-            action = _events.EXIT
-        elif action is None:
-            action = _events.NONE
-
-        # If element is a Menu
-        if isinstance(action, (pygame_menu.Menu, type(self._menu))):
-            # Check for recursive
-            if action == self._menu or action.in_submenu(self._menu, recursive=True):
-                raise ValueError(
-                    f'{action.get_class_id()} title "{action.get_title()}" is '
-                    f"already on submenu structure, recursive menus lead to "
-                    f"unexpected behaviours. For returning to previous menu"
-                    f"use pygame_menu.events.BACK event defining an optional "
-                    f"back_count number of menus to return from, default is 1"
-                )
-
-            widget = Button(title, button_id, self._menu._open, action)
-            widget.to_menu = True
-
-        # If element is a MenuAction
-        elif action == _events.BACK:  # Back to Menu
-            widget = Button(title, button_id, self._menu.reset, total_back)
-
-        elif action == _events.CLOSE:  # Close Menu
-            widget = Button(title, button_id, self._menu._close)
-
-        elif action == _events.EXIT:  # Exit program
-            widget = Button(title, button_id, self._menu._exit)
-
-        elif action == _events.NONE:  # None action
-            widget = Button(title, button_id)
-
-        elif action == _events.RESET:  # Back to Top Menu
-            widget = Button(title, button_id, self._menu.full_reset)
-
-        # If element is a function or callable
-        elif callable(action):
-            if not accept_kwargs:
-                widget = Button(title, button_id, action, *args)
-            else:
-                widget = Button(title, button_id, action, *args, **kwargs)
-
-        else:
-            raise ValueError(
-                "action must be a Menu, a MenuAction (event), a "
-                "function (callable), or None"
-            )
-
-        # Configure and add the button
+        # Check kwargs validity if not accepting kwargs
         if not accept_kwargs:
             try:
                 self._check_kwargs(kwargs)
@@ -328,6 +392,17 @@ class ButtonManager(AbstractWidgetManager, ABC):
                     )
                 raise
 
+        widget = self._create_button_from_action(
+            title=title,
+            button_id=button_id,
+            action=action,
+            total_back=total_back,
+            accept_kwargs=accept_kwargs,
+            args=args,
+            kwargs=kwargs,
+        )
+
+        # Configure and add the button
         self._configure_widget(widget=widget, **attributes)
         if underline:
             widget.add_underline(underline_color, underline_offset, underline_width)
@@ -337,9 +412,10 @@ class ButtonManager(AbstractWidgetManager, ABC):
         widget._wordwrap = wordwrap
         self._append_widget(widget)
 
-        # Add to submenu
+        # Add to submenu using normalized action
         if widget.to_menu:
-            self._add_submenu(action, widget)  # type: ignore
+            normalized_action = self._normalize_button_action(action)
+            self._add_submenu(normalized_action, widget)  # type: ignore
 
         return widget
 
@@ -406,31 +482,19 @@ class ButtonManager(AbstractWidgetManager, ABC):
         """
         # Validate link
         assert isinstance(href, str) and len(href) > 0
+        assert re.match(_URL_REGEX, href) is not None, "invalid link format"
 
-        regex = re.compile(
-            r"^(?:http|ftp)s?://"  # http:// or https://
-            r"(?:(?:[A-Z\d](?:[A-Z\d-]{0,61}[A-Z\d])?\.)+(?:[A-Z]{2,6}\.?|[A-Z\d-]{2,}\.?)|"  # domain...
-            r"localhost|"  # localhost...
-            r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})"  # ...or ip
-            r"(?::\d+)?"  # optional port
-            r"(?:/?|[/?]\S+)$",
-            re.IGNORECASE,
-        )
-        assert re.match(regex, href) is not None, "invalid link format"
+        # Configure kwargs consistently using setdefault
+        url_color = self._theme.widget_url_color
+        kwargs.setdefault("cursor", CURSOR_HAND)
+        kwargs.setdefault("font_color", url_color)
+        kwargs.setdefault("selection_color", url_color)
+        kwargs.setdefault("selection_effect", pygame_menu.widgets.NoneSelection())
+        kwargs.setdefault("underline", True)
 
-        # Configure kwargs
-        if "cursor" not in kwargs.keys():
-            kwargs["cursor"] = CURSOR_HAND
-        if "font_color" not in kwargs.keys():
-            kwargs["font_color"] = self._theme.widget_url_color
-        if "selection_color" not in kwargs.keys():
-            kwargs["selection_color"] = self._theme.widget_url_color
-        if "selection_effect" not in kwargs.keys():
-            kwargs["selection_effect"] = pygame_menu.widgets.NoneSelection()
-        if "underline" not in kwargs.keys():
-            kwargs["underline"] = True
+        # Clear callback helper avoiding anonymous lambda
+        def _open_url() -> None:
+            webbrowser.open(href)
 
         # Return new button
-        return self.button(
-            title if title != "" else href, lambda: webbrowser.open(href), **kwargs
-        )
+        return self.button(title or href, _open_url, **kwargs)
