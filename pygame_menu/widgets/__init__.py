@@ -29,6 +29,7 @@ from pygame_menu.widgets.selection import (
 from pygame_menu.widgets.widget import (
     Button,
     ColorInput,
+    Counter,
     DropSelect,
     DropSelectMultiple,
     Frame,
