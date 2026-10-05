@@ -45,6 +45,7 @@ from pygame_menu.widgets.widget import (
     SurfaceWidget,
     Table,
     TextInput,
+    Timer,
     ToggleSwitch,
     VFill,
     VMargin,
