@@ -208,13 +208,124 @@ def test_toggle_switch_rejects_out_of_range_default_values(
 
     with pytest.raises(
         AssertionError,
-        match="default value can be 0 or 1",
+        match="default value index out of range",
     ):
         manager.toggle_switch("Toggle", default=default)
 
     factory.assert_not_called()
     manager._configure_widget.assert_not_called()
     manager._append_widget.assert_not_called()
+
+
+def test_toggle_switch_multi_state_custom_length(
+    manager,
+    toggle_switch_setup,
+):
+    """Test that a toggle switch with more than 2 states (e.g., 3 states) initializes correctly."""
+    widget, factory = toggle_switch_setup
+    manager._filter_widget_attributes = Mock(return_value={})
+
+    result = manager.toggle_switch(
+        "Quality",
+        default=1,
+        state_text=("Low", "Medium", "High"),
+        state_values=(10, 20, 30),
+        width=(100, 120, 140),
+    )
+
+    assert result is widget
+
+    factory_kwargs = factory.call_args.kwargs
+    assert factory_kwargs["default_state"] == 1
+    assert factory_kwargs["state_text"] == ("Low", "Medium", "High")
+    assert factory_kwargs["state_values"] == (10, 20, 30)
+    assert factory_kwargs["state_width"] == (100, 120, 140)
+    # Check that dynamic multi-state colors generated the correct length
+    assert len(factory_kwargs["state_color"]) == 3
+    assert len(factory_kwargs["state_text_font_color"]) == 3
+
+
+def test_toggle_switch_rejects_mismatched_state_text_and_values(
+    manager,
+    toggle_switch_setup,
+):
+    """Test that an assertion error is raised if state_text and state_values have differing lengths."""
+    _, factory = toggle_switch_setup
+    manager._filter_widget_attributes = Mock(return_value={})
+
+    with pytest.raises(
+        AssertionError,
+        match="state_text and state_values must have the same length",
+    ):
+        manager.toggle_switch(
+            "Mismatch",
+            state_text=("Off", "On"),  # length 2
+            state_values=(1, 2, 3),  # length 3
+        )
+
+    factory.assert_not_called()
+
+
+@pytest.mark.parametrize("default", [0, 2, 4])
+def test_toggle_switch_multi_state_valid_defaults(
+    manager,
+    toggle_switch_setup,
+    default,
+):
+    """Test valid default indices for a 5-state toggle switch."""
+    _, factory = toggle_switch_setup
+    manager._filter_widget_attributes = Mock(return_value={})
+
+    manager.toggle_switch(
+        "Five States",
+        default=default,
+        state_text=("S1", "S2", "S3", "S4", "S5"),
+        state_values=(1, 2, 3, 4, 5),
+    )
+
+    assert factory.call_args.kwargs["default_state"] == default
+
+
+@pytest.mark.parametrize("default", [-1, 5, 10])
+def test_toggle_switch_multi_state_out_of_range_defaults(
+    manager,
+    toggle_switch_setup,
+    default,
+):
+    """Test that out-of-range defaults fail dynamically based on the custom state length."""
+    _, factory = toggle_switch_setup
+    manager._filter_widget_attributes = Mock(return_value={})
+
+    with pytest.raises(
+        AssertionError,
+        match="default value index out of range",
+    ):
+        manager.toggle_switch(
+            "Five States",
+            default=default,
+            state_text=("S1", "S2", "S3", "S4", "S5"),
+            state_values=(1, 2, 3, 4, 5),
+        )
+
+    factory.assert_not_called()
+
+
+def test_toggle_switch_preserves_tuple_width_casting(
+    manager,
+    toggle_switch_setup,
+):
+    """Test that a tuple containing floats for width gets cleanly converted to integers per segment."""
+    _, factory = toggle_switch_setup
+    manager._filter_widget_attributes = Mock(return_value={})
+
+    manager.toggle_switch(
+        "Float Tuple Width",
+        state_text=("A", "B"),
+        state_values=(0, 1),
+        width=(100.5, 200.75),
+    )
+
+    assert factory.call_args.kwargs["state_width"] == (100, 200)
 
 
 @pytest.mark.parametrize(

@@ -27,6 +27,7 @@ from pygame_menu.widgets.widget.selector import Selector
 from pygame_menu.widgets.widget.surface import SurfaceWidget
 from pygame_menu.widgets.widget.table import Table
 from pygame_menu.widgets.widget.textinput import TextInput
+from pygame_menu.widgets.widget.timer import Timer
 from pygame_menu.widgets.widget.toggleswitch import ToggleSwitch
 from pygame_menu.widgets.widget.vfill import VFill
 from pygame_menu.widgets.widget.vmargin import VMargin

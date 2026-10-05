@@ -44,6 +44,7 @@ from pygame_menu.widgets.manager.selector import SelectorManager
 from pygame_menu.widgets.manager.surface import SurfaceWidgetManager
 from pygame_menu.widgets.manager.table import TableManager
 from pygame_menu.widgets.manager.textinput import TextInputManager
+from pygame_menu.widgets.manager.timer import TimerManager
 from pygame_menu.widgets.manager.toggleswitch import ToggleSwitchManager
 from pygame_menu.widgets.manager.vfill import VFillManager
 from pygame_menu.widgets.manager.vmargin import VMarginManager
@@ -69,6 +70,7 @@ class WidgetManager(
     SurfaceWidgetManager,
     TableManager,
     TextInputManager,
+    TimerManager,
     ToggleSwitchManager,
     VFillManager,
     VMarginManager,
