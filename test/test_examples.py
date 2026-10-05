@@ -12,6 +12,7 @@ import pytest
 import pygame_menu.examples.game_selector as game_selector
 import pygame_menu.examples.multi_input as multi_input
 import pygame_menu.examples.other.calculator as calculator
+import pygame_menu.examples.other.counter as counter
 import pygame_menu.examples.other.dynamic_button_append as dynamic_button
 import pygame_menu.examples.other.dynamic_widget_update as dynamic_widget
 import pygame_menu.examples.other.fps as fps
@@ -19,6 +20,7 @@ import pygame_menu.examples.other.image_background as image_background
 import pygame_menu.examples.other.maze as maze
 import pygame_menu.examples.other.scrollbar as scrollbar
 import pygame_menu.examples.other.scrollbar_area as scrollbar_area
+import pygame_menu.examples.other.timer as timer_example
 import pygame_menu.examples.other.ui_solar_system as ui_solarsystem
 import pygame_menu.examples.other.widget_positioning as widget_positioning
 import pygame_menu.examples.scroll_menu as scroll_menu
@@ -321,3 +323,83 @@ def test_example_other_fps():
     app.process_events(PygameEventUtils.keydown(pygame.K_ESCAPE))
 
     assert not app.menu.is_enabled()
+
+
+def test_example_other_counter():
+    """Test counter example."""
+    app = counter.main(test=True)
+
+    assert app.counter.get_value() == 0
+
+    app.increment()
+    assert app.counter.get_value() == 1
+
+    app.decrement()
+    assert app.counter.get_value() == 0
+
+    app.increment()
+    app.increment()
+    app.reset()
+    assert app.counter.get_value() == 0
+
+    # Test keyboard controls
+    app.process_events(PygameEventUtils.keydown(pygame.K_UP))
+    assert app.counter.get_value() == 1
+
+    app.process_events(PygameEventUtils.keydown(pygame.K_RIGHT))
+    assert app.counter.get_value() == 2
+
+    app.process_events(PygameEventUtils.keydown(pygame.K_DOWN))
+    assert app.counter.get_value() == 1
+
+    app.process_events(PygameEventUtils.keydown(pygame.K_LEFT))
+    assert app.counter.get_value() == 0
+
+    app.process_events(PygameEventUtils.keydown(pygame.K_r))
+    assert app.counter.get_value() == 0
+
+    app.process_events(PygameEventUtils.keydown(pygame.K_UP))
+    app.process_events(PygameEventUtils.keydown(pygame.K_0))
+    assert app.counter.get_value() == 0
+
+
+def test_example_other_timer():
+    """Test the timer example."""
+    app = timer_example.main(test=True)
+
+    # The timer should initially be stopped and display zero.
+    assert not app.timer.is_running()
+    assert not app.timer.is_paused()
+    assert app.timer.get_elapsed() == 0.0
+    assert app.timer._title == "00:00"
+
+    # Start the timer through the same method used by the Start button.
+    app.start()
+    assert app.timer.is_running()
+
+    # Force a widget update so the title generator refreshes the label.
+    app.timer.update([])
+
+    # The timer should still display a valid elapsed-time string.
+    assert isinstance(app.timer._title, str)
+    assert len(app.timer._title) == 5
+    assert app.timer._title[2] == ":"
+
+    # Pause the timer.
+    app.pause()
+    assert not app.timer.is_running()
+    assert app.timer.is_paused()
+
+    elapsed_before_resume = app.timer.get_elapsed()
+
+    # Resume the paused timer.
+    app.start()
+    assert app.timer.is_running()
+    assert app.timer.get_elapsed() >= elapsed_before_resume
+
+    # Reset the timer.
+    app.reset()
+    assert not app.timer.is_running()
+    assert not app.timer.is_paused()
+    assert app.timer.get_elapsed() == 0.0
+    assert app.timer._title == "00:00"

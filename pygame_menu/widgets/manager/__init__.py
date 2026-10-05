@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from pygame_menu.widgets.manager.button import ButtonManager
 from pygame_menu.widgets.manager.colorinput import ColorInputManager
+from pygame_menu.widgets.manager.counter import CounterManager
 from pygame_menu.widgets.manager.dropselect import DropSelectManager
 from pygame_menu.widgets.manager.dropselect_multiple import DropSelectMultipleManager
 from pygame_menu.widgets.manager.fps import FPSManager
@@ -25,6 +26,7 @@ from pygame_menu.widgets.manager.selector import SelectorManager
 from pygame_menu.widgets.manager.surface import SurfaceWidgetManager
 from pygame_menu.widgets.manager.table import TableManager
 from pygame_menu.widgets.manager.textinput import TextInputManager
+from pygame_menu.widgets.manager.timer import TimerManager
 from pygame_menu.widgets.manager.toggleswitch import ToggleSwitchManager
 from pygame_menu.widgets.manager.vfill import VFillManager
 from pygame_menu.widgets.manager.vmargin import VMarginManager

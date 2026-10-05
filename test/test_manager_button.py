@@ -215,3 +215,95 @@ def test_button_keyword_collision_validation_error(manager):
 def test_url_invalid_format_raises_assertion(manager):
     with pytest.raises(AssertionError, match="invalid link format"):
         manager.url(href="not-a-valid-url")
+
+
+def test_create_button_from_action_pygame_quit(manager, monkeypatch):
+    widget_mock = Mock()
+    btn_factory = Mock(return_value=widget_mock)
+    monkeypatch.setattr(button_module, "Button", btn_factory)
+
+    manager._create_button_from_action(
+        title="Quit",
+        button_id="",
+        action=_events.PYGAME_QUIT,
+        total_back=1,
+        accept_kwargs=False,
+        args=(),
+        kwargs={},
+    )
+
+    btn_factory.assert_called_once_with(
+        "Quit",
+        "",
+        manager._menu._exit,
+    )
+
+
+def test_button_none_action_maps_to_none_event(manager, monkeypatch):
+    widget_mock = Mock()
+    btn_factory = Mock(return_value=widget_mock)
+    monkeypatch.setattr(button_module, "Button", btn_factory)
+
+    result = manager.button("Test", None)
+
+    assert result is widget_mock
+    btn_factory.assert_called_once_with("Test", "")
+
+
+def test_create_button_from_action_window_close(manager, monkeypatch):
+    widget_mock = Mock()
+    btn_factory = Mock(return_value=widget_mock)
+    monkeypatch.setattr(button_module, "Button", btn_factory)
+
+    manager._create_button_from_action(
+        title="Quit",
+        button_id="",
+        action=_events.PYGAME_WINDOWCLOSE,
+        total_back=1,
+        accept_kwargs=False,
+        args=(),
+        kwargs={},
+    )
+
+    btn_factory.assert_called_once_with(
+        "Quit",
+        "",
+        manager._menu._exit,
+    )
+
+
+def test_create_event_button_invalid_event(manager):
+    with pytest.raises(ValueError, match="unsupported event action"):
+        manager._create_event_button(
+            "Test",
+            "",
+            9999,
+            1,
+        )
+
+
+def test_normalize_button_action(manager):
+    assert manager._normalize_button_action(_events.PYGAME_QUIT) == _events.EXIT
+    assert manager._normalize_button_action(_events.PYGAME_WINDOWCLOSE) == _events.EXIT
+    assert manager._normalize_button_action(None) == _events.NONE
+
+    custom_callable = lambda: None
+    assert manager._normalize_button_action(custom_callable) is custom_callable
+
+
+def test_button_wordwrap_and_leading(manager, monkeypatch):
+    widget_mock = Mock(name="Button")
+    btn_factory = Mock(return_value=widget_mock)
+    monkeypatch.setattr(button_module, "Button", btn_factory)
+
+    manager.button(
+        "Wrapped",
+        action=None,
+        wordwrap=True,
+        leading=12,
+        max_nlines=5,
+    )
+
+    assert widget_mock._wordwrap is True
+    assert widget_mock._leading == 12
+    assert widget_mock._max_nlines == 5

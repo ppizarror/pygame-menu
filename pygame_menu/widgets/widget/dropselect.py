@@ -96,7 +96,7 @@ class DropSelect(Widget):
     :param dropselect_id: ID of the drop select
     :param default: Index of default item to display. If ``None`` no item is selected
     :param onchange: Callback when changing the drop select item
-    :param onreturn: Callback when pressing return (apply) on the selected item
+    :param onreturn: Callback when applying an item with Return or by clicking it
     :param onselect: Function when selecting the widget
     :param open_middle: If ``True`` the selection box is opened in the middle of the menu
     :param placeholder: Text shown if no option is selected yet
@@ -710,8 +710,10 @@ class DropSelect(Widget):
         btn.set_attribute("ignore_scroll_to_widget")
         prev_index = self._index
         self.set_value(index)
-        if self._index != prev_index and self._index != -1:
+        if self._index != -1 and self._index != prev_index:
             self.change(*self._items[self._index][1:])
+        if self._index != -1:
+            self.apply(*self._items[self._index][1:])
         if self._close_on_apply:
             self.active = False
             if self._drop_frame is not None:

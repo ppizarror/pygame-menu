@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from pygame_menu.widgets.widget.button import Button
 from pygame_menu.widgets.widget.colorinput import ColorInput
+from pygame_menu.widgets.widget.counter import Counter
 from pygame_menu.widgets.widget.dropselect import DropSelect
 from pygame_menu.widgets.widget.dropselect_multiple import DropSelectMultiple
 from pygame_menu.widgets.widget.fps import FPS
@@ -27,6 +28,7 @@ from pygame_menu.widgets.widget.selector import Selector
 from pygame_menu.widgets.widget.surface import SurfaceWidget
 from pygame_menu.widgets.widget.table import Table
 from pygame_menu.widgets.widget.textinput import TextInput
+from pygame_menu.widgets.widget.timer import Timer
 from pygame_menu.widgets.widget.toggleswitch import ToggleSwitch
 from pygame_menu.widgets.widget.vfill import VFill
 from pygame_menu.widgets.widget.vmargin import VMargin

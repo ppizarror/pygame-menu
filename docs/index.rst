@@ -144,6 +144,7 @@ class. The currently existing classes are:
     - :py:class:`~pygame_menu.widgets.SurfaceWidget`
     - :py:class:`~pygame_menu.widgets.Table`
     - :py:class:`~pygame_menu.widgets.TextInput`
+    - :py:class:`~pygame_menu.widgets.Timer`
     - :py:class:`~pygame_menu.widgets.ToggleSwitch`
     - :py:class:`~pygame_menu.widgets.VFill`
     - :py:class:`~pygame_menu.widgets.VMargin`
