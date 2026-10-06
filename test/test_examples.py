@@ -15,6 +15,7 @@ import pygame_menu.examples.other.calculator as calculator
 import pygame_menu.examples.other.counter as counter
 import pygame_menu.examples.other.dynamic_button_append as dynamic_button
 import pygame_menu.examples.other.dynamic_widget_update as dynamic_widget
+import pygame_menu.examples.other.fps as fps
 import pygame_menu.examples.other.image_background as image_background
 import pygame_menu.examples.other.maze as maze
 import pygame_menu.examples.other.scrollbar as scrollbar
@@ -305,6 +306,23 @@ def test_example_other_custom_selectors():
     assert isinstance(
         widgets[6].get_selection_effect(), custom_selectors.UnderlineSelection
     )
+
+
+def test_example_other_fps():
+    """Test FPS example."""
+    app = fps.main(test=True)
+
+    assert isinstance(app, fps.FPSApp)
+    assert app.fps.get_fps() >= 0
+    assert not app.fps.is_empty()
+
+    app.process_events([])
+
+    assert app.fps.get_title().startswith("FPS:")
+
+    app.process_events(PygameEventUtils.keydown(pygame.K_ESCAPE))
+
+    assert not app.menu.is_enabled()
 
 
 def test_example_other_counter():
