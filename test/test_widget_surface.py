@@ -127,3 +127,32 @@ def test_surface_widget_value_api(menu):
 
     assert not widget.value_changed()
     widget.reset_value()
+
+
+def test_surface_widget_copy_surface(menu):
+    surf = pygame.Surface((100, 100))
+
+    widget = menu.add.surface(surf, copy_surface=True)
+
+    assert widget.get_surface() is not surf
+    assert widget.get_surface().get_size() == surf.get_size()
+
+
+def test_surface_widget_copy_surface_set_surface(menu):
+    surf1 = pygame.Surface((100, 100))
+    surf2 = pygame.Surface((200, 200))
+
+    widget = menu.add.surface(surf1, copy_surface=True)
+
+    widget.set_surface(surf2)
+
+    assert widget.get_surface() is not surf2
+    assert widget.get_size(apply_padding=False) == (200, 200)
+
+
+def test_surface_widget_no_copy_surface(menu):
+    surf = pygame.Surface((100, 100))
+
+    widget = menu.add.surface(surf, copy_surface=False)
+
+    assert widget.get_surface() is surf

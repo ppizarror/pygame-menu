@@ -57,12 +57,18 @@ def test_surface_creates_configures_checks_kwargs_appends_and_returns_widget(
     surface_id = "my-surface"
     onselect_cb = Mock()
     selectable = True
+
     kwargs = {
         "align": "center",
         "background_color": (0, 0, 0),
         "invalid_key": "drop_me",
     }
-    filtered_attributes = {"align": "center", "background_color": (0, 0, 0)}
+
+    filtered_attributes = {
+        "align": "center",
+        "background_color": (0, 0, 0),
+    }
+
     widget = Mock(name="SurfaceWidget")
 
     filter_attributes = Mock(return_value=filtered_attributes)
@@ -89,25 +95,39 @@ def test_surface_creates_configures_checks_kwargs_appends_and_returns_widget(
     assert result is widget
     assert widget.is_selectable is selectable
 
-    expected_cleaned_kwargs = {"align": "center", "background_color": (0, 0, 0)}
+    expected_cleaned_kwargs = {
+        "align": "center",
+        "background_color": (0, 0, 0),
+    }
 
     filter_attributes.assert_called_once_with(expected_cleaned_kwargs)
+
     surface_factory.assert_called_once_with(
         surface=mock_surface,
         surface_id=surface_id,
+        copy_surface=False,
         onselect=onselect_cb,
     )
+
     check_kwargs.assert_called_once_with(expected_cleaned_kwargs)
+
     configure_widget.assert_called_once_with(
         widget=widget,
         **filtered_attributes,
     )
+
     append_widget.assert_called_once_with(widget)
 
 
-def test_surface_asserts_selectable_is_boolean(manager, mock_surface):
+def test_surface_asserts_selectable_is_boolean(
+    manager,
+    mock_surface,
+):
     with pytest.raises(AssertionError):
-        manager.surface(surface=mock_surface, selectable="true")
+        manager.surface(
+            surface=mock_surface,
+            selectable="true",
+        )
 
 
 def test_surface_uses_defaults_for_id_and_onselect(
@@ -129,9 +149,11 @@ def test_surface_uses_defaults_for_id_and_onselect(
 
     assert result is widget
     assert widget.is_selectable is False
+
     surface_factory.assert_called_once_with(
         surface=mock_surface,
         surface_id="",
+        copy_surface=False,
         onselect=None,
     )
 
@@ -172,9 +194,69 @@ def test_surface_passes_arguments_unchanged(
     surface_factory.assert_called_once_with(
         surface=mock_surface,
         surface_id=surface_id,
+        copy_surface=False,
         onselect=None,
     )
+
     assert widget.is_selectable is selectable
+
+
+def test_surface_forwards_copy_surface_true(
+    manager,
+    monkeypatch,
+    mock_surface,
+):
+    widget = Mock(name="SurfaceWidget")
+    surface_factory = Mock(return_value=widget)
+
+    monkeypatch.setattr(surface_module, "SurfaceWidget", surface_factory)
+
+    manager._filter_widget_attributes = Mock(return_value={})
+    manager._configure_widget = Mock()
+    manager._append_widget = Mock()
+    manager._check_kwargs = Mock()
+
+    manager.surface(
+        surface=mock_surface,
+        copy_surface=True,
+    )
+
+    surface_factory.assert_called_once_with(
+        surface=mock_surface,
+        surface_id="",
+        copy_surface=True,
+        onselect=None,
+    )
+
+
+@pytest.mark.parametrize("copy_surface", [True, False])
+def test_surface_forwards_copy_surface_value(
+    manager,
+    monkeypatch,
+    mock_surface,
+    copy_surface,
+):
+    widget = Mock(name="SurfaceWidget")
+    surface_factory = Mock(return_value=widget)
+
+    monkeypatch.setattr(surface_module, "SurfaceWidget", surface_factory)
+
+    manager._filter_widget_attributes = Mock(return_value={})
+    manager._configure_widget = Mock()
+    manager._append_widget = Mock()
+    manager._check_kwargs = Mock()
+
+    manager.surface(
+        surface=mock_surface,
+        copy_surface=copy_surface,
+    )
+
+    surface_factory.assert_called_once_with(
+        surface=mock_surface,
+        surface_id="",
+        copy_surface=copy_surface,
+        onselect=None,
+    )
 
 
 def test_surface_lifecycle_order(
@@ -195,12 +277,15 @@ def test_surface_lifecycle_order(
     manager._filter_widget_attributes = Mock(
         side_effect=lambda attrs: events.append(("filter", attrs)) or {"cursor": 1}
     )
+
     manager._check_kwargs = Mock(
         side_effect=lambda kw: events.append(("check_kwargs", kw))
     )
+
     manager._configure_widget = Mock(
         side_effect=lambda **cfg: events.append(("configure", cfg))
     )
+
     manager._append_widget = Mock(
         side_effect=lambda val: events.append(("append", val))
     )

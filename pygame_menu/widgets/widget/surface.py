@@ -33,22 +33,35 @@ class SurfaceWidget(Widget):
 
     :param surface: Pygame surface object
     :param surface_id: Surface ID
+    :param copy_surface: Whether to make a copy of the surface on init and updates
     :param onselect: Function when selecting the widget
     """
 
     _surface_obj: pygame.Surface
+    _copy_surface: bool
 
     def __init__(
         self,
         surface: pygame.Surface,
         surface_id: str = "",
+        copy_surface: bool = False,
         onselect: CallbackType = None,
     ) -> None:
         assert isinstance(surface, pygame.Surface)
         assert isinstance(surface_id, str)
 
         super().__init__(onselect=onselect, widget_id=surface_id)
-        self._surface_obj = surface
+        self._copy_surface = copy_surface
+        self._surface_obj = surface.copy() if self._copy_surface else surface
+
+    @property
+    def surface(self) -> pygame.Surface:
+        """Get the current surface object."""
+        return self._surface_obj
+
+    @property
+    def surface_size(self) -> tuple[int, int]:
+        return self._surface_obj.get_size()
 
     def set_title(self, title: str, *args: Any) -> SurfaceWidget:
         return self
@@ -61,7 +74,7 @@ class SurfaceWidget(Widget):
         :return: Self reference
         """
         assert isinstance(surface, pygame.Surface)
-        self._surface_obj = surface
+        self._surface_obj = surface.copy() if self._copy_surface else surface
         self._render()
         self.force_menu_surface_update()
         return self
@@ -91,10 +104,10 @@ class SurfaceWidget(Widget):
         surface.blit(self._surface_obj, self._rect.topleft)
 
     def get_surface(self) -> pygame.Surface:
-        return self._surface_obj
+        return self.surface
 
     def _render(self) -> bool | None:
-        self._rect.width, self._rect.height = self._surface_obj.get_size()
+        self._rect.size = self._surface_obj.get_size()
         return None
 
     def update(self, events: EventVectorType) -> bool:
