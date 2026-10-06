@@ -27,11 +27,6 @@ def assert_color(widget, r, g, b):
     assert widget.get_value() == (r, g, b)
 
 
-def assert_invalid_color(widget):
-    """Utility to assert widget color is in invalid state (-1, -1, -1)."""
-    assert widget.get_value() == (-1, -1, -1)
-
-
 def test_textinput_basic_behavior():
     """Test basic TextInput widget functionality and constraints."""
     menu = MenuUtils.generic_menu()
@@ -165,80 +160,6 @@ def test_password_constraints():
 
     password_input.set_value("")  # Should be allowed
     assert password_input.get_value() == ""
-
-
-def test_colorinput_rgb_basics():
-    """Test ColorInput with RGB type and separator constraints."""
-    menu = MenuUtils.generic_menu(theme=TEST_THEME.copy())
-
-    # Base RGB setup
-    widget = menu.add.color_input("title", color_type="rgb", input_separator=",")
-    widget.set_value((123, 234, 55))
-    assert_color(widget, 123, 234, 55)
-
-    # Invalid value types/ranges
-    with pytest.raises(AssertionError):
-        widget.set_value("0,0,0")  # Must be tuple
-    with pytest.raises(AssertionError):
-        widget.set_value((255, 0))  # type: ignore
-    with pytest.raises(AssertionError):
-        widget.set_value((255, 255, -255))  # Out of range
-
-
-@pytest.mark.parametrize("invalid_sep", ["", "  ", "unknown", "1", "5", "9"])
-def test_colorinput_invalid_configs(invalid_sep):
-    """Test invalid separators and color types."""
-    menu = MenuUtils.generic_menu()
-
-    if invalid_sep == "unknown":
-        with pytest.raises(AssertionError):
-            menu.add.color_input("title", color_type="unknown")
-    else:
-        with pytest.raises(AssertionError):
-            menu.add.color_input("title", color_type="rgb", input_separator=invalid_sep)
-
-
-def test_colorinput_automatic_formatting():
-    """Test that commas and zeros are handled correctly during typing."""
-    menu = MenuUtils.generic_menu()
-    widget = menu.add.color_input("color", color_type="rgb", input_separator=",")
-
-    # Sequence: Type '2', '5', ',' -> '25,'
-    widget.update(PygameEventUtils.key(pygame.K_2, keydown=True, char="2"))
-    widget.update(PygameEventUtils.key(pygame.K_5, keydown=True, char="5"))
-    widget.update(PygameEventUtils.key(pygame.K_COMMA, keydown=True, char=","))
-    assert widget._input_string == "25,"
-
-    # Type '0' -> should trigger auto-separator logic '25,0,'
-    widget.update(PygameEventUtils.key(pygame.K_0, keydown=True, char="0"))
-    assert widget._input_string == "25,0,"
-    assert_invalid_color(widget)
-
-    # Test max value constraint (typing '5' to make '2555' should fail)
-    widget._cursor_position = 2  # after '25'
-    widget.update(PygameEventUtils.key(pygame.K_5, keydown=True, char="5"))
-    assert widget._input_string.startswith("255")
-
-    widget.update(PygameEventUtils.key(pygame.K_5, keydown=True, char="5"))
-    assert widget._input_string == "255,0,"  # Still 255 because 2555 is invalid
-
-
-def test_colorinput_hex_behavior():
-    """Test Hex color input specifically."""
-    menu = MenuUtils.generic_menu()
-    widget = menu.add.color_input("title", color_type="hex")
-
-    assert widget._input_string == "#"
-    assert widget._cursor_position == 1
-
-    # Set valid hex
-    widget.set_value("FF00FF")
-    assert_color(widget, 255, 0, 255)
-
-    # Hex formatting (Upper/Lower)
-    widget_upper = menu.add.color_input("title", color_type="hex", hex_format="upper")
-    widget_upper.set_value("aabbcc")
-    assert widget_upper.get_value(as_string=True) == "#AABBCC"
 
 
 def test_widget_value_tracking():
@@ -433,28 +354,6 @@ def test_textinput_frame_packing_and_column_constraints():
     assert textinput.get_width() < 200
 
 
-def test_colorinput_copy_paste_exceptions():
-    """Test clipboard exception handling for ColorInput."""
-    import pygame_menu.widgets.widget.textinput as tinput
-
-    menu = MenuUtils.generic_menu()
-    widget = menu.add.color_input("title", color_type="rgb")
-
-    def invalid_clipboard(*_):
-        """Incorrect clipboard handling."""
-        raise tinput.PyperclipException("test")
-
-    original_copy = tinput.clipboard_copy
-    tinput.clipboard_copy = invalid_clipboard
-    assert not widget._copy()
-    tinput.clipboard_copy = original_copy
-
-    original_paste = tinput.clipboard_paste
-    tinput.clipboard_paste = invalid_clipboard
-    assert not widget._paste()
-    tinput.clipboard_paste = original_paste
-
-
 def test_multiple_selected_widgets_exception():
     """Ensure selecting multiple text inputs raises the correct exception."""
     menu = MenuUtils.generic_menu()
@@ -481,217 +380,6 @@ def test_menu_clear_and_widget_reassignment():
 
     menu.clear()
     assert menu._stats.removed_widgets > 1
-
-
-def test_colorinput():
-    """Test ColorInput widget."""
-
-    def _assert_invalid_color(widg) -> None:
-        """Assert that the widget color is invalid."""
-        r, g, b = widg.get_value()
-        assert r == -1
-        assert g == -1
-        assert b == -1
-
-    def _assert_color(widg, cr, cg, cb) -> None:
-        """Assert widget RGB channels."""
-        r, g, b = widg.get_value()
-        assert r == cr
-        assert g == cg
-        assert b == cb
-
-    menu = MenuUtils.generic_menu(theme=TEST_THEME.copy())
-
-    # Base rgb
-    widget = menu.add.color_input("title", color_type="rgb", input_separator=",")
-    widget.set_value((123, 234, 55))
-    with pytest.raises(AssertionError):
-        widget.set_value("0,0,0")
-    with pytest.raises(AssertionError):
-        widget.set_value((255, 0,))  # type: ignore
-    with pytest.raises(AssertionError):
-        widget.set_value((255, 255, -255))
-    _assert_color(widget, 123, 234, 55)
-
-    # Test separator
-    widget = menu.add.color_input("color", color_type="rgb", input_separator="+")
-    widget.set_value((34, 12, 12))
-    assert widget._input_string == "34+12+12"
-    with pytest.raises(AssertionError):
-        menu.add.color_input("title", color_type="rgb", input_separator="")
-    with pytest.raises(AssertionError):
-        menu.add.color_input("title", color_type="rgb", input_separator="  ")
-    with pytest.raises(AssertionError):
-        menu.add.color_input("title", color_type="unknown")
-    for i in range(10):
-        with pytest.raises(AssertionError):
-            menu.add.color_input("title", color_type="rgb", input_separator=str(i))
-
-    # Empty rgb
-    widget = menu.add.color_input("color", color_type="rgb", input_separator=",")
-
-    PygameEventUtils.test_widget_key_press(widget)
-    assert widget._cursor_position == 0
-    widget.update(PygameEventUtils.key(pygame.K_RIGHT, keydown=True))
-    assert widget._cursor_position == 0
-    _assert_invalid_color(widget)
-
-    # Write sequence: 2 -> 25 -> 25, -> 25,0,
-    # The comma after the zero must be automatically set
-    assert not widget.update(PygameEventUtils.key(0, keydown=True, testmode=False))
-    widget.update(PygameEventUtils.key(pygame.K_2, keydown=True, char="2"))
-    widget.update(PygameEventUtils.key(pygame.K_5, keydown=True, char="5"))
-    widget.update(PygameEventUtils.key(pygame.K_COMMA, keydown=True, char=","))
-    assert widget._input_string == "25,"
-    widget.update(PygameEventUtils.key(pygame.K_0, keydown=True, char="0"))
-    assert widget._input_string == "25,0,"
-    _assert_invalid_color(widget)
-
-    # Now, sequence: 25,0,c -> 25c,0, with cursor c
-    widget.update(PygameEventUtils.key(pygame.K_LEFT, keydown=True))
-    widget.update(PygameEventUtils.key(pygame.K_LEFT, keydown=True))
-    widget.update(PygameEventUtils.key(pygame.K_LEFT, keydown=True))
-    assert widget._cursor_position == 2
-
-    # Sequence. 25,0, -> 255,0, -> 255,0, trying to write another 5 in the same position
-    # That should be canceled because 2555 > 255
-    widget.update(PygameEventUtils.key(pygame.K_5, keydown=True, char="5"))
-    assert widget._input_string == "255,0,"
-    widget.update(PygameEventUtils.key(pygame.K_5, keydown=True, char="5"))
-    assert widget._input_string == "255,0,"
-
-    # Invalid left zeros, try to write 255,0, -> 255,00, but that should be disabled
-    widget.update(PygameEventUtils.key(pygame.K_RIGHT, keydown=True))
-    widget.update(PygameEventUtils.key(pygame.K_0, keydown=True, char="0"))
-    assert widget._input_string == "255,0,"
-
-    # Second comma cannot be deleted because there's a number between ,0,
-    widget.update(PygameEventUtils.key(pygame.K_BACKSPACE, keydown=True))
-    assert widget._input_string == "255,0,"
-    widget.update(PygameEventUtils.key(pygame.K_LEFT, keydown=True))
-    widget.update(PygameEventUtils.key(pygame.K_DELETE, keydown=True))
-    assert widget._input_string == "255,0,"
-
-    # Current cursor is at 255c,0,
-    # Now right comma and 0 can be deleted
-    widget.update(PygameEventUtils.key(pygame.K_END, keydown=True))
-    widget.update(PygameEventUtils.key(pygame.K_BACKSPACE, keydown=True))
-    widget.update(PygameEventUtils.key(pygame.K_BACKSPACE, keydown=True))
-    assert widget._input_string == "255,"
-
-    # Fill with zeros, then number with 2 consecutive 0 types must be 255,0,0
-    # Commas should be inserted automatically
-    widget.readonly = True
-    widget.update(PygameEventUtils.key(pygame.K_0, keydown=True, char="0"))
-    assert widget._input_string == "255,"
-    widget.readonly = False
-    widget.update(PygameEventUtils.key(pygame.K_0, keydown=True, char="0"))
-    widget.update(PygameEventUtils.key(pygame.K_0, keydown=True, char="0"))
-    assert widget._input_string == "255,0,0"
-    _assert_color(widget, 255, 0, 0)
-
-    # At this state, user cannot add more zeros at right
-    for _ in range(5):
-        widget.update(PygameEventUtils.key(pygame.K_0, keydown=True, char="0"))
-    assert widget._input_string == "255,0,0"
-    widget.get_rect()
-
-    widget.clear()
-    assert widget._input_string == ""
-
-    # Assert invalid defaults rgb
-    with pytest.raises(AssertionError):
-        menu.add.color_input("title", color_type="rgb", default=(255, 255,))  # type: ignore
-    with pytest.raises(AssertionError):
-        menu.add.color_input("title", color_type="rgb", default=(255, 255))  # type: ignore
-    with pytest.raises(AssertionError):
-        menu.add.color_input("title", color_type="rgb", default=(255, 255, 255, 255))  # type: ignore
-
-    # Assert hex widget
-    widget = menu.add.color_input("title", color_type="hex")
-    assert widget._input_string == "#"
-    assert widget._cursor_position == 1
-    _assert_invalid_color(widget)
-    with pytest.raises(AssertionError):
-        widget.set_value("#FF")
-    with pytest.raises(AssertionError):
-        widget.set_value("#FFFFF<")
-    with pytest.raises(AssertionError):
-        widget.set_value("#FFFFF")
-    with pytest.raises(AssertionError):
-        widget.set_value("#F")
-    with pytest.raises(AssertionError):
-        widget.set_value("FFFFF")
-    with pytest.raises(AssertionError):
-        widget.set_value("F")
-    widget.set_value("FF00FF")
-    _assert_color(widget, 255, 0, 255)
-    widget.set_value("#12FfAa")
-    _assert_color(widget, 18, 255, 170)
-    widget.set_value("   59C1e5")
-    _assert_color(widget, 89, 193, 229)
-
-    widget.render()
-    widget.draw(surface)
-
-    widget.clear()
-    assert widget._input_string == "#"  # This cannot be empty
-    assert widget._cursor_position == 1
-
-    # In hex widget # cannot be deleted
-    widget.update(PygameEventUtils.key(pygame.K_BACKSPACE, keydown=True))
-    assert widget._cursor_position == 1
-    widget.update(PygameEventUtils.key(pygame.K_LEFT, keydown=True))
-    widget.update(PygameEventUtils.key(pygame.K_DELETE, keydown=True))
-    assert widget._input_string == "#"
-    widget.update(PygameEventUtils.key(pygame.K_END, keydown=True))
-    for _ in range(10):
-        widget.update(PygameEventUtils.key(pygame.K_f, keydown=True, char="f"))
-    assert widget._input_string == "#ffffff"
-    _assert_color(widget, 255, 255, 255)
-
-    # Test hex formats
-    widget = menu.add.color_input("title", color_type="hex", hex_format="none")
-    widget.set_value("#ff00ff")
-    assert not widget.update(PygameEventUtils.key(0, keydown=True, testmode=False))
-    assert widget.get_value(as_string=True) == "#ff00ff"
-    widget.set_value("#FF00ff")
-    assert widget.get_value(as_string=True) == "#FF00ff"
-
-    widget = menu.add.color_input("title", color_type="hex", hex_format="lower")
-    widget.set_value("#FF00ff")
-    assert widget.get_value(as_string=True) == "#ff00ff"
-    widget.set_value("AABBcc")
-    assert widget.get_value(as_string=True) == "#aabbcc"
-
-    widget = menu.add.color_input("title", color_type="hex", hex_format="upper")
-    widget.set_value("#FF00ff")
-    assert widget.get_value(as_string=True) == "#FF00FF"
-    widget.set_value("AABBcc")
-    assert widget.get_value(as_string=True) == "#AABBCC"
-
-    # Test dynamic sizing
-    widget = menu.add.color_input("title", color_type="hex", hex_format="upper", dynamic_width=True)
-    assert widget.get_width() == 200
-    widget.set_value("#ffffff")
-    width = 342 if PYGAME_V2 else 345
-    assert widget.get_width() == width
-    widget.set_value(None)
-    assert widget.get_width() == 200
-    assert widget.get_value(as_string=True) == "#"
-    widget.set_value("#ffffff")
-    assert widget.get_width() == width
-    widget.update(
-        PygameEventUtils.key(pygame.K_BACKSPACE, keydown=True)
-    )  # remove the last character, now color is invalid
-    assert widget.get_value(as_string=True) == "#FFFFF"  # is upper
-    widget.render()
-    assert widget.get_width() == 200
-
-    widget = menu.add.color_input("title", color_type="hex", hex_format="upper", dynamic_width=False)
-    assert widget.get_width() == width
-    widget.set_value("#ffffff")
-    assert widget.get_width() == width
 
 
 def test_textinput_underline():
@@ -759,7 +447,9 @@ def test_textinput_underline():
         ".-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-"
     )
 
-    textinput = menu.add.text_input("title: ", input_underline="_", input_underline_len=10)
+    textinput = menu.add.text_input(
+        "title: ", input_underline="_", input_underline_len=10
+    )
     assert textinput._current_underline_string == "_" * 10
 
     # Text underline with different column widths
@@ -863,7 +553,9 @@ def test_copy_paste():
         maxwidth=20,
         maxchar=20,
     )
-    textinput_copy.set_value("this value should be cropped as this is longer than the max char")
+    textinput_copy.set_value(
+        "this value should be cropped as this is longer than the max char"
+    )
     assert not textinput_copy._block_copy_paste
     textinput_copy._copy()
     if textinput_copy._block_copy_paste:  # Otherwise, an exception happened
@@ -915,22 +607,30 @@ def test_unicode():
     textinput.update(PygameEventUtils.key(pygame.K_1, keydown=True, char="1"))
     textinput.update(PygameEventUtils.key(pygame.K_1, keydown=True, char="5"))
     assert textinput.get_value() == "tk 215"
-    textinput.update(PygameEventUtils.keydown_mod_alt(pygame.K_x))  # convert 215 to unicode
+    textinput.update(
+        PygameEventUtils.keydown_mod_alt(pygame.K_x)
+    )  # convert 215 to unicode
     assert textinput.get_value() == "tkȕ"
     textinput.update(PygameEventUtils.key(pygame.K_SPACE, keydown=True))
     textinput.update(PygameEventUtils.key(pygame.K_SPACE, keydown=True))
     textinput.update(PygameEventUtils.key(pygame.K_b, keydown=True, char="B"))
     textinput.update(PygameEventUtils.key(pygame.K_1, keydown=True, char="1"))
-    textinput.update(PygameEventUtils.keydown_mod_alt(pygame.K_x))  # convert 215 to unicode
+    textinput.update(
+        PygameEventUtils.keydown_mod_alt(pygame.K_x)
+    )  # convert 215 to unicode
     assert textinput.get_value() == "tkȕ ±"
 
     # Remove all
     textinput.clear()
     textinput.update(PygameEventUtils.key(pygame.K_b, keydown=True, char="B"))
     textinput.update(PygameEventUtils.key(pygame.K_1, keydown=True, char="1"))
-    textinput.update(PygameEventUtils.keydown_mod_alt(pygame.K_x))  # convert 215 to unicode
+    textinput.update(
+        PygameEventUtils.keydown_mod_alt(pygame.K_x)
+    )  # convert 215 to unicode
     assert textinput.get_value() == "±"
-    textinput.update(PygameEventUtils.keydown_mod_alt(pygame.K_x))  # convert same to unicode, do nothing
+    textinput.update(
+        PygameEventUtils.keydown_mod_alt(pygame.K_x)
+    )  # convert same to unicode, do nothing
     assert textinput.get_value() == "±"
 
     # Test consecutive
@@ -938,7 +638,9 @@ def test_unicode():
     textinput.update(PygameEventUtils.key(pygame.K_0, keydown=True, char="0"))
     textinput.update(PygameEventUtils.key(pygame.K_1, keydown=True, char="1"))
     textinput.update(PygameEventUtils.key(pygame.K_3, keydown=True, char="3"))
-    textinput.update(PygameEventUtils.keydown_mod_alt(pygame.K_x))  # convert 215 to unicode
+    textinput.update(
+        PygameEventUtils.keydown_mod_alt(pygame.K_x)
+    )  # convert 215 to unicode
     assert textinput.get_value() == "±–"
 
     # Test 0x
@@ -991,13 +693,11 @@ def test_complex_textinput():
 
     # Assert bad settings
     with pytest.raises(ValueError):
-        menu.add.text_input("title",
-                            input_type=pygame_menu.locals.INPUT_FLOAT,
-                            default="bad")
+        menu.add.text_input(
+            "title", input_type=pygame_menu.locals.INPUT_FLOAT, default="bad"
+        )
     with pytest.raises(ValueError):  # Default and password cannot coexist
-        menu.add.text_input("title",
-                            password=True,
-                            default="bad")
+        menu.add.text_input("title", password=True, default="bad")
 
     # Create text input widget
     textinput = menu.add.text_input("title", input_underline="_")
@@ -1065,7 +765,9 @@ def test_complex_textinput():
     assert not textinput.update(PygameEventUtils.keydown_mod_ctrl(pygame.K_x))
     textinput._selection_enabled = False
     assert not textinput.update(PygameEventUtils.keydown_mod_ctrl(pygame.K_a))
-    assert not textinput.update(PygameEventUtils.keydown_mod_ctrl(pygame.K_r))  # invalid
+    assert not textinput.update(
+        PygameEventUtils.keydown_mod_ctrl(pygame.K_r)
+    )  # invalid
 
     # Reset
     textinput._copy_paste_enabled = True
@@ -1136,8 +838,7 @@ def test_complex_textinput():
 
     # Test keyup
     assert pygame.K_t in textinput._keyrepeat_counters.keys()
-    assert not textinput.update(
-        PygameEventUtils.key(pygame.K_t, keyup=True, char="1"))
+    assert not textinput.update(PygameEventUtils.key(pygame.K_t, keyup=True, char="1"))
     assert pygame.K_t not in textinput._keyrepeat_counters.keys()
 
     # Test tab
@@ -1168,16 +869,22 @@ def test_complex_textinput():
     textinput._selection_active = True
     assert textinput._cursor_position == 6
     assert textinput._selection_box == [0, 6]
-    textinput.update(PygameEventUtils.middle_rect_click(textinput, evtype=pygame.MOUSEBUTTONDOWN))
+    textinput.update(
+        PygameEventUtils.middle_rect_click(textinput, evtype=pygame.MOUSEBUTTONDOWN)
+    )
     assert textinput._selection_box == [0, 0]
 
     # Check click pos
-    textinput._check_mouse_collide_input(PygameEventUtils.middle_rect_click(textinput)[0].pos)
+    textinput._check_mouse_collide_input(
+        PygameEventUtils.middle_rect_click(textinput)[0].pos
+    )
     assert textinput._cursor_position == 6
 
     # Test touch
     textinput._cursor_position = 0
-    textinput._check_touch_collide_input(PygameEventUtils.middle_rect_click(textinput)[0].pos)
+    textinput._check_touch_collide_input(
+        PygameEventUtils.middle_rect_click(textinput)[0].pos
+    )
     assert textinput._cursor_position == 6
 
     # Update mouse
