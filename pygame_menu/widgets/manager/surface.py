@@ -34,6 +34,7 @@ class SurfaceWidgetManager(AbstractWidgetManager, ABC):
         self,
         surface: pygame.Surface,
         surface_id: str = "",
+        copy_surface: bool = False,
         onselect: Callable[[bool, Widget, pygame_menu.Menu], Any] | None = None,
         selectable: bool = False,
         **kwargs,
@@ -81,6 +82,7 @@ class SurfaceWidgetManager(AbstractWidgetManager, ABC):
 
         :param surface: Pygame surface object
         :param surface_id: Surface ID
+        :param copy_surface: Whether to create a private copy of the surface
         :param onselect: Callback executed when selecting the widget; only executed if ``selectable`` is ``True``
         :param selectable: Surface accepts user selection
         :param kwargs: Optional keyword arguments
@@ -117,7 +119,10 @@ class SurfaceWidgetManager(AbstractWidgetManager, ABC):
         attributes = self._filter_widget_attributes(kwargs)
 
         widget = SurfaceWidget(
-            surface=surface, surface_id=surface_id, onselect=onselect
+            surface=surface,
+            surface_id=surface_id,
+            copy_surface=copy_surface,
+            onselect=onselect,
         )
         widget.is_selectable = selectable
 
