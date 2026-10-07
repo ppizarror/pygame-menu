@@ -15,6 +15,7 @@ import math
 import os
 import sys
 import time
+from math import inf
 from typing import TYPE_CHECKING, Any
 
 import pygame
@@ -333,7 +334,7 @@ class Menu(Base):
 
         else:
             if rows is None:
-                rows = 10000000  # Set rows as a big number
+                rows = sys.maxsize  # Set rows as a big number
             else:
                 assert isinstance(rows, int), (
                     "rows cannot be a tuple/list as there's only 1 column"
@@ -358,7 +359,7 @@ class Menu(Base):
                             f"should be a vector of {columns} items. By default a vector has "
                             f"been created using the same value for each column"
                         )
-                column_min_width = [column_min_width for _ in range(columns)]
+                column_min_width = [column_min_width] * columns
             else:
                 column_min_width = [column_min_width]
 
@@ -381,7 +382,7 @@ class Menu(Base):
                     "column_max_width must be equal or greater than zero"
                 )
                 if columns != 1:
-                    column_max_width = [column_max_width for _ in range(columns)]
+                    column_max_width = [column_max_width] * columns
                 else:
                     column_max_width = [column_max_width]
 
@@ -391,7 +392,7 @@ class Menu(Base):
             )
 
             for i in column_max_width:
-                assert isinstance(i, type(None)) or isinstance(i, NumberInstance), (
+                assert i is None or isinstance(i, NumberInstance), (
                     "each item of column_max_width can be None (no limit) or an "
                     "integer/float"
                 )
@@ -401,14 +402,16 @@ class Menu(Base):
                 )
 
         else:
-            column_max_width = [None for _ in range(columns)]
+            column_max_width = [None] * columns
 
         # Check that every column max width is equal or greater than minimum width
-        for i in range(len(column_max_width)):
-            if column_max_width[i] is not None:
-                assert column_max_width[i] >= column_min_width[i], (
-                    f"item {i} of column_max_width ({column_max_width[i]}) must be equal or greater "
-                    f"than column_min_width ({column_min_width[i]})"
+        for i, (max_width, min_width) in enumerate(
+            zip(column_max_width, column_min_width)
+        ):
+            if max_width is not None:
+                assert max_width >= min_width, (
+                    f"item {i} of column_max_width ({max_width}) must be equal or "
+                    f"greater than column_min_width ({min_width})"
                 )
 
         # Element size and position asserts
@@ -518,13 +521,7 @@ class Menu(Base):
         self._widget_surface_cache_need_update = True
 
         # Columns and rows
-        self._column_max_width_zero = []
-        for i in range(len(column_max_width)):
-            if column_max_width[i] == 0:
-                self._column_max_width_zero.append(True)
-            else:
-                self._column_max_width_zero.append(False)
-
+        self._column_max_width_zero = [width == 0 for width in column_max_width]
         self._column_max_width = column_max_width
         self._column_min_width = column_min_width
         self._column_pos_x = []  # Stores the center x position of each column
@@ -537,8 +534,7 @@ class Menu(Base):
         self._widget_max_position = (0, 0)
         self._widget_min_position = (0, 0)
 
-        for r in self._rows:
-            self._max_row_column_elements += r
+        self._max_row_column_elements = sum(self._rows)
 
         # Position of Menu
         self._position_default = position
@@ -1087,10 +1083,9 @@ class Menu(Base):
         :param onmouseover: Callback executed if user enters the Menu with the mouse; it can be a function or None
         :return: Self reference
         """
-        if onmouseover is not None:
-            assert callable(onmouseover), (
-                "onmouseover must be callable (function-type) or None"
-            )
+        assert onmouseover is None or callable(onmouseover), (
+            "onmouseover must be callable (function-type) or None"
+        )
         self._onmouseover = onmouseover
         return self
 
@@ -1176,9 +1171,10 @@ class Menu(Base):
 
         :return: Position on x-axis and y-axis (x,y) in px
         """
-        return self._position[0] + self._translate[0], self._position[
-            1
-        ] + self._translate[1]
+        return (
+            self._position[0] + self._translate[0],
+            self._position[1] + self._translate[1],
+        )
 
     def select_widget(self, widget: Widget | str | None) -> Menu:
         """
@@ -1300,13 +1296,13 @@ class Menu(Base):
         :param update_surface: Updates Menu surface
         """
         # Check if there's more selectable widgets
-        n_select = 0
-        last_selectable = 0
-        for indx in range(len(self._widgets)):
-            wid = self._widgets[indx]
-            if wid.is_selectable and wid.is_visible():  # Considers frame
-                n_select += 1
-                last_selectable = indx
+        selectable = [
+        i for i, w in enumerate(self._widgets)
+        if w.is_selectable and w.is_visible()  # Considers frame
+        ]
+
+        n_select = len(selectable)
+        last_selectable = selectable[-1] if selectable else -1
 
         # Any widget is selected
         if n_select == 0:
@@ -1380,8 +1376,7 @@ class Menu(Base):
         invalid_selection_widgets: list[str] = []
         selected_widget = None
 
-        for index in range(len(self._widgets)):
-            widget = self._widgets[index]
+        for index, widget in enumerate(self._widgets):
 
             # Check widget selection
             if widget.is_selected():
@@ -1575,8 +1570,8 @@ class Menu(Base):
 
         # Widget max/min position
         min_max_updated = False
-        max_x, max_y = -1e8, -1e8
-        min_x, min_y = 1e8, 1e8
+        max_x, max_y = -inf, -inf
+        min_x, min_y = inf, inf
 
         # Cache rects
         rects_cache: dict[str, pygame.Rect] = {}
@@ -1598,8 +1593,7 @@ class Menu(Base):
         menubar_height = self._menubar.get_height() if self._menubar.fixed else 0
 
         # Update appended widgets
-        for index in range(len(self._widgets)):
-            widget = self._widgets[index]
+        for index, widget in enumerate(self._widgets):
 
             align = widget.get_alignment()
             margin = widget.get_margin()
