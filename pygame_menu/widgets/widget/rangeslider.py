@@ -1087,24 +1087,30 @@ class RangeSlider(Widget):
     def _focus(self) -> None:
         self._selected_mouse = False
 
-    def _left_right(self, event, left: bool) -> bool:
+    def _left_right(self, event, left: bool, ignore_keyrepeat: bool = False) -> bool:
         """
         Process left and right event keys.
 
         :param event: Event
         :param left: ``True`` if left, right otherwise
+        :param ignore_keyrepeat: If ``True``, ignore key repeat counters and the shift modifier. Joystick events carry no ``key`` attribute, so the keyboard-only bookkeeping must be skipped for them
         :return: ``True`` if updated
         """
         self._value_hidden = self._value.copy()  # Update hidden to real value
-        if event.key not in self._keyrepeat_counters:
-            self._keyrepeat_counters[event.key] = 0
-        keys_pressed = pygame.key.get_pressed()
+        keys_pressed = None
+        if not ignore_keyrepeat:
+            if event.key not in self._keyrepeat_counters:
+                self._keyrepeat_counters[event.key] = 0
+            keys_pressed = pygame.key.get_pressed()
 
         # If not discrete, apply delta as increment
         if len(self._range_values) == 2:
             mod = (
                 1
-                if not (keys_pressed[pygame.K_LSHIFT] or keys_pressed[pygame.K_RSHIFT])
+                if not (
+                    keys_pressed is not None
+                    and (keys_pressed[pygame.K_LSHIFT] or keys_pressed[pygame.K_RSHIFT])
+                )
                 else self._increment_shift_factor
             )
             if left:
@@ -1193,7 +1199,7 @@ class RangeSlider(Widget):
                 or joy_axismotion
                 and self._ctrl.joy_axis_x_left(event, self)
             ):
-                if self._left_right(event, True):
+                if self._left_right(event, True, ignore_keyrepeat=not keydown):
                     return True
 
             # Right button
@@ -1205,7 +1211,7 @@ class RangeSlider(Widget):
                 or joy_axismotion
                 and self._ctrl.joy_axis_x_right(event, self)
             ):
-                if self._left_right(event, False):
+                if self._left_right(event, False, ignore_keyrepeat=not keydown):
                     return True
 
             # Press enter
