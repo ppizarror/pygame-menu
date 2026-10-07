@@ -55,7 +55,7 @@ DECORATION_FILL: int = 2020
 DECORATION_LINE: int = 2006
 DECORATION_NONE: int = 2007
 DECORATION_PIE: int = 2008
-DECORATION_PIXEL: int = 209
+DECORATION_PIXEL: int = 2009
 DECORATION_POLYGON: int = 2010
 DECORATION_RECT: int = 2011
 DECORATION_SURFACE: int = 2012
@@ -96,8 +96,8 @@ class Decorator(Base):
     def __init__(
         self,
         obj: pygame_menu.widgets.Widget
-             | pygame_menu._scrollarea.ScrollArea
-             | pygame_menu.Menu,
+        | pygame_menu._scrollarea.ScrollArea
+        | pygame_menu.Menu,
         decorator_id: str = "",
         verbose: bool = True,
     ) -> None:
@@ -164,11 +164,13 @@ class Decorator(Base):
         decor_id = uuid4()
 
         if prev:
-            assert self._prev_enabled, "prev decorators are not enabled"
+            if not self._prev_enabled:
+                raise RuntimeError("prev decorators are not enabled")
             self._decor[DECOR_TYPE_PREV].append((decortype, decor_id, data))
             self._decor_prev_id.append(decor_id)
         else:
-            assert self._post_enabled, "post decorators are not enabled"
+            if not self._post_enabled:
+                raise RuntimeError("post decorators are not enabled")
             self._decor[DECOR_TYPE_POST].append((decortype, decor_id, data))
 
         # Force surface cache update
@@ -246,15 +248,27 @@ class Decorator(Base):
         """
         assert_list_vector(coords, 2)
         color = assert_color(color)
-        assert len(coords) >= 3
-        assert isinstance(filled, bool)
-        assert isinstance(width, int) and width >= 0
+
+        if len(coords) < 3:
+            raise ValueError("Polygon must have at least 3 coordinates")
+        if not isinstance(filled, bool):
+            raise TypeError("filled must be a boolean")
+        if not isinstance(width, int):
+            raise TypeError("width must be an integer")
+        if width < 0:
+            raise ValueError("width must be >= 0")
+
         if filled:
-            assert width == 0, "width must be 0 if the polygon is filled"
-            assert gfx, "only gfxdraw support filled polygon, then gfx should be True"
+            if width != 0:
+                raise ValueError("width must be 0 if the polygon is filled")
+            if not gfx:
+                raise ValueError(
+                    "only gfxdraw supports filled polygons; gfx must be True"
+                )
         else:
             if width != 0 and gfx:
                 gfx = False  # gfx don't support width
+
         return self._add_decor(
             DECORATION_POLYGON, prev, (tuple(coords), color, filled, width, gfx, kwargs)
         )
@@ -282,8 +296,14 @@ class Decorator(Base):
         """
         assert_list_vector(coords, 2)
         color = assert_color(color)
-        assert len(coords) >= 3
-        assert isinstance(steps, int) and steps >= 1
+
+        if len(coords) < 3:
+            raise ValueError("Bezier curve must have at least 3 coordinates")
+        if not isinstance(steps, int):
+            raise TypeError("steps must be an integer")
+        if steps < 1:
+            raise ValueError("steps must be >= 1")
+
         return self._add_decor(
             DECORATION_BEZIER, prev, (tuple(coords), color, steps, kwargs)
         )
@@ -320,14 +340,25 @@ class Decorator(Base):
         coords = [(x, y)]
         assert_list_vector(coords, 2)
         color = assert_color(color)
-        assert isinstance(radius, NumberInstance) and radius > 0
-        assert isinstance(filled, bool)
-        assert isinstance(width, int) and width >= 0
+
+        if not isinstance(radius, NumberInstance):
+            raise TypeError("radius must be a number")
+        if radius <= 0:
+            raise ValueError("radius must be a positive number")
+        if not isinstance(filled, bool):
+            raise TypeError("filled must be a boolean")
+        if not isinstance(width, int):
+            raise TypeError("width must be an integer")
+        if width < 0:
+            raise ValueError("width must be >= 0")
+
         if filled:
-            assert width == 0, "width must be 0 if the circle is filled"
+            if width != 0:
+                raise ValueError("width must be 0 if the circle is filled")
         else:
             if width != 0 and gfx:
                 gfx = False  # gfx don't support width
+
         return self._add_decor(
             DECORATION_CIRCLE,
             prev,
@@ -368,11 +399,22 @@ class Decorator(Base):
         coords = [(x, y)]
         assert_list_vector(coords, 2)
         color = assert_color(color)
-        assert isinstance(radius, NumberInstance) and radius > 0
-        assert isinstance(init_angle, NumberInstance)
-        assert isinstance(final_angle, NumberInstance)
-        assert isinstance(width, int) and width >= 0
-        assert init_angle != final_angle
+
+        if not isinstance(radius, NumberInstance):
+            raise TypeError("radius must be a number")
+        if radius <= 0:
+            raise ValueError("radius must be a positive number")
+        if not isinstance(init_angle, NumberInstance):
+            raise TypeError("init_angle must be a number")
+        if not isinstance(final_angle, NumberInstance):
+            raise TypeError("final_angle must be a number")
+        if not isinstance(width, int):
+            raise TypeError("width must be an integer")
+        if width < 0:
+            raise ValueError("width must be >= 0")
+        if init_angle == final_angle:
+            raise ValueError("init_angle and final_angle cannot be equal")
+
         return self._add_decor(
             DECORATION_ARC,
             prev,
@@ -418,10 +460,16 @@ class Decorator(Base):
         coords = [(x, y)]
         assert_list_vector(coords, 2)
         color = assert_color(color)
-        assert isinstance(radius, NumberInstance) and radius > 0
-        assert isinstance(init_angle, NumberInstance)
-        assert isinstance(final_angle, NumberInstance)
-        assert init_angle != final_angle
+        if not isinstance(radius, NumberInstance):
+            raise TypeError("radius must be a number")
+        if radius <= 0:
+            raise ValueError("radius must be > 0")
+        if not isinstance(init_angle, NumberInstance):
+            raise TypeError("init_angle must be a number")
+        if not isinstance(final_angle, NumberInstance):
+            raise TypeError("final_angle must be a number")
+        if init_angle == final_angle:
+            raise ValueError("init_angle and final_angle cannot be equal")
         return self._add_decor(
             DECORATION_PIE,
             prev,
@@ -453,7 +501,10 @@ class Decorator(Base):
         """
         coords = [(x, y)]
         assert_list_vector(coords, 2)
-        assert isinstance(surface, pygame.Surface)
+        if not isinstance(surface, pygame.Surface):
+            raise TypeError("surface must be a pygame.Surface")
+        if not isinstance(centered, bool):
+            raise TypeError("centered must be a boolean")
         return self._add_decor(
             DECORATION_SURFACE, prev, (tuple(coords), surface, centered, kwargs)
         )
@@ -489,7 +540,10 @@ class Decorator(Base):
         """
         coords = [(x, y)]
         assert_list_vector(coords, 2)
-        assert isinstance(image, pygame_menu.BaseImage)
+        if not isinstance(image, pygame_menu.BaseImage):
+            raise TypeError("image must be a pygame_menu.BaseImage")
+        if not isinstance(centered, bool):
+            raise TypeError("centered must be a boolean")
         return self._add_decor(
             DECORATION_BASEIMAGE, prev, (tuple(coords), image, centered, kwargs)
         )
@@ -519,11 +573,15 @@ class Decorator(Base):
         :param kwargs: Optional keyword arguments
         :return: ID of the decoration
         """
-        assert isinstance(width, int) and width >= 0
+        if not isinstance(width, int):
+            raise TypeError("width must be an integer")
+        if width < 0:
+            raise ValueError("width must be >= 0")
         coords = [(x, y)]
         assert_list_vector(coords, 2)
         color = assert_color(color)
-        assert isinstance(rect, pygame.Rect)
+        if not isinstance(rect, pygame.Rect):
+            raise TypeError("rect must be a pygame.Rect")
         return self._add_decor(
             DECORATION_RECT, prev, (tuple(coords), rect, color, width, kwargs)
         )
@@ -555,8 +613,16 @@ class Decorator(Base):
         :param kwargs: Optional keyword arguments
         :return: ID of the decoration
         """
-        assert isinstance(width, NumberInstance) and width > 0
-        assert isinstance(height, NumberInstance) and height > 0
+        if not isinstance(width, NumberInstance):
+            raise TypeError("width must be a number")
+        if width <= 0:
+            raise ValueError("width must be a positive number")
+
+        if not isinstance(height, NumberInstance):
+            raise TypeError("height must be a number")
+        if height <= 0:
+            raise ValueError("height must be a positive number")
+
         rect = pygame.Rect(0, 0, width, height)
         return self.add_rect(x, y, rect, color, border, prev, **kwargs)
 
@@ -594,6 +660,15 @@ class Decorator(Base):
         coords = [(x, y)]
         assert_list_vector(coords, 2)
         text = str(text)
+        if not isinstance(size, int):
+            raise TypeError("size must be an integer")
+        if size <= 0:
+            raise ValueError("size must be > 0")
+        if not isinstance(antialias, bool):
+            raise TypeError("antialias must be a boolean")
+        if not isinstance(centered, bool):
+            raise TypeError("centered must be a boolean")
+
         font_obj = pygame_menu.font.get_font(font, size)
         color = assert_color(color)
         surface_font = font_obj.render(text, antialias, color)
@@ -635,9 +710,16 @@ class Decorator(Base):
         coords = [(x, y)]
         assert_list_vector(coords, 2)
         color = assert_color(color)
-        assert isinstance(rx, NumberInstance) and rx > 0
-        assert isinstance(ry, NumberInstance) and ry > 0
-        assert isinstance(filled, bool)
+        if not isinstance(rx, NumberInstance):
+            raise TypeError("rx must be a number")
+        if rx <= 0:
+            raise ValueError("rx must be > 0")
+        if not isinstance(ry, NumberInstance):
+            raise TypeError("ry must be a number")
+        if ry <= 0:
+            raise ValueError("ry must be > 0")
+        if not isinstance(filled, bool):
+            raise TypeError("filled must be a boolean")
         return self._add_decor(
             DECORATION_ELLIPSE, prev, (tuple(coords), rx, ry, color, filled, kwargs)
         )
@@ -694,8 +776,10 @@ class Decorator(Base):
         :param pass_args: If ``False`` function is called without (surface, object) as args
         :return: ID of the decoration
         """
-        assert callable(fun), "fun must be a callable type"
-        assert isinstance(pass_args, bool)
+        if not callable(fun):
+            raise TypeError("fun must be a callable type")
+        if not isinstance(pass_args, bool):
+            raise TypeError("pass_args must be a boolean")
         if pass_args:
             return self._add_decor(DECORATION_CALLABLE, prev, fun)
         return self._add_decor(DECORATION_CALLABLE_NO_ARGS, prev, fun)
@@ -730,9 +814,14 @@ class Decorator(Base):
         :return: ID of the decoration
         """
         assert_list_vector(coords, 2)
-        assert len(coords) >= 3
-        assert isinstance(texture, (pygame.Surface, pygame_menu.BaseImage))
-        assert isinstance(tx, int) and isinstance(ty, int)
+        if len(coords) < 3:
+            raise ValueError("textured polygon must have at least 3 coordinates")
+        if not isinstance(texture, (pygame.Surface, pygame_menu.BaseImage)):
+            raise TypeError("texture must be a pygame.Surface or pygame_menu.BaseImage")
+        if not isinstance(tx, int):
+            raise TypeError("tx must be an integer")
+        if not isinstance(ty, int):
+            raise TypeError("ty must be an integer")
         return self._add_decor(
             DECORATION_TEXTURE_POLYGON, prev, (tuple(coords), texture, tx, ty, kwargs)
         )
@@ -763,8 +852,14 @@ class Decorator(Base):
         assert_vector(pos1, 2)
         assert_vector(pos2, 2)
         color = assert_color(color)
-        assert isinstance(width, int) and width >= 1
-        assert math.dist(pos1, pos2) > 0, "line cannot be zero-length"
+
+        if not isinstance(width, int):
+            raise TypeError("width must be an integer")
+        if width < 1:
+            raise ValueError("width must be >= 1")
+        if math.dist(pos1, pos2) == 0:
+            raise ValueError("line cannot be zero-length")
+
         return self._add_decor(
             DECORATION_LINE, prev, ((tuple(pos1), tuple(pos2)), color, width, kwargs)
         )
@@ -807,7 +902,8 @@ class Decorator(Base):
         :param kwargs: Optional keyword arguments
         :return: ID of the decoration
         """
-        assert x1 != x2
+        if x1 == x2:
+            raise ValueError("x1 and x2 cannot be equal for a horizontal line")
         return self.add_line((x1, y), (x2, y), color, width, prev, **kwargs)
 
     def add_vline(
@@ -835,7 +931,8 @@ class Decorator(Base):
         :param kwargs: Optional keyword arguments
         :return: ID of the decoration
         """
-        assert y1 != y2
+        if y1 == y2:
+            raise ValueError("y1 and y2 cannot be equal for a vertical line")
         return self.add_line((x, y1), (x, y2), color, width, prev, **kwargs)
 
     def disable(self, decorid: str) -> Decorator:
@@ -846,7 +943,7 @@ class Decorator(Base):
         :param decorid: Decoration ID
         :return: Self reference
         """
-        if decorid not in self._decor_enabled.keys():
+        if decorid not in self._decor_enabled:
             raise IndexError(f'decoration<"{decorid}"> was not found')
         self._decor_enabled[decorid] = False
         self.force_cache_update(prev=decorid in self._decor_prev_id)
@@ -860,7 +957,7 @@ class Decorator(Base):
         :param decorid: Decoration ID
         :return: Self reference
         """
-        if decorid not in self._decor_enabled.keys():
+        if decorid not in self._decor_enabled:
             raise IndexError(f'decoration<"{decorid}"> was not found')
         self._decor_enabled[decorid] = True
         self.force_cache_update(prev=decorid in self._decor_prev_id)
@@ -874,7 +971,7 @@ class Decorator(Base):
         :param decorid: Decoration ID
         :return: ``True`` if enabled
         """
-        if decorid not in self._decor_enabled.keys():
+        if decorid not in self._decor_enabled:
             raise IndexError(f'decoration<"{decorid}"> was not found')
         return self._decor_enabled[decorid]
 
@@ -886,8 +983,9 @@ class Decorator(Base):
         :param decorid: Decoration ID
         :return: Self reference
         """
-        assert isinstance(decorid, str)
-        if decorid in self._coord_cache.keys():
+        if not isinstance(decorid, str):
+            raise TypeError("decorid must be a string")
+        if decorid in self._coord_cache:
             del self._coord_cache[decorid]
         for p in (DECOR_TYPE_PREV, DECOR_TYPE_POST):
             for d in self._decor[p]:
@@ -913,8 +1011,7 @@ class Decorator(Base):
             return self
         p = DECOR_TYPE_PREV if prev else DECOR_TYPE_POST
         self._cache_needs_update[p] = False
-        del self._decor[p]
-        self._decor[p] = []
+        self._decor[p].clear()
         return self
 
     def _draw_assemble_cache(
@@ -1008,127 +1105,160 @@ class Decorator(Base):
         if not deco:
             return
         rect = self._obj.get_rect()
-
         for d in deco:
             dtype, decoid, data = d
             if not self._decor_enabled[decoid]:
                 continue
-
             elif dtype == DECORATION_POLYGON:
-                points, color, filled, width, gfx, kwargs = data
-                points = self._update_pos_list(rect, decoid, points, **kwargs)
-                if gfx:
-                    if filled:
-                        gfxdraw.filled_polygon(surface, points, color)
-                    else:
-                        gfxdraw.polygon(surface, points, color)
-                else:
-                    pydraw.polygon(surface, color, points, width)
-
+                self._draw_polygon(surface, rect, decoid, data)
             elif dtype == DECORATION_CIRCLE:
-                points, r, color, filled, width, gfx, kwargs = data
-                points = self._update_pos_list(rect, decoid, points, **kwargs)
-                x, y = points[0]
-                if filled:
-                    if gfx:
-                        gfxdraw.filled_circle(surface, x, y, r, color)
-                    else:
-                        pydraw.circle(surface, color, (x, y), r)
-                else:
-                    pydraw.circle(surface, color, (x, y), r, width)
-
-            elif (
-                dtype == DECORATION_SURFACE
-                or dtype == DECORATION_BASEIMAGE
-                or dtype == DECORATION_TEXT
-            ):
-                pos, surf, centered, kwargs = data
-                if isinstance(surf, pygame_menu.BaseImage):
-                    surf = surf.get_surface(new=False)
-                pos = self._update_pos_list(rect, decoid, pos, **kwargs)[0]
-                surf_rect = surf.get_rect()
-                surf_rect.x += pos[0]
-                surf_rect.y += pos[1]
-                if centered:
-                    surf_rect.x -= int(surf_rect.width / 2)
-                    surf_rect.y -= int(surf_rect.height / 2)
-                surface.blit(surf, surf_rect)
-
+                self._draw_circle(surface, rect, decoid, data)
+            elif dtype in (DECORATION_SURFACE, DECORATION_BASEIMAGE, DECORATION_TEXT):
+                self._draw_surface(surface, rect, decoid, data)
             elif dtype == DECORATION_ELLIPSE:
-                pos, rx, ry, color, filled, kwargs = data
-                pos = self._update_pos_list(rect, decoid, pos, **kwargs)[0]
-                if filled:
-                    gfxdraw.filled_ellipse(surface, pos[0], pos[1], rx, ry, color)
-                else:
-                    gfxdraw.ellipse(surface, pos[0], pos[1], rx, ry, color)
-
+                self._draw_ellipse(surface, rect, decoid, data)
             elif dtype == DECORATION_CALLABLE:
                 data(surface, self._obj)
-
             elif dtype == DECORATION_CALLABLE_NO_ARGS:
                 data()
-
             elif dtype == DECORATION_TEXTURE_POLYGON:
-                pos, texture, tx, ty, kwargs = data
-                pos = self._update_pos_list(rect, decoid, pos, **kwargs)
-                if isinstance(texture, pygame_menu.BaseImage):
-                    texture = texture.get_surface()
-                gfxdraw.textured_polygon(surface, pos, texture, tx, ty)
-
+                self._draw_textured_polygon(surface, rect, decoid, data)
             elif dtype == DECORATION_ARC:
-                points, r, ia, fa, color, width, gfx, kwargs = data
-                points = self._update_pos_list(rect, decoid, points, **kwargs)
-                x, y = points[0]
-                rect_arc = pygame.Rect(x - r, y - r, x + 2 * r, y + 2 * r)
-                if gfx:
-                    gfxdraw.arc(surface, x, y, r, ia, fa, color)
-                else:
-                    pydraw.arc(
-                        surface, color, rect_arc, ia / (2 * pi), fa / (2 * pi), width
-                    )
-
+                self._draw_arc(surface, rect, decoid, data)
             elif dtype == DECORATION_PIE:
-                points, r, ia, fa, color, kwargs = data
-                points = self._update_pos_list(rect, decoid, points, **kwargs)
-                x, y = points[0]
-                gfxdraw.pie(surface, x, y, r, ia, fa, color)
-
+                self._draw_pie(surface, rect, decoid, data)
             elif dtype == DECORATION_BEZIER:
-                points, color, steps, kwargs = data
-                points = self._update_pos_list(rect, decoid, points, **kwargs)
-                gfxdraw.bezier(surface, points, steps, color)
-
+                self._draw_bezier(surface, rect, decoid, data)
             elif dtype == DECORATION_FILL:
                 surface.fill(data, rect)
-
             elif dtype == DECORATION_RECT:
-                d_rect: pygame.Rect
-                pos, d_rect, color, width, kwargs = data
-                pos = self._update_pos_list(rect, decoid, pos, **kwargs)[0]
-                d_rect = d_rect.copy()
-                d_rect.x += pos[0]
-                d_rect.y += pos[1]
-                pygame.draw.rect(surface, color, d_rect, width)
-
+                self._draw_rect(surface, rect, decoid, data)
             elif dtype == DECORATION_PIXEL:
-                pos, color, kwargs = data
-                pos = self._update_pos_list(rect, decoid, pos, **kwargs)[0]
-                gfxdraw.pixel(surface, pos[0], pos[1], color)
-
+                self._draw_pixel(surface, rect, decoid, data)
             elif dtype == DECORATION_LINE:
-                pos, color, width, kwargs = data
-                pos = self._update_pos_list(rect, decoid, pos, **kwargs)
-                pydraw.line(surface, color, pos[0], pos[1], width)
-
+                self._draw_line(surface, rect, decoid, data)
             else:
                 raise ValueError("unknown decoration type")
+
+    def _draw_polygon(
+        self, surface: pygame.Surface, rect: pygame.Rect, decoid: str, data: Any
+    ) -> None:
+        points, color, filled, width, gfx, kwargs = data
+        points = self._update_pos_list(rect, decoid, points, **kwargs)
+        if gfx:
+            if filled:
+                gfxdraw.filled_polygon(surface, points, color)
+            else:
+                gfxdraw.polygon(surface, points, color)
+        else:
+            pydraw.polygon(surface, color, points, width)
+
+    def _draw_circle(
+        self, surface: pygame.Surface, rect: pygame.Rect, decoid: str, data: Any
+    ) -> None:
+        points, r, color, filled, width, gfx, kwargs = data
+        points = self._update_pos_list(rect, decoid, points, **kwargs)
+        x, y = points[0]
+        if filled:
+            if gfx:
+                gfxdraw.filled_circle(surface, x, y, r, color)
+            else:
+                pydraw.circle(surface, color, (x, y), r)
+        else:
+            pydraw.circle(surface, color, (x, y), r, width)
+
+    def _draw_surface(
+        self, surface: pygame.Surface, rect: pygame.Rect, decoid: str, data: Any
+    ) -> None:
+        pos, surf, centered, kwargs = data
+        if isinstance(surf, pygame_menu.BaseImage):
+            surf = surf.get_surface(new=False)
+        pos = self._update_pos_list(rect, decoid, pos, **kwargs)[0]
+        surf_rect = surf.get_rect()
+        surf_rect.x += pos[0]
+        surf_rect.y += pos[1]
+        if centered:
+            surf_rect.x -= int(surf_rect.width / 2)
+            surf_rect.y -= int(surf_rect.height / 2)
+        surface.blit(surf, surf_rect)
+
+    def _draw_ellipse(
+        self, surface: pygame.Surface, rect: pygame.Rect, decoid: str, data: Any
+    ) -> None:
+        pos, rx, ry, color, filled, kwargs = data
+        pos = self._update_pos_list(rect, decoid, pos, **kwargs)[0]
+        if filled:
+            gfxdraw.filled_ellipse(surface, pos[0], pos[1], rx, ry, color)
+        else:
+            gfxdraw.ellipse(surface, pos[0], pos[1], rx, ry, color)
+
+    def _draw_textured_polygon(
+        self, surface: pygame.Surface, rect: pygame.Rect, decoid: str, data: Any
+    ) -> None:
+        pos, texture, tx, ty, kwargs = data
+        pos = self._update_pos_list(rect, decoid, pos, **kwargs)
+        if isinstance(texture, pygame_menu.BaseImage):
+            texture = texture.get_surface()
+        gfxdraw.textured_polygon(surface, pos, texture, tx, ty)
+
+    def _draw_arc(
+        self, surface: pygame.Surface, rect: pygame.Rect, decoid: str, data: Any
+    ) -> None:
+        points, r, ia, fa, color, width, gfx, kwargs = data
+        points = self._update_pos_list(rect, decoid, points, **kwargs)
+        x, y = points[0]
+        rect_arc = pygame.Rect(x - r, y - r, x + 2 * r, y + 2 * r)
+        if gfx:
+            gfxdraw.arc(surface, x, y, r, ia, fa, color)
+        else:
+            pydraw.arc(surface, color, rect_arc, ia / (2 * pi), fa / (2 * pi), width)
+
+    def _draw_pie(
+        self, surface: pygame.Surface, rect: pygame.Rect, decoid: str, data: Any
+    ) -> None:
+        points, r, ia, fa, color, kwargs = data
+        points = self._update_pos_list(rect, decoid, points, **kwargs)
+        x, y = points[0]
+        gfxdraw.pie(surface, x, y, r, ia, fa, color)
+
+    def _draw_bezier(
+        self, surface: pygame.Surface, rect: pygame.Rect, decoid: str, data: Any
+    ) -> None:
+        points, color, steps, kwargs = data
+        points = self._update_pos_list(rect, decoid, points, **kwargs)
+        gfxdraw.bezier(surface, points, steps, color)
+
+    def _draw_rect(
+        self, surface: pygame.Surface, rect: pygame.Rect, decoid: str, data: Any
+    ) -> None:
+        d_rect: pygame.Rect
+        pos, d_rect, color, width, kwargs = data
+        pos = self._update_pos_list(rect, decoid, pos, **kwargs)[0]
+        d_rect = d_rect.copy()
+        d_rect.x += pos[0]
+        d_rect.y += pos[1]
+        pygame.draw.rect(surface, color, d_rect, width)
+
+    def _draw_pixel(
+        self, surface: pygame.Surface, rect: pygame.Rect, decoid: str, data: Any
+    ) -> None:
+        pos, color, kwargs = data
+        pos = self._update_pos_list(rect, decoid, pos, **kwargs)[0]
+        gfxdraw.pixel(surface, pos[0], pos[1], color)
+
+    def _draw_line(
+        self, surface: pygame.Surface, rect: pygame.Rect, decoid: str, data: Any
+    ) -> None:
+        pos, color, width, kwargs = data
+        pos = self._update_pos_list(rect, decoid, pos, **kwargs)
+        pydraw.line(surface, color, pos[0], pos[1], width)
 
     def _update_pos_list(
         self,
         rect: pygame.Rect,
         decoid: str,
         pos: Tuple2NumberType
-             | tuple[Tuple2NumberType, ...],  # only (x, y) or ((x1,y1), ...
+        | tuple[Tuple2NumberType, ...],  # only (x, y) or ((x1,y1), ...
         use_center_positioning=True,
     ) -> tuple[Tuple2IntType, ...] | Tuple2IntType:
         """

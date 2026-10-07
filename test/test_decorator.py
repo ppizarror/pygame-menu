@@ -7,6 +7,7 @@ Decorator API.
 """
 
 import copy
+import math
 import timeit
 
 import pygame
@@ -206,11 +207,11 @@ def test_general():
     color = (1, 1, 1)
 
     # Polygon
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError):
         deco.add_polygon([(1, 1)], color, True)
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError):
         deco.add_polygon([(1, 1)], color, True, 1)
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError):
         deco.add_polygon([(1, 1)], color, True, gfx=False)
     deco.add_polygon(poly, color, True)
     deco.add_polygon(poly, color, False)
@@ -218,11 +219,11 @@ def test_general():
     deco.draw_prev(surface)
 
     # Circle
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError):
         deco.add_circle(1, 1, 0, color, True)
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError):
         deco.add_circle(1, 1, 0, color, True, gfx=False)
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError):
         deco.add_circle(50, 50, 100, color, True, 1)
     deco.add_circle(1, 1, 100, color, False, 5)
     deco.add_circle(50, 50, 100, color, True)
@@ -285,7 +286,7 @@ def test_general():
     menu.draw(surface)
 
     # Ellipse
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError):
         deco.add_ellipse(0, 0, 0, 0, color, True)
     deco.add_ellipse(-250, 0, 110, 150, (255, 0, 0), True)
     deco.add_ellipse(-250, 0, 110, 150, (255, 0, 0), False)
@@ -344,3 +345,77 @@ def test_general():
 
     menu.draw(surface)
     deco.remove_all()
+
+
+def test_arc_validation():
+    """Test arc validation."""
+    widg = NoneWidget()
+    deco = widg.get_decorator()
+
+    color = (255, 255, 255)
+
+    with pytest.raises(ValueError):
+        deco.add_arc(0, 0, 0, 0, 90, color)
+
+    with pytest.raises(ValueError):
+        deco.add_arc(0, 0, 10, 90, 90, color)
+
+    with pytest.raises(TypeError):
+        deco.add_arc(0, 0, "10", 0, 90, color)
+
+    with pytest.raises(TypeError):
+        deco.add_arc(0, 0, 10, "0", 90, color)
+
+    with pytest.raises(TypeError):
+        deco.add_arc(0, 0, 10, 0, 90, color, width="1")
+
+
+def test_arc_non_gfx_matches_pygame():
+    """Decorator non-gfx arc should match pygame.draw.arc."""
+    widg = NoneWidget()
+    deco = widg.get_decorator()
+
+    surf_deco = pygame.Surface((500, 500))
+    surf_expected = pygame.Surface((500, 500))
+
+    color = (255, 255, 255)
+
+    deco.add_arc(
+        0,
+        0,
+        50,
+        0,
+        180,
+        color,
+        width=1,
+        gfx=False,
+    )
+
+    deco.draw_prev(surf_deco)
+
+    rect = widg.get_rect()
+    cx, cy = rect.centerx, rect.centery
+
+    expected_rect = pygame.Rect(
+        cx - 50,
+        cy - 50,
+        100,
+        100,
+    )
+
+    pygame.draw.arc(
+        surf_expected,
+        color,
+        expected_rect,
+        0 / (2 * math.pi),
+        180 / (2 * math.pi),
+        1,
+    )
+
+    assert pygame.image.tostring(
+        surf_deco,
+        "RGBA",
+    ) == pygame.image.tostring(
+        surf_expected,
+        "RGBA",
+    )
