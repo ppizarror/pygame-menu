@@ -63,7 +63,12 @@ def test_scrollarea_position_logic():
     """Test the mapping of position constants to scrollbar identifiers."""
     assert len(get_scrollbars_from_position(SCROLLAREA_POSITION_FULL)) == 4
 
-    for pos in (POSITION_EAST, POSITION_WEST, POSITION_NORTH):
+    for pos in (
+        POSITION_EAST,
+        POSITION_WEST,
+        POSITION_NORTH,
+        POSITION_SOUTH,
+    ):
         assert isinstance(get_scrollbars_from_position(pos), str)
 
     assert get_scrollbars_from_position(POSITION_NORTHWEST) == (
@@ -471,13 +476,15 @@ def test_widget_relative_to_view_rect():
     menu = MenuUtils.generic_menu()
     buttons = []
     for i in range(20):
-        btn_title = f'b{i}'
+        btn_title = f"b{i}"
         buttons.append(menu.add.button(btn_title, button_id=btn_title))
     sa = menu.get_scrollarea()
 
     def test_relative(widget: pygame_menu.widgets.Widget, x: float, y: float) -> None:
         """Test relative position from widget to scroll view rect."""
-        rx, ry = widget.get_scrollarea().get_widget_position_relative_to_view_rect(widget)
+        rx, ry = widget.get_scrollarea().get_widget_position_relative_to_view_rect(
+            widget
+        )
         assert rx == pytest.approx(x)
         assert ry == pytest.approx(y)
 
@@ -493,3 +500,132 @@ def test_widget_relative_to_view_rect():
     sa.scroll_to(ORIENTATION_VERTICAL, 1)
     test_relative(buttons[0], 0.4689655172413793, -1.4375)
     test_relative(buttons[-1], 0.45517241379310347, 0.89)
+
+
+def test_scrollarea_single_positions():
+    """Test all single-position scrollbar mappings."""
+    assert get_scrollbars_from_position(POSITION_EAST) == POSITION_EAST
+    assert get_scrollbars_from_position(POSITION_WEST) == POSITION_WEST
+    assert get_scrollbars_from_position(POSITION_NORTH) == POSITION_NORTH
+    assert get_scrollbars_from_position(POSITION_SOUTH) == POSITION_SOUTH
+
+
+def test_duplicate_scrollbars_removed():
+    """Duplicate scrollbar positions should be deduplicated."""
+    sa = pygame_menu._scrollarea.ScrollArea(
+        100,
+        100,
+        scrollbars=(
+            POSITION_EAST,
+            POSITION_EAST,
+            POSITION_SOUTH,
+            POSITION_SOUTH,
+        ),
+    )
+
+    assert sa._scrollbar_positions == (
+        POSITION_EAST,
+        POSITION_SOUTH,
+    )
+
+
+def test_empty_scrollbar_removed():
+    """Empty scrollbar definitions should be discarded."""
+    sa = pygame_menu._scrollarea.ScrollArea(
+        100,
+        100,
+        scrollbars=(POSITION_EAST, "", POSITION_SOUTH),
+    )
+
+    assert "" not in sa._scrollbar_positions
+    assert sa._scrollbar_positions == (
+        POSITION_EAST,
+        POSITION_SOUTH,
+    )
+
+
+def test_parent_cannot_be_self():
+    """A scrollarea cannot be its own parent."""
+    sa = pygame_menu._scrollarea.ScrollArea(100, 100)
+
+    with pytest.raises(AssertionError):
+        sa.set_parent_scrollarea(sa)
+
+
+def test_depth():
+    """Test nested scrollarea depth calculation."""
+    root = pygame_menu._scrollarea.ScrollArea(100, 100)
+
+    child = pygame_menu._scrollarea.ScrollArea(
+        100,
+        100,
+        parent_scrollarea=root,
+    )
+
+    grandchild = pygame_menu._scrollarea.ScrollArea(
+        100,
+        100,
+        parent_scrollarea=child,
+    )
+
+    assert root.get_depth() == 0
+    assert child.get_depth() == 1
+    assert grandchild.get_depth() == 2
+
+
+def test_coordinate_roundtrip(sa):
+    """World->real->world conversion should preserve coordinates."""
+    point = (37, 84)
+
+    real = sa.to_real_position(point)
+    world = sa.to_world_position(real)
+
+    assert world == point
+
+
+def test_scroll_to_bounds(menu):
+    """Test scrolling to top and bottom."""
+    for i in range(50):
+        menu.add.button(str(i))
+
+    menu.render()
+    sa = menu.get_scrollarea()
+
+    sa.scroll_to(ORIENTATION_VERTICAL, 0)
+
+    assert sa.get_scroll_value_percentage(ORIENTATION_VERTICAL) == pytest.approx(0)
+
+    sa.scroll_to(ORIENTATION_VERTICAL, 1)
+
+    assert sa.get_scroll_value_percentage(ORIENTATION_VERTICAL) > 0.99
+
+
+def test_get_parent():
+    """Test parent getter."""
+    parent = pygame_menu._scrollarea.ScrollArea(100, 100)
+    child = pygame_menu._scrollarea.ScrollArea(
+        100,
+        100,
+        parent_scrollarea=parent,
+    )
+
+    assert child.get_parent() is parent
+    assert parent.get_parent() is None
+
+
+def test_set_world_get_world():
+    """Test world setter/getter."""
+    sa = pygame_menu._scrollarea.ScrollArea(100, 100)
+
+    world = pygame.Surface((300, 400))
+    sa.set_world(world)
+
+    assert sa.get_world() is world
+    assert sa.get_world_size() == (300, 400)
+
+
+def test_get_border_size_no_border():
+    """Test border size when no border configured."""
+    sa = pygame_menu._scrollarea.ScrollArea(100, 100)
+
+    assert sa.get_border_size() == (0, 0)

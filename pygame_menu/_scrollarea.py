@@ -16,7 +16,7 @@ __all__ = [
 ]
 
 from itertools import product
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import pygame
 
@@ -61,6 +61,9 @@ from pygame_menu.utils import (
 )
 from pygame_menu.widgets import ScrollBar
 
+if TYPE_CHECKING:
+    from collections.abc import Iterator
+
 
 def get_scrollbars_from_position(
     position: str,
@@ -73,7 +76,7 @@ def get_scrollbars_from_position(
     :param position: Position
     :return: Scrollbars
     """
-    if position in (POSITION_EAST, POSITION_EAST, POSITION_WEST, POSITION_NORTH):
+    if position in (POSITION_EAST, POSITION_WEST, POSITION_NORTH, POSITION_SOUTH):
         return position
     elif position == POSITION_NORTHWEST:
         return POSITION_NORTH, POSITION_WEST
@@ -438,12 +441,9 @@ class ScrollArea(Base):
         """
         parent = self._parent_scrollarea
         count = 0
-        if parent is not None:
-            while True:
-                if parent is None:
-                    break
-                count += 1
-                parent = parent._parent_scrollarea
+        while parent is not None:
+            count += 1
+            parent = parent._parent_scrollarea
         return count
 
     def __copy__(self) -> ScrollArea:
@@ -497,15 +497,25 @@ class ScrollArea(Base):
             self._decorator.force_cache_update()
         return self
 
+    def _iter_scrollbars(self) -> Iterator[tuple[ScrollBar, str]]:
+        """
+        Iterate over scrollbars and their configured positions.
+
+        This helper yields ``(scrollbar, position)`` pairs, simplifying
+        iteration over scrollbar objects and their associated placement
+        constants.
+
+        :return: Iterator of ``(ScrollBar, position)`` tuples
+        """
+        yield from zip(self._scrollbars, self._scrollbar_positions)
+
     def _apply_size_changes(self) -> None:
         """
         Apply size changes to scrollbar.
         """
         self._view_rect = self.get_view_rect()
 
-        for sbar in self._scrollbars:
-            pos = self._scrollbar_positions[self._scrollbars.index(sbar)]
-
+        for sbar, pos in self._iter_scrollbars():
             d_size, dx, dy = 0, 0, 0
             if self._menubar is not None:
                 d_size, (dx, dy) = self._menubar.get_scrollbar_style_change(pos)
@@ -530,7 +540,7 @@ class ScrollArea(Base):
                 )
             else:
                 raise ValueError(
-                    "unknown position, only west, east, north, andsouth are allowed"
+                    "unknown position, only west, east, north, and south are allowed"
                 )
 
             if pos in (POSITION_NORTH, POSITION_SOUTH):
@@ -790,10 +800,9 @@ class ScrollArea(Base):
             self._world.get_height() > self._rect.height
             and self._world.get_width() > self._rect.width
         ):
-            for sbar in self._scrollbars:
+            for sbar, pos in self._iter_scrollbars():
                 if not sbar.is_visible():
                     continue
-                pos = self._scrollbar_positions[self._scrollbars.index(sbar)]
                 thk = sbar.get_thickness()
                 if pos == POSITION_WEST:
                     rect.left += thk
@@ -810,10 +819,9 @@ class ScrollArea(Base):
         # Calculate the maximum variations introduced by the scrollbars
         bars_total_width = 0
         bars_total_height = 0
-        for sbar in self._scrollbars:
+        for sbar, pos in self._iter_scrollbars():
             if not sbar.is_visible():
                 continue
-            pos = self._scrollbar_positions[self._scrollbars.index(sbar)]
             thk = sbar.get_thickness()
             if pos in (POSITION_NORTH, POSITION_SOUTH):
                 bars_total_height += thk
@@ -821,10 +829,9 @@ class ScrollArea(Base):
                 bars_total_width += thk
 
         if self._world.get_height() > self._rect.height:
-            for sbar in self._scrollbars:
+            for sbar, pos in self._iter_scrollbars():
                 if not sbar.is_visible():
                     continue
-                pos = self._scrollbar_positions[self._scrollbars.index(sbar)]
                 thk = sbar.get_thickness()
                 if pos == POSITION_WEST:
                     rect.left += thk
@@ -839,10 +846,9 @@ class ScrollArea(Base):
                         rect.height -= thk
 
         if self._world.get_width() > self._rect.width:
-            for sbar in self._scrollbars:
+            for sbar, pos in self._iter_scrollbars():
                 if not sbar.is_visible():
                     continue
-                pos = self._scrollbar_positions[self._scrollbars.index(sbar)]
                 thk = sbar.get_thickness()
                 if pos == POSITION_NORTH:
                     rect.top += thk
@@ -965,12 +971,9 @@ class ScrollArea(Base):
         """
         values: list[float] = [self.get_scroll_value_percentage(orientation)]
         parent = self._parent_scrollarea
-        if parent is not None:
-            while True:  # Recursive
-                if parent is None:
-                    break
-                values.append(parent.get_scroll_value_percentage(orientation))
-                parent = parent._parent_scrollarea
+        while parent is not None:  # Recursive
+            values.append(parent.get_scroll_value_percentage(orientation))
+            parent = parent._parent_scrollarea
         return tuple(values)
 
     def get_scroll_value_percentage(self, orientation: str) -> float:
@@ -1234,14 +1237,11 @@ class ScrollArea(Base):
         view_rect_absolute = self.to_absolute_position(self._view_rect)
         if self._parent_scrollarea is not None:
             parent = self._parent_scrollarea
-            if parent is not None:
-                while True:  # Recursive
-                    if parent is None:
-                        break
-                    view_rect_absolute = parent.get_absolute_view_rect().clip(
-                        view_rect_absolute
-                    )
-                    parent = parent._parent_scrollarea
+            while parent is not None:  # Recursive
+                view_rect_absolute = parent.get_absolute_view_rect().clip(
+                    view_rect_absolute
+                )
+                parent = parent._parent_scrollarea
         return view_rect_absolute
 
     def to_real_position(
@@ -1387,7 +1387,7 @@ class ScrollArea(Base):
         :return: The ScrollBar object or None.
         """
         assert_position(position)  # Ensure valid position string
-        for sbar, pos in zip(self._scrollbars, self._scrollbar_positions):
+        for sbar, pos in self._iter_scrollbars():
             if pos == position:
                 return sbar
         return None
