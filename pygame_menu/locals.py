@@ -79,7 +79,7 @@ POSITION_WEST = "position-west"
 
 # Menu ScrollArea position
 SCROLLAREA_POSITION_BOTH_HORIZONTAL = "scrollarea-position-both-horizontal"
-SCROLLAREA_POSITION_BOTH_VERTICAL = "scrollarea_position-both-vertical"
+SCROLLAREA_POSITION_BOTH_VERTICAL = "scrollarea-position-both-vertical"
 SCROLLAREA_POSITION_FULL = "scrollarea-position-full"
 SCROLLAREA_POSITION_NONE = "scrollarea-position-none"
 
@@ -88,62 +88,20 @@ ORIENTATION_HORIZONTAL = "orientation-horizontal"
 ORIENTATION_VERTICAL = "orientation-vertical"
 
 # Cursors
-CURSOR_ARROW = (
-    None
-    if not hasattr(__pygame, "SYSTEM_CURSOR_ARROW")
-    else __pygame.SYSTEM_CURSOR_ARROW
-)
-CURSOR_CROSSHAIR = (
-    None
-    if not hasattr(__pygame, "SYSTEM_CURSOR_CROSSHAIR")
-    else __pygame.SYSTEM_CURSOR_CROSSHAIR
-)
-CURSOR_HAND = (
-    None if not hasattr(__pygame, "SYSTEM_CURSOR_HAND") else __pygame.SYSTEM_CURSOR_HAND
-)
-CURSOR_IBEAM = (
-    None
-    if not hasattr(__pygame, "SYSTEM_CURSOR_IBEAM")
-    else __pygame.SYSTEM_CURSOR_IBEAM
-)
-CURSOR_NO = (
-    None if not hasattr(__pygame, "SYSTEM_CURSOR_NO") else __pygame.SYSTEM_CURSOR_NO
-)
-CURSOR_SIZEALL = (
-    None
-    if not hasattr(__pygame, "SYSTEM_CURSOR_SIZEALL")
-    else __pygame.SYSTEM_CURSOR_SIZEALL
-)
-CURSOR_SIZENESW = (
-    None
-    if not hasattr(__pygame, "SYSTEM_CURSOR_SIZENESW")
-    else __pygame.SYSTEM_CURSOR_SIZENESW
-)
-CURSOR_SIZENS = (
-    None
-    if not hasattr(__pygame, "SYSTEM_CURSOR_SIZENS")
-    else __pygame.SYSTEM_CURSOR_SIZENS
-)
-CURSOR_SIZENWSE = (
-    None
-    if not hasattr(__pygame, "SYSTEM_CURSOR_SIZENWSE")
-    else __pygame.SYSTEM_CURSOR_SIZENWSE
-)
-CURSOR_SIZEWE = (
-    None
-    if not hasattr(__pygame, "SYSTEM_CURSOR_SIZEWE")
-    else __pygame.SYSTEM_CURSOR_SIZEWE
-)
-CURSOR_WAIT = (
-    None if not hasattr(__pygame, "SYSTEM_CURSOR_WAIT") else __pygame.SYSTEM_CURSOR_WAIT
-)
-CURSOR_WAITARROW = (
-    None
-    if not hasattr(__pygame, "SYSTEM_CURSOR_WAITARROW")
-    else __pygame.SYSTEM_CURSOR_WAITARROW
-)
+CURSOR_ARROW = getattr(__pygame, "SYSTEM_CURSOR_ARROW", None)
+CURSOR_CROSSHAIR = getattr(__pygame, "SYSTEM_CURSOR_CROSSHAIR", None)
+CURSOR_HAND = getattr(__pygame, "SYSTEM_CURSOR_HAND", None)
+CURSOR_IBEAM = getattr(__pygame, "SYSTEM_CURSOR_IBEAM", None)
+CURSOR_NO = getattr(__pygame, "SYSTEM_CURSOR_NO", None)
+CURSOR_SIZEALL = getattr(__pygame, "SYSTEM_CURSOR_SIZEALL", None)
+CURSOR_SIZENESW = getattr(__pygame, "SYSTEM_CURSOR_SIZENESW", None)
+CURSOR_SIZENS = getattr(__pygame, "SYSTEM_CURSOR_SIZENS", None)
+CURSOR_SIZENWSE = getattr(__pygame, "SYSTEM_CURSOR_SIZENWSE", None)
+CURSOR_SIZEWE = getattr(__pygame, "SYSTEM_CURSOR_SIZEWE", None)
+CURSOR_WAIT = getattr(__pygame, "SYSTEM_CURSOR_WAIT", None)
+CURSOR_WAITARROW = getattr(__pygame, "SYSTEM_CURSOR_WAITARROW", None)
 
 # Events compatibility with lower pygame versions
-FINGERDOWN = -1 if not hasattr(__pygame, "FINGERDOWN") else __pygame.FINGERDOWN
-FINGERMOTION = -1 if not hasattr(__pygame, "FINGERMOTION") else __pygame.FINGERMOTION
-FINGERUP = -1 if not hasattr(__pygame, "FINGERUP") else __pygame.FINGERUP
+FINGERDOWN = getattr(__pygame, "FINGERDOWN", -1)
+FINGERMOTION = getattr(__pygame, "FINGERMOTION", -1)
+FINGERUP = getattr(__pygame, "FINGERUP", -1)
