@@ -1320,7 +1320,7 @@ def test_columns_menu():
     assert menu._column_widths == [200, 150, 150]
 
     menu = MenuUtils.generic_menu()
-    assert menu.get_col_rows() == (1, [10000000])
+    assert menu.get_col_rows() == (1, [sys.maxsize])
 
 
 def test_screen_dimension():
