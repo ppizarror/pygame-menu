@@ -673,6 +673,23 @@ class DropSelect(Widget):
             self._drop_frame.scrollv(value)
         return self
 
+    def is_expanded(self) -> bool:
+        """
+        Return ``True`` if the drop selection box (the dropdown listing the
+        options) is currently expanded, ``False`` otherwise.
+
+        A DropSelect is expanded after the user clicks the selection box (or
+        presses the toggle key) and collapsed again once an option is selected
+        and ``close_on_apply`` is enabled.
+
+        :return: ``True`` if the dropdown is expanded
+        """
+        return (
+            self.active
+            and self._drop_frame is not None
+            and self._drop_frame.is_visible()
+        )
+
     def get_scroll_value_percentage(self, orientation: str) -> float:
         """
         Get the scroll value in percentage, if ``0`` the scroll is at top/left,
