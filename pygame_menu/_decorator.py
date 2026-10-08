@@ -12,8 +12,9 @@ from __future__ import annotations
 __all__ = ["Decorator"]
 
 import math
+from dataclasses import dataclass, field
 from math import pi
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Union
 
 import pygame
 import pygame.draw as pydraw
@@ -29,6 +30,7 @@ from pygame_menu._types import (
     Tuple2IntType,
     Tuple2NumberType,
 )
+from pygame_menu.baseimage import BaseImage
 from pygame_menu.utils import (
     assert_color,
     assert_list_vector,
@@ -64,6 +66,111 @@ DECORATION_TEXTURE_POLYGON: int = 2014
 
 DECOR_TYPE_PREV: str = "prev"
 DECOR_TYPE_POST: str = "post"
+
+BaseImageOrSurface = Union[pygame.Surface, BaseImage]
+
+
+@dataclass
+class PolygonDecoration:
+    points: tuple[Tuple2NumberType, ...]
+    color: ColorInputType
+    filled: bool
+    width: int
+    gfx: bool
+    kwargs: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass
+class BezierDecoration:
+    points: tuple[Tuple2NumberType, ...]
+    color: ColorInputType
+    steps: int
+    kwargs: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass
+class CircleDecoration:
+    points: tuple[Tuple2NumberType, ...]
+    radius: NumberType
+    color: ColorInputType
+    filled: bool
+    width: int
+    gfx: bool
+    kwargs: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass
+class ArcDecoration:
+    points: tuple[Tuple2NumberType, ...]
+    radius: NumberType
+    init_angle: NumberType
+    final_angle: NumberType
+    color: ColorInputType
+    width: int
+    gfx: bool
+    kwargs: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass
+class PieDecoration:
+    points: tuple[Tuple2NumberType, ...]
+    radius: NumberType
+    init_angle: NumberType
+    final_angle: NumberType
+    color: ColorInputType
+    kwargs: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass
+class BlitDecoration:
+    points: tuple[Tuple2NumberType, ...]
+    surface: BaseImageOrSurface
+    centered: bool
+    kwargs: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass
+class RectangleDecoration:
+    points: tuple[Tuple2NumberType, ...]
+    rect: pygame.Rect
+    color: ColorInputType
+    width: int
+    kwargs: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass
+class EllipseDecoration:
+    points: tuple[Tuple2NumberType, ...]
+    rx: NumberType
+    ry: NumberType
+    color: ColorInputType
+    filled: bool
+    kwargs: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass
+class PixelDecoration:
+    points: tuple[Tuple2NumberType, ...]
+    color: ColorInputType
+    kwargs: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass
+class TexturedPolygonDecoration:
+    points: tuple[Tuple2NumberType, ...]
+    texture: BaseImageOrSurface
+    tx: int
+    ty: int
+    kwargs: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass
+class LineDecoration:
+    start: Tuple2NumberType
+    end: Tuple2NumberType
+    color: ColorInputType
+    width: int
+    kwargs: dict[str, Any] = field(default_factory=dict)
 
 
 class Decorator(Base):
@@ -270,7 +377,16 @@ class Decorator(Base):
                 gfx = False  # gfx don't support width
 
         return self._add_decor(
-            DECORATION_POLYGON, prev, (tuple(coords), color, filled, width, gfx, kwargs)
+            DECORATION_POLYGON,
+            prev,
+            PolygonDecoration(
+                points=tuple(coords),
+                color=color,
+                filled=filled,
+                width=width,
+                gfx=gfx,
+                kwargs=kwargs,
+            ),
         )
 
     def add_bezier(
@@ -305,7 +421,14 @@ class Decorator(Base):
             raise ValueError("steps must be >= 1")
 
         return self._add_decor(
-            DECORATION_BEZIER, prev, (tuple(coords), color, steps, kwargs)
+            DECORATION_BEZIER,
+            prev,
+            BezierDecoration(
+                points=tuple(coords),
+                color=color,
+                steps=steps,
+                kwargs=kwargs,
+            ),
         )
 
     def add_circle(
@@ -362,7 +485,15 @@ class Decorator(Base):
         return self._add_decor(
             DECORATION_CIRCLE,
             prev,
-            (tuple(coords), int(radius), color, filled, width, gfx, kwargs),
+            CircleDecoration(
+                points=tuple(coords),
+                radius=int(radius),
+                color=color,
+                filled=filled,
+                width=width,
+                gfx=gfx,
+                kwargs=kwargs,
+            ),
         )
 
     def add_arc(
@@ -418,15 +549,15 @@ class Decorator(Base):
         return self._add_decor(
             DECORATION_ARC,
             prev,
-            (
-                tuple(coords),
-                int(radius),
-                init_angle,
-                final_angle,
-                color,
-                width,
-                gfx,
-                kwargs,
+            ArcDecoration(
+                points=tuple(coords),
+                radius=int(radius),
+                init_angle=init_angle,
+                final_angle=final_angle,
+                color=color,
+                width=width,
+                gfx=gfx,
+                kwargs=kwargs,
             ),
         )
 
@@ -473,7 +604,14 @@ class Decorator(Base):
         return self._add_decor(
             DECORATION_PIE,
             prev,
-            (tuple(coords), int(radius), init_angle, final_angle, color, kwargs),
+            PieDecoration(
+                points=tuple(coords),
+                radius=int(radius),
+                init_angle=init_angle,
+                final_angle=final_angle,
+                color=color,
+                kwargs=kwargs,
+            ),
         )
 
     def add_surface(
@@ -506,7 +644,14 @@ class Decorator(Base):
         if not isinstance(centered, bool):
             raise TypeError("centered must be a boolean")
         return self._add_decor(
-            DECORATION_SURFACE, prev, (tuple(coords), surface, centered, kwargs)
+            DECORATION_SURFACE,
+            prev,
+            BlitDecoration(
+                points=tuple(coords),
+                surface=surface,
+                centered=centered,
+                kwargs=kwargs,
+            ),
         )
 
     def add_baseimage(
@@ -545,7 +690,14 @@ class Decorator(Base):
         if not isinstance(centered, bool):
             raise TypeError("centered must be a boolean")
         return self._add_decor(
-            DECORATION_BASEIMAGE, prev, (tuple(coords), image, centered, kwargs)
+            DECORATION_BASEIMAGE,
+            prev,
+            BlitDecoration(
+                points=tuple(coords),
+                surface=image,
+                centered=centered,
+                kwargs=kwargs,
+            ),
         )
 
     def add_rect(
@@ -583,7 +735,15 @@ class Decorator(Base):
         if not isinstance(rect, pygame.Rect):
             raise TypeError("rect must be a pygame.Rect")
         return self._add_decor(
-            DECORATION_RECT, prev, (tuple(coords), rect, color, width, kwargs)
+            DECORATION_RECT,
+            prev,
+            RectangleDecoration(
+                points=tuple(coords),
+                rect=rect,
+                color=color,
+                width=width,
+                kwargs=kwargs,
+            ),
         )
 
     def add_rectangle(
@@ -624,7 +784,16 @@ class Decorator(Base):
             raise ValueError("height must be a positive number")
 
         rect = pygame.Rect(0, 0, width, height)
-        return self.add_rect(x, y, rect, color, border, prev, **kwargs)
+
+        return self.add_rect(
+            x,
+            y,
+            rect,
+            color,
+            border,
+            prev,
+            **kwargs,
+        )
 
     def add_text(
         self,
@@ -677,7 +846,14 @@ class Decorator(Base):
         )
         surface.blit(surface_font, (0, 0))
         return self._add_decor(
-            DECORATION_TEXT, prev, (tuple(coords), surface, centered, kwargs)
+            DECORATION_TEXT,
+            prev,
+            BlitDecoration(
+                points=tuple(coords),
+                surface=surface,
+                centered=centered,
+                kwargs=kwargs,
+            ),
         )
 
     def add_ellipse(
@@ -721,7 +897,16 @@ class Decorator(Base):
         if not isinstance(filled, bool):
             raise TypeError("filled must be a boolean")
         return self._add_decor(
-            DECORATION_ELLIPSE, prev, (tuple(coords), rx, ry, color, filled, kwargs)
+            DECORATION_ELLIPSE,
+            prev,
+            EllipseDecoration(
+                points=tuple(coords),
+                rx=rx,
+                ry=ry,
+                color=color,
+                filled=filled,
+                kwargs=kwargs,
+            ),
         )
 
     def add_pixel(
@@ -748,7 +933,15 @@ class Decorator(Base):
         coords = [(x, y)]
         assert_list_vector(coords, 2)
         color = assert_color(color)
-        return self._add_decor(DECORATION_PIXEL, prev, (tuple(coords), color, kwargs))
+        return self._add_decor(
+            DECORATION_PIXEL,
+            prev,
+            PixelDecoration(
+                points=tuple(coords),
+                color=color,
+                kwargs=kwargs,
+            ),
+        )
 
     def add_callable(
         self,
@@ -823,7 +1016,15 @@ class Decorator(Base):
         if not isinstance(ty, int):
             raise TypeError("ty must be an integer")
         return self._add_decor(
-            DECORATION_TEXTURE_POLYGON, prev, (tuple(coords), texture, tx, ty, kwargs)
+            DECORATION_TEXTURE_POLYGON,
+            prev,
+            TexturedPolygonDecoration(
+                points=tuple(coords),
+                texture=texture,
+                tx=tx,
+                ty=ty,
+                kwargs=kwargs,
+            ),
         )
 
     def add_line(
@@ -861,7 +1062,15 @@ class Decorator(Base):
             raise ValueError("line cannot be zero-length")
 
         return self._add_decor(
-            DECORATION_LINE, prev, ((tuple(pos1), tuple(pos2)), color, width, kwargs)
+            DECORATION_LINE,
+            prev,
+            LineDecoration(
+                start=tuple(pos1),
+                end=tuple(pos2),
+                color=color,
+                width=width,
+                kwargs=kwargs,
+            ),
         )
 
     def add_fill(self, color: ColorInputType, prev: bool = True) -> str:
@@ -1141,117 +1350,308 @@ class Decorator(Base):
                 raise ValueError("unknown decoration type")
 
     def _draw_polygon(
-        self, surface: pygame.Surface, rect: pygame.Rect, decoid: str, data: Any
+        self,
+        surface: pygame.Surface,
+        rect: pygame.Rect,
+        decoid: str,
+        data: PolygonDecoration,
     ) -> None:
-        points, color, filled, width, gfx, kwargs = data
-        points = self._update_pos_list(rect, decoid, points, **kwargs)
-        if gfx:
-            if filled:
-                gfxdraw.filled_polygon(surface, points, color)
+        points = self._update_pos_list(
+            rect,
+            decoid,
+            data.points,
+            **data.kwargs,
+        )
+
+        if data.gfx:
+            if data.filled:
+                gfxdraw.filled_polygon(surface, points, data.color)
             else:
-                gfxdraw.polygon(surface, points, color)
+                gfxdraw.polygon(surface, points, data.color)
         else:
-            pydraw.polygon(surface, color, points, width)
+            pydraw.polygon(
+                surface,
+                data.color,
+                points,
+                data.width,
+            )
 
     def _draw_circle(
-        self, surface: pygame.Surface, rect: pygame.Rect, decoid: str, data: Any
+        self,
+        surface: pygame.Surface,
+        rect: pygame.Rect,
+        decoid: str,
+        data: CircleDecoration,
     ) -> None:
-        points, r, color, filled, width, gfx, kwargs = data
-        points = self._update_pos_list(rect, decoid, points, **kwargs)
+        points = self._update_pos_list(
+            rect,
+            decoid,
+            data.points,
+            **data.kwargs,
+        )
+
         x, y = points[0]
-        if filled:
-            if gfx:
-                gfxdraw.filled_circle(surface, x, y, r, color)
+
+        if data.filled:
+            if data.gfx:
+                gfxdraw.filled_circle(surface, x, y, data.radius, data.color)
             else:
-                pydraw.circle(surface, color, (x, y), r)
+                pydraw.circle(surface, data.color, (x, y), data.radius)
         else:
-            pydraw.circle(surface, color, (x, y), r, width)
+            pydraw.circle(
+                surface,
+                data.color,
+                (x, y),
+                data.radius,
+                data.width,
+            )
 
     def _draw_surface(
-        self, surface: pygame.Surface, rect: pygame.Rect, decoid: str, data: Any
+        self,
+        surface: pygame.Surface,
+        rect: pygame.Rect,
+        decoid: str,
+        data: BlitDecoration,
     ) -> None:
-        pos, surf, centered, kwargs = data
+        surf = data.surface
+
         if isinstance(surf, pygame_menu.BaseImage):
             surf = surf.get_surface(new=False)
-        pos = self._update_pos_list(rect, decoid, pos, **kwargs)[0]
+
+        pos = self._update_pos_list(
+            rect,
+            decoid,
+            data.points,
+            **data.kwargs,
+        )[0]
+
         surf_rect = surf.get_rect()
         surf_rect.x += pos[0]
         surf_rect.y += pos[1]
-        if centered:
+
+        if data.centered:
             surf_rect.x -= int(surf_rect.width / 2)
             surf_rect.y -= int(surf_rect.height / 2)
+
         surface.blit(surf, surf_rect)
 
     def _draw_ellipse(
-        self, surface: pygame.Surface, rect: pygame.Rect, decoid: str, data: Any
+        self,
+        surface: pygame.Surface,
+        rect: pygame.Rect,
+        decoid: str,
+        data: EllipseDecoration,
     ) -> None:
-        pos, rx, ry, color, filled, kwargs = data
-        pos = self._update_pos_list(rect, decoid, pos, **kwargs)[0]
-        if filled:
-            gfxdraw.filled_ellipse(surface, pos[0], pos[1], rx, ry, color)
+        pos = self._update_pos_list(
+            rect,
+            decoid,
+            data.points,
+            **data.kwargs,
+        )[0]
+
+        if data.filled:
+            gfxdraw.filled_ellipse(
+                surface,
+                pos[0],
+                pos[1],
+                data.rx,
+                data.ry,
+                data.color,
+            )
         else:
-            gfxdraw.ellipse(surface, pos[0], pos[1], rx, ry, color)
+            gfxdraw.ellipse(
+                surface,
+                pos[0],
+                pos[1],
+                data.rx,
+                data.ry,
+                data.color,
+            )
 
     def _draw_textured_polygon(
-        self, surface: pygame.Surface, rect: pygame.Rect, decoid: str, data: Any
+        self,
+        surface: pygame.Surface,
+        rect: pygame.Rect,
+        decoid: str,
+        data: TexturedPolygonDecoration,
     ) -> None:
-        pos, texture, tx, ty, kwargs = data
-        pos = self._update_pos_list(rect, decoid, pos, **kwargs)
+        pos = self._update_pos_list(
+            rect,
+            decoid,
+            data.points,
+            **data.kwargs,
+        )
+
+        texture = data.texture
+
         if isinstance(texture, pygame_menu.BaseImage):
             texture = texture.get_surface()
-        gfxdraw.textured_polygon(surface, pos, texture, tx, ty)
+
+        gfxdraw.textured_polygon(
+            surface,
+            pos,
+            texture,
+            data.tx,
+            data.ty,
+        )
 
     def _draw_arc(
-        self, surface: pygame.Surface, rect: pygame.Rect, decoid: str, data: Any
+        self,
+        surface: pygame.Surface,
+        rect: pygame.Rect,
+        decoid: str,
+        data: ArcDecoration,
     ) -> None:
-        points, r, ia, fa, color, width, gfx, kwargs = data
-        points = self._update_pos_list(rect, decoid, points, **kwargs)
+        points = self._update_pos_list(
+            rect,
+            decoid,
+            data.points,
+            **data.kwargs,
+        )
+
         x, y = points[0]
-        rect_arc = pygame.Rect(x - r, y - r, x + 2 * r, y + 2 * r)
-        if gfx:
-            gfxdraw.arc(surface, x, y, r, ia, fa, color)
+
+        rect_arc = pygame.Rect(
+            x - data.radius,
+            y - data.radius,
+            2 * data.radius,
+            2 * data.radius,
+        )
+
+        if data.gfx:
+            gfxdraw.arc(
+                surface,
+                x,
+                y,
+                data.radius,
+                data.init_angle,
+                data.final_angle,
+                data.color,
+            )
         else:
-            pydraw.arc(surface, color, rect_arc, ia / (2 * pi), fa / (2 * pi), width)
+            pydraw.arc(
+                surface,
+                data.color,
+                rect_arc,
+                data.init_angle / (2 * pi),
+                data.final_angle / (2 * pi),
+                data.width,
+            )
 
     def _draw_pie(
-        self, surface: pygame.Surface, rect: pygame.Rect, decoid: str, data: Any
+        self,
+        surface: pygame.Surface,
+        rect: pygame.Rect,
+        decoid: str,
+        data: PieDecoration,
     ) -> None:
-        points, r, ia, fa, color, kwargs = data
-        points = self._update_pos_list(rect, decoid, points, **kwargs)
+        points = self._update_pos_list(
+            rect,
+            decoid,
+            data.points,
+            **data.kwargs,
+        )
+
         x, y = points[0]
-        gfxdraw.pie(surface, x, y, r, ia, fa, color)
+
+        gfxdraw.pie(
+            surface,
+            x,
+            y,
+            data.radius,
+            data.init_angle,
+            data.final_angle,
+            data.color,
+        )
 
     def _draw_bezier(
-        self, surface: pygame.Surface, rect: pygame.Rect, decoid: str, data: Any
+        self,
+        surface: pygame.Surface,
+        rect: pygame.Rect,
+        decoid: str,
+        data: BezierDecoration,
     ) -> None:
-        points, color, steps, kwargs = data
-        points = self._update_pos_list(rect, decoid, points, **kwargs)
-        gfxdraw.bezier(surface, points, steps, color)
+        points = self._update_pos_list(
+            rect,
+            decoid,
+            data.points,
+            **data.kwargs,
+        )
+
+        gfxdraw.bezier(
+            surface,
+            points,
+            data.steps,
+            data.color,
+        )
 
     def _draw_rect(
-        self, surface: pygame.Surface, rect: pygame.Rect, decoid: str, data: Any
+        self,
+        surface: pygame.Surface,
+        rect: pygame.Rect,
+        decoid: str,
+        data: RectangleDecoration,
     ) -> None:
-        d_rect: pygame.Rect
-        pos, d_rect, color, width, kwargs = data
-        pos = self._update_pos_list(rect, decoid, pos, **kwargs)[0]
-        d_rect = d_rect.copy()
+        pos = self._update_pos_list(
+            rect,
+            decoid,
+            data.points,
+            **data.kwargs,
+        )[0]
+
+        d_rect = data.rect.copy()
         d_rect.x += pos[0]
         d_rect.y += pos[1]
-        pygame.draw.rect(surface, color, d_rect, width)
+
+        pygame.draw.rect(
+            surface,
+            data.color,
+            d_rect,
+            data.width,
+        )
 
     def _draw_pixel(
-        self, surface: pygame.Surface, rect: pygame.Rect, decoid: str, data: Any
+        self,
+        surface: pygame.Surface,
+        rect: pygame.Rect,
+        decoid: str,
+        data: PixelDecoration,
     ) -> None:
-        pos, color, kwargs = data
-        pos = self._update_pos_list(rect, decoid, pos, **kwargs)[0]
-        gfxdraw.pixel(surface, pos[0], pos[1], color)
+        pos = self._update_pos_list(
+            rect,
+            decoid,
+            data.points,
+            **data.kwargs,
+        )[0]
+
+        gfxdraw.pixel(
+            surface,
+            pos[0],
+            pos[1],
+            data.color,
+        )
 
     def _draw_line(
-        self, surface: pygame.Surface, rect: pygame.Rect, decoid: str, data: Any
+        self,
+        surface: pygame.Surface,
+        rect: pygame.Rect,
+        decoid: str,
+        data: LineDecoration,
     ) -> None:
-        pos, color, width, kwargs = data
-        pos = self._update_pos_list(rect, decoid, pos, **kwargs)
-        pydraw.line(surface, color, pos[0], pos[1], width)
+        pos = self._update_pos_list(
+            rect,
+            decoid,
+            (data.start, data.end),
+            **data.kwargs,
+        )
+
+        pydraw.line(
+            surface,
+            data.color,
+            pos[0],
+            pos[1],
+            data.width,
+        )
 
     def _update_pos_list(
         self,
