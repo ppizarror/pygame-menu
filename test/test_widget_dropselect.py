@@ -188,6 +188,39 @@ def test_dropselect_keyboard_events_and_scrolling(generic_menu, drop_items):
         assert prev > 0.9
 
 
+def test_dropselect_is_expanded(generic_menu, drop_items):
+    """Test DropSelect.is_expanded() tracks the dropdown state."""
+    menu = generic_menu
+    drop = menu.add.dropselect("dropsel", drop_items)
+
+    # Collapsed by default
+    assert not drop.is_expanded()
+
+    # Expand with the toggle key
+    drop.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
+    assert drop.active
+    assert drop.is_expanded()
+
+    # Collapse by applying the selection
+    drop.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
+    assert not drop.active
+    assert not drop.is_expanded()
+
+
+def test_dropselect_is_expanded_close_on_apply_disabled(generic_menu, drop_items):
+    """Test is_expanded() stays True when close_on_apply is disabled."""
+    menu = generic_menu
+    drop = menu.add.dropselect("dropsel", drop_items, close_on_apply=False)
+
+    drop.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
+    assert drop.is_expanded()
+
+    # Applying an option does not collapse the dropdown
+    drop.update(PygameEventUtils.key(ctrl.KEY_MOVE_UP, keydown=True))
+    drop.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
+    assert drop.is_expanded()
+
+
 def test_dropselect_mouse_and_touch_toggle(generic_menu, drop_items):
     """Test DropSelect mouse and touch interaction toggling."""
     menu = generic_menu
