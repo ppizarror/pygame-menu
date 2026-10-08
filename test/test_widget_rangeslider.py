@@ -642,6 +642,48 @@ def test_keyrepeat_original_style(menu_no_ignore):
     assert slider_off.get_value() == 0.1
 
 
+def test_joystick_axis_updates_value(menu):
+    """Joystick axis motion must change the value without raising (issue #478)."""
+    slider = menu.add.range_slider("", 0.5, [0, 1], increment=0.1)
+
+    assert slider.update(PygameEventUtils.joy_motion(x=1)) is True
+    assert slider.get_value() == 0.6
+    assert slider.update(PygameEventUtils.joy_motion(x=-1)) is True
+    assert slider.get_value() == 0.5
+
+
+def test_joystick_hat_updates_value(menu):
+    """Joystick hat motion must change the value without raising (issue #478)."""
+    slider = menu.add.range_slider("", 0.5, [0, 1], increment=0.1)
+
+    assert slider.update(PygameEventUtils.joy_hat_motion((1, 0))) is True
+    assert slider.get_value() == 0.6
+    assert slider.update(PygameEventUtils.joy_hat_motion((-1, 0))) is True
+    assert slider.get_value() == 0.5
+
+
+def test_joystick_does_not_pollute_keyrepeat_counters(menu):
+    """Joystick events must not register keyboard repeat counters."""
+    slider = menu.add.range_slider("", 0.5, [0, 1], increment=0.1)
+
+    slider.update(PygameEventUtils.joy_motion(x=1))
+    assert slider._keyrepeat_counters == {}
+
+    # Keyboard repeat still works after a joystick event
+    slider.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
+    assert ctrl.KEY_RIGHT in slider._keyrepeat_counters
+
+
+def test_joystick_discrete_slider_updates_value(menu):
+    """Joystick axis motion must work for discrete range sliders (issue #478)."""
+    slider = menu.add.range_slider("", 1, [0, 1, 2], increment=1)
+
+    assert slider.update(PygameEventUtils.joy_motion(x=1)) is True
+    assert slider.get_value() == 2
+    assert slider.update(PygameEventUtils.joy_motion(x=-1)) is True
+    assert slider.get_value() == 1
+
+
 def test_key_repeat_functionality(menu):
     """Test controlled key repeat behavior."""
     # Controlled version (no sleep)
