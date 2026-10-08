@@ -419,3 +419,105 @@ def test_arc_non_gfx_matches_pygame():
         surf_expected,
         "RGBA",
     )
+
+
+def test_add_rectangle_invalid_color():
+    """add_rectangle should validate color input."""
+    widg = NoneWidget()
+    deco = widg.get_decorator()
+
+    with pytest.raises(Exception):
+        deco.add_rectangle(
+            0,
+            0,
+            100,
+            100,
+            "invalid-color",
+        )
+
+
+def test_add_rectangle_negative_border():
+    """Border must be non-negative."""
+    widg = NoneWidget()
+    deco = widg.get_decorator()
+
+    with pytest.raises(ValueError):
+        deco.add_rectangle(
+            0,
+            0,
+            100,
+            100,
+            (255, 255, 255),
+            border=-1,
+        )
+
+
+def test_arc_non_gfx_matches_pygame_nonzero_center():
+    """Arc rendering should match pygame.draw.arc even when centered away from origin."""
+
+    menu = MenuUtils.generic_menu()
+    btn = menu.add.button("Button")
+
+    deco = btn.get_decorator()
+
+    surf_deco = pygame.Surface((1000, 1000))
+    surf_expected = pygame.Surface((1000, 1000))
+
+    color = (255, 255, 255)
+
+    deco.add_arc(
+        100,
+        50,
+        40,
+        0,
+        180,
+        color,
+        width=2,
+        gfx=False,
+    )
+
+    deco.draw_prev(surf_deco)
+
+    rect = btn.get_rect()
+    cx, cy = rect.center
+
+    expected_rect = pygame.Rect(
+        cx + 100 - 40,
+        cy + 50 - 40,
+        80,
+        80,
+    )
+
+    pygame.draw.arc(
+        surf_expected,
+        color,
+        expected_rect,
+        0 / (2 * math.pi),
+        180 / (2 * math.pi),
+        2,
+    )
+
+    assert pygame.image.tostring(
+        surf_deco,
+        "RGBA",
+    ) == pygame.image.tostring(
+        surf_expected,
+        "RGBA",
+    )
+
+
+def test_remove_all_removes_all_decorations():
+    widg = NoneWidget()
+    deco = widg.get_decorator()
+
+    deco.add_pixel(0, 0, (255, 255, 255))
+    deco.add_circle(0, 0, 10, (255, 255, 255), True)
+
+    assert deco._total_decor() == 2
+
+    deco.remove_all()
+
+    assert deco._total_decor() == 0
+
+    # drawing should still work
+    deco.draw_prev(surface)
