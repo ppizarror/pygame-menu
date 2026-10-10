@@ -24,7 +24,7 @@ __all__ = [
     "MenuBarStyleModeType",
 ]
 
-from typing import Any
+from typing import Any, Callable
 
 import pygame
 import pygame.gfxdraw as gfxdraw
@@ -89,16 +89,22 @@ class MenuBar(Widget):
     :param kwargs: Optional keyword arguments for callbacks
     """
 
+    _DIAGONAL_PADDING: int = 25
+    _TITLE_PADDING: int = 5
+    _BACKBOX_MARGIN: int = 4
+    _ADAPTIVE_HEIGHT_RATIO: float = 0.6
+    _UNDERLINE_RATIO: float = 0.91
+
     _backbox: bool
     _backbox_background_color: ColorType
     _backbox_border_width: int
-    _backbox_pos: Any
+    _backbox_pos: tuple[Tuple2IntType, ...] | None
     _backbox_rect: pygame.Rect | None
     _box_mode: int
     _modify_scrollarea: bool
     _offsetx: NumberType
     _offsety: NumberType
-    _polygon_pos: Any
+    _polygon_pos: tuple[Tuple2IntType, ...] | None
     _scrollbar_deltas: list[tuple[int, Tuple2IntType]]
     _style: int
     _width: int
@@ -258,8 +264,292 @@ class MenuBar(Widget):
             )
         )
 
+    def _set_scrollbar_deltas(
+        self,
+        north: tuple[int, Tuple2IntType],
+        east: tuple[int, Tuple2IntType],
+        south: tuple[int, Tuple2IntType],
+        west: tuple[int, Tuple2IntType],
+    ) -> None:
+        self._scrollbar_deltas = [north, east, south, west]
+
+    def _default_cross_size(self) -> int:
+        return int(
+            self._rect.height * self._ADAPTIVE_HEIGHT_RATIO * self._backbox_visible()
+        )
+
+    def _default_scrollbar(self, cross_size: int) -> None:
+        self._set_scrollbar_deltas(
+            (0, (0, self._rect.height)),
+            (-cross_size, (0, cross_size)),
+            (0, (0, 0)),
+            (-self._rect.height, (0, self._rect.height)),
+        )
+
+    def _render_adaptive(self) -> tuple[int, int]:
+        """
+        A-------------------B                  D-E: 25 dx
+        |****             x | *0,6 height
+        |      D------------C
+        F----E/
+        """
+        a = self._rect.x, self._rect.y
+        b = self._rect.x + self._width - 1, self._rect.y
+        c = (
+            self._rect.x + self._width - 1,
+            self._rect.y + int(self._rect.height * self._ADAPTIVE_HEIGHT_RATIO),
+        )
+        d = (
+            self._rect.x + self._rect.width + self._DIAGONAL_PADDING + self._offsetx,
+            self._rect.y + int(self._rect.height * self._ADAPTIVE_HEIGHT_RATIO),
+        )
+        e = (
+            self._rect.x + self._rect.width + self._TITLE_PADDING + self._offsetx,
+            self._rect.y + self._rect.height,
+        )
+        f = self._rect.x, self._rect.y + self._rect.height
+        self._polygon_pos = a, b, c, d, e, f
+        cross_size = int(self._rect.height * self._ADAPTIVE_HEIGHT_RATIO)
+        self._set_scrollbar_deltas(
+            (0, (0, self._rect.height)),
+            (-cross_size, (0, cross_size)),
+            (0, (0, 0)),
+            (-self._rect.height, (0, self._rect.height)),
+        )
+        self._check_title_color(background_menu=False)
+        return cross_size, 0
+
+    def _render_simple(self) -> tuple[int, int]:
+        """
+        A-------------------B
+        |****             x | *1,0 height
+        D-------------------C
+        """
+        a = self._rect.x, self._rect.y
+        b = self._rect.x + self._width - 1, self._rect.y
+        c = self._rect.x + self._width - 1, self._rect.y + self._rect.height
+        d = self._rect.x, self._rect.y + self._rect.height
+        self._polygon_pos = a, b, c, d
+        cross_size = int(self._rect.height * self._backbox_visible())
+        self._set_scrollbar_deltas(
+            (0, (0, self._rect.height)),
+            (-self._rect.height, (0, self._rect.height)),
+            (0, (0, 0)),
+            (-self._rect.height, (0, self._rect.height)),
+        )
+        self._check_title_color(background_menu=False)
+        return cross_size, 0
+
+    def _render_title_only(self) -> tuple[int, int]:
+        """
+        A-----B
+        | *** |           x        *0,6 height
+        D-----C
+        """
+        a = self._rect.x, self._rect.y
+        b = (
+            self._rect.x + self._rect.width + self._TITLE_PADDING + self._offsetx,
+            self._rect.y,
+        )
+        c = (
+            self._rect.x + self._rect.width + self._TITLE_PADDING + self._offsetx,
+            self._rect.y + self._rect.height,
+        )
+        d = self._rect.x, self._rect.y + self._rect.height
+        self._polygon_pos = a, b, c, d
+        cross_size = self._default_cross_size()
+        self._default_scrollbar(cross_size)
+        self._check_title_color(background_menu=False)
+        return cross_size, 0
+
+    def _render_title_only_diagonal(self) -> tuple[int, int]:
+        """
+        A--------B
+        | **** /          x        *0,6 height
+        D-----C
+        """
+        a = self._rect.x, self._rect.y
+        b = (
+            self._rect.x + self._rect.width + self._DIAGONAL_PADDING + self._offsetx,
+            self._rect.y,
+        )
+        c = (
+            self._rect.x + self._rect.width + self._TITLE_PADDING + self._offsetx,
+            self._rect.y + self._rect.height,
+        )
+        d = self._rect.x, self._rect.y + self._rect.height
+        self._polygon_pos = a, b, c, d
+        cross_size = self._default_cross_size()
+        self._default_scrollbar(cross_size)
+        self._check_title_color(background_menu=False)
+        return cross_size, 0
+
+    def _render_none(self) -> tuple[int, int]:
+        """
+        A------------------B
+         ****             x        *0,6 height
+        """
+        a = self._rect.x, self._rect.y
+        b = self._rect.x + self._width - 1, self._rect.y
+        self._polygon_pos = a, b
+        cross_size = self._default_cross_size()
+        self._default_scrollbar(cross_size)
+        self._check_title_color(background_menu=True)
+        return cross_size, 0
+
+    def _render_underline(self) -> tuple[int, int]:
+        """
+         ****             x
+        A-------------------B      *0,09 height
+        D-------------------C
+        """
+        dy = 0
+        offset_y = int(self._UNDERLINE_RATIO * self._rect.height + dy)
+        a = self._rect.x, self._rect.y + offset_y
+        b = (
+            self._rect.x + self._width - 1,
+            self._rect.y + offset_y,
+        )
+        c = self._rect.x + self._width - 1, self._rect.y + self._rect.height + dy
+        d = self._rect.x, self._rect.y + self._rect.height + dy
+        self._polygon_pos = a, b, c, d
+        cross_size = int(
+            self._ADAPTIVE_HEIGHT_RATIO * self._rect.height * self._backbox_visible()
+        )
+        self._set_scrollbar_deltas(
+            (0, (0, self._rect.height)),
+            (-self._rect.height, (0, self._rect.height)),
+            (0, (0, 0)),
+            (-self._rect.height, (0, self._rect.height)),
+        )
+        self._check_title_color(background_menu=True)
+        return cross_size, dy
+
+    def _render_underline_title(self) -> tuple[int, int]:
+        """
+         ****               x
+        A----B                     *0,09 height
+        D----C
+        """
+        dy = 0
+        offset_y = int(self._UNDERLINE_RATIO * self._rect.height + dy)
+        a = self._rect.x, self._rect.y + offset_y
+        b = (
+            self._rect.x + self._rect.width + self._TITLE_PADDING + self._offsetx,
+            self._rect.y + offset_y,
+        )
+        c = (
+            self._rect.x + self._rect.width + self._TITLE_PADDING + self._offsetx,
+            self._rect.y + self._rect.height + dy,
+        )
+        d = self._rect.x, self._rect.y + self._rect.height + dy
+        self._polygon_pos = a, b, c, d
+        cross_size = self._default_cross_size()
+        self._default_scrollbar(cross_size)
+        self._check_title_color(background_menu=True)
+        return cross_size, dy
+
+    _STYLE_RENDERERS: dict[int, Callable[[MenuBar], tuple[int, int]]] = {
+        MENUBAR_STYLE_ADAPTIVE: _render_adaptive,
+        MENUBAR_STYLE_SIMPLE: _render_simple,
+        MENUBAR_STYLE_TITLE_ONLY: _render_title_only,
+        MENUBAR_STYLE_TITLE_ONLY_DIAGONAL: _render_title_only_diagonal,
+        MENUBAR_STYLE_NONE: _render_none,
+        MENUBAR_STYLE_UNDERLINE: _render_underline,
+        MENUBAR_STYLE_UNDERLINE_TITLE: _render_underline_title,
+    }
+
+    def _create_close_icon(self) -> None:
+        self._backbox_pos = (
+            (self._backbox_rect.left + 4, self._backbox_rect.top + 4),
+            (self._backbox_rect.centerx, self._backbox_rect.centery),
+            (self._backbox_rect.right - 4, self._backbox_rect.top + 4),
+            (self._backbox_rect.centerx, self._backbox_rect.centery),
+            (self._backbox_rect.right - 4, self._backbox_rect.bottom - 4),
+            (self._backbox_rect.centerx, self._backbox_rect.centery),
+            (self._backbox_rect.left + 4, self._backbox_rect.bottom - 4),
+            (self._backbox_rect.centerx, self._backbox_rect.centery),
+            (self._backbox_rect.left + 4, self._backbox_rect.top + 4),
+        )
+
+    def _create_back_icon(self) -> None:
+        self._backbox_pos = (
+            (self._backbox_rect.left + 5, self._backbox_rect.centery),
+            (self._backbox_rect.centerx, self._backbox_rect.top + 5),
+            (self._backbox_rect.centerx, self._backbox_rect.centery - 2),
+            (self._backbox_rect.right - 5, self._backbox_rect.centery - 2),
+            (self._backbox_rect.right - 5, self._backbox_rect.centery + 2),
+            (self._backbox_rect.centerx, self._backbox_rect.centery + 2),
+            (self._backbox_rect.centerx, self._backbox_rect.bottom - 5),
+            (self._backbox_rect.left + 5, self._backbox_rect.centery),
+        )
+
+    def _create_backbox(self, cross_size: int) -> None:
+        if not self._backbox:
+            return
+
+        scroll_delta = 0
+        if self._floating and self._menu is not None:
+            scroll_delta = self._menu.get_width() - self._menu.get_width(inner=True)
+
+        self._backbox_rect = pygame.Rect(
+            int(
+                self._rect.x
+                + self._width
+                - cross_size
+                + self._BACKBOX_MARGIN
+                - scroll_delta
+            ),
+            int(self._rect.y + self._BACKBOX_MARGIN),
+            int(cross_size - 2 * self._BACKBOX_MARGIN),
+            int(cross_size - 2 * self._BACKBOX_MARGIN),
+        )
+
+        if self._box_mode == _MODE_CLOSE:
+            self._create_close_icon()
+        elif self._box_mode == _MODE_BACK:
+            self._create_back_icon()
+
+    def _render(self) -> bool | None:
+        if self._menu is None:
+            return None
+
+        menu_prev_condition = (
+            not self._menu or not self._menu._top or not self._menu._top._prev
+        )
+
+        if not self._render_hash_changed(
+            self._menu.get_id(),
+            self._rect.x,
+            self._rect.y,
+            self._title,
+            self._width,
+            self._visible,
+            self._font_selected_color,
+            menu_prev_condition,
+        ):
+            return True
+
+        if menu_prev_condition:
+            self._box_mode = _MODE_CLOSE
+        else:
+            self._box_mode = _MODE_BACK
+
+        self._surface = self._render_string(self._title, self._font_selected_color)
+        self._rect.width, self._rect.height = self._surface.get_size()
+        self._apply_transforms()
+
+        if self._style not in self._STYLE_RENDERERS:
+            raise ValueError(f"invalid menubar mode {self._style}")
+
+        cross_size, dy = self._STYLE_RENDERERS[self._style](self)
+        self._rect.height += dy
+
+        self._create_backbox(cross_size)
+        return True
+
     def _draw(self, surface: pygame.Surface) -> None:
-        if len(self._polygon_pos) > 2:
+        if self._polygon_pos and len(self._polygon_pos) > 2:
             gfxdraw.filled_polygon(surface, self._polygon_pos, self._background_color)
 
         # Draw backbox if enabled
@@ -309,256 +599,6 @@ class MenuBar(Widget):
             return self._scrollbar_deltas[3]
         return 0, (0, 0)
 
-    def _render(self) -> bool | None:
-        if self._menu is None:
-            return None
-
-        # noinspection PyProtectedMember
-        menu_prev_condition = (
-            not self._menu or not self._menu._top or not self._menu._top._prev
-        )
-
-        if not self._render_hash_changed(
-            self._menu.get_id(),
-            self._rect.x,
-            self._rect.y,
-            self._title,
-            self._width,
-            self._visible,
-            self._font_selected_color,
-            menu_prev_condition,
-        ):
-            return True
-
-        # Update box mode
-        elif menu_prev_condition:
-            self._box_mode = _MODE_CLOSE
-        else:
-            self._box_mode = _MODE_BACK
-
-        self._surface = self._render_string(self._title, self._font_selected_color)
-        self._rect.width, self._rect.height = self._surface.get_size()
-        self._apply_transforms()  # Rotation does not affect rect size
-
-        dy = 0
-
-        if self._style == MENUBAR_STYLE_ADAPTIVE:
-            """
-            A-------------------B                  D-E: 25 dx
-            |****             x | *0,6 height
-            |      D------------C
-            F----E/
-            """
-            a = self._rect.x, self._rect.y
-            b = self._rect.x + self._width - 1, self._rect.y
-            c = self._rect.x + self._width - 1, self._rect.y + self._rect.height * 0.6
-            d = (
-                self._rect.x + self._rect.width + 25 + self._offsetx,
-                self._rect.y + self._rect.height * 0.6,
-            )
-            e = (
-                self._rect.x + self._rect.width + 5 + self._offsetx,
-                self._rect.y + self._rect.height,
-            )
-            f = self._rect.x, self._rect.y + self._rect.height
-            self._polygon_pos = a, b, c, d, e, f
-            cross_size = int(self._rect.height * 0.6)
-            self._scrollbar_deltas = [
-                (0, (0, self._rect.height)),
-                (-cross_size, (0, cross_size)),
-                (0, (0, 0)),
-                (-self._rect.height, (0, self._rect.height)),
-            ]
-            self._check_title_color(background_menu=False)
-
-        elif self._style == MENUBAR_STYLE_SIMPLE:
-            """
-            A-------------------B
-            |****             x | *1,0 height
-            D-------------------C
-            """
-            a = self._rect.x, self._rect.y
-            b = self._rect.x + self._width - 1, self._rect.y
-            c = self._rect.x + self._width - 1, self._rect.y + self._rect.height
-            d = self._rect.x, self._rect.y + self._rect.height
-            self._polygon_pos = a, b, c, d
-            cross_size = int(self._rect.height * self._backbox_visible())
-            self._scrollbar_deltas = [
-                (0, (0, self._rect.height)),
-                (-self._rect.height, (0, self._rect.height)),
-                (0, (0, 0)),
-                (-self._rect.height, (0, self._rect.height)),
-            ]
-            self._check_title_color(background_menu=False)
-
-        elif self._style == MENUBAR_STYLE_TITLE_ONLY:
-            """
-            A-----B
-            | *** |           x        *0,6 height
-            D-----C
-            """
-            a = self._rect.x, self._rect.y
-            b = self._rect.x + self._rect.width + 5 + self._offsetx, self._rect.y
-            c = (
-                self._rect.x + self._rect.width + 5 + self._offsetx,
-                self._rect.y + self._rect.height,
-            )
-            d = self._rect.x, self._rect.y + self._rect.height
-            self._polygon_pos = a, b, c, d
-            cross_size = int(self._rect.height * 0.6 * self._backbox_visible())
-            self._scrollbar_deltas = [
-                (0, (0, self._rect.height)),
-                (-cross_size, (0, cross_size)),
-                (0, (0, 0)),
-                (-self._rect.height, (0, self._rect.height)),
-            ]
-            self._check_title_color(background_menu=False)
-
-        elif self._style == MENUBAR_STYLE_TITLE_ONLY_DIAGONAL:
-            """
-            A--------B
-            | **** /          x        *0,6 height
-            D-----C
-            """
-            a = self._rect.x, self._rect.y
-            b = self._rect.x + self._rect.width + 25 + self._offsetx, self._rect.y
-            c = (
-                self._rect.x + self._rect.width + 5 + self._offsetx,
-                self._rect.y + self._rect.height,
-            )
-            d = self._rect.x, self._rect.y + self._rect.height
-            self._polygon_pos = a, b, c, d
-            cross_size = int(self._rect.height * 0.6 * self._backbox_visible())
-            self._scrollbar_deltas = [
-                (0, (0, self._rect.height)),
-                (-cross_size, (0, cross_size)),
-                (0, (0, 0)),
-                (-self._rect.height, (0, self._rect.height)),
-            ]
-            self._check_title_color(background_menu=False)
-
-        elif self._style == MENUBAR_STYLE_NONE:
-            """
-            A------------------B
-             ****             x        *0,6 height
-            """
-            a = self._rect.x, self._rect.y
-            b = self._rect.x + self._width - 1, self._rect.y
-            self._polygon_pos = a, b
-            cross_size = int(self._rect.height * 0.6 * self._backbox_visible())
-            self._scrollbar_deltas = [
-                (0, (0, self._rect.height)),
-                (-cross_size, (0, cross_size)),
-                (0, (0, 0)),
-                (-self._rect.height, (0, self._rect.height)),
-            ]
-            self._check_title_color(background_menu=True)
-
-        elif self._style == MENUBAR_STYLE_UNDERLINE:
-            """
-             ****             x
-            A-------------------B      *0,09 height
-            D-------------------C
-            """
-            # dy = 0
-            a = self._rect.x, self._rect.y + 0.91 * self._rect.height + dy
-            b = (
-                self._rect.x + self._width - 1,
-                self._rect.y + 0.91 * self._rect.height + dy,
-            )
-            c = self._rect.x + self._width - 1, self._rect.y + self._rect.height + dy
-            d = self._rect.x, self._rect.y + self._rect.height + dy
-            self._polygon_pos = a, b, c, d
-            cross_size = int(0.6 * self._rect.height * self._backbox_visible())
-            self._scrollbar_deltas = [
-                (0, (0, self._rect.height)),
-                (-self._rect.height, (0, self._rect.height)),
-                (0, (0, 0)),
-                (-self._rect.height, (0, self._rect.height)),
-            ]
-            self._check_title_color(background_menu=True)
-
-        elif self._style == MENUBAR_STYLE_UNDERLINE_TITLE:
-            """
-             ****               x
-            A----B                     *0,09 height
-            D----C
-            """
-            # dy = 3
-            a = self._rect.x, self._rect.y + 0.91 * self._rect.height + dy
-            b = (
-                self._rect.x + self._rect.width + 5 + self._offsetx,
-                self._rect.y + 0.91 * self._rect.height + dy,
-            )
-            c = (
-                self._rect.x + self._rect.width + 5 + self._offsetx,
-                self._rect.y + self._rect.height + dy,
-            )
-            d = self._rect.x, self._rect.y + self._rect.height + dy
-            self._polygon_pos = a, b, c, d
-            cross_size = int(0.6 * self._rect.height * self._backbox_visible())
-            self._scrollbar_deltas = [
-                (0, (0, self._rect.height)),
-                (-cross_size, (0, cross_size)),
-                (0, (0, 0)),
-                (-self._rect.height, (0, self._rect.height)),
-            ]
-            self._check_title_color(background_menu=True)
-
-        else:
-            raise ValueError(f"invalid menubar mode {self._style}")
-        self._rect.height += dy
-
-        # Create the back box
-        if self._backbox:
-            backbox_margin = 4
-
-            # Subtract the scrollarea thickness if float and enabled
-            scroll_delta = 0
-            if self._floating and self._menu is not None:
-                scroll_delta = self._menu.get_width() - self._menu.get_width(inner=True)
-
-            self._backbox_rect = pygame.Rect(
-                int(
-                    self._rect.x
-                    + self._width
-                    - cross_size
-                    + backbox_margin
-                    - scroll_delta
-                ),
-                int(self._rect.y + backbox_margin),
-                int(cross_size - 2 * backbox_margin),
-                int(cross_size - 2 * backbox_margin),
-            )
-
-            if self._box_mode == _MODE_CLOSE:
-                # Make a cross for top Menu
-                self._backbox_pos = (
-                    (self._backbox_rect.left + 4, self._backbox_rect.top + 4),
-                    (self._backbox_rect.centerx, self._backbox_rect.centery),
-                    (self._backbox_rect.right - 4, self._backbox_rect.top + 4),
-                    (self._backbox_rect.centerx, self._backbox_rect.centery),
-                    (self._backbox_rect.right - 4, self._backbox_rect.bottom - 4),
-                    (self._backbox_rect.centerx, self._backbox_rect.centery),
-                    (self._backbox_rect.left + 4, self._backbox_rect.bottom - 4),
-                    (self._backbox_rect.centerx, self._backbox_rect.centery),
-                    (self._backbox_rect.left + 4, self._backbox_rect.top + 4),
-                )
-
-            elif self._box_mode == _MODE_BACK:
-                # Make a back arrow for sub-menus
-                self._backbox_pos = (
-                    (self._backbox_rect.left + 5, self._backbox_rect.centery),
-                    (self._backbox_rect.centerx, self._backbox_rect.top + 5),
-                    (self._backbox_rect.centerx, self._backbox_rect.centery - 2),
-                    (self._backbox_rect.right - 5, self._backbox_rect.centery - 2),
-                    (self._backbox_rect.right - 5, self._backbox_rect.centery + 2),
-                    (self._backbox_rect.centerx, self._backbox_rect.centery + 2),
-                    (self._backbox_rect.centerx, self._backbox_rect.bottom - 5),
-                    (self._backbox_rect.left + 5, self._backbox_rect.centery),
-                )
-        return True
-
     def set_title(
         self, title: Any, offsetx: NumberType = 0, offsety: NumberType = 0
     ) -> MenuBar:
@@ -599,14 +639,18 @@ class MenuBar(Widget):
                 self._check_mouseover(event)
 
             # User clicks/touches the backbox rect; don't consider the mouse wheel (button 4 & 5)
-            if (
+            mouse_event = (
                 event.type == pygame.MOUSEBUTTONUP
                 and self._mouse_enabled
                 and event.button in (1, 2, 3)
-                or event.type == FINGERUP
+            )
+            touch_event = (
+                event.type == FINGERUP
                 and self._touchscreen_enabled
                 and self._menu is not None
-            ):
+            )
+
+            if mouse_event or touch_event:
                 event_pos = get_finger_pos(self._menu, event)
                 if self._backbox_visible() and self._backbox_rect.collidepoint(
                     *event_pos
