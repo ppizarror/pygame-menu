@@ -29,6 +29,7 @@ from pygame_menu.widgets import (
     MenuBar,
 )
 from pygame_menu.widgets.core.widget import WidgetTransformationNotImplemented
+from pygame_menu.widgets.widget.menubar import _MODE_CLOSE
 from test._utils import MenuUtils, PygameEventUtils, surface
 
 
@@ -244,3 +245,167 @@ def test_menubar_value_api():
 
     assert not mb.value_changed()
     mb.reset_value()
+
+
+def test_menubar_backbox_created(menu):
+    """Test backbox creation when enabled."""
+    mb = MenuBar("Menu", 500, (0, 0, 0), back_box=True)
+    mb.set_menu(menu)
+
+    mb._render()
+
+    assert mb._backbox_rect is not None
+    assert mb._backbox_pos is not None
+
+
+def test_menubar_backbox_disabled(menu):
+    """Test backbox is not created when disabled."""
+    mb = MenuBar("Menu", 500, (0, 0, 0), back_box=False)
+    mb.set_menu(menu)
+
+    mb._render()
+
+    assert mb._backbox_rect is None
+
+
+def test_menubar_close_mode_backbox(menu):
+    """Test close mode backbox generation."""
+    mb = MenuBar("Menu", 500, (0, 0, 0), back_box=True)
+    mb.set_menu(menu)
+
+    mb._render()
+
+    assert mb._box_mode == _MODE_CLOSE
+    assert mb._backbox_pos is not None
+
+
+def test_menubar_title_offset():
+    """Test title offset getter."""
+    mb = MenuBar("Menu", 500, (0, 0, 0), offsetx=10, offsety=20)
+
+    assert mb.get_title_offset() == (10, 20)
+
+
+def test_menubar_set_title_returns_self():
+    """Test set_title returns self."""
+    mb = MenuBar("Menu", 500, (0, 0, 0))
+
+    assert mb.set_title("New title") is mb
+
+
+def test_menubar_set_title_updates_title():
+    """Test set_title updates stored title."""
+    mb = MenuBar("Menu", 500, (0, 0, 0))
+
+    mb.set_title("Updated")
+
+    assert mb._title == "Updated"
+
+
+def test_menubar_get_title_offset_casts_int():
+    """Test title offsets are returned as integers."""
+    mb = MenuBar("Menu", 500, (0, 0, 0))
+
+    mb._offsetx = 10.8
+    mb._offsety = 15.2
+
+    assert mb.get_title_offset() == (10, 15)
+
+
+def test_menubar_scrollbar_change_hidden(menu):
+    """Test hidden menubar has no scrollbar displacement."""
+    mb = MenuBar("Menu", 500, (0, 0, 0))
+    mb.set_menu(menu)
+
+    mb.hide()
+
+    assert mb.get_scrollbar_style_change(POSITION_EAST) == (0, (0, 0))
+
+
+def test_menubar_scrollbar_change_modify_scrollarea_disabled(menu):
+    """Test disabled scrollarea modification returns no displacement."""
+    mb = MenuBar(
+        "Menu",
+        500,
+        (0, 0, 0),
+        modify_scrollarea=False,
+    )
+    mb.set_menu(menu)
+
+    assert mb.get_scrollbar_style_change(POSITION_EAST) == (0, (0, 0))
+
+
+def test_menubar_set_padding_returns_self():
+    """Test set_padding returns self."""
+    mb = MenuBar("Menu", 500, (0, 0, 0))
+
+    assert mb.set_padding(1, 2, 3, 4) is mb
+
+
+def test_menubar_set_border_returns_self():
+    """Test set_border returns self."""
+    mb = MenuBar("Menu", 500, (0, 0, 0))
+
+    assert mb.set_border(1) is mb
+
+
+def test_menubar_set_selection_effect_returns_self():
+    """Test set_selection_effect returns self."""
+    mb = MenuBar("Menu", 500, (0, 0, 0))
+
+    assert mb.set_selection_effect(None) is mb
+
+
+def test_menubar_backbox_visibility_disabled():
+    """Test backbox visibility when backbox is disabled."""
+    mb = MenuBar("Menu", 500, (0, 0, 0), back_box=False)
+
+    assert not mb._backbox_visible()
+
+
+def test_menubar_get_height_hidden():
+    """Test hidden menubar height is zero."""
+    mb = MenuBar("Menu", 500, (0, 0, 0))
+
+    mb.hide()
+
+    assert mb.get_height() == 0
+
+
+def test_menubar_get_height_floating():
+    """Test floating menubar height is zero."""
+    mb = MenuBar("Menu", 500, (0, 0, 0))
+
+    mb.set_float(True)
+
+    assert mb.get_height() == 0
+
+
+def test_menubar_set_title_rerender(menu):
+    """Test title update after menubar is attached to a menu."""
+    mb = MenuBar("Menu", 500, (0, 0, 0))
+    mb.set_menu(menu)
+
+    mb.set_title("New title")
+
+    assert mb._title == "New title"
+
+
+def test_menubar_invalid_title_offset_types():
+    """Test invalid title offset types."""
+    mb = MenuBar("Menu", 500, (0, 0, 0))
+
+    with pytest.raises(AssertionError):
+        mb.set_title("Menu", offsetx="bad")  # type: ignore
+
+    with pytest.raises(AssertionError):
+        mb.set_title("Menu", offsety="bad")  # type: ignore
+
+
+def test_menubar_backbox_border_width_update():
+    """Test backbox border width update."""
+    mb = MenuBar("Menu", 500, (0, 0, 0), back_box=True)
+
+    mb.set_backbox_border_width(5)
+
+    assert mb._backbox_border_width == 5
