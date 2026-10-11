@@ -29,7 +29,7 @@ from pygame_menu.widgets import (
     MenuBar,
 )
 from pygame_menu.widgets.core.widget import WidgetTransformationNotImplemented
-from pygame_menu.widgets.widget.menubar import _MODE_CLOSE
+from pygame_menu.widgets.widget.menubar import _MenuBarMode
 from test._utils import MenuUtils, PygameEventUtils, surface
 
 
@@ -275,7 +275,7 @@ def test_menubar_close_mode_backbox(menu):
 
     mb._render()
 
-    assert mb._box_mode == _MODE_CLOSE
+    assert mb._box_mode == _MenuBarMode.CLOSE
     assert mb._backbox_pos is not None
 
 
@@ -409,3 +409,22 @@ def test_menubar_backbox_border_width_update():
     mb.set_backbox_border_width(5)
 
     assert mb._backbox_border_width == 5
+
+
+def test_menubar_get_style():
+    """Test get_style returns current style."""
+    mb = MenuBar(
+        "Menu",
+        500,
+        (0, 0, 0),
+        mode=MENUBAR_STYLE_UNDERLINE,
+    )
+
+    assert mb.get_style() == MENUBAR_STYLE_UNDERLINE
+
+
+def test_menubar_has_backbox_disabled():
+    """Test has_backbox returns False when disabled."""
+    mb = MenuBar("Menu", 500, (0, 0, 0), back_box=False)
+
+    assert mb.has_backbox() is False

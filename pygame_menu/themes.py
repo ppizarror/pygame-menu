@@ -24,7 +24,7 @@ __all__ = [
 
 import copy
 import json
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from pygame_menu._scrollarea import get_scrollbars_from_position
 from pygame_menu._types import (
@@ -75,9 +75,6 @@ from pygame_menu.widgets.core.widget import (
     WIDGET_SHADOW_TYPE_RECTANGULAR,
     WidgetBorderPositionType,
 )
-
-if TYPE_CHECKING:
-    import pygame_menu
 
 TRANSPARENT_COLOR: ColorType = (0, 0, 0, 0)
 
