@@ -24,6 +24,7 @@ __all__ = [
     "MenuBarStyleModeType",
 ]
 
+from enum import IntEnum
 from typing import Any, Callable
 
 import pygame
@@ -58,9 +59,11 @@ MENUBAR_STYLE_NONE = 1004
 MENUBAR_STYLE_UNDERLINE = 1005
 MENUBAR_STYLE_UNDERLINE_TITLE = 1006
 
-# Menubar operation modes
-_MODE_CLOSE = 1020
-_MODE_BACK = 1021
+
+class _MenuBarMode(IntEnum):
+    CLOSE = 1020
+    BACK = 1021
+
 
 # Custom types
 MenuBarStyleModeType = int
@@ -100,7 +103,7 @@ class MenuBar(Widget):
     _backbox_border_width: int
     _backbox_pos: tuple[Tuple2IntType, ...] | None
     _backbox_rect: pygame.Rect | None
-    _box_mode: int
+    _box_mode: _MenuBarMode
     _modify_scrollarea: bool
     _offsetx: NumberType
     _offsety: NumberType
@@ -150,7 +153,7 @@ class MenuBar(Widget):
         self._backbox_pos = None
         self._backbox_rect = None
         self._background_color = background_color
-        self._box_mode = 0
+        self._box_mode = _MenuBarMode.CLOSE
         self._modify_scrollarea = modify_scrollarea
         self._mouseover_check_rect = lambda: self._backbox_rect
         self._offsetx = 0
@@ -165,6 +168,22 @@ class MenuBar(Widget):
 
         # Public's
         self.fixed = True
+
+    def get_style(self) -> int:
+        """
+        Return the current style of the MenuBar.
+
+        :return: Style constant
+        """
+        return self._style
+
+    def has_backbox(self) -> bool:
+        """
+        Return whether the backbox feature is enabled.
+
+        :return: Bool
+        """
+        return self._backbox
 
     def _apply_font(self) -> None:
         pass
@@ -258,7 +277,7 @@ class MenuBar(Widget):
             (self._mouse_enabled or self._touchscreen_enabled)
             and self._backbox
             and not (
-                self._box_mode == _MODE_CLOSE
+                self._box_mode == _MenuBarMode.CLOSE
                 and self._menu is not None
                 and self._menu._onclose is None
             )
@@ -505,9 +524,9 @@ class MenuBar(Widget):
             int(cross_size - 2 * self._BACKBOX_MARGIN),
         )
 
-        if self._box_mode == _MODE_CLOSE:
+        if self._box_mode == _MenuBarMode.CLOSE:
             self._create_close_icon()
-        elif self._box_mode == _MODE_BACK:
+        elif self._box_mode == _MenuBarMode.BACK:
             self._create_back_icon()
 
     def _render(self) -> bool | None:
@@ -531,9 +550,9 @@ class MenuBar(Widget):
             return True
 
         if menu_prev_condition:
-            self._box_mode = _MODE_CLOSE
+            self._box_mode = _MenuBarMode.CLOSE
         else:
-            self._box_mode = _MODE_BACK
+            self._box_mode = _MenuBarMode.BACK
 
         self._surface = self._render_string(self._title, self._font_selected_color)
         self._rect.width, self._rect.height = self._surface.get_size()
