@@ -184,6 +184,9 @@ Menubar style                                                       Example
 :py:data:`pygame_menu.widgets.MENUBAR_STYLE_NONE`                   .. image:: ../_static/menubar_none.png
 :py:data:`pygame_menu.widgets.MENUBAR_STYLE_UNDERLINE`              .. image:: ../_static/menubar_underline.png
 :py:data:`pygame_menu.widgets.MENUBAR_STYLE_UNDERLINE_TITLE`        .. image:: ../_static/menubar_underline_title.png
+:py:data:`pygame_menu.widgets.MENUBAR_STYLE_FLOATING_PILL`          .. image:: ../_static/menubar_floating_pill.png
+:py:data:`pygame_menu.widgets.MENUBAR_STYLE_CHEVRON`                .. image:: ../_static/menubar_chevron.png
+:py:data:`pygame_menu.widgets.MENUBAR_STYLE_HEXAGON`                .. image:: ../_static/menubar_hexagon.png
 =================================================================   =======================================================
 
 

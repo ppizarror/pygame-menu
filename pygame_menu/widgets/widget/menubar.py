@@ -20,6 +20,9 @@ __all__ = [
     "MENUBAR_STYLE_NONE",
     "MENUBAR_STYLE_UNDERLINE",
     "MENUBAR_STYLE_UNDERLINE_TITLE",
+    "MENUBAR_STYLE_FLOATING_PILL",
+    "MENUBAR_STYLE_CHEVRON",
+    "MENUBAR_STYLE_HEXAGON",
     # Custom types
     "MenuBarStyleModeType",
 ]
@@ -58,6 +61,9 @@ MENUBAR_STYLE_TITLE_ONLY_DIAGONAL = 1003
 MENUBAR_STYLE_NONE = 1004
 MENUBAR_STYLE_UNDERLINE = 1005
 MENUBAR_STYLE_UNDERLINE_TITLE = 1006
+MENUBAR_STYLE_FLOATING_PILL = 1007
+MENUBAR_STYLE_CHEVRON = 1008
+MENUBAR_STYLE_HEXAGON = 1009
 
 
 class _MenuBarMode(IntEnum):
@@ -107,6 +113,7 @@ class MenuBar(Widget):
     _modify_scrollarea: bool
     _offsetx: NumberType
     _offsety: NumberType
+    _pill_rect: pygame.Rect | None
     _polygon_pos: tuple[Tuple2IntType, ...] | None
     _scrollbar_deltas: list[tuple[int, Tuple2IntType]]
     _style: int
@@ -158,6 +165,7 @@ class MenuBar(Widget):
         self._mouseover_check_rect = lambda: self._backbox_rect
         self._offsetx = 0
         self._offsety = 0
+        self._pill_rect = None
         self._polygon_pos = None
         # north, east, south, west
         self._scrollbar_deltas = [(0, (0, 0)), (0, (0, 0)), (0, (0, 0)), (0, (0, 0))]
@@ -328,6 +336,7 @@ class MenuBar(Widget):
         )
         f = self._rect.x, self._rect.y + self._rect.height
         self._polygon_pos = a, b, c, d, e, f
+        self._pill_rect = None
         cross_size = int(self._rect.height * self._ADAPTIVE_HEIGHT_RATIO)
         self._set_scrollbar_deltas(
             (0, (0, self._rect.height)),
@@ -349,6 +358,7 @@ class MenuBar(Widget):
         c = self._rect.x + self._width - 1, self._rect.y + self._rect.height
         d = self._rect.x, self._rect.y + self._rect.height
         self._polygon_pos = a, b, c, d
+        self._pill_rect = None
         cross_size = int(self._rect.height * self._backbox_visible())
         self._set_scrollbar_deltas(
             (0, (0, self._rect.height)),
@@ -376,6 +386,7 @@ class MenuBar(Widget):
         )
         d = self._rect.x, self._rect.y + self._rect.height
         self._polygon_pos = a, b, c, d
+        self._pill_rect = None
         cross_size = self._default_cross_size()
         self._default_scrollbar(cross_size)
         self._check_title_color(background_menu=False)
@@ -398,6 +409,7 @@ class MenuBar(Widget):
         )
         d = self._rect.x, self._rect.y + self._rect.height
         self._polygon_pos = a, b, c, d
+        self._pill_rect = None
         cross_size = self._default_cross_size()
         self._default_scrollbar(cross_size)
         self._check_title_color(background_menu=False)
@@ -411,6 +423,7 @@ class MenuBar(Widget):
         a = self._rect.x, self._rect.y
         b = self._rect.x + self._width - 1, self._rect.y
         self._polygon_pos = a, b
+        self._pill_rect = None
         cross_size = self._default_cross_size()
         self._default_scrollbar(cross_size)
         self._check_title_color(background_menu=True)
@@ -432,6 +445,7 @@ class MenuBar(Widget):
         c = self._rect.x + self._width - 1, self._rect.y + self._rect.height + dy
         d = self._rect.x, self._rect.y + self._rect.height + dy
         self._polygon_pos = a, b, c, d
+        self._pill_rect = None
         cross_size = int(
             self._ADAPTIVE_HEIGHT_RATIO * self._rect.height * self._backbox_visible()
         )
@@ -463,10 +477,95 @@ class MenuBar(Widget):
         )
         d = self._rect.x, self._rect.y + self._rect.height + dy
         self._polygon_pos = a, b, c, d
+        self._pill_rect = None
         cross_size = self._default_cross_size()
         self._default_scrollbar(cross_size)
         self._check_title_color(background_menu=True)
         return cross_size, dy
+
+    def _render_floating_pill(self) -> tuple[int, int]:
+        """
+            ___________________
+        /                     \
+        |        TITLE          |
+        \\_______
+        """
+        margin_x = 20
+        margin_y = 6
+
+        self._pill_rect = pygame.Rect(
+            self._rect.x + margin_x,
+            self._rect.y + margin_y,
+            self._width - margin_x * 2,
+            self._rect.height - margin_y * 2,
+        )
+
+        self._polygon_pos = None
+
+        cross_size = self._default_cross_size()
+        self._default_scrollbar(cross_size)
+        self._check_title_color(False)
+
+        return cross_size, 0
+
+    def _render_chevron(self) -> tuple[int, int]:
+        """
+        A----------------B
+        |                |\
+        |     TITLE      | >
+        |                |/
+        D--------------
+        """
+        tip = 20
+
+        a = (self._rect.x, self._rect.y)
+        b = (self._rect.x + self._width - tip, self._rect.y)
+        c = (
+            self._rect.x + self._width,
+            self._rect.y + self._rect.height // 2,
+        )
+        d = (
+            self._rect.x + self._width - tip,
+            self._rect.y + self._rect.height,
+        )
+        e = (self._rect.x, self._rect.y + self._rect.height)
+
+        self._polygon_pos = (a, b, c, d, e)
+        self._pill_rect = None
+
+        cross_size = self._default_cross_size()
+        self._default_scrollbar(cross_size)
+        self._check_title_color(background_menu=False)
+
+        return cross_size, 0
+
+    def _render_hexagon(self) -> tuple[int, int]:
+        """
+          ________
+        /          \
+       |   TITLE    |
+        \\__________/
+        """
+        cut = min(20, self._width // 6)
+
+        a = (self._rect.x + cut, self._rect.y)
+        b = (self._rect.x + self._width - cut, self._rect.y)
+        c = (self._rect.x + self._width, self._rect.y + self._rect.height // 2)
+        d = (
+            self._rect.x + self._width - cut,
+            self._rect.y + self._rect.height,
+        )
+        e = (self._rect.x + cut, self._rect.y + self._rect.height)
+        f = (self._rect.x, self._rect.y + self._rect.height // 2)
+
+        self._polygon_pos = (a, b, c, d, e, f)
+        self._pill_rect = None
+
+        cross_size = self._default_cross_size()
+        self._default_scrollbar(cross_size)
+        self._check_title_color(background_menu=False)
+
+        return cross_size, 0
 
     _STYLE_RENDERERS: dict[int, Callable[[MenuBar], tuple[int, int]]] = {
         MENUBAR_STYLE_ADAPTIVE: _render_adaptive,
@@ -476,6 +575,9 @@ class MenuBar(Widget):
         MENUBAR_STYLE_NONE: _render_none,
         MENUBAR_STYLE_UNDERLINE: _render_underline,
         MENUBAR_STYLE_UNDERLINE_TITLE: _render_underline_title,
+        MENUBAR_STYLE_FLOATING_PILL: _render_floating_pill,
+        MENUBAR_STYLE_CHEVRON: _render_chevron,
+        MENUBAR_STYLE_HEXAGON: _render_hexagon,
     }
 
     def _create_close_icon(self) -> None:
@@ -545,6 +647,7 @@ class MenuBar(Widget):
             self._width,
             self._visible,
             self._font_selected_color,
+            self._style,
             menu_prev_condition,
         ):
             return True
@@ -568,7 +671,14 @@ class MenuBar(Widget):
         return True
 
     def _draw(self, surface: pygame.Surface) -> None:
-        if self._polygon_pos and len(self._polygon_pos) > 2:
+        if self._style == MENUBAR_STYLE_FLOATING_PILL and self._pill_rect is not None:
+            pygame.draw.rect(
+                surface,
+                self._background_color,
+                self._pill_rect,
+                border_radius=self._pill_rect.height // 2,
+            )
+        elif self._polygon_pos and len(self._polygon_pos) > 2:
             gfxdraw.filled_polygon(surface, self._polygon_pos, self._background_color)
 
         # Draw backbox if enabled
@@ -636,6 +746,20 @@ class MenuBar(Widget):
         self._offsetx = offsetx
         if self._menu is not None:
             self._render()
+        return self
+
+    def set_style(self, style: MenuBarStyleModeType) -> MenuBar:
+        """
+        Set menubar style.
+
+        :param style: Menubar style constant
+        :return: Self reference
+        """
+        self._style = style
+
+        if self._menu is not None:
+            self.set_title(self._title, self._offsetx, self._offsety)
+
         return self
 
     def get_height(

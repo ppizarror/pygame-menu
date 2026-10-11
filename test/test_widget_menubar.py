@@ -20,6 +20,9 @@ from pygame_menu.locals import (
 )
 from pygame_menu.widgets import (
     MENUBAR_STYLE_ADAPTIVE,
+    MENUBAR_STYLE_CHEVRON,
+    MENUBAR_STYLE_FLOATING_PILL,
+    MENUBAR_STYLE_HEXAGON,
     MENUBAR_STYLE_NONE,
     MENUBAR_STYLE_SIMPLE,
     MENUBAR_STYLE_TITLE_ONLY,
@@ -49,6 +52,9 @@ def menu():
         MENUBAR_STYLE_UNDERLINE_TITLE,
         MENUBAR_STYLE_TITLE_ONLY,
         MENUBAR_STYLE_TITLE_ONLY_DIAGONAL,
+        MENUBAR_STYLE_FLOATING_PILL,
+        MENUBAR_STYLE_CHEVRON,
+        MENUBAR_STYLE_HEXAGON,
     ],
 )
 def test_menubar_modes(menu, mode):
@@ -428,3 +434,94 @@ def test_menubar_has_backbox_disabled():
     mb = MenuBar("Menu", 500, (0, 0, 0), back_box=False)
 
     assert mb.has_backbox() is False
+
+
+def test_menubar_floating_pill_render(menu):
+    """Test floating pill creates pill rect."""
+    mb = MenuBar(
+        "Menu",
+        500,
+        (0, 0, 0),
+        mode=MENUBAR_STYLE_FLOATING_PILL,
+    )
+    mb.set_menu(menu)
+
+    mb._render()
+
+    assert mb._pill_rect is not None
+    assert mb._polygon_pos is None
+
+
+def test_menubar_chevron_render(menu):
+    """Test chevron creates polygon."""
+    mb = MenuBar(
+        "Menu",
+        500,
+        (0, 0, 0),
+        mode=MENUBAR_STYLE_CHEVRON,
+    )
+    mb.set_menu(menu)
+
+    mb._render()
+
+    assert mb._polygon_pos is not None
+    assert len(mb._polygon_pos) == 5
+    assert mb._pill_rect is None
+
+
+def test_menubar_hexagon_render(menu):
+    """Test hexagon creates polygon."""
+    mb = MenuBar(
+        "Menu",
+        500,
+        (0, 0, 0),
+        mode=MENUBAR_STYLE_HEXAGON,
+    )
+    mb.set_menu(menu)
+
+    mb._render()
+
+    assert mb._polygon_pos is not None
+    assert len(mb._polygon_pos) == 6
+    assert mb._pill_rect is None
+
+
+def test_menubar_set_style():
+    """Test set_style updates current style."""
+    mb = MenuBar(
+        "Menu",
+        500,
+        (0, 0, 0),
+        mode=MENUBAR_STYLE_SIMPLE,
+    )
+
+    assert mb.get_style() == MENUBAR_STYLE_SIMPLE
+
+    returned = mb.set_style(MENUBAR_STYLE_HEXAGON)
+
+    assert returned is mb
+    assert mb.get_style() == MENUBAR_STYLE_HEXAGON
+
+
+def test_menubar_set_style_updates_render(menu):
+    """Test set_style changes rendered geometry."""
+    mb = MenuBar(
+        "Menu",
+        500,
+        (0, 0, 0),
+        mode=MENUBAR_STYLE_SIMPLE,
+    )
+
+    mb.set_menu(menu)
+
+    mb._render()
+
+    assert mb._polygon_pos is not None
+    assert len(mb._polygon_pos) == 4
+
+    mb.set_style(MENUBAR_STYLE_HEXAGON)
+
+    mb._render()
+
+    assert mb._polygon_pos is not None
+    assert len(mb._polygon_pos) == 6

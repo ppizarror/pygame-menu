@@ -59,6 +59,9 @@ from pygame_menu.utils import (
 )
 from pygame_menu.widgets import (
     MENUBAR_STYLE_ADAPTIVE,
+    MENUBAR_STYLE_CHEVRON,
+    MENUBAR_STYLE_FLOATING_PILL,
+    MENUBAR_STYLE_HEXAGON,
     MENUBAR_STYLE_NONE,
     MENUBAR_STYLE_SIMPLE,
     MENUBAR_STYLE_TITLE_ONLY,
@@ -88,10 +91,13 @@ def _check_menubar_style(style: int) -> bool:
     """
     return style in (
         MENUBAR_STYLE_ADAPTIVE,
+        MENUBAR_STYLE_CHEVRON,
+        MENUBAR_STYLE_FLOATING_PILL,
+        MENUBAR_STYLE_HEXAGON,
+        MENUBAR_STYLE_NONE,
         MENUBAR_STYLE_SIMPLE,
         MENUBAR_STYLE_TITLE_ONLY,
         MENUBAR_STYLE_TITLE_ONLY_DIAGONAL,
-        MENUBAR_STYLE_NONE,
         MENUBAR_STYLE_UNDERLINE,
         MENUBAR_STYLE_UNDERLINE_TITLE,
     )
