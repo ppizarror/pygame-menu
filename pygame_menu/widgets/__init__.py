@@ -74,6 +74,9 @@ from pygame_menu.widgets.widget.frame import (
 )
 from pygame_menu.widgets.widget.menubar import (
     MENUBAR_STYLE_ADAPTIVE,
+    MENUBAR_STYLE_CHEVRON,
+    MENUBAR_STYLE_FLOATING_PILL,
+    MENUBAR_STYLE_HEXAGON,
     MENUBAR_STYLE_NONE,
     MENUBAR_STYLE_SIMPLE,
     MENUBAR_STYLE_TITLE_ONLY,
