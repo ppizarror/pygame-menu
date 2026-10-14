@@ -1055,6 +1055,12 @@ class RangeSlider(Widget):
         slider_idx = 0 if self._slider_selected[0] else 1
 
         self._value_hidden[slider_idx] += delta
+        if isinstance(self._value_hidden[slider_idx], float):
+            # Drop binary rounding noise accumulated by repeated increments,
+            # e.g. 0.1 + 0.2 == 0.30000000000000004
+            self._value_hidden[slider_idx] = float(
+                f"{self._value_hidden[slider_idx]:.15g}"
+            )
         if self._value_hidden[0] >= self._value_hidden[1] and not self._single:
             self._value_hidden = old_value_hidden
         else:

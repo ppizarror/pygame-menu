@@ -900,3 +900,16 @@ def test_small_increment(menu):
     r = menu.add.range_slider("R", 0.5, (0, 1), 1e-9)
     r.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
     assert r.get_value() == pytest.approx(0.500000001)
+
+
+def test_repeated_increment_reaches_bounds_exactly(menu):
+    """Repeated keyboard increments must not accumulate float error."""
+    r = menu.add.range_slider("R", 0, (0, 1), 0.1)
+    values = []
+    for _ in range(10):
+        r.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
+        values.append(r.get_value())
+    assert values == [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
+    for _ in range(10):
+        r.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
+    assert r.get_value() == 0
