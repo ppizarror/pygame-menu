@@ -7,7 +7,7 @@ name = "pygame-menu"
 dynamic = ["version"]
 description = "A menu for pygame. Simple, and easy to use"
 readme = "README.rst"
-requires-python = ">=3.9, <4"
+requires-python = ">=3.10, <4"
 license = {text = "MIT"}
 authors = [{name = "Pablo Pizarro R.", email = "pablo@ppizarror.com"}]
 keywords = ["pygame", "menu", "menus", "gui", "widget", "input", "button", "image", "sound", "ui"]
@@ -15,7 +15,6 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Natural Language :: English",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
