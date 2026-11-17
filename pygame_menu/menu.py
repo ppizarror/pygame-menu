@@ -297,9 +297,9 @@ class Menu(Base):
             "pygame is not initialized"
         )
 
-        # Assert python version is greater than 3.9
-        assert sys.version_info >= (3, 9, 0), (
-            "pygame-menu only supports python equal or greater than version 3.9.0"
+        # Assert python version is greater than 3.10
+        assert sys.version_info >= (3, 10, 0), (
+            "pygame-menu only supports python equal or greater than version 3.10.0"
         )
 
         # Column/row asserts
