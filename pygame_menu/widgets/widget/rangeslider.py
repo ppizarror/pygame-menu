@@ -19,7 +19,7 @@ __all__ = [
 
 import math
 from collections.abc import Callable
-from typing import Any, Union
+from typing import Any
 
 import pygame
 

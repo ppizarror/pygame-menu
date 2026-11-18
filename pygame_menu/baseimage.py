@@ -34,7 +34,7 @@ import base64
 import math
 from io import BytesIO
 from pathlib import Path
-from typing import TYPE_CHECKING, Literal, Union
+from typing import TYPE_CHECKING, Literal
 
 import pygame
 

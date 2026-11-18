@@ -30,3 +30,28 @@ from pygame_menu.widgets.manager.timer import TimerManager
 from pygame_menu.widgets.manager.toggleswitch import ToggleSwitchManager
 from pygame_menu.widgets.manager.vfill import VFillManager
 from pygame_menu.widgets.manager.vmargin import VMarginManager
+
+__all__ = [
+    "ButtonManager",
+    "ColorInputManager",
+    "CounterManager",
+    "DropSelectManager",
+    "DropSelectMultipleManager",
+    "FPSManager",
+    "FrameManager",
+    "HMarginManager",
+    "ImageManager",
+    "LabelManager",
+    "MenuLinkManager",
+    "NoneWidgetManager",
+    "ProgressBarManager",
+    "RangeSliderManager",
+    "SelectorManager",
+    "SurfaceWidgetManager",
+    "TableManager",
+    "TextInputManager",
+    "TimerManager",
+    "ToggleSwitchManager",
+    "VFillManager",
+    "VMarginManager",
+]

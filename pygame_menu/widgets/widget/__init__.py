@@ -32,3 +32,30 @@ from pygame_menu.widgets.widget.timer import Timer
 from pygame_menu.widgets.widget.toggleswitch import ToggleSwitch
 from pygame_menu.widgets.widget.vfill import VFill
 from pygame_menu.widgets.widget.vmargin import VMargin
+
+__all__ = [
+    "Button",
+    "ColorInput",
+    "Counter",
+    "DropSelect",
+    "DropSelectMultiple",
+    "FPS",
+    "Frame",
+    "HMargin",
+    "Image",
+    "Label",
+    "MenuBar",
+    "MenuLink",
+    "NoneWidget",
+    "ProgressBar",
+    "RangeSlider",
+    "ScrollBar",
+    "Selector",
+    "SurfaceWidget",
+    "Table",
+    "TextInput",
+    "Timer",
+    "ToggleSwitch",
+    "VFill",
+    "VMargin",
+]

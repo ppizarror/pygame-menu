@@ -40,7 +40,7 @@ def test_menuaction_equality_with_int():
 def test_menuaction_identity():
     """Check identity behavior for enum members vs raw integers."""
     assert events.MenuAction.BACK is events.MenuAction.BACK
-    assert 0 is not events.MenuAction.BACK
+    assert 0 != events.MenuAction.BACK
 
 
 def test_menuaction_unknown_value_raises():
@@ -124,7 +124,7 @@ def test_menu_last_event_literals():
 def test_backwards_identity_comparison_breakage():
     """Document identity mismatch between raw ints and enum members."""
     assert events.MenuAction(0) is events.MenuAction.BACK
-    assert 0 is not events.MenuAction.BACK
+    assert 0 != events.MenuAction.BACK
 
 
 def test_backwards_unknown_action_breakage():

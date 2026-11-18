@@ -41,7 +41,7 @@ __all__ = [
 
 from difflib import SequenceMatcher
 from pathlib import Path
-from typing import Any, Union
+from typing import Any
 
 import pygame.font as __font
 

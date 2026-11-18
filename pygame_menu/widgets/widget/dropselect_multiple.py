@@ -20,7 +20,7 @@ __all__ = [
 ]
 
 from collections.abc import Callable
-from typing import TYPE_CHECKING, Any, Union
+from typing import TYPE_CHECKING, Any
 
 from pygame_menu.locals import POSITION_NORTHWEST, POSITION_SOUTHEAST
 from pygame_menu.utils import assert_color, assert_vector

@@ -11,7 +11,7 @@ from __future__ import annotations
 __all__ = ["Label"]
 
 from collections.abc import Callable
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 import pygame
 

@@ -18,3 +18,16 @@ from pygame_menu.widgets.selection.right_arrow import RightArrowSelection
 from pygame_menu.widgets.selection.rounded_highlight import RoundedHighlightSelection
 from pygame_menu.widgets.selection.simple import SimpleSelection
 from pygame_menu.widgets.selection.underline import UnderlineSelection
+
+__all__ = [
+    "DotSelection",
+    "DoubleArrowSelection",
+    "HighlightSelection",
+    "ImageSelection",
+    "LeftArrowSelection",
+    "NoneSelection",
+    "RightArrowSelection",
+    "RoundedHighlightSelection",
+    "SimpleSelection",
+    "UnderlineSelection",
+]

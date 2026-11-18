@@ -14,7 +14,7 @@ __all__ = ["Decorator"]
 import math
 from dataclasses import dataclass, field
 from math import pi
-from typing import TYPE_CHECKING, Any, Union
+from typing import TYPE_CHECKING, Any
 
 import pygame
 import pygame.draw as pydraw

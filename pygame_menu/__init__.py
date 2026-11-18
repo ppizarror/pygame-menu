@@ -100,6 +100,20 @@ if __pygame_version__ is not None:
     Sound = sound.Sound
     Theme = themes.Theme
 
+__all__ = [
+    "BaseImage",
+    "Menu",
+    "Sound",
+    "Theme",
+    "_scrollarea",
+    "controls",
+    "events",
+    "font",
+    "locals",
+    "version",
+    "widgets",
+]
+
 # Version print
 if (
     "PYGAME_MENU_HIDE_VERSION" not in os.environ
