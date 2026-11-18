@@ -301,14 +301,12 @@ elif EXAMPLE == "MENU_LINK":
     menu2 = make_menu(pygame_menu.themes.THEME_GREEN, "Menu 2")
     menu3 = make_menu(pygame_menu.themes.THEME_SOLARIZED, "Menu 3")
 
-
     def open_link(*args) -> None:
         """
         Opens link.
         """
         link: pygame_menu.widgets.MenuLink = args[-1]
         link.open()
-
 
     # Create the links
     link1 = menu.add.menu_link(menu1)

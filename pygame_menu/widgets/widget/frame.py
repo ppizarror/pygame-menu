@@ -86,7 +86,7 @@ FRAME_TITLE_BUTTON_MINIMIZE = "minimize"
 S_FINGER_FACTOR = 0.25, 0.25
 
 # Types
-FrameTitleBackgroundColorType = Optional[ColorInputGradientType]
+FrameTitleBackgroundColorType = ColorInputGradientType | None
 FrameTitleButtonType = str
 
 

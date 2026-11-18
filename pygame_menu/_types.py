@@ -15,32 +15,32 @@ from pygame.color import Color as __Color
 from pygame.event import Event as EventType
 
 # Common types
-ArgsType = Optional[Sequence[Any]]
+ArgsType = Sequence[Any] | None
 CallableNoArgsType = Callable[[], Any]
-CallbackType = Optional[Callable]
+CallbackType = Callable | None
 EventListType = list[EventType]
-EventVectorType = Union[EventListType, tuple[EventType]]
-KwargsType = Optional[Mapping[Any, Any]]
-NumberType = Union[int, float]
+EventVectorType = EventListType | tuple[EventType]
+KwargsType = Mapping[Any, Any] | None
+NumberType = int | float
 
 # Colors
-ColorType = Union[tuple[int, int, int], tuple[int, int, int, int]]
-ColorInputType = Union[ColorType, str, int, __Color]
+ColorType = tuple[int, int, int] | tuple[int, int, int, int]
+ColorInputType = ColorType | str | int | __Color
 
 # Color input gradient; from, to, vertical, forward
 ColorInputGradientType = tuple[ColorInputType, ColorInputType, bool, bool]
 
 # Vectors
-Vector2BoolType = Union[tuple[bool, bool], list[bool]]
-Vector2IntType = Union[tuple[int, int], list[int]]
-Vector2FloatType = Union[tuple[float, float], list[float]]
-Vector2NumberType = Union[tuple[NumberType, NumberType], list[NumberType]]
+Vector2BoolType = tuple[bool, bool] | list[bool]
+Vector2IntType = tuple[int, int] | list[int]
+Vector2FloatType = tuple[float, float] | list[float]
+Vector2NumberType = tuple[NumberType, NumberType] | list[NumberType]
 
 # Generic length
 VectorTupleType = tuple[NumberType, ...]
 VectorListType = list[NumberType]
-VectorType = Union[VectorTupleType, VectorListType]
-VectorIntType = Union[tuple[int, ...], list[int]]
+VectorType = VectorTupleType | VectorListType
+VectorIntType = tuple[int, ...] | list[int]
 
 # Tuples
 Tuple2BoolType = tuple[bool, bool]
@@ -53,21 +53,20 @@ Tuple4Tuple2IntType = tuple[Tuple2IntType, Tuple2IntType, Tuple2IntType, Tuple2I
 TupleIntType = tuple[int, ...]
 
 # Menu constructor types
-MenuColumnMaxWidthType = Optional[Union[int, float, VectorType]]
-MenuColumnMinWidthType = Optional[Union[int, float, VectorType]]
-MenuRowsType = Optional[Union[int, VectorIntType]]
+MenuColumnMaxWidthType = int | float | VectorType | None
+MenuColumnMinWidthType = int | float | VectorType | None
+MenuRowsType = int | VectorIntType | None
 
 # Other
-PaddingType = Optional[
-    Union[
-        NumberType,
-        list[NumberType],
-        tuple[NumberType],
-        Tuple2NumberType,
-        Tuple4NumberType,
-    ]
-]
-StringVector = Union[str, tuple[str, ...], list[str]]
+PaddingType = (
+    NumberType
+    | list[NumberType]
+    | tuple[NumberType]
+    | Tuple2NumberType
+    | Tuple4NumberType
+    | None
+)
+StringVector = str | tuple[str, ...] | list[str]
 
 # Instances
 ColorInputInstance = (int, str, tuple, list, __Color)
@@ -79,9 +78,9 @@ VectorInstance = (tuple, list)
 try:
     from pygame.cursors import Cursor as __Cursor  # type: ignore
 
-    CursorInputType = Optional[Union[int, __Cursor]]
+    CursorInputType = int | __Cursor | None
     CursorInputInstance = (int, __Cursor, type(None))
 
 except (AttributeError, ImportError):
-    CursorInputType, CursorInputInstance = Optional[int], (int, type(None))
+    CursorInputType, CursorInputInstance = int | None, (int, type(None))
 CursorType = CursorInputType

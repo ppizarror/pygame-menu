@@ -26,7 +26,7 @@ if TYPE_CHECKING:
         EventVectorType,
     )
 
-LabelTitleGeneratorType = Optional[Callable[[], str]]
+LabelTitleGeneratorType = Callable[[], str] | None
 
 
 class Label(Widget):

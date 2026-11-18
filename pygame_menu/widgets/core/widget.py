@@ -233,31 +233,28 @@ def _check_widget_mouseleave(
 
 
 # Types
-BackgroundSurfaceType = Optional[
+BackgroundSurfaceType = (
     list[
         Union[
             "pygame.Rect",
             "pygame.Surface",
-            Optional[Union[ColorType, "pygame_menu.BaseImage"]],
+            Union[ColorType, "pygame_menu.BaseImage"] | None,
         ]
     ]
-]
-CallbackMouseType = Optional[
-    Union[Callable[["Widget", EventType], Any], CallableNoArgsType]
-]
-CallbackSelectType = Optional[
-    Union[Callable[[bool, "Widget", "pygame_menu.Menu"], Any], CallableNoArgsType]
-]
-WidgetBorderPositionType = Union[str, list[str], tuple[str, ...]]
+    | None
+)
+CallbackMouseType = Callable[["Widget", EventType], Any] | CallableNoArgsType | None
+CallbackSelectType = (
+    Callable[[bool, "Widget", "pygame_menu.Menu"], Any] | CallableNoArgsType | None
+)
+WidgetBorderPositionType = str | list[str] | tuple[str, ...]
 WidgetBorderType = tuple[ColorType, int, WidgetBorderPositionType, Tuple2IntType]
 WidgetShadowType = dict[
     str,
-    Union[
-        Optional["pygame.Surface"],
-        Optional["pygame.Rect"],
-        bool,
-        tuple[str, int, int, int, Tuple3IntType],
-    ],
+    Optional["pygame.Surface"]
+    | Optional["pygame.Rect"]
+    | bool
+    | tuple[str, int, int, int, Tuple3IntType],
 ]
 
 

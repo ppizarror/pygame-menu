@@ -24,53 +24,53 @@ def menu():
     [
         (
             # long lorem ipsum
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod "
-                "tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, "
-                "quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. "
-                "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu "
-                "fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in "
-                "culpa qui officia deserunt mollit anim id est laborum.",
-                33,
-                [
-                    "Lorem ipsum dolor sit amet,",
-                    "consectetur adipiscing elit, sed",
-                    "do eiusmod tempor incididunt ut",
-                    "labore et dolore magna aliqua. Ut",
-                    "enim ad minim veniam, quis",
-                    "nostrud exercitation ullamco",
-                    "laboris nisi ut aliquip ex ea",
-                    "commodo consequat. Duis aute",
-                    "irure dolor in reprehenderit in",
-                    "voluptate velit esse cillum",
-                    "dolore eu fugiat nulla pariatur.",
-                    "Excepteur sint occaecat cupidatat",
-                    "non proident, sunt in culpa qui",
-                    "officia deserunt mollit anim id",
-                    "est laborum.",
-                ],
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod "
+            "tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, "
+            "quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. "
+            "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu "
+            "fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in "
+            "culpa qui officia deserunt mollit anim id est laborum.",
+            33,
+            [
+                "Lorem ipsum dolor sit amet,",
+                "consectetur adipiscing elit, sed",
+                "do eiusmod tempor incididunt ut",
+                "labore et dolore magna aliqua. Ut",
+                "enim ad minim veniam, quis",
+                "nostrud exercitation ullamco",
+                "laboris nisi ut aliquip ex ea",
+                "commodo consequat. Duis aute",
+                "irure dolor in reprehenderit in",
+                "voluptate velit esse cillum",
+                "dolore eu fugiat nulla pariatur.",
+                "Excepteur sint occaecat cupidatat",
+                "non proident, sunt in culpa qui",
+                "officia deserunt mollit anim id",
+                "est laborum.",
+            ],
         ),
         (
-                "This label should split.\nIn two lines",
-                None,
-                ["This label should split.", "In two lines"],
+            "This label should split.\nIn two lines",
+            None,
+            ["This label should split.", "In two lines"],
         ),
         (
-                "This label should split, this line is really long so it should split.\nThe second line",
-                40,
-                [
-                    "This label should split, this line is",
-                    "really long so it should split.",
-                    "The second line",
-                ],
+            "This label should split, this line is really long so it should split.\nThe second line",
+            40,
+            [
+                "This label should split, this line is",
+                "really long so it should split.",
+                "The second line",
+            ],
         ),
         (
-                "This label should split, this line is really long so it should split.\nThe second line",
-                -1,
-                [
-                    "This label should split, this line is really",
-                    "long so it should split.",
-                    "The second line",
-                ],
+            "This label should split, this line is really long so it should split.\nThe second line",
+            -1,
+            [
+                "This label should split, this line is really",
+                "long so it should split.",
+                "The second line",
+            ],
         ),
         ("a\n\nb\n\nc", -1, ["a", "", "b", "", "c"]),
     ],
@@ -348,9 +348,7 @@ def test_label_split_one_char(menu):
 
 def test_unicode_text(menu):
     """Test unicode rendering."""
-    label = menu.add.label(
-        "你好世界 Καλημέρα Привет 😀"
-    )
+    label = menu.add.label("你好世界 Καλημέρα Привет 😀")
 
     assert label.get_title() == "你好世界 Καλημέρα Привет 😀"
 
@@ -371,8 +369,7 @@ def test_label_helpers(menu):
 def test_clear_resets_overflow(menu):
     """Clearing a label removes its displayed and overflow text."""
     label = menu.add.label(
-        "lorem ipsum dolor sit amet this was very important nice "
-        "a test is required",
+        "lorem ipsum dolor sit amet this was very important nice a test is required",
         wordwrap=True,
         max_nlines=1,
     )
@@ -422,9 +419,7 @@ def test_label_overflow_helpers(menu):
     assert label.has_overflow()
     assert label.get_overflow_lines()
     assert label.get_overflow_count() > 0
-    assert label.get_overflow_count() == len(
-        label.get_overflow_lines()
-    )
+    assert label.get_overflow_count() == len(label.get_overflow_lines())
 
 
 def test_label_without_overflow(menu):

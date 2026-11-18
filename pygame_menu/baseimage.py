@@ -135,12 +135,12 @@ _VALID_IMAGE_FORMATS = [
 
 # Custom types
 ColorChannelType = Literal["r", "g", "b"]
-ChannelType = Union[
-    ColorChannelType,
-    tuple[ColorChannelType, ColorChannelType],
-    tuple[ColorChannelType, ColorChannelType, ColorChannelType],
-    list[ColorChannelType],
-]
+ChannelType = (
+    ColorChannelType
+    | tuple[ColorChannelType, ColorChannelType]
+    | tuple[ColorChannelType, ColorChannelType, ColorChannelType]
+    | list[ColorChannelType]
+)
 
 
 class BaseImage(Base):

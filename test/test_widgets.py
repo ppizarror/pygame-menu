@@ -813,14 +813,10 @@ def test_widget_contains_point() -> None:
     assert w.contains_point(rect.center)
 
     # Outside top-left
-    assert not w.contains_point(
-        (rect.left - 10, rect.top - 10)
-    )
+    assert not w.contains_point((rect.left - 10, rect.top - 10))
 
     # Outside bottom-right
-    assert not w.contains_point(
-        (rect.right + 10, rect.bottom + 10)
-    )
+    assert not w.contains_point((rect.right + 10, rect.bottom + 10))
 
 
 def test_widget_contains_point_invalid_input() -> None:
@@ -923,10 +919,7 @@ def test_render_hash_stable() -> None:
     assert h1 == h2
 
 
-@pytest.mark.parametrize(
-    "angle",
-    [0, 45, 90, 180, -90, 360]
-)
+@pytest.mark.parametrize("angle", [0, 45, 90, 180, -90, 360])
 def test_rotation(angle) -> None:
     """Test widget rotation."""
     menu = MenuUtils.generic_menu()
@@ -949,10 +942,7 @@ def test_toggle_selection_calls_onselect() -> None:
     def onselect(*_):
         called[0] = True
 
-    btn = menu.add.button(
-        "Button",
-        onselect=onselect
-    )
+    btn = menu.add.button("Button", onselect=onselect)
 
     called[0] = False
 

@@ -86,7 +86,7 @@ FONT_EXAMPLES = (
     FONT_FIRACODE_BOLD_ITALIC,
 )
 
-FontType = Union[str, __font.Font, Path]
+FontType = str | __font.Font | Path
 FontInstance = (str, __font.Font, Path)
 
 # Internal Font Cache

@@ -47,7 +47,7 @@ DROPSELECT_MULTIPLE_SFORMAT_LIST_COMMA = "comma-list"
 DROPSELECT_MULTIPLE_SFORMAT_LIST_HYPHEN = "hyphen-list"
 DROPSELECT_MULTIPLE_SFORMAT_TOTAL = "total"
 
-DropSelectMultipleSFormatType = Union[str, Callable[[list[str]], str]]
+DropSelectMultipleSFormatType = str | Callable[[list[str]], str]
 
 
 class DropSelectMultiple(DropSelect):

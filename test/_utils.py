@@ -54,7 +54,7 @@ from pygame_menu.locals import FINGERDOWN, FINGERMOTION, FINGERUP
 from pygame_menu.utils import PYGAME_V2, assert_vector
 from pygame_menu.widgets.core.widget import check_widget_mouseleave
 
-EventListType = Union[EventType, list[EventType]]
+EventListType = EventType | list[EventType]
 
 # Constants
 WINDOW_SIZE = (600, 600)  # Width, height

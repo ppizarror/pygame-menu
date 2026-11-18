@@ -67,7 +67,7 @@ DECORATION_TEXTURE_POLYGON: int = 2014
 DECOR_TYPE_PREV: str = "prev"
 DECOR_TYPE_POST: str = "post"
 
-BaseImageOrSurface = Union[pygame.Surface, BaseImage]
+BaseImageOrSurface = pygame.Surface | BaseImage
 
 
 @dataclass
