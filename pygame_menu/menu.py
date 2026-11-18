@@ -245,15 +245,15 @@ class Menu(Base):
         mouse_visible: bool = True,
         mouse_visible_update: bool = True,
         onclose: _events.MenuAction
-                 | Callable[[Menu], Any]
-                 | CallableNoArgsType
-                 | None = None,
+        | Callable[[Menu], Any]
+        | CallableNoArgsType
+        | None = None,
         onreset: Callable[[Menu], Any] | CallableNoArgsType | None = None,
         overflow: Vector2BoolType | bool = (True, True),
         position: Vector2NumberType | tuple[NumberType, NumberType, bool] = (
-                50,
-                50,
-                True,
+            50,
+            50,
+            True,
         ),
         remember_selection: bool = False,
         rows: MenuRowsType = None,
@@ -1297,8 +1297,9 @@ class Menu(Base):
         """
         # Check if there's more selectable widgets
         selectable = [
-        i for i, w in enumerate(self._widgets)
-        if w.is_selectable and w.is_visible()  # Considers frame
+            i
+            for i, w in enumerate(self._widgets)
+            if w.is_selectable and w.is_visible()  # Considers frame
         ]
 
         n_select = len(selectable)
@@ -1377,7 +1378,6 @@ class Menu(Base):
         selected_widget = None
 
         for index, widget in enumerate(self._widgets):
-
             # Check widget selection
             if widget.is_selected():
                 if not has_selected_widget:
@@ -1594,7 +1594,6 @@ class Menu(Base):
 
         # Update appended widgets
         for index, widget in enumerate(self._widgets):
-
             align = widget.get_alignment()
             margin = widget.get_margin()
             padding = widget.get_padding()

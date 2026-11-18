@@ -503,9 +503,7 @@ def test_json_roundtrip_restores_tuples():
         title_offset=(5, 6),
     )
 
-    restored = pygame_menu.themes.Theme.from_json(
-        theme.to_json()
-    )
+    restored = pygame_menu.themes.Theme.from_json(theme.to_json())
 
     assert restored.widget_margin == (10, 20)
     assert restored.title_offset == (5, 6)

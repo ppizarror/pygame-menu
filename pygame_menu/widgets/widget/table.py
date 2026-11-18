@@ -61,7 +61,7 @@ if TYPE_CHECKING:
     import pygame_menu
 
 CellType = Union["Widget", str, int, float, bool, "BaseImage", "pygame.Surface"]
-ColumnInputType = Union[tuple[CellType, ...], list[CellType]]
+ColumnInputType = tuple[CellType, ...] | list[CellType]
 
 
 class Table(Frame):

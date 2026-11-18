@@ -59,9 +59,9 @@ from pygame_menu.widgets.core.widget import (
     WidgetTransformationNotImplemented,
 )
 
-RangeSliderRangeValueType = Union[Vector2NumberType, VectorType]
+RangeSliderRangeValueType = Vector2NumberType | VectorType
 RangeSliderValueFormatType = Callable[[NumberType], str]
-RangeSliderValueType = Union[NumberType, Vector2NumberType]
+RangeSliderValueType = NumberType | Vector2NumberType
 
 
 class RangeSlider(Widget):

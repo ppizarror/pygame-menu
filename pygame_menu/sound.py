@@ -164,7 +164,7 @@ class Sound(Base):
     def __init__(
         self,
         allowedchanges: int = AUDIO_ALLOW_CHANNELS_CHANGE
-                              | AUDIO_ALLOW_FREQUENCY_CHANGE,
+        | AUDIO_ALLOW_FREQUENCY_CHANGE,
         buffer: int = 4096,
         channels: int = 2,
         devicename: str = "",
@@ -204,7 +204,8 @@ class Sound(Base):
         self._channel: mixer.Channel | None = None
         self._uniquechannel: bool = uniquechannel
         self._sound: dict[str, SoundData] = {
-            sound_type: {} for sound_type in SOUND_TYPES  # type: ignore
+            sound_type: {}
+            for sound_type in SOUND_TYPES  # type: ignore
         }
         self._mixer_configs: dict[str, int | str] = {}
         self._last_play: str = ""

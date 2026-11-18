@@ -28,7 +28,7 @@ __all__ = [
 ]
 
 from enum import IntEnum
-from typing import Any, Callable
+from typing import TYPE_CHECKING, Any
 
 import pygame
 import pygame.gfxdraw as gfxdraw
@@ -52,6 +52,9 @@ from pygame_menu.locals import (
 )
 from pygame_menu.utils import assert_color, get_finger_pos, warn
 from pygame_menu.widgets.core.widget import Widget, WidgetTransformationNotImplemented
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 # Menubar styles
 MENUBAR_STYLE_ADAPTIVE = 1000

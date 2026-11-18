@@ -2358,6 +2358,7 @@ def test_baseimage_selector():
 
     class Sample:
         """Sample example class which contains a selector that changes an image."""
+
         icons: list[BaseImage]
         icon: widgets.Image
         selector: widgets.Selector
@@ -2630,7 +2631,7 @@ def test_menu_render_toggle():
     # Position after render must be equal!
     for i in range(n):
         assert position_before[i] == wdt[i].get_position()
-    print(f'Render on: {t_on}s, off: {t_off}s')
+    print(f"Render on: {t_on}s, off: {t_off}s")
 
 
 def test_menu_widget_selected_events():

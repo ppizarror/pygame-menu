@@ -46,7 +46,7 @@ most basic widget should contain this code:
             # Draw the self._surface pygame object on the given surface
             surface.blit(self._surface, self._rect.topleft)
 
-        def _render(self) -> Optional[bool]:
+        def _render(self) -> bool | None:
             """
             Render the Widget surface.
 

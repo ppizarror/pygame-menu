@@ -42,7 +42,9 @@ def test_table_initialization(menu, table):
 def test_row_addition_and_sizing(table):
     """Test table row addition and sizing."""
     row1 = table.add_row(
-        [1, 2, 3], row_background_color="blue", cell_align=pygame_menu.locals.ALIGN_CENTER
+        [1, 2, 3],
+        row_background_color="blue",
+        cell_align=pygame_menu.locals.ALIGN_CENTER,
     )
     assert row1.get_size() == (51, 41)
 
@@ -217,7 +219,11 @@ def test_table():
         table.pack(btn)
 
     # Test add rows
-    row1 = table.add_row([1, 2, 3], row_background_color="blue", cell_align=pygame_menu.locals.ALIGN_CENTER)
+    row1 = table.add_row(
+        [1, 2, 3],
+        row_background_color="blue",
+        cell_align=pygame_menu.locals.ALIGN_CENTER,
+    )
     assert table.is_rectangular()
     assert row1.get_size() == (51, 41)
     assert table.get_size(apply_padding=False) == (51, 41)
@@ -243,7 +249,10 @@ def test_table():
     # Test cell properties
     assert c1.get_attribute("align") == pygame_menu.locals.ALIGN_CENTER
     assert c1.get_attribute("border_color") == (0, 0, 0, 255)
-    assert c1.get_attribute("border_position") == pygame_menu.widgets.core.widget.WIDGET_FULL_BORDER
+    assert (
+        c1.get_attribute("border_position")
+        == pygame_menu.widgets.core.widget.WIDGET_FULL_BORDER
+    )
     assert c1.get_attribute("border_width") == 1
     assert c1.get_attribute("column") == 1
     assert c1.get_attribute("padding") == (0, 0, 0, 0)
@@ -323,8 +332,11 @@ def test_table():
 
     assert btn in menu.get_widgets()
 
-    row4 = table.add_row(["sub-table", table2, btn], cell_align=pygame_menu.locals.ALIGN_CENTER,
-                         cell_vertical_position=pygame_menu.locals.POSITION_CENTER)
+    row4 = table.add_row(
+        ["sub-table", table2, btn],
+        cell_align=pygame_menu.locals.ALIGN_CENTER,
+        cell_vertical_position=pygame_menu.locals.POSITION_CENTER,
+    )
     table.update_cell_style(2, 4, background_color="white")
     assert btn not in menu.get_widgets()
     assert btn.get_frame() == row4
@@ -350,8 +362,10 @@ def test_table():
     inner_surface = pygame.Surface((20, 20))
     inner_surface.fill((75, 0, 130))
     new_surface.blit(inner_surface, (10, 10))
-    row5 = table.add_row([new_surface, "epic", new_surface],
-                         cell_border_position=pygame_menu.locals.POSITION_SOUTH)
+    row5 = table.add_row(
+        [new_surface, "epic", new_surface],
+        cell_border_position=pygame_menu.locals.POSITION_SOUTH,
+    )
 
     assert isinstance(row5.get_widgets()[0], pygame_menu.widgets.SurfaceWidget)
     assert isinstance(row5.get_widgets()[1], pygame_menu.widgets.Label)
@@ -383,7 +397,11 @@ def test_table():
     menu.remove_widget(surf_widget)
 
     assert table._translate_virtual == (0, 0)
-    frame.pack(table, align=pygame_menu.locals.ALIGN_CENTER, vertical_position=pygame_menu.locals.POSITION_CENTER)
+    frame.pack(
+        table,
+        align=pygame_menu.locals.ALIGN_CENTER,
+        vertical_position=pygame_menu.locals.POSITION_CENTER,
+    )
     assert table._translate_virtual == (25, 33)
 
     # Add to scrollable frame
@@ -393,7 +411,9 @@ def test_table():
 
     # Add scrollable frame to table
     menu._test_print_widgets()
-    frame3 = menu.add.frame_v(200, 200, max_width=100, max_height=100, background_color="cyan")
+    frame3 = menu.add.frame_v(
+        200, 200, max_width=100, max_height=100, background_color="cyan"
+    )
     assert frame3 in menu._update_frames
     row6 = table.add_row([frame3, table3], cell_border_width=0)
     row6_widgs = row6.get_widgets(unpack_subframes=False)
