@@ -21,7 +21,7 @@ __all__ = [
     "FRAME_TITLE_BUTTON_MINIMIZE",
 ]
 
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 import pygame
 

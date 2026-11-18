@@ -30,7 +30,7 @@ __all__ = [
 import random
 import sys
 from time import sleep
-from typing import Any, Union
+from typing import Any
 
 import pygame
 

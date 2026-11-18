@@ -62,6 +62,7 @@ exclude = [".git", ".venv", "build", "dist", "__pycache__"]
 
 [tool.ruff.lint]
 select = [
+    "F",    # pyflakes (unused imports, unused variables, etc.)
     "W",    # pycodestyle warnings
     "UP",   # pyupgrade
     "TCH",  # type-checking imports
