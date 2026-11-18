@@ -6,17 +6,21 @@ BUILD
 Build file.
 """
 
+from __future__ import annotations
+
 import shutil
 import subprocess
 import sys
 from pathlib import Path
 
 assert len(sys.argv) == 2, "Argument is required, usage: build_package.py pip/twine"
-mode: str = sys.argv[1].strip()
+
+mode = sys.argv[1].strip()
 
 root = Path(__file__).resolve().parent
 dist = root / "dist"
 build = root / "build"
+
 
 if mode == "pip":
     if dist.is_dir():
@@ -25,19 +29,26 @@ if mode == "pip":
     if build.is_dir():
         shutil.rmtree(build)
 
-    subprocess.run(["python", "-m", "build"], check=True)
+    subprocess.run(
+        [sys.executable, "-m", "build"],
+        check=True,
+    )
 
 elif mode == "twine":
-    if dist.is_dir():
-        subprocess.run(
-            ["python", "-m", "twine", "upload", "dist/*"],
-            shell=True,  # required because of wildcard
-            check=True,
-        )
-    else:
+    if not dist.is_dir():
         raise FileNotFoundError(
             "No distribution found, execute build_package.py pip first"
         )
+
+    distributions = sorted(str(path) for path in dist.iterdir() if path.is_file())
+
+    if not distributions:
+        raise FileNotFoundError("No distribution artifacts found in dist/")
+
+    subprocess.run(
+        [sys.executable, "-m", "twine", "upload", *distributions],
+        check=True,
+    )
 
 else:
     raise ValueError(f"Unknown mode {mode}")
